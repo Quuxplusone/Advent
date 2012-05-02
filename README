@@ -1,0 +1,74 @@
+
+This is a translation of Crowther and Woods' "Adventure" into
+modern ANSI C. (Well, C89, actually.)
+
+===========================================================================
+
+A summary of existing versions and ports of Adventure is available
+on Russel Dalenberg's website:
+http://www.prismnet.com/~ged/www/advelist.html
+
+  The original "Adventure" was written in Fortran IV by Will Crowther,
+  and extended also in Fortran by Don Woods.
+
+  In 1977, Jim Gillogly ported Woods' code to C. Gillogly's extremely
+  literal port (lots of switches and gotos) is still shipped, as
+  "adventure", in the Debian bsdgames package.
+
+  In 1998, Don Knuth rewrote the entire game in CWEB, a literate
+  programming language that combines ANSI C and documentation.
+  He's updated the program several times since then; most recently
+  in January 2010.
+
+  For this translation, my primary source was the "woven" version of
+  Knuth's program, circa 2002, as available on literateprogramming.com.
+  In cases when the behavior seemed suspect, I compared it to the
+  "raw" version of Knuth's current program, and/or to Woods' Fortran
+  version. I caught at least two bugs in Knuth2002, both of which had
+  been fixed in Knuth2010; so I may have unknowingly copied a few more
+  bugs anyway. I may also have introduced a few myself; I've caught one
+  such bug already (caused by a mismatched "else").
+
+Both Gillogly's and (especially) Knuth's versions suffer from the
+extreme disadvantage that their main() functions are enormous and
+convoluted, with gotos jumping all over the place. Knuth's is worse,
+because CWEB encourages a subroutine-less style: it's easier to inline
+a code snippet than to create a C function call for it.
+
+But even though Knuth's "tangled" C program is indeed a tangled mass of
+code (it uses 81 global variables, and the main() function is 3270 lines
+long), it's mostly modular in its construction. I've followed Knuth's
+organization very closely in my translation.
+
+===========================================================================
+
+A second goal of this translation is to produce a faithful version of
+the original "Adventure" which can be compiled to run on the Z-machine.
+The history of "Adventure" on the Z-machine, as far as I know, is:
+
+  In May 1994, Graham Nelson ported "Adventure" to Inform 5. His starting
+  point was David Baggett's TADS version "Colossal Cave Revisited".
+  This version has "EXAMINE" text for all the scenery, and although
+  Baggett's version keeps the "motion words" such as SLAB and GRATE,
+  Nelson's Inform version gets rid of them. It's easy to distinguish
+  this version, because there is no two-word command that will unlock
+  the grate. (You must UNLOCK GRATE WITH KEYS.)
+  http://ifarchive.org/if-archive/games/source/inform/Advent.inf
+
+  Circa 2010, Chris Conley ported Will Crowther's original ADVENT (that is,
+  ADVENT as it was before Don Woods got hold of it) to Inform 7.
+  Conley devoted much more effort to fighting the Inform parser, but
+  added some convenience commands such as I (as opposed to INVEN).
+  http://ifarchive.org/if-archive/games/source/inform/Advent_Crowther_source.txt
+
+This C port can be run on the Z-machine if you compile it using
+"vbccz", a Z-machine backend written by David Given in 2008 for
+Volker Barthelmann's open-source C compiler "vbcc".
+http://www.cowlark.com/vbcc-z-compiler/
+
+However, as of this writing, "vbccz" has some bugs that make the
+game runnable but essentially unplayable. I would like to fix these
+bugs, eventually, so as to make "Adventure" playable on the Z-machine.
+
+This git repository will host both my port of "Adventure" and my patches
+to vbccz.
