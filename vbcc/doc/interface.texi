@@ -1,0 +1,2604 @@
+
+@section Introduction
+
+This chapter is under construction!
+
+    
+
+This chapter describes some of the internals of @command{vbcc}
+ and tries to explain
+what has to be done to write a code generator for @command{vbcc}.
+However if someone wants to write one, I suggest to contact me first,
+so that it can be integrated into the source tree.
+
+You have to create a new directory for the new target named
+@file{machines/<target-name>} and write the files @file{machine.c}, 
+@file{machine.h}
+and @file{machine.dt}. The compiler for this target will be called
+@command{vbcc<target-name>} and can be built doing a
+@command{make TARGET=<target-name> bin/vbcc<target-name>}.
+
+From now on integer means any of @code{char, short, int, long, long long} or their
+unsigned couterparts. Arithmetic means integer or @code{float} or 
+@code{double} or @code{long double}.
+Elementary type means arithmetic or pointer.
+
+Note that this documentation may mention explicit values when introducing
+symbolic constants. This is due to copying and pasting from the source
+code. These values may not be up to date and in some cases can be overridden.
+Therefore do never use the absolute values but rather the symbolic
+representations.
+
+
+@section Building vbcc
+
+This section deals with the steps necessary to build the typical
+@command{vbcc} executables from the sources.
+
+@subsection Directory Structure
+
+    The vbcc-directory contains the following important files and
+    directories:
+@table @file
+@item    vbcc/
+The main directory containing the compiler sources.
+
+@item    vbcc/Makefile
+The Makefile used to build @command{vbcc}.
+
+@item    vbcc/frontend/
+Directory containing the source to @command{vc}, the compiler driver.
+
+@item    vbcc/machines/<target>/
+Directory for the @code{<target>} backend.
+
+@item    vbcc/machines/ucpp/
+Directory containing the builtin preprocessor.
+
+@item    vbcc/vsc/
+Directory containing source to @command{vsc}, the instruction scheduler.
+
+@item    vbcc/bin/
+Directory the executables will be placed in.
+@end table
+
+    All compiling is done from the main directory.
+    The frontend @command{vc}
+ is not target-dependend and therefore only one version
+    is created.
+
+    Every available target has at least one subdirectory with its name in
+    @file{vbcc/machines} and contains at least the files 
+@file{machine.h}, @file{machine.c} and
+    @file{machine.dt}. Target-specific object-files will also be stored in that
+    directory.
+
+    The executables will be placed in @file{vbcc/bin/}. The main compiler will
+    be called @command{vbcc<target>}.
+
+
+@subsection Adapting the Makefile
+
+    Before building anything you have to insert correct values for
+    @code{CC, NCC, LDFLAGS} and @code{NLDFLAGS} in the @file{Makefile}.
+
+@table @code
+    @item CC
+       Here you have to insert a command that invokes an ANSI C
+             compiler you want to use to build vbcc. It must support
+             @option{-D}, @option{-I}, @option{-c} and @option{-o}
+                 the same like e.g. @command{vc} or @command{gcc}.
+             Additional options should also be inserted here. E.g. if you
+             are compiling for the Amiga with @command{vbcc} you should add 
+                @option{-DAMIGA}.
+
+    @item LDFLAGS 
+         Here you have to add options which are necessary for linking.
+             E.g. some compilers need special libraries for floating-point.
+
+    @item NCC
+    @itemx NLDFLAGS
+    These are similar to @code{CC} and @code{LDFLAGS} but they must always
+    describe a native compiler, i.e. Programs compiled with @code{NCC/NLDFLAGS}
+    must be executable on the host system. This is needed because during
+    the build programs may have to be executed on the host.
+@end table
+
+    An example for the Amiga using @command{vbcc} would be:
+@example
+      CC = vc -DAMIGA -c99
+      LDFLAGS = -lmieee
+      NCC = $(CC)
+      NLDFLAGS = $(LDFLAGS)
+@end example
+
+    An example for a typical Unix-installation would be:
+@example
+      CC = cc
+      LDFLAGS = -lm
+      NCC = $(CC)
+      NLDFLAGS = $(LDFLAGS)
+@end example
+
+The following settings are probably necessary for Open/Free/Any BSD i386 systems:
+@example
+      CC = gcc -D_ANSI_SOURCE
+      LDFLAGS = -lm
+      NCC = $(CC)
+      NLDFLAGS = $(LDFLAGS)
+@end example
+
+
+@subsection Building vc
+
+Note to users of Open/Free/Any BSD i386 systems: You will probably have to use
+GNU make instead of BSD make, i.e. in the following examples replace "make"
+with "gmake".
+
+    Type:
+@example
+      make bin/vc
+@end example
+
+@subsection Building vsc
+
+    Type:
+@example
+      make TARGET=<target> bin/vsc<target>
+@end example
+    For example:
+@example
+      make TARGET=alpha bin/vscalpha
+@end example
+
+    Omit this step if there is no file @file{machines/<target>/schedule.c}.
+
+
+@subsection Building vbcc
+
+    Type:
+
+@example
+      make TARGET=<target> bin/vbcc<target>
+@end example
+For example:
+@example
+      make TARGET=alpha bin/vbccalpha
+@end example
+
+    During the build the program @command{dtgen} will be generated and executed on
+    the host-system. First it will ask you whether you are building a
+    cross-compiler.
+
+    Answer @code{y} only if you are building a cross-compiler (i.e. a compiler
+    which does not produce code for the same machine it it running on).
+
+    Note that it does _not_ matter if you are cross-building a compiler,
+    i.e. if you are running on system A and building a B->B compiler
+    by using an A->B compiler then you can answer @code{n}.
+
+    If you answered @code{y} you will be asked if your system/compiler offers
+    certain datatypes. This refers to the compiler you described with
+    CC in the Makefile.
+    E.g. if @code{CC} is an A->B cross-compiler you have to answer the questions
+    according to B.
+    To each question answer @code{y} or @code{n} depending if such a datatype is
+    available on that compiler. If you answered @code{y} you have to type in
+    the name of that type on the compiler (e.g. @code{signed int},
+    @code{unsigned char} etc.).
+    If there are not enough datatypes available to build @command{vbcc}
+    an error
+    message will be printed and the build aborts.
+
+
+@subsection Configuring
+
+    Consult the @command{vbcc}-documentation for information on
+    how to create the necessary config-files.
+
+
+@subsection Building Cross-Compilers
+
+    As there is often confusion when it comes to cross-building compilers
+    or building cross-compilers, here is what has to be done to cross-build
+    a B->C cross-compiler on system A with only a native A->A compiler
+    available.
+
+    This is done by first building an A->B compiler and then cross-building
+    the B->C compiler using the A->B compiler.
+
+    For the first step you use the A->A compiler for @code{CC} as well as
+        @code{NCC}.
+    Now you type:
+@example
+      make bin/vc
+      make TARGET=B bin/vscB   # omit if there is no machines/B/schedule.c
+      make TARGET=B bin/vbccB
+@end example
+
+    The questions about datatypes are answered according to A.
+    Then you should write a @file{vc.config} for the @code{vbccB}
+ cross-compiler.
+
+    Now create a second directory containing all the sources to @command{vbcc}
+ and
+    set @code{CC/LDFLAGS} to @command{vc} using the config-file for vbccB and
+        @code{NCC/NLDFLAGS}
+    to the A->A compiler. Type:
+@example
+      make bin/vc
+      make TARGET=C bin/vscC   # omit if there is no machines/C/schedule.c
+      make TARGET=C bin/vbccC
+@end example
+
+
+
+@section The Intermediate Code
+
+@command{vbcc} will generate intermediate code for every function and pass
+this code to the code generator which has to convert it into the desired output.
+
+In the future there may be a code generator generator which reads a machine
+description file and generates a code generator from that, but it is not
+clear whether this could simplify much without taking penalties in the
+generated code.
+Anyway, this would be a layer on top of the current interface to the code
+generator, so that the interface described in this document would still be
+valid and accessible.
+
+@subsection General Format
+
+The intermediate code is represented as a doubly linked list of quadruples
+(I am calling them ICs from now on) consisting mainly of an operator, two
+source operands and a target. They are represented like this:
+
+@example
+
+struct IC@{
+    struct IC *prev;
+    struct IC *next;
+    int code;
+    int typf;
+    int typf2;
+    [...]
+    struct obj q1;
+    struct obj q2;
+    struct obj z;
+    [...]
+    struct ext_ic ext;  /* optional */
+@};
+@end example
+
+The only members relevant to the code generator are
+@code{prev, next, code, typf, typf2, q1, q2, z} and (optionally) @code{ext_ic}.
+
+@code{prev} and @code{next} are pointers to the previous and next IC.
+The first IC has @code{prev==0} and the last one has @code{next==0}.
+
+@code{typf} and @code{typf2} are the type of the operands of this IC.
+In most ICs all operands have the same type and therefore only @code{typf}
+is used. However, some ICs have operands of different types (e.g.
+converting an operand to another type or adding an integer to a pointer).
+@code{typf2} is used in these cases.
+
+Macros are provided which yield the type of an operand.
+@code{q1typ(), q2typ()} and @code{ztyp()} return the type of the first source
+operand, the second source operand and the destination, respectively.
+They have to be passed a pointer to a valid IC as argument. The results are
+undefined if the IC does not contain the specified operand (e.g. @code{q2typ()}
+for an IC with only a single operand).
+
+The standard types which are defined by default are:
+
+@example
+    #define CHAR 
+    #define SHORT 
+    #define INT 
+    #define LONG 
+    #define LLONG
+    #define FLOAT 
+    #define DOUBLE 
+    #define LDOUBLE
+    #define VOID 
+    #define POINTER 
+    #define ARRAY 
+    #define STRUCT 
+    #define UNION 
+    #define ENUM          /*  not relevant for code generator     */
+    #define FUNKT 
+@end example
+
+    and can be additionally or'ed by
+
+@example
+    #define UNSIGNED
+    #define CONST
+    #define VOLATILE
+    #define UNCOMPLETE
+@end example
+
+    However, only @code{UNSIGNED} is of real importance for the code generator.
+    @code{typf&NQ} yields the type without any qualifiers, @code{typf&NU}
+    yields the type without any qualifiers but @code{UNSIGNED}.
+
+It is possible for backends to define additional types. @xref{exttypes}
+for documentation on how to extend the type system.
+
+@node operands
+@subsection Operands
+
+@code{q1, q2} and @code{z} are the source1 (quelle1 in German), source2 and
+target (ziel) operands, respectively.
+If a result has to be computed, it always will be stored in the object @code{z}
+and the objects @code{q1} and @code{q2} usually may not be destroyed during
+this operation (unless they are aliased with the destination).
+
+The objects are described by this structure:
+
+@example
+
+struct obj@{
+    int flags;
+    int reg;
+    int dtyp;
+    struct Var *v;
+    struct AddressingMode *am;
+    union atyps@{
+        zchar vchar;
+        zchar vuchar;
+        zshort vshort;
+        zushort vushort;
+        zint vint;
+        zuint vuint;
+        zlong vlong;
+        zulong vulong;
+        zllong vllong;
+        zullong vullong;
+        zmax vmax;
+        zumax vumax;
+        zfloat vfloat;
+        zdouble vdouble;
+        zldouble vldouble;
+    @} val;
+@};
+
+@end example
+
+@code{flags} specifies the kind of object. It can be a combination of
+
+@table @code
+
+@item #define KONST 1
+    The object is a constant. Its value is in the corresponding (to
+        @code{typf} or @code{typf2})
+    member of @code{val}.
+
+@item #define VAR 2
+    The object is a variable. The pointer to its @code{struct Var} is in 
+    @code{v}. @code{val.vlong} vontains an offset that has to be added to it.
+    Fur further details, @pxref{Variables}.
+
+@item #define DREFOBJ 32
+    The content of the location in memory the object points to is used.
+        @code{dtyp} contains the type of the pointer. In systems with
+        only one pointer type, this will always be @code{POINTER}.
+
+@item #define REG 64
+    The object is a register. @code{reg} contains its number.
+
+@item #define VARADR 128
+    The address of the object is to be used. Only together with static
+    variables (i.e. @code{storage_class == STATIC} or @code{EXTERN}).
+
+@end table
+
+The possible combinations of these flags should be:
+
+@itemize
+        @item @code{0} (no object)
+        @item @code{KONST}
+        @item @code{KONST|DREFOBJ}
+        @item @code{REG}
+        @item @code{VAR}
+        @item @code{VAR|REG}
+        @item @code{REG|DREFOBJ}
+        @item @code{KONST|DREFOBJ}
+        @item @code{VAR|DREFOBJ}
+        @item @code{VAR|REG|DREFOBJ}
+        @item @code{VAR|VARADR}
+@end itemize
+
+Also some other bits which are not relevant to the code generator may be set.
+
+Constants will usually be in @code{q2} if possible. One of the sources always
+is not constant and the target is always an lvalue.
+The types of the operands can be queried using the macros
+@code{q1typ(), q2typ()} and @code{ztyp()}.
+In most cases (i.e. when not explicitly stated) the type is an elementary type
+(i.e. arithmetic or pointer).
+
+@code{am} can be used to store information on special addressing modes.
+This has to be handled by the by the code generator. However @code{am} has to be 0
+or has to point to a @code{struct AddressingMode} that was allocated using @code{malloc()}
+when the code generator returns. @code{struct AddressingMode} has to be defined
+in @file{machine.h}.
+
+@code{val} stores either the value of the object if it is a constant or an
+offset if it is a variable.
+
+@code{code} specifies the operation. Fur further details @pxref{operations}.
+
+
+
+@node Variables
+@subsection Variables
+
+    A @code{struct Var} looks like:
+
+@example
+
+    struct Var@{
+        int storage_class;
+        [...]
+        char *identifier;
+        [...]
+        zmax offset;
+        struct Typ *vtyp;
+        [...]
+        char *vattr;
+        unsigned long tattr;   /* optional */
+    @};
+@end example
+
+
+    The relevant entries are:
+
+@table @code
+    @item identifier
+        The name of the variable. Usually only of interest for variables
+        with external-linkage.
+
+    @item storage_class
+        One of:
+        @example
+            #define AUTO 1
+            #define REGISTER 2
+            #define STATIC 3
+            #define EXTERN  4
+            #define TYPEDEF 5       /*  not relevant    */
+        @end example
+        The backend should use the macros @code{isauto(), isstatic()}
+        and @code{isextern()} to check which category a variable falls into.
+
+     @item offset
+        Contains an offset relative to the beginning of the variable's
+        storage. Used, for example, when accessing members of structures.
+
+     @item vtyp
+        The type of the variable (@pxref{compositetypes}).
+
+     @item vattr
+        A string with attributes used in the declaration of the variable.
+        @xref{targetattributes} for further details.
+
+     @item tattr
+        Flags used when declaring the variable.
+        @xref{targetattributes} for further details.
+@end table
+
+        If the variable is not assigned to a register (i.e. bit @code{REG}
+        is not set in the flags of the corresponding @code{struct obj}) then
+        the variable can be addressed in the following ways (with
+        examples of 68k-code):
+
+@table @code
+        @item isauto(storage_class) != 0
+            @code{offset} contains the offset inside the local-variables
+            section. The code generator must decide how it's going to handle
+            the activation record.
+            If @code{offset < 0} then the variable is a function argument on
+                the
+            stack. In this case the offset in the parameter-area is
+             @code{- (offset + maxalign)}.
+
+            The code generator may have to calculate the actual offset
+            to a stack- or frame-pointer from the value in @code{offset}.
+@example
+                offset + val.vlong(sp)
+@end example
+            Note that @code{storage_class == REGISTER} is equivalent to
+                @code{AUTO} - whether
+            the variable is actually assigned a register is specified by
+            the bit @code{REG} in the @code{flags} of the @code{struct obj}.
+
+        @item isextern(storage_class) != 0
+            The variable can be addressed through its name in @code{identifier}.
+@example
+                val.vlong + '_'identifier
+@end example
+
+        @item isstatic(storage_class) != 0
+            The variable can be addressed through a numbered label. The
+            label number is stored in @code{offset}.
+@example
+                val.vlong+'l'offset
+@end example
+@end table
+
+@node compositetypes
+@subsection Composite Types
+
+The C language offers types which are composed out of other types,
+e.g. structures or arrays. Therefore, a C type can be an arbitrarily
+complex structure. Usually the backend does not need to deal with
+those structures. The ICs contain only the simple type flags, e.g.
+@code{INT} or @code{STRUCT}, but not the members of a structure (instead
+the size is given).
+
+Most backends do not have to deal with complex types at all, but
+there are some ways to access them, if needed (for example, they may be
+needed when generating debug information). Therefore, this chapter
+describes the representation of such full types.
+
+Types are represented by the following structure:
+@example
+struct Typ @{
+  int flags;
+  struct Typ *next;
+  struct struct_declaration *exact;
+  zmax size;
+  char *attr;
+@};
+@end example
+
+@code{flags} is the simple type as it is generally used in the
+backend. The meaning of the other members depends on @code{flags}.
+@code{attr} is an attribute that can be added to the type using
+the sytax @code{__attr("...")} (which is parsed like a type-qualifier,
+e.g. @code{const}). If several attributes are specified
+for a type, the strings will be concatenated, separated by semi-colons.
+
+If the type is a pointer (@code{ISPOINTER(flags) != 0}), then @code{next}
+will point to the type the pointer points to.
+
+If the type is an array (@code{ISARRAY(flags) != 0}), then @code{size}
+contains the number of elements and @code{next} points to a type structure
+representing the type of each array element.
+
+If the type is a structure (@code{ISSTRUCT(flags) != 0}), a union
+(@code{ISUNION(flags) != 0}) or a function (@code{ISFUNC(flags) != 0}), 
+then @code{exact}
+is a pointer to a @code{struct_declaration} (which is also used to represent
+unions and function prototypes) that looks like this:
+@example
+struct struct_declaration @{
+  int count;
+  int label;
+  int typ;
+  ...
+  struct struct_list (*sl)[];
+  char *identifier;
+@};
+@end example
+
+@code{count} is the number of members, @code{label} can be used to store
+a label when generating debug information. @code{typ} is either @code{STRUCT},
+@code{UNION} or @code{FUNKT} to denote whether it applies to a structure,
+union or function-prototype.
+
+@code{identifier} is only available for struct- and union-tags.
+
+@code{sl} points to an array of @code{struct struct_list}s which contain
+information on each member/parameter:
+@example
+struct struct_list @{
+  char *identifier;
+  struct Typ *styp;
+  zmax align;
+  int bfoffset;
+  int bfsize;
+  int storage_class;
+  int reg;
+@};
+@end example
+
+@code{identifier} is the identifier of the member/parameter, if available.
+@code{styp} denotes the full type, @code{align} the alignment in bytes
+(only for struct/union), @code{bfoffset} and @code{bfsize} the size and
+offset of bitfield-members, @code{storage_class} the storage class of
+function parameters (may be @code{AUTO} or @code{REGISTER}) and @code{reg}
+denotes the register a parameter is passed in.
+
+Example: If @code{struct Typ *t} points to a structure-type, then the type
+of the second structure member can be accessed through
+@code{(*t->exact->sl)[1].styp}.
+
+A prototyped function will have a last argument of type @code{VOID} unless
+it is a function accepting a variable number of arguments. If a function
+was declared without a prototype it will have no parameters, a function
+declared with prototype accepting no arguments will have one parameter of
+type @code{VOID}.
+
+Also, in the case of a function type, the @code{next}-member of a
+@code{struct Typ} points to the return type of the function.
+
+
+@node operations
+@subsection Operations
+
+This section lists all the different operations allowed in the
+intermediate code passed to the backend. It lists the symbolic name
+of the @code{code} value (the value should not be used), a template
+of the operands and a description. The description sometimes
+contains internals (e.g. which types are stored in @code{typf} and
+which in @code{typf2}), but they should not be used. Access them using
+the macros provided (e.g. @code{q1typ,q2typ,ztyp}) whenever possible.
+
+
+@table @code
+@item #define ASSIGN 2
+
+    Copy @code{q1} to @code{z}. @code{q1->z}.
+
+    @code{q2.val.vmax} contains the size of the objects (this is
+    necessary if it is an array or a struct). It should be accessed
+    using the @code{opsize()}-macro.
+    @code{typf} does not have to be an elementary type!
+
+    The only case where @code{typf == ARRAY} should be in automatic initializations.
+
+    It is also possible that @code{(typf&NQ) == CHAR} but the size is != 1. This is
+    created for an inline memcpy/strcpy where the type is not known.
+
+@item #define OR 16
+@item #define XOR 17
+@itemx #define AND 18
+
+    Bitwise boolean operations. @code{q1,q2->z}.
+
+    All operands are integers.
+
+@item #define LSHIFT 25
+@itemx #define RSHIFT 26
+
+    Bit shifting. @code{q1,q2->z}.
+
+ @code{'q2'} is the number of shifts.
+    All operands are integers.
+
+@item #define ADD 27
+@item #define SUB 28
+@item #define MULT 29
+@itemx #define DIV 30
+
+    Standard arithmetic operations. @code{q1,q2->z}.
+
+    All operands are of arithmetic types (integers or floating point).
+
+@item #define MOD 31
+
+    Modulo (@code{%}). @code{q1,q2->z}.
+
+    All operands are integers.
+
+@item #define KOMPLEMENT 33
+
+    Bitwise complement. @code{q1->z}.
+
+    All operands are integers.
+
+@item #define MINUS 38
+
+    Unary minus. @code{q1->z}.
+
+    All operands are of arithmetic types (integers or floating point).
+
+@item #define ADDRESS 40
+
+    Get the address of an object. @code{q1->z}.
+
+    @code{z} is always a pointer and @code{q1} is always an auto variable.
+
+@item #define CALL 42
+
+    Call the function @code{q1}. @code{q1}.
+
+    @code{q2.val.vmax} contains the number of bytes pushed on the stack as
+    function arguments for this call (use the @code{pushedargsize()}-macro
+    to access this size). Those may have to be popped from the
+    stack after the function returns depending on the calling mechanism.
+
+    A @code{CALL} IC has a member @code{arg_cnt} which contains the number
+    of arguments to this function call. @code{arg_list[i]} (with @code{i}
+    in the range 0...@code{arg_cnt-1}) contains the pointer to the
+    IC passing the @code{i}-th argument.
+
+@item #define CONVERT 50
+
+    Convert one type to another. @code{q1->z}.
+
+    @code{z} is always of the type @code{typf}, @code{q1} of type @code{typf2}.
+
+    Conversions between floating point and pointers do not occur, neither 
+    do conversions to and from structs, unions, arrays or void.
+
+@item #define ALLOCREG 65
+
+    Allocate a register. @code{q1}.
+
+    From now on the register @code{q1.reg} is in use. No code has to be generated
+    for this, but it is probably useful to keep track of the registers
+    in use to know which registers are available for the code generator
+    at a certain time and which registers are trashed by the function.
+
+@item #define FREEREG 66
+
+    Release a register. @code{q1}.
+
+    From now on the register @code{q1.reg} is free.
+
+    Also it means that the value currently stored in @code{q1.reg} is not used any
+    more and provides a little bit of data flow information.
+    Note however, if a @code{FREEREG} follows a branch, the value of the register
+    may be used at the target of the branch.
+
+@item #define COMPARE 77
+
+    Compare and set condition codes. @code{q1,q2(->z)}.
+
+    Compare the operands and set the condition code, so that
+    @code{BEQ, BNE, BLT, BGE, BLE} or @code{BGT} works as desired.
+    If @code{z.flags == 0} (this is always the case unless the backend sets
+    @code{multiple_ccs} to 1 and @option{-no-multiple-ccs} is not used) 
+    the condition codes will be evaluated only by an IC immediately
+    following the @code{COMPARE}, i.e. the next instruction (except possible
+    @code{FREEREG}s) will be a conditional branch.
+
+    However, if a target supports several condition code registers and sets
+    the global variable @code{multiple_ccs} to 1, @command{vbcc} might use those registers
+    and perform certain optimizations. In this case @code{z} may be non-empty and the
+    condition codes have to be stored in @code{z}.
+
+    Note that even if @code{multiple_ccs} is set, a backend must nevertheless
+    be able to deal with @code{z == 0}.
+
+@item #define TEST 68
+
+    Test @code{q1} against 0 and set condition codes. @code{q1(->z)}
+
+    This is equivalent to @code{COMPARE q1,#0}
+    but only the condition code for @code{BEQ} and @code{BNE} has to be set.
+
+@item @code{#define LABEL 69}
+
+    Generate a label. @code{typf} specifies the number of the label.
+
+@item #define BEQ 70
+@item #define BNE 71
+@item #define BLT 72
+@item #define BGE 73
+@item #define BLE 74
+@itemx #define BGT 75
+
+    Branch on condition codes. (@code{q1}).
+
+    @code{typf} specifies the label where program execution shall continue, if the
+    condition code is true (otherwise continue with next statement).
+    The condition codes mean equal, not equal, less than, greater or equal,
+    less or equal and greater than.
+    If @code{q1} is empty (@code{q1.flags == 0}), the codes set by the last @code{COMPARE}
+    or @code{TEST} must be evaluated. Otherwise @code{q1} contains the condition codes.
+
+    On some machines the type of operands of a comparison (e.g unsigned or
+    signed) is encoded in the branch instructions rather than in the
+    comparison instructions. In this case the code generator has to keep
+    track of the type of the last comparison.
+
+    Similarly, in some architectures, the compare and the branch can be
+    combined.
+
+@item #define BRA 76
+
+    Branch always. @code{typf} specifies the label where program execution
+    continues.
+
+@item #define PUSH 78
+
+    Push @code{q1} on the stack (for argument passing). @code{q1}.
+
+    @code{q2.val.vmax} contains the size of the object (should be accessed
+    using the @code{opsize()}-macro), @code{z.val.vmax}
+    contains the size that has to be pushed (access it using the
+    @code{pushsize()}-macro). These sizes may differ due to
+    alignment issues.
+
+    @code{q1} does not have to
+    be an elementary type (see @code{ASSIGN}).
+    Also, @code{q1} can be empty. This is used for ABIs which require
+    stack-slots to be omitted.
+
+    Depending on @code{ORDERED_PUSH} the @code{PUSH} ICs are generated
+    starting with the first or the last arguments. The direction of
+    the stack-growth can be chosen by the backend. Note that this is only
+    used for function-arguments, they can be pushed in opposite direction
+    of the real stack.
+
+@item #define ADDI2P 81
+
+    Add an integer to a pointer. @code{q1,q2->z}.
+
+    @code{q1} and @code{z} are always pointers (of type @code{typf2}) and
+    @code{q2} is an integer of type @code{typf}.
+    @code{z} has to be @code{q1} increased by @code{q2} bytes.
+
+@item #define SUBIFP 82
+
+    Subtract an Integer from a pointer. @code{q1,q2->z}.
+
+    @code{q1} and @code{z} are always pointers (of type @code{typf2}) and
+    @code{q2} is an integer of type @code{typf}.
+    @code{z} has to be @code{q1} decreased by @code{q2} bytes.
+
+@item #define SUBPFP 83
+
+    Subtract a pointer from a pointer. @code{q1,q2->z}.
+
+    @code{q1} and @code{q2} are pointers (of type @code{typf2}) and
+    @code{z} is an integer of type @code{typf}.
+    @code{z} has to be @code{q1 - q2} in bytes.
+
+@item #define GETRETURN 93
+
+    Get the return value of the last function call. @code{->z}.
+
+    If the return value is in a register, its number will be @code{q1.reg}.
+    Otherwise @code{q1.reg} will be 0.
+    @code{GETRETURN} immediately follows a @code{CALL} IC (except possible
+    @code{FREEREG}s).
+
+@item #define SETRETURN 94
+
+    Set the return value of the current function. @code{q1}.
+
+    If the return value is in a register, its number will be @code{z.reg}.
+    Otherwise @code{z.reg} will be 0.
+    @code{SETRETURN} is immediately followed by a function exit (i.e. it is the last
+    IC or followed by an unconditional branch to a label which is the last
+    IC - always ignoring possible @code{FREEREG}s).
+
+@item #define MOVEFROMREG 95
+
+    Move a register to memory. @code{q1->z}.
+
+    @code{q1} is always a register and @code{z} an array of size @code{regsize[q1.reg]}.
+
+@item #define MOVETOREG 96
+
+    Load a register from memory. @code{q1->z}.
+
+    @code{z} is always a register and @code{q1} an array of size @code{regsize[z.reg]}.
+
+@item #define NOP 97
+
+    Do nothing.
+
+@end table
+
+
+@section Type System
+
+@subsection Target Data Types
+
+As the compiler should be portable, we must not assume anything about
+the data types of the host system which is not guaranteed by
+ANSI/ISO C. Especially do not assume that the data types of the host
+system correspond to the ones of the target system.
+
+Therefore, @command{vbcc} will provide typedefs which can hold a data type
+of the target machine and (as there is no operator overloading in C)
+functions or macros to perform arithmetic on these types.
+
+The typedefs for the basic target's data types (they can be extended
+by additional types) are:
+
+@table @code
+    @item zchar
+           Type @code{char} on the target machine.
+    @item zuchar
+          Type @code{unsigned char} on the target machine.
+    @item zshort
+           Type @code{short} on the target machine.
+    @item zushort
+          Type @code{unsigned short} on the target machine.
+    @item zint
+           Type @code{int} on the target machine.
+    @item zuint
+          Type @code{unsigned int} on the target machine.
+    @item zlong
+           Type @code{long} on the target machine.
+    @item zulong
+          Type @code{unsigned long} on the target machine.
+    @item zllong
+           Type @code{long long} on the target machine.
+    @item zullong
+          Type @code{unsigned long long} on the target machine.
+    @item zmax
+          A type capable of storing (and correctly doing arithmetic on)
+          every signed integer type. Defaults to @code{zllong}.
+    @item zumax
+          A type capable of storing (and correctly doing arithmetic on)
+          every unsigned integer type. Defaults to @code{zullong}.
+    @item zfloat
+           Type @code{float} on the target machine.
+    @item zdouble
+           Type @code{double} on the target machine.
+    @item zldouble
+           Type @code{long double} on the target machine.
+    @item zpointer
+        A byte pointer on the target machine. Not really used.
+@end table
+
+These typedefs and arithmetic functions to work on them will be
+generated by the program @command{dtgen} when compiling @command{vbcc}.
+It will create the files @file{machines/$(TARGET)/dt.h} and @file{dt.c}.
+
+These files are generated from @file{machines/$(TARGET)/machine.dt}
+which must describe what representations the code generator needs.
+@command{dtgen} will then ask for available types on the host system and
+choose appropriate ones and/or install emulation functions, if available.
+
+In @file{machine.dt}, every data type representation gets a symbol (the ones which are
+already available can be looked up in @file{datatypes/datatypes.h} - new
+ones will be added when necessary).
+The first 14 lines must contain the representations for the
+following types:
+
+@enumerate
+       @item @code{signed char}
+       @item @code{unsigned char}
+       @item @code{signed short}
+       @item @code{unsigned short}
+       @item @code{signed int}
+       @item @code{unsigned int}
+       @item @code{signed long}
+       @item @code{unsigned long}
+       @item @code{signed long long}
+       @item @code{unsigned long long}
+       @item @code{float}
+       @item @code{double}
+       @item @code{long double}
+       @item @code{void *}
+@end enumerate
+
+If the code generator can use several representations, these can be
+added on the same line separated by spaces. E.g. the code generator
+for m68k does not care if the integers are stored big-endian or
+little-endian on the host system because it only accesses them through
+the provided arithmetic functions. It does, however, access floats
+and doubles through byte-pointers and therefore requires them to
+be stored in big-endian-format.
+
+@subsection Target Arithmetic
+
+Now you have a lot of functions/macros performing operations using the
+target machine's arithmetic. You can look them up in @file{dt.h/dt.c}.
+E.g. @code{zmadd()} takes two @code{zmax} and returns their sum as @code{zmadd}. @code{zumadd()} does
+the same with @code{zumax}, @code{zldadd()} with long doubles. No functions for smaller types
+are needed because you can calculate with the wider types and convert the
+results down if needed.
+
+Therefore, there are also conversion functions which convert between types of the
+target machine. E.g. @code{zm2zc} takes a @code{zmax} and returns the value
+converted to a @code{zchar}.
+Again, look at @file{dt.h/dt.c} to see which ones are there.
+
+A few functions for converting between target and host types are also
+there, e.g. @code{l2zm} takes a long and returns it converted to @code{zmax}.
+
+At last there are functions for comparing target data types. E.g.
+@code{zmleq(a,b)} returns true if @code{zlong a <= zlong b} and false otherwise.
+@code{zleqto(a,b)} returns true if @code{zlong a == zlong b} and false otherwise.
+
+
+
+@section @file{machine.h}
+
+This section describes the contents of the file @file{machine.h}.
+Note that
+some optional macros/declaration may be described someplace else in this
+manual.
+
+@table @code
+
+@item #include "dt.h"
+This should be the first statement in @file{machine.h}.
+
+@item struct AddressingMode @{ ... @};
+If machine-specific addressing modes (@pxref{addressingmodes}) are used,
+an appropriate structure can be specified here. Otherwise, just enter
+the following code:
+@example
+struct AddressingMode @{
+    int never_used;
+@};
+@end example
+
+@item #define MAXR <n>
+Insert the number of available registers.
+
+@item #define MAXGF <n>
+Insert the number of command line flags that can be used to
+configure the behaviour of the code generator. This must be at least one
+even if you do not use any flags.
+
+@item #define USEQ2ASZ <0/1>
+If this is set to zero, @command{vbcc} will not generate ICs with the
+target operand being the same as the 2nd source operand.
+This can sometimes simplify the code-generator, but usually
+the code is better if the code-generator allows it.
+
+@item #define MINADDI2P <type>
+Insert the smallest integer type
+that can be added to a pointer. Smaller types will be automatically converted
+to type @code{MINADDI2P} when they are to be added to a pointer.
+This may be subsumed by @code{shortcut()} in the future.
+
+@item #define BIGENDIAN <0/1>
+Insert 1 if integers are represented in big endian, i.e. the
+most significant byte is at the lowest memory address, the least significant
+byte at the highest.
+
+@item #define LITTLEENDIAN <0/1>
+Insert 1 if integers are represented in little endian, i.e.
+the least significant byte is at the lowest memory address, the most
+significant byte at the highest.
+
+@item #define SWITCHSUBS <0/1>
+Insert 1 if switch-statements should be compiled into a
+series of @code{SUB/TEST/BEQ} instructions rather than @code{COMPARE/BEQ}.
+This may be useful if the target has a more efficient @code{SUB}-instruction
+which sets condition codes (e.g. 68k).
+
+@item #define INLINEMEMCPY <n>
+Insert the largest size in bytes allowed for inline memcpy.
+In optimizing compilation, certain library memcpy/strcpy-calls
+with length known at compile-time will be inlined using an
+@code{ASSIGN} IC if the size is less or equal to @code{INLINEMEMCPY}.
+The type used for the @code{ASSIGN} IC will be @code{UNSIGNED|CHAR}.
+
+This may be replaced by a variable of type @code{zmax} in the future.
+
+@item #define ORDERED_PUSH <0/1>
+Insert 1 if @code{PUSH} ICs for function arguments shall
+be generated from left to right instead right to left.
+
+@item #define HAVE_REGPARMS 1
+Insert this line if the backend supports register parameters
+(@pxref{regparm}).
+
+@item #define HAVE_REGPAIRS 1
+Insert this line if the backend supports register pairs
+(@pxref{regpairs}).
+
+@item #define HAVE_INT_SIZET 1
+Insert this line if @code{size_t} shall be of type @code{unsigned int}
+rather than @code{unsigned long}.
+
+@item #define EMIT_BUF_LEN <n>
+Insert the maximum length of a line of code output.
+
+@item #define EMIT_BUF_DEPTH <n>
+Insert the number of ouput lines that should be buffered. This
+can be useful for peephole-optimizing the assembly output (see
+below).
+
+@item #define HAVE_TARGET_PEEPHOLE <0/1>
+Insert 1 if the backend provides an @code{asm_peephole()}
+function (@pxref{asmpeephole}).
+
+@item #define HAVE_TARGET_ATTRIBUTES 1
+Insert this line if the backend provides old target-specific
+variable-attributes (@pxref{targetattributes}).
+
+@item #define HAVE_TARGET_PRAGMAS 1
+Insert this line if the backend provides target-specific
+@code{#pragma}-directives (@pxref{targetpragmas}).
+
+@item #define HAVE_REGS_MODIFIED 1
+Insert this line if the backend supports inter-procedural
+register-allocation (@pxref{regsmodified}).
+
+@item #define HAVE_TARGET_RALLOC 1
+Insert this line if the backend supports context-sensitive
+register-allocation (@pxref{targetralloc}).
+
+@item #define HAVE_TARGET_EFF_IC 1
+Insert this line if the backend provides a @code{mark_eff_ics()}
+function (@pxref{markeffics}).
+
+@item #define HAVE_EXT_IC 1
+Insert this line if the backend provides a @code{struct ext_ic}
+(@pxref{extic}).
+
+@item #define HAVE_EXT_TYPES 1
+Insert this line if the backend supports additional types
+(@pxref{exttypes}).
+
+@item #define HAVE_TGT_PRINTVAL 1
+Insert this line if the backend provides an own @code{printval} function
+@pxref{tgtprintval}).
+
+@end table
+
+@section @file{machine.c}
+
+This is the main part of the code generator. The first statement
+should be @code{#include "supp.h"} which will include all necessary
+declarations.
+
+The following variables and functions must be provided by machine.c.
+
+@subsection Name and Copyright
+
+    The codegenerater must define a zero-terminated character array
+    @code{char cg_copyright[];} containing name and copyright-notice of
+    the code-generator.
+
+@subsection Command Line Options
+
+    You can use code generator specific commandline options.
+    The number of flags is specified as @code{MAXGF} in @file{machine.h}.
+    Insert the names for the flags as @code{char *g_flags_name[MAXGF]}.
+    If an option was specified @code{(g_flags[i]&USEDFLAG)} is not zero.
+    In @code{int g_flags[MAXGF]} you can choose how the options are to be
+    used:
+@table @code
+        @item 0
+                The option can only be specified. E.g. if
+                @code{g_flags_name[2]=="myflag"}, the commandline may contain
+                @option{-myflag} and @code{(g_flags[2]&USEDFLAG)!=0}.
+      @item VALFLAG
+   The option must be specified with an integer constant, e.g.
+                @option{-myflag=1234}. This value can be found in
+                @code{g_flags_val[2].l}.
+   @item  STRINGFLAG
+   The option must be specified with a string, e.g.
+                @option{-myflag=Hallo}. The pointer to the string can be found in
+                @code{g_flags_val[2].p}.
+@end table
+
+@subsection Data Types
+
+The following variables have to be initialized to describe the
+representation of the data types.
+
+@table @code
+@item MAX_TYPE
+ This macro contains the number of different types. In case of target-specific
+ extended types (@pxref{exttypes}) this is set by the backend, otherwise the
+ frontend will use a default.
+
+@item zmax char_bit;
+ The number of bits in a @code{char} on the target (usually 8).
+
+@item    zmax align[MAX_TYPE+1];
+ This array must contain the necessary alignments for every
+    type in bytes. Some of the entries in this array are not actually
+    used, but @code{align[type&NQ]} must yield the correct alignment for every type.
+    @code{align[CHAR]} must be 1.
+
+    The alignment of a structure depends not only on @code{sizetab[STRUCT]}
+    but also on the alignment of the members. The maximum of the alignments
+    of all members and @code{sizetab[STRUCT]} is the alignment of any
+    particular structure, i.e. @code{sizetab[STRUCT]} is only a minimum
+    alignment.
+
+    The same applies to unions and arrays.
+
+@item zmax maxalign;
+        This variable  must be set to an alignment in bytes that is used when
+    pushing arguments on the stack. (FIXME: describe stackalign)
+
+@item zmax sizetab[MAX_TYPE+1];
+ This array must contain the sizes of every type in bytes.
+
+@item zmax t_min[MAX_TYPE+1];
+  This array must contain the smallest representable number for every
+    signed integer type.
+
+@item zumax t_min[MAX_TYPE+1];
+  This array must contain the largest representable number for every
+    signed integer type.
+
+@item zumax tu_min[MAX_TYPE+1];
+  This array must contain the largest representable number for every
+    unsigned integer type.
+
+@end table
+
+    As @code{zmax} and @code{zumax} may be no elementary types on the host
+    machine, those arrays have to be initialized dynamically (in 
+    @code{init_cg()}). It is recommended to use explicit typenames, e.g.
+    @code{sizetab[INT]=l2zm(4L);} to keep it portable and allow
+    later extensions of the type system.
+
+    Also note that those values
+    may not be representable as constants by the host architecture and have to
+    be calculated using the functions for arithmetic on the target's data
+    types. E.g. the smallest representable value of a 32bit twos-complement
+    data type is not guaranteed to be valid on every ANSI C implementation.
+
+    You may not use simple operators on the target data types
+    but you have to use the functions or convert them to an elementary
+    type of the host machine before (if you know that it is representable
+    as such).
+
+@subsection Register Set
+
+The following variables have to be initialized to describe the
+register set of the target.
+
+@table @code
+@item MAXR
+    The valid registers are numbered from 1..@code{MAXR}.
+    @code{MAXR} must be @code{#define}d in @file{machine.h}.
+
+@item char *regnames[MAXR+1]
+This array must contain the names for every register. They do not
+necessarily have to be used in the assembly output but are used for
+explicit register arguments.
+
+@item zmax regsize[MAXR+1]
+This array must contain the size of each register in bytes.
+    It is used to create storage if registers have to be saved.
+
+@item int regscratch[MAXR+1]
+This array must contain information whether a register is
+    a scratchregister, i.e. may be destroyed during a function call (1 or 0).
+    vbcc will generate code to save/restore all scratch-registers which are
+    assigned a value when calling a function (unless it knows the register
+    will not be modified). However, if the code generator
+    uses additional scratch-registers it has to take care to save/restore
+    them.
+
+    Also, the code generator must take care that used non-scratch-registers
+    are saved/restored on function entry/exit.
+
+@item int regsa[MAXR+1]
+This array must contain information whether a register is in use
+    or not at the beginning of a function (1 or 0).
+    The compiler will not use any of those registers for register variables
+    or temporaries, therefore this can be used to mark special registers
+    like a stack- or frame-pointer and to reserve registers to the
+    code-generator. The latter may
+    be reasonable if for many ICs code cannot be generated without using
+    additional registers.
+
+    You must set @code{regsratch[i] = 0} if @code{regsa[i] == 1}. If you
+    want it to be
+    saved across function calls the code generator has to take care of this.
+
+@item int reg_prio[MAXR+1];
+This array must contain a priority (>=0) for every register. When the
+register allocator has to choose between several registers which seem
+to be equal, it will choose the one with the highest priority (if
+several registers have the same priority it is undefined which one
+will be taken).
+
+Note that this priority is only the last decision factor if everything
+else seems to be equal. If one register seems to give a higher cost saving
+(according to the estimation of the register allocator) but has a lower
+priority, it will nevertheless be used. The priority can be used to
+fine-tune the register selection. Some guidelines:
+@itemize @minus
+@item Scratch registers might have a higher priority than non-scratch
+        registers (although the register-allocator will usually handle
+        this anyway).
+@item Registers which are more restricted should have a higher priority
+        (if they seem to give the same saving it is usually better to use
+        the restricted registers and try to keep the more versatile ones
+        for situation in which they can give better savings).
+@item Registers which are used for argument-passing should have lower
+        priority than registers not used for arguments. The priority
+        within the argument-registers should decrease as the frequency
+        of usage as argument increases (typically the register for the first
+        argument ist used most frequently, etc.).
+@end itemize
+
+@end table
+
+Note that for the array @code{zmax regsize[]} the same comments mentioned
+in the section on data types regarding initialization apply.
+
+
+@subsection Functions
+
+The following functions have to be implemented by the code generator.
+There may be optional additional functions described in other sections.
+
+@table @code
+@item int init_cg(void);
+    This function is called after the commandline arguments are parsed.
+    It can set up certain internal data, etc. The arrays regarding the
+    data types and the register set can be set up at this point rather
+    than with a static initialization, however the arrays regarding the
+    commandline options have to be static initialized.
+    The results of the commandline options are available at this point.
+
+    If something goes wrong, 0 has to be returned, otherwise 1.
+
+@item void cleanup_cg(FILE *f);
+    This function is called before the compiler exits. @code{f} is the output
+    file which must be checked against 0 before using.
+
+@item int freturn(struct Typ *t);
+    This function has to return the number of the register return
+    values of type @code{t} are passed in. If the type is not passed in a
+    register, 0 must be returned. Usually the decision can be made
+    only considering @code{t->flags}, ignoring the full type
+    (@pxref{compositetypes}).
+
+@item int regok(int r, int t, int mode);
+    Check whether the type t can be stored in register @code{r} and whether
+    the usual operations (for this type) can be generated. Return 0, if not.
+
+    If @code{t} is a pointer and @code{mode==0} the register only has to be
+    able to store the pointer and do arithmetic, but if @code{mode!=0} it has
+    to be able to dereference the pointer.
+
+    @code{mode==-1} is used with context-sensitive register-allocation
+    (@pxref{targetralloc}). If the backend does not support it, this case
+    can be handled equivalent to @code{mode==0}.
+
+    If @code{t==0} return whether the register can be used to store condition codes.
+    This is only relevant if @code{multiple_ccs} is set to 1.
+
+@item int dangerous_IC(struct IC *p);
+    Check if this IC can raise exceptions or is otherwise dangerous.
+    Movement of ICs which are dangerous is restricted to preserve the
+    semantics of the program.
+
+    Typical dangerous ICs are divisions or pointer dereferencing. On certain
+    targets floating point or even signed integer arithmetic can raise
+    exceptions, too.
+
+@item int must_convert(int from,int to,int const_expr);
+    Check if code must be generated to convert from type @code{from} to
+    type @code{to}. E.g. on
+    many machines certain types have identical representations (integers
+    of the same size or pointers and integers of the same size).
+
+    If @code{const_expr != 0} return if a conversion was necessary in
+    a constant expression.
+
+    For example, a machine may have identical
+    pointers and integers, but different sets of registers (one set
+    supports integer operations and the other pointer operations).
+    Therefore, @code{must_convert()} would return 1 (we need a
+    @code{CONVERT} IC to move the value from one register set to the
+    other).
+    
+    This would imply that @command{vbcc} would not allow a
+    cast from a pointer to an integer or vice-versa in constant expressions
+    (as it will not
+    generate code for static initializations). However, in this
+    case, a static initialization would be ok as the representation is
+    identical and registers are not involved. Therefore, the backend
+    can return 1 if @code{const_expr == 0} and 0 otherwise.
+
+@item int shortcut(int code, int t);
+    In C no operations are done with chars and shorts because of integral
+    promotion. However sometimes @command{vbcc} might see that an operation could
+    be performed with the short types yielding the same result.
+
+    Before generating such an instruction with short types @command{vbcc} will ask
+    the code generator by calling @code{shortcut()} to find out whether it
+    should do so. Return true iff it is a win to perform the operation
+    @code{code} with
+    type @code{t} rather than promoting the operands and using e.g. @code{int}.
+
+@item void gen_code(FILE *f, struct IC *p, struct Var *v, zmax offset);
+    This function has to emit code for a function to stream @code{f}.
+    @code{v} is the function being generated,
+    @code{p} is a pointer to the list of ICs, that has to be converted.
+    @code{offset} is the space needed for local variables in bytes.
+
+    This function has to take care that only scratchregisters are destroyed
+    by this function. The array @code{regused} contains information about the
+    registers that have been used by @command{vbcc} in this function. However if the
+    code generator uses additional registers it has to take care of them,
+    too.
+
+    The @code{regs[]} and @code{regused[]} arrays may be overwritten by @code{gen_code()} as well
+    as parts of the list of ICs. However the list of ICs must still be a
+    valid list of ICs after @code{gen_code()} returns.
+
+    All assembly output should be generated using the available
+    @code{emit} functions. These functions are able to keep several
+    lines of assembly output buffered and allow peephole optimizations
+    on assembly output (@pxref{asmpeephole}).
+
+@item void gen_ds(FILE *f, zmax size, struct Typ *t);
+    Has to emit output that generates @code{size} bytes of type @code{t}
+    initialized with proper 0.
+
+    @code{t} is a pointer to a @code{struct Typ} which contains the precise type of
+    the variable. On machines where every type can be initialized to 0
+    by setting all bits to zero, the type does not matter. Otherwise
+    @pxref{compositetypes}.
+
+    All assembly output should be generated using the available
+    @code{emit} functions.
+    
+
+@item void gen_align(FILE *f, zmax align);
+    Has to emit output that ensures the following data to be aligned to
+    @code{align} bytes.
+
+    All assembly output should be generated using the available
+    @code{emit} functions.
+
+@item void gen_var_head(FILE *f, struct Var *v);
+    Has to print the head of a static or external variable @code{v}. This includes
+    the label and necessary informations for external linkage etc.
+
+    Typically variables will be generated by a call to @code{gen_align()} followed
+    by @code{gen_var_head()} and (a series of) calls to @code{gen_dc()} and/or @code{gen_ds()}. It may be necessary to keep track of the information passed
+    to @code{gen_var_head()}.
+
+    All assembly output should be generated using the available
+    @code{emit} functions.
+
+@item void gen_dc(FILE *f, int t, struct const_list *p);
+    Emit initialized data. @code{t} is the basic type that has to be
+    emitted. @code{p} points to a @code{struct const_list}.
+
+    If @code{p->tree != 0} then @code{p->tree->o} is a @code{struct obj}
+    which has to be emitted. This will usually be the address of a
+    variable of storage class static or unsigned, possibly with an offset
+    added (@pxref{operands} for further details).
+
+    if @code{p->tree == 0} then @code{p->val} is a @code{union atyps}
+    which contains (in the member corresponding to @code{t}) the constant
+    value to be emitted.
+
+    All assembly output should be generated using the available
+    @code{emit} functions.
+
+@item void init_db(FILE *f);
+    If debug-information is requested, this functions is called after
+    @code{init_cg()}, but before any code is generated.
+    See also @ref{debuginfo}.
+
+@item void cleanup_db(FILE *f);
+    If debug-information is requested, this functions is called prior to
+    @code{cleanup_cg()}.
+    See also @ref{debuginfo}.
+
+@end table
+
+@section Available Support Functions, Macros and Variables
+
+This section lists a series of general variables, macros and functions
+which are available to the backend and may prove useful. Note that there
+may be additional support specific to certain features which will be mentioned
+at appropriate sections in this manual.
+
+@table @code
+@item MAXINT
+A constant for the largest target integer type (@code{zmax}). It is outside
+the range of the other types and cannot be accessed by an application
+(although there will usually be an accessible type with the same 
+representation).
+
+@item MAX_TYPE
+The type number of the last type.
+
+@item NQ
+A mask. @code{t & NQ} will delete all type-qualifiers of a type.
+
+@item NU
+A mask. @code{t & NU} will delete all type-qualifiers but
+@code{UNSIGNED} of a type.
+
+@item q1typ(p)
+Yields the type of the first source operand of IC @code{p}.
+Undefined if the operand is not used!
+
+@item q2typ(p)
+Yields the type of the second source operand of IC @code{p}.
+Undefined if the operand is not used!
+
+@item ztyp(p)
+Yields the type of the destination operand of IC @code{p}.
+Undefined if the operand is not used!
+
+@item iclabel(p)
+Returns the label of an IC. Only defined if @code{p->code} is
+@code{LABEL, BEQ, BNE, BLT, BGT, BLE} or @code{BGE}.
+
+@item opsize(p)
+Returns the size of the operand of an @code{ASSIGN} or @code{PUSH}
+IC as @code{zmax}.
+
+@item pushsize(p)
+Returns the stack-adjustment value of a @code{PUSH} IC as @code{zmax}.
+It is always greater or equal than @code{opsize(p)}.
+
+@item pushedargsize(p)
+Returns the space occupied by arguments passed on the stack
+as parameters for a function call. Only valid for @code{CALL} ICs.
+
+@item isstatic(sc)
+Tests whether the storage-class @code{sc} denotes a variable with
+static storage and no external linkage.
+
+@item isextern(sc)
+Tests whether the storage-class @code{sc} denotes a variable with
+static storage and external linkage.
+
+@item isauto(sc)
+Tests whether the storage-class @code{sc} denotes a variable with
+automatic storage-duration.
+
+@item t_min(t)
+@itemx t_max(t)
+These macros yield the smallest and largest representable value of any
+target integer type, e.g. @code{t_min(INT)} or @code{t_max(UNSIGNED|LONG)}.
+
+@item ISPOINTER(t)
+@item ISINT(t)
+@item ISFLOAT(t)
+@item ISFUNC(t)
+@item ISSTRUCT(t)
+@item ISUNION(t)
+@item ISARRAY(t)
+@item ISSCALAR(t)
+@itemx ISARITH(t)
+These macros test whether the simple type @code{t} is a pointer type,
+an integral type, a floating point type, a function, a structure type,
+a union type, an array type, a scalar (integer, floating point or pointer)
+and an arithmetic type (integer or floating point), respectively.
+
+@item int label;
+The number of the last label used so far. For a new label number, use
+@code{++label}.
+
+@item zmax falign(struct Typ *t);
+This function returns the alignment of a full type. Contrary to the
+@code{align[]} array provided by the backend (which is used by this function),
+it will yield correct values for composite types like structures and arrays.
+
+@item zmax szof(struct Typ *t);
+This function returns the size in bytes of a full type. Contrary to the
+@code{sizetab[]} array provided by the backend (which is used by this function),
+it will yield correct values for composite types like structures and arrays.
+
+@item void *mymalloc(size_t size);
+@item void *myrealloc(void *p,size_t size);
+@itemx void myfree(void *p);
+Memory allocation functions similar to @code{malloc(), realloc()} and
+@code{free}. They will automatically
+clean up the exit in the case an allocation fails. Also, some debug
+possibilities are available.
+
+@item void emit(FILE *f,const char *fmt,...);
+@item void emit_char(FILE *f,int c) ;
+@item void emitval(FILE *f,union atyps *p,int t);
+@item void emitzm(FILE *f,zmax x);
+@item void emitzum(FILE *f,zumax x); 
+All output produced by the backend should be produced using these
+functions. @code{emit()} uses a format like @code{printf()},
+@code{emitval(), emitzm()} and @code{emitzum()} are suitable to
+output target integers as decimal text. Currently emitting floating
+point constants has to be done by the backend.
+
+@item int is_const(struct Typ *);
+Tests whether a full type is constant (e.g. to decide whether it can be
+put into a ROM section).
+
+@item int is_volatile_obj(struct obj *);
+@itemx int is_volatile_ic(struct IC *);
+Tests whether an object or IC is volatile. Only of interest to the backend
+in rare cases.
+
+@item int switch_IC(struct IC *p);
+This function checks whether @code{p->q2} and @code{p->z} use the
+same register (including register pairs). If they do, it will try
+to swap @code{p->q1} and @code{p->q2} (only possible if the IC is
+commutative). It is often possible to generate
+better code if @code{p->q2} and @code{p->z} do not collide. Note
+however, that it is not always possible to eliminate a conflict and
+the code generator still has to be able to handle such a case.
+
+The function returns 0 if no modification took place and non-zero if
+the IC has been modified.
+
+@item union atyps gval;
+@item void eval_const(union atyps *p,int t);
+@itemx void insert_const(union atyps *p,int t);
+For every target data type there is a corresponding global variable
+of that type, e.g. @code{zchar vchar, zuchar vuchar, zmax vmax} etc.
+These two functions simplify handling of target data types by transferring
+between a @code{union atyps} and these variables.
+
+@code{eval_const()} reads the member of the union corresponding to the
+type @code{t} and converts it into all the global variables while
+@code{insert_const()} takes the global variable according to @code{t}
+and puts it into the appropriate member of the @code{union atyps}.
+
+The global variable @code{gval} may be used as a temporary
+@code{union atyps} by the backend.
+
+@item void printzm(FILE *f,zmax x);
+@item void printzum(FILE *f,zumax x) ;
+@item void printval(FILE *f,union atyps *p,int t);
+@item void printtype(FILE *o,struct Typ *p);
+@item void printobj(FILE *f,struct obj *p,int t);
+@item void printic(FILE *f,struct IC *p);
+@itemx void printiclist(FILE *f,struct IC *first);
+This is a series of functions which print a more or less human
+readable version of the corresponding type to a stream. These functions
+are to be used only for debugging purposes, not for generating code.
+Also, the arguments must contain valid values.
+
+@item bvtype
+@itemx BVSIZE(n)
+@command{vbcc} provides macros and functions for handling bit-vectors
+which may also be used by the backend. @code{bvtype} is the basic type
+to create bit-vectors of. @code{BVSIZE(n)} yields the number of
+bytes needed to implement a bit-vector with @code{n} elements.
+@example
+bvtype *mybv = mymalloc(BVSIZE(n));
+@end example
+
+@item BSET(bv,n)
+@item BCLR(bv,n)
+@itemx BTST(bv,n)
+Macros which set, clear and test the @code{n}-th bit in bit-vector @code{bv}.
+
+@item void bvunite(bvtype *dest,bvtype *src,size_t len);
+@item void bvintersect(bvtype *dest,bvtype *src,size_t len);
+@itemx void bvdiff(bvtype *dest,bvtype *src,size_t len);
+These functions calculate the union, intersection and difference of two
+bit-vectors. @code{dest} is the first operand as well as the destination.
+@code{len} is the length of the bit-vectors in bytes, not in bits.
+
+@item void bvcopy(bvtype *dest,bvtype *src,size_t len);
+@item void bvclear(bvtype *dest,size_t len);
+@itemx void bvsetall(bvtype *dest,size_t len);
+These functions copy, clear and fill bit-vectors.
+
+@item int bvcmp(bvtype *bv1,bvtype *bv2,size_t len);
+@itemx int bvdointersect(bvtype *bv1,bvtype *bv2,size_t len);
+These functions test whether two bit-vectors are equal or
+have a non-empty intersection, respectively. The do not modify the
+bit-vectors.
+
+@end table
+
+
+@section Hints for common Optimizations
+
+While it is no easy job to produce a stable code generator for a new target
+architecture, there is a huge difference between a simple backend and
+a highly optimized code generator which produces small and efficient 
+high quality code. Although @command{vbcc} is able to do a lot machine
+independent global optimizations for every target automatically, it is still
+common for an optimized backend to produce code up to twice as fast on
+average as a simple one.
+
+Sometimes, a simple backend is sufficient and the
+work required to produce high-quality code is not worthwile. However,
+this section lists a series of common backend optimizations which are
+often done in case that good code-quality is desired. Note that neither are
+all of these optimizations applicable (without modifications or at all)
+to all architectures nor is
+this an exhaustive list. It is just a list of recommendations to consider.
+You have to make sure that the optimization is safe and beneficial for
+the architecture you are targetting. 
+
+
+@subsection Instruction Combining
+
+While ICs are often a bit more powerful than instructions of a typical
+microprocessor, sometimes several of them can be implemented by a single
+instruction or more efficient code can be generated when looking at a
+few of them rather than at each one separately.
+
+In the simple case, this can be done by looking at the current IC,
+deciding whether it is a candidate for combining and then test whether
+the next IC (or ICs) are suitable for combining. This is relatively easy
+to perform, however some care has to be taken to verify that the
+combination is indeed legal (e.g. what happens if the first IC modifies
+a value which is used by the following IC).
+
+A more sophisticated implementation might look at a larger sequence of
+instructions to find more possibilities for optimization. Detecting
+whether the combination is legal becomes much more difficult then.
+
+Sometimes the IC migh compute a temporary result which would be eliminated by
+the complex machine instruction. Then it is necessary to verify that it
+was indeed a temporary result which is not used anywhere else. As long as
+the result is in a register, this can be done by checking for a
+@code{FREEREG} IC.
+
+Examples for instruction combining are multiply-and-add or bit-test
+instructions which are available on many architectures.
+Special cases are complex
+addressing modes and instructions which can automatically set condition
+codes which are described in the following sections.
+
+
+@node addressingmodes
+@subsection Adressing Modes
+
+The intermediate code generated by vbcc does not use any
+addressing-modes a target might offer. Therefore the code generator
+must find a way to combine several statements if it wants to make use
+of these modes. E.g. on the m68k the intermediate code
+@example
+        ADDI2P  int     a0,#20->a1
+        ASSIG   int     #10->(a1)
+        FREEREG         a1
+@end example
+could be translated to
+@example
+        move.l  #10,20(a0)
+@end example
+(notice the @code{FREEREG} which is important).
+
+To aid in this there is a pointer to a @code{struct AdressingMode} in every
+@code{struct obj}. A code generator could e.g. do a pass over the intermediate
+code, find possible uses for addressing-modes, allocate a
+@code{struct AddressingMode} and store a pointer in the
+@code{struct obj}, effectively replacing the obj.
+
+If the code generator supports extended addressing-modes, you have to think
+of a way to represent them and define the @code{struct AddressingMode} so that
+all modes can be stored in it. The machine independant part of
+@command{vbcc} will
+not use these modes, so your code generator has to find a way to combine
+several statements to make use of these modes.
+
+A possible implementation of a structure to handle the addressing mode
+described above as well as a register-indirect mode could be:
+@example
+#define IMM_IND 1
+#define REG_IND 2
+
+struct AddressingMode @{
+  int flags;   /* either IMM_IND or REG_IND */
+  int base;    /* base register */
+  zmax offset; /* offset in case of IMM_IND */
+  int idx;     /* index register in case of REG_IND */
+@}
+@end example
+
+When the code generator is done that pointer in every @code{struct obj} must
+either be zero or point to a @code{mymalloc}ed @code{struct AddressingMode}
+which will be free'd by @command{vbcc}.
+
+Following is an example of a function which traverses a list of ICs and
+inserts addressing modes with constant offsets where possible.
+@example
+/* search for possible addressing-modes */
+static void find_addr_modes(struct IC *p)
+@{
+  int c,c2,r;
+  struct IC *p2;
+  struct AddressingMode *am;
+
+  for(;p;p=p->next)@{
+    c=p->code;
+
+    if(IMM_IND&&(c==ADDI2P||c==SUBIFP)&&
+       isreg(z)&&(p->q2.flags&(KONST|DREFOBJ))==KONST)@{
+      /* we have found addi2p q1,#const->reg */
+      int base;zmax of;struct obj *o;
+
+      eval_const(&p->q2.val,p->typf);
+      /* handle sub instead of add */
+      if(c==SUBIFP)
+        of=zmsub(l2zm(0L),vmax);
+      else
+        of=vmax;
+
+      /* Is the offset suitable for an addressing mode? */
+      if(ISVALID_OFFSET(vmax))@{
+        r=p->z.reg;
+        /* If q1 is a register, we use it as base-register,
+           otherwise q1 is loaded in the temporary register
+           and this one used as base register. */
+        if(isreg(q1))
+          base=p->q1.reg;
+        else
+          base=r;
+
+        o=0;
+        /* Now search the following instructions. */
+        for(p2=p->next;p2;p2=p2->next)@{
+          c2=p2->code;
+
+          /* End of a basic block. We have to abort. */
+          if(c2==CALL||c2==LABEL||(c2>=BEQ&&c2<=BRA)) break;
+
+          /* The temporary register is used. We have to abort. */
+          if(c2!=FREEREG&&(p2->q1.flags&(REG|DREFOBJ))==REG&&
+             p2->q1.reg==r)
+              break;
+      	  if(c2!=FREEREG&&(p2->q2.flags&(REG|DREFOBJ))==REG&&
+             p2->q2.reg==r) 
+              break;
+
+          if(c2!=CALL&&(c2<LABEL||c2>BRA)&&c2!=ADDRESS)@{
+            /* See, if we find a valid use (dereference) of the
+               temporary register. */
+            if(!p->q1.am&&(p2->q1.flags&(REG|DREFOBJ))==(REG|DREFOBJ)&&
+              p2->q1.reg==r)@{
+              if(o) break;
+              o=&p2->q1;
+            @}
+            if(!p->q1.am&&(p2->q2.flags&(REG|DREFOBJ))==(REG|DREFOBJ)&&
+               p2->q2.reg==r)@{
+              if(o) break;
+              o=&p2->q2;
+            @}
+            if(!p->q1.am&&(p2->z.flags&(REG|DREFOBJ))==(REG|DREFOBJ)&&
+               p2->z.reg==r)@{
+              if(o) break;
+              o=&p2->z;
+            @}
+          @}
+          if(c2==FREEREG||(p2->z.flags&(REG|DREFOBJ))==REG)@{
+            int m;
+            if(c2==FREEREG)
+              m=p2->q1.reg;
+            else
+              m=p2->z.reg;
+            if(m==r)@{
+            /* The value of the temporary register is not used any more
+               (either due to FREEREG or because it is overwritten).
+               If we have found exactly one dereference, we can use
+               a target addressing mode. */
+              if(o)@{
+                o->am=am=mymalloc(sizeof(*am));
+                am->flags=IMM_IND;
+                am->base=base;
+                am->offset=zm2l(of);
+                if(isreg(q1))@{
+                  /* The base already was in a register. We can
+                     eliminate the ADDI2P IC. */
+                  p->code=c=NOP;p->q1.flags=p->q2.flags=p->z.flags=0;
+                @}else@{
+                  /* The base was not in a register.
+                     We have to load it . */
+                  p->code=c=ASSIGN;p->q2.flags=0;
+                  p->typf=p->typf2;p->q2.val.vmax=sizetab[p->typf2&NQ];
+                @}
+              @}
+              break;
+            @}
+            if(c2!=FREEREG&&m==base) break;
+            continue;
+          @}
+        @}
+      @}
+    @}
+  @}
+@}
+@end example
+
+@subsection Implicit setting of Condition Codes
+
+Many architectures have instruction that automatically set the
+condition codes according to the computed result. For these architectures
+it is generally a good idea to keep track of the setting of condition
+codes (e.g. if they reflect the state of some object or register). A
+subsequent @code{TEST} or @code{COMPARE} instruction can then often be
+eliminated.
+
+Care has to be taken to delete this information if either the condition
+codes may be modified or the object they represent is modified. Also,
+this optimization is usually hard to do across labels.
+
+Some architectures provide versions of instructions which set condition
+codes as well as versions which do not. This obviously enable more
+optimizations, but it is more difficult to make use of this. One
+possibility is to search the list of ICs backwards starting from
+every suitable @code{TEST} or @code{COMPARE} instruction. If an IC
+is found which computes the tested object, the IC can be marked
+(extended ICs can be used for marking, @pxref{extic}).
+
+
+@node regparm
+@subsection Register Parameters
+
+While passing of arguments to functions can be done by pushing them on
+the stack, it is often more efficient to pass them in registers if the
+architecture has enough registers.
+
+To use register parameters you have to add the line
+@example
+#define HAVE_REGPARMS 1
+@end example
+to @file{machine.h} and define a
+@example
+        struct reg_handle @{...@}
+@end example
+This struct is used by the compiler to find out which register should be used
+to pass an argument. @file{machine.c} has to contain an initialized
+variable
+@example
+        struct reg_handle empty_reg_handle;
+@end example
+which represents the default state, and a function
+@example
+        int reg_parm(struct reg_handle *, struct Typ *, int vararg, struct Typ *);
+@end example
+which returns the number of the register the next argument will be
+passed in (or 0 if the argument is not passed in a register). Also,
+it has to update the reg_handle in a way that successive calls to
+@code{reg_parm()}
+yield the correct register for every argument.
+
+@code{vararg} is different from zero, if the argument is part of the variable
+arguments of a function accepting a variable number of arguments.
+
+It is also possible to return a negative number @code{x}. In this case,
+the argument will be passed in register number @code{-x}, but also a
+stack-slot will be reserved for this argument (i.e. a @code{PUSH} IC
+without an operand will be generated). If @option{-double-push} is
+specified, the argument will also be written to the stack-slot (i.e.
+it will be passed twice, in a register and on the stack).
+
+@node regpairs
+@subsection Register Pairs
+
+Often, there are types which cannot be stored in a single machine register,
+but it may be more efficient to store them in two registers rather than
+in memory. Typical examples are integers which are bigger than the
+register size or architectures which combine two floating point registers
+into one register of double precision.
+
+To make use of register pairs, the line
+@example
+#define HAVE_REGPAIRS 1
+@end example
+has to be added to @file{machine.h}. The register pairs are declared
+as normal registers (each register pair counts as an own register and
+@code{MAXR} has to be adjusted). Usually only adjacent registers are
+declared as register pairs. Note that @code{regscratch} must be identical
+for both registers of a pair.
+
+Now the function
+@example
+int reg_pair(int r,struct rpair *p);
+@end example
+must be implemented. If register @code{r} is a register pair, the function
+has to set @code{p->r1} and @code{p->r2} to the first and second register
+which comprise the pair and return 1. Otherwise, zero has to be returned.
+
+
+@subsection Elimination of Frame-Pointer
+
+Local variables on the stack can usually be addressed via a so-called
+frame-pointer which is set set to current stack-pointer at the entry
+of a function. However, in the code generated by @command{vbcc}, the
+difference between the stack-pointer and the frame-pointer is fixed
+at any instruction.
+
+Therefore it is possible to keep track of this offset (by counting the
+bytes every time code for pushing or popping from the stack is generated).
+Using this offset, local variables can perhaps be addressed using the
+stack-pointer directly. Benefit would be smaller function entry/exit code
+as well as an additional free register which can be used for other
+purposes.
+
+Note that only few debuggers can handle such a situation.
+
+@subsection Delayed popping of Stack-Slots
+
+In most ABIs arguments which are pushed on the stack are not popped
+by the called function but the caller pops them by adjusting the stack
+after the callee returns (otherwise variable arguments would be hard
+to implement).
+
+If several functions are called in sequence, it is not necessary to
+adjust the stack after each call but the arguments for several calls
+can be popped at once. It can be implemented by keeping track of the
+size to be popped and deferring popping to a point where it has to be
+done (e.g. a label or a branch). Also, in the case of nested calls,
+care has to be taken to pop arguments at the right time.
+
+Note that this usually saves code-size and execution time but will
+increase stack-usage. Therefore, it may not be advisable for small systems.
+
+@subsection Optimized Return
+
+Return instructions are not explicitly represented in ICs. Rather, they are
+branches to a label which is the last IC in the list (except possible
+@code{FREEREG}s).
+
+It is possible to generate working code by translating
+these branches normally, but directly inserting the function exit code
+instead of a branch is often faster. It is most recommendable if the
+exit code is small (e.g. no registers have to be restored and no
+stack-frame removed).
+
+Another common possibility for optimization is a function call as the last
+IC. If return addresses are pushed on the stack and no function exit code
+is needed, it is usually possible to generate a jump-instruction, i.e.
+replace
+@example
+    call  somefunc
+    ret
+@end example
+by
+@example
+    jmp   somefunc
+@end example
+
+
+@subsection Jump Tables
+
+FIXME: To be written.
+
+@node targetralloc
+@subsection Context-sensitive Register-Allocation
+
+The @code{regok()} function is only a simple means of telling the
+register allocator which registers to use. It works fairly well with
+orthogonal register and instruction sets. However, it does not really
+care about the operations performed and it allocates variables to registers
+only according to their type, not according to the operations performed.
+
+Some architectures provide different kinds of registers which are able to
+store a type, but not all of them are able to perform all operations or some
+operations are more expensive with some registers. To do good register
+allocation for these systems, the operations which are used on variables
+have to be considered.
+
+If the backend wants to support this kind of register allocation, it has
+to define @code{HAVE_TARGET_RALLOC} and provide the following functions
+or macros:
+
+@table @code
+@item int cost_move_reg(int x,int y);
+The cost of copying register @code{x} to register @code{y}.
+@item int cost_load_reg(int r,struct Var *v);
+The cost of loading register @code{r} from variable @code{v}.
+@item int cost_save_reg(int r,struct Var *v);
+The cost of storing register @code{r} into variable @code{v}.
+@item int cost_pushpop_reg(int r);
+The cost of storing register @code{r} during function prologue and
+restoring it in the epilogue.
+@item int cost_savings(struct IC *p,int r,struct obj *o);
+Estimate the savings which would be obtained if the object @code{o}
+in IC @code{p} would be assigned to register @code{r} (in this IC). If the
+backend was not able
+to emit code in this case, @code{INT_MIN} must be returned.
+
+If @code{(o->flags & VKONST) != 0}, the register allocator is thinking
+about putting a constant (or address of a static variable) in a register.
+In this case, the real object which would be put in a register is found
+in @code{o->v->cobj}.
+@end table
+
+The unit of the costs can be chosen by the backend, but should be some
+reasonable small values.
+
+If @code{regok()} is called with a third parameter of -1, it is possible
+to return non-zero for a register which cannot perform all operations.
+The register allocator will call @code{cost_savings()} and returning
+@code{INT_MIN} can be used to prevent this register from being allocated,
+if the register is not suitable for a certain operation.
+
+
+@node regsmodified
+@subsection Inter-procedural Register-Allocation
+
+FIXME: To be written.
+
+@subsection Conditional Instructions
+
+FIXME: To be written.
+
+@node extic
+@subsection Extended ICs
+
+FIXME: To be written.
+
+@node asmpeephole
+@subsection Peephole Optimizations on Assembly Output
+
+Some optimizations are easier to do on the generated assembly code rather
+than doing them before emitting code. Therefore it is possible to do
+peephole optimizations on the emitted code before it is really
+written to a file.
+
+@code{EMIT_BUF_DEPTH} lines will be stored in a ring buffer and are available
+to examination and modification by a function @code{emit_peephole()}. The
+actual assembly output is stored in @code{emit_buffer}, the index of
+the first line to be output in @code{emit_f} and the index of the last one
+in @code{emit_l} (note that you have to calculate modulo @code{EMIT_BUF_DEPTH}
+- it is a ring buffer).
+
+The output may be modified in memory and the first line may be removed
+using @code{remove_asm()}. If a modification took place, a non-zero value
+has to be returned (0 otherwise). The following example code would combine
+two consecutive additions to the same register:
+@example
+int emit_peephole(void)
+@{
+  int entries,i,r1,r2;
+  long x,y;
+  /* pointer to the lines in order of output */
+  char *asmline[EMIT_BUF_DEPTH];
+  i=emit_l;
+  /* compute number of entries in ring buffer */
+  if(emit_f==0)
+    entries=i-emit_f+1;
+  else
+    entries=EMIT_BUF_DEPTH;
+  /* the first line */
+  asmline[0]=emit_buffer[i];
+  if(entries>=2)@{
+    /* we have at least two line sin the buffer */
+    /* calculate the next line (modulo EMIT_BUF_DEPTH) */
+    i--;
+    if(i<0) i=EMIT_BUF_DEPTH-1;
+    asmline[1]=emit_buffer[i];
+    if(sscanf(asmline[0],"\tadd\tR%d,#%ld",&r1,&x)==2&&
+       sscanf(asmline[1],"\tadd\tR%d,#%ld",&r2,&y)==2&&
+       r1==r2)@{
+      sprintf(asmline[1],"\tadd\tR%d,#%ld\n",r1,x+y);
+      remove_asm();
+      return 1;
+    @}
+  @}
+  return 0;                                                                    
+@}
+@end example
+
+Be very careful when doing such optimizations. Only perform optimizations
+which are really legal. Especially assembly code often has side effects
+like setting of flags.
+
+Depending on command line flags inline assembly code may or may not be
+passed through this peephole optimizer. By default, it will be done,
+enabling optimizations between generated code and inline assembly.
+
+
+@node markeffics
+@subsection Marking of efficient ICs
+
+FIXME: To be written.
+
+@subsection Function entry/exit Code
+
+At entry and exit of function, there is usually some code to set up
+the new environment for this function. For example, registers will
+have to be saved/restored, a frame pointer may be set up and a stack
+frame will be created. It is generally worthwile to optimize this 
+entry/exit code. For example, if no registers need to be saved and no
+local variables are used on the stack, it may not be necessary to
+create a stack frame.
+
+The exact possibilities for optimization depend on the architecture and the
+ABI.
+
+
+@subsection Multiplication/division with Constants
+
+Many architectures do not provide instruction for multiplication,
+division or modulo calculation. And on most architectures providing
+such instructions they are rather slow. Therefore, it is recommended
+to emit cheaper instructions, if possible.
+
+Usually, this can only be done if one operand of the operation is a
+constant. Multiplications may be replaced by a series of shift and
+add instructions, for example. The simplest and most important cases
+to replace are multiplication, division and modulo with a power of two.
+Multiplication by x can be replaced by a left shift of log2(x),
+unsigned division of x can be replaced by logical right shift of log2(x)
+and unsigned modulo by x can be replaced by anding with x-1.
+
+Note that
+signed division and modulo can usually not be replaced that simple because
+most division instructions give different results for some negative
+values. An additional adjustment would be necessary to get correct results.
+Whether this is still an improvement, depends on the architecture details.
+
+The following function can be used to test whether a value is a power of
+two:
+@example
+static long pof2(zumax x)
+/*  Yields log2(x)+1 oder 0. */
+@{
+  zumax p;int ln=1;
+  p=ul2zum(1L);
+  while(ln<=32&&zumleq(p,x))@{
+    if(zumeqto(x,p)) return ln;
+    ln++;p=zumadd(p,p);
+  @}
+  return 0;
+@}
+@end example
+
+@subsection Block copying
+
+FIXME: To be written.
+
+@subsection Optimized Library Functions
+
+FIXME: To be written.
+
+@subsection Instruction Scheduler
+
+FIXME: To be written.
+
+
+@section Hints for common Extensions
+
+This section lists some common extensions to the C language which are
+often very helpful when using a compiler in practice. Depending on the
+kind of target system they may range from nobody-really-cares to
+absolutely essential. For example, consider the ability to specify the section
+within an object file a variable or function should be placed in. This is
+rarely of any interest when targetting a Unix-like operating system. On
+a stand-alone embedded system, however, it may be absolutely necessary.
+
+Therefore, consider this list as a recommendation of ideas that might
+be helpful.
+
+@subsection Inline Assembly
+
+The possibility to insert assembly code into C source is very handy in
+many cases. It can be used in headers to implement specially optimized
+versions of time-critical library routines or enable access to CPU
+features which are not otherwise accessible by normal C constructs.
+
+In general, almost all work is done by the frontend and only a few lines
+have to be inserted in the backend to make it work. Therefore, it is
+recommended to always support this important feature.
+
+Everything that has to be done is to check a certain condition when code for
+a @code{CALL} IC is generated. Instead of emitting a normal call instruction,
+call the @code{emit_inline_asm()} function:
+@example
+if((p->q1.flags & (VAR|DREFOBJ)) == VAR &&
+    p->q1.v->fi &&
+    p->q1.v->fi->inline_asm)@{
+        emit_inline_asm(f,p->q1.v->fi->inline_asm);
+    @}else@{
+        emit(f,"\tcall\t");
+        emit_obj(f,&p->q1,t);
+        emit(f,"\n");
+    @}
+@end example
+Note that argument-passing, adjusting the stack after a @code{CALL} IC etc.
+is not affected. Only the actual emitting of call code is changed in the
+case of inline assembly.
+
+@subsection -speed/-size
+
+Often it is desired to generate code which runs as fast as possible
+but sometimes small code is needed. The command line options
+@option{-speed} and @option{-size} are provided for the user to specify
+his intention.
+
+These options already may change the intermediate code produced by the
+frontend, but the backend should also respect these switches, if possible.
+The variables @code{optspeed} and @code{optsize} can be queried to see
+if these options were specified.
+
+If e.g. @code{optspeed} was specified, the backend should choose faster
+code-sequences, even if code-size is increased significantly. Vice-versa,
+if @code{optsize} is specified, it should always choose the shorter code
+if there is a trade-off between size and speed.
+
+Typical cases for such tradeoffs are for example, block-copy (@code{ASSIGN}
+and @code{PUSH}) ICs. Often it is possible to call a library function or
+generate a simple short loop for small code, but an unrolled inlined loop
+for fast code.
+
+@node targetmacros
+@subsection Target-specific Macros
+
+A backend is able to provide macro definitions which are automatically
+active. It is recommended to define macros which allow applications to
+query the target architecture and the selected chip (if possible).
+Also, it is recommended to provide internal macros for backend specific
+attributes using the @code{__attr()} and @code{__vattr()} attributes.
+
+The definition of these macros can be done in @code{init_cg()} (the
+results of command line parsing are available at this point). There is
+a variable
+@example
+char **target_macros;
+@end example
+which can be set to an array of pointers to strings which contain the
+macro definitions. The array has to be terminated by a null pointer and
+the syntax of the macro definitions is similar to the command line
+option @option{-D}:
+@example
+static char *marray[] = @{
+  "__TARGET_ARCH__",
+  "__section(x)=__vattr(\"section(\"#x\")\")",
+  0
+@};
+...
+target_macros = marray;
+@end example
+
+@subsection stdarg.h
+
+FIXME: To be written.
+
+
+@subsection Section Specifiers
+
+Especially for embedded systems it can be very important to be able to
+place variables and functions in specific section to override default
+placement. This can relatively easily be done using variable attributes
+(@pxref{targetattributes}).
+
+
+@node targetattributes
+@subsection Target-specific Attributes
+
+There are two ways of adding target-specific attributes to variables and
+functions. A general way is the use of @code{__vattr()} which will add
+the string argument to the @code{vattr} member of the corresponding
+@code{struct Var}, separating it by a semi-colon. The backend can use
+this information by parsing the string. The frontend will just build
+the string, it will not interpret it. If a backend offers attributes
+using the @code{__vattr()} mechanism, it is recommended to provide
+target-specific macros (@pxref{targetmacros}) which expand to the
+appropriate @code{__vattr()}-syntax. Only these macros should be
+documented.
+
+A second way to specify attributes is enabled by adding
+@example
+#define HAVE_TARGET_PRAGMAS 1
+@end example
+to @file{machine.h} and adding an array
+@example
+char *g_attr_name[];
+@end example
+to @file{machine.c}. This array should point to the strings used
+for the attributes, terminated by a null-pointer, e.g.:
+@example
+char *g_attr_name[] = @{
+  "__far",
+  "__near",
+  "__interrupt",
+  0
+@};
+@end example
+These attributes can be queried in the member
+@example
+unsigned long tattr;
+@end example
+of a @code{struct Var}. The first attribute is represented by bit 1, the
+second by bit 2 and so on. Using this mechanism, the frontend will check for
+redeclarations with different setting of attributes or multiple specification
+of attributes. However, only boolean attributes are possible. If parameters
+have to be specified, the @code{__vattr()}-mechanism has to be used.
+
+@node targetpragmas
+@subsection Target-specific @code{#pragma}s
+
+FIXME: To be written.
+
+@node exttypes
+@subsection Target-specific extended Types
+
+FIXME: To be written.
+
+@node tgtprintval
+@subsection Target-specific @code{printval}
+
+FIXME: To be written.
+
+@node debuginfo
+@subsection Debug Information
+
+Debug information which enables (source level) debugging of compiled
+programs is an important feature to improve the user-friendliness of a
+compiler. Depending on the object format and debugger used, the format
+and capabilities of debug information can vary widely. Therefore, it is
+the responsibility of each backend to generate debug information. However,
+for common debug standards there will be modules which can be used by
+the backends and will do most of the work. Currently there is one such
+module for the DWARF2 debug standard.
+
+The compiler frontend provides a variable @code{debug_info} which can
+be queried to test whether debug information is desired. Also, the
+functions @code{init_db()} and @code{cleanup_db()} are helpful.
+
+Each @code{struct Var} contains the members @code{char *dfilename} and
+@code{int dline} which specify the file and line number of the variable's
+definition. Also, every IC contains the members @code{char *file} and
+@code{int line} with the file name and line number this IC belongs to. Note
+however, that there may be ICs with @code{file == 0} - not all ICs can
+be assigned a certain code location. Also, ICs do not always have increasing
+line numbers and line numbers may repeat. Not all debuggers may be able
+to deal with this.
+
+@subsubsection DWARF2
+
+There is support for the DWARF2 debug standard which can be added to a backend
+rather easily. The following additions are necessary:
+
+@enumerate
+@item Add the line
+@example
+#include "dwarf2.c"
+@end example
+to @file{machine.c}.
+@item Add the following lines to @code{init_db()}:
+@example
+dwarf2_setup(sizetab[POINTER],
+             ".byte",
+             ".2byte",
+             ".4byte",
+             ".4byte",
+             labprefix,
+             idprefix,
+             ".section");
+dwarf2_print_comp_unit_header(f);
+@end example
+The arguments to @code{dwarf2_setup()} have the following meanings:
+@enumerate
+@item The size of an address on the target.
+@item An assembler directive to create one byte of initialized storage.
+@item An assembler directive to create two bytes of initialized storage
+      (without any padding for alignment).
+@item An assembler directive to create four bytes of initialized storage
+      (without any padding for alignment).
+@item An assembler directive to create initialized storage representing
+      a target address (without any padding for alignment).
+@item A prefix which is used for emitting numbered labels (or empty string).
+@item A prefix which is used for emitting external identifiers
+      (or empty string).
+@item An assembler directive to switch to a new named section.
+@end enumerate
+@item Add the line
+@example
+dwarf2_cleanup(f);
+@end example
+to @code{cleanup_db()}.
+@item Write the function
+@example
+static int dwarf2_regnumber(int r);
+@end example
+which
+      returns the DWARF2 regnumber for a @command{vbcc} register number.
+@item Write the function
+@example
+static zmax dwarf2_fboffset(struct Var *v);
+@end example
+      which returns the offset of variable @code{v} from the DWARF2
+      frame-pointer.
+@item Write the function
+@example
+static void dwarf2_print_frame_location(FILE *f,struct Var *v);
+@end example
+which prints a DWARF2 location of the frame pointer. It can use the
+function
+@example
+void dwarf2_print_location(FILE *f,struct obj *o);
+@end example
+to output the location. For example, if the frame pointer is a simple
+register, it might look like this:
+@example
+static void dwarf2_print_frame_location(FILE *f,struct Var *v)
+@{
+  struct obj o;
+  o.flags=REG;
+  o.reg=frame_pointer_register;
+  o.val.vmax=l2zm(0L);
+  o.v=0;
+  dwarf2_print_location(f,&o);
+@}
+@end example
+@item Before emitting code for an IC @code{p}, execute the code
+@example
+if(debug_info)
+  dwarf2_line_info(f,p);
+@end example
+@item After emitting code for a function @code{v}, a new numbered label
+      has to be emitted after the function code and the function
+@example
+void dwarf2_function(FILE *f,struct Var *v,int endlabel);
+@end example
+must be called.
+
+@end enumerate
+
+Note that the DWARF2 standard supports use of location lists which can be
+used to describe a variable whose location changes during the program (e.g.
+in a register for some time, then in memory and again in a register) as well
+as a moving frame pointer (very useful if no separate frame pointer is used
+but all local variables are accessed through a moving stack pointer).
+Unfortunately, none of the debuggers I have tried so far could handle these
+location lists. Therefore, the current DWARF2 module does not output
+location lists, but future version will probably offer them as an option.
+
+Without location lists, accessing local variables will only work with
+a fixed frame pointer and no register variables. Even with these restrictions,
+function parameters which are passed in registers will not be correctly
+displayed during the function entry code.
+
+@subsection Interrupt Handlers
+
+Especially for embedded systems, support for writing interrupt handlers in
+C is a common feature. Variable attributes (@pxref{targetattributes}) can
+be used to mark functions which are used as interrupt handlers.
+
+Typical changes which might be necessary for interrupt handlers are:
+@itemize @minus
+@item Using a different return instruction.
+@item Saving all modified registers, including scratch-registers.
+@item Creating an entry in the interrupt vector table.
+@end itemize
+
+
+@subsection Stack checking
+
+Dynamic checking of the stack used (or possibly extending the stack size
+if possible) is another useful feature. If the variable @code{stack_check}
+is set, stack-checking code should be emitted, if possible. Every function
+should call a library function (usually called @code{__stack_check}) and
+pass the maximum size of stack used in this function as argument. This
+obviously has to be done before allocating the stack-frame.
+
+The library function is responsible to take into account its own
+stack-frame.
+
+
+@subsection Profiling
+
+FIXME: To be written.
+
+
+
+@section Changes from 0.7 Interface
+
+The backend interface has changed in several ways since @command{vbcc} 0.7.
+The following list mentions most(all?) differences between the old
+and new interfaces (not including new optional features which do not have
+to be used):
+
+@itemize @minus
+@item There are more types (@code{LLONG, LDOUBLE, MAXINT}). Therefore
+      the @code{align[]} and @code{sizetab[]} arrays have dimension
+      @code{MAX_TYPES+1} rather than 16.
+@item The representation and access of @code{t_min[]} and @code{t_max[]}
+      has been changed.
+@item @code{zmax} replaces @code{zlong} as largest integer target
+      type. @code{zlong} is only used when actually referring to a
+      @code{long} on the target. Also, the macros for target arithmetic
+      are available for @code{zmax/zumax} instead of @code{zlong/zulong}.
+@item @code{PUSH} ICs contain a second size (actual stack-adjustment).
+@item The second argument of @code{SHIFT} ICs has an own type.
+@item @code{DREFOBJ} objects contain the type of the dereferenced pointer
+      (only meaningful if there are different pointer types).
+@item The new @code{CONVERT} IC replaces the series of old ICs
+      (@code{CONVINT} etc.).
+@item @code{emit()}-functions have to be used to generate output rather
+      than @code{fprintf()}.
+@item The functions @code{init_db()} and @code{cleanup_db()} have to be
+      provided (they do not have do to anything).
+@item A new array @code{reg_prio[]} is needed and controls the order
+      in which registers are allocated.
+@item The parameters of @code{must_convert()} have changed.
+@item Static functions must not use identifiers, but have to use numbered
+      labels.
+
+@end itemize
+
+Volker Barthelmann                                      vb@@compilers.de
+

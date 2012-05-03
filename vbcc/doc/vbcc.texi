@@ -1,0 +1,401 @@
+\input texinfo
+
+@setfilename index.texi
+@settitle vbcc manual
+@setchapternewpage odd
+
+@ifinfo
+
+This is the manual for the vbcc compiler system.
+
+Copyright 1995-2011 Volker Barthelmann
+
+@end ifinfo
+
+@titlepage
+@title vbcc compiler system
+@author Volker Barthelmann
+
+@page
+
+@end titlepage
+
+@paragraphindent 0
+
+@contents
+
+@chapter General
+
+@section Introduction
+
+    vbcc is a highly optimizing portable and retargetable ISO C compiler.
+    It supports ISO C according to ISO/IEC 9899:1989 and a subset of the
+    new standard ISO/IEC 9899:1999 (C99).
+
+    It is split into a target-independent and a target-dependent part, and
+    provides complete abstraction of host- and target-arithmetic. Therefore,
+    it fully supports cross-compiling for 8, 16, 32 and 64bit architectures.
+
+    Embedded systems are supported by features like different pointer-sizes
+    (e.g. differently sized function- and object-pointers or near- and
+    far-pointers), ROM-able code, inline-assembly, bit-types,
+    interrupt-handlers, section-attributes, stack-calculation and many
+    others (depending on the backend).
+
+    vbcc provides a large set of aggressive high-level optimizations
+    (@pxref{Optimizations})
+    as well as target-specific optimizations to produce faster or smaller
+    code. Rather than restricting analysis and optimization to single
+    functions or files, vbcc is able to optimize across functions and
+    even modules. Target-independent optimizations include:
+
+@itemize @minus
+    @item cross-module function-inlining
+    @item partial inlining of recursive functions
+    @item inter-procedural data-flow analysis
+    @item inter-procedural register-allocation
+    @item register-allocation for global variables
+    @item global common-subexpression-elimination
+    @item global constant-propagation
+    @item global copy-propagation
+    @item dead-code-elimination
+    @item alias-analysis
+    @item loop-unrolling
+    @item induction-variable elimination
+    @item loop-invariant code-motion
+    @item loop-reversal
+@end itemize
+
+
+@section Legal
+
+    vbcc is copyright in 1995-2011 by Volker Barthelmann.
+
+    This archive may be redistributed without modifications and used
+    for non-commercial purposes.
+
+    Distributing modified versions and commercial usage needs my written
+    consent.
+
+    This copyright applies to vc, vbcc and vsc.
+
+    This archive may contain other tools (e.g. assemblers or linkers)
+    which do not fall under this license. Please consult the corresponding
+    documentation of these tools.
+
+    vbcc contains the preprocessor ucpp by Thomas Pornin. Included is the
+    copyright notice of ucpp (note that this license does not apply to vbcc
+    or any other part of this distribution):
+
+@example
+/*
+ * (c) Thomas Pornin 1999, 2000
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 4. The name of the authors may not be used to endorse or promote
+ *    products derived from this software without specific prior written
+ *    permission.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+ * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+@end example
+
+
+@section Installation
+
+The vbcc directory tree looks as follows:
+
+@table @file
+
+@item vbcc/bin
+                The executables.
+
+@item vbcc/config
+                Config files for the frontend.
+
+@item vbcc/targets/<target>
+                Subdirectory containing all files specific to a certain
+                target (e.g. m68k-amigaos or ppc-eabi).
+@end table
+
+@subsection Installing for Unix
+
+    @enumerate
+
+    @item Extract the archive.
+
+    @item Set the environment variable @env{VBCC} to the vbcc directory.
+        Depending on your shell this might be done e.g. by
+
+        @example
+        VBCC=<prefix>/vbcc
+        @end example
+
+        or
+
+        @example
+        setenv VBCC <prefix>/vbcc
+        @end example
+
+    @item Include <prefix>/vbcc/bin to your search-path. Depending on your
+        shell this might be done e.g. by
+
+        @example
+        PATH=<prefix>/vbcc/bin:"$PATH"
+        @end example
+
+        or
+
+        @example
+        setenv PATH <prefix>/vbcc/bin:"$PATH"
+        @end example
+
+    @end enumerate
+
+
+@subsection Installing for DOS/Windows
+
+    @enumerate
+
+    @item Extract the archive.
+
+    @item Set the environment variable @env{VBCC} to the vbcc directory.
+
+        @example
+        set VBCC=<prefix>\vbcc
+        @end example
+
+    @item Include <prefix>/vbcc/bin to your search-path.
+
+        @example
+        set PATH=<prefix>\vbcc\bin;%PATH%
+        @end example
+
+    @end enumerate
+
+
+@subsection Installing for AmigaOS
+
+    Since @command{vbcc 0.8g} there is an Amiga Installer, which lets
+    you install the binary and target archives with a simple mouse click.
+    @command{vbcc} for AmigaOS/MorphOS is divided into the following
+    packages:
+
+    @table @file
+    @item vbcc_bin_amigaos68k
+	Binaries for AmigaOS 2.x/3.x (680x0).
+    @item vbcc_bin_amigaosppc
+	Binaries for AmigaOS 4.x (PowerPC).
+    @item vbcc_bin_morphos
+	Binaries for MorphOS (PowerPC).
+    @item vbcc_bin_powerup
+	Additional PPC-native binaries using the PowerUp kernel for
+	AmigaOS 3.x.
+    @item vbcc_bin_warpos
+	Additional PPC-native binaries using the WarpOS kernel for
+	AmigaOS 3.x.
+    @item vbcc_target_m68k-amigaos
+	Header files and libraries for AmigaOS/M68k.
+    @item vbcc_target_ppc-amigaos
+	Header files and libraries for AmigaOS 4.x.
+    @item vbcc_target_ppc-morphos
+	Header files and libraries for MorphOS.
+    @item vbcc_target_ppc-powerup
+	Header files and libraries for PowerUp.
+    @item vbcc_target_ppc-warpos
+	Header files and libraries for WarpOS.
+    @end table
+   
+    Usually you will install the binary archive for your host architecture
+    of choice, then add as many target archives you need.
+
+    When installing manually it is recommended to add the following
+    assigns to your @file{s:User-Startup} file (only do the assignments
+    required for the installed targets): 
+
+@example
+assign >NIL: vbcc: <path to vbcc directory>
+assign >NIL: C: vbcc:bin add
+ 
+assign >NIL: vincludeos3: vbcc:targets/m68k-amigaos/include
+assign >NIL: vincludeos3: <path to your AmigaOS3 header files> ADD
+assign >NIL: vlibos3: vbcc:targets/m68k-amigaos/lib
+
+assign >NIL: vincludeos4: vbcc:targets/ppc-amigaos/include
+assign >NIL: vincludeos4: <path to your AmigaOS4 header files> ADD
+assign >NIL: vlibos4: vbcc:targets/ppc-amigaos/lib
+
+assign >NIL: vincludemos: vbcc:targets/ppc-morphos/include
+assign >NIL: vincludemos: <path to your MorphOS header files> ADD
+assign >NIL: vlibmos: vbcc:targets/ppc-morphos/lib
+
+assign >NIL: vincludepup: vbcc:targets/ppc-powerup/include
+assign >NIL: vincludepup: <path to your AmigaOS3 header files> ADD
+assign >NIL: vlibpup: vbcc:targets/ppc-powerup/lib
+
+assign >NIL: vincludewos: vbcc:target/ppc-warpos/include
+assign >NIL: vincludewos: <path to your AmigaOS3 header files> ADD
+assign >NIL: vlibwos: vbcc:target/ppc-warpos/lib
+
+@end example
+
+    Also, the stack-size has to be increased from the default, for those
+    binaries which don't do that automatically (e.g. AmigaOS4).
+    64KB is a sensible value, for very large projects higher
+    values might be necessary.
+
+    For writing AmigaOS/MorphOS programs you will need the appropriate
+    system header files. Please use NDK 3.9 or later for AmigaOS/68k, as
+    the proto/inline headers have been created with it.
+
+    There are different configuration files provided in the
+    @file{config}-subdirectory to choose different targets (i.e.
+    the system you want to generate programs for) and hosts
+    (i.e. the system you want the compiler an tools to run on).
+    The general naming-scheme for these files ist <target>_<host>.
+
+    Available config files, when all targets are installed, are
+    @file{aos68k} (AmigaOS on M68k), @file{aosppc} (AmigaOS4 on PPC using
+    vclib), @file{newlib} (AmigaOS4 on PPC using newlib), @file{morphos}
+    (PPC systems running MorphOS), @file{powerup} (PPC boards using the
+    PowerUp system), @file{warpos} (PPC boards using the WarpOS system).
+
+    You can choose one of these systems using the @option{+}-option
+    of @command{vc}, e.g.
+
+@example
+    vc +aos68k_powerup ...
+@end example
+
+    will compile for AmigaOS/68k using the compiler running on PowerUp.
+
+    You may choose to create copies of some of these configuration
+    files with simpler names. E.g. if you usually want the compiler
+    to run on WarpOS you could copy @file{aos68k_warpos} to @file{aos68k},
+    @file{warpos_warpos} to @file{warpos} and so on. Then you can just specify
+    the target and your preferred host system will be chosen automatically.
+
+    Additionally, you may copy the configuration file for your preferred
+    host/target-combination to
+    @file{vc.config}. This configuration will be chosen by default if
+    you do not specify anything.
+
+    By default, the target-only-specifications use 68k-native tools on
+    AmigaOS 2.x/3.x, e.g. @option{+warpos} will create code for WarpOS,
+    but the compiler and tools will run on the 68k. The default
+    @file{vc.config} will then create code for 68k using tools running
+    on 68k. Having installed the MorphOS-native binary archive instead,
+    the default @file{vc.config} will create PPC code for MorphOS using
+    tools running on MorphOS.
+
+@section Tutorial
+
+    Now you should be able to use vbcc. To compile and
+    link the program @file{hello.c}, type
+ 
+@example
+        vc hello.c
+@end example
+ 
+    The file @file{hello.c} will be compiled and linked to create
+    the executable a.out in the current directory.
+ 
+@example
+        vc hello.c -o hello
+@end example
+ 
+    will do the same, but the created executable will be called @file{hello}.
+ 
+@example
+        vc -c t1.c t2.c
+@end example
+ 
+    will compile @file{t1.c} and @file{t2.c} without linking, creating the
+    object files @file{t1.o} and @file{t2.o}.
+ 
+@example
+        vc t1.o t2.o -o tt
+@end example
+ 
+    will link them together and create the executable @file{tt}.
+ 
+    If your program uses floating point, you may have to link with a
+    math-library. The details are dependent on the target, but usually
+    @option{-lm} will be suitable (for AmigaOS on m68k choose one of
+    @option{-lmieee}, @option{-lm881} or @option{-lm040}).
+
+@example 
+        vc calc.c -o calc -lmieee
+@end example
+
+
+@node The Frontend
+@chapter The Frontend
+@include vc.texi
+
+@node The Compiler
+@chapter The Compiler
+@include vbcc_main.texi
+
+
+@node M68k/Coldfire Backend
+@chapter M68k/Coldfire Backend
+@include vbccm68k.texi
+
+@node PowerPC Backend
+@chapter PowerPC Backend
+@include vbccppc.texi
+
+@node DEC Alpha Backend
+@chapter DEC Alpha Backend
+@include vbccalpha.texi
+
+@node i386 Backend
+@chapter i386 Backend
+@include vbcci386.texi
+
+@node c16x Backend
+@chapter c16x Backend
+@include vbccc16x.texi
+
+@node 68hc12 Backend
+@chapter 68hc12 Backend
+@include vbcchc12.texi
+
+@node Instruction Scheduler
+@chapter Instruction Scheduler
+@include vsc.texi
+
+@node C Library
+@chapter C Library
+@include vclib.texi
+
+@node List of Errors
+@chapter List of Errors
+
+@enumerate 0
+@include errors.texi
+@end enumerate
+
+@chapter Backend Interface
+@include interface.texi
+
+@bye

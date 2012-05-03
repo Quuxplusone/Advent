@@ -1,0 +1,250 @@
+This chapter describes @command{vc}, the frontend for vbcc. It knows how
+to deal with different file types and optimization settings and will
+call the compiler, assembler and linker.
+It is not recommended to call the different translation-phases directly.
+@command{vc} provides an easy-to-use interface which is mostly compatible to
+Unix @command{cc}.
+
+@section Usage
+
+    The general syntax for calling @command{vc}
+
+@example
+    @command{vc [options] file1 file2 ...}
+@end example
+
+    processes all files according to their suffix and links all objects
+    together (unless any of @option{-E}, @option{-S}, @option{-c} is specified).
+ The following file types are recognized:
+
+@table @file
+    @item .c      
+                C source
+    @item .i      
+                already preprocessed C source
+    @item .scs    
+                assembly source to be fed to the scheduler
+    @item .asm
+    @item .s      
+                assembly source
+    @item .obj
+    @item .o      
+                object file
+@end table
+
+    Usually pattern matching is supported - however this depends on the
+    port and the host system.
+
+    The options recognized by @command{vc} are:
+
+@table @option
+
+    @item -v      
+                Verbose mode. Prints all commands before executing them.
+
+    @item -vv     
+                Very verbose. Displays some internals as well.
+
+    @item -Ox     
+                Sets the optimization level.@*
+            -O0 is equivalent to -O=0.@*
+            -O  will activate some optimizations (at the moment -O=991).@*
+            -O2 will activate most optimizations (at the moment -O=1023 -schedule).@*
+            -O3 will activate all optimizations (at the moment -O=~0 -schedule).@*
+            -O4 will activate full cross-module-optimization.@*
+
+            Also, -O3 will activate cross-module-optimizations. All source
+            files specified on the command line will be passed to the compiler
+            at once. Only one assembly/object-file will be produced (by default
+            the name is the name of the first source file with corresponding
+            suffix).
+
+            When compiling with -O4 and -c vbcc will not produce real object
+            files but special files containing all necessary information to
+            defer optimization and code-generation to link-time. This is
+            useful to provide all files of a project to the optimizer and
+            make full use of cross-module optimizations.
+            Note that you must use vc to do the linking. vc will detect and
+            handle these files correctly. They can not be linked directly.
+            Also, make sure to pass all relevant compiler options also to
+            the linker-command.
+
+            Higher values may or may not activate even more optimizations.
+            The default is -O=1.
+            It is also possible to specify an exact value with -O=n.
+            However, I do not recommend this unless you know exactly what
+            you are doing.
+
+    @item -o file 
+                Save the target as @file{file} (default for executables is
+                @file{a.out}).
+
+    @item -E      
+                Save the preprocessed C sources with .i suffix.
+
+    @item -S      
+                Do not assemble. Save the compiled files with .asm suffix.
+
+    @item -SCS    
+                Do not schedule. Save the compiled files with .scs suffix.
+
+    @item -c      
+                Do not link. Save the compiled files with .o suffix.
+
+    @item -k      
+                Keep all intermediate files. By default all generated files
+            except the source files and the targets are deleted.
+
+    @item -Dstr   
+                @code{#define} a preprocessor symbol, e.g. -DAMIGA or -DCPU=68000.
+                The former syntax is equivalent to:
+@example
+ #define AMIGA 1
+@end example
+                The latter form is equivalent to:
+@example
+ #define CPU 68000
+@end example
+
+    @item -Ipath  
+                Add @file{path} to the include-search-path.
+
+    @item -lulib  
+                Link with library @file{ulib}.
+
+    @item -Lpath  
+                Add @file{path} to the library-search-path.
+            This is passed through to the linker.
+
+    @item -static
+                Instruct the linker to link against static libraries.
+                This may override the default to link against dynamic
+                libraries first.
+
+    @item -nostdlib   
+                Do not link with standard-startup/libraries. Useful only
+                for people who know what they are doing.
+
+    @item -notmpfile  
+                Do not use names from tmpnam() for temporary files.
+
+    @item -schedule   
+                Invoke the instruction-scheduler, if available.
+
+    @item +file   
+        Use @file{file} as config-file.
+
+@end table
+
+
+    All other options are passed through to @command{vbcc}.
+
+
+
+
+
+@section Configuration
+
+    @command{vc} needs a config file to know how to call all the translation
+    phases (compiler, assembler, linker). Unless a different file is
+    specified using the @option{+}-option, it will look for a file
+    @file{vc.config} (@file{vc.cfg} for DOS/Windows).
+
+    On AmigaOS @command{vc} will search in the current
+    directory, in @file{ENV:} and @file{VBCC:}.
+
+    On Unix @command{vc} will search in the current directory followed
+    by @file{/etc/}.
+
+    On DOS/Windows it will search in the current directory.
+
+    If the config file was not found in the default search-paths and
+    an environment variable @env{$VBCC} is set, @command{vc} will also look
+    in @env{$VBCC}@file{/config}.
+
+    Once a config file is found, it will
+    be treated as a collection of additional command line arguments. Every
+    line of the file will be used as one argument. So no quoting shall be
+    used and furthermore must each argument be placed on its own line.
+
+
+    The following options can be used to tell @command{vc} how to call the
+    translation phases (they will usually be contained in the config-file):
+
+@table @option
+
+    @item -pp=string
+                The preprocessor will be called like in
+                @code{printf(string,opts,infile,outfile)}, e.g. the default for @command{vcpp}
+                searching the includes in @file{vinclude:} and defining @code{__STDC__})
+                is @option{-pp=vcpp -Ivinclude: -D__STDC__=1 %s %s %s}.
+                Note that there is an internal preprocessor, called
+                @command{ucpp}, since V0.8, you usually don't need this
+                option any more.
+
+    @item -cc=string
+                For the compiler. Note that you cannot use @command{vc} to call
+                another compiler than @command{vbcc}. But you can call different
+                versions of @command{vbcc} this way, e.g.:
+                @option{-cc=vbccm68k -quiet} or
+                @option{-cc=vbcci386 -quiet}
+
+    @item -isc=string
+                The same for the scheduler, e.g.:
+                @option{-isc=vscppc -quiet %s %s}
+                Omit, if there is no scheduler for the architecture.
+
+    @item -as=string
+                The same for the assembler, e.g.:
+                @option{-as=vasmm68k_mot -quiet -Fhunk -phxass -opt-pea -opt-clr %s -o %s} or
+                @option{-as=as %s -o %s}
+
+    @item -rm=string 
+                This is the string for the delete command and takes only
+                one argument, e.g.
+                @option{-rm=delete quiet %s} or
+                @option{-rm=rm %s}
+
+    @item -ld=string
+                This is for the linker and takes three arguments. The first
+                one are the object files (separated by spaces), the second
+                one the user specified libraries and the last one the name
+                of the resulting executable.
+                This has to link with proper startup-code and c-libraries,
+                e.g.:
+                @option{-ld=vlink -x -Bstatic -Cvbcc -nostdlib -Lvlibos3: vlibos3:startup.o %s %s -lvc -o %s} or
+                @option{-ld=ld /usr/lib/crt0.o %s %s -lc -o %s}
+
+    @item -l2=string
+                The same like -ld, but standard-startup and -libraries should
+                not be linked; used when -nostdlib is specified.
+
+    @item -ldnodb=string
+                This option string is inserted in the linker command before
+                specifying the libraries, whenever an executable without
+                debugging information and symbols should be created (AKA
+                as a 'stripped' executable).
+
+    @item -ldstatic=string
+                This option string is inserted in the linker command before
+                specifying the libraries when static linking was requested
+                with option @option{-static}.
+                
+@end table
+
+    All those strings should tell the command to omit any output apart from
+    error messages if possible. However for every of those options there
+    exists one with an additional @samp{v}, i.e. @option{-ppv=}, @option{-asv=}, etc. which should
+    produce some output, if possible.
+    If vc is invoked with the @option{-vv} option the verbose commands will be called,
+    if not the quiet ones will be used.
+
+@table @samp
+    @item -ul=string  
+                Format for additional libraries specified with @option{-l<lib>}.
+                The result of @code{printf(string,lib)} will be added to the
+                command invoking the linker. Examples are:
+                @option{-ul=vlib:%s.lib} or @option{-ul=-l%s}
+
+@end table
+

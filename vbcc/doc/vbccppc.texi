@@ -1,0 +1,348 @@
+This chapter documents the Backend for the PowerPC processor family.
+
+@section Additional options for this version
+
+This backend provides the following additional options:
+
+@table @option
+
+    @item -merge-constants
+
+                Place identical floating point constants at the same
+                memory location. This can reduce program size.
+
+    @item -const-in-data
+
+                By default constant data will be placed in the @code{.rodata}
+                section. Using this option it will be placed in the 
+                @code{.data} section.
+                Note that on operating systems with memory protection this
+                option will disable write-protection of constant data.
+
+    @item -fsub-zero
+
+                Use fsub to load a floating-point-register with zero.
+                This is faster but requires all registers to always contain
+                valid values (i.e. no NaNs etc.) which may not be the case
+                depending on startup-code, libraries etc.
+
+    @item -amiga-align
+
+                Do not require any alignments greater than 2 bytes.
+                This is needed when accessing Amiga system-structures, but
+                can cause a performance penalty.
+
+    @item -elf
+
+                Do not prefix symbols with '_'. Prefix labels with '.'.
+
+    @item -poweropen
+
+                Generate code for the PowerOpen ABI like used in AIX.
+                This does not work correctly yet.
+
+    @item -sc
+
+                Generate code for the modified PowerOpen ABI used in the
+                StormC compiler (aka WarpOS ABI).
+
+    @item -no-regnames
+
+                Do not use register names but only numbers in the assembly
+                output. This is necessary
+                to avoid name-conflicts when using @option{-elf}.
+
+    @item -setccs
+
+                The V.4 ABI requires signalling (in a bit of the condition code
+                register) when arguments to varargs-functions
+                are passed in floating-point registers.
+                vbcc usually does not make use of this and
+                therefore does not set that bit by default.
+                This may lead to problems when linking objects compiled by
+                vbcc to objects/libraries created by other
+                compilers and calling varargs-functions with floating-point
+                arguments.
+                @option{-setccs} will fix this problem.
+
+    @item -no-peephole
+
+                Do not perform several peephole optimizations.
+                Currently includes:
+                @itemize @minus
+                 @item better use of d16(r) addressing
+                 @item use of indexed addressing modes
+                 @item use of update-flag
+                 @item use of record-flag
+                 @item use of condition-code-registers to avoid certain branches
+                @end itemize
+
+    @item -use-lmw
+
+                Use @code{lmw/stmw}-instructions. This can significantly reduce
+                code-size. However these instructions may be slower on
+                certain PPCs.
+
+    @item -madd
+               Use the @code{fmadd/fmsub} instructions for combining
+                multiplication with addition/subtraction in one instruction.
+                As these instructions do not round between the operations,
+                they have increased precision over separate addition and
+                multiplication.
+
+                While this usually does no harm, it is not ISO conforming
+                and therefore not the default behaviour.
+
+    @item -eabi
+               Use the PowerPC Embedded ABI (eabi).
+
+    @item -sd
+                 Place all objects in small data-sections.
+
+    @item -gas
+                Create code suitable for the GNU assembler.
+
+    @item -no-align-args
+
+                Do not align function arguments on the stack stricter
+                than 4 bytes. Default with @option{-poweropen}.
+
+    @item -use-commons
+
+                Use real common symbols instead of bss symbols for
+                non-initialized external variables.
+
+    @item -baserel32os4
+
+                Use 32bit base-relative addressing as used by AmigaOS 4.
+
+    @item -baserel32mos
+
+                Use 32bit base-relative addressing as used by MorphOS.
+
+
+
+@end table
+
+@section ABI
+
+        This backend supports the following registers:
+
+        @itemize @minus
+        @item @code{r0} through @code{r31} for the general purpose registers,
+        @item @code{f0} through @code{f31} for the floating point registers and
+        @item @code{cr0} through @code{cr7} for the condition-code registers.
+        @end itemize
+
+        Additionally, the register pairs @code{r3/r4, r5/r6, r7/r8, r9/r10,
+        r14/r15, r16/r17, r18/r19,
+        r20/r21, r22/r23, r24/r25, r26/r27, r28/r29} and @code{r30/r31} are
+        available.
+
+        @code{r0, r11, r12, f0, f12} and @code{f13} are reserved by the
+        backend.
+
+        
+
+    The current version generates assembly output for use with @file{vasmppc}
+    or the GNU assembler. The generated code should
+    work on 32bit systems based on a PowerPC CPU using the V.4 ABI or the
+    PowerPC Embedded ABI (eabi).
+
+
+    The registers r0, r3-r12, f0-f13 and cr0-cr1 are used as scratch registers
+    (i.e. they can be destroyed in function calls), all other registers are
+    preserved. r1 is the stack-pointer and r13 is the small-data-pointer if
+    small-data-mode is used.
+
+    The first 8 function arguments which have integer or pointer types
+    are passed in registers r3 through r10 and the first 8 floating-point
+    arguments are passed in registers f1 through f8. All other arguments
+    are passed on the stack.
+
+    Integers and pointers are returned in r3 (and r4 for long long),
+    floats and doubles in f1.
+    All other types are returned by passing the function the address
+    of the result as a hidden argument - so when you call such a function
+    without a proper declaration in scope you can expect a crash.
+
+    The elementary data types are represented like:
+
+    @example
+    type        size in bits        alignment in bytes (-amiga-align)
+
+    char                8                       1 (1)
+    short              16                       2 (2)
+    int                32                       4 (2)
+    long               32                       4 (2)
+    long long          64                       8 (2)
+    all pointers       32                       4 (2)
+    float              32                       4 (2)
+    double             64                       8 (2)
+    @end example
+
+@section Target-specific variable-attributes
+
+    The PPC-backend offers the following variable-attributes:
+
+@table @code
+
+    @item __saveds
+                    Load the pointer to the small data segment at
+                 function-entry. Applicable only to functions.
+
+    @item __chip
+                      Place variable in chip-memory. Only applicable on
+                 AmigaOS to variables with static storage-duration.
+
+    @item __far
+                       Do not place this variable in the small-data segment
+                 in small-data-mode. No effect in large-data-mode.
+                 Only applicable to variables with static storage-
+                 duration.
+
+    @item __near
+              Currently ignored.
+
+    @item __saveall
+                Make sure all registers are saved by this function. On lower
+                optimization levels, all volatile registers will be saved
+                additionally. On higher levels, only the ones that may be
+                destroyed, are saved.
+
+    @item __interrupt
+                Return with en @code{rfi}-instruction rather than @code{blr}.
+
+    @item __section("name","attr")
+                 Place this function/object in section "name" with
+                 attributes "attr".
+@end table
+
+
+@section Target-specific pragmas
+
+    The PPC-backend offers the following #pragmas:
+
+@table @code
+
+    @item #pragma amiga-align
+             Set alignment like -amiga-alignment option.
+
+    @item #pragma natural-align
+           Align every type to its own size.
+
+    @item #pragma default-align
+           Set alignment according to command-line options.
+
+@end table
+
+@section Predefined Macros
+
+        This backend defines the following macros:
+
+@table @code
+        @item __PPC__
+        
+@end table
+
+@section Stack
+
+    If the @option{-stack-check} option is used, every function-prologue will
+    call the function @code{__stack_check} with the stacksize needed by this
+    function in register r12. This function has to consider its own
+    stacksize and must restore all registers.
+
+@section Stdarg
+
+    A possible <stdarg.h> for V.4 ABI could look like this:
+
+@example
+
+typedef struct @{
+  int gpr;
+  int fpr;
+  char *regbase;
+  char *membase;
+@} va_list;
+
+char *__va_start(void);
+char *__va_regbase(void);
+int __va_fixedgpr(void);
+int __va_fixedfpr(void);
+
+#define va_start(vl,dummy) \
+  ( \
+    vl.gpr=__va_fixedgpr(), \
+    vl.fpr=__va_fixedfpr(), \
+    vl.regbase=__va_regbase(), \
+    vl.membase=__va_start() \
+  )
+
+#define va_end(vl) ((vl).regbase=(vl).membase=0)
+
+#define va_copy(new,old) ((new)=(old))
+
+#define __va_align(type) (__alignof(type)>=4?__alignof(type):4)
+
+#define __va_do_align(vl,type) ((vl).membase=(char *)((((unsigned int)((vl).membase))+__va_align(type)-1)/__va_align(type)*__va_align(type)))
+
+#define __va_mem(vl,type) (__va_do_align((vl),type),(vl).membase+=sizeof(type),((type*)((vl).membase))[-1])
+
+#define va_arg(vl,type) \
+ ( \
+  (__typeof(type)&127)>10? \
+    __va_mem((vl),type) \
+  : \
+   ( \
+    (((__typeof(type)&127)>=6&&(__typeof(type)&127)<=8)) ? \
+     ( \
+      ++(vl).fpr<=8 ? \
+        ((type*)((vl).regbase+32))[(vl).fpr-1] \
+      : \
+        __va_mem((vl),type) \
+     ) \
+    : \
+     ( \
+      ++(vl).gpr<=8 ? \
+        ((type*)((vl).regbase+0))[(vl).gpr-1] \
+      : \
+        __va_mem((vl),type) \
+     ) \
+   ) \
+ )
+
+@end example
+
+    A possible <stdarg.h> for PowerOpen ABI could look like this:
+
+@example
+
+typedef unsigned char *va_list;
+
+#define __va_align(type) (4)
+
+#define __va_do_align(vl,type) ((vl)=(char *)((((unsigned int)(vl))+__va_align(type)-1)/__va_align(type)*__va_align(type)))
+
+#define __va_mem(vl,type) (__va_do_align((vl),type),(vl)+=sizeof(type),((type*)(vl))[-1])
+
+#define va_start(ap, lastarg) ((ap)=(va_list)(&lastarg+1))
+ 
+#define va_arg(vl,type) __va_mem(vl,type)
+ 
+#define va_end(vl) ((vl)=0)
+
+#define va_copy(new,old) ((new)=(old))
+
+@end example
+
+
+@section Known problems
+
+@itemize @minus
+  @item  composite types are put on the stack rather than passed via pointer
+  @item indication of fp-register-args with bit 6 of cr is not done well
+@end itemize
+
+
+
+

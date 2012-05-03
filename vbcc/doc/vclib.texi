@@ -1,0 +1,1019 @@
+This chapter describes the C library usually provided with @command{vbcc}.
+
+
+@section Introduction
+
+To execute code compiled by @command{vbcc}, a library is needed. It
+provides basic interfaces to the underlying operating system or
+hardware as well as a set of often used functions.
+
+A big part of the library is portable across all architectures. However,
+some functions (e.g. for input/output or memory allocation) are
+naturally dependent on the operating system or hardware. There are
+several sections in this chapter dealing with different versions of
+the library.
+
+The library itself often is split into several parts. A startup-code
+will do useful initializations, like setting up IO, parsing the command
+line or initializing variables and hardware.
+
+The biggest part of the functions will usually be stored in one library file.
+The name and format of this file depends on the conventions of the underlying
+system (e.g. @file{vc.lib} or @file{libvc.a}).
+
+Often, floating point code (if available) is stored in a different file
+(e.g. @file{m.lib} or @file{libm.a}). If floating point is used in an
+application, it might be necessary to explicitly link with this library
+(e.g. by specifying @file{-lm}).
+
+In many cases, the include files provide special inline-code or similar
+optimizations. Therefore, it is recommended to always include the
+corresponding include file when using a library function. Even if it
+is not necessary in all cases, it may affect the quality of the generated
+code.
+
+The library implements the functions specified by ISO9899:1989 as well
+as a small number of the new functions from ISO9899:1999.
+
+@section Legal
+
+Most parts of this library are public domain. However, for some systems,
+parts may be under a different license. Please consult the system
+specific documentation. Usually, linking against this library will
+not put any restrictions on the created executable unless otherwise
+mentioned.
+
+Parts of the math library (e.g. transcendental functions) are derived
+from Sun's free math library:
+@example
+ * ====================================================
+ * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
+ *
+ * Developed at SunPro, a Sun Microsystems, Inc. business.
+ * Permission to use, copy, modify, and distribute this
+ * software is freely granted, provided that this notice 
+ * is preserved.
+ * ====================================================
+@end example
+
+The softfloat functions, used by some targets, are derived from John
+Hauser's IEC/IEEE Floating-point Artithmetic Package:
+
+@example
+This C source file is part of the SoftFloat IEC/IEEE Floating-point
+Arithmetic Package, Release 2.
+
+Written by John R. Hauser.  This work was made possible in part by the
+International Computer Science Institute, located at Suite 600, 1947 Center
+Street, Berkeley, California 94704.  Funding was partially provided by the
+National Science Foundation under grant MIP-9311980.  The original version
+of this code was written as part of a project to build a fixed-point vector
+processor in collaboration with the University of California at Berkeley,
+overseen by Profs. Nelson Morgan and John Wawrzynek.  More information
+is available through the web page `http://HTTP.CS.Berkeley.EDU/~jhauser/
+arithmetic/softfloat.html'.
+
+THIS SOFTWARE IS DISTRIBUTED AS IS, FOR FREE.  Although reasonable effort
+has been made to avoid it, THIS SOFTWARE MAY CONTAIN FAULTS THAT WILL AT
+TIMES RESULT IN INCORRECT BEHAVIOR.  USE OF THIS SOFTWARE IS RESTRICTED TO
+PERSONS AND ORGANIZATIONS WHO CAN AND WILL TAKE FULL RESPONSIBILITY FOR ANY
+AND ALL LOSSES, COSTS, OR OTHER PROBLEMS ARISING FROM ITS USE.
+
+Derivative works are acceptable, even for commercial purposes, so long as
+(1) they include prominent notice that the work is derivative, and (2) they
+include prominent notice akin to these three paragraphs for those parts of
+this code that are retained.
+@end example
+
+
+@section Embedded Systems
+
+This section describes specifics of the C library for embedded systems.
+
+@subsection Startup
+
+The startup is usually split into two parts. The first part is done by
+assembly code that produces the object file @file{lib/startup.o}. This
+assembly code is usually provided with vbcc and may have to be adapted to
+the hardware you are using. The key actions that have to be performed by this
+code are:
+
+@table @minus
+@item hardware initialization
+        It may be necessary to perform some hardware initialization right
+        at the beginning, e.g. to configure the memory system. This has to
+        be modified by the user.
+
+@item variable initializations
+        When running code from ROM, some memory sections have to be
+        initialized. Usually, the init-values of initialized variables
+        have to be copied from ROM to the data segment and the values of
+        un-initialized variables have to be cleared in the bss segment.
+        This code is usually provided in the startup code.
+
+@item stack pointer
+        The stack pointer has to be set to a suitable memory area.
+        The startup code
+        will set the stack pointer to the value of the pointer @code{__stack}.
+        There is a default stack provided in the C library which will be used
+        unless the application defines its own stack using, for example, the
+        following code (assuming that the stack grows downwards):
+@example
+#define STACKSIZE <whatever>
+
+static long mystack[STACKSIZE/sizeof(long)];
+char *__stack=((char*)mystack)+STACKSIZE;
+@end example
+
+@item calling @code{__main}
+        After all the above initializations have been performed, the function
+        @code{__main()} has to be called. This function is provided by the
+        library and performs high-level initializations, if necessary (mainly
+        it calls constructors created by the linker) and will then call the
+        user @code{main()} function. Note that the library
+        may not work correctly if the user @code{main()} function is called
+        directly from the startup code.
+
+@end table
+
+@subsection Heap
+
+When dynamic memory management is used (e.g. by using the @code{malloc()}
+function), a heap memory area is needed to allocate memory from. The
+@code{malloc()} function assumes that @code{__heapptr} is a variable pointing
+to the beginning of the heap memory and that @code{__heapsize} specifies
+the size of the heap area in bytes. The library will provide a default heap
+memory area that can be replaced by adding, for example, the following file
+to the application:
+@example
+#define HEAPSIZE <whatever>
+
+char __heap[HEAPSIZE],*__heapptr=__heap;
+size_t __heapsize=HEAPSIZE;
+@end example
+
+
+@subsection Input/Output
+
+The standard C input/output functions are provided also for embedded systems.
+Reading/writing to a stream will be directed to void unless the following
+low-level I/O-functions are provided by the application:
+@example
+int __open(const char *name,const char *mode);
+void __close(int h);
+size_t __read(int h,char *p,size_t l);
+size_t __write(int h,const char *p,size_t l);
+@end example
+
+The @code{__open()} function receives a name and a mode string (as in the C
+@code{fopen()} function) as arguments and has to return a file-descriptor if
+it is possible to open this file. The other functions are equivalent to the
+corresponding POSIX functions.
+
+Also, @code{stdin, stdout} and @code{stderr} can be used with the standard
+descriptors.
+
+@subsection Floating Point
+
+Whether floating point is supported, depends on the target architecture and
+chip. If it is supported, there will usually be a math-library that has to
+be linked (using option @option{-lm}) when floating point is used.
+
+@subsection Useless Functions
+
+Of course, some of the C library functions can not be implemented reasonably on
+embedded systems. These functions are contained in the library but will
+always return an error value. Mainly affected are:
+
+@table @minus
+@item locale
+@item time
+@item signal
+@item filesystem functions
+@end table
+
+Depending on the hardware provided by a system it is possible to implement
+these functions and add them to the application. In this case, the new
+functions will be used rather than the default ones returning only error
+values.
+
+@subsection Linking/Locating
+
+To produce ROM images (e.g. in the form of absolute ELF executables, Intel
+Hex files or Motorola S-Records), the linker is called with a linker script.
+This script can be used to join together different sections of the input files
+and locate them to suitable absolute memory areas. Also, this linker script
+can be used to set symbols that may be used by the application or the startup
+code, e.g. addresses of data sections, initialization values or small data
+pointers.
+
+Code or data that has to reside at special locations can be put into a special
+section using the @code{__section} attribute. This section can then be
+placed at the desired location using the linker script.
+
+Usually, an example linker script will be provided. While this is often not
+suitable for different chips, it may serve as a starting point.
+
+
+@section AmigaOS/68k
+
+This section describes specifics of the C library for AmigaOS/68k.
+The relevant files are @file{startup.o}, @file{minstart.o},
+@file{vc.lib}, @file{vcs.lib}, @file{mieee.lib}, @file{mieees.lib},
+@file{m881.lib}, @file{m881s.lib}, @file{m040.lib}, @file{m040s.lib}
+@file{amiga.lib}, @file{amigas.lib}, @file{auto.lib} and @file{autos.lib}.
+
+Note that @file{extra.lib} is no longer part of the vbcc distribution.
+It was replaced by 'PosixLib', available on Aminet
+@file{dev/c/vbcc_PosixLib.lha}, which has a much more comprehensive
+support for POSIX and Unix functions.
+
+@subsection Startup
+
+    The startup code currently consists of a slightly modified standard
+    Amiga startup (@file{startup.o}). The startup code sets up some
+    global variables and initializes stdin, stdout and stderr.
+    The exit code closes all open files and frees all memory.
+    If you link with a math library the startup/exit code will be taken
+    from there if necessary.
+
+
+@subsection Floating point
+
+    Note that you have to link with a math library if you want to use
+    floating point. All math functions, special startup code and
+    printf/scanf functions which support floating point are contained in
+    the math libraries only.
+    At the moment there are three math libraries:
+ 
+@table @file
+@item mieee.lib
+   This one uses the C= math libraries. The startup code
+                    will always open MathIeeeSingBas.library,
+                    MathIeeeDoubBas.library and MathIeeeDoubTrans.library.
+                    Float return values are passed in d0, double return
+                    values are passed in d0/d1.
+                    A 68000 is sufficient to use this library.
+                    You must not specify @option{-fpu=...}
+                    when you use this library.
+ 
+@item m881.lib
+    This one uses direct FPU instructions and function
+                    return values are passed in fp0. You must have a
+                    68020 or higher and an FPU to use this library. You
+                    also have to specify @option{-fpu=68881}.
+                    Several FPU instructions that have to be emulated on
+                    040/060 may be used.
+ 
+@item m040.lib
+    This one uses only direct FPU instructions that do not
+                    have to be emulated on a 040/060. Other functions use
+                    the Motorola emulation routines modified by
+                    Aki M Laukkanen.
+                    It should be used for programs compiled for 040 or 060
+                    with FPU.
+                    Return values are passed in fp0.
+@end table
+
+Depending on the CPU/FPU selected, #including @file{math.h} will
+cause inline-code generated for certain math functions.
+
+@node amiga-stack
+@subsection Stack
+
+An application can specify the stack-size needed by defining a variable
+@code{__stack} (of type @code{size_t}) with external linkage, e.g.
+
+@example
+size_t __stack=65536; /* 64KB stack-size */
+@end example
+
+The startup code will check whether the stack-size specified is larger
+than the default stack-size (as set in the shell) and switch to a new
+stack of appropriate size, if necessary.
+
+If the @option{-stack-check} option is specified when compiling, the
+library will check for a stack overflow and abort the program, if the
+stack overflows. Note, however, that only code compiled with this
+option will be checked. Calls to libraries which have not been compiled
+with @option{-stack-check} or calls to OS function may cause a stack
+overflow which is not noticed.
+
+Additionally, if @option{-stack-check} is used, the maximum stack-size
+used can be read by querying the external variable @code{__stack_usage}.
+
+@example
+#include <stdio.h>
+
+extern size_t __stack_usage;
+
+main()
+@{
+    do_program();
+    printf("stack used: %lu\n",(unsigned long)__stack_usage);
+@}
+@end example
+
+Like above, the stack used by functions not compiled using
+@option{-stack-check} or OS functions is ignored.
+
+@subsection Small data model
+
+When using the small data model of the 68k series CPUs, you also have
+to link with appropriate libraries. Most libraries documented here are
+also available as small data versions (with an 's' attached to the
+file name). Exceptions are the math libraries.
+
+To compile and link a program using the small data model a command like
+
+@example
+vc test.c -o test -sd -lvcs -lamigas
+@end example
+
+might be used.
+
+@subsection Restrictions
+
+The following list contains some restrictions of this version of the
+library:
+
+@table @code
+
+@item tmpfile()
+The @code{tmpfile()} function always returns an error.
+
+@item clock()
+The @code{clock()} function always returns -1. This is correct,
+according to the C standard, because on AmigaOS it is not possible to
+obtain the time used by the calling process.
+
+@end table
+
+@node Minimal startup
+@subsection Minimal startup 
+
+If you want to write programs that use only Amiga functions and none from
+vc.lib you can use @file{minstart.o} instead of @file{startup.o} and
+produce smaller executables.
+ 
+This is only useful for people who know enough about the Amiga shared
+libraries, the stubs in amiga.lib etc. If you do not know enough about
+those things better forget minstart at all.
+ 
+This startup code does not set up all the things needed by vc.lib, so you
+must not use most of those functions (string and ctype funtions are ok,
+but most other functions - especially I/O and memory handling - must not
+be used).
+@code{exit()} is supplied by minstart and can be used.
+ 
+The command line is not parsed, but passed to @code{main()} as a single
+string,
+so you can declare main as
+@code{int main(char *command)} or @code{int main(void)}.
+ 
+Also no Amiga libraries are opened (but @code{SysBase} ist set up), so you
+have to define and open @code{DOSBase} yourself if you need it.
+If you want to use floating point with the IEEE libraries you have to
+define and open MathIeeeSingBas.library, MathIeeeDoubBas.library and
+MathIeeeDoubTrans.library (in this order!) and link with mieee.lib (if
+compiled for FPU this is not needed).
+ 
+A hello world using minstart could look like this:
+
+@example 
+#include <proto/exec.h>
+#include <proto/dos.h>
+ 
+struct DosLibrary *DOSBase;
+ 
+main()
+@{
+    if(DOSBase=(struct DosLibrary *)OpenLibrary("dos.library",0))@{
+        Write(Output(),"Hello, world!\n",14);
+        CloseLibrary((struct Library *)DOSBase);
+    @}
+    return 0;
+@}
+
+@end example
+
+This can yield an executable of under 300 bytes when compiled with
+@option{-sc -sd -O2} and linked with @file{minstart.o} and @code{amigas.lib}
+(using @command{vlink} - may not work with other linkers).
+
+@subsection amiga.lib
+
+To write programs accessing AmigaOS (rather than standard C functions
+only), a replacement for the original (copyrighted) @file{amiga.lib}
+is provided with @command{vbcc}. This replacement is adapted to vbcc,
+does not cause collisions with some functions (e.g. @code{sprintf})
+provided by the original @file{amiga.lib} and is available in
+small data. It is recommended to always use this library rather than
+the original version.
+
+Additionally, there are header files (in the @file{proto}- and
+@file{inline}-subdirectories) which cause inlined calls to Amiga
+library functions.
+
+Specify @option{-lamiga} to link with @file{amiga.lib}.
+
+@node auto.lib
+@subsection auto.lib
+
+    To link with @file{auto.lib} (or the small data version
+    @file{autos.lib}) specify
+    the @option{-lauto} or @option{-lautos} option to @command{vc}.
+ 
+    When you are calling a standard Amiga library function and do not
+    have defined the corresponding library base then the library base
+    as well as code to open/close it will be taken from @file{auto.lib}.
+ 
+    By default, @file{auto.lib} will try to open any library version. If you
+    need at least a certain version you can define and set a variable
+    _<library-base>Ver with external linkage, e.g. (on file-scope):
+
+@example 
+        int _IntuitionBaseVer = 39;
+@end example
+
+    Note that your program will abort before reaching @code{main()} if one
+    of the libraries cannot be opened. Also note that the dos.library
+    will be openened by the standard startup code, not by auto.lib.
+    This means you have to open dos.library yourself, when linking
+    with @file{minstart.o}. 
+
+
+@section PowerUp/PPC
+
+This section describes specifics of the C library for PowerUp/PPC.
+The relevant files are @file{startup.o}, @file{minstart.o},
+@file{libvc.a}, @file{libvcs.a}, @file{libm.a}, @file{libms.a}
+@file{libamiga.a}, @file{libamigas.a},
+@file{libauto.a} and @file{libautos.a}.
+
+Note that @file{libextra.a} is no longer part of the vbcc distribution.
+It was replaced by 'PosixLib', available on Aminet
+@file{dev/c/vbcc_PosixLib.lha}, which has a much more comprehensive
+support for POSIX and Unix functions.
+
+@subsection Startup
+ 
+    The startup code @file{startup.o} sets up some
+    global variables and initializes stdin, stdout and stderr.
+    The exit code closes all open files and frees all memory.
+    If you link with a math library the startup/exit code will be taken
+    from there if necessary.
+
+@subsection Floating point
+ 
+    Note that you have to link with a math library if you want to use
+    floating point. All math functions, special startup code and
+    printf/scanf functions which support floating point are contained in
+    the math libraries only.
+
+    The math library (@file{libm.a}) is linked against the floating point
+    library libmoto by Motorola.
+
+Depending on the CPU/FPU selected, #including @file{math.h} will
+cause inline-code generated for certain math functions.
+
+@subsection Stack
+
+Stack-handling is similar to AmigaOS/68k (@xref{amiga-stack}).
+The only difference is that stack-swapping cannot be done. If the
+default stack-size is less than the stack-size specified with
+@code{__stack} the program will abort.
+
+@subsection Small data model
+ 
+When using the small data model of the PPC series CPUs, you also have
+to link with appropriate libraries. Most libraries documented here are
+also available as small data versions (with an 's' attached to the
+file name). Exceptions are the math libraries.
+ 
+To compile and link a program using the small data model a command like
+ 
+@example
+vc test.c -o test -sd -lvcs -lamigas
+@end example
+ 
+might be used.
+
+@subsection Restrictions
+ 
+The following list contains some restrictions of this version of the
+library:
+ 
+@table @code
+ 
+@item tmpfile()
+The @code{tmpfile()} function always returns an error.
+ 
+@item clock()
+The @code{clock()} function always returns -1. This is correct,
+according to the C standard, because on AmigaOS it is not possible to
+obtain the time used by the calling process.
+
+@end table
+
+@subsection Minimal startup
+
+The provided minimal startup code (@file{minstart.o}) is used
+similarly like the one for 68k (@xref{Minimal startup}). Only use
+it if you know what you are doing.
+
+@subsection libamiga.a
+
+To write programs accessing AmigaOS (rather than standard C functions
+only), a replacement for the original (copyrighted) @file{amiga.lib}
+is provided with @command{vbcc}. This replacement (@file{libamiga.a})
+automatically performs a necessary context switch to the 68k to execute
+the system call. Furthermore, it is adapted to vbcc,
+does not cause collisions with some functions (e.g. @code{sprintf})
+provided by the original @file{amiga.lib} and is available in
+small data.
+
+Specify @option{-lamiga} to link with @file{libamiga.a}.
+ 
+@subsection libauto.a
+ 
+This library corresponds to the AmigaOS/68k version (@xref{auto.lib}).
+
+@section WarpOS/PPC
+ 
+This section describes specifics of the C library for WarpOS/PPC.
+The relevant files are @file{startup.o}, 
+@file{vc.lib}, @file{m.lib}, @file{amiga.lib} and @file{auto.lib}.
+
+Note that @file{extra.lib} is no longer part of the vbcc distribution.
+It was replaced by 'PosixLib', available on Aminet
+@file{dev/c/vbcc_PosixLib.lha}, which has a much more comprehensive
+support for POSIX and Unix functions.
+
+@subsection Startup
+ 
+    The startup code @file{startup.o} sets up some
+    global variables and initializes stdin, stdout and stderr.
+    The exit code closes all open files and frees all memory.
+    If you link with a math library the startup/exit code will be taken
+    from there if necessary. 
+
+@subsection Floating point
+ 
+    Note that you have to link with a math library if you want to use
+    floating point. All math functions, special startup code and
+    printf/scanf functions which support floating point are contained in
+    the math libraries only.
+
+    The math library (@file{m.lib}) contains functions from Sun's
+    portable floating point library. Additionally, there is a
+    @command{vbcc} version of Andreas Heumann's @file{ppcmath.lib}.
+    These routines are linked against Motorola's floating point
+    routines optimized for PowerPC and therefore are much faster.
+
+    To make use of this library, link with @file{ppcmath.lib} before
+    @file{m.lib}, e.g.
+
+@example
+    vc test.c -lppcmath -lm
+@end example
+    
+
+ 
+Depending on the CPU/FPU selected, #including @file{math.h} will
+cause inline-code generated for certain math functions.
+
+@subsection Stack
+
+Stack-handling is similar to AmigaOS/68k (@xref{amiga-stack}).
+
+@subsection Restrictions
+ 
+The following list contains some restrictions of this version of the
+library:
+ 
+@table @code
+ 
+@item tmpfile()
+The @code{tmpfile()} function always returns an error.
+ 
+@item clock()
+The @code{clock()} function always returns -1. This is correct,
+according to the C standard, because on AmigaOS it is not possible to
+obtain the time used by the calling process.
+ 
+@end table
+
+@subsection amiga.lib
+ 
+To write programs accessing AmigaOS (rather than standard C functions
+only), a replacement for the original (copyrighted) @file{amiga.lib}
+is provided with @command{vbcc}. This replacement
+automatically performs a necessary context switch to the 68k to execute
+the system call. Furthermore, it is adapted to vbcc,
+does not cause collisions with some functions (e.g. @code{sprintf})
+provided by the original @file{amiga.lib} and is available in
+small data.
+ 
+Specify @option{-lamiga} to link with @file{amiga.lib}.
+
+ 
+@subsection auto.lib
+ 
+This library corresponds to the AmigaOS/68k version (@xref{auto.lib}).
+ 
+
+@section MorphOS/PPC
+ 
+This section describes specifics of the C library for MorphOS/PPC.
+The relevant files are @file{startup.o}, @file{minstart.o},
+@file{libvc.a}, @file{libvcs.a}, @file{libm.a}, @file{libms.a}
+@file{libamiga.a}, @file{libamigas.a},
+@file{libauto.a} and @file{libautos.a}.
+
+Note that @file{libextra.a} is no longer part of the vbcc distribution.
+It was replaced by 'PosixLib', available on Aminet
+@file{dev/c/vbcc_PosixLib.lha}, which has a much more comprehensive
+support for POSIX and Unix functions.
+ 
+@subsection Startup
+ 
+    The startup code @file{startup.o} sets up some
+    global variables and initializes stdin, stdout and stderr.
+    The exit code closes all open files and frees all memory.
+    If you link with a math library the startup/exit code will be taken
+    from there if necessary.
+ 
+@subsection Floating point
+ 
+    Note that you have to link with a math library if you want to use
+    floating point. All math functions, special startup code and
+    printf/scanf functions which support floating point are contained in
+    the math libraries only.
+ 
+    The math library (@file{libm.a}) is linked against the floating point
+    library libmoto by Motorola.
+ 
+Depending on the CPU/FPU selected, #including @file{math.h} will
+cause inline-code generated for certain math functions.
+
+@subsection Stack
+
+Stack-handling is similar to AmigaOS/68k (@xref{amiga-stack}).
+
+@subsection Small data model
+ 
+When using the small data model of the PPC series CPUs, you also have
+to link with appropriate libraries. Most libraries documented here are
+also available as small data versions (with an 's' attached to the
+file name). Exceptions are the math libraries.
+ 
+To compile and link a program using the small data model a command like
+ 
+@example
+vc test.c -o test -sd -lvcs -lamigas
+@end example
+ 
+might be used.
+
+@subsection Restrictions
+ 
+The following list contains some restrictions of this version of the
+library:
+ 
+@table @code
+ 
+@item tmpfile()
+The @code{tmpfile()} function always returns an error.
+ 
+@item clock()
+The @code{clock()} function always returns -1. This is correct,
+according to the C standard, because on MorphOS it is not possible to
+obtain the time used by the calling process.
+ 
+@end table
+
+@subsection libamiga.a
+
+To write programs using AmigaOS compatible functions, a replacement for
+the original (copyrighted) @file{amiga.lib}
+is provided with @command{vbcc}. This replacement (@file{libamiga.a})
+will invoke the MorphOS 68k emulator to execute the system function.
+Furthermore, it is adapted to vbcc and
+does not cause collisions with some functions (e.g. @code{sprintf})
+and is available in small data.
+
+Specify @option{-lamiga} to link with @file{libamiga.a}.
+
+
+@subsection libauto.a
+ 
+This library corresponds to the AmigaOS/68k version (@xref{auto.lib}).
+ 
+
+@section AmigaOS4/PPC
+ 
+This section describes specifics of the C library for AmigaOS4/PPC.
+The relevant files are @file{startup.o}, @file{minstart.o},
+@file{libvc.a}, @file{libvcs.a}, @file{libm.a}, @file{libms.a}
+@file{libamiga.a}, @file{libamigas.a},
+@file{libauto.a} and @file{libautos.a}.
+
+Note that @file{libextra.a} is no longer part of the vbcc distribution.
+It was replaced by 'PosixLib', available on Aminet
+@file{dev/c/vbcc_PosixLib.lha}, which has a much more comprehensive
+support for POSIX and Unix functions.
+ 
+@subsection Startup
+ 
+The startup code @file{startup.o} sets up some
+global variables and initializes stdin, stdout and stderr.
+Then it runs all constructors of dynamically linked libraries, before
+entering the main program.
+The exit code runs all destructors of dynamically linked libraries,
+closes all open files and frees all memory.
+If you link with a math library the startup/exit code will be taken
+from there if necessary.
+ 
+@subsection Floating point
+ 
+Note that you have to link with a math library if you want to use
+floating point. All math functions, special startup code and
+printf/scanf functions which support floating point are contained in
+the math libraries only.
+
+The math library (@file{libm.a}) is linked against the floating point
+library libmoto by Motorola.
+ 
+Depending on the CPU/FPU selected, #including @file{math.h} will
+cause inline-code generated for certain math functions.
+
+@subsection Stack
+
+There is no automatic stack extension for AmigaOS 4! This should be
+done automatically by the operating system.
+
+@subsection Small data model
+ 
+When using the small data model of the PPC series CPUs, you also have
+to link with appropriate libraries. Most libraries documented here are
+also available as small data versions (with an 's' attached to the
+file name). Exceptions are the math libraries.
+ 
+To compile and link a program using the small data model a command like
+ 
+@example
+vc test.c -o test -sd -lvcs -lamigas
+@end example
+ 
+might be used.
+
+@subsection Dynamic linking
+Since @file{elf.library} @code{V52.2} AmigaOS4 supports dynamic linking with
+shared object files (@file{.so} extension), similar to Unix. The default
+behaviour is to prefer linking against a shared object over a static
+library. To force static linking you might want to give the
+@option{-static} option to the @file{vc} frontend.
+
+@subsection Restrictions
+ 
+The following list contains some restrictions of this version of the
+library:
+ 
+@table @code
+ 
+@item tmpfile()
+The @code{tmpfile()} function always returns an error.
+ 
+@item clock()
+The @code{clock()} function always returns -1. This is correct,
+according to the C standard, because on AmigaOS it is not possible to
+obtain the time used by the calling process.
+
+@item Small data in dynamically linked executables
+There is a bug in @file{elf.library} @code{V52.4} (and earlier), which
+doesn't load @code{.sdata} and @code{.sbss} as a contiguous block into
+memory, when the executable requires dynamic linking. I decided against
+writing a workaround, as the bug should be fixed in OS4.
+
+@end table
+
+@subsection libamiga.a
+
+In contrast to other amigalibs the OS4 @file{libamiga.a} doesn't contain
+any stubs for calling system functions. AmigaOS 4 system calls are done
+through special macros in the SDK's interface header files.
+
+The library only includes some remaining amigalib functions, not already
+integrated into the OS, like @code{CreateIO()}, but its use is discouraged.
+
+Specify @option{-lamiga} to link with @file{libamiga.a}.
+
+
+@subsection libauto.a
+
+Auto-open -close functions for the following libraries are included:
+
+@code{Asl, CyberGfx, DataTypes, Dos, GadTools, Graphics, Icon, IFFParse,
+      Intuition, Locale, LowLevel, Picasso96, BSDSocket, Utility, Workbench}
+
+Note that gcc's @file{libauto.a} doesn't include CyberGfx.
+ 
+
+@subsection newlib
+
+@subsubsection Introduction
+
+    newlib.library is a shared AmigaOS4 library, which is covered by
+    several BSD like licenses,
+    and includes standard ANSI and POSIX functions as well as some
+    functions common in Unix, BSD and similar operating systems. It is
+    part of the OS4 SDK.
+
+    The config file @file{newlib} will be created on installation to
+    use the paths for header files and libraries pointing to the
+    newlib from the SDK. 
+
+    What are the main differences between vclib and newlib?
+
+@itemize @minus
+@item vclib contains (almost) only standard ANSI functions. If you want
+      to port Unix programs you will probably miss a lot of functions.
+      Also newlib supports things like mapping Unix directory paths to
+      Amiga paths or expanding wildcards in command lines automatically.
+ 
+@item Programs compiled for newlib will be shorter because the code for all
+      functions is not contained in the executable itself.
+
+@item Programs compiled for newlib will need the shared object
+      @file{libc.so} present when started.
+
+@item Programs compiled for newlib will probably need more memory because
+      the entire (rather large) @file{libc.so} will be loaded into memory.
+      With vclib only the functions your program uses will be in ram.
+      However if you have several programs using newlib at the same
+      time only one copy of @file{libc.so} should be loaded.
+@end itemize
+
+    Things you should note:
+ 
+@itemize @minus
+@item With newlib you do not need extra math-libraries.
+ 
+@item You must link with a vbcc-specific @file{startup.o} from the newlib
+      @file{lib/} directory as startup code.
+      The config-file @file{newlib} will usually take care of this.
+ 
+@item You _must_ use the newlib-includes from the SDK
+      rather than the ones which are for vc.lib.
+      The config-file @file{newlib} will usually take care of this.
+@end itemize
+
+
+@subsubsection Usage
+
+To compile a program to use newlib for OS4 you must make sure the proper
+config-file (@file{newlib}) is used, e.g.
+ 
+@example
+        vc +newlib hello.c
+@end example
+
+With a new SDK this will usually generate a dynamically linked executable,
+which requires @file{libc.so}. To force a statically linked executable:
+
+@example
+        vc +newlib -static hello.c
+@end example
+
+
+@section Atari MiNT
+ 
+This section describes specifics of the C library for MiNT, a multitasking
+operating system for Atari 16/32 bit computers. Executables linked with
+this C library do also run on plain TOS, without modifications.
+The relevant files are @file{startup.o}, @file{minstart.o},
+@file{libvc.a}, @file{libvcs.a}, @file{libm.a}, @file{libms.a}.
+
+@subsection Startup
+ 
+The startup code @file{startup.o} sets up some
+global variables and initializes stdin, stdout and stderr and returns
+the unneeded memory to the system.
+The exit code closes all open files and frees all memory.
+ 
+@subsection Floating point
+
+Note that you have to link with a math library if you want to use
+floating point. All math functions, special startup code and
+printf/scanf functions which support floating point are contained in
+the math libraries only.
+
+At the moment (@file{libm.a}) is a soft-float library, which is compatible
+with all the Atari models without an FPU. There may be real FPU support
+in future updates.
+
+@subsection Stack
+
+The default stack size is 64k. There is a MiNT tool called @file{stack}
+which can adjust the stack size of an executable to any value, by looking
+for a symbol named @code{__stksize} (defined by vclib's startup code).
+
+@subsection Small data model
+
+When using the small data model, you also have
+to link with appropriate libraries. Most libraries documented here are
+also available as small data versions (with an 's' attached to the
+file name).
+ 
+To compile and link a program using the small data model a command like
+ 
+@example
+vc test.c -o test -sd -lms -lvcs
+@end example
+ 
+might be used.
+
+@subsection Restrictions
+ 
+The following list contains some restrictions of this version of the
+library:
+ 
+@table @code
+ 
+@item tmpfile()
+The @code{tmpfile()} function always returns an error.
+ 
+@item clock()
+The @code{clock()} function always returns -1. This is correct,
+according to the C standard, because under MiNT it is not possible to
+obtain the time used by the calling process.
+
+@end table
+
+
+@section Atari TOS
+ 
+This section describes specifics of the C library for Atari 16/32 bit
+computers (Atari ST/TT, Atari Falcon, etc.).
+The relevant files are @file{startup.o}, @file{minstart.o},
+@file{libvc.a}, @file{libvcs.a}, @file{libm.a}, @file{libms.a}.
+
+This target differs from Atari MiNT, as it uses 16 bit @code{int} data types.
+@code{int} arguments on the stack are also passed in 2 bytes. Therefore you
+should use the 16 bit aware @code{vbccm68ks} compiler.
+
+@subsection Startup
+ 
+The startup code @file{startup.o} sets up some
+global variables and initializes stdin, stdout and stderr and returns
+the unneeded memory to the system.
+The exit code closes all open files and frees all memory.
+ 
+@subsection Floating point
+
+Note that you have to link with a math library if you want to use
+floating point. All math functions, special startup code and
+printf/scanf functions which support floating point are contained in
+the math libraries only.
+
+At the moment (@file{libm.a}) is a soft-float library, which is compatible
+with all the Atari models without an FPU. There may be real FPU support
+in future updates.
+
+@subsection Stack
+
+Stack-handling is similar to AmigaOS/68k (@xref{amiga-stack}).
+The default stack size is 4k.
+
+@subsection Small data model
+
+When using the small data model, you also have
+to link with appropriate libraries. Most libraries documented here are
+also available as small data versions (with an 's' attached to the
+file name).
+ 
+To compile and link a program using the small data model a command like
+ 
+@example
+vc test.c -o test -sd -lms -lvcs
+@end example
+ 
+might be used.
+
+@subsection Restrictions
+ 
+The following list contains some restrictions of this version of the
+library:
+ 
+@table @code
+ 
+@item tmpfile()
+The @code{tmpfile()} function always returns an error.
+ 
+@item clock()
+The @code{clock()} function always returns -1. This is correct,
+according to the C standard, because under TOS it is not possible to
+obtain the time used by the calling process.
+
+@end table

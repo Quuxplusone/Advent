@@ -1,0 +1,33 @@
+
+INTRODUCTION
+
+    vprof is a portable utility to visualize the profiling informations,
+    which are usually stored in the file "mon.out".
+    It shows the percentage of total time spent in a function, the
+    total time in seconds, the number of function calls and the time
+    by call in ms.
+
+
+LEGAL
+
+    vprof is freeware.
+
+
+USAGE
+
+    vprof [mon.out]
+
+    If the profiling file has another name than "mon.out", you may
+    specify it as an argument to vprof.
+
+    Some vbcc code generators are able to create profiling information
+    by compiling with the -prof option (vbccm68k, for example).
+
+
+BUGS
+
+    The percentage column is still not working and will always
+    display "n.a.".
+
+
+Frank Wille                                              frank@phoenix.owl.de

@@ -1,0 +1,258 @@
+This chapter documents the Backend for the c16x/st10 microcontroller family.
+
+@section Additional options for this version
+
+This backend provides the following additional options:
+
+@table @option
+
+    @item -merge-constants
+                Place identical floating point constants at the same
+                memory location. This can reduce program size and increase
+                compilation time.
+
+    @item -const-in-data
+                By default constant data will be placed in a read-only
+                section. Using this option it will be placed in the
+                data section.
+
+    @item -no-delayed-popping
+                By default arguments of function calls are not always popped
+                from the stack immediately after the call, so that the
+                arguments of several calls may be popped at once.
+                With this option vbcc can be forced to pop them after every
+                function call.
+                This may simplify debugging and very slightly reduce the
+                stack size needed by the compiled program.
+
+    @item -no-peephole
+                Do not perform peephole-optimizations.
+
+    @item -tasking
+                Produce output for the Tasking assembler.
+
+    @item -mtiny
+              Assume all functions are within one code-segment.
+                Shorter instructions for calling functions are used and
+                function-pointers will be only 2 bytes long.
+                This results in shorter and faster code.
+
+    @item -mlarge
+             All objects which are not explicitly qualified are assumed
+                to be far (i.e. they may be in different segments but must
+                not cross one segment-boundary). The default pointer size
+                will be 4.
+
+    @item -mhuge
+              All objects which are not explicitly qualified are assumed
+                to be huge (i.e. they may be in different segments and may
+                cross segment-boundaries). The default pointer size will
+                be 4.
+
+    @item -int32
+              Do not use.
+@end table
+
+@section ABI
+
+        This backend supports the following registers:
+
+        @itemize @minus
+        @item @code{R0} through @code{R15} for the general purpose registers
+        @end itemize
+
+        Additionally, the register pairs
+        @code{R2/R3, R3/R4, R4/R5, R6/R7, R7/R8, R8/R9, R12/R13, R13/R14,}
+        and @code{R15/R15}
+        are available.
+
+        @code{R1, R11} and @code{R12} are reserved by the backend.
+
+    The current version generates assembly output for use with the vasm
+    assembler. Optionally, assembly code for the Tasking
+    assembler can be generated.
+    The default memory model corresponds to the Tasking small-memory
+    model with 16bit data-pointers and 32bit function-pointers.
+    However, the @code{DPPx} registers have to be set up in a way to
+    create a linear 16bit address space (i.e. @code{DPPx=x}).
+    The generated code should work on systems with c161, c163, c164, c165
+    and c167 microcontrollers as well as ST10 derivates. Old versions like
+    the c166 are not supported
+
+    The registers @code{R1-R5} and @code{R10-R15} are used as scratch registers (i.e. they
+    can be destroyed in function calls), all other registers are preserved.
+
+    @code{R0} is used as user stack pointer. Automatic variables and temporaries
+    are put on the user stack. Return addresses are pushed on the system
+    stack.
+
+    The first 4 function arguments which have integer or pointer types
+    are passed in registers @code{R12} through @code{R15}.
+
+    Integers and pointers are returned in @code{R4/R5}.
+    All other types are returned by passing the function the address
+    of the result as a hidden argument - so when you call such a function
+    without a proper declaration in scope you can expect a crash.
+
+    The elementary data types are represented like:
+
+    @example
+    type        size in bits        alignment in bytes
+
+    char                8                       1 
+    short              16                       2 
+    int                16                       2 
+    long               32                       2 
+    long long          n/a                     n/a 
+    near pointers      16                       2
+    far pointers       32                       2
+    huge pointers      32                       2
+    float              n/a                     n/a
+    double             n/a                     n/a
+    @end example
+
+
+@section Target-specific variable-attributes
+ 
+    The c16x-backend offers the following variable attributes:
+
+@table @code
+
+    @item __interrupt
+                 Return with rfi rather than blr.
+                 @code{MDL/MDH} will be saved, however it is recommended
+                 to switch to a new register bank as the gprs are
+                 not saved.
+                 Also, @code{DPP0-DPP3} are not saved (the compiler does not
+                 use them).
+
+    @item __interrupt(<vector>)
+                Like @code{__interrupt}, but also places a jump-instruction
+                to the interrupt service at the corresponding vector table
+                address (needs support from library and linker file).
+
+    @item __section(<name>)
+                 Place this object/function in section <name>.
+
+    @item __rbank(<bank>)
+                 Switch to another register-bank for this function.
+@end table
+
+
+@section Target-specific type-attributes
+ 
+    The c16x-backend offers the following type attributes:
+
+@table @code
+    @item __near
+          Object resides within the same segment.
+
+    @item __far
+           Object may reside in a different segment, but does not cross
+             a segment-boundary.
+
+    @item __huge
+          Object may reside in a different segment and may cross a
+             segment-boundary
+
+     @item __section(<name>)
+           Place this function or object in section <name>.
+
+     @item __sfr(<addr>)
+           Used to declare a special function register at <addr>.
+
+ Example:
+ @example
+         __sfr(0xff10) volatile unsigned int PSW;
+ @end example
+
+     @item __esfr(<addr>)
+           The same for extended special function registers.
+
+     @item __sfrbit(<addr>,<bit>)
+           Declare a single bit in the bit-addressable area.
+
+ Example:
+ @example
+         __sfr(0xff10,11) volatile __bit IEN;
+ @end example
+
+     @item __esfrbit(<addr>,<bit>)
+           The same for the extended bit-addressable area.
+
+@end table
+
+@section Target-specific types
+
+    The c16x-backend offers the following additional types:
+
+@table @code
+    @item __bit
+           A single bit in the bit-addressable inernal RAM-area.
+             Only static and external variables may use this type.
+             It is not allowed for auto or register storage-class.
+             Also, arrays of bits, pointers to bits or bits within
+             aggregates are not allowed.
+             Conversion of a bit to an integral type yields 0 if the
+             bit is cleared and 1 if it is set..
+             Conversion of an integral type to a bit clears the bit if
+             the integer is equal to 0 and sets it otherwise.
+@end table
+
+@section Predefined Macros
+
+        This backend defines the following macros:
+
+@table @code
+        @item __C16X__
+        @item __C167__
+        @item __ST10__        
+@end table
+
+
+
+@section Stack
+
+    If the @option{-stack-check} option is used, every function-prologue will
+    call the function @code{__stack_check} with the stacksize needed by this
+    function in register @code{R1}. This function has to consider its own
+    stacksize and must restore all registers.
+
+    Only stack-checking of the user-stack is supported. Checking the
+    system-stack is supported by hardware.
+
+
+
+@section Stdarg
+
+    A possible <stdarg.h> could look like this:
+
+@example
+    typedef char *va_list;
+
+    va_list __va_start(void);
+
+    #define __va_rounded_size(__TYPE)  \
+      (((sizeof (__TYPE) + sizeof (int) - 1) / sizeof (int)) * sizeof (int))
+
+    #define va_start(__AP,__LA) (__AP=__va_start())
+
+    #define va_arg(__AP, __TYPE) \
+     (__AP = ((char *) (__AP) + __va_rounded_size (__TYPE)),     \
+      *((__TYPE *)((__AP) - __va_rounded_size (__TYPE))))
+ 
+    #define va_end(__AP) ((__AP) = 0)
+@end example
+
+
+@section Known Problems
+
+@itemize @minus
+    @item no floating-point
+    @item huge-pointers are sometimes derferenced as far-pointers
+    @item addressing-modes sometimes ignore huge
+    @item initialized data is placed in RAM, bits are not initialized
+    @item struct-copy only works with near-pointers
+    @item near/far-conversion assumes DPP0-DPP3 linear
+@end itemize
+

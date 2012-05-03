@@ -1,0 +1,123 @@
+This chapter documents the Backend for the Intel i386 processor family.
+
+@section Additional options for this version
+
+This backend provides the following additional options:
+
+@table @option
+
+    @item -longalign
+                 Align multibyte-values on 4-byte-boundaries. Needed by some
+                operating systems.
+
+    @item -elf
+               Do not use a '_'-prefix in front of external identifiers.
+                Use a '.'-prefix for label names.
+
+    @item -merge-constants
+                Place identical floating point constants at the same
+                memory location. This can reduce program size and increase
+                compilation time.
+
+    @item -const-in-data
+                By default constant data will be placed in a read-only
+                section. Using this option it will be placed in the data section
+                Note that on operating systems with memory protection this
+                option will disable write-protection of constant data.
+
+    @item -no-delayed-popping
+                By default arguments of function calls are not always popped
+                from the stack immediately after the call, so that the
+                arguments of several calls may be popped at once.
+                With this option vbcc can be forced to pop them after every
+                function call.
+                This may simplify debugging and very slightly reduce the
+                stack size needed by the compiled program.
+
+    @item -safe-fp 
+                Do not use the floating-point-stack for register variables.
+                At the moment this is necessary as vbcci386 still has problems
+                in some cases otherwise.
+@end table
+
+
+@section ABI
+
+        This backend supports the following registers:
+
+        @itemize @minus
+        @item @code{%eax, %ebx, %ecx, %edx}
+        @item @code{%esi, %edi, %ebp, %esp}
+        @end itemize
+
+        (And @code{%st(0)-%st(7)} for the floating point stack but these must not
+         bes used for register variables because they cannot be handled like
+         normal registers.)
+
+    The current version generates assembly output for use with the GNU
+    assembler. The generated code should work on systems with Intel 80386
+    or higher CPUs with FPU and compatible chips.
+
+    The registers @code{%eax, %ecx} and @code{%edx} (as well as the floating point stack)
+    are used as scratch registers (i.e. they can be destroyed in function
+    calls), all other registers are preserved.
+
+    All elementary types up to 4 bytes are returned in register @code{%eax}
+    Floating point values are returned in %st(0).
+    All other types are returned by passing the function the address
+    of the result as a hidden argument - so when you call such a function
+    without a proper declaration in scope you can expect a crash.
+
+    @code{vbcc} uses @code{%eax, %ebx, %ecx, %edx, %esi, %edi, %ebp} and the floating point
+    stack for temporary results and register variables. Local variables
+    are created on the stack and addressed via @code{%esp}.
+
+    The elementary data types are represented like:
+
+    @example
+    type        size in bits        alignment in bytes (-longalign)
+
+    char                8                       1 (1)
+    short              16                       2 (4)
+    int                32                       2 (4)
+    long               32                       2 (4)
+    long long          n/a                      n/a
+    all pointers       32                       2 (4)
+    float              32                       2 (4)
+    double             64                       2 (4)
+    @end example
+
+@section Predefined Macros
+
+        This backend defines the following macros:
+
+@table @code
+        @item __I386__
+        @item __X86__
+        
+@end table
+
+
+@section Stdarg
+
+    A possible <stdarg.h> could look like this:
+
+@example
+    typedef unsigned char *va_list;
+
+    #define va_start(ap, lastarg) ((ap) = (va_list)(&lastarg + 1))
+    #define va_arg(ap, type) ((ap) += \
+      (sizeof(type)<sizeof(int)?sizeof(int):sizeof(type)), ((type *)(ap))[-1])
+    #define va_end(ap) ((ap) = 0L)
+@end example
+
+
+@section Known Problems
+
+@itemize @minus
+    @item generated code is rather poor
+    @item  functions which return floating-point values sometimes are broken(?)
+    @item  in some cases (scare registers) non-reentrant code is generated
+@end itemize
+
+

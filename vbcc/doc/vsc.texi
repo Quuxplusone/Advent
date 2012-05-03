@@ -1,0 +1,52 @@
+vsc - scheduler for vbcc (c) in 1997-99 by Volker Barthelmann
+
+
+@section Introduction
+
+    vsc is an instruction-scheduler which reorders the assembly output of
+    vbcc and tries to improve performance of the generated code by avoiding
+    pipeline stalls etc.
+
+    Like the compiler vbcc it is split into a target independent and a
+    target dependent part. However there may be code-generators for vbcc
+    which do not have a corresponding scheduler.
+
+    This document only deals with the target independent parts of vsc.
+    Be sure to read all the documents for your machine.
+
+
+@section Usage
+
+    Usually @command{vsc} will be called by a frontend. However if you call it
+    directly, it has to be done like this:
+
+@example
+    vsc [options] input-file output-file
+@end example
+
+    The following options are supported:
+
+@table @option
+    @item -quiet
+                      Do not print the copyright notice.
+
+    @item -debug=<n>
+                  Set debug-level to <n>.
+@end table
+
+
+    Note that depending on the target @command{vbcc} may insert hints into the
+    generated code to tell vsc what CPU to schedule for. Code
+    scheduled for a certain CPU may run much slower on slightly different
+    CPUs. Therefore it is especially important to specify the correct
+    target-CPU when compiling.
+
+
+@section Known problems
+
+@itemize @minus
+    @item works only on basic-blocks
+@end itemize
+
+
+

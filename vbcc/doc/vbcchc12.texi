@@ -1,0 +1,123 @@
+This chapter documents the Backend for the 68hc12 microcontroller family.
+
+Note that this backend is not done!
+
+@section Additional options for this version
+
+This backend provides the following additional options:
+
+@table @option
+
+    @item -merge-constants
+                Place identical floating point constants at the same
+                memory location. This can reduce program size and increase
+                compilation time.
+
+    @item -const-in-data
+                By default constant data will be placed in a read-only
+                section. Using this option it will be placed in the
+                data section.
+
+    @item -no-delayed-popping
+                By default arguments of function calls are not always popped
+                from the stack immediately after the call, so that the
+                arguments of several calls may be popped at once.
+                With this option vbcc can be forced to pop them after every
+                function call.
+                This may simplify debugging and very slightly reduce the
+                stack size needed by the compiled program.
+
+    @item -no-peephole
+                Do not perform peephole-optimizations.
+
+    @item -mem-cse
+                Try to hold values loaded from memory in registers and
+                reuse them. Due to the small register-set of the hc12
+                this is disabled by default as it increases register-
+                pressure and tends to spill to the stack.
+@end table
+
+@section ABI
+
+    The current version generates assembly output for use with the GNU
+    assembler using the non-banked model.
+
+        This backend supports the following registers:
+
+        @itemize @minus
+        @item @code{d}  for the accumulator (also used for byte, i.e. @code{a})
+        @item @code{x}  for index register x
+        @item @code{y}  for index register y
+        @item @code{sp} for the stack-pointer
+        @end itemize
+
+    All registers are scratch (i.e. caller-save).
+
+    The first function arguments which has integer or pointer types
+    is passed in the accumulator @code{d} or the register pair @code{d/x}.
+       The
+    remaining arguments are passed on the stack.
+
+    Integers and pointers are returned in @code{d} or @code{d/x}.
+    All other types are returned by passing the function the address
+    of the result as a hidden argument - so when you call such a function
+    without a proper declaration in scope you can expect a crash.
+
+    The elementary data types are represented like:
+@example
+    type        size in bits        alignment in bytes
+
+    char                8                       1
+    short              16                       2
+    int                16                       2
+    long                 currently not supported
+    near pointers      16                       2
+    far pointers         currently not supported
+    huge pointers        currently not supported
+    float                currently not supported
+    double               currently not supported
+@end example
+
+
+@section Target-specific variable-attributes
+ 
+    The hc12-backend offers the following variable attributes:
+
+@table @code 
+    @item __interrupt
+         Return with @code{rfi} rather than @code{blr}.
+
+    @item __section("name","attr")
+                 Place this function/object in section "section"
+                 with attributes "attr".
+@end table
+
+@section Predefined Macros
+
+        This backend defines the following macros:
+
+@table @code
+        @item __HC12__
+        
+@end table
+
+@section Stack
+
+    If the @option{-stack-check} option is used, every function-prologue will
+    call the function @code{__stack_check} with the stacksize needed by this
+    function in register @code{y}. This function has to consider its own
+    stacksize and must restore all registers.
+
+
+@section Stdarg
+
+    To be written...
+
+
+@section Known Problems
+
+@itemize @minus
+    @item this backend is far from done...
+@end itemize
+
+
