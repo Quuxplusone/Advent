@@ -1,6 +1,6 @@
 diff -Nur vbcc/config/z vbcc-patched/config/z
 --- vbcc/config/z	1969-12-31 16:00:00.000000000 -0800
-+++ vbcc-patched/config/z	2012-05-02 22:25:04.463913151 -0700
++++ vbcc-patched/config/z	2012-05-02 23:25:11.883830273 -0700
 @@ -0,0 +1,5 @@
 +-cc=../bin/vbccz -quiet %s -o=%s %s -O=%ld
 +-ccv=../bin/vbccz %s -o=%s %s -O=%ld
@@ -8,8 +8,8 @@ diff -Nur vbcc/config/z vbcc-patched/config/z
 +-ld=echo "Don't know how to link Z-machine code" 1>&2; exit 0
 +-rm=rm %s
 diff -Nur vbcc/datatypes/dtgen.c vbcc-patched/datatypes/dtgen.c
---- vbcc/datatypes/dtgen.c	2012-05-02 22:32:05.471903480 -0700
-+++ vbcc-patched/datatypes/dtgen.c	2012-05-02 22:25:04.463913151 -0700
+--- vbcc/datatypes/dtgen.c	2012-05-02 23:35:05.371816638 -0700
++++ vbcc-patched/datatypes/dtgen.c	2012-05-02 23:25:11.883830273 -0700
 @@ -133,8 +133,8 @@
    do{
      printf("Type y or n [%s]: ",def);
@@ -22,8 +22,8 @@ diff -Nur vbcc/datatypes/dtgen.c vbcc-patched/datatypes/dtgen.c
    return *in=='y';
  }
 diff -Nur vbcc/frontend/vc.c vbcc-patched/frontend/vc.c
---- vbcc/frontend/vc.c	2012-05-02 22:32:05.475903480 -0700
-+++ vbcc-patched/frontend/vc.c	2012-05-02 22:25:04.463913151 -0700
+--- vbcc/frontend/vc.c	2012-05-02 23:35:05.379816637 -0700
++++ vbcc-patched/frontend/vc.c	2012-05-02 23:25:11.883830273 -0700
 @@ -2,6 +2,7 @@
  /*  (c) in 1995-2010 by Volker Barthelmann  */
  /*  #define AMIGA for Amiga-Version         */
@@ -154,9 +154,87 @@ diff -Nur vbcc/frontend/vc.c vbcc-patched/frontend/vc.c
          if(!strncmp(parm,"-cf=",4)){cf=parm+4;*parm=0;}
          if(!strncmp(parm,"-isc=",5)){scname=parm+5;*parm=0;}
          if(!strncmp(parm,"-iscv=",6)){scv=parm+6;*parm=0;}
+diff -Nur vbcc/ic.c vbcc-patched/ic.c
+--- vbcc/ic.c	2012-05-02 23:35:05.379816637 -0700
++++ vbcc-patched/ic.c	2012-05-02 23:34:47.511817048 -0700
+@@ -915,6 +915,74 @@
+         struct IC *merk_fp,*lp;
+ 	unsigned int merk_opushed=opushed;
+ #endif
++	/* [ajo] The following code optimizes puts("hello") into a single
++	 * Z-machine opcode: print "hello". This cuts down a little bit on
++	 * code size, but greatly on static data size, because (as far as I
++	 * know) the Z-machine stores text strings differently from regular
++	 * static data. */
++        if (p->left->flags==ADDRESS &&
++            p->left->left->flags==IDENTIFIER &&
++            p->left->left->o.v->storage_class==EXTERN &&
++            !strcmp(p->left->left->o.v->identifier, "puts")) {
++            /* Generating IC for puts() of something */
++            struct argument_list *al = p->alist;
++            if (al != NULL && al->arg != NULL && al->next == NULL &&
++                al->arg->left != NULL && al->arg->left->flags == STRING) {
++                /* Generating IC for puts() of a string literal */
++                int optimize = 1;
++                char *puts_buffer = mymalloc(100);
++                int len = 0, cap = 100;
++                struct const_list *cl = al->arg->left->cl;
++                strcpy(puts_buffer, "\tprint \"");
++                len = 8;
++                while (cl != NULL) {
++                    int ch = cl->other->val.vchar;
++                    cl = cl->next;
++                    if (ch == '\0') break;
++                    if (len == cap-16) {
++                        puts_buffer = myrealloc(puts_buffer, cap *= 2);
++                    }
++                    switch (ch) {
++                        case '\n': puts_buffer[len++] = '^'; break;
++                        case '\t': strcpy(puts_buffer+len, "@{9}"); len += 4; break;
++                        case '"': puts_buffer[len++] = '~'; break;
++                        case '@': strcpy(puts_buffer+len, "@{40}"); len += 5; break;
++                        case '\\': strcpy(puts_buffer+len, "@{5c}"); len += 5; break;
++                        case '^': optimize = 0; break;
++                        case '~': strcpy(puts_buffer+len, "@{7e}"); len += 5; break;
++                        default:
++                            puts_buffer[len++] = ch;
++                            if (ch < 32 || ch > 126)
++                                optimize = 0;
++                            break;
++                    }
++                }
++                if (optimize) {
++                    strcpy(puts_buffer+len, "^\";\n");
++                    /* Now we need to turn this into a CALL of a made-up function
++                     * with appropriate inline assembly. */
++                    char pfname[50];
++                    static int counter = 0;
++                    struct Typ voidt = {VOID};
++                    struct Typ *voidfunctyp = new_typ();
++                    sprintf(pfname, "XXinternal_pf_%07x_puts", ++counter);
++                    voidfunctyp->next = clone_typ(&voidt);  /* returning void */
++                    voidfunctyp->exact = mymalloc(sizeof *voidfunctyp->exact);
++                    voidfunctyp->exact->count = 0;  /* taking unspecified arguments */
++                    voidfunctyp->flags = FUNKT;
++                    struct Var *pseudofunc = add_var(pfname, voidfunctyp, EXTERN, NULL);
++                    pseudofunc->fi = new_fi();
++                    pseudofunc->fi->inline_asm = puts_buffer;
++                    p->left->left->o.v = pseudofunc;
++                    p->alist = NULL;
++                    gen_IC(p, ltrue, lfalse);
++                    return;
++                } else {
++                    free(puts_buffer);
++                }
++            }
++        }
++
+         if(p->left->flags==ADDRESS&&p->left->left->flags==IDENTIFIER){
+             struct Var *v;
+             gen_IC(p->left,0,0); r=1;
 diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
---- vbcc/machines/z/machine.c	2012-05-02 22:32:05.483903479 -0700
-+++ vbcc-patched/machines/z/machine.c	2012-05-02 22:25:59.755911882 -0700
+--- vbcc/machines/z/machine.c	2012-05-02 23:35:05.387816638 -0700
++++ vbcc-patched/machines/z/machine.c	2012-05-02 23:25:11.887830273 -0700
 @@ -60,6 +60,8 @@
  static char FILE_[]=__FILE__;
  char cg_copyright[]="vbcc code-generator for Z-machine V0.0a (c) in 2001 by David Given";
@@ -185,8 +263,8 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  				fprintf(fp, "XXX !!! bad konst type %X\n", typf);
  		}
 diff -Nur vbcc/Makefile vbcc-patched/Makefile
---- vbcc/Makefile	2012-05-02 22:32:05.467903480 -0700
-+++ vbcc-patched/Makefile	2012-05-02 22:25:04.467913151 -0700
+--- vbcc/Makefile	2012-05-02 23:35:05.367816638 -0700
++++ vbcc-patched/Makefile	2012-05-02 23:25:11.887830273 -0700
 @@ -1,6 +1,6 @@
  
  # used to create vbcc, vc and ucpp
