@@ -2,9 +2,9 @@
 export VBCC:=../vbcc
 
 VBCCZ = ../vbcc/bin/vc +z -O=3 -DZ_MACHINE -Iz-machine/include
-MAXES = \$$MAX_ARRAYS=800 \
-        \$$MAX_ZCODE_SIZE=42000 \
-		\$$MAX_STATIC_DATA=57000
+MAXES = \$$MAX_ARRAYS=900 \
+        \$$MAX_ZCODE_SIZE=40000 \
+        \$$MAX_STATIC_DATA=65000
 
 all: advent advent.z8
 

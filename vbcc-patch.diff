@@ -1,6 +1,6 @@
 diff -Nur vbcc/config/z vbcc-patched/config/z
 --- vbcc/config/z	1969-12-31 16:00:00.000000000 -0800
-+++ vbcc-patched/config/z	2012-05-02 21:47:53.911964398 -0700
++++ vbcc-patched/config/z	2012-05-02 22:25:04.463913151 -0700
 @@ -0,0 +1,5 @@
 +-cc=../bin/vbccz -quiet %s -o=%s %s -O=%ld
 +-ccv=../bin/vbccz %s -o=%s %s -O=%ld
@@ -8,8 +8,8 @@ diff -Nur vbcc/config/z vbcc-patched/config/z
 +-ld=echo "Don't know how to link Z-machine code" 1>&2; exit 0
 +-rm=rm %s
 diff -Nur vbcc/datatypes/dtgen.c vbcc-patched/datatypes/dtgen.c
---- vbcc/datatypes/dtgen.c	2012-05-02 21:39:45.727975615 -0700
-+++ vbcc-patched/datatypes/dtgen.c	2012-05-02 22:01:51.423945157 -0700
+--- vbcc/datatypes/dtgen.c	2012-05-02 22:32:05.471903480 -0700
++++ vbcc-patched/datatypes/dtgen.c	2012-05-02 22:25:04.463913151 -0700
 @@ -133,8 +133,8 @@
    do{
      printf("Type y or n [%s]: ",def);
@@ -22,8 +22,8 @@ diff -Nur vbcc/datatypes/dtgen.c vbcc-patched/datatypes/dtgen.c
    return *in=='y';
  }
 diff -Nur vbcc/frontend/vc.c vbcc-patched/frontend/vc.c
---- vbcc/frontend/vc.c	2012-05-02 21:39:45.731975615 -0700
-+++ vbcc-patched/frontend/vc.c	2012-05-02 21:47:53.911964398 -0700
+--- vbcc/frontend/vc.c	2012-05-02 22:32:05.475903480 -0700
++++ vbcc-patched/frontend/vc.c	2012-05-02 22:25:04.463913151 -0700
 @@ -2,6 +2,7 @@
  /*  (c) in 1995-2010 by Volker Barthelmann  */
  /*  #define AMIGA for Amiga-Version         */
@@ -154,9 +154,39 @@ diff -Nur vbcc/frontend/vc.c vbcc-patched/frontend/vc.c
          if(!strncmp(parm,"-cf=",4)){cf=parm+4;*parm=0;}
          if(!strncmp(parm,"-isc=",5)){scname=parm+5;*parm=0;}
          if(!strncmp(parm,"-iscv=",6)){scv=parm+6;*parm=0;}
+diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
+--- vbcc/machines/z/machine.c	2012-05-02 22:32:05.483903479 -0700
++++ vbcc-patched/machines/z/machine.c	2012-05-02 22:25:59.755911882 -0700
+@@ -60,6 +60,8 @@
+ static char FILE_[]=__FILE__;
+ char cg_copyright[]="vbcc code-generator for Z-machine V0.0a (c) in 2001 by David Given";
+ 
++extern char *strdup(const char *);
++
+ /* Command-line flags. */
+ 
+ int g_flags[MAXGF] = {
+@@ -1096,7 +1098,7 @@
+ 			case UNSIGNED|CHAR:	c.val.constant = obj->val.vuchar;	break;
+ 			case SHORT:		c.val.constant = obj->val.vshort;	break;
+ 			case UNSIGNED|SHORT:	c.val.constant = obj->val.vushort;	break;
+-		case POINTER:	      ierror(0);
++			case POINTER:	      	c.val.constant = obj->val.vulong;	break;
+ 			case INT:		c.val.constant = obj->val.vint;		break;
+ 			case UNSIGNED|INT:	c.val.constant = obj->val.vuint;	break;
+ 			default:
+@@ -1266,7 +1268,7 @@
+ 			case UNSIGNED|SHORT:	op->val.constant = obj->val.vushort;	break;
+ 			case INT:		op->val.constant = obj->val.vint;	break;
+ 			case UNSIGNED|INT:	op->val.constant = obj->val.vuint;	break;
+-		case POINTER:		ierror(0);
++			case POINTER:		op->val.constant = obj->val.vulong;	break;
+ 			default:
+ 				fprintf(fp, "XXX !!! bad konst type %X\n", typf);
+ 		}
 diff -Nur vbcc/Makefile vbcc-patched/Makefile
---- vbcc/Makefile	2012-05-02 21:39:45.727975615 -0700
-+++ vbcc-patched/Makefile	2012-05-02 21:47:53.915964399 -0700
+--- vbcc/Makefile	2012-05-02 22:32:05.467903480 -0700
++++ vbcc-patched/Makefile	2012-05-02 22:25:04.467913151 -0700
 @@ -1,6 +1,6 @@
  
  # used to create vbcc, vc and ucpp
