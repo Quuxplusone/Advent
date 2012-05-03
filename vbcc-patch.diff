@@ -1,0 +1,167 @@
+diff -Nur vbcc/config/z vbcc-patched/config/z
+--- vbcc/config/z	1969-12-31 16:00:00.000000000 -0800
++++ vbcc-patched/config/z	2012-05-02 21:47:53.911964398 -0700
+@@ -0,0 +1,5 @@
++-cc=../bin/vbccz -quiet %s -o=%s %s -O=%ld
++-ccv=../bin/vbccz %s -o=%s %s -O=%ld
++-as=cp %s %s
++-ld=echo "Don't know how to link Z-machine code" 1>&2; exit 0
++-rm=rm %s
+diff -Nur vbcc/datatypes/dtgen.c vbcc-patched/datatypes/dtgen.c
+--- vbcc/datatypes/dtgen.c	2012-05-02 21:39:45.727975615 -0700
++++ vbcc-patched/datatypes/dtgen.c	2012-05-02 22:01:51.423945157 -0700
+@@ -133,8 +133,8 @@
+   do{
+     printf("Type y or n [%s]: ",def);
+     fflush(stdout);
+-    fgets(in,sizeof(in),stdin);
+-    if(*in=='\n') strcpy(in,def);
++    if (fgets(in,sizeof(in),stdin) == NULL || *in == '\n')
++      strcpy(in,def);
+   }while(*in!='y'&&*in!='n');
+   return *in=='y';
+ }
+diff -Nur vbcc/frontend/vc.c vbcc-patched/frontend/vc.c
+--- vbcc/frontend/vc.c	2012-05-02 21:39:45.731975615 -0700
++++ vbcc-patched/frontend/vc.c	2012-05-02 21:47:53.911964398 -0700
+@@ -2,6 +2,7 @@
+ /*  (c) in 1995-2010 by Volker Barthelmann  */
+ /*  #define AMIGA for Amiga-Version         */
+ 
++#include <assert.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdio.h>
+@@ -204,41 +205,50 @@
+     }
+ }
+ 
++static char *derelativize(int from_cfg, char *old_path)
++{
++    if (from_cfg && !strncmp(old_path, "../", 3)) {
++        char *vbcc_dir = getenv("VBCC");
++        int vbcc_dir_len;
++        char *new_path;
++        assert(vbcc_dir != NULL);  /* or we'd already have bailed */
++        vbcc_dir_len = strlen(vbcc_dir);
++        new_path = malloc(vbcc_dir_len + 1 + strlen(old_path+3) + 1);
++        sprintf(new_path, "%s%s%s",
++                vbcc_dir,
++                vbcc_dir[vbcc_dir_len-1] == '/' ? "" : "/",
++                old_path+3);
++        return new_path;
++    }
++    return old_path;
++}
++
+ static int read_config(const char *cfg_name)
+ {
+     int i,count; long size;
+-    char *p,*name;
+-    FILE *file=0;
+-    for(i=0;i<sizeof(search_dirs)/sizeof(search_dirs[0]);i++){
+-      name=malloc(strlen(search_dirs[i])+strlen(cfg_name)+1);
+-      if(!name) {printf(nomem);raus(EXIT_FAILURE);}
+-      strcpy(name,search_dirs[i]);
+-      strcat(name,cfg_name);
+-      file=fopen(name,"r");
+-      free(name);
+-      if(file) break;
+-    }
+-    if(!file){
+-      p=getenv("VBCC");
+-      if(p){
+-        name=malloc(strlen(p)+strlen(cfg_name)+20);
+-        if(!name){printf(nomem);raus(EXIT_FAILURE);}
+-        strcpy(name,p);
+-#if defined(_WIN32)||defined(MSDOS)||defined(ATARI)
+-        strcat(name,"\\config\\");
+-        strcat(name,cfg_name);
+-#elif defined(AMIGA)
+-        AddPart(name,"config",strlen(p)+strlen(cfg_name)+20);
+-        AddPart(name,(STRPTR)cfg_name,strlen(p)+strlen(cfg_name)+20);
+-#else
+-        strcat(name,"/config/");
+-        strcat(name,cfg_name);
+-#endif
+-        file=fopen(name,"r");
+-        free(name);
+-      }
++    char *p;
++    char *vbcc_dir = getenv("VBCC");
++    int vbcc_dir_len;
++    char *config_fullpath;
++    FILE *file;
++    if (vbcc_dir == NULL) {
++        puts("Environment variable VBCC must point to the vbcc install directory!");
++        raus(EXIT_FAILURE);
++    }
++    vbcc_dir_len = strlen(vbcc_dir);
++    config_fullpath = malloc(vbcc_dir_len + 1 + 7 + strlen(cfg_name) + 1);
++    sprintf(config_fullpath, "%s%s%s%s",
++            vbcc_dir,
++            vbcc_dir[vbcc_dir_len-1] == '/' ? "" : "/",
++            "config/",
++            cfg_name);
++    file = fopen(config_fullpath, "r");
++    if (file == NULL) {
++        printf("Config file %s not found!\n"
++               "Is environment variable VBCC set correctly?\n",
++               config_fullpath);
++        raus(EXIT_FAILURE);
+     }
+-    if(!file) {puts("No config file!");raus(EXIT_FAILURE);}
+     if(fseek(file,0,SEEK_END)) return 0;
+     size=ftell(file);
+     if(fseek(file,0,SEEK_SET)) return 0;
+@@ -333,25 +343,26 @@
+         if(!strncmp(parm,"-ul=",4)){ul=parm+4;*parm=0;}
+     }
+     for(i=1;i<argc+count;i++){
+-        if(i<argc) parm=argv[i]; else parm=confp[i-argc];
++        int from_cfg = (i >= argc);
++        parm = (from_cfg ? confp[i-argc] : argv[i]);
+ /*        printf("Parameter %d=%s\n",i,parm);*/
+         if(!strncmp(parm,"-ldnodb=",8)){nodb=parm+8;*parm=0;}
+         if(!strncmp(parm,"-ldstatic=",10)){staticflag=parm+10;*parm=0;}
+         if(!strcmp(parm,"-g")) db=1;
+         if(!strcmp(parm,"-static")){staticmode=1;*parm=0;}
+         if(!strncmp(parm,"-ml=",4)){MAXCLEN=atoi(parm+4);*parm=0;}
+-        if(!strncmp(parm,"-pp=",4)){ppname=parm+4;*parm=0;}
+-        if(!strncmp(parm,"-cc=",4)){ccname=parm+4;*parm=0;}
+-        if(!strncmp(parm,"-as=",4)){asname=parm+4;*parm=0;}
+-        if(!strncmp(parm,"-ld=",4)){ldname=parm+4;*parm=0;}
+-        if(!strncmp(parm,"-l2=",4)){l2name=parm+4;*parm=0;}
+-        if(!strncmp(parm,"-rm=",4)){rmname=parm+4;*parm=0;}
+-        if(!strncmp(parm,"-ppv=",5)){ppv=parm+5;*parm=0;}
+-        if(!strncmp(parm,"-ccv=",5)){ccv=parm+5;*parm=0;}
+-        if(!strncmp(parm,"-asv=",5)){asv=parm+5;*parm=0;}
+-        if(!strncmp(parm,"-ldv=",5)){ldv=parm+5;*parm=0;}
+-        if(!strncmp(parm,"-l2v=",5)){l2v=parm+5;*parm=0;}
+-        if(!strncmp(parm,"-rmv=",5)){rmv=parm+5;*parm=0;}
++        if(!strncmp(parm,"-pp=",4)){ppname=derelativize(from_cfg, parm+4);*parm=0;}
++        if(!strncmp(parm,"-cc=",4)){ccname=derelativize(from_cfg, parm+4);*parm=0;}
++        if(!strncmp(parm,"-as=",4)){asname=derelativize(from_cfg, parm+4);*parm=0;}
++        if(!strncmp(parm,"-ld=",4)){ldname=derelativize(from_cfg, parm+4);*parm=0;}
++        if(!strncmp(parm,"-l2=",4)){l2name=derelativize(from_cfg, parm+4);*parm=0;}
++        if(!strncmp(parm,"-rm=",4)){rmname=derelativize(from_cfg, parm+4);*parm=0;}
++        if(!strncmp(parm,"-ppv=",5)){ppv=derelativize(from_cfg, parm+5);*parm=0;}
++        if(!strncmp(parm,"-ccv=",5)){ccv=derelativize(from_cfg, parm+5);*parm=0;}
++        if(!strncmp(parm,"-asv=",5)){asv=derelativize(from_cfg, parm+5);*parm=0;}
++        if(!strncmp(parm,"-ldv=",5)){ldv=derelativize(from_cfg, parm+5);*parm=0;}
++        if(!strncmp(parm,"-l2v=",5)){l2v=derelativize(from_cfg, parm+5);*parm=0;}
++        if(!strncmp(parm,"-rmv=",5)){rmv=derelativize(from_cfg, parm+5);*parm=0;}
+         if(!strncmp(parm,"-cf=",4)){cf=parm+4;*parm=0;}
+         if(!strncmp(parm,"-isc=",5)){scname=parm+5;*parm=0;}
+         if(!strncmp(parm,"-iscv=",6)){scv=parm+6;*parm=0;}
+diff -Nur vbcc/Makefile vbcc-patched/Makefile
+--- vbcc/Makefile	2012-05-02 21:39:45.727975615 -0700
++++ vbcc-patched/Makefile	2012-05-02 21:47:53.915964399 -0700
+@@ -1,6 +1,6 @@
+ 
+ # used to create vbcc, vc and ucpp
+-CC = gcc -std=c9x -g -DHAVE_AOS4 #-DHAVE_ECPP -DHAVE_MISRA
++CC = gcc -std=c9x -g -Wno-format #-DHAVE_AOS4 -DHAVE_ECPP -DHAVE_MISRA
+ LDFLAGS = -lm
+ 
+ # native version; used to create dtgen
