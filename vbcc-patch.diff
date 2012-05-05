@@ -1,6 +1,6 @@
 diff -Nur vbcc/config/z vbcc-patched/config/z
 --- vbcc/config/z	1969-12-31 16:00:00.000000000 -0800
-+++ vbcc-patched/config/z	2012-05-02 22:44:42.631886083 -0700
++++ vbcc-patched/config/z	2012-05-04 18:44:48.624246756 -0700
 @@ -0,0 +1,5 @@
 +-cc=../bin/vbccz -quiet %s -o=%s %s -O=%ld
 +-ccv=../bin/vbccz %s -o=%s %s -O=%ld
@@ -8,8 +8,8 @@ diff -Nur vbcc/config/z vbcc-patched/config/z
 +-ld=echo "Don't know how to link Z-machine code" 1>&2; exit 0
 +-rm=rm %s
 diff -Nur vbcc/datatypes/dtgen.c vbcc-patched/datatypes/dtgen.c
---- vbcc/datatypes/dtgen.c	2012-05-04 18:20:37.208280101 -0700
-+++ vbcc-patched/datatypes/dtgen.c	2012-05-02 22:44:42.635886083 -0700
+--- vbcc/datatypes/dtgen.c	2012-05-04 22:13:33.863958993 -0700
++++ vbcc-patched/datatypes/dtgen.c	2012-05-04 18:44:48.624246756 -0700
 @@ -133,8 +133,8 @@
    do{
      printf("Type y or n [%s]: ",def);
@@ -22,8 +22,8 @@ diff -Nur vbcc/datatypes/dtgen.c vbcc-patched/datatypes/dtgen.c
    return *in=='y';
  }
 diff -Nur vbcc/frontend/vc.c vbcc-patched/frontend/vc.c
---- vbcc/frontend/vc.c	2012-05-04 18:20:37.216280101 -0700
-+++ vbcc-patched/frontend/vc.c	2012-05-02 22:44:42.635886083 -0700
+--- vbcc/frontend/vc.c	2012-05-04 22:13:33.867958993 -0700
++++ vbcc-patched/frontend/vc.c	2012-05-04 18:44:48.628246756 -0700
 @@ -2,6 +2,7 @@
  /*  (c) in 1995-2010 by Volker Barthelmann  */
  /*  #define AMIGA for Amiga-Version         */
@@ -155,8 +155,8 @@ diff -Nur vbcc/frontend/vc.c vbcc-patched/frontend/vc.c
          if(!strncmp(parm,"-isc=",5)){scname=parm+5;*parm=0;}
          if(!strncmp(parm,"-iscv=",6)){scv=parm+6;*parm=0;}
 diff -Nur vbcc/ic.c vbcc-patched/ic.c
---- vbcc/ic.c	2012-05-04 18:20:37.216280101 -0700
-+++ vbcc-patched/ic.c	2012-05-02 23:33:56.851818212 -0700
+--- vbcc/ic.c	2012-05-04 22:13:33.867958993 -0700
++++ vbcc-patched/ic.c	2012-05-04 18:44:48.628246756 -0700
 @@ -915,6 +915,74 @@
          struct IC *merk_fp,*lp;
  	unsigned int merk_opushed=opushed;
@@ -233,8 +233,8 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
              struct Var *v;
              gen_IC(p->left,0,0); r=1;
 diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
---- vbcc/machines/z/machine.c	2012-05-04 18:20:37.224280101 -0700
-+++ vbcc-patched/machines/z/machine.c	2012-05-04 18:15:14.176287524 -0700
+--- vbcc/machines/z/machine.c	2012-05-04 22:13:33.875958993 -0700
++++ vbcc-patched/machines/z/machine.c	2012-05-04 21:46:22.531996472 -0700
 @@ -60,6 +60,8 @@
  static char FILE_[]=__FILE__;
  char cg_copyright[]="vbcc code-generator for Z-machine V0.0a (c) in 2001 by David Given";
@@ -630,25 +630,29 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  						modulename, fixup->value.val.number);
  					break;
  
-@@ -2660,13 +2651,13 @@
+@@ -2660,15 +2651,15 @@
  			switch (fixup->identifier.type)
  			{
  				case STATIC:
 -					fprintf(fp, "\t@storew STATIC_%s_%ld 0%+ld sp;\n",
 +					fprintf(fp, "\t@storew STATIC_%s_%d 0%+d sp;\n",
  						modulename, fixup->identifier.val.number,
- 						fixup->identifier.offset);
+-						fixup->identifier.offset);
++						fixup->identifier.offset >> 1);
  					break;
  
  				case EXTERN:
 -					fprintf(fp, "\t@storew _%s 0%+ld sp;\n",
 +					fprintf(fp, "\t@storew _%s 0%+d sp;\n",
  						fixup->identifier.val.identifier,
- 						fixup->identifier.offset);
+-						fixup->identifier.offset);
++						fixup->identifier.offset >> 1);
  					break;
+ 
+ 				default:
 diff -Nur vbcc/Makefile vbcc-patched/Makefile
---- vbcc/Makefile	2012-05-04 18:20:37.208280101 -0700
-+++ vbcc-patched/Makefile	2012-05-04 15:07:10.600546757 -0700
+--- vbcc/Makefile	2012-05-04 22:13:33.859958993 -0700
++++ vbcc-patched/Makefile	2012-05-04 18:44:48.632246756 -0700
 @@ -1,6 +1,6 @@
  
  # used to create vbcc, vc and ucpp
