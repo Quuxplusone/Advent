@@ -109,7 +109,6 @@ typedef enum {
     SAY, READ, FEEFIE, BRIEF, FIND, INVENTORY, SCORE, QUIT
 } ActionWord;
 
-const char *default_msg[30];  /* messages for untoward actions */
 const char *message[13];  /* messages tied to certain vocabulary words */
 const char ok[] = "OK.";  /* Woods' Fortran version didn't include the period, by the way. */
 const char pitch_dark_msg[] = "It is now pitch dark.  If you proceed you will most likely fall into a pit.";
@@ -261,88 +260,52 @@ void build_vocabulary(void)
     new_action_word("keep", TAKE); new_action_word("catch", TAKE);
     new_action_word("captu", TAKE); new_action_word("steal", TAKE);
     new_action_word("get", TAKE); new_action_word("tote", TAKE);
-    default_msg[TAKE] = "You are already carrying it!";
     new_action_word("drop", DROP); new_action_word("relea", DROP);
     new_action_word("free", DROP); new_action_word("disca", DROP);
     new_action_word("dump", DROP);
-    default_msg[DROP] = "You aren't carrying it!";
     new_action_word("open", OPEN); new_action_word("unloc", OPEN);
-    default_msg[OPEN] = "I don't know how to lock or unlock such a thing.";
     new_action_word("close", CLOSE); new_action_word("lock", CLOSE);
-    default_msg[CLOSE] = default_msg[OPEN];
     new_action_word("light", ON); new_action_word("on", ON);
-    default_msg[ON] = "You have no source of light.";
     new_action_word("extin", OFF); new_action_word("off", OFF);
-    default_msg[OFF] = default_msg[ON];
-
     new_action_word("wave", WAVE); new_action_word("shake", WAVE);
     new_action_word("swing", WAVE);
-    default_msg[WAVE] = "Nothing happens.";
     new_action_word("calm", CALM); new_action_word("placa", CALM);
     new_action_word("tame", CALM);
-    default_msg[CALM] = "I'm game.  Would you care to explain how?";
     new_action_word("walk", GO); new_action_word("run", GO);
     new_action_word("trave", GO); new_action_word("go", GO);
     new_action_word("proce", GO); new_action_word("explo", GO);
     new_action_word("goto", GO); new_action_word("follo", GO);
     new_action_word("turn", GO);
-    default_msg[GO] = "Where?";
     new_action_word("nothi", RELAX);
-    default_msg[RELAX] = ok;
     new_action_word("pour", POUR);
-    default_msg[POUR] = default_msg[DROP];
     new_action_word("eat", EAT); new_action_word("devou", EAT);
-    default_msg[EAT] = "Don't be ridiculous!";
     new_action_word("drink", DRINK);
-    default_msg[DRINK] =
-        "You have taken a drink from the stream.  The water tastes strongly of\n"
-        "minerals, but is not unpleasant.  It is extremely cold.";
     new_action_word("rub", RUB);
-    default_msg[RUB] =
-        "Rubbing the electric lamp is not particularly rewarding. Anyway,\n"
-        "nothing exciting happens.";
     new_action_word("throw", TOSS); new_action_word("toss", TOSS);
-    default_msg[TOSS] = "Peculiar.  Nothing unexpected happens.";
     new_action_word("wake", WAKE); new_action_word("distu", WAKE);
-    default_msg[WAKE] = default_msg[EAT];
     new_action_word("feed", FEED);
-    default_msg[FEED] = "There is nothing here to eat.";
     new_action_word("fill", FILL);
-    default_msg[FILL] = "You can't fill that.";
     new_action_word("break", BREAK); new_action_word("smash", BREAK);
     new_action_word("shatt", BREAK);
-    default_msg[BREAK] = "It is beyond your power to do that.";
     new_action_word("blast", BLAST); new_action_word("deton", BLAST);
     new_action_word("ignit", BLAST); new_action_word("blowu", BLAST);
-    default_msg[BLAST] = "Blasting requires dynamite.";
     new_action_word("attac", KILL); new_action_word("kill", KILL);
     new_action_word("fight", KILL); new_action_word("hit", KILL);
     new_action_word("strik", KILL); new_action_word("slay", KILL);
-    default_msg[KILL] = default_msg[EAT];
     new_action_word("say", SAY);
     new_action_word("chant", SAY);
     new_action_word("sing", SAY);
     new_action_word("utter", SAY);
     new_action_word("mumbl", SAY);
-    /* default_msg[SAY] = NULL; */
     new_action_word("read", READ); new_action_word("perus", READ);
-    default_msg[READ] = "I'm afraid I don't understand.";
     new_action_word("fee", FEEFIE); new_action_word("fie", FEEFIE);
     new_action_word("foe", FEEFIE); new_action_word("foo", FEEFIE);
     new_action_word("fum", FEEFIE);
-    default_msg[FEEFIE] = "I don't know how.";
     new_action_word("brief", BRIEF);
-    default_msg[BRIEF] = "On what?";  /* [ajo] Pretty sure this message is unreachable! */
     new_action_word("find", FIND); new_action_word("where", FIND);
-    default_msg[FIND] =
-        "I can only tell you what you see as you move about and manipulate\n"
-        "things.  I cannot tell you where remote things are.";
     new_action_word("inven", INVENTORY);
-    default_msg[INVENTORY] = default_msg[FIND];
     new_action_word("score", SCORE);
-    default_msg[SCORE] = "Eh?";
     new_action_word("quit", QUIT);
-    default_msg[QUIT] = default_msg[SCORE];
 
     /* Finally, our vocabulary is rounded out by words like HELP, which
      * trigger the printing of fixed messages. */
