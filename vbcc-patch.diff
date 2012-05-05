@@ -1,6 +1,6 @@
 diff -Nur vbcc/config/z vbcc-patched/config/z
 --- vbcc/config/z	1969-12-31 16:00:00.000000000 -0800
-+++ vbcc-patched/config/z	2012-05-04 22:16:05.591955507 -0700
++++ vbcc-patched/config/z	2012-05-05 12:47:35.338754166 -0700
 @@ -0,0 +1,5 @@
 +-cc=../bin/vbccz -quiet %s -o=%s %s -O=%ld
 +-ccv=../bin/vbccz %s -o=%s %s -O=%ld
@@ -8,8 +8,8 @@ diff -Nur vbcc/config/z vbcc-patched/config/z
 +-ld=echo "Don't know how to link Z-machine code" 1>&2; exit 0
 +-rm=rm %s
 diff -Nur vbcc/datatypes/dtgen.c vbcc-patched/datatypes/dtgen.c
---- vbcc/datatypes/dtgen.c	2012-05-05 12:32:39.066774758 -0700
-+++ vbcc-patched/datatypes/dtgen.c	2012-05-04 22:16:05.591955507 -0700
+--- vbcc/datatypes/dtgen.c	2012-05-05 14:44:29.462593018 -0700
++++ vbcc-patched/datatypes/dtgen.c	2012-05-05 12:47:35.342754165 -0700
 @@ -133,8 +133,8 @@
    do{
      printf("Type y or n [%s]: ",def);
@@ -22,8 +22,8 @@ diff -Nur vbcc/datatypes/dtgen.c vbcc-patched/datatypes/dtgen.c
    return *in=='y';
  }
 diff -Nur vbcc/frontend/vc.c vbcc-patched/frontend/vc.c
---- vbcc/frontend/vc.c	2012-05-05 12:32:39.074774758 -0700
-+++ vbcc-patched/frontend/vc.c	2012-05-04 22:16:05.591955507 -0700
+--- vbcc/frontend/vc.c	2012-05-05 14:44:29.474593019 -0700
++++ vbcc-patched/frontend/vc.c	2012-05-05 12:47:35.342754165 -0700
 @@ -2,6 +2,7 @@
  /*  (c) in 1995-2010 by Volker Barthelmann  */
  /*  #define AMIGA for Amiga-Version         */
@@ -155,8 +155,8 @@ diff -Nur vbcc/frontend/vc.c vbcc-patched/frontend/vc.c
          if(!strncmp(parm,"-isc=",5)){scname=parm+5;*parm=0;}
          if(!strncmp(parm,"-iscv=",6)){scv=parm+6;*parm=0;}
 diff -Nur vbcc/ic.c vbcc-patched/ic.c
---- vbcc/ic.c	2012-05-05 12:32:39.074774758 -0700
-+++ vbcc-patched/ic.c	2012-05-04 22:16:05.595955507 -0700
+--- vbcc/ic.c	2012-05-05 14:44:29.474593019 -0700
++++ vbcc-patched/ic.c	2012-05-05 12:47:35.346754165 -0700
 @@ -915,6 +915,74 @@
          struct IC *merk_fp,*lp;
  	unsigned int merk_opushed=opushed;
@@ -233,8 +233,8 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
              struct Var *v;
              gen_IC(p->left,0,0); r=1;
 diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
---- vbcc/machines/z/machine.c	2012-05-05 12:32:39.082774758 -0700
-+++ vbcc-patched/machines/z/machine.c	2012-05-05 12:25:39.006784408 -0700
+--- vbcc/machines/z/machine.c	2012-05-05 14:44:29.482593019 -0700
++++ vbcc-patched/machines/z/machine.c	2012-05-05 14:30:48.030611890 -0700
 @@ -60,6 +60,10 @@
  static char FILE_[]=__FILE__;
  char cg_copyright[]="vbcc code-generator for Z-machine V0.0a (c) in 2001 by David Given";
@@ -246,7 +246,25 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  /* Command-line flags. */
  
  int g_flags[MAXGF] = {
-@@ -337,20 +341,16 @@
+@@ -68,6 +72,7 @@
+ 	0,
+ 	0,
+ 	0,
++	0,
+ 	0
+ };
+ char *g_flags_name[MAXGF] = {
+@@ -76,7 +81,8 @@
+ 	"trace-all",
+ 	"safe-branches",
+ 	"comment-ic",
+-	"comment-misc"
++	"comment-misc",
++	"patch-not"
+ };
+ union ppi g_flags_val[MAXGF];
+ 
+@@ -337,20 +343,16 @@
  
  /* Extract the sign extended byte n of a value. */
  
@@ -271,7 +289,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  }
  
  /* Debug function: prints the text name of a type. */
-@@ -428,17 +428,12 @@
+@@ -428,17 +430,12 @@
  				break;
  
  			case FLOAT:
@@ -291,7 +309,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  		}
  	}
  	else if (f == REG)
-@@ -455,13 +450,15 @@
+@@ -455,13 +452,15 @@
  		if ((obj->v->storage_class == AUTO) ||
  		    (obj->v->storage_class == REGISTER))
  		{
@@ -312,7 +330,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  
  		if (f & REG)
  			fprintf(fp, " in %s", regnames[obj->reg]);
-@@ -503,19 +500,7 @@
+@@ -503,19 +502,7 @@
  		case MINUS:		p = "MINUS";		break;
  		case ADDRESS:		p = "ADDRESS";		break;
  		case CALL:		p = "CALL";		break;
@@ -333,7 +351,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  		case ALLOCREG:		p = "ALLOCREG";		break;
  		case FREEREG:		p = "FREEREG";		break;
  		case COMPARE:		p = "COMPARE";		break;
-@@ -743,8 +728,8 @@
+@@ -743,8 +730,8 @@
  			break;
  			
  		case STATIC:
@@ -344,7 +362,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  			currentvar.type = STATIC;
  			currentvar.val.number = var->offset;
  			currentvar.offset = 0;
-@@ -757,7 +742,7 @@
+@@ -757,7 +744,7 @@
  
  void gen_ds(FILE *fp, zmax size, struct Typ *typ)
  {
@@ -353,7 +371,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  	currentvar.offset += size;
  }
  
-@@ -834,6 +819,8 @@
+@@ -834,6 +821,8 @@
  zmax voff(struct obj* obj)
  {
  	zmax offset = obj->v->offset;
@@ -362,7 +380,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  	if (offset < 0)
  		offset = stackparamadjust + stackoffset - offset - maxalign;
  	else
-@@ -892,8 +879,8 @@
+@@ -892,8 +881,8 @@
  	switch (obj->v->storage_class)
  	{
  		case STATIC:
@@ -373,7 +391,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  			break;
  
  		case EXTERN:
-@@ -956,10 +943,10 @@
+@@ -956,10 +945,10 @@
  		case AUTO:
  		case REGISTER: /* Local variable */
  		{
@@ -386,7 +404,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  					offset, regnames[reg]);
  			else
  			{
-@@ -973,7 +960,7 @@
+@@ -973,7 +962,7 @@
  					fprintf(fp, "\t@storew sp 0 %s;\n", regnames[reg]);
  				}
  				else
@@ -395,7 +413,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  						offset >> 1, regnames[reg]);
  			}
  			return;
-@@ -988,8 +975,8 @@
+@@ -988,8 +977,8 @@
  			{
  				fprintf(fp, "\t@storeb ");
  				emit_identifier(fp, obj);
@@ -406,7 +424,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  			}
  			else
  			{
-@@ -997,8 +984,8 @@
+@@ -997,8 +986,8 @@
  				{
  					fprintf(fp, "\t@add ");
  					emit_identifier(fp, obj);
@@ -417,7 +435,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  					fprintf(fp, "\t@storew sp 0 %s;\n",
  						regnames[reg]);
  				}
-@@ -1006,8 +993,8 @@
+@@ -1006,8 +995,8 @@
  				{
  					fprintf(fp, "\t@storew ");
  					emit_identifier(fp, obj);
@@ -428,7 +446,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  				}
  			}
  			return;
-@@ -1096,7 +1083,7 @@
+@@ -1096,7 +1085,7 @@
  			case UNSIGNED|CHAR:	c.val.constant = obj->val.vuchar;	break;
  			case SHORT:		c.val.constant = obj->val.vshort;	break;
  			case UNSIGNED|SHORT:	c.val.constant = obj->val.vushort;	break;
@@ -437,7 +455,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  			case INT:		c.val.constant = obj->val.vint;		break;
  			case UNSIGNED|INT:	c.val.constant = obj->val.vuint;	break;
  			default:
-@@ -1127,8 +1114,8 @@
+@@ -1127,8 +1116,8 @@
  			case REGISTER: /* Local variable */
  				if (flags & VARADR)
  				{
@@ -448,7 +466,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  				}
  				else if (flags & REG)
  				{
-@@ -1138,20 +1125,20 @@
+@@ -1138,20 +1127,20 @@
  				}
  				else
  				{
@@ -473,7 +491,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  								offset >> 1, regnames[reg]);
  					}
  				}
-@@ -1170,12 +1157,12 @@
+@@ -1170,12 +1159,12 @@
  
  					fprintf(fp, "\t@add ");
  					emit_identifier(fp, obj);
@@ -489,7 +507,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  						find_varargs(), regnames[reg]);
  				}
  				else
-@@ -1186,8 +1173,8 @@
+@@ -1186,8 +1175,8 @@
  					{
  						fprintf(fp, "\t@loadb ");
  						emit_identifier(fp, obj);
@@ -500,7 +518,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  					}
  					else
  					{
-@@ -1195,8 +1182,8 @@
+@@ -1195,8 +1184,8 @@
  						{
  							fprintf(fp, "\t@add ");
  							emit_identifier(fp, obj);
@@ -511,7 +529,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  							fprintf(fp, "\t@loadw sp 0 -> %s;\n",
  								regnames[reg]);
  						}
-@@ -1204,8 +1191,8 @@
+@@ -1204,8 +1193,8 @@
  						{
  							fprintf(fp, "\t@loadw ");
  							emit_identifier(fp, obj);
@@ -522,7 +540,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  						}
  					}
  				}
-@@ -1266,7 +1253,7 @@
+@@ -1266,7 +1255,7 @@
  			case UNSIGNED|SHORT:	op->val.constant = obj->val.vushort;	break;
  			case INT:		op->val.constant = obj->val.vint;	break;
  			case UNSIGNED|INT:	op->val.constant = obj->val.vuint;	break;
@@ -531,7 +549,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  			default:
  				fprintf(fp, "XXX !!! bad konst type %X\n", typf);
  		}
-@@ -1404,7 +1391,7 @@
+@@ -1404,7 +1393,7 @@
  			return;
  
  		case ZOP_CONSTANT:
@@ -540,7 +558,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  			return;
  
  		case ZOP_EXTERN:
-@@ -1412,13 +1399,13 @@
+@@ -1412,13 +1401,13 @@
  			return;
  
  		case ZOP_STATIC:
@@ -558,7 +576,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  			return;
  
  		default:
-@@ -1585,7 +1572,7 @@
+@@ -1585,7 +1574,7 @@
  		push_addrof(fp, z, POINTER, &zz);
  		fprintf(fp, "\t@call_vn __long_loadconst ");
  		emit_zop(fp, &zz);
@@ -567,7 +585,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  		return;
  	}
  
-@@ -1598,6 +1585,98 @@
+@@ -1598,6 +1587,98 @@
  	fprintf(fp, " 4;\n");
  }
  
@@ -666,7 +684,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  /* The code generator itself.
   * This big, complicated, hairy and scary function does the work to actually
   * produce the code.  fp is the output stream, ic the beginning of the ic
-@@ -1615,6 +1694,8 @@
+@@ -1615,6 +1696,8 @@
  
      int c,t,lastcomp=0,reg;
  	    
@@ -675,7 +693,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
      	function = func;
  
  	/* r0..r5 are always used for parameter passing. */
-@@ -1638,7 +1719,7 @@
+@@ -1638,7 +1721,7 @@
  	reflower(fp);
  
  	if (func->storage_class == STATIC)
@@ -684,7 +702,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  	else
  		fprintf(fp, "[ _%s xp\n", func->identifier);
  
-@@ -1658,7 +1739,7 @@
+@@ -1658,7 +1741,7 @@
  	if (g_flags[1] & USEDFLAG)
  	{
  		if (func->storage_class == STATIC)
@@ -693,7 +711,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  		else
  			fprintf(fp, "print \"_%s^\";\n", func->identifier);
  	}
-@@ -1666,7 +1747,7 @@
+@@ -1666,7 +1749,7 @@
  	/* Adjust stack for locals. */
  
  	if (stackframe)
@@ -702,7 +720,46 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  	//if (stackoffset)
  	//	fprintf(fp, "\txp = xp - %ld\n", stackframe);
  
-@@ -1912,7 +1993,7 @@
+@@ -1862,17 +1945,29 @@
+ 				continue;
+ 
+ 			case KOMPLEMENT: /* Unary komplement */
+-				/* INFORM BUG! */
+-				/* The @not opcode doesn't work. We have to use a
+-				 * wrapper function instead. */
+-				
+ 				push_value(fp, &ic->q1, typf, &q1);
+ 				pop_value(fp, &ic->z, typf, &z);
+-				fprintf(fp, "\t@call_2s __not ");
+-				emit_zop(fp, &q1);
+-				fprintf(fp, " -> ");
+-				emit_zop(fp, &z);
+-				fprintf(fp, ";\n");
++				if (g_flags[6] & USEDFLAG) {
++					/* Prior to Inform 6.30, the assembler
++					 * had a major bug in the @not opcode;
++					 * it would generate bogus code and
++					 * crash some Z-machine interpreters. */
++					fprintf(fp, "\t@call_2s __not ");
++					emit_zop(fp, &q1);
++					fprintf(fp, " -> ");
++					emit_zop(fp, &z);
++					fprintf(fp, ";\n");
++				} else {
++					/* The bug was fixed in Inform 6.30.
++					 * The current distribution of Inform 6
++					 * is 6.31; the version distributed
++					 * with Inform 7 is 6.32. */
++					fprintf(fp, "\t@not ");
++					emit_zop(fp, &q1);
++					fprintf(fp, " -> ");
++					emit_zop(fp, &z);
++					fprintf(fp, ";\n");
++				}
+ 				fin_zop(fp, &ic->z, typf, &z);
+ 				continue;
+ 
+@@ -1912,7 +2007,7 @@
  						emit_zop(fp, &q1);
  						fprintf(fp, " ");
  						emit_zop(fp, &z);
@@ -711,7 +768,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  						break;
  
  					default:
-@@ -1924,15 +2005,15 @@
+@@ -1924,15 +2019,15 @@
  					 AUTO or STATIC */
  				i = voff(&ic->q1);
  				pop_value(fp, &ic->z, typf, &z);
@@ -730,7 +787,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  				//stackoffset += ic->q2.val.vlong;
  				stackparamadjust += ic->q2.val.vlong;
  
-@@ -1956,7 +2037,7 @@
+@@ -1956,7 +2051,7 @@
  						push_addrof(fp, &ic->q1, typf, &q1);
  						fprintf(fp, "\t@copy_table ");
  						emit_zop(fp, &q1);
@@ -739,7 +796,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  						break;
  				}
  				continue;
-@@ -2547,7 +2628,7 @@
+@@ -2547,7 +2642,7 @@
  
  				if (stackparamadjust)
  				{
@@ -748,7 +805,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  						stackparamadjust);
  					//stackoffset -= stackparamadjust;
  					stackparamadjust = 0;
-@@ -2622,9 +2703,9 @@
+@@ -2622,9 +2717,9 @@
  
  		while (constant)
  		{
@@ -760,7 +817,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  				xword(constant->value, 1),
  				xword(constant->value, 0));
  			constant = constant->next;
-@@ -2639,12 +2720,12 @@
+@@ -2639,12 +2734,12 @@
  		fprintf(fp, "[ __init_vars_%s;\n", modulename);
  		while (fixup)
  		{
@@ -775,7 +832,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  						modulename, fixup->value.val.number);
  					break;
  
-@@ -2660,15 +2741,15 @@
+@@ -2660,15 +2755,15 @@
  			switch (fixup->identifier.type)
  			{
  				case STATIC:
@@ -795,9 +852,21 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  					break;
  
  				default:
+diff -Nur vbcc/machines/z/machine.h vbcc-patched/machines/z/machine.h
+--- vbcc/machines/z/machine.h	2012-05-05 14:44:29.482593019 -0700
++++ vbcc-patched/machines/z/machine.h	2012-05-05 14:31:18.282611195 -0700
+@@ -18,7 +18,7 @@
+ 
+ /* Number of command-line options we accept. */
+ 
+-#define MAXGF 6
++#define MAXGF 7
+ 
+ /* If this is set to zero vbcc will not generate ICs where the target operand
+  * is the same as the 2nd source operand. This can sometimes simplify the
 diff -Nur vbcc/Makefile vbcc-patched/Makefile
---- vbcc/Makefile	2012-05-05 12:32:39.066774758 -0700
-+++ vbcc-patched/Makefile	2012-05-04 22:16:05.599955507 -0700
+--- vbcc/Makefile	2012-05-05 14:44:29.458593018 -0700
++++ vbcc-patched/Makefile	2012-05-05 12:47:35.350754165 -0700
 @@ -1,6 +1,6 @@
  
  # used to create vbcc, vc and ucpp
