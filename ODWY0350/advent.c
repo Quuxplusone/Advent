@@ -8,6 +8,7 @@ enum { true=1, false=0 };
 #ifdef Z_MACHINE
 int ran(int range) = "\t@random r0 -> r0;\n";
 #define assert(x)
+#define toupper(ch) ((ch) & ~(('a' <= (ch) && (ch) <= 'z') ? 0x20 : 0x00))
 #define tolower(ch) ((ch) | (('A' <= (ch) && (ch) <= 'Z') ? 0x20 : 0x00))
 #define isspace(ch) ((ch)==' ' || (ch)=='\n')
 #else
@@ -3482,6 +3483,8 @@ void simulate_an_adventure(void)
                     if (obj == NOTHING || obj == BOTTLE) {
                         obj = bottle_contents();
                         if (obj == NOTHING) goto get_object;
+                        /* Notice that POUR BOTTLE when the bottle is empty
+                         * will actually result in the message "Bottle what?". */
                     }
                     if (toting(obj)) {
                         if (obj != WATER && obj != OIL) {
@@ -3515,10 +3518,12 @@ void simulate_an_adventure(void)
                                     puts("The oil has freed up the hinges so that the door will now open.");
                                     break;
                             }
-                            continue;
+                        } else {
+                            puts("Your bottle is empty and the ground is wet.");
                         }
+                    } else {
+                        puts("You aren't carrying it!");
                     }
-                    puts("You aren't carrying it!");
                     continue;
                 case FILL:
                     if (attempt_fill(obj, loc)) {
@@ -3705,6 +3710,7 @@ void simulate_an_adventure(void)
                     continue;
             }
         get_object:
+            word1[0] = toupper(word1[0]);
             printf("%s what?\n", word1);
             goto cycle;
         cant_see_it:
