@@ -1,3 +1,5 @@
+#include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,16 +8,19 @@ typedef int bool;
 enum { true=1, false=0 };
 
 #ifdef Z_MACHINE
+#ifdef SAVE_AND_RESTORE
+int attempt_save(void) = "\t@save -> r0;\n";
+int attempt_restore(void) =
+    "\trestore Rmaybe;\n"
+    "\tr0 = 0;\n" /* restore failed */
+    "\t.RMaybe;\n"
+    "\tr0 = 2;\n";  /* ok */
+
+#endif /* SAVE_AND_RESTORE */
 int ran(int range) = "\t@random r0 -> r0;\n";
-#define assert(x)
-#define toupper(ch) ((ch) & ~(('a' <= (ch) && (ch) <= 'z') ? 0x20 : 0x00))
-#define tolower(ch) ((ch) | (('A' <= (ch) && (ch) <= 'Z') ? 0x20 : 0x00))
-#define isspace(ch) ((ch)==' ' || (ch)=='\n')
 #else
 int ran(int range) { return rand() % range; }
-#include <assert.h>
-#include <ctype.h>
-#endif
+#endif /* Z_MACHINE */
 
 bool pct(int percent) { return (ran(100) < percent); }
 bool streq(const char *a, const char *b) { return !strncmp(a, b, 5); }
@@ -108,6 +113,9 @@ typedef enum {
     ABSTAIN, TAKE, DROP, OPEN, CLOSE, ON, OFF, WAVE, CALM, GO, RELAX,
     POUR, EAT, DRINK, RUB, TOSS, WAKE, FEED, FILL, BREAK, BLAST, KILL,
     SAY, READ, FEEFIE, BRIEF, FIND, INVENTORY, SCORE, QUIT
+#ifdef SAVE_AND_RESTORE
+    , SAVE, RESTORE
+#endif /* SAVE_AND_RESTORE */
 } ActionWord;
 
 const char *message[13];  /* messages tied to certain vocabulary words */
@@ -307,6 +315,10 @@ void build_vocabulary(void)
     new_action_word("inven", INVENTORY);
     new_action_word("score", SCORE);
     new_action_word("quit", QUIT);
+#ifdef SAVE_AND_RESTORE
+    new_action_word("save", SAVE);
+    new_action_word("resto", RESTORE);
+#endif /* SAVE_AND_RESTORE */
 
     /* Finally, our vocabulary is rounded out by words like HELP, which
      * trigger the printing of fixed messages. */
@@ -3371,6 +3383,22 @@ void simulate_an_adventure(void)
                 case QUIT:
                     if (yes("Do you really wish to quit now?", ok, ok)) give_up();
                     continue;
+#ifdef SAVE_AND_RESTORE
+		case SAVE:
+		    switch (attempt_save()) {
+                        case 0: puts("Save failed!"); break;
+                        case 1: puts("Saved."); break;
+                        case 2: puts("Restored."); break;
+                    }
+		    continue;
+		case RESTORE:
+                    /* TODO: this does not always work correctly. Figure out why. */
+		    switch (attempt_restore()) {
+                        case 2: puts("Restored. (Whaaat?)"); break;
+                        default: puts("Restore failed!"); break;
+                    }
+		    continue;
+#endif /* SAVE_AND_RESTORE */
                 case FEEFIE: {
                     static const char *const incantation[] = { "fee", "fie", "foe", "foo", "fum" };
                     int k = 0;
@@ -3706,6 +3734,10 @@ void simulate_an_adventure(void)
                     continue;
                 case SCORE:
                 case QUIT:
+#ifdef SAVE_AND_RESTORE
+		case SAVE:
+		case RESTORE:
+#endif /* SAVE_AND_RESTORE */
                     puts("Eh?");
                     continue;
             }
@@ -3802,8 +3834,13 @@ void dwarves_upset(void)
 
 int main()
 {
+#ifdef Z_MACHINE
+    puts("\n\n\n\n\n\n\n\n");
+#endif /* Z_MACHINE */
+
     offer(0);
-    lamp_limit = (hints[0].given ? 1000 : 330);  /* interesting */
+    /* Reading the instructions is greatly rewarded! */
+    lamp_limit = (hints[0].given ? 1000 : 330);
     build_vocabulary();
     build_travel_table();
     build_object_table();
