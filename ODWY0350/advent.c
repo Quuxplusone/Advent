@@ -1929,7 +1929,7 @@ bool move_dwarves_and_pirate(Location loc)
                         if (odloc[j] == dloc[j]) {
                             ++attack;
                             if (knife_loc >= 0) knife_loc = loc;
-                            if (pct(95*(dflag-2))) ++stick;
+                            if (ran(1000) < 95*(dflag-2)) ++stick;
                         }
                     }
                 }
