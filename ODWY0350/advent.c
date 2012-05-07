@@ -1779,7 +1779,7 @@ void listen(void)
 
 int dflag;  /* how angry are the dwarves? */
 int dkill;  /* how many of them have you killed? */
-Location dloc[6];
+Location dloc[6] = { R_PIRATES_NEST, R_HMK, R_WFISS, R_Y2, R_LIKE3, R_COMPLEX };
 Location odloc[6];
 bool dseen[6];
 
