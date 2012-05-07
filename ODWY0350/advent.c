@@ -2588,11 +2588,11 @@ void attempt_drop(ObjectWord obj, Location loc)
         suppress_ok_message = true;
         if (objs[PILLOW].place == loc) {
             puts(note[30]);
-            objs[VASE].prop = 0;  /* the vase is now broken */
-            immobilize(VASE);
+            objs[VASE].prop = 0;  /* resting gently on the pillow */
         } else {
             puts(note[32]);
-            objs[VASE].prop = 2;  /* resting gently on the pillow */
+            objs[VASE].prop = 2;  /* the vase is now broken */
+            immobilize(VASE);
         }
     } else if (obj == BEAR && is_at_loc(TROLL, loc)) {
         /* Chase the troll away. */
