@@ -1,7 +1,7 @@
 # vbcc needs this environment variable so it can find its config file.
 export VBCC:=../vbcc
 
-VBCCZ = ../vbcc/bin/vc +z -O=3 -DZ_MACHINE -DSAVE_AND_RESTORE -Iz-machine/include
+VBCCZ = ../vbcc/bin/vc +z -c99 -O=3 -DZ_MACHINE -DSAVE_AND_RESTORE -Iz-machine/include
 MAXES = \$$MAX_ARRAYS=900 \
         \$$MAX_ZCODE_SIZE=40000 \
         \$$MAX_STATIC_DATA=65000
@@ -9,8 +9,8 @@ MAXES = \$$MAX_ARRAYS=900 \
 all: advent advent.z8 parchment
 
 advent: advent.c
-	gcc -O3 -ansi -pedantic -W -Wall -Wextra \
-		-Wno-switch -Wno-overlength-strings -Wno-unused-result \
+	gcc -std=c99 -O3 -pedantic -W -Wall -Wextra \
+		-Wno-switch -Wno-unused-result \
 		advent.c -o $@
 
 advent.z8: z-machine/Main.inf z-machine/stubs.inf z-machine/cstubs.s z-machine/advent.s

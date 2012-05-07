@@ -1,6 +1,6 @@
 
 This is a translation of Crowther and Woods' "Adventure" into
-modern ANSI C. (Well, C89, actually.)
+modern, modular C99.
 
 ===========================================================================
 
@@ -26,8 +26,7 @@ http://www.prismnet.com/~ged/www/advelist.html
   "raw" version of Knuth's current program, and/or to Woods' Fortran
   version. I caught at least two bugs in Knuth2002, both of which had
   been fixed in Knuth2010; so I may have unknowingly copied a few more
-  bugs anyway. I may also have introduced a few myself; I've caught one
-  such bug already (caused by a mismatched "else").
+  bugs anyway. I may also have introduced a few myself.
 
 Both Gillogly's and (especially) Knuth's versions suffer from the
 extreme disadvantage that their main() functions are enormous and
@@ -61,14 +60,23 @@ The history of "Adventure" on the Z-machine, as far as I know, is:
   added some convenience commands such as I (as opposed to INVEN).
   http://ifarchive.org/if-archive/games/source/inform/Advent_Crowther_source.txt
 
-This C port can be run on the Z-machine if you compile it using
-"vbccz", a Z-machine backend written by David Given in 2008 for
-Volker Barthelmann's open-source C compiler "vbcc".
-http://www.cowlark.com/vbcc-z-compiler/
+  In May 2012, Arthur O'Dwyer (that's me!) ported "Adventure" to C
+  and got it running on the Z-machine. Play it here:
+  http://quuxplusone.github.com/Advent/play.html
 
-However, as of this writing, "vbccz" has some bugs that make the
-game runnable but essentially unplayable. I would like to fix these
-bugs, eventually, so as to make "Adventure" playable on the Z-machine.
+To run C code on the Z-machine, I'm using "vbccz", a Z-machine backend
+written by David Given in 2008 for Volker Barthelmann's open-source C
+compiler "vbcc". This git repository hosts an unmodified copy of "vbcc"
+(as per its license terms), plus a cumulative patch to fix several
+backend bugs so that it can successfully compile my version of "advent.c".
+Apply the patch by running "./build-vbcc.sh"; then cd to ODWY0350/ and
+run "make".
 
-This git repository will host both my port of "Adventure" and my patches
-to vbccz.
+Disclaimer: "vbccz" is not really a general-purpose C compiler. While
+I'm fixing the bugs that are relevant to "Adventure", I'm ignoring many
+other trouble areas. For example, it calls out to library routines for
+all 32-bit math; since "Adventure" doesn't use any 32-bit variables,
+I haven't bothered to include David Given's "runtime.s" library in
+this repository. And don't even talk to me about floating point!
+The unimplemented areas might give an internal assertion error, if
+you're lucky, but they might just generate bad code. Use with caution.

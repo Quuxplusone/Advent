@@ -52,8 +52,7 @@ struct HashEntry hash_table[HASH_PRIME];
 void new_word(WordType t, const char *w, int m)
 {
     int h = 0;
-    const char *p;
-    for (p = w; *p != '\0'; ++p) {
+    for (const char *p = w; *p != '\0'; ++p) {
         h = ((h << 1) + *p) % HASH_PRIME;
     }
     while (hash_table[h].word_type != WordType_None)
@@ -71,8 +70,7 @@ void new_message_word(const char *w, int m) { new_word(WordType_Message, w, m); 
 int lookup(const char *w)
 {
     int h = 0;
-    const char *p;
-    for (p = w; *p != '\0' && p != w+5; ++p) {
+    for (const char *p = w; *p != '\0' && p != w+5; ++p) {
         h = ((h << 1) + *p) % HASH_PRIME;
     }
     while (hash_table[h].word_type != WordType_None) {
@@ -1521,11 +1519,10 @@ void carry(ObjectWord t)
 
 bool is_at_loc(ObjectWord t, Location loc)
 {
-    ObjectWord tt;
     if (objs[t].base == NULL)
         return (objs[t].place == loc);
     /* Check the "alternative" objects based on this one. */
-    for (tt = t; objs[tt].base == &objs[t]; ++tt) {
+    for (ObjectWord tt = t; objs[tt].base == &objs[t]; ++tt) {
         if (objs[tt].place == loc)
             return true;
     }
@@ -1788,9 +1785,8 @@ bool dseen[6];
 
 bool dwarf_in(int loc)  /* is a dwarf present? Section 160 in Knuth. */
 {
-    int j;
     if (dflag < 2) return false;
-    for (j=1; j <= 5; ++j) {
+    for (int j=1; j <= 5; ++j) {
         if (dloc[j] == loc) return true;
     }
     return false;
@@ -1813,12 +1809,11 @@ bool too_easy_to_steal(ObjectWord t, Location loc)
 
 void steal_all_your_treasure(Location loc)  /* sections 173--174 in Knuth */
 {
-    int i;
     puts("Out from the shadows behind you pounces a bearded pirate!  \"Har, har,\"\n"
          "he chortles. \"I'll just take all this booty and hide it away with me\n"
          "chest deep in the maze!\"  He snatches your treasure and vanishes into\n"
          "the gloom.");
-    for (i = MIN_TREASURE; i <= MAX_OBJ; ++i) {
+    for (int i = MIN_TREASURE; i <= MAX_OBJ; ++i) {
         if (too_easy_to_steal(i, loc)) continue;
         if (objs[i].base == NULL && objs[i].place == loc) carry(i);
         if (toting(i)) drop(i, R_PIRATES_NEST);
@@ -1829,10 +1824,9 @@ void pirate_tracks_you(Location loc)
 {
     bool chest_needs_placing = (objs[MESSAGE].place == R_LIMBO);
     bool stalking = false;
-    int i;
     /* The pirate leaves you alone once you've found the chest. */
     if (loc == R_PIRATES_NEST || objs[CHEST].prop >= 0) return;
-    for (i = MIN_TREASURE; i <= MAX_OBJ; ++i) {
+    for (int i = MIN_TREASURE; i <= MAX_OBJ; ++i) {
         if (too_easy_to_steal(i, loc)) continue;
         if (toting(i)) {
             steal_all_your_treasure(loc);
@@ -1886,11 +1880,10 @@ bool move_dwarves_and_pirate(Location loc)
              * the current location, we move him to R_NUGGET; thus no
              * dwarf is presently tracking you. Another dwarf does,
              * however, toss an axe and grumpily leave the scene. */
-            int j;
             dflag = 2;
             if (pct(50)) dloc[1+ran(5)] = R_LIMBO;
             if (pct(50)) dloc[1+ran(5)] = R_LIMBO;
-            for (j=1; j <= 5; ++j) {
+            for (int j=1; j <= 5; ++j) {
                 if (dloc[j] == loc) dloc[j] = R_NUGGET;
                 odloc[j] = dloc[j];
             }
@@ -1903,16 +1896,14 @@ bool move_dwarves_and_pirate(Location loc)
         int dtotal = 0;  /* this many dwarves are in the room with you */
         int attack = 0;  /* this many have had time to draw their knives */
         int stick = 0;  /* this many have hurled their knives accurately */
-        int j;
-        for (j=0; j <= 5; ++j) {
+        for (int j=0; j <= 5; ++j) {
             if (dloc[j] != R_LIMBO) {
                 Location ploc[19];  /* potential locations for the next random step */
                 int i = 0;
                 /* Make a table of all potential exits.
                  * Dwarves think R_SCAN1, R_SCAN2, R_SCAN3 are three different locations,
                    * although you will never have that perception. */
-                Instruction *q;
-                for (q = start[dloc[j]]; q < start[dloc[j]+1]; ++q) {
+                for (Instruction *q = start[dloc[j]]; q < start[dloc[j]+1]; ++q) {
                     Location newloc = q->dest;
                     if (i != 0 && newloc == ploc[i-1]) continue;
                     if (newloc < MIN_LOWER_LOC) continue;  /* don't follow above level 2 */
@@ -1987,7 +1978,6 @@ bool cave_is_closing(void)
 
 void close_the_cave(void)
 {
-    int j;
     puts("The sepulchral voice intones, \"The cave is now closed.\"  As the echoes\n"
          "fade, there is a blinding flash of light (and a small puff of orange\n"
          "smoke). . . .    Then your eyes refocus; you look around and find...");
@@ -2005,7 +1995,7 @@ void close_the_cave(void)
     move(ROD2, R_SWEND); objs[ROD2].prop = -1;
     move(PILLOW, R_SWEND); objs[PILLOW].prop = -1;
     move(MIRROR_, R_SWEND);
-    for (j = 1; j <= MAX_OBJ; ++j) {
+    for (int j = 1; j <= MAX_OBJ; ++j) {
         if (toting(j)) destroy(j);
     }
     closed = true;
@@ -2025,13 +2015,12 @@ bool check_clocks_and_lamp(Location loc)
          * From now on until clock2 runs out, you cannot unlock the grate,
          * move to any location outside the cave, or create the bridge.
          * Nor can you be resurrected if you die. */
-        int j;
         puts("A sepulchral voice, reverberating through the cave, says \"Cave\n"
              "closing soon.  All adventurers exit immediately through main office.\"");
         clock1 = -1;
         objs[GRATE].prop = 0;
         objs[CRYSTAL].prop = 0;
-        for (j=0; j <= 5; ++j) {
+        for (int j=0; j <= 5; ++j) {
             dseen[j] = false;
             dloc[j] = R_LIMBO;
         }
@@ -2132,10 +2121,9 @@ int look_around(Location loc, bool dark, bool was_dark)
     if (FORCED_MOVE(loc)) return 't';  /* goto try_move; */
     give_optional_plugh_hint(loc);
     if (!dark) {
-        struct ObjectData *t;
         visits[loc]++;
         /* Describe the objects at this location. */
-        for (t = first[loc]; t != NULL; t = t->link) {
+        for (struct ObjectData *t = first[loc]; t != NULL; t = t->link) {
             struct ObjectData *tt = t->base ? t->base : t;
             if (t->prop < 0) {  /* you've spotted a treasure */
                 if (closed) continue;  /* no automatic prop change after hours */
@@ -2244,8 +2232,7 @@ void maybe_give_a_hint(Location loc, Location oldloc, Location oldoldloc, Object
 {
     /* Check if a hint applies, and give it if requested. */
     unsigned int k = F_CAVE_HINT;
-    int j;
-    for (j = 2; j <= 7; ++j, k <<= 1) {
+    for (int j = 2; j <= 7; ++j, k <<= 1) {
         if (hints[j].given) continue;
         if ((flags[loc] & k) == 0) {
             /* We've left the map region associated with this hint. */
@@ -2309,10 +2296,9 @@ int death_count;
 
 int score(void)
 {
-    int i;
     int s = 2;
     if (dflag != 0) s += 25;
-    for (i = MIN_TREASURE; i <= MAX_OBJ; ++i) {
+    for (int i = MIN_TREASURE; i <= MAX_OBJ; ++i) {
         if (objs[i].prop >= 0) {
             s += 2;  /* two points just for seeing a treasure */
             if (objs[i].place == R_HOUSE && objs[i].prop == 0) {
@@ -2331,7 +2317,7 @@ int score(void)
     if (objs[MAG].place == R_WITT) s += 1;  /* last lousy point */
     if (cave_is_closing()) s += 25;  /* bonus for making it this far */
     s += bonus;
-    for (i = 0; i < 8; ++i) {
+    for (int i = 0; i < 8; ++i) {
         if (hints[i].given) s -= hints[i].cost;
     }
     return s;
@@ -2402,7 +2388,6 @@ const char *death_wishes[2*MAX_DEATHS] = {
 
 void kill_the_player(Location last_safe_place)
 {
-    int j;
     death_count++;
     if (cave_is_closing()) {
         puts("It looks as though you're dead.  Well, seeing as how it's"
@@ -2412,7 +2397,7 @@ void kill_the_player(Location last_safe_place)
     if (!yes(death_wishes[2*death_count-2], death_wishes[2*death_count-1], ok) || death_count == MAX_DEATHS)
         quit();
     /* At this point you are reborn. */
-    for (j = MAX_OBJ; j > 0; --j) {
+    for (int j = MAX_OBJ; j > 0; --j) {
         if (toting(j)) drop(j, (j == LAMP) ? R_ROAD : last_safe_place);
     }
     if (toting(LAMP)) objs[LAMP].prop = 0;
@@ -2442,9 +2427,8 @@ void adjustments_before_listening(Location loc)
          * they won't be described until they've been picked up and put
          * down, separate from their respective piles. Section 182 in Knuth. */
         if (objs[OYSTER].prop < 0 && toting(OYSTER)) {
-            int j;
             puts(note[71]);
-            for (j=1; j <= MAX_OBJ; ++j) {
+            for (int j=1; j <= MAX_OBJ; ++j) {
                 if (toting(j) && objs[j].prop < 0)
                     objs[j].prop = -1 - objs[j].prop;
             }
@@ -2464,8 +2448,7 @@ Location attempt_plover_passage(Location from)  /* section 149 in Knuth */
 void attempt_inventory(void)  /* section 94 in Knuth */
 {
     bool holding_anything = false;
-    ObjectWord t;
-    for (t = 1; t <= MAX_OBJ; ++t) {
+    for (ObjectWord t = 1; t <= MAX_OBJ; ++t) {
         if (toting(t) && (objs[t].base == NULL || objs[t].base == &objs[t]) && t != BEAR) {
             if (!holding_anything) {
                 holding_anything = true;
@@ -2748,6 +2731,7 @@ void throw_axe_at_dwarf(Location loc)  /* section 163 in Knuth */
     for (j=1; j <= 5; ++j) {
         if (dloc[j] == loc) break;
     }
+    assert(j <= 5);
     if (ran(3) < 2) {
         if (dkill == 0) {
             puts("You killed a little dwarf.  The body vanishes in a cloud of greasy\n"
@@ -3203,8 +3187,7 @@ void simulate_an_adventure(void)
             newloc = loc;
         } else if (newloc != loc && newloc <= R_PIRATES_NEST) {
             /* Stay in loc if a dwarf is blocking the way to newloc */
-            int j;
-            for (j=1; j <= 5; ++j) {
+            for (int j=1; j <= 5; ++j) {
                 if (odloc[j] == newloc && dseen[j]) {
                     puts("A little dwarf with a big knife blocks your way.");
                     newloc = loc; break;
@@ -3661,7 +3644,6 @@ void simulate_an_adventure(void)
                                 verb = ABSTAIN; obj = NOTHING;
                                 listen();
                                 if (streq(word1, "yes") || streq(word1, "y")) {
-                                    int t;
                                     puts(note[9]);
                                     objs[DRAGON].prop = 2;  /* dead */
                                     objs[RUG].prop = 0;
@@ -3670,7 +3652,7 @@ void simulate_an_adventure(void)
                                     destroy(DRAGON_);
                                     immobilize(RUG_);
                                     destroy(RUG_);
-                                    for (t = 1; t <= MAX_OBJ; ++t) {
+                                    for (int t = 1; t <= MAX_OBJ; ++t) {
                                         if (objs[t].place == R_SCAN1 || objs[t].place == R_SCAN3)
                                             move(t, R_SCAN2);
                                     }
