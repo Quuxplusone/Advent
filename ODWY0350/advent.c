@@ -1778,7 +1778,6 @@ void listen(void)
  */
 
 int dflag;  /* how angry are the dwarves? */
-int dkill;  /* how many of them have you killed? */
 Location dloc[6] = { R_PIRATES_NEST, R_HMK, R_WFISS, R_Y2, R_LIKE3, R_COMPLEX };
 Location odloc[6];
 bool dseen[6];
@@ -1834,9 +1833,9 @@ void pirate_tracks_you(Location loc)
             return;
         }
         if (objs[i].place == loc) {
-            /* We're carrying a treasure with base != NOTHING.
-             * [ajo] TODO understand how this can happen.
-             * The pirate can't steal it yet, so he remains quiet. */
+            /* There is a treasure in this room, but we're not carrying
+             * it. The pirate won't pounce unless we're carrying the
+             * treasure; so he'll try to remain quiet. */
             stalking = true;
         }
     }
@@ -1845,8 +1844,9 @@ void pirate_tracks_you(Location loc)
      * the troll bridge). */
     if (tally == lost_treasures+1 && !stalking && objs[MESSAGE].place == R_LIMBO &&
         objs[LAMP].prop && here(LAMP, loc)) {
-        /* Let the pirate be spotted. We don't spot the pirate unless our lamp
-         * is on. We do spot him even if the lighted lamp is on the ground. */
+        /* As soon as we've seen all the treasures (except the ones that are
+         * lost forever), we "cheat" and let the pirate be spotted. Of course
+         * there have to be shadows to hide in, so check the lamp. */
         puts("There are faint rustling noises from the darkness behind you. As you\n"
              "turn toward them, the beam of your lamp falls across a bearded pirate.\n"
              "He is carrying a large chest. \"Shiver me timbers!\" he cries, \"I've\n"
@@ -2733,15 +2733,16 @@ void throw_axe_at_dwarf(Location loc)  /* section 163 in Knuth */
     }
     assert(j <= 5);
     if (ran(3) < 2) {
-        if (dkill == 0) {
+        static bool first_time = true;
+        if (first_time) {
             puts("You killed a little dwarf.  The body vanishes in a cloud of greasy\n"
                  "black smoke.");
+            first_time = false;
         } else {
             puts("You killed a little dwarf.");
         }
-        dloc[j] = R_LIMBO;
+        dloc[j] = R_LIMBO;  /* Once killed, a dwarf never comes back. */
         dseen[j] = false;
-        ++dkill;
     } else {
         puts("You attack a little dwarf, but he dodges out of the way.");
     }
@@ -3555,6 +3556,7 @@ void simulate_an_adventure(void)
                 case TOSS:
                     if (obj == ROD && toting(ROD2) && !toting(ROD)) obj = ROD2;
                     if (!toting(obj)) {
+                        /* This response is weird, but it matches Knuth. */
                         puts("Peculiar.  Nothing unexpected happens.");
                         continue;
                     }
