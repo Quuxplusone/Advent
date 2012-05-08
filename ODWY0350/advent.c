@@ -1425,6 +1425,11 @@ void build_travel_table(void)
     make_ins(0, R_EMIST);
     make_loc(q, R_CLIMB, "You clamber up the plant and scurry through the hole at the top.", NULL, 0);
     make_ins(0, R_NARROW);
+    /* This extra room causes some extra blank lines before the
+     * message about climbing "up the plant and out of the pit".
+     * But this matches Knuth, and at least the room definition
+     * seems to match Woods, although maybe he got rid of the
+     * extra blank lines somehow. */
     make_loc(q, R_CHECK, "", NULL, 0);
     make_cond_ins(0, 300+PLANT+200, R_UPNOUT);
     make_ins(0, R_DIDIT);
@@ -1981,9 +1986,14 @@ bool cave_is_closing(void)
 
 void close_the_cave(void)
 {
+    /* Woods has "entones", but that's not a word, so I'm changing it.
+     * Knuth writes "Then your eyes refocus;" in place of "As your eyes
+     * refocus," but I don't see any reason to deviate from Woods'
+     * wording there. Maybe Knuth was working from a slightly earlier
+     * or later version than the one I'm looking at. */
     puts("The sepulchral voice intones, \"The cave is now closed.\"  As the echoes\n"
          "fade, there is a blinding flash of light (and a small puff of orange\n"
-         "smoke). . . .    Then your eyes refocus; you look around and find...");
+         "smoke). . . .    As your eyes refocus, you look around and find...");
     move(BOTTLE, R_NEEND); objs[BOTTLE].prop = -2;
     move(PLANT, R_NEEND); objs[PLANT].prop = -1;
     move(OYSTER, R_NEEND); objs[OYSTER].prop = -1;
@@ -2087,6 +2097,12 @@ void panic_at_closing_time(void)
     }
     puts("A mysterious recorded voice groans into life and announces:\n"
          "   \"This exit is closed.  Please leave via main office.\"");
+    /* Woods does NOT set "was_dark = false" at this point.
+     * This means that if you've gotten into the habit of turning
+     * off your lamp before you use a magic word to teleport out
+     * of the cave, we might well add injury to insult by causing
+     * you to fall into a pit and die (thus ending the game) right
+     * at this point. */
 }
 
 
@@ -2128,9 +2144,9 @@ int look_around(Location loc, bool dark, bool was_dark)
         /* Describe the objects at this location. */
         for (struct ObjectData *t = first[loc]; t != NULL; t = t->link) {
             struct ObjectData *tt = t->base ? t->base : t;
-            if (t->prop < 0) {  /* you've spotted a treasure */
+            if (tt->prop < 0) {  /* you've spotted a treasure */
                 if (closed) continue;  /* no automatic prop change after hours */
-                t->prop = (tt == &objs[RUG] || tt == &objs[CHAIN]);
+                tt->prop = (tt == &objs[RUG] || tt == &objs[CHAIN]);
                 tally--;
                 if (tally == lost_treasures && tally > 0 && lamp_limit > 35) {
                     /* Zap the lamp if the remaining treasures are too elusive */
@@ -2431,10 +2447,10 @@ void adjustments_before_listening(Location loc)
          * down, separate from their respective piles. Section 182 in Knuth. */
         if (objs[OYSTER].prop < 0 && toting(OYSTER)) {
             puts(note[71]);
-            for (int j=1; j <= MAX_OBJ; ++j) {
-                if (toting(j) && objs[j].prop < 0)
-                    objs[j].prop = -1 - objs[j].prop;
-            }
+        }
+        for (int j=1; j <= MAX_OBJ; ++j) {
+            if (toting(j) && objs[j].prop < 0)
+                objs[j].prop = -1 - objs[j].prop;
         }
     }
 }
@@ -3019,8 +3035,7 @@ int check_noun_validity(ObjectWord obj, Location loc)  /* sections 90--91 in Knu
             return 'c';  /* can't see it */
         case PLANT:
             if (is_at_loc(PLANT2, loc) && objs[PLANT2].prop != 0) {
-                obj = PLANT2;
-                return 0;
+                return 'p';  /* obj = PLANT2 */
             }
             return 'c';  /* can't see it */
         case KNIFE:
@@ -3030,8 +3045,7 @@ int check_noun_validity(ObjectWord obj, Location loc)  /* sections 90--91 in Knu
             return 'f';  /* action is finished */
         case ROD:
             if (!here(ROD2, loc)) return 'c';
-            obj = ROD2;
-            return 0;
+            return 'r';  /* obj = ROD2 */
         case WATER:
             if (here(BOTTLE, loc) && objs[BOTTLE].prop == 0) return 0;
             if ((flags[loc] & F_LIQUID) && !(flags[loc] & F_OIL)) return 0;
@@ -3287,6 +3301,8 @@ void simulate_an_adventure(void)
                         case 'd': mot = DEPRESSION; goto try_move;
                         case 'e': mot = ENTRANCE; goto try_move;
                         case 'f': continue;
+                        case 'p': obj = PLANT2; break;
+                        case 'r': obj = ROD2; break;
                         /* case 0: break; */
                     }
                     if (*word2 != '\0') break;
@@ -3370,20 +3386,24 @@ void simulate_an_adventure(void)
                     if (yes("Do you really wish to quit now?", ok, ok)) give_up();
                     continue;
 #ifdef SAVE_AND_RESTORE
-		case SAVE:
-		    switch (attempt_save()) {
+                case SAVE:
+                    switch (attempt_save()) {
                         case 0: puts("Save failed!"); break;
-                        case 1: puts("Saved."); break;
+                        case 1:
+                            /* Saved. Parchment already prints a nice
+                             * message, so we don't need to. */
+                            break;
                         case 2: puts("Restored."); break;
                     }
-		    continue;
-		case RESTORE:
-                    /* TODO: this does not always work correctly. Figure out why. */
-		    switch (attempt_restore()) {
-                        case 2: puts("Restored. (Whaaat?)"); break;
-                        default: puts("Restore failed!"); break;
-                    }
-		    continue;
+                    continue;
+                case RESTORE:
+                    /* On the fizmo interpreter, @restore yields 2
+                     * when the save file doesn't exist, or when it
+                     * has the wrong serial number for this game.
+                     * I don't know what return value 0 would mean. */
+                    attempt_restore();
+                    puts("Restore failed!");
+                    continue;
 #endif /* SAVE_AND_RESTORE */
                 case FEEFIE: {
                     static const char *const incantation[] = { "fee", "fie", "foe", "foo", "fum" };
@@ -3721,8 +3741,8 @@ void simulate_an_adventure(void)
                 case SCORE:
                 case QUIT:
 #ifdef SAVE_AND_RESTORE
-		case SAVE:
-		case RESTORE:
+                case SAVE:
+                case RESTORE:
 #endif /* SAVE_AND_RESTORE */
                     puts("Eh?");
                     continue;
