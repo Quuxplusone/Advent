@@ -17,7 +17,10 @@ int attempt_restore(void) =
     "\tr0 = 2;\n";  /* ok */
 
 #endif /* SAVE_AND_RESTORE */
-int ran(int range) = "\t@random r0 -> r0;\n";
+/* The Z-machine's "@random 42" instruction returns a value in the range 1..42. */
+int ran(int range) =
+    "\t@random r0 -> r0;\n"
+    "\t@sub r0 0+1 -> r0;\n";
 #else
 int ran(int range) { return rand() % range; }
 #endif /* Z_MACHINE */
