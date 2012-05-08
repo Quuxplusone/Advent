@@ -2764,8 +2764,7 @@ bool attempt_fill(ObjectWord obj, Location loc)  /* sections 110--111 in Knuth *
             objs[VASE].prop = 2;  /* worthless shards */
             immobilize(VASE);
         }
-    }
-    if (!here(BOTTLE, loc)) {
+    } else if (!here(BOTTLE, loc)) {
         if (obj == NOTHING)
             return true;
         puts("You can't fill that.");
