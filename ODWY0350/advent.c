@@ -3590,8 +3590,8 @@ void simulate_an_adventure(void)
                     } else if (is_at_loc(TROLL, loc)) {
                         puts("The troll deftly catches the axe, examines it carefully, and tosses it\n"
                              "back, declaring, \"Good workmanship, but it's not valuable enough.\"");
-                    } else if (here(BEAR, loc) && objs[BEAR].prop) {
-                        /* Throw the axe at the bear. */
+                    } else if (here(BEAR, loc) && objs[BEAR].prop == 0) {
+                        /* Throw the axe at the (un-tame) bear. */
                         drop(AXE, loc);
                         objs[AXE].prop = 1;
                         immobilize(AXE);
