@@ -1,3 +1,4 @@
+
 /* adv01.c: A-code kernel - copyleft Mike Arnautov 1990-2010.
  *
  * 01 Apr 10   MLA             Added make_copy functionality.
@@ -12,5 +13,3 @@
 
 #define ADV01
 #include "adv1.h"
-
-
