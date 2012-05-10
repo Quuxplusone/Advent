@@ -1,17 +1,11 @@
 #ifndef ADV1_H
 #define ADV1_H
-#define GAME_NAME "Adv550"
-#define GAME_VERSION "99.99"
+
 #define GAME_ID "adv550.acd"
-#define STYLE 1
+
 #ifndef ADV01
 #define ACDC_VERSION "12.20, 06 Oct 2010"
-#if defined(MSDOS) || defined(_WIN32) || defined(VMS)
-#  define CGINAME "_adv550"
-#else
-#  define CGINAME ".adv550"
-#endif
-#define DBNAME "adv550.dat"
+#define CGINAME ".adv550"
 #define OBJSIZE 1
 #define LOCSIZE 1
 #define VARSIZE 1
@@ -51,8 +45,6 @@
 #define DBSTATUS 0
 #define LPROC 442
 #define KEY(X) (value[444]==X || value[445]==X)
-#define INIT_PROC p1
-#define REPEAT_PROC p23
 #endif
-#define TEXT_BYTES 119682
+
 #endif

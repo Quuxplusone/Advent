@@ -1,9 +1,6 @@
 #include "adv3.h"
-#ifdef __STDC__
-void p1()
-#else
-void p1()
-#endif
+
+void initial()
 {
    p2();
    p3();
@@ -28,21 +25,15 @@ void p1()
    p22();
    return;
 }
-#ifdef __STDC__
-void p23()
-#else
-void p23()
-#endif
+
+void repeat()
 {
    p24();
    p25();
    return;
 }
-#ifdef __STDC__
+
 void p26()
-#else
-void p26()
-#endif
 {
    p27();
    p28();
@@ -834,9 +825,5 @@ void p592()
    p594();
    return;
 }
-#ifdef __STDC__
 void p0(void)
-#else
-void p0()
-#endif
 {return;}
