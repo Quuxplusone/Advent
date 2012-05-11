@@ -37,23 +37,11 @@ int value_all;
 
 jmp_buf loop_back;
 
-#define VAL_SIZE (LTEXT * sizeof (int))
-#define OFFSET_LOCS VAL_SIZE
-#define LOCS_SIZE ((LOBJ + 1) * sizeof (int))
-#define OFFSET_OBJBIT (OFFSET_LOCS + LOCS_SIZE)
-#define OBJBIT_SIZE (OBJSIZE * (LOBJ - FOBJ + 1) * sizeof (short))
-#define OFFSET_LOCBIT (OFFSET_OBJBIT + OBJBIT_SIZE)
-#define LOCBIT_SIZE (LOCSIZE * (LLOC - FLOC + 1) * sizeof (short))
-#define OFFSET_VARBIT (OFFSET_LOCBIT + LOCBIT_SIZE)
-#define VARBIT_SIZE (VARSIZE * (LVAR - FVERB + 1) * sizeof (short))
-#define VRBBIT_SIZE (VARSIZE * (LVERB - FVERB + 1) * sizeof (short))
-#define IMAGE_SIZE (OFFSET_VARBIT + VARBIT_SIZE)
-char IMAGE[IMAGE_SIZE];
-int *value = (int *)IMAGE;
-int *location = (int *)(IMAGE + OFFSET_LOCS);
-short *objbits = (short *)(IMAGE + OFFSET_OBJBIT);
-short *placebits = (short *)(IMAGE + OFFSET_LOCBIT);
-short *varbits = (short *)(IMAGE + OFFSET_VARBIT);
+int value[LTEXT];
+int location[LOBJ + 1];
+short objbits[LOBJ - FOBJ + 1];
+short placebits[LLOC - FLOC + 1];
+short varbits[LVAR - FVERB + 1];
 char *prog;
 char *optr;
 char *obuf = NULL;
@@ -85,7 +73,6 @@ int compress = 1;
 int end_pause = 0;
 int cgi = 0;
 char cgicom[160];
-char *cgi_name = CGINAME;
 
 #include "adv3.h"
 #include "adv4.h"
@@ -148,13 +135,15 @@ int keyword(int first, ...)
     return (1);
 }
 
-/*===========================================================*/
 int irand(int less_than)
 {
     return rand() % less_than;
 }
 
-/*===========================================================*/
+int pct(int p)
+{
+    return (irand(100) < p);
+}
 
 #define MAX_BREAKS 100
 char get_char(int char_addr)
@@ -1152,56 +1141,12 @@ int query(int textref)
     goto try_again;
 }
 
-/*===========================================================*/
-int memstore(int key)
-{
-
-/* Key -1  check for existence of memory image
- * Key 0   true memory save
- * Key 1   true memory restore
- * Key 2   temporary memory save
- * Key 3   temporary memory restore
- */
-    static char *image_base = NULL;     /* True memory save area */
-    static char *image_temp = NULL;     /* Temp save over restore area */
-    char *image_ptr;
-
-    if (key < 0) {
-        return (image_base ? 0 : 1);
-    }
-    image_ptr = key < 2 ? image_base : image_temp;
-    if (key == 0 || key == 2) {
-        if (image_ptr == NULL) {
-            image_ptr = (char *)malloc(IMAGE_SIZE);
-            if (image_ptr == NULL)
-                return (1);
-            if (key == 0)
-                image_base = image_ptr;
-
-            else
-                image_temp = image_ptr;
-        }
-        memcpy(image_ptr, IMAGE, IMAGE_SIZE);
-        return (0);
-    }
-
-    else {
-        if (image_ptr == NULL)
-            return (1);
-        memcpy(IMAGE, image_ptr, IMAGE_SIZE);
-        return (0);
-    }
-}
-
 void save_game()
 {
-
     /* [ajo] This is a stub to be filled in later. */
-} void restore_game()
-{
+}
 
-    /* [ajo] This is a stub to be filled in later. */
-} int special(int key, int *var)
+int special(int key, int *var)
 {
     char file_name[168];
     int val;
@@ -1211,7 +1156,7 @@ void save_game()
         case 1:                /* Dump game to disc */
         case 2:                /* Restore game from disc */
             val = value[ARG2];
-          try_again:if (val != -1) {
+            if (val != -1) {
                 if (*long_word && strncmp(long_word, arg2_word, 16) == 0)
                     strcpy(file_name, long_word);
 
@@ -1224,8 +1169,6 @@ void save_game()
         case 998:
                 save_game();
             return 0;
-          restore_it:restore_game();
-            return (0);
         case 3:                /* Delete saved game */
             return (0);
         case 4:                /* Adv550 legacy - flush game cache */
@@ -1390,10 +1333,8 @@ void move(int a1, int a2, ...)
     value[HERE] = a1;
     *bitword(HERE) = -1;
 
-#if defined (MOVED) && defined (STATUS)
     bitmod('s', STATUS, MOVED);
 
-#endif /* MOVED and STATUS */
     if (a2 < -2)
         a2 = -a2;
     if (a2 > 0)
@@ -1404,15 +1345,11 @@ void move(int a1, int a2, ...)
 }
 
 /*===========================================================*/
-void apport(int l1, int l2)
+void apport(int obj, int to_room)
 {
-
-#if defined (JUGGLED) && defined (STATUS)
-    if (location[l1] == INHAND || l2 == INHAND)
+    if (location[obj] == INHAND || to_room == INHAND)
         bitmod('s', STATUS, JUGGLED);
-
-#endif /*  */
-    location[l1] = (l2 <= LLOC || l2 == INHAND) ? l2 : value[l2];
+    location[obj] = (to_room <= LLOC || to_room == INHAND) ? to_room : value[to_room];
     return;
 }
 
@@ -1479,30 +1416,18 @@ void set(char t1, int v1, char t2, int v2, int *lv, short *lb)
     }
 }
 
-/*===========================================================*/
-void lda(int l1, int l2)
-{
-    value[l1] = l2;
-    *bitword(l1) = -1;
-    textadr[l1] = textadr[l2];
-    return;
-}
-
-/*===========================================================*/
 void eval(int l1, int l2)
 {
     value[l1] = value[value[l2]];
     return;
 }
 
-/*===========================================================*/
 void deposit(int l1, int l2)
 {
     value[value[l1]] = (l2 > LVAR || l2 < FVAR) ? l2 : value[l2];
     return;
 }
 
-/*===========================================================*/
 void locate(int l1, int l2)
 {
     value[l1] = location[(l2 < FVAR || l2 > LVAR) ? l2 : value[l2]];
@@ -1510,24 +1435,20 @@ void locate(int l1, int l2)
     return;
 }
 
-/*===========================================================*/
 int evar(int l1)
 {
     if (*bitword(l1) == -1)
         return value[l1];
-
     else
         return l1;
 }
 
-/*===========================================================*/
 void finita(void)
 {
     quitting = 1;
     longjmp(loop_back, 1);
 }
 
-/*===========================================================*/
 short *bitword(int a1)
 {
     short *adr;
@@ -1544,7 +1465,6 @@ short *bitword(int a1)
     return (adr);
 }
 
-/*===========================================================*/
 void bitmod(char a1, int a2, int a3)
 {
     short *bitadr = bitword(a2);
@@ -1561,7 +1481,6 @@ void bitmod(char a1, int a2, int a3)
     return;
 }
 
-/*===========================================================*/
 int bitest(int a1, int a2)
 {
     short *bitadr;
@@ -1578,7 +1497,6 @@ int bitest(int a1, int a2)
     return (*bitadr & 1 << a2);
 }
 
-/*===========================================================*/
 void svar(int type, int *var)
 {
     time_t now;
@@ -1595,52 +1513,4 @@ void svar(int type, int *var)
             assert(0);
     }
     return;
-}
-
-/*===========================================================*/
-void glue_text(void)
-{
-
-/* Convert last message output into a fragment */
-    while (*(lptr - 1) == '\n')
-        lptr--;
-}
-
-/*===========================================================*/
-void zap_text(void)
-{
-
-/* Zap all of the accumulated text */
-    lptr = text_buf;
-    *lptr = '\0';
-    text_len = 0;
-}
-
-/*===========================================================*/
-void verbatim(int arg)
-{
-    if (arg == ARG1)
-        strncpy(arg1_word, tp[tindex - 1], WORDSIZE);
-
-    else if (arg == ARG2 && value[STATUS] == 2)
-        strncpy(arg2_word, tp[tindex - 1], WORDSIZE);
-
-    else if (arg != ARG2) {
-        assert(0);
-    }
-}
-
-/*===========================================================*/
-void pcall(int procno)
-{
-    fprintf(stderr,
-            "\n*GLITCH* Called proc offest %d, but game's offset range is 0 to %d!\n",
-            procno, LPROC);
-    if (procno == BADWORD) {
-        fprintf(stderr, "   Probable cause: ");
-        if (procno == BADWORD)
-            fprintf(stderr, "bad word");
-        fprintf(stderr, " in player command not handled by game's code.\n");
-    }
-    fprintf(stderr, "\n");
 }

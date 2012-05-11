@@ -1,30 +1,24 @@
+#include <assert.h>
 #include "adv0.h"
 #include "adv3.h"
-#ifdef __STDC__
+
 void p56(void)
-#else
-void p56()
-#endif
 {
     move(148, 0, -367);
     move(150, 0, -368);
     move(151, 0, -151);
 }
 
-#ifdef __STDC__
 void p57(void)
-#else
-void p57()
-#endif
 {
     if (!anyof(369, 370, 357, 358, -1))
         return;
-    if (irand(100) < 65) {
+    if (pct(65)) {
         say(0, 624, 0);
         longjmp(loop_back, 1);
     } else {
         move(185, 0, -358);
-        if (irand(100) < 75) {
+        if (pct(75)) {
             move(155, 0, -369);
             move(125, 0, -357);
             move(151, 0, -370);
@@ -36,15 +30,11 @@ void p57()
     }
 }
 
-#ifdef __STDC__
 void p58(void)
-#else
-void p58()
-#endif
 {
     if (!keyword(374, -1))
         return;
-    if (irand(100) < 50) {
+    if (pct(50)) {
         say(0, 552, 0);
     } else {
         move(176, -1);
@@ -52,11 +42,7 @@ void p58()
     longjmp(loop_back, 1);
 }
 
-#ifdef __STDC__
 void p527(void)
-#else
-void p527()
-#endif
 {
     move(149, 0, -371);
     move(112, 0, -368);
@@ -66,7 +52,7 @@ void p527()
     move(175, 0, -175);
     if (!anyof(374, 370, -1))
         return;
-    if (irand(100) < 65) {
+    if (pct(65)) {
         move(176, 0, -374);
         say(0, 552, 0);
     } else {
@@ -76,11 +62,7 @@ void p527()
     longjmp(loop_back, 1);
 }
 
-#ifdef __STDC__
 void p178(void)
-#else
-void p178()
-#endif
 {
     move(150, 0, -367);
     move(111, 0, -368);
@@ -89,11 +71,7 @@ void p178()
     move(113, 0, -105);
 }
 
-#ifdef __STDC__
 void p501(void)
-#else
-void p501()
-#endif
 {
     move(111, 0, -370);
     move(152, 0, -357);
@@ -102,11 +80,7 @@ void p501()
     move(149, 0, -149);
 }
 
-#ifdef __STDC__
 void p495(void)
-#else
-void p495()
-#endif
 {
     move(151, 0, -358);
     move(151, 0, -151);
@@ -116,11 +90,7 @@ void p495()
     move(202, 0, -370);
 }
 
-#ifdef __STDC__
 void p494(void)
-#else
-void p494()
-#endif
 {
     move(154, 0, -369);
     move(149, 0, -358);
@@ -128,22 +98,14 @@ void p494()
     move(189, 0, -370);
 }
 
-#ifdef __STDC__
 void p493(void)
-#else
-void p493()
-#endif
 {
     move(149, 0, -372);
     move(153, 0, -370);
     move(121, 0, -369);
 }
 
-#ifdef __STDC__
 void p327(void)
-#else
-void p327()
-#endif
 {
     move(149, 0, -149);
     move(201, 0, -373);
@@ -152,32 +114,20 @@ void p327()
     move(176, 0, -176);
 }
 
-#ifdef __STDC__
 void p142(void)
-#else
-void p142()
-#endif
 {
     move(155, 0, -370);
     move(155, 0, -349);
     move(155, 0, -343);
 }
 
-#ifdef __STDC__
 void p491(void)
-#else
-void p491()
-#endif
 {
     move(110, 0, -367);
     move(158, 0, -358);
 }
 
-#ifdef __STDC__
 void p492(void)
-#else
-void p492()
-#endif
 {
     if (!keyword(368, -1))
         return;
@@ -189,30 +139,18 @@ void p492()
     longjmp(loop_back, 1);
 }
 
-#ifdef __STDC__
 void p405(void)
-#else
-void p405()
-#endif
 {
     move(159, 0, -370);
     move(160, 0, -369);
 }
 
-#ifdef __STDC__
 void p542(void)
-#else
-void p542()
-#endif
 {
     move(158, 0, -369);
 }
 
-#ifdef __STDC__
 void p533(void)
-#else
-void p533()
-#endif
 {
     move(158, 0, -367);
     move(161, 0, -368);
@@ -220,20 +158,12 @@ void p533()
     move(150, 0, -349);
 }
 
-#ifdef __STDC__
 void p143(void)
-#else
-void p143()
-#endif
 {
     move(160, 0, -370);
 }
 
-#ifdef __STDC__
 void p348(void)
-#else
-void p348()
-#endif
 {
     move(127, 0, -369);
     move(162, 0, -368);
@@ -241,83 +171,51 @@ void p348()
     move(163, 0, -367);
 }
 
-#ifdef __STDC__
 void p349(void)
-#else
-void p349()
-#endif
 {
     move(162, 0, -368);
     move(162, 0, -343);
 }
 
-#ifdef __STDC__
 void p350(void)
-#else
-void p350()
-#endif
 {
     move(129, 0, -370);
     move(129, 0, -343);
 }
 
-#ifdef __STDC__
 void p351(void)
-#else
-void p351()
-#endif
 {
     move(142, 0, -370);
     move(166, 0, -367);
     move(167, 0, -368);
 }
 
-#ifdef __STDC__
 void p352(void)
-#else
-void p352()
-#endif
 {
     move(142, 0, -369);
     move(165, 0, -368);
     move(198, 0, -374);
 }
 
-#ifdef __STDC__
 void p353(void)
-#else
-void p353()
-#endif
 {
     move(165, 0, -367);
     move(165, 0, -343);
 }
 
-#ifdef __STDC__
 void p354(void)
-#else
-void p354()
-#endif
 {
     move(137, 0, -357);
     move(137, 0, -343);
 }
 
-#ifdef __STDC__
 void p355(void)
-#else
-void p355()
-#endif
 {
     move(130, 0, -357);
     move(130, 0, -358);
 }
 
-#ifdef __STDC__
 void p386(void)
-#else
-void p386()
-#endif
 {
     move(114, 0, -358);
     move(114, 0, -376);
@@ -326,11 +224,7 @@ void p386()
     move(172, 0, -172);
 }
 
-#ifdef __STDC__
 void p387(void)
-#else
-void p387()
-#endif
 {
     if (!keyword(365, -1))
         return;
@@ -338,11 +232,7 @@ void p387()
     p517();
 }
 
-#ifdef __STDC__
 void p291(void)
-#else
-void p291()
-#endif
 {
     move(174, 0, -369);
     move(174, 0, -174);
@@ -351,11 +241,7 @@ void p291()
     move(155, 803, -376);
 }
 
-#ifdef __STDC__
 void p232(void)
-#else
-void p232()
-#endif
 {
     move(170, 0, -370);
     move(170, 0, -204);
@@ -363,22 +249,14 @@ void p232()
     move(173, 0, -369);
 }
 
-#ifdef __STDC__
 void p284(void)
-#else
-void p284()
-#endif
 {
     move(172, 0, -370);
     move(172, 0, -172);
     move(172, 0, -353);
 }
 
-#ifdef __STDC__
 void p285(void)
-#else
-void p285()
-#endif
 {
     if (!anyof(369, 350, 174, -1))
         return;
@@ -390,11 +268,7 @@ void p285()
     longjmp(loop_back, 1);
 }
 
-#ifdef __STDC__
 void p109(void)
-#else
-void p109()
-#endif
 {
     move(173, 0, -370);
     move(173, 0, -343);
@@ -403,11 +277,7 @@ void p109()
     move(171, 0, -171);
 }
 
-#ifdef __STDC__
 void p110(void)
-#else
-void p110()
-#endif
 {
     if (!anyof(358, 365, -1))
         return;
@@ -446,22 +316,14 @@ void p110()
     longjmp(loop_back, 1);
 }
 
-#ifdef __STDC__
 void p511(void)
-#else
-void p511()
-#endif
 {
     move(150, 0, -368);
     move(150, 0, -343);
     move(150, 0, -150);
 }
 
-#ifdef __STDC__
 void p424(void)
-#else
-void p424()
-#endif
 {
     move(150, 0, -372);
     move(155, 0, -368);
@@ -471,22 +333,14 @@ void p424()
     move(177, 0, -174);
 }
 
-#ifdef __STDC__
 void p379(void)
-#else
-void p379()
-#endif
 {
     move(176, 0, -370);
     move(176, 0, -176);
     move(178, 0, -368);
 }
 
-#ifdef __STDC__
 void p380(void)
-#else
-void p380()
-#endif
 {
     if (!keyword(365, -1))
         return;
@@ -495,11 +349,7 @@ void p380()
     longjmp(loop_back, 1);
 }
 
-#ifdef __STDC__
 void p27(void)
-#else
-void p27()
-#endif
 {
     if (!anyof(367, 353, 179, -1))
         return;
@@ -519,21 +369,13 @@ void p27()
     longjmp(loop_back, 1);
 }
 
-#ifdef __STDC__
 void p28(void)
-#else
-void p28()
-#endif
 {
     move(177, 0, -374);
     move(177, 0, -174);
 }
 
-#ifdef __STDC__
 void p450(void)
-#else
-void p450()
-#endif
 {
     if (value[HERE] != 179)
         return;
@@ -549,11 +391,7 @@ void p450()
     }
 }
 
-#ifdef __STDC__
 void p451(void)
-#else
-void p451()
-#endif
 {
     if (!anyof(368, 353, 178, -1))
         return;
@@ -573,32 +411,20 @@ void p451()
     longjmp(loop_back, 1);
 }
 
-#ifdef __STDC__
 void p452(void)
-#else
-void p452()
-#endif
 {
     move(180, 0, -371);
     move(180, 0, -180);
 }
 
-#ifdef __STDC__
 void p140(void)
-#else
-void p140()
-#endif
 {
     move(179, 0, -370);
     move(179, 0, -179);
     move(179, 0, -343);
 }
 
-#ifdef __STDC__
 void p38(void)
-#else
-void p38()
-#endif
 {
     move(182, 0, -358);
     move(182, 0, -182);
@@ -606,11 +432,7 @@ void p38()
     move(324, 0, -367);
 }
 
-#ifdef __STDC__
 void p499(void)
-#else
-void p499()
-#endif
 {
     move(181, 0, -357);
     move(181, 0, -364);
@@ -618,11 +440,7 @@ void p499()
     move(183, 0, -204);
 }
 
-#ifdef __STDC__
 void p500(void)
-#else
-void p500()
-#endif
 {
     if (!anyof(370, 148, -1))
         return;
@@ -638,22 +456,14 @@ void p500()
     longjmp(loop_back, 1);
 }
 
-#ifdef __STDC__
 void p460(void)
-#else
-void p460()
-#endif
 {
     move(182, 0, -357);
     move(182, 0, -182);
     move(184, 0, -358);
 }
 
-#ifdef __STDC__
 void p137(void)
-#else
-void p137()
-#endif
 {
     move(183, 0, -357);
     move(183, 0, -343);
@@ -661,22 +471,14 @@ void p137()
     move(182, 0, -182);
 }
 
-#ifdef __STDC__
 void p29(void)
-#else
-void p29()
-#endif
 {
     move(148, 0, -357);
     move(149, 0, -368);
     move(187, 0, -367);
 }
 
-#ifdef __STDC__
 void p356(void)
-#else
-void p356()
-#endif
 {
     move(255, 0, -370);
     move(256, 0, -373);
@@ -690,15 +492,11 @@ void p356()
     move(145, 0, -358);
 }
 
-#ifdef __STDC__
 void p588(void)
-#else
-void p588()
-#endif
 {
     if (!anyof(369, 370, 367, 357, 358, 371, 374, 372, 373, -1))
         return;
-    if (irand(100) < 95) {
+    if (pct(95)) {
         move(187, -1);
     } else {
         move(185, -1);
@@ -706,11 +504,7 @@ void p588()
     longjmp(loop_back, 1);
 }
 
-#ifdef __STDC__
 void p589(void)
-#else
-void p589()
-#endif
 {
     if (!keyword(368, -1))
         return;
@@ -718,11 +512,7 @@ void p589()
     longjmp(loop_back, 1);
 }
 
-#ifdef __STDC__
 void p372(void)
-#else
-void p372()
-#endif
 {
     if (!keyword(9, -1))
         return;
@@ -730,31 +520,19 @@ void p372()
     longjmp(loop_back, 1);
 }
 
-#ifdef __STDC__
 void p373(void)
-#else
-void p373()
-#endif
 {
     move(152, 0, -370);
     move(191, 0, -369);
     move(191, 0, -191);
 }
 
-#ifdef __STDC__
 void p585(void)
-#else
-void p585()
-#endif
 {
     move(154, 0, -368);
 }
 
-#ifdef __STDC__
 void p586(void)
-#else
-void p586()
-#endif
 {
     if (!keyword(365, -1))
         return;
@@ -763,27 +541,19 @@ void p586()
     p124();
 }
 
-#ifdef __STDC__
 void p519(void)
-#else
-void p519()
-#endif
 {
     move(153, 0, -369);
 }
 
-#ifdef __STDC__
 void p520(void)
-#else
-void p520()
-#endif
 {
     if (!anyof(358, 365, 376, -1))
         return;
-    if (irand(100) < 40) {
+    if (pct(40)) {
         move(135, -1);
     } else {
-        if (irand(100) < 50) {
+        if (pct(50)) {
             move(138, -1);
         } else {
             move(130, -1);
@@ -792,11 +562,7 @@ void p520()
     longjmp(loop_back, 1);
 }
 
-#ifdef __STDC__
 void p357(void)
-#else
-void p357()
-#endif
 {
     move(255, 0, -373);
     move(256, 0, -369);
@@ -810,11 +576,7 @@ void p357()
     move(264, 0, -370);
 }
 
-#ifdef __STDC__
 void p466(void)
-#else
-void p466()
-#endif
 {
     move(188, 0, -370);
     move(188, 0, -343);
@@ -839,7 +601,7 @@ void p467()
         return;
     if (isnear(27, -1, -1)) {
         say(0, 854, 0);
-        apport(27, 333);
+        apport(27, LIMBO);
         move(191, -1);
     } else {
         say(0, 853, 0);
@@ -928,9 +690,9 @@ void p530()
                         }
                         say(12, 661, 445);
                         set('E', 21, 'c', 1, NULL, NULL);
-                        apport(21, 333);
+                        apport(21, LIMBO);
                         apport(22, 199);
-                        apport(value[445], 333);
+                        apport(value[445], LIMBO);
                     } else {
                         return;
                     }
@@ -964,7 +726,7 @@ void p531()
                 say(0, 21, 0);
                 set('E', 21, 'c', 0, NULL, NULL);
                 apport(21, 199);
-                apport(22, 333);
+                apport(22, LIMBO);
             } else {
                 if (value[21] == 1) {
                     set('E', 21, 'c', 2, NULL, NULL);
@@ -1100,7 +862,7 @@ void p389()
         return;
     set('E', 21, 'c', 4, NULL, NULL);
     say(0, 665, 0);
-    apport(21, 333);
+    apport(21, LIMBO);
     apport(22, 199);
     apport(37, HERE);
     longjmp(loop_back, 1);
@@ -1139,9 +901,9 @@ void p390()
                         }
                         say(12, 661, 445);
                         set('E', 21, 'c', 1, NULL, NULL);
-                        apport(21, 333);
+                        apport(21, LIMBO);
                         apport(22, 199);
-                        apport(value[445], 333);
+                        apport(value[445], LIMBO);
                     } else {
                         return;
                     }
@@ -1175,7 +937,7 @@ void p391()
                 say(0, 21, 0);
                 set('E', 21, 'c', 0, NULL, NULL);
                 apport(21, 199);
-                apport(22, 333);
+                apport(22, LIMBO);
             } else {
                 if (value[21] == 1) {
                     set('E', 21, 'c', 2, NULL, NULL);
@@ -1183,7 +945,7 @@ void p391()
                 if (have(37, -1, -1)) {
                     say(0, 664, 0);
                     set('E', 20, 'c', 1, NULL, NULL);
-                    apport(22, 333);
+                    apport(22, LIMBO);
                     move(334, -1);
                     p124();
                 } else {
@@ -1196,7 +958,7 @@ void p391()
                             set('E', 20, 'c', 2, NULL, NULL);
                             say(0, 792, 0);
                         }
-                        apport(22, 333);
+                        apport(22, LIMBO);
                         move(334, -1);
                         p124();
                     } else {
@@ -1599,7 +1361,7 @@ void p369()
         return;
     if (!have(47, -1, -1))
         return;
-    apport(47, 333);
+    apport(47, LIMBO);
     apport(38, value[442]);
     say(2, 465, 0);
     say(0, 38, 0);
@@ -3426,10 +3188,8 @@ void p554()
                  KEY(357)) ||
                 KEY(358)) ||
                KEY(342)) || KEY(417)) || KEY(343)) || KEY(350)) {
-            if (value[445] < LPROC && value[445] >= 0)
-                (*procs[value[445]]) ();
-            else
-                pcall(value[445]);
+            assert(value[445] < LPROC && value[445] >= 0);
+            (*procs[value[445]]) ();
         } else {
             if (bitest(evar(445), 13)) {
                 if ((value[HERE] == value[445])) {
@@ -3491,7 +3251,7 @@ void p558(typ0, par0)
         return;
     if (isnear(5, -1, -1)) {
         if (have(82, -1, -1)) {
-            apport(82, 333);
+            apport(82, LIMBO);
             set('E', 81, 'c', 1, NULL, NULL);
             say(0, 611, 0);
             set('E', 5, 'c', 0, NULL, NULL);
@@ -3516,7 +3276,7 @@ void p408(typ0, par0)
         return;
     if (isnear(5, -1, -1)) {
         if (have(83, -1, -1)) {
-            apport(83, 333);
+            apport(83, LIMBO);
             set('E', 81, 'c', 1, NULL, NULL);
             set('E', 5, 'c', 1, NULL, NULL);
             say(0, 612, 0);
@@ -3541,7 +3301,7 @@ void p559(typ0, par0)
         return;
     if (isnear(10, -1, -1)) {
         if (have(82, -1, -1)) {
-            apport(82, 333);
+            apport(82, LIMBO);
             set('E', 81, 'c', 1, NULL, NULL);
             value[10] += 1;
             say(0, 10, 0);
@@ -3575,7 +3335,7 @@ void p409(typ0, par0)
         return;
     if (isnear(10, -1, -1)) {
         if (have(83, -1, -1)) {
-            apport(83, 333);
+            apport(83, LIMBO);
             set('E', 81, 'c', 1, NULL, NULL);
             say(0, 610, 0);
         } else {
@@ -3658,7 +3418,7 @@ void p536(typ0, par0)
         } else {
             if (isnear(37, -1, -1)) {
                 say(0, 670, 0);
-                apport(80, 333);
+                apport(80, LIMBO);
                 set('E', 37, 'c', 1, NULL, NULL);
                 if (value[85] == 1) {
                     set('E', 85, 'c', 0, NULL, NULL);
@@ -3687,8 +3447,8 @@ void p537(typ0, par0)
     if (!isnear(90, -1, -1))
         return;
     say(0, 842, 0);
-    apport(87, 333);
-    apport(90, 333);
+    apport(87, LIMBO);
+    apport(90, LIMBO);
     longjmp(loop_back, 1);
 }
 
@@ -3915,10 +3675,8 @@ void p324()
 {
     if (!anyof(410, 407, -1))
         return;
-    if (value[445] < LPROC && value[445] >= 0)
-        (*procs[value[445]]) ();
-    else
-        pcall(value[445]);
+    assert(value[445] < LPROC && value[445] >= 0);
+    (*procs[value[445]]) ();
 }
 
 #ifdef __STDC__
@@ -3986,7 +3744,7 @@ void p411()
                 if (!(bitest(evar(442), 0))) {
                     (*procs[377]) ();
                 }
-                p433();
+                phog();
             } else {
                 say(0, 687, 0);
             }
@@ -4018,7 +3776,7 @@ void p406()
             if (!(bitest(evar(442), 0))) {
                 say(0, 509, 0);
             }
-            p433();
+            phog();
         } else {
             if (KEY(69)) {
                 say(12, 522, 445);
@@ -4169,7 +3927,7 @@ void p419(typ0, par0)
         say(0, 618, 0);
     } else {
         if (have(50, -1, -1)) {
-            apport(76, 333);
+            apport(76, LIMBO);
             apport(77, value[442]);
             apport(58, 184);
             say(0, 622, 0);
@@ -4258,7 +4016,7 @@ void p423(typ0, par0)
     if ((value[HERE] == 214)) {
         if (isnear(26, -1, -1)) {
             say(0, 845, 0);
-            apport(26, 333);
+            apport(26, LIMBO);
             bitmod('s', 26, 10);
         } else {
             say(0, 847, 0);

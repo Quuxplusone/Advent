@@ -1,11 +1,6 @@
 #ifndef ADV1_H
 #define ADV1_H
 
-#define GAME_ID "adv550.acd"
-
-#ifndef ADV01
-#define ACDC_VERSION "12.20, 06 Oct 2010"
-#define CGINAME ".adv550"
 #define OBJSIZE 1
 #define LOCSIZE 1
 #define VARSIZE 1
@@ -45,6 +40,5 @@
 #define DBSTATUS 0
 #define LPROC 442
 #define KEY(X) (value[444]==X || value[445]==X)
-#endif
 
 #endif

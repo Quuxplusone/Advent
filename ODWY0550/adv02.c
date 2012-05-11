@@ -133,9 +133,9 @@ void p204()
 }
 
 #ifdef __STDC__
-void p433(void)
+void phog(void)
 #else
-void p433()
+void phog()
 #endif
 {
     if (value[13] < 8) {
@@ -143,7 +143,7 @@ void p433()
     }
     value[14] = irand(8);
     if ((isnear(69, -1, -1)) && value[69] == 1) {
-        apport(14, 333);
+        apport(14, LIMBO);
     } else {
         apport(14, 211);
         if (((value[HERE] == 211)) && !(bitest(evar(446), 0))) {
@@ -163,8 +163,8 @@ void p124()
     bitmod('c', evar(458), 3);
     bitmod('c', evar(458), 1);
     set('E', 16, 'c', 0, NULL, NULL);
-    apport(16, 333);
-    apport(90, 333);
+    apport(16, LIMBO);
+    apport(90, LIMBO);
     if (value[24] == 1) {
         set('E', 24, 'c', 0, NULL, NULL);
     } else {
@@ -196,7 +196,7 @@ void p124()
         *bitword(449) = -1;
         if (value[448] < value[449]) {
             if (have(52, -1, -1)) {
-                apport(52, 333);
+                apport(52, LIMBO);
                 apport(53, INHAND);
             }
             *bitword(448) = -1;
@@ -206,13 +206,13 @@ void p124()
                     apport(value[448], HERE);
                 }
             }
-            apport(82, 333);
-            apport(83, 333);
+            apport(82, LIMBO);
+            apport(83, LIMBO);
             set('V', 452, 'c', 0, NULL, NULL);
             set('E', 69, 'c', 0, NULL, NULL);
             apport(13, 210);
             set('E', 13, 'c', 8, NULL, NULL);
-            p433();
+            phog();
             move(94, -1);
             set('V', 443, 'c', 0, NULL, NULL);
             apport(69, 92);
@@ -225,7 +225,7 @@ void p124()
                     }
                 }
             }
-            apport(91, 333);
+            apport(91, LIMBO);
             set('E', 91, 'c', 0, NULL, NULL);
             bitmod('c', 18, 10);
             longjmp(loop_back, 1);
@@ -317,13 +317,13 @@ void p159()
     set('E', 71, 'c', 0, NULL, NULL);
     if (isnear(6, -1, -1)) {
         say(0, 523, 0);
-        apport(6, 333);
+        apport(6, LIMBO);
         bitmod('c', 110, 5);
         longjmp(loop_back, 1);
     } else {
         if (isnear(19, -1, -1)) {
             if (value[19] == 0) {
-                apport(71, 333);
+                apport(71, LIMBO);
                 say(0, 650, 0);
                 longjmp(loop_back, 1);
             }
@@ -334,13 +334,13 @@ void p159()
             } else {
                 if (isnear(23, -1, -1)) {
                     say(0, 652, 0);
-                    apport(71, 333);
+                    apport(71, LIMBO);
                     longjmp(loop_back, 1);
                 } else {
                     if (isnear(37, -1, -1)) {
                         if (value[37] == 0) {
                             say(0, 653, 0);
-                            apport(71, 333);
+                            apport(71, LIMBO);
                         } else {
                             say(0, 654, 0);
                         }
@@ -348,12 +348,12 @@ void p159()
                     } else {
                         if ((isnear(24, -1, -1)) && value[24] < 2) {
                             say(0, 655, 0);
-                            apport(71, 333);
+                            apport(71, LIMBO);
                             p124();
                         } else {
                             if (isnear(91, -1, -1)) {
                                 say(12, 656, 91);
-                                apport(71, 333);
+                                apport(71, LIMBO);
                                 longjmp(loop_back, 1);
                             }
                         }
@@ -397,7 +397,7 @@ void p163()
         if ((have(75, -1, -1)) || !isnear(75, -1, -1)) {
             set('E', 52, 'c', 2, NULL, NULL);
             say(0, 52, 0);
-            apport(52, 333);
+            apport(52, LIMBO);
             apport(53, value[442]);
         } else {
             set('E', 52, 'c', 1, NULL, NULL);
@@ -416,7 +416,7 @@ void p162()
 {
     if (!have(value[445], -1, -1))
         return;
-    apport(value[445], 333);
+    apport(value[445], LIMBO);
     set('E', 81, 'c', 1, NULL, NULL);
     if ((isnear(91, -1, -1)) && KEY(392)) {
         if (value[91] == 1) {
@@ -440,8 +440,8 @@ void p160()
     if (!have(81, -1, -1))
         return;
     apport(81, HERE);
-    apport(83, 333);
-    apport(82, 333);
+    apport(83, LIMBO);
+    apport(82, LIMBO);
     say(2, 465, 0);
     longjmp(loop_back, 1);
 }
@@ -594,7 +594,7 @@ void p305()
 #endif
 {
     if (value[463] < 3) {
-        apport(71, 333);
+        apport(71, LIMBO);
         say(0, 541, 0);
     } else {
         say(0, 632, 0);
@@ -623,15 +623,15 @@ void p310()
         value[448] -= value[452];
         value[448] += 2;
         value[448] *= 10;
-        if (irand(100) < value[448]) {
+        if (pct(value[448])) {
             say(0, 543, 0);
             value[91] -= 1;
             if (value[91] == 0) {
-                apport(91, 333);
+                apport(91, LIMBO);
             }
             value[461] -= 1;
         } else {
-            if (irand(100) < value[448]) {
+            if (pct(value[448])) {
                 say(0, 544, 0);
             } else {
                 say(0, 545, 0);
@@ -652,7 +652,7 @@ void p312()
 #endif
 {
     if (query(546)) {
-        if (irand(100) < 50) {
+        if (pct(50)) {
             say(0, 809, 0);
         } else {
             say(0, 810, 0);
@@ -773,7 +773,7 @@ void p214()
     if (!isnear(26, -1, -1))
         return;
     say(0, 845, 0);
-    apport(26, 333);
+    apport(26, LIMBO);
     bitmod('s', 26, 10);
     longjmp(loop_back, 1);
 }
@@ -855,7 +855,7 @@ void p228()
         } else {
             say(0, 824, 0);
         }
-        apport(36, 333);
+        apport(36, LIMBO);
         longjmp(loop_back, 1);
     }
 }
@@ -1008,7 +1008,7 @@ void p113()
                 if (((((((((value[459] > 150) &&
                            !(bitest(18, 1))) ||
                           bitest(18, 10)) ||
-                         irand(100) < 15) &&
+                         pct(15)) &&
                         !(bitest(48, 1))) &&
                        !isnear(91, -1, -1)) &&
                       !(bitest(evar(442), 0))) &&
@@ -1053,7 +1053,7 @@ void p113()
                     value[448] += 2;
                     value[448] *= 10;
                     if (((isnear(91, -1, -1)) ||
-                         irand(100) < value[448]) && value[91] < value[461]) {
+                         pct(value[448])) && value[91] < value[461]) {
                         if (bitest(85, 1)) {
                             apport(91, value[442]);
                             value[91] += 1;
@@ -1079,13 +1079,13 @@ void p113()
             if (isnear(91, -1, -1)) {
                 say(13, 728, 91);
             }
-            apport(91, 333);
+            apport(91, LIMBO);
             set('E', 91, 'c', 0, NULL, NULL);
             set('V', 461, 'c', 0, NULL, NULL);
             set('E', 7, 'c', 0, NULL, NULL);
             set('E', 29, 'c', 0, NULL, NULL);
-            apport(21, 333);
-            apport(19, 333);
+            apport(21, LIMBO);
+            apport(19, LIMBO);
             set('E', 21, 'c', 5, NULL, NULL);
             apport(22, 199);
             bitmod('s', 7, 7);
@@ -1161,7 +1161,7 @@ void p318()
                 say(0, 687, 0);
                 set('E', 69, 'c', 0, NULL, NULL);
                 bitmod('s', evar(458), 6);
-                p433();
+                phog();
             }
         }
     }
@@ -1314,7 +1314,7 @@ void p395()
         value[449] += value[450];
         say(14, 449, 448);
     } else {
-        if (irand(100) < 25) {
+        if (pct(25)) {
             say(0, 516, 0);
             p124();
         } else {
@@ -1336,7 +1336,7 @@ void p65(void)
 void p65()
 #endif
 {
-    apport(88, 333);
+    apport(88, LIMBO);
     say(0, 783, 0);
     value[448] = irand(7);
     value[449] = 784;
@@ -1351,7 +1351,7 @@ void p65()
             set('E', 88, 'c', 2, NULL, NULL);
         }
         say(0, 88, 0);
-        apport(91, 333);
+        apport(91, LIMBO);
         value[461] -= value[91];
         set('E', 91, 'c', 0, NULL, NULL);
     }
@@ -1377,7 +1377,7 @@ void p65()
     if (isnear(32, -1, -1)) {
         set('E', 88, 'c', 8, NULL, NULL);
         say(0, 88, 0);
-        apport(32, 333);
+        apport(32, LIMBO);
     }
     if ((isnear(19, -1, -1)) && value[19] == 0) {
         set('E', 88, 'c', 9, NULL, NULL);
@@ -1394,7 +1394,7 @@ void p65()
     if (isnear(90, -1, -1)) {
         set('E', 88, 'c', 12, NULL, NULL);
         say(0, 88, 0);
-        apport(90, 333);
+        apport(90, LIMBO);
     }
     longjmp(loop_back, 1);
 }
@@ -1405,17 +1405,17 @@ void p164(void)
 void p164()
 #endif
 {
-    if ((have(88, -1, -1)) && irand(100) < 10) {
+    if ((have(88, -1, -1)) && pct(10)) {
         say(0, 782, 0);
-        apport(88, 333);
+        apport(88, LIMBO);
         p124();
     }
 }
 
 #ifdef __STDC__
-void p166(void)
+void dwarf_attack(void)
 #else
-void p166()
+void dwarf_attack()
 #endif
 {
     set('V', 449, 'e', 91, NULL, NULL);
@@ -1445,7 +1445,7 @@ void p166()
             return;
         }
     }
-    if ((irand(100) < value[478]) || bitest(91, 10)) {
+    if (pct(value[478]) || bitest(91, 10)) {
         say(13, 491, 449);
         bitmod('c', 91, 10);
     } else {
@@ -1511,8 +1511,8 @@ void p562()
             if ((KEY(85)) ^ KEY(384)) {
                 value[448] += 15;
             }
-            if (irand(100) < value[448]) {
-                if ((irand(100) < 5) && !(bitest(evar(458), 8))) {
+            if (pct(value[448])) {
+                if (pct(5) && !(bitest(evar(458), 8))) {
                     say(12, 645, 445);
                     bitmod('s', evar(458), 8);
                 } else {
@@ -1520,7 +1520,7 @@ void p562()
                 }
                 value[91] -= 1;
                 if (value[91] == 0) {
-                    apport(91, 333);
+                    apport(91, LIMBO);
                 } else {
                     set('V', 478, 'c', 0, NULL, NULL);
                     set('V', 477, 'c', 100, NULL, NULL);
@@ -1551,7 +1551,7 @@ void p562()
                                     say(0, 793, 0);
                                 }
                             } else {
-                                if (irand(100) < 50) {
+                                if (pct(50)) {
                                     say(0, 794, 0);
                                 } else {
                                     say(0, 795, 0);
@@ -1576,8 +1576,8 @@ void p562()
                                         p124();
                                     } else {
                                         say(0, 808, 0);
-                                        apport(86, 333);
-                                        apport(23, 333);
+                                        apport(86, LIMBO);
+                                        apport(23, LIMBO);
                                         apport(63, value[442]);
                                         longjmp(loop_back, 1);
                                     }
@@ -1909,12 +1909,12 @@ void p549()
         }
     }
     if (KEY(81)) {
-        apport(83, 333);
-        apport(82, 333);
+        apport(83, LIMBO);
+        apport(82, LIMBO);
     }
     if ((KEY(83)) || KEY(82)) {
         set('E', 81, 'c', 1, NULL, NULL);
-        apport(value[445], 333);
+        apport(value[445], LIMBO);
     }
     if ((KEY(70)) && have(71, -1, -1)) {
         apport(71, value[449]);
@@ -1946,7 +1946,7 @@ void p239()
         value[448] -= value[468];
         value[448] *= 5;
         value[448] += 60;
-        if (irand(100) < value[448]) {
+        if (pct(value[448])) {
             say(12, 907, 445);
             p124();
         } else {
@@ -2061,15 +2061,11 @@ void p209()
     move(96, 0, -370);
 }
 
-#ifdef __STDC__
 void p210(void)
-#else
-void p210()
-#endif
 {
     if (!anyof(96, 341, 369, -1))
         return;
-    if (irand(100) < 50) {
+    if (pct(50)) {
         move(96, -1);
     } else {
         move(97, -1);
@@ -2509,7 +2505,7 @@ void p384()
         move(273, 0, -374);
         move(270, 0, -372);
         move(157, 0, -375);
-        if (irand(100) < 35) {
+        if (pct(35)) {
             move(157, 0, -373);
         } else {
             say(0, 552, 0);
