@@ -65,13 +65,13 @@ void p70(void)
 
 void p329(void)
 {
-    if ((value[446] == 1) || !(bitest(evar(458), 5))) {
+    if ((value[STATUS] == 1) || !(bitest(evar(458), 5))) {
         say(0, 557, 0);
         longjmp(loop_back, 1);
     }
     if (bitest(evar(445), 13)) {
         say(2, 479, 0);
-        move(value[445], -1);
+        move(value[ARG2], -1);
     } else {
         say(0, 557, 0);
     }
@@ -83,7 +83,7 @@ void p301(void)
     default_to(0, value[HERE], 5);
     if (!anyof(21, 91, 19, 6, 71, 37, 77, 76, 23, 16, 26, 90, 24, 25, -1))
         return;
-    if (!isnear(value[445], -1, -1))
+    if (!isnear(value[ARG2], -1, -1))
         return;
     if (KEY(21)) {
         p314();
@@ -141,7 +141,7 @@ void p301(void)
 
 void p302(void)
 {
-    if (value[446] == 1) {
+    if (value[STATUS] == 1) {
         say(0, 540, 0);
         longjmp(loop_back, 1);
     }
@@ -171,7 +171,7 @@ void p194(void)
 {
     if (!anyof(37, 21, 71, 6, 91, 19, 24, 90, -1))
         return;
-    if (isnear(value[445], -1, -1)) {
+    if (isnear(value[ARG2], -1, -1)) {
         if (KEY(37)) {
             if (isnear(80, -1, -1)) {
                 say(0, 670, 0);
@@ -236,7 +236,7 @@ void p194(void)
 
 void p195(void)
 {
-    if (value[446] == 1) {
+    if (value[STATUS] == 1) {
         say(0, 506, 0);
     } else {
         say(0, 608, 0);
@@ -381,7 +381,7 @@ void p202(void)
 {
     if (!KEY(417))
         return;
-    if ((bitest(evar(442), 4)) && !(bitest(100, 1))) {
+    if ((bitest(value[HERE], 4)) && !(bitest(100, 1))) {
         say(0, 553, 0);
     } else {
         say(0, 554, 0);
@@ -391,10 +391,10 @@ void p202(void)
 
 void p203(void)
 {
-    if (value[446] > 1) {
+    if (value[STATUS] > 1) {
         if (bitest(evar(445), 15)) {
-            if (isnear(value[445], -1, -1)) {
-                if (have(value[445], -1, -1)) {
+            if (isnear(value[ARG2], -1, -1)) {
+                if (have(value[ARG2], -1, -1)) {
                     say(0, 592, 0);
                 } else {
                     say(0, 633, 0);
@@ -405,7 +405,7 @@ void p203(void)
             longjmp(loop_back, 1);
         } else {
             if (bitest(evar(445), 13)) {
-                if ((value[HERE] == value[445])) {
+                if ((value[HERE] == value[ARG2])) {
                     say(0, 635, 0);
                 } else {
                     say(0, 555, 0);
@@ -434,7 +434,7 @@ void p63(void)
     if (have(52, -1, -1)) {
     }
     apport(52, LIMBO);
-    apport(53, value[442]);
+    apport(53, value[HERE]);
     longjmp(loop_back, 1);
 }
 
@@ -463,12 +463,12 @@ void p198(void)
         return;
     if (!isnear(52, -1, -1))
         return;
-    if ((bitest(evar(442), 6)) || (value[HERE] == 113)) {
+    if ((bitest(value[HERE], 6)) || (value[HERE] == 113)) {
         say(0, 640, 0);
         if (have(52, -1, -1)) {
         }
         apport(52, LIMBO);
-        apport(53, value[442]);
+        apport(53, value[HERE]);
     } else {
         say(0, 639, 0);
     }
@@ -482,7 +482,7 @@ void p199(void)
     if (!isnear(81, -1, -1))
         return;
     if (value[81] == 1) {
-        if (bitest(evar(442), 6)) {
+        if (bitest(value[HERE], 6)) {
             say(0, 605, 0);
             set('E', 81, 'c', 0, NULL, NULL);
             if (have(81, -1, -1)) {
@@ -507,7 +507,7 @@ void p199(void)
 
 void p200(void)
 {
-    if (value[446] > 1) {
+    if (value[STATUS] > 1) {
         say(0, 607, 0);
         longjmp(loop_back, 1);
     }
@@ -530,7 +530,7 @@ void p456(void)
             } else {
                 bitmod('c', 11, 7);
             }
-            move(value[442], -1);
+            move(value[HERE], -1);
             set('E', 11, 'e', 10, NULL, NULL);
         } else {
             if (isnear(5, -1, -1)) {
@@ -538,7 +538,7 @@ void p456(void)
                 set('E', 5, 'c', 0, NULL, NULL);
             } else {
                 say(0, 575, 0);
-                bitmod('s', evar(442), 12);
+                bitmod('s', value[HERE], 12);
             }
         }
     } else {
@@ -562,7 +562,7 @@ void p457(void)
                 set('E', 5, 'c', 1, NULL, NULL);
             } else {
                 say(0, 575, 0);
-                bitmod('s', evar(442), 12);
+                bitmod('s', value[HERE], 12);
             }
         }
     } else {
@@ -575,7 +575,7 @@ void p440(void)
 {
     if (!anyof(91, 6, 71, 19, 21, 37, 18, 23, 24, 90, -1))
         return;
-    if (!isnear(value[445], -1, -1))
+    if (!isnear(value[ARG2], -1, -1))
         return;
     say(0, 507, 0);
     longjmp(loop_back, 1);
@@ -586,7 +586,7 @@ void p174(void)
     default_to(0, value[HERE], 8);
     if (!isnear(89, -1, -1))
         return;
-    if ((value[446] == 1) || KEY(89)) {
+    if ((value[STATUS] == 1) || KEY(89)) {
         if (have(89, -1, -1)) {
             apport(89, HERE);
         }
@@ -604,7 +604,7 @@ void p175(void)
 {
     if (!isnear(80, -1, -1))
         return;
-    if ((value[446] == 1) || KEY(80)) {
+    if ((value[STATUS] == 1) || KEY(80)) {
         if (have(80, -1, -1)) {
         }
         apport(80, LIMBO);
@@ -617,7 +617,7 @@ void p176(void)
 {
     if (!anyof(91, 19, 71, 6, 37, 21, 10, 23, 24, 90, -1))
         return;
-    if (isnear(value[445], -1, -1)) {
+    if (isnear(value[ARG2], -1, -1)) {
         say(0, 567, 0);
     } else {
         say(12, 522, 445);
@@ -627,12 +627,12 @@ void p176(void)
 
 void p177(void)
 {
-    if (value[446] == 1) {
+    if (value[STATUS] == 1) {
         say(0, 676, 0);
         longjmp(loop_back, 1);
     } else {
         if (bitest(evar(445), 15)) {
-            if (isnear(value[445], -1, -1)) {
+            if (isnear(value[ARG2], -1, -1)) {
                 say(0, 574, 0);
                 longjmp(loop_back, 1);
             }
@@ -652,9 +652,9 @@ void p472(void)
 
 void p473(void)
 {
-    if (value[446] > 1) {
+    if (value[STATUS] > 1) {
         if (bitest(evar(445), 15)) {
-            if (isnear(value[445], -1, -1)) {
+            if (isnear(value[ARG2], -1, -1)) {
                 say(0, 573, 0);
                 longjmp(loop_back, 1);
             }
@@ -664,10 +664,10 @@ void p473(void)
 
 void p41(void)
 {
-    if (((bitest(evar(442), 3)) || bitest(evar(443), 3)) || value[443] == 0) {
+    if (((bitest(value[HERE], 3)) || bitest(evar(443), 3)) || value[THERE] == 0) {
         say(0, 589, 0);
     } else {
-        move(value[443], -1);
+        move(value[THERE], -1);
     }
     longjmp(loop_back, 1);
 }
@@ -683,14 +683,14 @@ void p479(void)
     if (!anyof(425, 421, 179, 422, 428, 427, 424,
                429, 420, 430, 423, 435, 426, -1))
         return;
-    assert(value[445] < LPROC && value[445] >= 0);
-    (*procs[value[445]]) ();
+    assert(value[ARG2] < LPROC && value[ARG2] >= 0);
+    (*procs[value[ARG2]]) ();
     longjmp(loop_back, 1);
 }
 
 void p480(void)
 {
-    if (value[446] == 2) {
+    if (value[STATUS] == 2) {
         longjmp(loop_back, 1);
     }
 }
@@ -777,7 +777,7 @@ void p468(void)
                 query(749);
             }
             value[448] = 0;
-            move(value[442], -1);
+            move(value[HERE], -1);
             say(2, 465, 0);
             say(0, 483, 0);
         } else {
@@ -798,8 +798,8 @@ void p468(void)
 
 void p154(void)
 {
-    if ((value[446] == 1) || KEY(82)) {
-        if (bitest(evar(442), 6)) {
+    if ((value[STATUS] == 1) || KEY(82)) {
+        if (bitest(value[HERE], 6)) {
             say(0, 569, 0);
             longjmp(loop_back, 1);
         } else {
@@ -817,7 +817,7 @@ void p154(void)
         }
     } else {
         if (bitest(evar(445), 15)) {
-            if (isnear(value[445], -1, -1)) {
+            if (isnear(value[ARG2], -1, -1)) {
                 say(0, 608, 0);
             } else {
                 say(12, 522, 445);
@@ -837,9 +837,9 @@ void p394(void)
 
 void p461(void)
 {
-    if (value[446] > 1) {
+    if (value[STATUS] > 1) {
         if (bitest(evar(445), 15)) {
-            if (isnear(value[445], -1, -1)) {
+            if (isnear(value[ARG2], -1, -1)) {
                 if (KEY(78)) {
                     p463();
                 } else {
@@ -971,7 +971,7 @@ void p403(void)
     if (!KEY(424))
         return;
     if ((((bitest(69, 10)) ||
-          bitest(evar(442), 0)) ||
+          bitest(value[HERE], 0)) ||
          !(bitest(278, 1))) || !isnear(69, -1, -1)) {
         say(0, 538, 0);
     } else {
@@ -1047,7 +1047,7 @@ void p60(void)
 
 void p469(void)
 {
-    if (((value[446] == 1) || KEY(27)) && isnear(27, -1, -1)) {
+    if (((value[STATUS] == 1) || KEY(27)) && isnear(27, -1, -1)) {
         say(0, 854, 0);
         move(191, -1);
         apport(27, LIMBO);
@@ -1058,10 +1058,10 @@ void p469(void)
 void p434(void)
 {
     bitmod('s', 26, 11);
-    if (bitest(evar(442), 4)) {
+    if (bitest(value[HERE], 4)) {
         say(0, 538, 0);
     } else {
-        if (((isnear(81, -1, -1)) && value[81] == 0) || bitest(evar(442), 6)) {
+        if (((isnear(81, -1, -1)) && value[81] == 0) || bitest(value[HERE], 6)) {
             if (pct(85)) {
                 say(0, 538, 0);
             } else {
@@ -1122,7 +1122,7 @@ void p474(void)
 {
     if (bitest(evar(458), 5)) {
         set('V', 462, 'c', 0, NULL, NULL);
-        move(value[442], -1);
+        move(value[HERE], -1);
         say(2, 465, 0);
     } else {
         say(0, 557, 0);
@@ -1867,8 +1867,8 @@ void p24(void)
         return;
     }
     if (((bitest(evar(443), 8)) &&
-         (location[91] == value[443])) && !(bitest(evar(458), 5))) {
-        move(value[443], -1);
+         (location[91] == value[THERE])) && !(bitest(evar(458), 5))) {
+        move(value[THERE], -1);
         bitmod('c', evar(446), 0);
         say(0, 488, 0);
         return;
@@ -1904,32 +1904,32 @@ void p24(void)
         }
     }
     if (!((location[90] == LIMBO))) {
-        apport(90, value[442]);
+        apport(90, value[HERE]);
         if (value[90] > -1) {
             say(0, 848, 0);
         }
         value[90] += 1;
     }
-    if (((bitest(evar(442), 1)) &&
+    if (((bitest(value[HERE], 1)) &&
          bitest(evar(446), 1)) || bitest(evar(446), 2)) {
         set('V', 449, 'c', 0, NULL, NULL);
     } else {
         set('V', 449, 'c', 1, NULL, NULL);
     }
-    if (((isnear(69, -1, -1)) && value[69] == 1) || bitest(evar(442), 0)) {
+    if (((isnear(69, -1, -1)) && value[69] == 1) || bitest(value[HERE], 0)) {
         say(2, 442, 0);
-        if (bitest(evar(442), 12)) {
+        if (bitest(value[HERE], 12)) {
             say(0, 576, 0);
         }
-        if (bitest(evar(442), 1)) {
+        if (bitest(value[HERE], 1)) {
             set('V', 450, 'c', 2, NULL, NULL);
         } else {
             set('V', 450, 'c', 3, NULL, NULL);
         }
-        bitmod('s', evar(442), 1);
+        bitmod('s', value[HERE], 1);
         if (!((location[91] == LIMBO))) {
-            if (!((bitest(evar(442), 4)) || bitest(evar(442), 2))) {
-                apport(91, value[442]);
+            if (!((bitest(value[HERE], 4)) || bitest(value[HERE], 2))) {
+                apport(91, value[HERE]);
             }
         }
         *bitword(448) = -1;
@@ -1968,7 +1968,7 @@ void p24(void)
             p124();
         }
     }
-    if (!(bitest(evar(442), 4))) {
+    if (!(bitest(value[HERE], 4))) {
         value[462] -= value[450];
         if (value[462] < 1) {
             p113();
@@ -1987,16 +1987,16 @@ void p24(void)
 
 void p25(void)
 {
-    if (bitest(evar(442), 5)) {
+    if (bitest(value[HERE], 5)) {
         value[467] += 1;
-        if (((value[467] > 30) && !(bitest(evar(442), 7))) || value[467] > 50) {
+        if (((value[467] > 30) && !(bitest(value[HERE], 7))) || value[467] > 50) {
             p242();
         }
     } else {
         set('V', 467, 'c', 0, NULL, NULL);
     }
     if (value[16] == 16) {
-        apport(16, value[442]);
+        apport(16, value[HERE]);
     }
     if (bitest(evar(446), 5)) {
         bitmod('c', evar(446), 5);
@@ -2014,39 +2014,39 @@ void p25(void)
     input(0);
     value[460] -= 1;
     value[457] += 1;
-    if (value[446] == 0) {
+    if (value[STATUS] == 0) {
         longjmp(loop_back, 1);
     }
-    if (value[444] == 9999) {
+    if (value[ARG1] == 9999) {
         say(0, 557, 0);
         longjmp(loop_back, 1);
     }
     if (KEY(336)) {
         p458();
     }
-    if (value[446] > 1) {
-        if (value[445] == 9999) {
+    if (value[STATUS] > 1) {
+        if (value[ARG2] == 9999) {
             value[448] = 338;
             *bitword(448) = -1;
-            if (value[444] > value[448]) {
+            if (value[ARG1] > value[448]) {
                 say(12, 556, 445);
                 longjmp(loop_back, 1);
             }
         }
     }
-    assert(value[442] < LPROC && value[442] >= 0);
-    (*procs[value[442]]) ();
+    assert(value[HERE] < LPROC && value[HERE] >= 0);
+    (*procs[value[HERE]]) ();
     if (bitest(evar(444), 13)) {
-        if ((value[HERE] == value[444])) {
+        if ((value[HERE] == value[ARG1])) {
             say(0, 635, 0);
         } else {
             say(0, 634, 0);
         }
     } else {
-        assert(value[444] < LPROC && value[444] >= 0);
-        (*procs[value[444]]) ();
+        assert(value[ARG1] < LPROC && value[ARG1] >= 0);
+        (*procs[value[ARG1]]) ();
         if (bitest(evar(444), 15)) {
-            if (isnear(value[444], -1, -1)) {
+            if (isnear(value[ARG1], -1, -1)) {
                 say(12, 714, 444);
                 bitmod('s', evar(446), 4);
             } else {

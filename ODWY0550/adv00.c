@@ -417,7 +417,6 @@ void outbuf(void)
 #define VAR_FLAG       2
 #define VALUE_FLAG     1
 
-#ifdef NEST_TEXT
 void nested_say(int addr, int key, int qualifier)
 {
     int refno;
@@ -453,8 +452,6 @@ void nested_say(int addr, int key, int qualifier)
     ta = addr;
 }
 
-#endif /* NEST_TEXT */
-
 /*===========================================================*/
 void say(int key, int what, int qualifier)
 {
@@ -467,20 +464,11 @@ void say(int key, int what, int qualifier)
     int quip_flag;
     int brief_flag = 0;
     int voc_flag;
-
-#ifdef FULL
-    int full_flag;
-
-#endif /* FULL */
     int switch_size;
     int textqual;
     int swqual;
     int given_qualifier;
-
-#ifdef NEST_TEXT
     int given_key = key;
-
-#endif /* NEST_TEXT */
     char auxbuf[WORDSIZE];
     int auxa;
     int ea;
@@ -492,31 +480,12 @@ void say(int key, int what, int qualifier)
         lptr = text_buf;
     locate_demands++;
     quip_flag = key & QUIP_FLAG;
-
-#ifdef FULL
-    full_flag = key & FULL_FLAG;
-
-#endif /*  */
     qual_flag = key & QUAL_FLAG;
     var_qual_flag = key & VQUAL_FLAG;
     var_what_flag = key & VAR_FLAG;
     value_flag = key & VALUE_FLAG;
     voc_flag = key & VOC_FLAG;
 
-#ifdef OBSOLETE
-#ifdef FULL
-    if (bitest(STATUS, TERSE))
-        full_flag = 0;
-
-    else if (bitest(STATUS, FULL) ||
-             (bitest(STATUS, TERSE) == 0 && bitest(STATUS, BRIEF) == 0))
-        full_flag = 1;
-
-    else if (bitest(STATUS, BRIEF))
-        full_flag = bitest(value[HERE], BEENHERE) ? 0 : 1;
-
-#endif /* FULL */
-#endif /* OBSOLETE */
     if (var_what_flag) {
         int tmp = value[what];
 
@@ -546,75 +515,31 @@ void say(int key, int what, int qualifier)
             return;
         }
         ta = textadr[what];
-    }
-
-    else if (what >= FLOC) {
-
-#if defined(TERSE) && defined(FULL) && defined(BEENHERE)
+    } else if (what >= FLOC) {
         if (bitest(STATUS, TERSE) ||
             (!bitest(STATUS, FULL) && bitest(what, BEENHERE)))
             ta = brief_desc[what];
-
         else
-#endif /*  */
             ta = long_desc[what];
-    }
-
-    else if (what >= FOBJ) {
+    } else if (what >= FOBJ) {
         if (location[what] == INHAND) {
             brief_flag = 1;
             ta = brief_desc[what];
-        }
-
-        else
+        } else {
             ta = long_desc[what];
+        }
     }
     if ((tc = get_char(ta)) == '\0')
         goto shutup;
 
-#define RANDOM_TEXT      1
-#define INCREMENTAL_TEXT 2
-#define CYCLIC_TEXT      4
-#define ASSIGNED_TEXT    8
-#define TIED_TEXT       16
     if (what >= FTEXT) {
         int twat = 2 * (what - FTEXT);
-
         textqual = qualifier;
-        if (text_info[twat] == RANDOM_TEXT) {
-            textqual = text_info[twat + 1];
-            if (textqual <= 1)
-                textqual = 0;
-
-            else {
-                textqual = irand(textqual - 1);
-                if (textqual >= value[what])
-                    textqual++;
-            }
-            value[what] = textqual;
-        }
-
-        else if (text_info[twat] == INCREMENTAL_TEXT) {
+        if (text_info[twat] == 2) {  /* "incremental text" */
             textqual = value[what];
             if (value[what] < text_info[twat + 1] - 1)
                 value[what]++;
         }
-
-        else if (text_info[twat] == CYCLIC_TEXT) {
-            textqual = value[what];
-            if (value[what] < text_info[twat + 1] - 1)
-                value[what]++;
-
-            else
-                value[what] = 0;
-        }
-
-        else if (text_info[twat] == ASSIGNED_TEXT)
-            textqual = value[what];
-
-        else if (text_info[twat] == TIED_TEXT)
-            textqual = value[value[what]];
-
         else if (qualifier == ARG2 && value[ARG2] >= 0)
             textqual = value[value[qualifier]];
     }

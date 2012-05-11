@@ -37,8 +37,7 @@
 #define BEENHERE 1
 #define TERSE 2
 #define BRIEF 1
-#define DBSTATUS 0
 #define LPROC 442
-#define KEY(X) (value[444]==X || value[445]==X)
+#define KEY(X) (value[ARG1]==X || value[ARG2]==X)
 
 #endif
