@@ -1981,7 +1981,7 @@ void close_the_cave(void)
     puts("The sepulchral voice intones, \"The cave is now closed.\"  As the echoes\n"
          "fade, there is a blinding flash of light (and a small puff of orange\n"
          "smoke). . . .    As your eyes refocus, you look around and find...");
-    move(BOTTLE, R_NEEND); objs[BOTTLE].prop = -2;
+    move(BOTTLE, R_NEEND); objs[BOTTLE].prop = -2;  /* empty */
     move(PLANT, R_NEEND); objs[PLANT].prop = -1;
     move(OYSTER, R_NEEND); objs[OYSTER].prop = -1;
     move(LAMP, R_NEEND); objs[LAMP].prop = -1;
@@ -1989,8 +1989,8 @@ void close_the_cave(void)
     move(DWARF, R_NEEND); objs[DWARF].prop = -1;
     move(MIRROR, R_NEEND); objs[MIRROR].prop = -1;
     move(GRATE, R_SWEND); objs[GRATE].prop = 0;
-    move(SNAKE, R_SWEND); objs[SNAKE].prop = -2;
-    move(BIRD, R_SWEND); objs[BIRD].prop = -1;
+    move(SNAKE, R_SWEND); objs[SNAKE].prop = -2;  /* not blocking the way */
+    move(BIRD, R_SWEND); objs[BIRD].prop = -2;  /* caged */
     move(CAGE, R_SWEND); objs[CAGE].prop = -1;
     move(ROD2, R_SWEND); objs[ROD2].prop = -1;
     move(PILLOW, R_SWEND); objs[PILLOW].prop = -1;
@@ -3853,7 +3853,8 @@ int main()
 #endif /* Z_MACHINE */
 
     offer(0);
-    /* Reading the instructions is greatly rewarded! */
+    /* Reading the instructions marks you as a newbie who will need the
+     * extra lamp power. However, it will also cost you 5 points. */
     lamp_limit = (hints[0].given ? 1000 : 330);
     build_vocabulary();
     build_travel_table();
