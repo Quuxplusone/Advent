@@ -6,7 +6,7 @@ MAXES = \$$MAX_ARRAYS=900 \
         \$$MAX_ZCODE_SIZE=40000 \
         \$$MAX_STATIC_DATA=65000
 
-all: advent advent.z8 parchment
+all: advent advent.z8
 
 advent: advent.c
 	gcc -std=c99 -O3 -pedantic -W -Wall -Wextra \
@@ -15,11 +15,6 @@ advent: advent.c
 
 advent.z8: z-machine/Main.inf z-machine/stubs.inf z-machine/cstubs.s z-machine/advent.s
 	cd z-machine ; inform -v8 -ew~S~X~D $(MAXES) Main.inf ../advent.z8
-
-parchment: advent.z8
-	cp advent.z8 parchment/advent.z8
-	SIZE=`ls -nlk advent.z8 | awk '{print $$5}'` ; \
-	sed -i -e "s@id=\"filesize\">([^<]*)<@id=\"filesize\">(.Z8 file, $${SIZE}K)<@" parchment/index.html
 
 z-machine/advent.s: advent.c
 	$(VBCCZ) -c $< -o $@ -module-name=advent
