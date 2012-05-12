@@ -3202,7 +3202,7 @@ void simulate_an_adventure(void)
         if (cave_is_closing() && newloc < MIN_IN_CAVE && newloc != R_LIMBO) {
             panic_at_closing_time();
             newloc = loc;
-        } else if (newloc != loc && newloc <= R_PIRATES_NEST) {
+        } else if (newloc != loc && loc <= R_PIRATES_NEST) {
             /* Stay in loc if a dwarf is blocking the way to newloc */
             for (int j=1; j <= 5; ++j) {
                 if (odloc[j] == newloc && dseen[j]) {
