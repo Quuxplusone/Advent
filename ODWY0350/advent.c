@@ -1,11 +1,9 @@
 #include <assert.h>
 #include <ctype.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-typedef int bool;
-enum { true=1, false=0 };
 
 #ifdef Z_MACHINE
 #ifdef SAVE_AND_RESTORE
@@ -477,8 +475,7 @@ typedef struct {
 
 enum flagsBits {
     F_LIGHTED    = 0x001,
-    F_OIL        = 0x002,
-    F_LIQUID     = 0x004,
+    F_WATER      = 0x004,
     F_CAVE_HINT  = 0x008,
     F_BIRD_HINT  = 0x010,
     F_SNAKE_HINT = 0x020,
@@ -523,7 +520,7 @@ void build_travel_table(void)
              "You are standing at the end of a road before a small brick building.\n"
              "Around you is a forest.  A small stream flows out of the building and\n"
              "down a gully.",
-             "You're at end of road again.", F_LIGHTED | F_LIQUID);
+             "You're at end of road again.", F_LIGHTED | F_WATER);
     make_ins(W, R_HILL); ditto(U); ditto(ROAD);
     make_ins(E, R_HOUSE); ditto(IN); ditto(HOUSE); ditto(ENTER);
     make_ins(S, R_VALLEY); ditto(D); ditto(GULLY); ditto(STREAM); ditto(DOWNSTREAM);
@@ -537,7 +534,7 @@ void build_travel_table(void)
     make_ins(WOODS, R_FOREST); ditto(N); ditto(S);
     make_loc(q, R_HOUSE,
              "You are inside a building, a well house for a large spring.",
-             "You're inside building.", F_LIGHTED | F_LIQUID);
+             "You're inside building.", F_LIGHTED | F_WATER);
     make_ins(ENTER, R_ROAD); ditto(OUT); ditto(OUTDOORS); ditto(W);
     make_ins(XYZZY, R_DEBRIS);
     make_ins(PLUGH, R_Y2);
@@ -545,7 +542,7 @@ void build_travel_table(void)
     make_loc(q, R_VALLEY,
              "You are in a valley in the forest beside a stream tumbling along a\n"
              "rocky bed.",
-             "You're in valley.", F_LIGHTED | F_LIQUID);
+             "You're in valley.", F_LIGHTED | F_WATER);
     make_ins(UPSTREAM, R_ROAD); ditto(HOUSE); ditto(N);
     make_ins(WOODS, R_FOREST); ditto(E); ditto(W); ditto(U);
     make_ins(DOWNSTREAM, R_SLIT); ditto(S); ditto(D);
@@ -566,7 +563,7 @@ void build_travel_table(void)
     make_loc(q, R_SLIT,
              "At your feet all the water of the stream splashes into a 2-inch slit\n"
              "in the rock.  Downstream the streambed is bare rock.",
-             "You're at slit in streambed.", F_LIGHTED | F_LIQUID);
+             "You're at slit in streambed.", F_LIGHTED | F_WATER);
     make_ins(HOUSE, R_ROAD);
     make_ins(UPSTREAM, R_VALLEY); ditto(N);
     make_ins(WOODS, R_FOREST); ditto(E); ditto(W);
@@ -894,7 +891,7 @@ void build_travel_table(void)
     make_loc(q, R_WET,
              "You are in the bottom of a small pit with a little stream, which\n"
              "enters and exits through tiny slits.",
-             "You're in pit by stream.", F_LIQUID);
+             "You're in pit by stream.", F_WATER);
     make_ins(CLIMB, R_CLEAN); ditto(U); ditto(OUT);
     make_ins(SLIT, FIRST_REMARK+0); ditto(STREAM); ditto(D); ditto(UPSTREAM); ditto(DOWNSTREAM);
     make_loc(q, R_DUSTY,
@@ -1018,7 +1015,7 @@ void build_travel_table(void)
     make_loc(q, R_EPIT,
              "You are at the bottom of the eastern pit in the Twopit Room.  There is\n"
              "a small pool of oil in one corner of the pit.",
-             "You're in east pit.", F_LIQUID | F_OIL);
+             "You're in east pit.", 0);
     make_ins(U, R_E2PIT); ditto(OUT);
     make_loc(q, R_WPIT,
              "You are at the bottom of the western pit in the Twopit Room.  There is\n"
@@ -1058,7 +1055,7 @@ void build_travel_table(void)
              "You are in a magnificent cavern with a rushing stream, which cascades\n"
              "over a sparkling waterfall into a roaring whirlpool that disappears\n"
              "through a hole in the floor.  Passages exit to the south and west.",
-             "You're in cavern with waterfall.", F_LIQUID);
+             "You're in cavern with waterfall.", F_WATER);
     make_ins(S, R_IMMENSE); ditto(OUT);
     make_ins(GIANT, R_GIANT);
     make_ins(W, R_STEEP);
@@ -1186,12 +1183,13 @@ void build_travel_table(void)
              "fed by a stream, which tumbles out of a hole in the wall about 10 feet\n"
              "overhead and splashes noisily into the water somewhere within the\n"
              "mist.  The only passage goes back toward the south.",
-             "You're at reservoir.", F_LIQUID);
+             "You're at reservoir.", F_WATER);
     make_ins(S, R_MIRROR); ditto(OUT);
 
     /* R_SCAN1 and R_SCAN3 are the rooms the player sees when entering the
      * secret canyon from the north and the east, respectively. The dragon
-     * blocks different exits in each room.
+     * blocks different exits in each room (and items dropped at one end of
+     * the canyon are not visible or accessible from the other end).
      * Once the dragon has been vanquished, R_SCAN2 replaces both rooms.
      */
     make_loc(q, R_SCAN1,
@@ -1576,9 +1574,7 @@ void build_object_table(void)
     new_obj(8, DRAGON_, 0, DRAGON, R_SCAN3);
     new_obj(8, DRAGON, 0, DRAGON, R_SCAN1);
     note[8] = "A huge green fierce dragon bars the way!";
-    note[9] =
-        "Congratulations!  You have just vanquished a dragon with your bare\n"
-        "hands! (Unbelievable, isn't it?)";
+    note[9] = NULL;
     note[10] = "The body of a huge green dead dragon is lying off to one side.";
     new_obj(11, SHADOW_, 0, SHADOW, R_WINDOW);
     new_obj(11, SHADOW, 0, SHADOW, R_WINDOE);
@@ -1592,7 +1588,7 @@ void build_object_table(void)
     new_obj(15, CRYSTAL, 0, CRYSTAL, R_EFISS);
     note[15] = NULL;
     note[16] ="A crystal bridge now spans the fissure.";
-    note[17] = "The crystal bridge has vanished!";
+    note[17] = NULL;
     new_obj(18, TREADS_, 0, TREADS, R_EMIST);
     new_obj(18, TREADS, 0, TREADS, R_SPIT);
     note[18] = "Rough stone steps lead down the pit.";
@@ -1618,13 +1614,13 @@ void build_object_table(void)
     note[29] = "There is a delicate, precious, Ming vase here!";
     note[30] = "The vase is now resting, delicately, on a velvet pillow.";
     note[31] = "The floor is littered with worthless shards of pottery.";
-    note[32] = "The Ming vase drops with a delicate crash.";
+    note[32] = NULL;
     new_obj(33, TRIDENT, "Jeweled trident", 0, R_FALLS);
     note[33] = "There is a jewel-encrusted trident here!";
     new_obj(34, EGGS, "Golden eggs", 0, R_GIANT);
     note[34] = "There is a large nest here, full of golden eggs!";
-    note[35] = "The nest of golden eggs has vanished!";
-    note[36] = "Done!";
+    note[35] = NULL;
+    note[36] = NULL;
     new_obj(37, CHEST, "Treasure chest", 0, R_LIMBO);
     note[37] = "The pirate's treasure chest is here!";
     new_obj(38, COINS, "Rare coins", 0, R_WEST);
@@ -1668,13 +1664,13 @@ void build_object_table(void)
     note[57] = NULL;
     new_obj(58, PLANT, 0, PLANT, R_WPIT);
     note[58] = "There is a tiny little plant in the pit, murmuring \"Water, water, ...\"";
-    note[59] = "The plant spurts into furious growth for a few seconds.";
+    note[59] = NULL;
     note[60] =
         "There is a 12-foot-tall beanstalk stretching up out of the pit,\n"
         "bellowing \"Water!! Water!!\"";
-    note[61] = "The plant grows explosively, almost filling the bottom of the pit.";
+    note[61] = NULL;
     note[62] = "There is a gigantic beanstalk stretching all the way up to the hole.";
-    note[63] = "You've over-watered the plant! It's shriveling up! It's, it's...";
+    note[63] = NULL;
     new_obj(64, MIRROR, 0, MIRROR, R_MIRROR);
     note[64] = NULL;
     new_obj(65, OIL, "Oil in the bottle", 0, R_LIMBO);
@@ -1691,12 +1687,11 @@ void build_object_table(void)
     note[69] = "There are a few recent issues of \"Spelunker Today\" magazine here.";
     new_obj(70, OYSTER, "Giant oyster >GROAN!<", 0, R_LIMBO);
     note[70] = "There is an enormous oyster here with its shell tightly closed.";
-    note[71] =
-        "Interesting. There seems to be something written on the underside of\n"
-        "the oyster.";
+    note[71] = NULL;
     new_obj(72, CLAM, "Giant clam >GRUNT!<", 0, R_SHELL);
     note[72] = "There is an enormous clam here with its shell tightly closed.";
     new_obj(73, TABLET, 0, TABLET, R_DROOM);
+    /* Woods has "imbedded", but Knuth fixes it. */
     note[73] =
         "A massive stone tablet embedded in the wall reads:\n"
         "\"CONGRATULATIONS ON BRINGING LIGHT INTO THE DARK-ROOM!\"";
@@ -1850,7 +1845,7 @@ void pirate_tracks_you(Location loc)
     /* tally is the number of treasures we haven't seen; lost_treasures is
      * the number we never will see (due to killing the bird or destroying
      * the troll bridge). */
-    if (tally == lost_treasures+1 && !stalking && objs[MESSAGE].place == R_LIMBO &&
+    if (tally == lost_treasures+1 && !stalking && chest_needs_placing &&
         objs[LAMP].prop && here(LAMP, loc)) {
         /* As soon as we've seen all the treasures (except the ones that are
          * lost forever), we "cheat" and let the pirate be spotted. Of course
@@ -1910,7 +1905,7 @@ bool move_dwarves_and_pirate(Location loc)
                 int i = 0;
                 /* Make a table of all potential exits.
                  * Dwarves think R_SCAN1, R_SCAN2, R_SCAN3 are three different locations,
-                   * although you will never have that perception. */
+                 * although you will never have that perception. */
                 for (Instruction *q = start[dloc[j]]; q < start[dloc[j]+1]; ++q) {
                     Location newloc = q->dest;
                     if (i != 0 && newloc == ploc[i-1]) continue;
@@ -1918,7 +1913,7 @@ bool move_dwarves_and_pirate(Location loc)
                     if (newloc == odloc[j] || newloc == dloc[j]) continue;  /* don't double back */
                     if (q->cond == 100) continue;
                     if (j == 0 && newloc > R_PIRATES_NEST) continue;
-                    if (j != 0 && newloc >= MIN_FORCED_LOC) continue;
+                    if (newloc >= MIN_FORCED_LOC) continue;
                     ploc[i++] = newloc;
                 }
                 if (i==0) ploc[i++] = odloc[j];
@@ -2438,7 +2433,6 @@ bool now_in_darkness(Location loc)
 /* Sections 158, 169, 182 in Knuth */
 void adjustments_before_listening(Location loc)
 {
-    (void)ran(1);  /* kick the random number generator */
     if (knife_loc > R_LIMBO && knife_loc != loc) knife_loc = R_LIMBO;
     if (closed) {
         /* After the cave is closed, we look for objects being toted with
@@ -2446,7 +2440,8 @@ void adjustments_before_listening(Location loc)
          * they won't be described until they've been picked up and put
          * down, separate from their respective piles. Section 182 in Knuth. */
         if (objs[OYSTER].prop < 0 && toting(OYSTER)) {
-            puts(note[71]);
+            puts("Interesting. There seems to be something written on the underside of\n"
+                 "the oyster.");
         }
         for (int j=1; j <= MAX_OBJ; ++j) {
             if (toting(j) && objs[j].prop < 0)
@@ -2583,14 +2578,14 @@ void attempt_drop(ObjectWord obj, Location loc)
         destroy(COINS);
         drop(BATTERIES, loc);
         objs[BATTERIES].prop = 0;
-        puts(note[44]);
+        puts("There are fresh batteries here.");
         return;
     } else if (obj == BIRD) {
         if (here(SNAKE, loc)) {
             puts("The little bird attacks the green snake, and in an astounding flurry\n"
                  "drives the snake away.");
             suppress_ok_message = true;
-            if (closed) dwarves_upset();  /* Wow, is this reachable? */
+            if (closed) dwarves_upset();
             destroy(SNAKE);
             objs[SNAKE].prop = 1;  /* used in conditional Instructions */
         } else if (is_at_loc(DRAGON, loc) && objs[DRAGON].prop == 0) {
@@ -2606,10 +2601,10 @@ void attempt_drop(ObjectWord obj, Location loc)
     } else if (obj == VASE && loc != R_SOFT) {
         suppress_ok_message = true;
         if (objs[PILLOW].place == loc) {
-            puts(note[30]);
+            puts("The vase is now resting, delicately, on a velvet pillow.");
             objs[VASE].prop = 0;  /* resting gently on the pillow */
         } else {
-            puts(note[32]);
+            puts("The Ming vase drops with a delicate crash.");
             objs[VASE].prop = 2;  /* the vase is now broken */
             immobilize(VASE);
         }
@@ -2640,9 +2635,13 @@ void attempt_wave(ObjectWord obj, Location loc)  /* section 99 in Knuth */
 {
     if (obj == ROD && (loc == R_EFISS || loc == R_WFISS) &&
             toting(ROD) && !cave_is_closing()) {
-        bool crystal_bridge_exists = objs[CRYSTAL].prop;
-        puts(note[16+crystal_bridge_exists]);
-        objs[CRYSTAL].prop = !crystal_bridge_exists;
+        if (objs[CRYSTAL].prop) {
+            puts("The crystal bridge has vanished!");
+            objs[CRYSTAL].prop = 0;
+        } else {
+            puts("A crystal bridge now spans the fissure.");
+            objs[CRYSTAL].prop = 1;
+        }
     } else if (toting(obj) || (obj == ROD && toting(ROD2))) {
         puts("Nothing happens.");
     } else {
@@ -2685,9 +2684,9 @@ void attempt_find(ObjectWord obj, Location loc)  /* section 100 in Knuth */
             its_right_here = true;
         } else if (obj != NOTHING && obj == bottle_contents() && objs[BOTTLE].place == loc) {
             its_right_here = true;
-        } else if (obj == WATER && (flags[loc] & F_LIQUID) && !(flags[loc] & F_OIL)) {
+        } else if (obj == WATER && (flags[loc] & F_WATER)) {
             its_right_here = true;
-        } else if (obj == OIL && (flags[loc] & F_OIL)) {
+        } else if (obj == OIL && loc == R_EPIT) {
             its_right_here = true;
         } else if (obj == DWARF && dwarf_in(loc)) {
             its_right_here = true;
@@ -2771,7 +2770,7 @@ void throw_axe_at_dwarf(Location loc)  /* section 163 in Knuth */
 bool attempt_fill(ObjectWord obj, Location loc)  /* sections 110--111 in Knuth */
 {
     if (obj == VASE) {
-        if (!(flags[loc] & F_LIQUID)) {
+        if (loc != R_EPIT && !(flags[loc] & F_WATER)) {
             puts("There is nothing here with which to fill the vase.");
         } else if (!toting(VASE)) {
             puts("You aren't carrying it!");
@@ -2788,12 +2787,16 @@ bool attempt_fill(ObjectWord obj, Location loc)  /* sections 110--111 in Knuth *
         puts("You can't fill that.");
     } else if (bottle_contents() != NOTHING) {
         puts("Your bottle is already full.");
-    } else if (!(flags[loc] & F_LIQUID)) {
-        puts("There is nothing here with which to fill the bottle.");
+    } else if (loc == R_EPIT) {
+        puts("Your bottle is now full of oil.");
+        objs[BOTTLE].prop = 2;
+        if (toting(BOTTLE)) objs[OIL].place = R_INHAND;
+    } else if (flags[loc] & F_WATER) {
+        puts("Your bottle is now full of water.");
+        objs[BOTTLE].prop = 0;
+        if (toting(BOTTLE)) objs[WATER].place = R_INHAND;
     } else {
-        objs[BOTTLE].prop = (flags[loc] & F_OIL);  /* sneaky! F_OIL == 2. */
-        if (toting(BOTTLE)) objs[bottle_contents()].place = R_INHAND;
-        printf("Your bottle is now full of %s.\n", objs[BOTTLE].prop ? "oil" : "water");
+        puts("There is nothing here with which to fill the bottle.");
     }
     return false;  /* just continue normally */
 }
@@ -3047,12 +3050,12 @@ int check_noun_validity(ObjectWord obj, Location loc)  /* sections 90--91 in Knu
             if (!here(ROD2, loc)) return 'c';
             return 'r';  /* obj = ROD2 */
         case WATER:
-            if (here(BOTTLE, loc) && objs[BOTTLE].prop == 0) return 0;
-            if ((flags[loc] & F_LIQUID) && !(flags[loc] & F_OIL)) return 0;
+            if (flags[loc] & F_WATER) return 0;
+            if (here(BOTTLE, loc) && bottle_contents() == WATER) return 0;
             return 'c';
         case OIL:
-            if (here(BOTTLE, loc) && objs[BOTTLE].prop == 2) return 0;
-            if (flags[loc] & F_OIL) return 0;
+            if (loc == R_EPIT) return 0;
+            if (here(BOTTLE, loc) && bottle_contents() == OIL) return 0;
             return 'c';
     }
     return 'c';
@@ -3156,7 +3159,7 @@ bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot)
                 objs[TROLL].prop = 0;
                 destroy(TROLL2); destroy(TROLL2_);
                 move(BRIDGE, R_SWSIDE); move(BRIDGE_, R_NESIDE);
-                puts(note[4]);
+                puts("The troll steps out from beneath the bridge and blocks your way.");
                 *newloc = loc;  /* stay put */
                 return false;
             }
@@ -3258,7 +3261,7 @@ void simulate_an_adventure(void)
             /* Handle additional special cases of input (Knuth sections 83, 105) */
             if (streq(word1, "enter")) {
                 if (streq(word2, "water") || streq(word2, "strea")) {
-                    if ((flags[loc] & F_LIQUID) && !(flags[loc] & F_OIL)) {
+                    if (flags[loc] & F_WATER) {
                         puts("Your feet are now wet.");
                     } else {
                         puts("Where?");
@@ -3422,9 +3425,14 @@ void simulate_an_adventure(void)
                         }
                         if (objs[EGGS].place == R_LIMBO && objs[TROLL].place == R_LIMBO && objs[TROLL].prop == 0)
                             objs[TROLL].prop = 1;  /* the troll returns */
-                        k = (loc == R_GIANT ? 0 : here(EGGS, loc) ? 1 : 2);
+                        if (loc == R_GIANT) {
+                            puts("There is a large nest here, full of golden eggs!");
+                        } else if (here(EGGS, loc)) {
+                            puts("The nest of golden eggs has vanished!");
+                        } else {
+                            puts("Done!");
+                        }
                         move(EGGS, R_GIANT);
-                        puts(note[34+k]);
                         continue;
                     } else if (foobar == 0) {
                         puts("Nothing happens.");
@@ -3493,7 +3501,7 @@ void simulate_an_adventure(void)
                     attempt_off(loc);
                     continue;
                 case DRINK: {
-                    bool stream_here = (flags[loc] & F_LIQUID) && !(flags[loc] & F_OIL);
+                    bool stream_here = (flags[loc] & F_WATER);
                     bool evian_here = here(BOTTLE, loc) && (bottle_contents() == WATER);
                     if (obj == NOTHING) {
                         if (!stream_here && !evian_here)
@@ -3533,9 +3541,16 @@ void simulate_an_adventure(void)
                                 puts("The plant indignantly shakes the oil off its leaves and asks, \"Water?\"");
                                 continue;
                             } else {
-                                puts(note[58+objs[PLANT].prop+1]);
-                                objs[PLANT].prop += 2;
-                                if (objs[PLANT].prop > 4) objs[PLANT].prop = 0;
+                                if (objs[PLANT].prop == 0) {
+                                    puts("The plant spurts into furious growth for a few seconds.");
+                                    objs[PLANT].prop = 2;
+                                } else if (objs[PLANT].prop == 2) {
+                                    puts("The plant grows explosively, almost filling the bottom of the pit.");
+                                    objs[PLANT].prop = 4;
+                                } else if (objs[PLANT].prop == 4) {
+                                    puts("You've over-watered the plant! It's shriveling up! It's, it's...");
+                                    objs[PLANT].prop = 0;
+                                }
                                 objs[PLANT2].prop = objs[PLANT].prop >> 1;
                                 mot = NOWHERE;
                                 goto try_move;
@@ -3668,7 +3683,8 @@ void simulate_an_adventure(void)
                                 verb = ABSTAIN; obj = NOTHING;
                                 listen();
                                 if (streq(word1, "yes") || streq(word1, "y")) {
-                                    puts(note[9]);
+                                    puts("Congratulations!  You have just vanquished a dragon with your bare\n"
+                                         "hands! (Unbelievable, isn't it?)");
                                     objs[DRAGON].prop = 2;  /* dead */
                                     objs[RUG].prop = 0;
                                     mobilize(RUG);
