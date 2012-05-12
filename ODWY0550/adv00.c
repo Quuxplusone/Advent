@@ -145,20 +145,6 @@ int pct(int p)
     return (irand(100) < p);
 }
 
-#define MAX_BREAKS 100
-char get_char(int char_addr)
-{
-    int mask;
-
-    mask = (char_addr >> 4) & 127;
-    if (mask == 0)
-        mask = char_addr & 127;
-    if (mask == 0)
-        mask = 'X';
-    mask = (17 * mask + 13) & 127;
-    return (mask ^ text[char_addr] ^ title[char_addr % titlen]);
-}
-
 /*===========================================================*/
 void voc(int word, int what, int test, int vtext)
 {
@@ -180,12 +166,12 @@ void voc(int word, int what, int test, int vtext)
     }
     index = (vtext == 0) ? word : vtext;
     ta = textadr[index];
-    tc = get_char(ta);
+    tc = text[ta];
     if (tc == '!')
-        tc = get_char(++ta);
+        tc = text[++ta];
     while (tc != '\0') {
         outchar(tc);
-        tc = get_char(++ta);
+        tc = text[++ta];
     }
 }
 
@@ -424,9 +410,9 @@ void nested_say(int addr, int key, int qualifier)
 
     if (key &= 14)
         key = 8;
-    type = get_char(addr++);
-    refno = get_char(addr++) << 8;
-    refno |= (get_char(addr) & 255);
+    type = text[addr++];
+    refno = text[addr++] << 8;
+    refno |= (text[addr] & 255);
     if (type == 0)
         key = VOC_FLAG;
 
@@ -529,7 +515,7 @@ void say(int key, int what, int qualifier)
             ta = long_desc[what];
         }
     }
-    if ((tc = get_char(ta)) == '\0')
+    if ((tc = text[ta]) == '\0')
         goto shutup;
 
     if (what >= FTEXT) {
@@ -548,11 +534,11 @@ void say(int key, int what, int qualifier)
     while (tc != '\0') {
         if (tc == NEST_TEXT) {
             nested_say(ta + 1, given_key, qualifier);
-            tc = get_char(++ta);
+            tc = text[++ta];
             continue;
         }
         if (tc == SW_START) {
-            switch_size = get_char(++ta);
+            switch_size = text[++ta];
             ea = ta + 2 * switch_size - 1;
             swqual = (what >= FTEXT) ? textqual : qualifier;
             if (brief_flag)
@@ -565,20 +551,20 @@ void say(int key, int what, int qualifier)
                     ((swqual > switch_size) ? switch_size - 1 : swqual - 1);
                 if (what < FTEXT)
                     ta += 2;
-                offset = get_char(ta + 1);
+                offset = text[ta + 1];
                 if (offset < 0)
                     offset += 256;
-                ta = ea + 256 * get_char(ta) + offset + 1;
+                ta = ea + 256 * text[ta] + offset + 1;
             }
-            offset = get_char(ea + 1);
+            offset = text[ea + 1];
             if (offset < 0)
                 offset += 256;
-            ea = ea + 256 * get_char(ea) + offset + 1;
-            tc = get_char(ta);
+            ea = ea + 256 * text[ea] + offset + 1;
+            tc = text[ta];
         }
 
         else if (tc == SW_BREAK) {
-            tc = get_char(ta = ea++);
+            tc = text[ta = ea++];
             if (tc == SW_BREAK)
                 goto next_char;
         }
@@ -606,12 +592,12 @@ void say(int key, int what, int qualifier)
                 auxa = ta;
                 locate_demands++;
                 ta = textadr[index];
-                tc = get_char(ta);
+                tc = text[ta];
                 if (tc == '!')
-                    tc = get_char(++ta);
+                    tc = text[++ta];
                 while (tc != '\0') {
                     outchar(tc);
-                    tc = get_char(++ta);
+                    tc = text[++ta];
                 }
                 ta = auxa;
             }
@@ -619,7 +605,7 @@ void say(int key, int what, int qualifier)
 
         else
             outchar(tc);
-      next_char:tc = get_char(++ta);
+      next_char:tc = text[++ta];
     }
   shutup:if (quip_flag)
         longjmp(loop_back, 1);
@@ -678,10 +664,10 @@ void advcpy(char *word_buff, int word_addr)
 {
     int wlen;
 
-    if (get_char(word_addr) == '!')
+    if (text[word_addr] == '!')
         word_addr++;
     for (wlen = 1; wlen <= 20; wlen++)
-        if ((*word_buff++ = get_char(word_addr++)) == '\0')
+        if ((*word_buff++ = text[word_addr++]) == '\0')
             return;
 }
 
@@ -759,10 +745,10 @@ void find_word(int *type, int *refno, int *tadr, int which_arg)
     while (top > bottom + 1) {
         locate_demands++;
         middle = (bottom + top) / 2;
-        if (get_char(va = voc_addr[middle]) == '!')
+        if (text[va = voc_addr[middle]] == '!')
             va++;
         wp = myword;
-        while (get_char(va) == *wp)
+        while (text[va] == *wp)
             if (*wp != '\0') {
                 wp++;
                 va++;
@@ -770,7 +756,7 @@ void find_word(int *type, int *refno, int *tadr, int which_arg)
 
             else
                 break;
-        if (get_char(va) < *wp && *wp != '\0')
+        if (text[va] < *wp && *wp != '\0')
             bottom = middle;
 
         else
@@ -781,11 +767,11 @@ void find_word(int *type, int *refno, int *tadr, int which_arg)
     top = VOCAB_SIZE;
     while (bottom < top) {
         wp = myword;
-        if (get_char(va = voc_addr[bottom]) == '!') {
+        if (text[va = voc_addr[bottom]] == '!') {
             va++;
         }
         ra = va;
-        while (*wp == get_char(ra)) {
+        while (*wp == text[ra]) {
             if (*wp == '\0')
                 break;
 
@@ -796,21 +782,21 @@ void find_word(int *type, int *refno, int *tadr, int which_arg)
         }
         if (*wp != '\0')
             break;
-        if (get_char(ra) == '\0' || ra - va >= 5) {
+        if (text[ra] == '\0' || ra - va >= 5) {
             *type = voc_type[bottom];
             *refno = voc_refno[bottom];
             *tadr = voc_word[bottom];
-            if (get_char(ra) == '\0') {
+            if (text[ra] == '\0') {
                 if (ra - va <= 2) {
                     wp = myword;
                     while (++bottom < top)
                         if (*refno == voc_refno[bottom] &&
-                            *wp == get_char(voc_addr[bottom]))
+                            *wp == text[voc_addr[bottom]])
                             *tadr = voc_word[bottom];
                 }
                 goto done;
             }
-            if (get_char(va) == '\0')
+            if (text[va] == '\0')
                 break;
         }
         bottom++;
