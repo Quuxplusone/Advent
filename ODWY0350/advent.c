@@ -1022,7 +1022,7 @@ void build_travel_table(void)
              "a large hole in the wall about 25 feet above you.",
              "You're in west pit.", 0);
     make_ins(U, R_W2PIT); ditto(OUT);
-    make_cond_ins(CLIMB, 300+PLANT+400, R_CHECK);
+    make_cond_ins(CLIMB, 300+PLANT+200, R_CHECK);
     make_ins(CLIMB, R_CLIMB);
     make_loc(q, R_NARROW,
              "You are in a long, narrow corridor stretching out of sight to the\n"
@@ -1429,7 +1429,7 @@ void build_travel_table(void)
      * seems to match Woods, although maybe he got rid of the
      * extra blank lines somehow. */
     make_loc(q, R_CHECK, "", NULL, 0);
-    make_cond_ins(0, 300+PLANT+200, R_UPNOUT);
+    make_cond_ins(0, 300+PLANT+100, R_UPNOUT);
     make_ins(0, R_DIDIT);
     make_loc(q, R_SNAKED, "You can't get by the snake.", NULL, 0);
     make_ins(0, R_HMK);
@@ -1466,11 +1466,10 @@ struct ObjectData {
     int prop;
     Location place;
     const char *name;
-    int offset;
+    const char *desc[4];  /* .prop ranges from 0 to 3 */
 } objs[MAX_OBJ+1];
 
 struct ObjectData *first[MAX_LOC+1];
-const char *note[100];
 int holding_count;  /* how many objects have prop[t] < 0? */
 Location knife_loc;  /* place where knife was mentioned, or -1 */
 int tally = 15;  /* treasures awaiting you */
@@ -1538,185 +1537,178 @@ bool is_at_loc(ObjectWord t, Location loc)
 void mobilize(ObjectWord t) { objs[t].base = NULL; }
 void immobilize(ObjectWord t) { objs[t].base = &objs[t]; }
 
-void new_obj(int note_ptr, ObjectWord t, const char *n, ObjectWord b, Location l)
+void new_obj(ObjectWord t, const char *n, ObjectWord b, Location l)
 {
     objs[t].name = n;
     objs[t].base = (b != 0 ? &objs[b] : NULL);
-    objs[t].offset = note_ptr;
     objs[t].prop = (IS_TREASURE(t) ? -1 : 0);
     drop(t, l);
 }
 
 void build_object_table(void)
 {
-    new_obj(0, RUG_, 0, RUG, R_SCAN3);
-    new_obj(0, RUG, "Persian rug", RUG, R_SCAN1);
-    note[0] = "There is a Persian rug spread out on the floor!";
-    note[1] = "The dragon is sprawled out on a Persian rug!!";
-    new_obj(2, TROLL2_, 0, TROLL2, R_LIMBO);
-    new_obj(2, TROLL2, 0, TROLL2, R_LIMBO);
-    note[2] = "The troll is nowhere to be seen.";
-    new_obj(3, TROLL_, 0, TROLL, R_NESIDE);
-    new_obj(3, TROLL, 0, TROLL, R_SWSIDE);
-    note[3] =
+    new_obj(RUG_, 0, RUG, R_SCAN3);
+    new_obj(RUG, "Persian rug", RUG, R_SCAN1);
+    objs[RUG].desc[0] = "There is a Persian rug spread out on the floor!";
+    objs[RUG].desc[1] = "The dragon is sprawled out on a Persian rug!!";
+    new_obj(TROLL2_, 0, TROLL2, R_LIMBO);
+    new_obj(TROLL2, 0, TROLL2, R_LIMBO);
+    objs[TROLL2].desc[0] = "The troll is nowhere to be seen.";
+    new_obj(TROLL_, 0, TROLL, R_NESIDE);
+    new_obj(TROLL, 0, TROLL, R_SWSIDE);
+    objs[TROLL].desc[0] =
         "A burly troll stands by the bridge and insists you throw him a\n"
         "treasure before you may cross.";
-    note[4] = "The troll steps out from beneath the bridge and blocks your way.";
-    note[5] = NULL;
-    new_obj(6, BRIDGE_, 0, BRIDGE, R_NESIDE);
-    new_obj(6, BRIDGE, 0, BRIDGE, R_SWSIDE);
-    note[6] =
+    objs[TROLL].desc[1] = "The troll steps out from beneath the bridge and blocks your way.";
+    objs[TROLL].desc[2] = NULL;
+    new_obj(BRIDGE_, 0, BRIDGE, R_NESIDE);
+    new_obj(BRIDGE, 0, BRIDGE, R_SWSIDE);
+    objs[BRIDGE].desc[0] =
         "A rickety wooden bridge extends across the chasm, vanishing into the\n"
         "mist. A sign posted on the bridge reads, \"STOP! PAY TROLL!\"";
-    note[7] =
+    objs[BRIDGE].desc[1] =
         "The wreckage of a bridge (and a dead bear) can be seen at the bottom\n"
         "of the chasm.";
-    new_obj(8, DRAGON_, 0, DRAGON, R_SCAN3);
-    new_obj(8, DRAGON, 0, DRAGON, R_SCAN1);
-    note[8] = "A huge green fierce dragon bars the way!";
-    note[9] = NULL;
-    note[10] = "The body of a huge green dead dragon is lying off to one side.";
-    new_obj(11, SHADOW_, 0, SHADOW, R_WINDOW);
-    new_obj(11, SHADOW, 0, SHADOW, R_WINDOE);
-    note[11] = "The shadowy figure seems to be trying to attract your attention.";
-    new_obj(12, PLANT2_, 0, PLANT2, R_E2PIT);
-    new_obj(12, PLANT2, 0, PLANT2, R_W2PIT);
-    note[12] = NULL;
-    note[13] = "The top of a 12-foot-tall beanstalk is poking out of the west pit.";
-    note[14] = "There is a huge beanstalk growing out of the west pit up to the hole.";
-    new_obj(15, CRYSTAL_, 0, CRYSTAL, R_WFISS);
-    new_obj(15, CRYSTAL, 0, CRYSTAL, R_EFISS);
-    note[15] = NULL;
-    note[16] ="A crystal bridge now spans the fissure.";
-    note[17] = NULL;
-    new_obj(18, TREADS_, 0, TREADS, R_EMIST);
-    new_obj(18, TREADS, 0, TREADS, R_SPIT);
-    note[18] = "Rough stone steps lead down the pit.";
-    note[19] = "Rough stone steps lead up the dome.";
-    new_obj(20, GRATE_, 0, GRATE, R_INSIDE);
-    new_obj(20, GRATE, 0, GRATE, R_OUTSIDE);
-    note[20] = "The grate is locked.";
-    note[21] = "The grate is open.";
-    new_obj(22, MIRROR_, 0, MIRROR, R_LIMBO);  /* joins up with MIRROR later */
-    new_obj(22, CHAIN, "Golden chain", CHAIN, R_BARR);
-    note[22] = "There is a golden chain lying in a heap on the floor!";
-    note[23] = "The bear is locked to the wall with a golden chain!";
-    note[24] = "There is a golden chain locked to the wall!";
-    new_obj(25, SPICES, "Rare spices", 0, R_CHAMBER);
-    note[25] = "There are rare spices here!";
-    new_obj(26, PEARL, "Glistening pearl", 0, R_LIMBO);
-    note[26] = "Off to one side lies a glistening pearl!";
-    new_obj(27, PYRAMID, "Platinum pyramid", 0, R_DROOM);
-    note[27] = "There is a platinum pyramid here, 8 inches on a side!";
-    new_obj(28, EMERALD, "Egg-sized emerald", 0, R_PROOM);
-    note[28] = "There is an emerald here the size of a plover's egg!";
-    new_obj(29, VASE, "Ming vase", 0, R_ORIENTAL);
-    note[29] = "There is a delicate, precious, Ming vase here!";
-    note[30] = "The vase is now resting, delicately, on a velvet pillow.";
-    note[31] = "The floor is littered with worthless shards of pottery.";
-    note[32] = NULL;
-    new_obj(33, TRIDENT, "Jeweled trident", 0, R_FALLS);
-    note[33] = "There is a jewel-encrusted trident here!";
-    new_obj(34, EGGS, "Golden eggs", 0, R_GIANT);
-    note[34] = "There is a large nest here, full of golden eggs!";
-    note[35] = NULL;
-    note[36] = NULL;
-    new_obj(37, CHEST, "Treasure chest", 0, R_LIMBO);
-    note[37] = "The pirate's treasure chest is here!";
-    new_obj(38, COINS, "Rare coins", 0, R_WEST);
-    note[38] = "There are many coins here!";
-    new_obj(39, JEWELS, "Precious jewelry", 0, R_SOUTH);
-    note[39] = "There is precious jewelry here!";
-    new_obj(40, SILVER, "Bars of silver", 0, R_NS);
-    note[40] = "There are bars of silver here!";
-    new_obj(41, DIAMONDS, "Several diamonds", 0, R_WFISS);
-    note[41] = "There are diamonds here!";
-    new_obj(42, GOLD, "Large gold nugget", 0, R_NUGGET);
-    note[42] = "There is a large sparkling nugget of gold here!";
-    new_obj(43, MOSS, 0, MOSS, R_SOFT);
-    note[43] = NULL;
-    new_obj(44, BATTERIES, "Batteries", 0, R_LIMBO);
-    note[44] = "There are fresh batteries here.";
-    note[45] = "Some worn-out batteries have been discarded nearby.";
-    new_obj(46, PONY, 0, PONY, R_PONY);
-    note[46] =
+    new_obj(DRAGON_, 0, DRAGON, R_SCAN3);
+    new_obj(DRAGON, 0, DRAGON, R_SCAN1);
+    objs[DRAGON].desc[0] = "A huge green fierce dragon bars the way!";
+    objs[DRAGON].desc[1] = NULL;
+    objs[DRAGON].desc[2] = "The body of a huge green dead dragon is lying off to one side.";
+    new_obj(SHADOW_, 0, SHADOW, R_WINDOW);
+    new_obj(SHADOW, 0, SHADOW, R_WINDOE);
+    objs[SHADOW].desc[0] = "The shadowy figure seems to be trying to attract your attention.";
+    new_obj(PLANT2_, 0, PLANT2, R_E2PIT);
+    new_obj(PLANT2, 0, PLANT2, R_W2PIT);
+    objs[PLANT2].desc[0] = NULL;
+    objs[PLANT2].desc[1] = "The top of a 12-foot-tall beanstalk is poking out of the west pit.";
+    objs[PLANT2].desc[2] = "There is a huge beanstalk growing out of the west pit up to the hole.";
+    new_obj(CRYSTAL_, 0, CRYSTAL, R_WFISS);
+    new_obj(CRYSTAL, 0, CRYSTAL, R_EFISS);
+    objs[CRYSTAL].desc[0] = NULL;
+    objs[CRYSTAL].desc[1] ="A crystal bridge now spans the fissure.";
+    new_obj(TREADS_, 0, TREADS, R_EMIST);
+    new_obj(TREADS, 0, TREADS, R_SPIT);
+    objs[TREADS].desc[0] = "Rough stone steps lead down the pit.";
+    objs[TREADS].desc[1] = "Rough stone steps lead up the dome.";
+    new_obj(GRATE_, 0, GRATE, R_INSIDE);
+    new_obj(GRATE, 0, GRATE, R_OUTSIDE);
+    objs[GRATE].desc[0] = "The grate is locked.";
+    objs[GRATE].desc[1] = "The grate is open.";
+    new_obj(MIRROR_, 0, MIRROR, R_LIMBO);  /* joins up with MIRROR later */
+    new_obj(CHAIN, "Golden chain", CHAIN, R_BARR);
+    objs[CHAIN].desc[0] = "There is a golden chain lying in a heap on the floor!";
+    objs[CHAIN].desc[1] = "The bear is locked to the wall with a golden chain!";
+    objs[CHAIN].desc[2] = "There is a golden chain locked to the wall!";
+    new_obj(SPICES, "Rare spices", 0, R_CHAMBER);
+    objs[SPICES].desc[0] = "There are rare spices here!";
+    new_obj(PEARL, "Glistening pearl", 0, R_LIMBO);
+    objs[PEARL].desc[0] = "Off to one side lies a glistening pearl!";
+    new_obj(PYRAMID, "Platinum pyramid", 0, R_DROOM);
+    objs[PYRAMID].desc[0] = "There is a platinum pyramid here, 8 inches on a side!";
+    new_obj(EMERALD, "Egg-sized emerald", 0, R_PROOM);
+    objs[EMERALD].desc[0] = "There is an emerald here the size of a plover's egg!";
+    new_obj(VASE, "Ming vase", 0, R_ORIENTAL);
+    objs[VASE].desc[0] = "There is a delicate, precious, Ming vase here!";
+    objs[VASE].desc[1] = "The vase is now resting, delicately, on a velvet pillow.";
+    objs[VASE].desc[2] = "The floor is littered with worthless shards of pottery.";
+    new_obj(TRIDENT, "Jeweled trident", 0, R_FALLS);
+    objs[TRIDENT].desc[0] = "There is a jewel-encrusted trident here!";
+    new_obj(EGGS, "Golden eggs", 0, R_GIANT);
+    objs[EGGS].desc[0] = "There is a large nest here, full of golden eggs!";
+    new_obj(CHEST, "Treasure chest", 0, R_LIMBO);
+    objs[CHEST].desc[0] = "The pirate's treasure chest is here!";
+    new_obj(COINS, "Rare coins", 0, R_WEST);
+    objs[COINS].desc[0] = "There are many coins here!";
+    new_obj(JEWELS, "Precious jewelry", 0, R_SOUTH);
+    objs[JEWELS].desc[0] = "There is precious jewelry here!";
+    new_obj(SILVER, "Bars of silver", 0, R_NS);
+    objs[SILVER].desc[0] = "There are bars of silver here!";
+    new_obj(DIAMONDS, "Several diamonds", 0, R_WFISS);
+    objs[DIAMONDS].desc[0] = "There are diamonds here!";
+    new_obj(GOLD, "Large gold nugget", 0, R_NUGGET);
+    objs[GOLD].desc[0] = "There is a large sparkling nugget of gold here!";
+    new_obj(MOSS, 0, MOSS, R_SOFT);
+    objs[MOSS].desc[0] = NULL;
+    new_obj(BATTERIES, "Batteries", 0, R_LIMBO);
+    objs[BATTERIES].desc[0] = "There are fresh batteries here.";
+    objs[BATTERIES].desc[1] = "Some worn-out batteries have been discarded nearby.";
+    new_obj(PONY, 0, PONY, R_PONY);
+    objs[PONY].desc[0] =
         "There is a massive vending machine here. The instructions on it read:\n"
         "\"Drop coins here to receive fresh batteries.\"";
-    new_obj(47, GEYSER, 0, GEYSER, R_VIEW);
-    note[47] = NULL;
-    new_obj(48, MESSAGE, 0, MESSAGE, R_LIMBO);
-    note[48] =
+    new_obj(GEYSER, 0, GEYSER, R_VIEW);
+    objs[GEYSER].desc[0] = NULL;
+    new_obj(MESSAGE, 0, MESSAGE, R_LIMBO);
+    objs[MESSAGE].desc[0] =
         "There is a message scrawled in the dust in a flowery script, reading:\n"
         "\"This is not the maze where the pirate hides his treasure chest.\"";
-    new_obj(49, BEAR, 0, BEAR, R_BARR);
-    note[49] = "There is a ferocious cave bear eying you from the far end of the room!";
-    note[50] = "There is a gentle cave bear sitting placidly in one corner.";
-    note[51] = "There is a contented-looking bear wandering about nearby.";
-    note[52] = NULL;
-    new_obj(53, PIRATE, 0, PIRATE, R_LIMBO);
-    note[53] = NULL;
-    new_obj(54, ART, 0, ART, R_ORIENTAL);
-    note[54] = NULL;
-    new_obj(55, AXE, "Dwarf's axe", 0, R_LIMBO);
-    note[55] = "There is a little axe here.";
-    note[56] = "There is a little axe lying beside the bear.";
-    new_obj(57, STALACTITE, 0, STALACTITE, R_TITE);
-    note[57] = NULL;
-    new_obj(58, PLANT, 0, PLANT, R_WPIT);
-    note[58] = "There is a tiny little plant in the pit, murmuring \"Water, water, ...\"";
-    note[59] = NULL;
-    note[60] =
+    new_obj(BEAR, 0, BEAR, R_BARR);
+    objs[BEAR].desc[0] = "There is a ferocious cave bear eying you from the far end of the room!";
+    objs[BEAR].desc[1] = "There is a gentle cave bear sitting placidly in one corner.";
+    objs[BEAR].desc[2] = "There is a contented-looking bear wandering about nearby.";
+    objs[BEAR].desc[3] = NULL;  /* the dead bear remains as scenery where it fell */
+    new_obj(PIRATE, 0, PIRATE, R_LIMBO);
+    /* The pirate is a dummy object; never appears on the ground. */
+    new_obj(ART, 0, ART, R_ORIENTAL);
+    objs[ART].desc[0] = NULL;
+    new_obj(AXE, "Dwarf's axe", 0, R_LIMBO);
+    objs[AXE].desc[0] = "There is a little axe here.";
+    objs[AXE].desc[1] = "There is a little axe lying beside the bear.";
+    new_obj(STALACTITE, 0, STALACTITE, R_TITE);
+    objs[STALACTITE].desc[0] = NULL;
+    new_obj(PLANT, 0, PLANT, R_WPIT);
+    objs[PLANT].desc[0] = "There is a tiny little plant in the pit, murmuring \"Water, water, ...\"";
+    objs[PLANT].desc[1] =
         "There is a 12-foot-tall beanstalk stretching up out of the pit,\n"
         "bellowing \"Water!! Water!!\"";
-    note[61] = NULL;
-    note[62] = "There is a gigantic beanstalk stretching all the way up to the hole.";
-    note[63] = NULL;
-    new_obj(64, MIRROR, 0, MIRROR, R_MIRROR);
-    note[64] = NULL;
-    new_obj(65, OIL, "Oil in the bottle", 0, R_LIMBO);
-    new_obj(65, WATER, "Water in the bottle", 0, R_LIMBO);
-    new_obj(65, BOTTLE, "Small bottle", 0, R_HOUSE);
-    note[65] = "There is a bottle of water here.";
-    note[66] = "There is an empty bottle here.";
-    note[67] = "There is a bottle of oil here.";
-    new_obj(68, FOOD, "Tasty food", 0, R_HOUSE);
-    note[68] = "There is food here.";
-    new_obj(69, KNIFE, 0, 0, R_LIMBO);
-    new_obj(69, DWARF, 0, DWARF, R_LIMBO);
-    new_obj(69, MAG, "\"Spelunker Today\"", 0, R_ANTE);
-    note[69] = "There are a few recent issues of \"Spelunker Today\" magazine here.";
-    new_obj(70, OYSTER, "Giant oyster >GROAN!<", 0, R_LIMBO);
-    note[70] = "There is an enormous oyster here with its shell tightly closed.";
-    note[71] = NULL;
-    new_obj(72, CLAM, "Giant clam >GRUNT!<", 0, R_SHELL);
-    note[72] = "There is an enormous clam here with its shell tightly closed.";
-    new_obj(73, TABLET, 0, TABLET, R_DROOM);
+    objs[PLANT].desc[2] = "There is a gigantic beanstalk stretching all the way up to the hole.";
+    new_obj(MIRROR, 0, MIRROR, R_MIRROR);
+    objs[MIRROR].desc[0] = NULL;
+    new_obj(OIL, "Oil in the bottle", 0, R_LIMBO);
+    new_obj(WATER, "Water in the bottle", 0, R_LIMBO);
+    /* These two items never appear on the ground; they are either in R_LIMBO or R_INHAND. */
+    new_obj(BOTTLE, "Small bottle", 0, R_HOUSE);
+    objs[BOTTLE].desc[0] = "There is a bottle of water here.";
+    objs[BOTTLE].desc[1] = "There is an empty bottle here.";
+    objs[BOTTLE].desc[2] = "There is a bottle of oil here.";
+    new_obj(FOOD, "Tasty food", 0, R_HOUSE);
+    objs[FOOD].desc[0] = "There is food here.";
+    new_obj(KNIFE, 0, 0, R_LIMBO);
+    new_obj(DWARF, 0, DWARF, R_LIMBO);
+    new_obj(MAG, "\"Spelunker Today\"", 0, R_ANTE);
+    objs[MAG].desc[0] = "There are a few recent issues of \"Spelunker Today\" magazine here.";
+    new_obj(OYSTER, "Giant oyster >GROAN!<", 0, R_LIMBO);
+    objs[OYSTER].desc[0] = "There is an enormous oyster here with its shell tightly closed.";
+    objs[OYSTER].desc[1] = NULL;
+    new_obj(CLAM, "Giant clam >GRUNT!<", 0, R_SHELL);
+    objs[CLAM].desc[0] = "There is an enormous clam here with its shell tightly closed.";
+    new_obj(TABLET, 0, TABLET, R_DROOM);
     /* Woods has "imbedded", but Knuth fixes it. */
-    note[73] =
+    objs[TABLET].desc[0] =
         "A massive stone tablet embedded in the wall reads:\n"
         "\"CONGRATULATIONS ON BRINGING LIGHT INTO THE DARK-ROOM!\"";
-    new_obj(74, SNAKE, 0, SNAKE, R_HMK);
-    note[74] = "A huge green fierce snake bars the way!";
-    note[75] = NULL;
-    new_obj(76, PILLOW, "Velvet pillow", 0, R_SOFT);
-    note[76] = "A small velvet pillow lies on the floor.";
-    new_obj(77, DOOR, 0, DOOR, R_IMMENSE);
-    note[77] = "The way north is barred by a massive, rusty, iron door.";
-    note[78] = "The way north leads through a massive, rusty, iron door.";
-    new_obj(79, BIRD, "Little bird in cage", 0, R_BIRD);
-    note[79] = "A cheerful little bird is sitting here singing.";
-    note[80] = "There is a little bird in the cage.";
-    new_obj(81, ROD2, "Black rod", 0, R_LIMBO);
-    note[81] = "A three-foot black rod with a rusty mark on an end lies nearby.";
-    new_obj(82, ROD, "Black rod", 0, R_DEBRIS);
-    note[82] = "A three-foot black rod with a rusty star on an end lies nearby.";
-    new_obj(83, CAGE, "Wicker cage", 0, R_COBBLES);
-    note[83] = "There is a small wicker cage discarded nearby.";
-    new_obj(84, LAMP, "Brass lantern", 0, R_HOUSE);
-    note[84] = "There is a shiny brass lamp nearby.";
-    note[85] = "There is a lamp shining nearby.";
-    new_obj(86, KEYS, "Set of keys", 0, R_HOUSE);
-    note[86] = "There are some keys on the ground here.";
+    new_obj(SNAKE, 0, SNAKE, R_HMK);
+    objs[SNAKE].desc[0] = "A huge green fierce snake bars the way!";
+    objs[SNAKE].desc[1] = NULL;  /* dead snake */
+    new_obj(PILLOW, "Velvet pillow", 0, R_SOFT);
+    objs[PILLOW].desc[0] = "A small velvet pillow lies on the floor.";
+    new_obj(DOOR, 0, DOOR, R_IMMENSE);
+    objs[DOOR].desc[0] = "The way north is barred by a massive, rusty, iron door.";
+    objs[DOOR].desc[1] = "The way north leads through a massive, rusty, iron door.";
+    new_obj(BIRD, "Little bird in cage", 0, R_BIRD);
+    objs[BIRD].desc[0] = "A cheerful little bird is sitting here singing.";
+    objs[BIRD].desc[1] = "There is a little bird in the cage.";
+    new_obj(ROD2, "Black rod", 0, R_LIMBO);
+    objs[ROD2].desc[0] = "A three-foot black rod with a rusty mark on an end lies nearby.";
+    new_obj(ROD, "Black rod", 0, R_DEBRIS);
+    objs[ROD].desc[0] = "A three-foot black rod with a rusty star on an end lies nearby.";
+    new_obj(CAGE, "Wicker cage", 0, R_COBBLES);
+    objs[CAGE].desc[0] = "There is a small wicker cage discarded nearby.";
+    new_obj(LAMP, "Brass lantern", 0, R_HOUSE);
+    objs[LAMP].desc[0] = "There is a shiny brass lamp nearby.";
+    objs[LAMP].desc[1] = "There is a lamp shining nearby.";
+    new_obj(KEYS, "Set of keys", 0, R_HOUSE);
+    objs[KEYS].desc[0] = "There are some keys on the ground here.";
 }
 
 
@@ -2152,7 +2144,7 @@ int look_around(Location loc, bool dark, bool was_dark)
                 /* The rough stone steps disappear if we are carrying the nugget. */
             } else {
                 int going_up = (tt == &objs[TREADS] && loc == R_EMIST);
-                const char *obj_description = note[tt->prop + tt->offset + going_up];
+                const char *obj_description = tt->desc[tt->prop + going_up];
                 if (obj_description != NULL) {
                     puts(obj_description);
                 }
@@ -3543,15 +3535,15 @@ void simulate_an_adventure(void)
                             } else {
                                 if (objs[PLANT].prop == 0) {
                                     puts("The plant spurts into furious growth for a few seconds.");
+                                    objs[PLANT].prop = 1;
+                                } else if (objs[PLANT].prop == 1) {
+                                    puts("The plant grows explosively, almost filling the bottom of the pit.");
                                     objs[PLANT].prop = 2;
                                 } else if (objs[PLANT].prop == 2) {
-                                    puts("The plant grows explosively, almost filling the bottom of the pit.");
-                                    objs[PLANT].prop = 4;
-                                } else if (objs[PLANT].prop == 4) {
                                     puts("You've over-watered the plant! It's shriveling up! It's, it's...");
                                     objs[PLANT].prop = 0;
                                 }
-                                objs[PLANT2].prop = objs[PLANT].prop >> 1;
+                                objs[PLANT2].prop = objs[PLANT].prop;
                                 mot = NOWHERE;
                                 goto try_move;
                             }
