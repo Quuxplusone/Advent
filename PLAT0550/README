@@ -1,0 +1,35 @@
+This directory contains the unzipped contents of
+http://www.mipmip.org/orig550/orig550.tgz
+which is linked from this page of Mike Arnautov's:
+http://www.mipmip.org/adv550/index.shtml
+
+The Makefile will invoke f77 (which you can install on Ubuntu
+by running "sudo apt-get install fort77") to compile Platt's
+"munger", and then run the munger to convert ADVENTURE.ACODE
+into a set of four data files. Meanwhile, we compile "exec.f"
+into an executable called "adv550". At runtime, the executable
+will read in those four data files and use them to construct
+the game world.
+
+This method of getting Adv550 up and running seems much
+less buggy than relying on Mike Arnautov's own A-code
+"kernel". For example, Platt's kernel correctly matches
+Crowther & Woods' behavior when confronted with
+
+    > GET
+    get what?
+    > AXE
+    Ok.
+
+Platt's kernel doesn't segfault when confronted with an
+unknown noun, either.
+
+However, the output of "f2c" is even less suitable for
+porting to the Z-machine than the output of "acdc".
+
+Platt's Adventure has several differences from Woods',
+even in the shared sections. For example, the rough stone
+steps don't disappear when you're carrying the gold nugget
+(and you can descend them without breaking your neck,
+although they remain unclimbable). And the command
+GET WATER no longer works to pick up the water bottle.
