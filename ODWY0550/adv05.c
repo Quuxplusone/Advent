@@ -30,13 +30,6 @@ void initial()
     return;
 }
 
-void repeat()
-{
-    p24();
-    p25();
-    return;
-}
-
 void p26()
 {
     p27();
@@ -82,8 +75,8 @@ void p55()
 
 void p62()
 {
-    p63();
-    p64();
+    action_BREAK_VASE();
+    action_BREAK_VIAL();
     return;
 }
 
@@ -91,7 +84,7 @@ void p66()
 {
     p67();
     p68();
-    p69();
+    cross_wheatstone_bridge();
     return;
 }
 
@@ -118,33 +111,33 @@ void p78()
 
 void p81()
 {
-    p82();
-    p83();
+    at_BUILDING();
+    at_BUILDING_downstream();
     return;
 }
 
 void p105()
 {
-    p106();
-    p107();
+    action_CAVE_outdoors();
+    action_CAVE();
     return;
 }
 
 void p108()
 {
     p109();
-    p110();
+    jumping_into_whirlpool();
     return;
 }
 
 void p114()
 {
-    p115();
-    p116();
-    p117();
-    p118();
-    p119();
-    p120();
+    action_CLOSE_grate();
+    action_CLOSE_CHAIN();
+    action_CLOSE_DOOR();
+    action_CLOSE_SAFE();
+    action_CLOSE_FLASK();
+    action_CLOSE_CAVE();
     return;
 }
 
@@ -171,8 +164,8 @@ void p147()
 
 void p155()
 {
-    p156();
-    p157();
+    action_DROP_special();
+    action_DROP();
     return;
 }
 
@@ -186,10 +179,10 @@ void p168()
 
 void p173()
 {
-    p174();
-    p175();
-    p176();
-    p177();
+    action_EAT_nearmushroom();
+    action_EAT_nearfood();
+    action_EAT_mortal();
+    action_EAT();
     return;
 }
 
@@ -216,30 +209,30 @@ void p186()
 
 void p190()
 {
-    p191();
-    p192();
+    action_FEE_fiefoefoo();
+    action_FEE();
     return;
 }
 
 void p193()
 {
-    p194();
-    p195();
+    action_FEED_mortal();
+    action_FEED();
     return;
 }
 
 void p197()
 {
-    p198();
-    p199();
-    p200();
+    action_FILL_VASE();
+    action_FILL_BOTTLE();
+    action_FILL();
     return;
 }
 
 void p201()
 {
-    p202();
-    p203();
+    action_FIND_CAVE();
+    action_FIND();
     return;
 }
 
@@ -252,8 +245,8 @@ void p208()
 
 void p218()
 {
-    p219();
-    p220();
+    action_GET_special();
+    action_GET();
     return;
 }
 
@@ -287,15 +280,15 @@ void p293()
 
 void p300()
 {
-    p301();
-    p302();
+    action_KILL_mortal();
+    action_KILL();
     return;
 }
 
 void p323()
 {
-    p324();
-    p325();
+    action_LOOK_scenery();
+    action_LOOK();
     return;
 }
 
@@ -360,31 +353,31 @@ void p396()
 
 void p402()
 {
-    p403();
-    p404();
+    action_NOSIDE_SAMOHT();
+    action_NOSIDE();
     return;
 }
 
 void p407()
 {
-    p408();
-    p409();
-    p410();
+    action_OIL_DOOR();
+    action_OIL_PLANT();
+    action_OIL();
     return;
 }
 
 void p413()
 {
-    p414();
-    p415();
-    p416();
-    p417();
-    p418();
-    p419();
-    p420();
-    p421();
-    p422();
-    p423();
+    action_OPEN_grate();
+    action_OPEN_CHAIN();
+    action_OPEN_DOOR();
+    action_OPEN_KEYS();
+    action_OPEN_SAFE();
+    action_OPEN_CLAM();
+    action_OPEN_OYSTER();
+    action_OPEN_VIAL();
+    action_OPEN_FLASK();
+    action_OPEN_PENTAGRAM();
     return;
 }
 
@@ -435,22 +428,22 @@ void p449()
 
 void p455()
 {
-    p456();
-    p457();
+    action_POUR_WATER();
+    action_POUR_OIL();
     return;
 }
 
 void p471()
 {
-    p472();
-    p473();
+    action_RUB_LAMP();
+    action_RUB();
     return;
 }
 
 void p478()
 {
-    p479();
-    p480();
+    action_SAY_magicword();
+    action_SAY();
     return;
 }
 
@@ -523,11 +516,11 @@ void p528()
 
 void p534()
 {
-    p535();
-    p536();
-    p537();
-    p538();
-    p539();
+    action_THROW_weaponry();
+    action_THROW_FOOD();
+    action_THROW_TEETH();
+    action_THROW_VIAL();
+    action_THROW();
     return;
 }
 
@@ -540,9 +533,9 @@ void p551()
 
 void p557()
 {
-    p558();
-    p559();
-    p560();
+    action_WATER_DOOR();
+    action_WATER_PLANT();
+    action_WATER();
     return;
 }
 

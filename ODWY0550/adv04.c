@@ -2,21 +2,21 @@
 #include "adv0.h"
 #include "adv3.h"
 
-void p120(void)
+void action_CLOSE_CAVE(void)
 {
     if (!KEY(417))
         return;
     if (bitest(evar(458), 5)) {
-        p121();
+        close_the_cave();
     }
 }
 
-void p240(void)
+void action_HELP(void)
 {
     if (value[467] == 0) {
         set('V', 467, 'c', 1, NULL, NULL);
     }
-    p242();
+    hint_logic();
     if (value[467] > 0) {
         if ((((((((isnear(91, -1, -1)) ||
                   isnear(19, -1, -1)) ||
@@ -37,23 +37,23 @@ void p240(void)
     longjmp(loop_back, 1);
 }
 
-void p292(void)
+void action_INFO(void)
 {
     say(0, 637, 0);
     longjmp(loop_back, 1);
 }
 
-void p459(void)
+void action_QUIT(void)
 {
     if (query(515)) {
         set('V', 464, 'c', 1, NULL, NULL);
-        p204();
+        finis();
     }
     say(2, 465, 0);
     longjmp(loop_back, 1);
 }
 
-void p70(void)
+void action_BRIEF(void)
 {
     say(0, 658, 0);
     bitmod('s', evar(446), 1);
@@ -63,7 +63,7 @@ void p70(void)
     longjmp(loop_back, 1);
 }
 
-void p329(void)
+void action_LPSD(void)
 {
     if ((value[STATUS] == 1) || !(bitest(evar(458), 5))) {
         say(0, 557, 0);
@@ -78,7 +78,7 @@ void p329(void)
     longjmp(loop_back, 1);
 }
 
-void p301(void)
+void action_KILL_mortal(void)
 {
     default_to(0, value[HERE], 5);
     if (!anyof(21, 91, 19, 6, 71, 37, 77, 76, 23, 16, 26, 90, 24, 25, -1))
@@ -86,43 +86,43 @@ void p301(void)
     if (!isnear(value[ARG2], -1, -1))
         return;
     if (KEY(21)) {
-        p314();
+        killtroll();
     } else {
         if (KEY(91)) {
-            p310();
+            killdwarf();
         } else {
             if (KEY(19)) {
-                p309();
+                killdragon();
             } else {
                 if (KEY(6)) {
-                    p313();
+                    killsnake();
                 } else {
                     if (KEY(16)) {
-                        p307();
+                        killblob();
                     } else {
                         if (KEY(37)) {
-                            p304();
+                            killbear();
                         } else {
                             if ((KEY(76)) || KEY(77)) {
-                                p306();
+                                killbivalve();
                             } else {
                                 if (KEY(23)) {
-                                    p312();
+                                    killogre();
                                 } else {
                                     if (KEY(71)) {
-                                        p305();
+                                        killbird();
                                     } else {
                                         if (KEY(26)) {
-                                            p308();
+                                            killdjinn();
                                         } else {
                                             if (KEY(90)) {
-                                                p311();
+                                                killgoblins();
                                             } else {
                                                 if (KEY(24)) {
-                                                    p303();
+                                                    killbasilisk();
                                                 } else {
                                                     if (KEY(25)) {
-                                                        p243();
+                                                        hitgong();
                                                     }
                                                 }
                                             }
@@ -139,7 +139,7 @@ void p301(void)
     longjmp(loop_back, 1);
 }
 
-void p302(void)
+void action_KILL(void)
 {
     if (value[STATUS] == 1) {
         say(0, 540, 0);
@@ -147,7 +147,7 @@ void p302(void)
     }
 }
 
-void p189(void)
+void action_FAST(void)
 {
     bitmod('c', evar(446), 1);
     bitmod('s', evar(446), 2);
@@ -157,7 +157,7 @@ void p189(void)
     longjmp(loop_back, 1);
 }
 
-void p215(void)
+void action_FULL(void)
 {
     bitmod('c', evar(446), 1);
     bitmod('c', evar(446), 2);
@@ -167,7 +167,7 @@ void p215(void)
     longjmp(loop_back, 1);
 }
 
-void p194(void)
+void action_FEED_mortal(void)
 {
     if (!anyof(37, 21, 71, 6, 91, 19, 24, 90, -1))
         return;
@@ -234,7 +234,7 @@ void p194(void)
     longjmp(loop_back, 1);
 }
 
-void p195(void)
+void action_FEED(void)
 {
     if (value[STATUS] == 1) {
         say(0, 506, 0);
@@ -244,40 +244,40 @@ void p195(void)
     longjmp(loop_back, 1);
 }
 
-void p481(void)
+void action_SCORE(void)
 {
     set('V', 464, 'c', 1, NULL, NULL);
-    p229();
+    getscore();
     say(13, 730, 455);
     say(13, 731, 456);
     longjmp(loop_back, 1);
 }
 
-void p299(void)
+void action_JUMP(void)
 {
     say(0, 726, 0);
     longjmp(loop_back, 1);
 }
 
-void p286(void)
+void action_IN(void)
 {
     say(0, 504, 0);
     longjmp(loop_back, 1);
 }
 
-void p425(void)
+void action_OUT(void)
 {
     say(0, 504, 0);
     longjmp(loop_back, 1);
 }
 
-void p496(void)
+void action_ABRA(void)
 {
     say(0, 547, 0);
     longjmp(loop_back, 1);
 }
 
-void p191(void)
+void action_FEE_fiefoefoo(void)
 {
     if (!anyof(433, 432, 431, 404, -1))
         return;
@@ -286,14 +286,14 @@ void p191(void)
     longjmp(loop_back, 1);
 }
 
-void p192(void)
+void action_FEE(void)
 {
     set('V', 460, 'c', 1, NULL, NULL);
     say(2, 465, 0);
     longjmp(loop_back, 1);
 }
 
-void p196(void)
+void action_FIE(void)
 {
     if (value[460] == 0) {
         set('V', 460, 'c', 2, NULL, NULL);
@@ -305,7 +305,7 @@ void p196(void)
     longjmp(loop_back, 1);
 }
 
-void p206(void)
+void action_FOE(void)
 {
     if (value[460] == 1) {
         set('V', 460, 'c', 3, NULL, NULL);
@@ -317,7 +317,7 @@ void p206(void)
     longjmp(loop_back, 1);
 }
 
-void p207(void)
+void action_FOO(void)
 {
     if (value[460] == 2) {
         if (((location[49] == 172)) || (location[49] == 334)) {
@@ -358,26 +358,26 @@ void p207(void)
     longjmp(loop_back, 1);
 }
 
-void p216(void)
+void action_FUM(void)
 {
     set('V', 460, 'c', 0, NULL, NULL);
     say(0, 538, 0);
     longjmp(loop_back, 1);
 }
 
-void p591(void)
+void action_XYZZY(void)
 {
     say(0, 538, 0);
     longjmp(loop_back, 1);
 }
 
-void p453(void)
+void action_PLUGH(void)
 {
     say(0, 538, 0);
     longjmp(loop_back, 1);
 }
 
-void p202(void)
+void action_FIND_CAVE(void)
 {
     if (!KEY(417))
         return;
@@ -389,7 +389,7 @@ void p202(void)
     longjmp(loop_back, 1);
 }
 
-void p203(void)
+void action_FIND(void)
 {
     if (value[STATUS] > 1) {
         if (bitest(evar(445), 15)) {
@@ -418,36 +418,34 @@ void p203(void)
     }
 }
 
-void p526(void)
+void action_SWIM(void)
 {
     say(0, 642, 0);
     longjmp(loop_back, 1);
 }
 
-void p63(void)
+void action_BREAK_VASE(void)
 {
     if (!KEY(52))
         return;
     if (!isnear(52, -1, -1))
         return;
     say(0, 702, 0);
-    if (have(52, -1, -1)) {
-    }
     apport(52, LIMBO);
     apport(53, value[HERE]);
     longjmp(loop_back, 1);
 }
 
-void p64(void)
+void action_BREAK_VIAL(void)
 {
     if (!KEY(88))
         return;
     if (!isnear(88, -1, -1))
         return;
-    p65();
+    break_vial();
 }
 
-void p205(void)
+void action_FIX_VASE(void)
 {
     if (!KEY(52))
         return;
@@ -457,7 +455,7 @@ void p205(void)
     longjmp(loop_back, 1);
 }
 
-void p198(void)
+void action_FILL_VASE(void)
 {
     if (!KEY(52))
         return;
@@ -465,8 +463,6 @@ void p198(void)
         return;
     if ((bitest(value[HERE], 6)) || (value[HERE] == 113)) {
         say(0, 640, 0);
-        if (have(52, -1, -1)) {
-        }
         apport(52, LIMBO);
         apport(53, value[HERE]);
     } else {
@@ -475,7 +471,7 @@ void p198(void)
     longjmp(loop_back, 1);
 }
 
-void p199(void)
+void action_FILL_BOTTLE(void)
 {
     if (!KEY(81))
         return;
@@ -505,7 +501,7 @@ void p199(void)
     longjmp(loop_back, 1);
 }
 
-void p200(void)
+void action_FILL(void)
 {
     if (value[STATUS] > 1) {
         say(0, 607, 0);
@@ -513,7 +509,7 @@ void p200(void)
     }
 }
 
-void p456(void)
+void action_POUR_WATER(void)
 {
     if (!KEY(82))
         return;
@@ -547,7 +543,7 @@ void p456(void)
     longjmp(loop_back, 1);
 }
 
-void p457(void)
+void action_POUR_OIL(void)
 {
     if (!KEY(83))
         return;
@@ -571,7 +567,7 @@ void p457(void)
     longjmp(loop_back, 1);
 }
 
-void p440(void)
+void action_PLACATE(void)
 {
     if (!anyof(91, 6, 71, 19, 21, 37, 18, 23, 24, 90, -1))
         return;
@@ -581,7 +577,7 @@ void p440(void)
     longjmp(loop_back, 1);
 }
 
-void p174(void)
+void action_EAT_nearmushroom(void)
 {
     default_to(0, value[HERE], 8);
     if (!isnear(89, -1, -1))
@@ -600,7 +596,7 @@ void p174(void)
     }
 }
 
-void p175(void)
+void action_EAT_nearfood(void)
 {
     if (!isnear(80, -1, -1))
         return;
@@ -613,7 +609,7 @@ void p175(void)
     }
 }
 
-void p176(void)
+void action_EAT_mortal(void)
 {
     if (!anyof(91, 19, 71, 6, 37, 21, 10, 23, 24, 90, -1))
         return;
@@ -625,7 +621,7 @@ void p176(void)
     longjmp(loop_back, 1);
 }
 
-void p177(void)
+void action_EAT(void)
 {
     if (value[STATUS] == 1) {
         say(0, 676, 0);
@@ -640,7 +636,7 @@ void p177(void)
     }
 }
 
-void p472(void)
+void action_RUB_LAMP(void)
 {
     if (!KEY(69))
         return;
@@ -650,7 +646,7 @@ void p472(void)
     longjmp(loop_back, 1);
 }
 
-void p473(void)
+void action_RUB(void)
 {
     if (value[STATUS] > 1) {
         if (bitest(evar(445), 15)) {
@@ -662,7 +658,7 @@ void p473(void)
     }
 }
 
-void p41(void)
+void action_BACK(void)
 {
     if (((bitest(value[HERE], 3)) || bitest(evar(443), 3)) || value[THERE] == 0) {
         say(0, 589, 0);
@@ -672,13 +668,13 @@ void p41(void)
     longjmp(loop_back, 1);
 }
 
-void p374(void)
+void action_MIST(void)
 {
     say(0, 565, 0);
     longjmp(loop_back, 1);
 }
 
-void p479(void)
+void action_SAY_magicword(void)
 {
     if (!anyof(425, 421, 179, 422, 428, 427, 424,
                429, 420, 430, 423, 435, 426, -1))
@@ -688,14 +684,14 @@ void p479(void)
     longjmp(loop_back, 1);
 }
 
-void p480(void)
+void action_SAY(void)
 {
     if (value[STATUS] == 2) {
         longjmp(loop_back, 1);
     }
 }
 
-void p477(void)
+void action_SAVE(void)
 {
     if (bitest(evar(458), 0)) {
         say(0, 704, 0);
@@ -734,7 +730,7 @@ void p477(void)
     longjmp(loop_back, 1);
 }
 
-void p468(void)
+void action_RESTORE(void)
 {
     value[448] = 0;
     if (value[448] > 0) {
@@ -796,7 +792,7 @@ void p468(void)
     longjmp(loop_back, 1);
 }
 
-void p154(void)
+void action_DRINK(void)
 {
     if ((value[STATUS] == 1) || KEY(82)) {
         if (bitest(value[HERE], 6)) {
@@ -829,25 +825,25 @@ void p154(void)
     longjmp(loop_back, 1);
 }
 
-void p394(void)
+void action_NEWS(void)
 {
     say(0, 486, 0);
     longjmp(loop_back, 1);
 }
 
-void p461(void)
+void action_READ(void)
 {
     if (value[STATUS] > 1) {
         if (bitest(evar(445), 15)) {
             if (isnear(value[ARG2], -1, -1)) {
                 if (KEY(78)) {
-                    p463();
+                    read_magazines();
                 } else {
                     if (KEY(28)) {
-                        p464();
+                        read_message();
                     } else {
                         if (KEY(8)) {
-                            p465();
+                            read_tablet();
                         } else {
                             say(12, 744, 444);
                         }
@@ -865,14 +861,14 @@ void p461(void)
     longjmp(loop_back, 1);
 }
 
-void p244(void)
+void action_HOURS(void)
 {
     say(0, 767, 0);
     puts("Open at all times.");
     longjmp(loop_back, 1);
 }
 
-void p590(void)
+void action_WIZARD(void)
 {
     if (query(768)) {
         say(0, 769, 0);
@@ -885,7 +881,7 @@ void p590(void)
     longjmp(loop_back, 1);
 }
 
-void p138(void)
+void action_CURIOUS(void)
 {
     if (value[476] == 0) {
         set('V', 476, 'c', 1, NULL, NULL);
@@ -896,7 +892,7 @@ void p138(void)
     longjmp(loop_back, 1);
 }
 
-void p238(void)
+void action_GREEN(void)
 {
     if (value[476] == 1) {
         set('V', 476, 'c', 2, NULL, NULL);
@@ -907,7 +903,7 @@ void p238(void)
     longjmp(loop_back, 1);
 }
 
-void p282(void)
+void action_IDEAS(void)
 {
     if (value[476] == 2) {
         set('V', 476, 'c', 3, NULL, NULL);
@@ -918,7 +914,7 @@ void p282(void)
     longjmp(loop_back, 1);
 }
 
-void p502(void)
+void action_SLEPT(void)
 {
     if (value[476] == 3) {
         set('V', 476, 'c', 4, NULL, NULL);
@@ -929,7 +925,7 @@ void p502(void)
     longjmp(loop_back, 1);
 }
 
-void p217(void)
+void action_FURIOUSLY(void)
 {
     if (value[476] == 4) {
         set('V', 476, 'c', -1, NULL, NULL);
@@ -943,19 +939,19 @@ void p217(void)
     longjmp(loop_back, 1);
 }
 
-void p112(void)
+void action_CLIMB(void)
 {
     say(0, 713, 0);
     longjmp(loop_back, 1);
 }
 
-void p326(void)
+void action_LOST(void)
 {
     say(0, 564, 0);
     longjmp(loop_back, 1);
 }
 
-void p370(void)
+void action_MELENKURION(void)
 {
     if ((isnear(30, -1, -1)) && value[30] == 0) {
         set('E', 30, 'c', 1, NULL, NULL);
@@ -966,7 +962,7 @@ void p370(void)
     longjmp(loop_back, 1);
 }
 
-void p403(void)
+void action_NOSIDE_SAMOHT(void)
 {
     if (!KEY(424))
         return;
@@ -977,7 +973,7 @@ void p403(void)
     } else {
         if (have(69, -1, -1)) {
             say(0, 776, 0);
-            p124();
+            coroner();
         } else {
             if (value[447] > 40) {
                 apport(69, 334);
@@ -989,7 +985,7 @@ void p403(void)
                     say(0, 509, 0);
                 } else {
                     say(0, 778, 0);
-                    p124();
+                    coroner();
                 }
             } else {
                 say(0, 779, 0);
@@ -1002,50 +998,50 @@ void p403(void)
     longjmp(loop_back, 1);
 }
 
-void p404(void)
+void action_NOSIDE(void)
 {
     say(0, 538, 0);
     longjmp(loop_back, 1);
 }
 
-void p475(void)
+void action_SAMOHT(void)
 {
     say(0, 538, 0);
     longjmp(loop_back, 1);
 }
 
-void p540(void)
+void action_THURB(void)
 {
     say(0, 538, 0);
     longjmp(loop_back, 1);
 }
 
-void p316(void)
+void action_KNERL(void)
 {
-    p426();
+    passphrase();
 }
 
-void p595(void)
+void action_ZORTON(void)
 {
-    p426();
+    passphrase();
 }
 
-void p315(void)
+void action_KLAETU(void)
 {
-    p426();
+    passphrase();
 }
 
-void p510(void)
+void action_SNOEZE(void)
 {
-    p426();
+    passphrase();
 }
 
-void p60(void)
+void action_BLERBI(void)
 {
-    p426();
+    passphrase();
 }
 
-void p469(void)
+void action_RIDE(void)
 {
     if (((value[STATUS] == 1) || KEY(27)) && isnear(27, -1, -1)) {
         say(0, 854, 0);
@@ -1055,7 +1051,7 @@ void p469(void)
     }
 }
 
-void p434(void)
+void action_PHUGGG(void)
 {
     bitmod('s', 26, 11);
     if (bitest(value[HERE], 4)) {
@@ -1067,7 +1063,7 @@ void p434(void)
             } else {
                 if (pct(95)) {
                     say(0, 864, 0);
-                    p124();
+                    coroner();
                 } else {
                     say(0, 865, 0);
                     finita();
@@ -1107,7 +1103,7 @@ void p434(void)
                         *bitword(449) = -1;
                         value[448] += value[449];
                         say(2, 448, 0);
-                        p124();
+                        coroner();
                     }
                 } else {
                     say(0, 538, 0);
@@ -1118,7 +1114,7 @@ void p434(void)
     longjmp(loop_back, 1);
 }
 
-void p474(void)
+void action_RUNOUT(void)
 {
     if (bitest(evar(458), 5)) {
         set('V', 462, 'c', 0, NULL, NULL);
@@ -1855,10 +1851,10 @@ void wake_up_and_greet_user(void)
     say(0, 483, 0);
 }
 
-void p24(void)
+void every_turn_1(void)
 {
     if (bitest(evar(458), 1)) {
-        blob_chases_you();
+        tick();
     }
     if (!(bitest(evar(446), 0))) {
         if ((isnear(91, -1, -1)) && pct(value[477])) {
@@ -1893,13 +1889,13 @@ void p24(void)
     }
     if (value[459] == value[448]) {
         say(0, 763, 0);
-        p204();
+        finis();
     }
     if (isnear(69, -1, -1)) {
         if (value[69] == 1) {
             value[447] -= 1;
             if ((value[447] == 40) || value[447] == 0) {
-                p318();
+                lamprey();
             }
         }
     }
@@ -1953,7 +1949,7 @@ void p24(void)
             say(0, 509, 0);
         } else {
             say(0, 516, 0);
-            p124();
+            coroner();
         }
     }
     bitmod('c', evar(458), 6);
@@ -1965,13 +1961,13 @@ void p24(void)
     if (isnear(90, -1, -1)) {
         value[90] += 1;
         if (value[90] > 6) {
-            p124();
+            coroner();
         }
     }
     if (!(bitest(value[HERE], 4))) {
         value[462] -= value[450];
         if (value[462] < 1) {
-            p113();
+            clock4();
         }
     }
     if (isnear(91, -1, -1)) {
@@ -1981,16 +1977,16 @@ void p24(void)
     if ((((location[69] == 334)) && (value[HERE] == 92)) && value[463] < 4) {
         say(0, 688, 0);
         set('V', 464, 'c', 1, NULL, NULL);
-        p204();
+        finis();
     }
 }
 
-void p25(void)
+void every_turn_2(void)
 {
     if (bitest(value[HERE], 5)) {
         value[467] += 1;
         if (((value[467] > 30) && !(bitest(value[HERE], 7))) || value[467] > 50) {
-            p242();
+            hint_logic();
         }
     } else {
         set('V', 467, 'c', 0, NULL, NULL);
@@ -2022,7 +2018,7 @@ void p25(void)
         longjmp(loop_back, 1);
     }
     if (KEY(336)) {
-        p458();
+        presay();
     }
     if (value[STATUS] > 1) {
         if (value[ARG2] == 9999) {
@@ -2053,7 +2049,7 @@ void p25(void)
                 say(12, 522, 444);
             }
         } else {
-            p42();
+            bailout();
         }
     }
     longjmp(loop_back, 1);

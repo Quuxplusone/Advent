@@ -19,7 +19,6 @@
 #define UMODE "ab+"
 
 #include "adv0.h"
-#include "adv6.h"
 
 #define SW_START     '\377'
 #define SW_BREAK     '\376'
@@ -32,6 +31,8 @@
 #define CENTRE_START '\363'
 #define PARA_START     '\360'
 #define PARA_END       '\357'
+extern unsigned char text[];
+
 void outbuf(void);
 int value_all;
 
@@ -1151,7 +1152,8 @@ int main(void)
         exit(0);
     }
     while (1) {
-        repeat();
+        every_turn_1();
+	every_turn_2();
     }
 }
 

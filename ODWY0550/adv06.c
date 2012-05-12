@@ -1,4 +1,4 @@
-unsigned char text[] =    
+unsigned char text[] =
     "\0"
     "adv550.acd\0"
     "adv550.acd\0"
@@ -3127,6 +3127,4 @@ unsigned char text[] =
     "tube\0"
     "warm\0"
     "balcony\0"
-    "cylindrical\0"
-    "";
-
+    "cylindrical";

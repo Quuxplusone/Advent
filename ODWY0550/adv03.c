@@ -229,7 +229,7 @@ void p387(void)
     if (!keyword(365, -1))
         return;
     move(114, -1);
-    p517();
+    splatter();
 }
 
 void p291(void)
@@ -277,7 +277,7 @@ void p109(void)
     move(171, 0, -171);
 }
 
-void p110(void)
+void jumping_into_whirlpool(void)
 {
     if (!anyof(358, 365, -1))
         return;
@@ -345,7 +345,7 @@ void p380(void)
     if (!keyword(365, -1))
         return;
     move(174, -1);
-    p517();
+    splatter();
     longjmp(loop_back, 1);
 }
 
@@ -538,7 +538,7 @@ void p586(void)
         return;
     say(0, 705, 0);
     move(188, -1);
-    p124();
+    coroner();
 }
 
 void p519(void)
@@ -622,7 +622,7 @@ void p43(void)
     if (!keyword(365, -1))
         return;
     move(334, -1);
-    p517();
+    splatter();
 }
 
 void p330(void)
@@ -718,7 +718,7 @@ void p532(void)
         say(0, 594, 0);
     } else {
         move(334, -1);
-        p517();
+        splatter();
     }
     longjmp(loop_back, 1);
 }
@@ -875,7 +875,7 @@ void p391(void)
                     set('E', 20, 'c', 1, NULL, NULL);
                     apport(22, LIMBO);
                     move(334, -1);
-                    p124();
+                    coroner();
                 } else {
                     if ((value[21] == 4) && bitest(21, 10)) {
                         if (isnear(37, -1, -1)) {
@@ -888,7 +888,7 @@ void p391(void)
                         }
                         apport(22, LIMBO);
                         move(334, -1);
-                        p124();
+                        coroner();
                     } else {
                         move(199, -1);
                     }
@@ -907,7 +907,7 @@ void p392(void)
         say(0, 594, 0);
     } else {
         move(334, -1);
-        p517();
+        splatter();
     }
     longjmp(loop_back, 1);
 }
@@ -968,10 +968,10 @@ void p68(void)
     if (!anyof(365, 358, 376, -1))
         return;
     move(334, -1);
-    p517();
+    splatter();
 }
 
-void p69(void)
+void cross_wheatstone_bridge(void)
 {
     if (!anyof(95, 366, 29, 369, -1))
         return;
@@ -995,7 +995,7 @@ void p69(void)
                 say(0, 812, 0);
             }
             move(334, -1);
-            p124();
+            coroner();
         }
     }
     longjmp(loop_back, 1);
@@ -1353,7 +1353,7 @@ void p74(void)
 {
     if (!keyword(365, -1))
         return;
-    p454();
+    plunge();
 }
 
 void p76(void)
@@ -1366,7 +1366,7 @@ void p77(void)
 {
     if (!keyword(365, -1))
         return;
-    p454();
+    plunge();
 }
 
 void p245(void)
@@ -1623,7 +1623,7 @@ void p80(void)
 {
     if (!keyword(365, -1))
         return;
-    p454();
+    plunge();
 }
 
 void p129(void)
@@ -1643,7 +1643,7 @@ void p132(void)
         return;
     if (isnear(32, -1, -1)) {
         say(0, 775, 0);
-        p124();
+        coroner();
     } else {
         move(322, -1);
     }
@@ -1682,7 +1682,7 @@ void p33(void)
             bitmod('s', 31, 10);
         }
         move(334, -1);
-        p124();
+        coroner();
     } else {
         move(325, -1);
         set('E', 31, 'c', 0, NULL, NULL);
@@ -1707,7 +1707,7 @@ void p36(void)
             bitmod('s', 31, 10);
         }
         move(334, -1);
-        p124();
+        coroner();
     } else {
         move(324, -1);
         set('E', 31, 'c', 0, NULL, NULL);
@@ -1783,14 +1783,14 @@ void p181(void)
                 say(0, 816, 0);
                 move(334, -1);
                 set('E', 29, 'c', 0, NULL, NULL);
-                p124();
+                coroner();
             } else {
                 move(207, -1);
             }
         } else {
             say(0, 812, 0);
             move(334, -1);
-            p124();
+            coroner();
         }
     }
     longjmp(loop_back, 1);
@@ -1956,7 +1956,7 @@ void p47(void)
                 set('E', 24, 'c', 2, NULL, NULL);
             } else {
                 say(0, 835, 0);
-                p124();
+                coroner();
             }
         }
         move(218, -1);
@@ -2278,10 +2278,10 @@ void p448(void)
         return;
     say(0, 827, 0);
     move(334, -1);
-    p124();
+    coroner();
 }
 
-void p139(void)
+void at_CYLINDRICAL_magicword(void)
 {
     if (!anyof(420, 421, 422, 423, 424, 425, 427, 428,
                429, 430, 431, 432, 433, 434, 435, 426, -1))
@@ -2314,46 +2314,46 @@ void p139(void)
     longjmp(loop_back, 1);
 }
 
-void p219(void)
+void action_GET_special(void)
 {
     if (((value[69] == 0) || !isnear(69, -1, -1)) && !(bitest(value[HERE], 0))) {
-        p239();
+        grope_for_it();
     }
     default_to(0, value[HERE], 0);
     if (!anyof(71, 70, 81, 83, 82, 62, 37, 395, 76, 86, 55, 79, -1))
         return;
     if (KEY(71)) {
-        p222();
+        getbird();
     } else {
         if (KEY(70)) {
-            p224();
+            getcage();
         } else {
             if (KEY(81)) {
-                p223();
+                getbottle();
             } else {
                 if (KEY(83)) {
-                    p227();
+                    getoil();
                 } else {
                     if (KEY(82)) {
-                        p231();
+                        getwater();
                     } else {
                         if (KEY(62)) {
-                            p225();
+                            getchain();
                         } else {
                             if (KEY(37)) {
-                                p221();
+                                getbear();
                             } else {
                                 if (KEY(395)) {
                                     (*procs[395]) ();
                                 } else {
                                     if (KEY(86)) {
-                                        p230();
+                                        getsword();
                                     } else {
                                         if (KEY(55)) {
-                                            p228();
+                                            getsceptre();
                                         } else {
                                             if (KEY(79)) {
-                                                p226();
+                                                getknife();
                                             }
                                         }
                                     }
@@ -2367,7 +2367,7 @@ void p219(void)
     }
 }
 
-void p220(void)
+void action_GET(void)
 {
     if (value[STATUS] == 1) {
         return;
@@ -2404,33 +2404,33 @@ void p220(void)
     longjmp(loop_back, 1);
 }
 
-void p156(void)
+void action_DROP_special(void)
 {
     if (!anyof(71, 70, 81, 83, 82, 52, 88, 26, 37, -1))
         return;
     if (KEY(71)) {
-        p159();
+        dropbird();
     } else {
         if (KEY(70)) {
-            p161();
+            dropcage();
         } else {
             if (KEY(81)) {
-                p160();
+                dropbottle();
             } else {
                 if ((KEY(83)) || KEY(82)) {
-                    p162();
+                    dropliquid();
                 } else {
                     if (KEY(52)) {
-                        p163();
+                        dropvase();
                     } else {
                         if (KEY(88)) {
-                            p164();
+                            dropvial();
                         } else {
                             if (KEY(26)) {
-                                p214();
+                                freedjinn();
                             } else {
                                 if (KEY(37)) {
-                                    p158();
+                                    dropbear();
                                 }
                             }
                         }
@@ -2442,7 +2442,7 @@ void p156(void)
     return;
 }
 
-void p157(void)
+void action_DROP(void)
 {
     if (value[STATUS] == 1) {
         return;
@@ -2460,7 +2460,7 @@ void p157(void)
     longjmp(loop_back, 1);
 }
 
-void p554(void)
+void action_WALK(void)
 {
     if (value[STATUS] == 1) {
         say(12, 579, 444);
@@ -2493,13 +2493,13 @@ void p554(void)
     longjmp(loop_back, 1);
 }
 
-void p150(void)
+void action_DIG(void)
 {
     say(0, 562, 0);
     longjmp(loop_back, 1);
 }
 
-void p106(void)
+void action_CAVE_outdoors(void)
 {
     if (value[HERE] != 95 && value[HERE] != 96 && value[HERE] != 97 &&
         value[HERE] != 92 && value[HERE] != 98 && value[HERE] != 99 &&
@@ -2509,13 +2509,13 @@ void p106(void)
     longjmp(loop_back, 1);
 }
 
-void p107(void)
+void action_CAVE(void)
 {
     say(0, 554, 0);
     longjmp(loop_back, 1);
 }
 
-void p558(void)
+void action_WATER_DOOR(void)
 {
     if (!KEY(5))
         return;
@@ -2534,7 +2534,7 @@ void p558(void)
     longjmp(loop_back, 1);
 }
 
-void p408(void)
+void action_OIL_DOOR(void)
 {
     if (!KEY(5))
         return;
@@ -2553,7 +2553,7 @@ void p408(void)
     longjmp(loop_back, 1);
 }
 
-void p559(void)
+void action_WATER_PLANT(void)
 {
     if (!KEY(10))
         return;
@@ -2581,7 +2581,7 @@ void p559(void)
     longjmp(loop_back, 1);
 }
 
-void p409(void)
+void action_OIL_PLANT(void)
 {
     if (!KEY(10))
         return;
@@ -2599,7 +2599,7 @@ void p409(void)
     longjmp(loop_back, 1);
 }
 
-void p410(void)
+void action_OIL(void)
 {
     if (value[STATUS] == 1) {
         if ((((isnear(81, -1, -1)) &&
@@ -2614,7 +2614,7 @@ void p410(void)
     longjmp(loop_back, 1);
 }
 
-void p560(void)
+void action_WATER(void)
 {
     if (value[STATUS] == 1) {
         if ((((isnear(81, -1, -1)) &&
@@ -2629,14 +2629,14 @@ void p560(void)
     longjmp(loop_back, 1);
 }
 
-void p535(void)
+void action_THROW_weaponry(void)
 {
     if (!anyof(85, 86, -1))
         return;
-    p562();
+    weaponry();
 }
 
-void p536(void)
+void action_THROW_FOOD(void)
 {
     if (!KEY(80))
         return;
@@ -2665,7 +2665,7 @@ void p536(void)
     longjmp(loop_back, 1);
 }
 
-void p537(void)
+void action_THROW_TEETH(void)
 {
     if (!KEY(87))
         return;
@@ -2680,16 +2680,16 @@ void p537(void)
     longjmp(loop_back, 1);
 }
 
-void p538(void)
+void action_THROW_VIAL(void)
 {
     if (!KEY(88))
         return;
     if (!have(88, -1, -1))
         return;
-    p65();
+    break_vial();
 }
 
-void p561(void)
+void action_WAVE(void)
 {
     if (value[STATUS] > 1) {
         if (!(bitest(evar(445), 15))) {
@@ -2737,7 +2737,7 @@ void p561(void)
         }
     } else {
         if ((KEY(85)) || KEY(86)) {
-            p562();
+            weaponry();
         } else {
             say(0, 538, 0);
         }
@@ -2745,79 +2745,79 @@ void p561(void)
     longjmp(loop_back, 1);
 }
 
-void p539(void)
+void action_THROW(void)
 {
     if (value[STATUS] == 2) {
         if (bitest(evar(445), 15)) {
             if ((have(value[ARG2], -1, -1)) && bitest(value[HERE], 9)) {
-                p549();
+                upchuck();
             }
         }
     }
     (*procs[379]) ();
 }
 
-void p399(void)
+void action_NORTH(void)
 {
-    p395();
+    no_move_possible();
     longjmp(loop_back, 1);
 }
 
-void p512(void)
+void action_SOUTH(void)
 {
-    p395();
+    no_move_possible();
     longjmp(loop_back, 1);
 }
 
-void p548(void)
+void action_UP(void)
 {
-    p395();
+    no_move_possible();
     longjmp(loop_back, 1);
 }
 
-void p153(void)
+void action_DOWN(void)
 {
-    p395();
+    no_move_possible();
     longjmp(loop_back, 1);
 }
 
-void p167(void)
+void action_EAST(void)
 {
-    p395();
+    no_move_possible();
     longjmp(loop_back, 1);
 }
 
-void p570(void)
+void action_WEST(void)
 {
-    p395();
+    no_move_possible();
     longjmp(loop_back, 1);
 }
 
-void p400(void)
+void action_NORTHEAST(void)
 {
-    p395();
+    no_move_possible();
     longjmp(loop_back, 1);
 }
 
-void p401(void)
+void action_NORTHWEST(void)
 {
-    p395();
+    no_move_possible();
     longjmp(loop_back, 1);
 }
 
-void p513(void)
+void action_SOUTHEAST(void)
 {
-    p395();
+    no_move_possible();
     longjmp(loop_back, 1);
 }
 
-void p515(void)
+void action_SOUTHWEST(void)
 {
-    p395();
+    no_move_possible();
     longjmp(loop_back, 1);
 }
 
-void p296(void)
+void action_INVENTORY(void)
 {
     set('V', 449, 'c', 0, NULL, NULL);
     *bitword(448) = -1;
@@ -2837,7 +2837,7 @@ void p296(void)
     longjmp(loop_back, 1);
 }
 
-void p324(void)
+void action_LOOK_scenery(void)
 {
     if (!anyof(410, 407, -1))
         return;
@@ -2845,7 +2845,7 @@ void p324(void)
     (*procs[value[ARG2]]) ();
 }
 
-void p325(void)
+void action_LOOK(void)
 {
     if (((isnear(69, -1, -1)) && value[69] == 1) || bitest(value[HERE], 0)) {
         set('V', 449, 'c', 0, NULL, NULL);
@@ -2880,7 +2880,7 @@ void p325(void)
     longjmp(loop_back, 1);
 }
 
-void p411(void)
+void action_LIGHT(void)
 {
     if ((KEY(69)) || value[STATUS] == 1) {
         if (isnear(69, -1, -1)) {
@@ -2917,7 +2917,7 @@ void p411(void)
     }
 }
 
-void p406(void)
+void action_EXTINGUISH(void)
 {
     if ((KEY(69)) || value[STATUS] == 1) {
         if (isnear(69, -1, -1)) {
@@ -2944,7 +2944,7 @@ void p406(void)
     longjmp(loop_back, 1);
 }
 
-void p414(void)
+void action_OPEN_grate(void)
 {
     default_to(0, value[HERE], 6);
     if (!keyword(3, -1))
@@ -2972,7 +2972,7 @@ void p414(void)
     longjmp(loop_back, 1);
 }
 
-void p415(void)
+void action_OPEN_CHAIN(void)
 {
     if (!KEY(62))
         return;
@@ -3001,7 +3001,7 @@ void p415(void)
     longjmp(loop_back, 1);
 }
 
-void p416(void)
+void action_OPEN_DOOR(void)
 {
     if (!KEY(5))
         return;
@@ -3011,7 +3011,7 @@ void p416(void)
     longjmp(loop_back, 1);
 }
 
-void p417(void)
+void action_OPEN_KEYS(void)
 {
     if (!KEY(68))
         return;
@@ -3019,7 +3019,7 @@ void p417(void)
     longjmp(loop_back, 1);
 }
 
-void p418(void)
+void action_OPEN_SAFE(void)
 {
     if (!KEY(34))
         return;
@@ -3037,7 +3037,7 @@ void p418(void)
     longjmp(loop_back, 1);
 }
 
-void p419(void)
+void action_OPEN_CLAM(void)
 {
     if (!KEY(76))
         return;
@@ -3058,7 +3058,7 @@ void p419(void)
     longjmp(loop_back, 1);
 }
 
-void p420(void)
+void action_OPEN_OYSTER(void)
 {
     if (!KEY(77))
         return;
@@ -3076,16 +3076,16 @@ void p420(void)
     longjmp(loop_back, 1);
 }
 
-void p421(void)
+void action_OPEN_VIAL(void)
 {
     if (!KEY(88))
         return;
     if (!isnear(88, -1, -1))
         return;
-    p65();
+    break_vial();
 }
 
-void p422(void)
+void action_OPEN_FLASK(void)
 {
     if (!KEY(84))
         return;
@@ -3105,7 +3105,7 @@ void p422(void)
     longjmp(loop_back, 1);
 }
 
-void p423(void)
+void action_OPEN_PENTAGRAM(void)
 {
     if (!KEY(214))
         return;
@@ -3123,7 +3123,7 @@ void p423(void)
     longjmp(loop_back, 1);
 }
 
-void p115(void)
+void action_CLOSE_grate(void)
 {
     default_to(0, value[HERE], 6);
     if (!keyword(3, -1))
@@ -3135,7 +3135,7 @@ void p115(void)
     longjmp(loop_back, 1);
 }
 
-void p116(void)
+void action_CLOSE_CHAIN(void)
 {
     if (!KEY(62))
         return;
@@ -3161,7 +3161,7 @@ void p116(void)
     longjmp(loop_back, 1);
 }
 
-void p117(void)
+void action_CLOSE_DOOR(void)
 {
     if (!KEY(5))
         return;
@@ -3171,7 +3171,7 @@ void p117(void)
     longjmp(loop_back, 1);
 }
 
-void p118(void)
+void action_CLOSE_SAFE(void)
 {
     if (!KEY(34))
         return;
@@ -3186,7 +3186,7 @@ void p118(void)
     longjmp(loop_back, 1);
 }
 
-void p119(void)
+void action_CLOSE_FLASK(void)
 {
     if (!KEY(84))
         return;

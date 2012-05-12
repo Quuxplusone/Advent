@@ -1,6 +1,7 @@
 #include "adv0.h"
 #include "adv3.h"
-void p229(void)
+
+void getscore(void)
 {
     if ((value[464] == 0) || value[463] > 2) {
         set('V', 455, 'c', 9, NULL, NULL);
@@ -52,9 +53,9 @@ void p229(void)
     }
 }
 
-void p204(void)
+void finis(void)
 {
-    p229();
+    getscore();
     say(13, 723, 455);
     say(13, 724, 456);
     say(13, 725, 459);
@@ -140,7 +141,7 @@ void phog(void)
     }
 }
 
-void p124(void)
+void coroner(void)
 {
     set('V', 464, 'c', 0, NULL, NULL);
     say(0, 483, 0);
@@ -165,7 +166,7 @@ void p124(void)
         } else {
             value[453] -= 1;
         }
-        p204();
+        finis();
     }
     value[448] = 578;
     *bitword(448) = -1;
@@ -214,15 +215,15 @@ void p124(void)
             bitmod('c', 18, 10);
             longjmp(loop_back, 1);
         } else {
-            p204();
+            finis();
         }
     } else {
-        p204();
+        finis();
     }
     finita();
 }
 
-void p222(void)
+void getbird(void)
 {
     if (!isnear(71, -1, -1))
         return;
@@ -251,7 +252,7 @@ void p222(void)
     longjmp(loop_back, 1);
 }
 
-void p224(void)
+void getcage(void)
 {
     if (!isnear(70, -1, -1))
         return;
@@ -269,7 +270,7 @@ void p224(void)
     longjmp(loop_back, 1);
 }
 
-void p226(void)
+void getknife(void)
 {
     if (bitest(85, 1)) {
         say(0, 614, 0);
@@ -277,7 +278,7 @@ void p226(void)
     }
 }
 
-void p159(void)
+void dropbird(void)
 {
     if (!have(71, -1, -1))
         return;
@@ -317,7 +318,7 @@ void p159(void)
                         if ((isnear(24, -1, -1)) && value[24] < 2) {
                             say(0, 655, 0);
                             apport(71, LIMBO);
-                            p124();
+                            coroner();
                         } else {
                             if (isnear(91, -1, -1)) {
                                 say(12, 656, 91);
@@ -334,7 +335,7 @@ void p159(void)
     longjmp(loop_back, 1);
 }
 
-void p161(void)
+void dropcage(void)
 {
     if (!have(70, -1, -1))
         return;
@@ -346,7 +347,7 @@ void p161(void)
     longjmp(loop_back, 1);
 }
 
-void p163(void)
+void dropvase(void)
 {
     if (!have(52, -1, -1))
         return;
@@ -368,7 +369,7 @@ void p163(void)
     longjmp(loop_back, 1);
 }
 
-void p162(void)
+void dropliquid(void)
 {
     if (!have(value[ARG2], -1, -1))
         return;
@@ -387,7 +388,7 @@ void p162(void)
     longjmp(loop_back, 1);
 }
 
-void p160(void)
+void dropbottle(void)
 {
     if (!have(81, -1, -1))
         return;
@@ -398,7 +399,7 @@ void p160(void)
     longjmp(loop_back, 1);
 }
 
-void p223(void)
+void getbottle(void)
 {
     if (!isnear(81, -1, -1))
         return;
@@ -422,7 +423,7 @@ void p223(void)
     longjmp(loop_back, 1);
 }
 
-void p227(void)
+void getoil(void)
 {
     if (value[HERE] != 113)
         return;
@@ -440,7 +441,7 @@ void p227(void)
     longjmp(loop_back, 1);
 }
 
-void p231(void)
+void getwater(void)
 {
     if (!(bitest(value[HERE], 6))) {
         return;
@@ -459,13 +460,13 @@ void p231(void)
     longjmp(loop_back, 1);
 }
 
-void p314(void)
+void killtroll(void)
 {
     say(0, 659, 0);
     longjmp(loop_back, 1);
 }
 
-void p304(void)
+void killbear(void)
 {
     if (value[37] == 0) {
         say(0, 667, 0);
@@ -475,13 +476,13 @@ void p304(void)
     longjmp(loop_back, 1);
 }
 
-void p313(void)
+void killsnake(void)
 {
     say(0, 542, 0);
     longjmp(loop_back, 1);
 }
 
-void p309(void)
+void killdragon(void)
 {
     if (value[19] > 0) {
         say(0, 669, 0);
@@ -511,7 +512,7 @@ void p309(void)
     longjmp(loop_back, 1);
 }
 
-void p305(void)
+void killbird(void)
 {
     if (value[463] < 3) {
         apport(71, LIMBO);
@@ -522,13 +523,13 @@ void p305(void)
     longjmp(loop_back, 1);
 }
 
-void p306(void)
+void killbivalve(void)
 {
     say(0, 646, 0);
     longjmp(loop_back, 1);
 }
 
-void p310(void)
+void killdwarf(void)
 {
     if (query(546)) {
         set('V', 448, 'v', 468, NULL, NULL);
@@ -547,7 +548,7 @@ void p310(void)
                 say(0, 544, 0);
             } else {
                 say(0, 545, 0);
-                p124();
+                coroner();
             }
         }
     } else {
@@ -557,14 +558,14 @@ void p310(void)
     longjmp(loop_back, 1);
 }
 
-void p312(void)
+void killogre(void)
 {
     if (query(546)) {
         if (pct(50)) {
             say(0, 809, 0);
         } else {
             say(0, 810, 0);
-            p124();
+            coroner();
         }
     } else {
         say(12, 909, 444);
@@ -573,36 +574,36 @@ void p312(void)
     longjmp(loop_back, 1);
 }
 
-void p307(void)
+void killblob(void)
 {
     say(0, 829, 0);
     longjmp(loop_back, 1);
 }
 
-void p308(void)
+void killdjinn(void)
 {
     say(0, 840, 0);
     longjmp(loop_back, 1);
 }
 
-void p311(void)
+void killgoblins(void)
 {
     say(0, 846, 0);
-    p124();
+    coroner();
 }
 
-void p303(void)
+void killbasilisk(void)
 {
     if (value[24] < 2) {
         say(0, 836, 0);
-        p124();
+        coroner();
     } else {
         say(0, 669, 0);
         longjmp(loop_back, 1);
     }
 }
 
-void p243(void)
+void hitgong(void)
 {
     if (isnear(27, -1, -1)) {
         say(0, 855, 0);
@@ -613,7 +614,7 @@ void p243(void)
     longjmp(loop_back, 1);
 }
 
-void p221(void)
+void getbear(void)
 {
     if (!isnear(37, -1, -1))
         return;
@@ -635,7 +636,7 @@ void p221(void)
     longjmp(loop_back, 1);
 }
 
-void p158(void)
+void dropbear(void)
 {
     if (!have(37, -1, -1))
         return;
@@ -644,7 +645,7 @@ void p158(void)
     longjmp(loop_back, 1);
 }
 
-void p214(void)
+void freedjinn(void)
 {
     if (!isnear(26, -1, -1))
         return;
@@ -654,7 +655,7 @@ void p214(void)
     longjmp(loop_back, 1);
 }
 
-void p225(void)
+void getchain(void)
 {
     if (value[HERE] != 254)
         return;
@@ -668,7 +669,7 @@ void p225(void)
     longjmp(loop_back, 1);
 }
 
-void p230(void)
+void getsword(void)
 {
     if (!isnear(86, -1, -1))
         return;
@@ -684,7 +685,7 @@ void p230(void)
     }
 }
 
-void p228(void)
+void getsceptre(void)
 {
     if (!isnear(55, -1, -1))
         return;
@@ -724,16 +725,16 @@ void p228(void)
     }
 }
 
-void p517(void)
+void splatter(void)
 {
     value[448] = 709;
     *bitword(448) = -1;
     value[448] += value[453];
     say(2, 448, 0);
-    p124();
+    coroner();
 }
 
-void p152(void)
+void do_cameo(void)
 {
     set('V', 475, 'c', 0, NULL, NULL);
     if ((((((((((((bitest(value[HERE], 4)) ||
@@ -757,7 +758,7 @@ void p152(void)
     say(0, 483, 0);
 }
 
-void p121(void)
+void close_the_cave(void)
 {
     say(0, 631, 0);
     bitmod('c', evar(446), 2);
@@ -786,7 +787,7 @@ void p121(void)
     longjmp(loop_back, 1);
 }
 
-void p113(void)
+void clock4(void)
 {
     if (value[463] == 0) {
         set('V', 463, 'c', 1, NULL, NULL);
@@ -844,7 +845,7 @@ void p113(void)
         if ((value[475] > 0) && value[475] < value[459]) {
             value[462] = irand(10);
             value[462] += 10;
-            p152();
+            do_cameo();
             set('V', 471, 'v', 462, NULL, NULL);
             return;
         }
@@ -944,14 +945,14 @@ void p113(void)
                 bitmod('c', evar(458), 4);
                 set('V', 462, 'c', 15, NULL, NULL);
             } else {
-                p121();
+                close_the_cave();
             }
         }
     }
     set('V', 471, 'v', 462, NULL, NULL);
 }
 
-void p42(void)
+void bailout(void)
 {
     if (value[STATUS] == 1) {
         say(12, 727, 444);
@@ -970,7 +971,7 @@ void p42(void)
     longjmp(loop_back, 1);
 }
 
-void p318(void)
+void lamprey(void)
 {
     if (value[447] > 0) {
         if (value[38] == 1) {
@@ -991,7 +992,7 @@ void p318(void)
         }
     } else {
         if (value[463] == 2) {
-            p121();
+            close_the_cave();
         } else {
             if ((isnear(38, -1, -1)) && value[38] == 0) {
                 say(0, 691, 0);
@@ -1007,30 +1008,30 @@ void p318(void)
     }
 }
 
-void p463(void)
+void read_magazines(void)
 {
     say(0, 693, 0);
     longjmp(loop_back, 1);
 }
 
-void p465(void)
+void read_tablet(void)
 {
     say(0, 700, 0);
     longjmp(loop_back, 1);
 }
 
-void p464(void)
+void read_message(void)
 {
     say(0, 694, 0);
 }
 
-void p462(void)
+void read_machine(void)
 {
     say(0, 698, 0);
     longjmp(loop_back, 1);
 }
 
-void p242(void)
+void hint_logic(void)
 {
     set('V', 448, 'c', 0, NULL, NULL);
     if ((value[HERE] == 99)) {
@@ -1116,7 +1117,7 @@ void p242(void)
     }
 }
 
-void p395(void)
+void no_move_possible(void)
 {
     if (((isnear(69, -1, -1)) && value[69] == 1) || bitest(value[HERE], 0)) {
         if (KEY(386)) {
@@ -1132,7 +1133,7 @@ void p395(void)
     } else {
         if (pct(25)) {
             say(0, 516, 0);
-            p124();
+            coroner();
         } else {
             say(0, 502, 0);
         }
@@ -1140,13 +1141,13 @@ void p395(void)
     if ((isnear(69, -1, -1)) && value[69] == 1) {
         value[447] -= 1;
         if ((value[447] == 0) || value[447] == 40) {
-            p318();
+            lamprey();
         }
     }
     longjmp(loop_back, 1);
 }
 
-void p65(void)
+void break_vial(void)
 {
     apport(88, LIMBO);
     say(0, 783, 0);
@@ -1211,12 +1212,12 @@ void p65(void)
     longjmp(loop_back, 1);
 }
 
-void p164(void)
+void dropvial(void)
 {
     if ((have(88, -1, -1)) && pct(10)) {
         say(0, 782, 0);
         apport(88, LIMBO);
-        p124();
+        coroner();
     }
 }
 
@@ -1254,11 +1255,11 @@ void dwarf_attack(void)
         bitmod('c', 91, 10);
     } else {
         say(13, 492, 449);
-        p124();
+        coroner();
     }
 }
 
-void p563(void)
+void weaponry_2(void)
 {
     if (isnear(24, -1, -1)) {
         if (value[24] > 1) {
@@ -1268,7 +1269,7 @@ void p563(void)
             }
         } else {
             say(12, 837, 445);
-            p124();
+            coroner();
         }
     } else {
         if (isnear(26, -1, -1)) {
@@ -1276,7 +1277,7 @@ void p563(void)
         } else {
             if (isnear(90, -1, -1)) {
                 say(12, 839, 445);
-                p124();
+                coroner();
             } else {
                 if (KEY(392)) {
                     apport(value[ARG2], INHAND);
@@ -1290,7 +1291,7 @@ void p563(void)
     longjmp(loop_back, 1);
 }
 
-void p562(void)
+void weaponry(void)
 {
     if (have(value[ARG2], -1, -1)) {
         if (KEY(392)) {
@@ -1351,7 +1352,7 @@ void p562(void)
                                     say(0, 794, 0);
                                 } else {
                                     say(0, 795, 0);
-                                    p124();
+                                    coroner();
                                 }
                             }
                         } else {
@@ -1365,11 +1366,11 @@ void p562(void)
                             if (isnear(23, -1, -1)) {
                                 if (KEY(384)) {
                                     say(12, 806, 445);
-                                    p124();
+                                    coroner();
                                 } else {
                                     if (KEY(85)) {
                                         say(12, 807, 445);
-                                        p124();
+                                        coroner();
                                     } else {
                                         say(0, 808, 0);
                                         apport(86, LIMBO);
@@ -1383,7 +1384,7 @@ void p562(void)
                                     say(12, 828, 445);
                                     longjmp(loop_back, 1);
                                 } else {
-                                    p563();
+                                    weaponry_2();
                                     return;
                                 }
                             }
@@ -1398,7 +1399,7 @@ void p562(void)
     longjmp(loop_back, 1);
 }
 
-void p426(void)
+void passphrase(void)
 {
     if (isnear(34, -1, -1)) {
         if (value[34] == 0) {
@@ -1425,27 +1426,27 @@ void p426(void)
     longjmp(loop_back, 1);
 }
 
-void blob_chases_you(void)
+void tick(void)
 {
     if (value[16] > 0) {
         if (value[16] == 16) {
             set('E', 16, 'c', 17, NULL, NULL);
             say(0, 16, 0);
-            p124();
+            coroner();
         }
         say(0, 16, 0);
         value[16] += 1;
     }
 }
 
-void p458(void)
+void presay(void)
 {
     if (value[STATUS] > 1) {
         say(12, 729, 445);
     }
 }
 
-void p454(void)
+void plunge(void)
 {
     move(334, -1);
     if (value[69] == 1) {
@@ -1458,10 +1459,10 @@ void p454(void)
     } else {
         say(0, 850, 0);
     }
-    p124();
+    coroner();
 }
 
-void p549(void)
+void upchuck(void)
 {
     set('V', 448, 'c', 0, NULL, NULL);
     if ((value[HERE] == 105)) {
@@ -1708,7 +1709,7 @@ void p549(void)
     longjmp(loop_back, 1);
 }
 
-void p239(void)
+void grope_for_it(void)
 {
     if (value[STATUS] == 1) {
         say(0, 906, 0);
@@ -1724,7 +1725,7 @@ void p239(void)
         value[448] += 60;
         if (pct(value[448])) {
             say(12, 907, 445);
-            p124();
+            coroner();
         } else {
             say(12, 908, 445);
             longjmp(loop_back, 1);
@@ -1732,7 +1733,7 @@ void p239(void)
     }
 }
 
-void p470(void)
+void at_ROAD(void)
 {
     move(93, 0, -92);
     move(93, 0, -368);
@@ -1752,7 +1753,7 @@ void p470(void)
     move(99, 0, -99);
 }
 
-void p241(void)
+void at_HILL(void)
 {
     move(92, 0, -92);
     move(92, 0, -94);
@@ -1764,7 +1765,7 @@ void p241(void)
     move(96, 0, -370);
 }
 
-void p82(void)
+void at_BUILDING(void)
 {
     move(92, 0, -92);
     move(92, 0, -343);
@@ -1776,7 +1777,7 @@ void p82(void)
     }
 }
 
-void p83(void)
+void at_BUILDING_downstream(void)
 {
     if (!anyof(346, 340, -1))
         return;
@@ -1882,7 +1883,7 @@ void p185(void)
     bitmod('c', evar(446), 1);
     say(0, 197, 0);
     set('V', 464, 'c', 0, NULL, NULL);
-    p204();
+    finis();
 }
 
 void p148(void)
@@ -2038,7 +2039,7 @@ void p437(void)
     if (have(43, -1, -1)) {
         say(0, 705, 0);
         move(106, -1);
-        p124();
+        coroner();
     } else {
         move(106, -1);
     }
@@ -2058,7 +2059,7 @@ void p439(void)
     if (!keyword(365, -1))
         return;
     move(106, -1);
-    p517();
+    splatter();
     longjmp(loop_back, 1);
 }
 
@@ -2114,7 +2115,7 @@ void p171(void)
         say(0, 594, 0);
     } else {
         move(174, -1);
-        p517();
+        splatter();
     }
     longjmp(loop_back, 1);
 }
@@ -2243,7 +2244,7 @@ void p574(void)
         say(0, 594, 0);
     } else {
         move(174, -1);
-        p517();
+        splatter();
     }
     longjmp(loop_back, 1);
 }
@@ -2333,7 +2334,7 @@ void p583(void)
         return;
     say(0, 705, 0);
     move(188, -1);
-    p124();
+    coroner();
 }
 
 void p151(void)
