@@ -582,6 +582,24 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  	/* This is used by the long code. The longop functions can only operate
  	 * on pointers to longs; so if we need to pass in a constant, we have
  	 * to stash it on the stack and return a pointer. */
+@@ -1309,7 +1287,7 @@
+ 
+ 	if ((flags == (VAR|VARADR)) &&
+ 	    (obj->v->storage_class == EXTERN) &&
+-	    (obj->v->offset == 0))
++	    (obj->val.vlong == 0))
+ 	{
+ 		debugemit(fp, "! zop varaddr extern %s\n", obj->v->identifier);
+ 		op->type = ZOP_EXTERN;
+@@ -1319,7 +1297,7 @@
+ 
+ 	if ((flags == (VAR|VARADR)) &&
+ 	    (obj->v->storage_class == STATIC) &&
+-	    (obj->v->offset == 0))
++	    (obj->val.vlong == 0))
+ 	{
+ 		debugemit(fp, "! zop varaddr static %ld\n", obj->v->offset);
+ 		op->type = ZOP_STATIC;
 @@ -1404,7 +1382,7 @@
  			return;
  
