@@ -486,17 +486,22 @@ enum flagsBits {
 
 Instruction travels[740];
 Instruction *start[MAX_LOC+2];
-const char *long_desc[MAX_LOC+1];
-const char *short_desc[MAX_LOC+1];
+struct Place {
+    const char *long_desc;
+    const char *short_desc;
+    unsigned int flags;
+    int visits;
+};
+struct Place places[MAX_LOC+1];
+
 const char *remarks[15];
-unsigned int flags[MAX_LOC+1];
 int visits[MAX_LOC+1];
 
 void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned int f)
 {
-    long_desc[x] = l;
-    short_desc[x] = s;
-    flags[x] = f;
+    places[x].long_desc = l;
+    places[x].short_desc = s;
+    places[x].flags = f;
     start[x] = q;
 }
 
@@ -1199,12 +1204,12 @@ void build_travel_table(void)
     remarks[10] = "The dragon looks rather nasty.  You'd best not try to get by.";
     make_ins(E, FIRST_REMARK+10); ditto(FORWARD);
     make_loc(q, R_SCAN2,
-             long_desc[R_SCAN1],
+             places[R_SCAN1].long_desc,
              NULL, 0);
     make_ins(N, R_ABOVER);
     make_ins(E, R_SECRET);
     make_loc(q, R_SCAN3,
-             long_desc[R_SCAN1],
+             places[R_SCAN1].long_desc,
              NULL, 0);
     make_ins(E, R_SECRET); ditto(OUT);
     make_ins(N, FIRST_REMARK+10); ditto(FORWARD);
@@ -1438,7 +1443,7 @@ void build_travel_table(void)
              "of the Hall of Mists.",
              NULL, 0);
     make_ins(0, R_WMIST);
-    make_loc(q, R_DUCK, long_desc[R_THRU], NULL, 0);
+    make_loc(q, R_DUCK, places[R_THRU].long_desc, NULL, 0);
     make_ins(0, R_WFISS);
     make_loc(q, R_SEWER,
              "The stream flows out through a pair of 1-foot-diameter sewer pipes.\n"
@@ -2115,10 +2120,10 @@ int look_around(Location loc, bool dark, bool was_dark)
     if (dark && !FORCED_MOVE(loc)) {
         if (was_dark && pct(35)) return 'p';  /* goto pitch_dark; */
         room_description = pitch_dark_msg;
-    } else if (short_desc[loc] == NULL || visits[loc] % verbose_interval == 0) {
-        room_description = long_desc[loc];
+    } else if (places[loc].short_desc == NULL || visits[loc] % verbose_interval == 0) {
+        room_description = places[loc].long_desc;
     } else {
-        room_description = short_desc[loc];
+        room_description = places[loc].short_desc;
     }
     if (toting(BEAR)) {
         puts("You are being followed by a very large, tame bear.");
@@ -2240,7 +2245,7 @@ void maybe_give_a_hint(Location loc, Location oldloc, Location oldoldloc, Object
     unsigned int k = F_CAVE_HINT;
     for (int j = 2; j <= 7; ++j, k <<= 1) {
         if (hints[j].given) continue;
-        if ((flags[loc] & k) == 0) {
+        if ((places[loc].flags & k) == 0) {
             /* We've left the map region associated with this hint. */
             hints[j].count = 0;
             continue;
@@ -2417,7 +2422,7 @@ void kill_the_player(Location last_safe_place)
 
 bool now_in_darkness(Location loc)
 {
-    if (flags[loc] & F_LIGHTED) return false;
+    if (places[loc].flags & F_LIGHTED) return false;
     if (here(LAMP, loc) && objs[LAMP].prop) return false;
     return true;
 }
@@ -2676,7 +2681,7 @@ void attempt_find(ObjectWord obj, Location loc)  /* section 100 in Knuth */
             its_right_here = true;
         } else if (obj != NOTHING && obj == bottle_contents() && objs[BOTTLE].place == loc) {
             its_right_here = true;
-        } else if (obj == WATER && (flags[loc] & F_WATER)) {
+        } else if (obj == WATER && (places[loc].flags & F_WATER)) {
             its_right_here = true;
         } else if (obj == OIL && loc == R_EPIT) {
             its_right_here = true;
@@ -2762,7 +2767,7 @@ void throw_axe_at_dwarf(Location loc)  /* section 163 in Knuth */
 bool attempt_fill(ObjectWord obj, Location loc)  /* sections 110--111 in Knuth */
 {
     if (obj == VASE) {
-        if (loc != R_EPIT && !(flags[loc] & F_WATER)) {
+        if (loc != R_EPIT && !(places[loc].flags & F_WATER)) {
             puts("There is nothing here with which to fill the vase.");
         } else if (!toting(VASE)) {
             puts("You aren't carrying it!");
@@ -2783,7 +2788,7 @@ bool attempt_fill(ObjectWord obj, Location loc)  /* sections 110--111 in Knuth *
         puts("Your bottle is now full of oil.");
         objs[BOTTLE].prop = 2;
         if (toting(BOTTLE)) objs[OIL].place = R_INHAND;
-    } else if (flags[loc] & F_WATER) {
+    } else if (places[loc].flags & F_WATER) {
         puts("Your bottle is now full of water.");
         objs[BOTTLE].prop = 0;
         if (toting(BOTTLE)) objs[WATER].place = R_INHAND;
@@ -3042,7 +3047,7 @@ int check_noun_validity(ObjectWord obj, Location loc)  /* sections 90--91 in Knu
             if (!here(ROD2, loc)) return 'c';
             return 'r';  /* obj = ROD2 */
         case WATER:
-            if (flags[loc] & F_WATER) return 0;
+            if (places[loc].flags & F_WATER) return 0;
             if (here(BOTTLE, loc) && bottle_contents() == WATER) return 0;
             return 'c';
         case OIL:
@@ -3253,7 +3258,7 @@ void simulate_an_adventure(void)
             /* Handle additional special cases of input (Knuth sections 83, 105) */
             if (streq(word1, "enter")) {
                 if (streq(word2, "water") || streq(word2, "strea")) {
-                    if (flags[loc] & F_WATER) {
+                    if (places[loc].flags & F_WATER) {
                         puts("Your feet are now wet.");
                     } else {
                         puts("Where?");
@@ -3493,7 +3498,7 @@ void simulate_an_adventure(void)
                     attempt_off(loc);
                     continue;
                 case DRINK: {
-                    bool stream_here = (flags[loc] & F_WATER);
+                    bool stream_here = (places[loc].flags & F_WATER);
                     bool evian_here = here(BOTTLE, loc) && (bottle_contents() == WATER);
                     if (obj == NOTHING) {
                         if (!stream_here && !evian_here)
