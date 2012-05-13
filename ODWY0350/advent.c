@@ -85,7 +85,7 @@ typedef enum {
     N,S,E,W,NE,SE,NW,SW,U,D,L,R,IN,OUT,FORWARD,BACK,
     OVER,ACROSS,UPSTREAM,DOWNSTREAM,
     ENTER,CRAWL,JUMP,CLIMB,LOOK,CROSS,
-    ROAD,HILL,WOODS,VALLEY,HOUSE,GULLY,STREAM,DEPRESSION,ENTRANCE,CAVE,
+    ROAD,HILL,FOREST,VALLEY,HOUSE,GULLY,STREAM,DEPRESSION,ENTRANCE,CAVE,
     ROCK,SLAB,BED,PASSAGE,CAVERN,CANYON,AWKWARD,SECRET,BEDQUILT,RESERVOIR,
     GIANT,ORIENTAL,SHELL,BARREN,BROKEN,DEBRIS,VIEW,FORK,
     PIT,SLIT,CRACK,DOME,HOLE,WALL,HALL,ROOM,FLOOR,
@@ -158,7 +158,7 @@ void build_vocabulary(void)
     new_motion_word("cross", CROSS);
     new_motion_word("road", ROAD);
     new_motion_word("hill", HILL);
-    new_motion_word("fores", WOODS);
+    new_motion_word("fores", FOREST);
     new_motion_word("valle", VALLEY);
     new_motion_word("build", HOUSE); new_motion_word("house", HOUSE);
     new_motion_word("gully", GULLY);
@@ -430,7 +430,7 @@ void build_vocabulary(void)
 
 typedef enum {
     R_INHAND = -1, R_LIMBO = 0,
-    R_ROAD, R_HILL, R_HOUSE, R_VALLEY, R_FOREST, R_WOODS, R_SLIT, R_OUTSIDE,
+    R_ROAD, R_HILL, R_HOUSE, R_VALLEY, R_FOREST, R_FOREST2, R_SLIT, R_OUTSIDE,
     R_INSIDE, MIN_IN_CAVE = R_INSIDE,
     R_COBBLES, R_DEBRIS, R_AWK, R_BIRD, R_SPIT,
     R_EMIST, MIN_LOWER_LOC = R_EMIST,
@@ -529,14 +529,14 @@ void build_travel_table(void)
     make_ins(W, R_HILL); ditto(U); ditto(ROAD);
     make_ins(E, R_HOUSE); ditto(IN); ditto(HOUSE); ditto(ENTER);
     make_ins(S, R_VALLEY); ditto(D); ditto(GULLY); ditto(STREAM); ditto(DOWNSTREAM);
-    make_ins(N, R_FOREST); ditto(WOODS);
+    make_ins(N, R_FOREST); ditto(FOREST);
     make_ins(DEPRESSION, R_OUTSIDE);
     make_loc(q, R_HILL,
              "You have walked up a hill, still in the forest.  The road slopes back\n"
              "down the other side of the hill.  There is a building in the distance.",
              "You're at hill in road.", F_LIGHTED);
     make_ins(ROAD, R_ROAD); ditto(HOUSE); ditto(FORWARD); ditto(E); ditto(D);
-    make_ins(WOODS, R_FOREST); ditto(N); ditto(S);
+    make_ins(FOREST, R_FOREST); ditto(N); ditto(S);
     make_loc(q, R_HOUSE,
              "You are inside a building, a well house for a large spring.",
              "You're inside building.", F_LIGHTED | F_WATER);
@@ -549,29 +549,29 @@ void build_travel_table(void)
              "rocky bed.",
              "You're in valley.", F_LIGHTED | F_WATER);
     make_ins(UPSTREAM, R_ROAD); ditto(HOUSE); ditto(N);
-    make_ins(WOODS, R_FOREST); ditto(E); ditto(W); ditto(U);
+    make_ins(FOREST, R_FOREST); ditto(E); ditto(W); ditto(U);
     make_ins(DOWNSTREAM, R_SLIT); ditto(S); ditto(D);
     make_ins(DEPRESSION, R_OUTSIDE);
     make_loc(q, R_FOREST,
              "You are in open forest, with a deep valley to one side.",
              "You're in forest.", F_LIGHTED);
     make_ins(VALLEY, R_VALLEY); ditto(E); ditto(D);
-    make_cond_ins(WOODS, 50, R_FOREST); ditto(FORWARD); ditto(N);
-    make_ins(WOODS, R_WOODS);
+    make_cond_ins(FOREST, 50, R_FOREST); ditto(FORWARD); ditto(N);
+    make_ins(FOREST, R_FOREST2);
     make_ins(W, R_FOREST); ditto(S);
-    make_loc(q, R_WOODS,
+    make_loc(q, R_FOREST2,
              "You are in open forest near both a valley and a road.",
              "You're in forest.", F_LIGHTED);
     make_ins(ROAD, R_ROAD); ditto(N);
     make_ins(VALLEY, R_VALLEY); ditto(E); ditto(W); ditto(D);
-    make_ins(WOODS, R_FOREST); ditto(S);
+    make_ins(FOREST, R_FOREST); ditto(S);
     make_loc(q, R_SLIT,
              "At your feet all the water of the stream splashes into a 2-inch slit\n"
              "in the rock.  Downstream the streambed is bare rock.",
              "You're at slit in streambed.", F_LIGHTED | F_WATER);
     make_ins(HOUSE, R_ROAD);
     make_ins(UPSTREAM, R_VALLEY); ditto(N);
-    make_ins(WOODS, R_FOREST); ditto(E); ditto(W);
+    make_ins(FOREST, R_FOREST); ditto(E); ditto(W);
     make_ins(DOWNSTREAM, R_OUTSIDE); ditto(ROCK); ditto(BED); ditto(S);
     remarks[0] = "You don't fit through a two-inch slit!";
     make_ins(SLIT, FIRST_REMARK+0); ditto(STREAM); ditto(D);
@@ -580,7 +580,7 @@ void build_travel_table(void)
              "dirt is a strong steel grate mounted in concrete.  A dry streambed\n"
              "leads into the depression.",
              "You're outside grate.", F_LIGHTED | F_CAVE_HINT);
-    make_ins(WOODS, R_FOREST); ditto(E); ditto(W); ditto(S);
+    make_ins(FOREST, R_FOREST); ditto(E); ditto(W); ditto(S);
     make_ins(HOUSE, R_ROAD);
     make_ins(UPSTREAM, R_SLIT); ditto(GULLY); ditto(N);
     make_cond_ins(ENTER, 300+GRATE, R_INSIDE); ditto(ENTER); ditto(IN); ditto(D);
@@ -1481,6 +1481,7 @@ int tally = 15;  /* treasures awaiting you */
 int lost_treasures;  /* treasures that you won't find */
 
 #define toting(t) (objs[t].place < 0)
+#define there(t, loc) (objs[t].place == (loc))
 
 ObjectWord bottle_contents(void)
 {
@@ -1492,9 +1493,10 @@ ObjectWord bottle_contents(void)
     return NOTHING;
 }
 
+/* Return true if t is at loc, or being carried. */
 bool here(ObjectWord t, Location loc)
 {
-    return toting(t) || (objs[t].place == loc);
+    return toting(t) || there(t, loc);
 }
 
 void drop(ObjectWord t, Location l)
@@ -1530,10 +1532,10 @@ void carry(ObjectWord t)
 bool is_at_loc(ObjectWord t, Location loc)
 {
     if (objs[t].base == NULL)
-        return (objs[t].place == loc);
+        return there(t, loc);
     /* Check the "alternative" objects based on this one. */
     for (ObjectWord tt = t; objs[tt].base == &objs[t]; ++tt) {
-        if (objs[tt].place == loc)
+        if (there(tt, loc))
             return true;
     }
     return false;
@@ -1814,14 +1816,14 @@ void steal_all_your_treasure(Location loc)  /* sections 173--174 in Knuth */
          "the gloom.");
     for (int i = MIN_TREASURE; i <= MAX_OBJ; ++i) {
         if (too_easy_to_steal(i, loc)) continue;
-        if (objs[i].base == NULL && objs[i].place == loc) carry(i);
+        if (objs[i].base == NULL && there(i, loc)) carry(i);
         if (toting(i)) drop(i, R_PIRATES_NEST);
     }
 }
 
 void pirate_tracks_you(Location loc)
 {
-    bool chest_needs_placing = (objs[MESSAGE].place == R_LIMBO);
+    bool chest_needs_placing = there(MESSAGE, R_LIMBO);
     bool stalking = false;
     /* The pirate leaves you alone once you've found the chest. */
     if (loc == R_PIRATES_NEST || objs[CHEST].prop >= 0) return;
@@ -1832,7 +1834,7 @@ void pirate_tracks_you(Location loc)
             return_pirate_to_lair(chest_needs_placing);
             return;
         }
-        if (objs[i].place == loc) {
+        if (there(i, loc)) {
             /* There is a treasure in this room, but we're not carrying
              * it. The pirate won't pounce unless we're carrying the
              * treasure; so he'll try to remain quiet. */
@@ -2064,7 +2066,7 @@ bool check_clocks_and_lamp(Location loc)
                 if (objs[BATTERIES].prop == 1) {
                     puts(", and you're out of spare batteries.  You'd\n"
                          "best start wrapping this up.");
-                } else if (objs[BATTERIES].place == R_LIMBO) {
+                } else if (there(BATTERIES, R_LIMBO)) {
                     puts(".  You'd best start wrapping this up, unless\n"
                          "you can find some fresh batteries.  I seem to recall that there's\n"
                          "a vending machine in the maze.  Bring some coins with you.");
@@ -2312,8 +2314,10 @@ int score(void)
     for (int i = MIN_TREASURE; i <= MAX_OBJ; ++i) {
         if (objs[i].prop >= 0) {
             s += 2;  /* two points just for seeing a treasure */
-            if (objs[i].place == R_HOUSE && objs[i].prop == 0) {
-                if (i < CHEST) {
+            if (there(i, R_HOUSE) && objs[i].prop == 0) {
+                if (objs[i].prop != 0) {
+                    /* no points for the broken vase */
+                } else if (i < CHEST) {
                     s += 10;
                 } else if (i == CHEST) {
                     s += 12;
@@ -2325,7 +2329,7 @@ int score(void)
     }
     s += 10 * (MAX_DEATHS - death_count);
     if (!gave_up) s += 4;
-    if (objs[MAG].place == R_WITT) s += 1;  /* last lousy point */
+    if (there(MAG, R_WITT)) s += 1;  /* last lousy point */
     if (cave_is_closing()) s += 25;  /* bonus for making it this far */
     s += bonus;
     for (int i = 0; i < 8; ++i) {
@@ -2590,14 +2594,14 @@ void attempt_drop(ObjectWord obj, Location loc)
             objs[BIRD].prop = 0;
             /* Now that the bird is dead, you can never get past the snake
              * into the south side chamber, so the precious jewelry is lost. */
-            if (objs[SNAKE].place == R_HMK) ++lost_treasures;
+            if (there(SNAKE, R_HMK)) ++lost_treasures;
             puts("The little bird attacks the green dragon, and in an astounding flurry\n"
                  "gets burnt to a cinder.  The ashes blow away.");
             return;
         }
     } else if (obj == VASE && loc != R_SOFT) {
         suppress_ok_message = true;
-        if (objs[PILLOW].place == loc) {
+        if (there(PILLOW, loc)) {
             puts("The vase is now resting, delicately, on a velvet pillow.");
             objs[VASE].prop = 0;  /* resting gently on the pillow */
         } else {
@@ -2679,7 +2683,7 @@ void attempt_find(ObjectWord obj, Location loc)  /* section 100 in Knuth */
         bool its_right_here = false;
         if (is_at_loc(obj, loc)) {
             its_right_here = true;
-        } else if (obj != NOTHING && obj == bottle_contents() && objs[BOTTLE].place == loc) {
+        } else if (obj != NOTHING && obj == bottle_contents() && there(BOTTLE, loc)) {
             its_right_here = true;
         } else if (obj == WATER && (places[loc].flags & F_WATER)) {
             its_right_here = true;
@@ -3270,9 +3274,9 @@ void simulate_an_adventure(void)
             }
             if (streq(word1, "water") || streq(word1, "oil")) {
                 /* Sometimes "water" and "oil" are used as verbs. */
-                if (streq(word2, "plant") && loc == objs[PLANT].place)
+                if (streq(word2, "plant") && there(PLANT, loc))
                     strcpy(word2, "pour");
-                if (streq(word2, "door") && loc == objs[DOOR].place)
+                if (streq(word2, "door") && there(DOOR, loc))
                     strcpy(word2, "pour");
             }
         parse:
@@ -3350,9 +3354,9 @@ void simulate_an_adventure(void)
                     obj = FOOD;
                     goto transitive;
                 case OPEN: case CLOSE:
-                    if (objs[GRATE].place == loc || objs[GRATE_].place == loc) {
+                    if (is_at_loc(GRATE, loc)) {
                         obj = GRATE;
-                    } else if (objs[DOOR].place == loc) {
+                    } else if (there(DOOR, loc)) {
                         obj = DOOR;
                     } else if (here(CLAM, loc)) {
                         obj = CLAM;
@@ -3416,11 +3420,11 @@ void simulate_an_adventure(void)
                             continue;
                         }
                         foobar = 0;
-                        if (objs[EGGS].place == R_GIANT || (toting(EGGS) && loc == R_GIANT)) {
+                        if (there(EGGS, R_GIANT) || (toting(EGGS) && loc == R_GIANT)) {
                             puts("Nothing happens.");
                             continue;
                         }
-                        if (objs[EGGS].place == R_LIMBO && objs[TROLL].place == R_LIMBO && objs[TROLL].prop == 0)
+                        if (there(EGGS, R_LIMBO) && there(TROLL, R_LIMBO) && objs[TROLL].prop == 0)
                             objs[TROLL].prop = 1;  /* the troll returns */
                         if (loc == R_GIANT) {
                             puts("There is a large nest here, full of golden eggs!");
@@ -3532,7 +3536,7 @@ void simulate_an_adventure(void)
                         }
                         objs[BOTTLE].prop = 1;  /* empty */
                         objs[obj].place = R_LIMBO;
-                        if (loc == objs[PLANT].place) {
+                        if (there(PLANT, loc)) {
                             /* Try to water the plant. */
                             if (obj != WATER) {
                                 puts("The plant indignantly shakes the oil off its leaves and asks, \"Water?\"");
@@ -3552,7 +3556,7 @@ void simulate_an_adventure(void)
                                 mot = NOWHERE;
                                 goto try_move;
                             }
-                        } else if (loc == objs[DOOR].place) {
+                        } else if (there(DOOR, loc)) {
                             /* Pour water or oil on the door. */
                             switch (obj) {
                                 case WATER:
@@ -3626,7 +3630,7 @@ void simulate_an_adventure(void)
                         drop(AXE, loc);
                         objs[AXE].prop = 1;
                         immobilize(AXE);
-                        if (objs[BEAR].place == loc) move(BEAR, loc);  /* keep bear first in the list */
+                        move(BEAR, loc);  /* keep bear first in the list */
                         puts("The axe misses and lands near the bear where you can't get at it.");
                         continue;
                     } else {
@@ -3664,7 +3668,7 @@ void simulate_an_adventure(void)
                             } else {
                                 destroy(BIRD);
                                 objs[BIRD].prop = 0;
-                                if (objs[SNAKE].place == R_HMK) ++lost_treasures;
+                                if (there(SNAKE, R_HMK)) ++lost_treasures;
                                 puts("The little bird is now dead.  Its body disappears.");
                                 continue;
                             }
@@ -3690,7 +3694,7 @@ void simulate_an_adventure(void)
                                     immobilize(RUG_);
                                     destroy(RUG_);
                                     for (int t = 1; t <= MAX_OBJ; ++t) {
-                                        if (objs[t].place == R_SCAN1 || objs[t].place == R_SCAN3)
+                                        if (there(t, R_SCAN1) || there(t, R_SCAN3))
                                             move(t, R_SCAN2);
                                     }
                                     loc = R_SCAN2;
