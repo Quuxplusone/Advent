@@ -96,13 +96,13 @@ typedef enum {
 typedef enum {
     NOTHING, KEYS, LAMP, GRATE, GRATE_, CAGE, ROD, ROD2, TREADS, TREADS_,
     BIRD, DOOR, PILLOW, SNAKE, CRYSTAL, CRYSTAL_, TABLET, CLAM, OYSTER,
-    MAG, DWARF, KNIFE, FOOD, BOTTLE, WATER, OIL,
-    MIRROR, MIRROR_, PLANT, PLANT2, PLANT2_, STALACTITE, SHADOW, SHADOW_,
-    AXE, ART, PIRATE, DRAGON, DRAGON_, BRIDGE, BRIDGE_, TROLL, TROLL_, TROLL2, TROLL2_,
+    MAG, DWARF, KNIFE, FOOD, BOTTLE, WATER, OIL, MIRROR, MIRROR_, PLANT,
+    PLANT2, PLANT2_, STALACTITE, SHADOW, SHADOW_, AXE, DRAWINGS, PIRATE,
+    DRAGON, DRAGON_, BRIDGE, BRIDGE_, TROLL, TROLL_, TROLL2, TROLL2_,
     BEAR, MESSAGE, GEYSER, PONY, BATTERIES, MOSS,
     MIN_TREASURE,
-    GOLD=MIN_TREASURE, DIAMONDS, SILVER, JEWELS, COINS, CHEST, EGGS, TRIDENT, VASE,
-    EMERALD, PYRAMID, PEARL, RUG, RUG_, SPICES, CHAIN,
+    GOLD=MIN_TREASURE, DIAMONDS, SILVER, JEWELS, COINS, CHEST, EGGS,
+    TRIDENT, VASE, EMERALD, PYRAMID, PEARL, RUG, RUG_, SPICES, CHAIN,
     MAX_OBJ=CHAIN
 } ObjectWord;
 
@@ -234,7 +234,7 @@ void build_vocabulary(void)
     new_object_word("stala", STALACTITE);
     new_object_word("shado", SHADOW); new_object_word("figur", SHADOW);
     new_object_word("axe", AXE);
-    new_object_word("drawi", ART);
+    new_object_word("drawi", DRAWINGS);
     new_object_word("pirat", PIRATE);
     new_object_word("drago", DRAGON);
     new_object_word("chasm", BRIDGE);
@@ -1656,8 +1656,8 @@ void build_object_table(void)
     objs[BEAR].desc[3] = NULL;  /* the dead bear remains as scenery where it fell */
     new_obj(PIRATE, 0, PIRATE, R_LIMBO);
     /* The pirate is a dummy object; never appears on the ground. */
-    new_obj(ART, 0, ART, R_ORIENTAL);
-    objs[ART].desc[0] = NULL;
+    new_obj(DRAWINGS, 0, DRAWINGS, R_ORIENTAL);
+    objs[DRAWINGS].desc[0] = NULL;
     new_obj(AXE, "Dwarf's axe", 0, R_LIMBO);
     objs[AXE].desc[0] = "There is a little axe here.";
     objs[AXE].desc[1] = "There is a little axe lying beside the bear.";
