@@ -1,8 +1,8 @@
 
-all: adv550
-
-adv550: adv00.c adv02.c adv03.c adv04.c adv05.c adv06.c
-	gcc -g -std=c99 -pedantic -W -Wall -Wextra -funsigned-char $^ -o $@
+adv550: adv550.c advdat.c advdat.h
+	gcc -std=c99 -O3 -pedantic -W -Wall -Wextra \
+		-Wno-switch -Wno-unused-result \
+		adv550.c advdat.c -o $@
 
 clean:
 	rm -f adv550
