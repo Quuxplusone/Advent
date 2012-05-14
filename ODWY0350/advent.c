@@ -442,17 +442,17 @@ typedef enum {
     R_DIFF6, R_DIFF7, R_DIFF8, R_DIFF9, R_DIFF10,
     R_PONY, R_CROSS, R_HMK, R_WEST, R_SOUTH, R_NS, R_Y2, R_JUMBLE, R_WINDOE,
     R_DIRTY, R_CLEAN, R_WET, R_DUSTY, R_COMPLEX,
-    R_SHELL, R_ARCH, R_RAGGED, R_SAC, R_ANTE, R_WITT,
-    R_BEDQUILT, R_CHEESE, R_SOFT,
+    R_SHELL, R_ARCHED, R_RAGGED, R_SAC, R_ANTE, R_WITT,
+    R_BEDQUILT, R_SWISS, R_SOFT,
     R_E2PIT, R_W2PIT, R_EPIT, R_WPIT,
     R_NARROW, R_GIANT, R_BLOCK, R_IMMENSE,
-    R_FALLS, R_STEEP, R_ABOVEP, R_SJUNC,
+    R_FALLS, R_INCLINE, R_ABOVEP, R_SJUNC,
     R_TITE, R_LOW, R_CRAWL, R_WINDOW,
-    R_ORIENTAL, R_MISTY, R_ALCOVE, R_PROOM, R_DROOM,
+    R_ORIENTAL, R_MISTY, R_ALCOVE, R_PLOVER, R_DARK,
     R_SLAB, R_ABOVER, R_MIRROR, R_RES,
     R_SCAN1, R_SCAN2, R_SCAN3, R_SECRET,
     R_WIDE, R_TIGHT, R_TALL, R_BOULDERS,
-    R_SCORR, R_SWSIDE,
+    R_SLOPING, R_SWSIDE,
     R_DEAD0, R_DEAD1, R_PIRATES_NEST, R_DEAD3, R_DEAD4, R_DEAD5,
     R_DEAD6, R_DEAD7, R_DEAD8, R_DEAD9, R_DEAD10, R_DEAD11,
     R_NESIDE, R_CORR, R_FORK, R_WARM, R_VIEW, R_CHAMBER,
@@ -862,7 +862,7 @@ void build_travel_table(void)
     make_ins(E, R_JUMBLE); ditto(WALL); ditto(BROKEN);
     make_ins(W, R_WINDOE);
     make_cond_ins(PLOVER, 100+EMERALD, R_PDROP);
-    make_ins(PLOVER, R_PROOM);
+    make_ins(PLOVER, R_PLOVER);
     make_loc(q, R_JUMBLE,
              "You are in a jumble of rock, with cracks everywhere.",
              NULL, 0);
@@ -921,14 +921,14 @@ void build_travel_table(void)
              "A shallow passage proceeds downward, and a somewhat steeper one\n"
              "leads up.  A low hands-and-knees passage enters from the south.",
              "You're in Shell Room.", 0);
-    make_ins(U, R_ARCH); ditto(HALL);
+    make_ins(U, R_ARCHED); ditto(HALL);
     make_ins(D, R_RAGGED);
     remarks[4] = "You can't fit this five-foot clam through that little passage!";
     remarks[5] = "You can't fit this five-foot oyster through that little passage!";
     make_cond_ins(S, 100+CLAM, FIRST_REMARK+4);
     make_cond_ins(S, 100+OYSTER, FIRST_REMARK+5);
     make_ins(S, R_COMPLEX);
-    make_loc(q, R_ARCH,
+    make_loc(q, R_ARCHED,
              "You are in an arched hall.  A coral passage once continued up and east\n"
              "from here, but is now blocked by debris.  The air smells of sea water.",
              "You're in arched hall.", 0);
@@ -969,7 +969,7 @@ void build_travel_table(void)
              "To explore at random select north, south, up, or down.",
              "You're in Bedquilt.", 0);
     make_ins(E, R_COMPLEX);
-    make_ins(W, R_CHEESE);
+    make_ins(W, R_SWISS);
     make_cond_ins(S, 80, FIRST_REMARK+6);
     make_ins(SLAB, R_SLAB);
     make_cond_ins(U, 80, FIRST_REMARK+6);
@@ -981,7 +981,7 @@ void build_travel_table(void)
     make_cond_ins(D, 80, FIRST_REMARK+6);
     make_ins(D, R_ANTE);
 
-    make_loc(q, R_CHEESE,
+    make_loc(q, R_SWISS,
              "You are in a room whose walls resemble Swiss cheese.  Obvious passages\n"
              "go west, east, NE, and NW.  Part of the room is occupied by a large\n"
              "bedrock block.",
@@ -997,7 +997,7 @@ void build_travel_table(void)
              "You are in the Soft Room.  The walls are covered with heavy curtains,\n"
              "the floor with a thick pile carpet.  Moss covers the ceiling.",
              "You're in Soft Room.", 0);
-    make_ins(W, R_CHEESE); ditto(OUT);
+    make_ins(W, R_SWISS); ditto(OUT);
     make_loc(q, R_E2PIT,
              "You are at the east end of the Twopit Room.  The floor here is\n"
              "littered with thin rock slabs, which make it easy to descend the pits.\n"
@@ -1005,7 +1005,7 @@ void build_travel_table(void)
              "and west.  There are holes all over, but the only big one is on the\n"
              "wall directly over the west pit where you can't get to it.",
              "You're at east end of Twopit Room.", 0);
-    make_ins(E, R_CHEESE);
+    make_ins(E, R_SWISS);
     make_ins(W, R_W2PIT); ditto(ACROSS);
     make_ins(D, R_EPIT); ditto(PIT);
     make_loc(q, R_W2PIT,
@@ -1063,8 +1063,8 @@ void build_travel_table(void)
              "You're in cavern with waterfall.", F_WATER);
     make_ins(S, R_IMMENSE); ditto(OUT);
     make_ins(GIANT, R_GIANT);
-    make_ins(W, R_STEEP);
-    make_loc(q, R_STEEP,
+    make_ins(W, R_INCLINE);
+    make_loc(q, R_INCLINE,
              "You are at the top of a steep incline above a large room.  You could\n"
              "climb down here, but you would not be able to climb up.  There is a\n"
              "passage leading back to the north.",
@@ -1098,7 +1098,7 @@ void build_travel_table(void)
              "You are in a large low room.  Crawls lead north, SE, and SW.",
              NULL, 0);
     make_ins(BEDQUILT, R_BEDQUILT);
-    make_ins(SW, R_SCORR);
+    make_ins(SW, R_SLOPING);
     make_ins(N, R_CRAWL);
     make_ins(SE, R_ORIENTAL); ditto(ORIENTAL);
     make_loc(q, R_CRAWL,
@@ -1121,7 +1121,7 @@ void build_travel_table(void)
              "walls.  A gently sloping passage leads upward to the north, another\n"
              "passage leads SE, and a hands-and-knees crawl leads west.",
              "You're in Oriental Room.", 0);
-    make_ins(SE, R_CHEESE);
+    make_ins(SE, R_SWISS);
     make_ins(W, R_LOW); ditto(CRAWL);
     make_ins(U, R_MISTY); ditto(N); ditto(CAVERN);
     make_loc(q, R_MISTY,
@@ -1139,8 +1139,8 @@ void build_travel_table(void)
              "You're in alcove.", F_DARK_HINT);
     make_ins(NW, R_MISTY); ditto(CAVERN);
     make_ins(E, R_PPASS); ditto(PASSAGE);
-    make_ins(E, R_PROOM);  /* never performed, but seen by "BACK" */
-    make_loc(q, R_PROOM,
+    make_ins(E, R_PLOVER);  /* never performed, but seen by "BACK" */
+    make_loc(q, R_PLOVER,
              "You're in a small chamber lit by an eerie green light.  An extremely\n"
              "narrow tunnel exits to the west.  A dark corridor leads NE.",
              "You're in Plover Room.", F_LIGHTED | F_DARK_HINT);
@@ -1148,11 +1148,11 @@ void build_travel_table(void)
     make_ins(W, R_ALCOVE);  /* never performed, but seen by "BACK" */
     make_cond_ins(PLOVER, 100+EMERALD, R_PDROP);
     make_ins(PLOVER, R_Y2);
-    make_ins(NE, R_DROOM); ditto(DARK);
-    make_loc(q, R_DROOM,
+    make_ins(NE, R_DARK); ditto(DARK);
+    make_loc(q, R_DARK,
              "You're in the Dark-Room.  A corridor leading south is the only exit.",
              "You're in Dark-Room.", F_DARK_HINT);
-    make_ins(S, R_PROOM); ditto(PLOVER); ditto(OUT);
+    make_ins(S, R_PLOVER); ditto(PLOVER); ditto(OUT);
     make_loc(q, R_SLAB,
              "You are in a large low circular chamber whose floor is an immense slab\n"
              "fallen from the ceiling (Slab Room).  There once were large passages\n"
@@ -1238,14 +1238,14 @@ void build_travel_table(void)
              "You're in tall E/W canyon.", 0);
     make_ins(E, R_WIDE);
     make_ins(W, R_BOULDERS);
-    make_ins(N, R_CHEESE); ditto(CRAWL);
+    make_ins(N, R_SWISS); ditto(CRAWL);
     make_loc(q, R_BOULDERS,
              /* Knuth can't help using "---" for the em dash here,
               * but Woods' version had only "--". */
              "The canyon runs into a mass of boulders -- dead end.",
              NULL, 0);
     make_ins(S, R_TALL);
-    make_loc(q, R_SCORR,
+    make_loc(q, R_SLOPING,
              "You are in a long winding corridor sloping out of sight in both\n"
              "directions.",
              "You're in sloping corridor.", 0);
@@ -1256,7 +1256,7 @@ void build_travel_table(void)
              "up from below obscures all view of the far side.  A SW path leads away\n"
              "from the chasm into a winding corridor.",
              "You're on SW side of chasm.", 0);
-    make_ins(SW, R_SCORR);
+    make_ins(SW, R_SLOPING);
     remarks[11] = "The troll refuses to let you cross.";
     make_cond_ins(OVER, 200+TROLL, FIRST_REMARK+11); ditto(ACROSS); ditto(CROSS); ditto(NE);
     remarks[12] = "There is no longer any way across the chasm.";
@@ -1610,9 +1610,9 @@ void build_object_table(void)
     objs[SPICES].desc[0] = "There are rare spices here!";
     new_obj(PEARL, "Glistening pearl", 0, R_LIMBO);
     objs[PEARL].desc[0] = "Off to one side lies a glistening pearl!";
-    new_obj(PYRAMID, "Platinum pyramid", 0, R_DROOM);
+    new_obj(PYRAMID, "Platinum pyramid", 0, R_DARK);
     objs[PYRAMID].desc[0] = "There is a platinum pyramid here, 8 inches on a side!";
-    new_obj(EMERALD, "Egg-sized emerald", 0, R_PROOM);
+    new_obj(EMERALD, "Egg-sized emerald", 0, R_PLOVER);
     objs[EMERALD].desc[0] = "There is an emerald here the size of a plover's egg!";
     new_obj(VASE, "Ming vase", 0, R_ORIENTAL);
     objs[VASE].desc[0] = "There is a delicate, precious, Ming vase here!";
@@ -1689,7 +1689,7 @@ void build_object_table(void)
     objs[OYSTER].desc[1] = NULL;
     new_obj(CLAM, "Giant clam >GRUNT!<", 0, R_SHELL);
     objs[CLAM].desc[0] = "There is an enormous clam here with its shell tightly closed.";
-    new_obj(TABLET, 0, TABLET, R_DROOM);
+    new_obj(TABLET, 0, TABLET, R_DARK);
     /* Woods has "imbedded", but Knuth fixes it. */
     objs[TABLET].desc[0] =
         "A massive stone tablet embedded in the wall reads:\n"
@@ -1805,7 +1805,7 @@ void return_pirate_to_lair(bool with_chest)
 
 bool too_easy_to_steal(ObjectWord t, Location loc)
 {
-    return (t == PYRAMID && (loc == R_PROOM || loc == R_DROOM));
+    return (t == PYRAMID && (loc == R_PLOVER || loc == R_DARK));
 }
 
 void steal_all_your_treasure(Location loc)  /* sections 173--174 in Knuth */
@@ -2454,7 +2454,7 @@ void adjustments_before_listening(Location loc)
 Location attempt_plover_passage(Location from)  /* section 149 in Knuth */
 {
     if (holding_count == !!toting(EMERALD))
-        return R_ALCOVE + R_PROOM - from;
+        return R_ALCOVE + R_PLOVER - from;
     puts("Something you're carrying won't fit through the tunnel with you.\n"
          "You'd best take inventory and drop something.");
     return from;
@@ -3143,7 +3143,7 @@ bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot)
             /* [ajo] Knuth used a goto here to resume table processing;
              * I believe this version is equivalent, given the contents
              * of the table. */
-            *newloc = R_Y2 + R_PROOM - loc;
+            *newloc = R_Y2 + R_PLOVER - loc;
             return false;
         }
         case R_TROLL: {
