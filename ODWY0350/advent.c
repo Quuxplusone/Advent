@@ -1889,8 +1889,13 @@ bool move_dwarves_and_pirate(Location loc)
                 if (dloc[j] == loc) dloc[j] = R_NUGGET;
                 odloc[j] = dloc[j];
             }
+            /* Knuth quietly fixes the garden-path grammar here:
+             *   A little dwarf just walked around a corner, saw you, threw a
+             *   little axe at you, cursed, and ran away. (The axe missed.)
+             * But Woods' version matches Crowther's original source code,
+             * and I don't think the deviation is justified. */
             puts("A little dwarf just walked around a corner, saw you, threw a little\n"
-                 "axe at you, cursed, and ran away.  (The axe missed.)");
+                 "axe at you which missed, cursed, and ran away.");
             drop(AXE, loc);
         }
     } else {
