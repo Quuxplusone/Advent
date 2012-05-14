@@ -956,7 +956,7 @@ leads into the depression.",@/
 make_inst(WOODS,0,forest);@+ditto(E);@+ditto(W);@+ditto(S);
 make_inst(HOUSE,0,road);
 make_inst(UPSTREAM,0,slit);@+ditto(GULLY);@+ditto(N);
-make_inst(ENTER,not(GRATE,0),inside);@+ditto(ENTER);@+ditto(IN);@+ditto(D);
+make_inst(ENTER,not(GRATE,0),inside);@+ditto(IN);@+ditto(D);
 remark("You can't go through a locked steel grate!");
 grate_rmk=sayit;
 make_inst(ENTER,0,sayit);
@@ -969,7 +969,7 @@ make_loc(inside,@/  @q9@>
 "You are in a small chamber beneath a 3x3 steel grate to the surface.\n\
 A low crawl over cobbles leads inwards to the west.",@/
 "You're below the grate.",lighted);
-make_inst(OUT,not(GRATE,0),outside);@+ditto(OUT);@+ditto(U);
+make_inst(OUT,not(GRATE,0),outside);@+ditto(U);
 make_inst(OUT,0,grate_rmk);
 make_inst(CRAWL,0,cobbles);@+ditto(COBBLES);@+ditto(IN);@+ditto(W);
 make_inst(PIT,0,spit);
@@ -2162,7 +2162,7 @@ location place[max_obj+1]; /* each object's current location */
 char *name[max_obj+1]; /* name of object for inventory listing */
 char *note[100]; /* descriptions of object properties */
 int offset[max_obj+1]; /* where notes for each object start */
-int holding; /* how many objects have |prop[t]<0|? */
+int holding; /* how many objects have |place[t]<0|? */
 int note_ptr=0; /* how many notes have we stored? */
 
 @ Here then is a simple subroutine to place an object at a given

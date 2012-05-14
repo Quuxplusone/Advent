@@ -583,14 +583,14 @@ void build_travel_table(void)
     make_ins(FOREST, R_FOREST); ditto(E); ditto(W); ditto(S);
     make_ins(HOUSE, R_ROAD);
     make_ins(UPSTREAM, R_SLIT); ditto(GULLY); ditto(N);
-    make_cond_ins(ENTER, 300+GRATE, R_INSIDE); ditto(ENTER); ditto(IN); ditto(D);
+    make_cond_ins(ENTER, 300+GRATE, R_INSIDE); ditto(IN); ditto(D);
     remarks[1] = "You can't go through a locked steel grate!";
     make_ins(ENTER, FIRST_REMARK+1);
     make_loc(q, R_INSIDE,
              "You are in a small chamber beneath a 3x3 steel grate to the surface.\n"
              "A low crawl over cobbles leads inwards to the west.",
              "You're below the grate.", F_LIGHTED);
-    make_cond_ins(OUT, 300+GRATE, R_OUTSIDE); ditto(OUT); ditto(U);
+    make_cond_ins(OUT, 300+GRATE, R_OUTSIDE); ditto(U);
     make_ins(OUT, FIRST_REMARK+1);
     make_ins(CRAWL, R_COBBLES); ditto(COBBLES); ditto(IN); ditto(W);
     make_ins(PIT, R_SPIT);
@@ -1475,7 +1475,7 @@ struct ObjectData {
 } objs[MAX_OBJ+1];
 
 struct ObjectData *first[MAX_LOC+1];
-int holding_count;  /* how many objects have prop[t] < 0? */
+int holding_count;  /* how many objects have objs[t].place < 0? */
 Location knife_loc;  /* place where knife was mentioned, or -1 */
 int tally = 15;  /* treasures awaiting you */
 int lost_treasures;  /* treasures that you won't find */
