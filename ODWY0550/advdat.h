@@ -57,12 +57,12 @@ typedef enum {
  R_SECRETEW_TITE, R_NSCANYONWIDE, R_TIGHTERSTILL,
  R_TALLEWCNYN, R_DEADEND3, R_MAZEA80, R_MAZEA81,
  R_MAZEA82, R_MAZEA83, R_MAZEA84, R_MAZEA85, R_MAZEA86, R_MAZEA87,
- R_NARROWCORRID, R_INCLINE, R_GIANT, R_IMMENSENSPASS, R_FALLS,
+ R_NARROW, R_INCLINE, R_GIANT, R_IMMENSENSPASS, R_FALLS,
  R_SOFT, R_ORIENTAL, R_MISTY, R_ALCOVE, R_PLOVER, R_DARK,
  R_ARCHED, R_SHELL, R_RAGGEDCORRID, R_CULDESAC, R_ANTE,
- R_MAZED107, R_WITT, R_MIRRORCNYN, R_STALACT, R_MAZED112,
+ R_MAZED107, R_WITT, R_MIRROR, R_STALACT, R_MAZED112,
  R_RES, R_RESERVOIR_N, R_WARM, R_BALCONY, R_FAKE_SLIT,
- R_CYLINDRICAL, R_TREASUREROOM, R_PIRATES_NEST, R_SWOFCHASM, R_NEOFCHASM,
+ R_CYLINDRICAL, R_PIRATES_NEST, R_SWOFCHASM, R_NEOFCHASM,
  R_SLOPING, R_SECRETCYNNE1, R_SECRETCYNNE2, R_CORRIDOR,
  R_FORK, R_WARMJUNCTN, R_VIEW, R_FACES, R_BY_FIGURE, R_PLAIN_1,
  R_PLAIN_2, R_PLAIN_3, R_NONDESCRIPT, R_PENTAGRAM, R_CHIMNEY,
@@ -109,7 +109,7 @@ struct InputWordInfo {
     WordType type;
     int meaning;
 };
-struct InputWordInfo word1, word2;
+extern struct InputWordInfo word1, word2;
 
 
 enum flagsBits {
@@ -140,23 +140,27 @@ enum flagsBits {
 };
 
 struct Place {
-    const char *long_desc;
     const char *short_desc;
+    const char *long_desc;
     unsigned int flags;
     int (*f)(void);
 };
 
 struct ObjectData {
-    struct ObjectData *link;
-    struct ObjectData *base;
+    const char *desc[4];  /* .prop ranges from 0 to 3 */
     int prop;
+    const char *name;
     unsigned int flags;
     Location place;
-    const char *name;
-    const char *desc[4];  /* .prop ranges from 0 to 3 */
 };
 
 extern struct Place places[];
 extern struct ObjectData objs[];
+
+#define toting(t) (objs[t].place < 0)
+#define there(t, loc) (objs[t].place == (loc))
+#define portable(t) (objs[t].flags & F_PORTABLE)
+
+#define you_are_dead_at(loc) ((loc)+R_YLEM)
 
 #endif /* H_ADVDAT */

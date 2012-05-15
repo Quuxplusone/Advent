@@ -52,7 +52,6 @@ bool quipped;  /* set when a dwarf dies dramatically */
 int closure;
 
 bool moved;  /* true if we've moved recently */
-bool juggled;  /* true if we've taken or dropped something recently */
 VerbWord verbosity_mode = BRIEF;  /* one of FAST, BRIEF, FULL */
 bool please_clarify;
 int turns;  /* how many times we've read your commands */
@@ -70,6 +69,7 @@ int hint_time;
 int death_count;
 int penalties;  /* score modifier */
 int cylinder_escape_count = 0;  /* Platt calls this ESCAPE */
+VerbWord password;  /* for the magic safe */
 
 /*========== Special flags. =============================================*/
 
@@ -84,8 +84,12 @@ bool have_drowned_in_quicksand = false;
 bool have_stolen_back_eggs = false;
 bool gave_up;
 
+/*========== Some common messages. ======================================*/
 
 const char ok[] = "OK.";
+const char hah[] = "Don't be ridiculous!";
+void I_see_no(const char *s) { printf("I see no %s here.\n", s); }
+void you_have_it() { puts("You are already carrying it!"); }
 
 /*========== Some forward declarations. =================================*/
 
@@ -363,31 +367,6 @@ void build_vocabulary(void)
 
 /*========== Locations. =================================================*/
 
-bool used_movement_placeword(Location where_to)
-{
-    /* HOUSE FOO will take you to the house, even if FOO is unrecognized;
-     * whereas FOO HOUSE will not. SAY HOUSE does basically the same thing
-     * as HOUSE. */
-    switch (word1.type) {
-        case WordType_Place:
-            return (word1.meaning == where_to);
-        case WordType_Verb:
-            if (word1.meaning == WALK || word1.meaning == SAY)
-                return (word2.type == WordType_Place && word2.meaning == where_to);
-            return false;
-    }
-    return false;
-}
-
-bool used_movement_verb(VerbWord where_to)
-{
-    if (word1.type != WordType_Verb) return false;
-    if (word1.meaning == (int)where_to) return true;
-    if (word1.meaning == WALK || word1.meaning == SAY)
-        return (word2.type == WordType_Verb && word2.meaning == (int)where_to);
-    return false;
-}
-
 void build_place_names(void)
 {
     /* Platt lists HERE,THERE,ARG1,ARG2,STATUS as synonymous placenames.
@@ -472,11 +451,7 @@ void build_place_names(void)
 
 /*========== Data structures for objects. ===============================*/
 
-struct ObjectData objs[MAX_OBJ+1];
 int holding_count;  /* how many objects are being carried? */
-
-#define toting(t) (objs[t].place < 0)
-#define there(t, loc) (objs[t].place == (loc))
 
 ObjectWord bottle_contents(void)
 {
@@ -496,49 +471,195 @@ bool here(ObjectWord t, Location loc)
 void apport(ObjectWord t, Location loc)
 {
     objs[t].place = loc;
-    juggled = true;
-}
-
-void new_obj(ObjectWord t, const char *n, ObjectWord b, Location l)
-{
-    objs[t].name = n;
-    objs[t].base = (b != 0 ? &objs[b] : NULL);
-    objs[t].prop = (IS_TREASURE(t) ? -1 : 0);
-    apport(t, l);
 }
 
 void build_object_table(void)
 {
-    new_obj(GRATE, 0, GRATE, R_DEPRESSION);
     objs[GRATE].desc[0] = "The grate is locked.";
     objs[GRATE].desc[1] = "The grate is open.";
+    objs[DOOR].desc[0] = "The way north is barred by a massive, rusty, iron door.";
+    objs[DOOR].desc[0] = "The way north leads through a massive, rusty, iron door.";
+    objs[SNAKE].desc[0] = "A huge green fierce snake bars the way!";
+    objs[FISSURE].desc[1] = "A crystalline bridge now spans the fissure.";
+    objs[FISSURE].desc[2] = "The crystalline bridge has vanished!";
+    objs[TABLET].desc[0] = "A massive stone tablet imbedded in the wall reads:\n"
+                           "\"Congratulations on bringing light into the Dark room!\"";
+    objs[PLANT].desc[0] = "There is a tiny little plant in the pit, murmuring \"Water, water, ...\"";                
+    objs[PLANT].desc[1] = "There is a 12-foot-tall beanstalk stretching up out of the pit,\n"
+                          "bellowing \"WATER!! WATER!!\"";
+    objs[PLANT].desc[2] = "There is a gigantic beanstalk stretching all the way up to the hole.";                
 
-    new_obj(OIL, "Oil in the bottle", 0, R_LIMBO);
-    new_obj(WATER, "Water in the bottle", 0, R_LIMBO);
-    /* These two items never appear on the ground; they are either in R_LIMBO or R_INHAND. */
-    new_obj(BOTTLE, "Small bottle", 0, R_HOUSE);
+    objs[PLANT2].desc[1] = "The top of a 12-foot-tall beanstalk is poking out of the west pit.";
+    objs[PLANT2].desc[2] = "There is a huge beanstalk growing out of the west pit up to the hole.";
+    objs[SHADOW].desc[0] = "The shadowy figure seems to be trying to attract your attention.";
+    objs[DRAGON].desc[0] = "A huge green fierce dragon bars the way!\n"
+                           "The dragon is sprawled out on a Persian rug!!";
+    objs[DRAGON].desc[2] = "The body of a huge green dead dragon is lying off to one side.";
+    objs[DRAGON].desc[3] = "The rotting carcass of a dead dragon is lying off to one side.";
+    objs[CHASM].desc[0] = "A rickety wooden bridge extends across the chasm, vanishing into the\n"
+                          "mist.  A sign posted on the bridge reads, \"STOP! Pay troll!\"";
+    objs[CHASM].desc[1] = "The wreckage of a bridge (and a dead bear) can be seen at the bottom\n"
+                          "of the chasm.";
+    objs[CHASM].desc[2] = "The charred remains of a wooden bridge can be seen at the bottom\n"
+                          "of the chasm.";
+    objs[TROLL].desc[0] = "A burly troll stands by the bridge and insists you throw him a\n"
+                          "treasure before you may cross.";
+    objs[TROLL].desc[3] = "The troll steps out from beneath the bridge and blocks your way.";
+
+    objs[TROLL2].desc[0] = "The troll is nowhere to be seen.";
+    objs[OGRE].desc[0] = "There is a large, nasty-looking ogre blocking your path!";
+    objs[BASILISK].desc[0] = "There is a basilisk lying in the corridor to the north, snoring\n"
+                             "quietly.";
+    objs[BASILISK].desc[1] = "There is a basilisk lying in the corridor to the south.  It is\n"
+                             "asleep, but is twitching and grumbling as if restless.";
+    objs[BASILISK].desc[2] = "There is a petrified basilisk in the corridor to the north.";
+    objs[BASILISK].desc[3] = "There is a petrified basilisk in the corridor to the south.";
+    objs[GONG].desc[0] = "There is a large brass gong fastened to the wall here.";
+    objs[DJINN].desc[0] = "There is a twelve-foot djinn standing in the center of the pentagram,\n"
+                          "glowering at you.";
+    objs[TURTLE].desc[0] = "Darwin the tortoise is swimming in the reservoir nearby.";
+    objs[MESSAGE].desc[0] = "There is a message scrawled in the dust in a flowery script, reading:\n"
+                            "\"This is not the maze where the pirate leaves his treasure chest.\"";
+    objs[GEYSER].desc[2] = "There is a wheat-colored stone bridge arching over the gorge.";
+    objs[STATUE].desc[1] = "Dark tunnels lead northeast, north, and northwest.";
+    objs[SLIME].desc[0] = "The passage to the south is swathed with sheets of evil-looking\n"
+                          "green slime, which twitches and flows as if aware of your presence.";
+    objs[PONY].desc[0] = "There is a massive vending machine here. The instructions on it read:\n"
+                         "\"Drop coins here to receive fresh batteries.\"";
+    objs[SAFE].desc[0] = "A massive walk-in safe takes up one entire wall.  It is tightly\n"
+         "closed, and has no handle, lock, nor keyhole.";
+    objs[SAFE].desc[1] = "A massive walk-in safe takes up one entire wall.  Its door has been\n"
+         "swung open and blocks the exit passage.";
+    objs[SAFE].desc[2] = "A massive walk-in safe takes up one entire wall.  It is closed, and\n"
+         "there are signs of melting around the edges of its door.";
+    objs[SKELETON].desc[0] = "Resting on the throne (\"sitting\" isn't really the right word) is an\n"
+         "incredible skeleton.  It is fairly humanoid from the waist up (except\n"
+         "for its incredible size and four extra arms);  below that, it resembles\n"
+         "the body of a giant python, and is wrapped in and around the bars and\n"
+         "rods of the throne.  Clutched in one bony hand is a long sceptre,\n"
+         "ornately encrusted with sapphires!!";
+    objs[BEAR].desc[0] = "There is a ferocious cave bear eying you from the far end of the room!";
+    objs[BEAR].desc[1] = "There is a gentle cave bear sitting placidly in one corner.";
+    objs[BEAR].desc[2] = "There is a contented-looking bear wandering about nearby.";
+    objs[BATTERIES].desc[0] = "There are fresh batteries here.";
+    objs[BATTERIES].desc[1] = "Some worn-out batteries have been discarded nearby.";
+    objs[DINGHY].desc[0] = "Lying upon the beach are the shattered remains of what must once have\n"
+                           "been a dinghy.  The remains consist of little more than a few broken\n"
+                           "boards, upon one of which may be seen a crude sketch of a skull and two\n"
+                           "crossed thighbones (perhaps this dinghy was once owned by a cook?)";
+    objs[DINGHY].desc[1] = "The shattered remains of a dinghy lie forlornly on the beach.";
+    objs[BAG].desc[0] = "There is a bag (obviously filled with pieces of eight) in the dinghy!";
+    objs[BAG].desc[1] = "There is a bag filled with pieces of eight lying off to one side!";
+    objs[CROWN].desc[0] = "There is a massive crown made of solid iridium floating in midair!";
+    objs[CROWN].desc[1] = "There is a massive iridium crown here!";
+    objs[GOLD].desc[0] = "There is a large sparkling nugget of gold here!";
+    objs[DIAMONDS].desc[0] = "There are diamonds here!";
+    objs[SILVER].desc[0] = "There are bars of silver here!";
+    objs[JEWELS].desc[0] = "There is precious jewelry here!";
+    objs[COINS].desc[0] = "There are many coins here!";
+    objs[CHEST].desc[0] = "The pirate's treasure chest is here, half-hidden behind a rock!";
+    objs[CHEST].desc[1] = "The pirate's treasure chest is here!";
+    objs[EGGS].desc[0] = "There is a large nest here, full of golden eggs!";
+    objs[TRIDENT].desc[0] = "There is a jewel-encrusted trident here!";
+    objs[HELMET].desc[0] = "There is a gem-encrusted visorless helmet sitting on the floor!";
+    objs[VASE].desc[0] = "There is a delicate, precious, Ming vase here!";
+    objs[SHARDS].desc[0] = "The floor is covered with worthless shards of pottery.";
+    objs[EMERALD].desc[0] = "There is an emerald here the size of a plover's egg!";
+    objs[SCEPTRE].desc[1] = "A sapphire-encrusted sceptre is lying on the ground!";
+    objs[YACHT].desc[0] = "There is a small toy yacht sitting on the floor. It is totally\n"
+                          "covered with rubies, and has the words \"Omar Khayyam\" engraved\n"
+                          "on the side!!";
+    objs[YACHT].desc[1] = "The ruby yacht of Omar Khayyam is sitting on the floor!";
+    objs[PYRAMID].desc[0] = "There is a platinum pyramid here, 8 inches on a side!";
+    objs[PEARL].desc[0] = "Off to one side lies a glistening pearl!";
+    objs[RUG].desc[0] = "There is a Persian rug spread out on the floor!";
+    objs[SPICES].desc[0] = "There are rare spices here!";
+    objs[BEADS].desc[0] = "There is a string of ancient Indian turquoise beads draped casually\n"
+                          "over the edge of the balcony!";
+    objs[CHAIN].desc[0] = "There is a golden chain lying in a heap on the floor!";
+    objs[CHAIN].desc[1] = "The bear is locked to the wall with a golden chain!";
+    objs[CHAIN].desc[2] = "There is a golden chain locked to the wall!";
+    objs[RING].desc[0] = "There is a shiny ring (crafted of the finest mithril) lying here!";
+    objs[SPYGLASS].desc[0] = "There is a small spyglass carved out of whale baleen sitting here!";
+    objs[BRACELET].desc[0] = "There is an ancient Chinese jade bracelet here!";
+    objs[CASKET].desc[0] = "There is a casket full of rare black opals sitting on a shelf!";
+    objs[CASKET].desc[1] = "There is a casket full of rare black opals here!";
+    objs[KEYS].desc[0] = "There are some keys on the ground here.";
+    objs[LAMP].desc[0] = "There is a shiny brass lamp nearby.";
+    objs[LAMP].desc[1] = "There is a lamp shining nearby.";
+    objs[CAGE].desc[0] = "There is a small wicker cage discarded nearby.";
+    objs[CAGE].desc[1] = "There is a small wicker cage nearby.";
+    objs[BIRD].desc[0] = "A cheerful little bird is sitting here singing.";
+    objs[BIRD].desc[1] = "There is a little bird in the cage.";
+    objs[ROD].desc[0] = "A three foot black rod with a rusty star on an end lies nearby.";
+    objs[PLATE].desc[0] = "A highly polished metal plate is leaning against the wall.";
+    objs[PLATE].desc[1] = "A polished metal plate lies nearby.";
+    objs[DYNAMITE].desc[0] = "A three foot black rod with a rusty mark on an end lies nearby.";
+    objs[PILLOW].desc[0] = "A small velvet pillow lies on the floor.";
+    objs[CLAM].desc[0] = "There is an enormous clam here with its shell tightly closed.";
+    objs[OYSTER].desc[0] = "There is an enormous oyster here with its shell tightly closed.";
+    objs[MAG].desc[0] = "There are a few recent issues of \"Spelunker Today\" magazine here.";
+    objs[FOOD].desc[0] = "There is food here.";
     objs[BOTTLE].desc[0] = "There is a bottle of water here.";
     objs[BOTTLE].desc[1] = "There is an empty bottle here.";
     objs[BOTTLE].desc[2] = "There is a bottle of oil here.";
-    new_obj(FOOD, "Tasty food", 0, R_HOUSE);
-    objs[FOOD].desc[0] = "There is food here.";
-    new_obj(DWARF, 0, DWARF, R_LIMBO);
-    new_obj(ROD, "Black rod", 0, R_DEBRIS);
-    objs[ROD].desc[0] = "A three-foot black rod with a rusty star on an end lies nearby.";
-    new_obj(CAGE, "Wicker cage", 0, R_COBBLES);
-    objs[CAGE].desc[0] = "There is a small wicker cage discarded nearby.";
-    new_obj(LAMP, "Brass lantern", 0, R_HOUSE);
-    objs[LAMP].desc[0] = "There is a shiny brass lamp nearby.";
-    objs[LAMP].desc[1] = "There is a lamp shining nearby.";
-    new_obj(KEYS, "Set of keys", 0, R_HOUSE);
-    objs[KEYS].desc[0] = "There are some keys on the ground here.";
+    objs[FLASK].desc[0] = "There is a sealed earthenware flask sitting in the center of the\n"
+                          "pentagram.";
+    objs[FLASK].desc[1] = "There is a small, tightly-sealed earthenware flask on the ground here.\n"
+                          "It has the words, \"London Dry\" written on the side.";
+    objs[FLASK].desc[2] = "There is a small, empty earthenware flask here.";
+    objs[AXE].desc[0] = "There is a little axe here.";
+    objs[AXE].desc[1] = "There is a little axe lying beside the bear.";
+    objs[TEETH].desc[0] = "There are several dragon's teeth scattered haphazardly about.";
+    objs[TEETH].desc[1] = "There are several dragon's teeth in a pile on the floor.";
+    objs[VIAL].desc[0] = "On the ground lies a small glass vial filled with an oily liquid.";
+    objs[MUSHROOM].desc[0] = "There is a small mushroom growing on the wall.";
+    objs[MUSHROOM].desc[1] = "There is a small mushroom lying on the floor.";
 }
 
 void describe_object(ObjectWord t)
 {
-    const char *d = objs[t].desc[objs[t].prop];
-    assert(0 <= objs[t].prop && objs[t].prop < 14);
-    if (d != NULL) puts(d);
+    if (t == DWARF) {
+        /* TODO: deal with the dwarves */
+    } else if (t == GOBLINS) {
+        /* TODO: deal with the gooseberry goblins */        
+    } else if (t == SWORD) {
+        /* TODO: deal with the singing sword */
+    } else if (t == SCULPTURE) {
+        /* TODO: deal with the rock-crystal sculpture */
+    } else if (t == BLOB) {
+        /* TODO: deal with Rover */
+    } else if (t == FOG) {
+        switch (objs[FOG].prop) {
+            case 0: puts("You are standing, badly befuddled, in a pale purple fog."); break;
+            case 1: puts("You are wandering around in the middle of a bright red fog."); break;
+            case 2: puts("You are lost in the midst of a thick, pea-green fog."); break;
+            case 3: puts("You are trying to find your way through a dense coal-black fog."); break;
+            case 4: puts("You are lost in the heart of a strange yellow fog."); break;
+            case 5: puts("You are standing, badly bedazzled, in a day-glow orange fog."); break;
+            case 6: puts("You are hunting your way through a shimmering magenta fog."); break;
+            case 7: puts("You are somewhere in the center of a weird, pearly pink fog."); break;
+            default: assert(false);
+        }
+    } else if (t == GLOW) {
+        /* N.B. - the directions listed here must match the first 8 directions
+         * in the VerbWord enumeration. */
+        switch (objs[GLOW].prop) {
+            case 0: puts("A faint glow of light is visible through the fog to the east."); break;
+            case 1: puts("A glimmer of light is visible through the fog in the west."); break;
+            case 2: puts("A glow of light is visible through the fog to the north."); break;
+            case 3: puts("A faint shimmer of light is visible to the south."); break;
+            case 4: puts("A flickering light is visible through the fog in the northeast."); break;
+            case 5: puts("A dim light is visible in the southeast."); break;
+            case 6: puts("A dim glow of light is visible in the southwest."); break;
+            case 7: puts("A dim flickering light is visible through the fog in the northwest."); break;
+            default: assert(false);
+        }
+    } else {
+        assert(0 <= objs[t].prop && objs[t].prop <= 3);
+        const char *d = objs[t].desc[objs[t].prop];
+        if (d != NULL) puts(d);
+    }
 }
 
 /*========== Input routines. ============================================*/
@@ -578,6 +699,9 @@ void parse(struct InputWordInfo *w)
         } else {
             w->type = h->word_type;
             w->meaning = h->meaning;
+            /* Turn "PLATI" into "platinum", e.g., so we
+             * can use it in certain messages. */
+            strcpy(w->text, h->text);
         }
     }
 }
@@ -646,12 +770,17 @@ void listen(void)
     }
 }
 
-bool keyword(WordType type, int meaning)
+static bool keyword(WordType type, int meaning)
 {
     if (word1.type == type && word1.meaning == meaning) return true;
     if (word2.type == type && word2.meaning == meaning) return true;
     return false;
 }
+
+bool keywordv(VerbWord meaning) { return keyword(WordType_Verb, meaning); }
+bool keywordo(ObjectWord meaning) { return keyword(WordType_Object, meaning); }
+bool keywordp(Location meaning) { return keyword(WordType_Place, meaning); }
+
 
 /*========== Dwarves. ===================================================*/
 
@@ -755,7 +884,7 @@ void maybe_do_cameo(Location loc)
      * cameo will appear in *this* game either.
      *   In short: Cameos are ridiculously rare. Having grown up with David
      * Malmberg's "Humongous Cave", in which one of these seven cameos
-     * happens on 3 out of every 100 turns, I give a "heartwarming cheer"
+     * happens on 3 out of every 100 turns, I give a "heart-warming cheer"
      * for Dave Platt's remarkable restraint.
      */
     static bool no_more_cameos = false;
@@ -1149,12 +1278,439 @@ void close_the_cave(void)
     cylinder_escape_count = 0;
 }
 
-/*========== The main loop. =============================================*/
+/*========== Verb processing. ===========================================*/
+
+bool now_in_darkness(Location loc)
+{
+    if (places[loc].flags & F_LIGHTED) return false;
+    if (here(LAMP, loc) && objs[LAMP].prop) return false;
+    return true;
+}
+
+void attempt_inventory(void)
+{
+    if (holding_count == 0) {
+        puts("You're not carrying anything.");
+        return;
+    }
+    puts("You are currently holding the following:");
+    for (int i=0; i <= MAX_OBJ; ++i) {
+        if (!toting(i)) continue;
+        if (i == WATER || i == OIL || i == BEAR) continue;
+        if (i == BOTTLE) {
+            if (toting(WATER)) {
+                puts("Small bottle full of water");
+            } else if (toting(OIL)) {
+                puts("Small bottle full of oil");
+            } else {
+                puts("Small bottle");
+            }
+        } else if (i == BATTERIES) {
+            if (objs[BATTERIES].prop) {
+                puts("Worn-out batteries");
+            } else {
+                puts("Fresh batteries");
+            }
+        } else {
+            puts(objs[i].name);
+        }
+    }
+    /* Platt doesn't mention the bear. */
+}
+
+ObjectWord default_to_something_portable(Location loc)
+{
+    int candidate = NOTHING;
+    for (int i=1; i <= MAX_OBJ; ++i) {
+        if (!there(i, loc)) continue;
+        if (!portable(i)) continue;
+        if (candidate != NOTHING) return NOTHING;
+        candidate = i;
+    }
+    /* We don't update word2.text, but that's okay, because the caller
+     * never tries to print the name of the object in this case. */
+    if (candidate != NOTHING) {
+        word2.type = WordType_Object;
+        word2.meaning = candidate;
+    }
+    return candidate;
+}
+
+void getbird(Location loc)
+{
+    if (toting(BIRD)) {
+        you_have_it();
+    } else if (!there(BIRD, loc)) {
+        I_see_no(word2.text);
+    } else if (objs[BIRD].prop) {
+        apport(CAGE, R_INHAND);
+        apport(BIRD, R_INHAND);
+        puts(ok);
+    } else if (toting(CAGE)) {
+        if (toting(ROD)) {
+            puts("The bird was unafraid when you entered, but as you approach it becomes\n"
+                 "disturbed and you cannot catch it.");
+        } else {
+            places[R_BIRD].flags &= ~F_HINTABLE;
+            apport(BIRD, R_INHAND);
+            objs[BIRD].prop = 1;  /* caged */
+            puts(ok);
+        }
+    } else {
+        puts("You might be able to catch the bird, but you could not carry it.");
+    }
+}
+
+void getliquid(ObjectWord obj)
+{
+    if (toting(BOTTLE)) {
+        if (objs[BOTTLE].prop == 1) {
+            apport(obj, R_INHAND);
+            if (obj == OIL) {
+                objs[BOTTLE].prop = 2;
+                puts("Your bottle is now full of oil.");
+            } else {
+                objs[BOTTLE].prop = 0;
+                puts("Your bottle is now full of water.");
+            }
+        } else {
+            puts("Your bottle is already full.");
+        }
+    } else {
+        puts("You have nothing in which to carry it.");
+    }
+}
+
+void getsceptre(void)
+{
+    /* We select the password randomly at the time the hint is given,
+     * rather than at the start of the game, to prevent save-scumming. */
+    const VerbWord possible_passwords[5] = { BLERBI, KLAETU, KNERL, SNOEZE, ZORTON };
+    const char *possible_spellings[5] = { "BLERBI", "KLAETU", "KNERL", "SNOEZE", "ZORTON" };
+    int i = ran(5);
+    const char *spelling = possible_spellings[i];
+    password = possible_passwords[i];
+    if (objs[SAFE].prop) {
+        puts("As you pluck the sceptre from the skeleton's grasp, it raises its head\n"
+             "and whispers, \"You blew it!\".  It then shivers and collapses into a\n"
+             "pile of fine dust which quickly vanishes.");
+    } else {
+        printf("You pluck the sceptre from the skeleton's bony hand.  As you do, the\n"
+               "skeleton raises its head and whispers \"Remember - %s!\" in a\n",
+               spelling);
+        /* Platt has "forboding"; I'm fixing it. */
+        puts("foreboding tone; it then sags to the ground and crumbles into dust which\n"
+             "drifts away into the still air of the cave.");
+    }
+    apport(SKELETON, R_LIMBO);
+    apport(SCEPTRE, R_INHAND);
+    objs[SCEPTRE].prop = 1;  /* no longer clutched by skeleton */
+}
+
+int attempt_take(ObjectWord obj, Location loc)
+{
+    if (now_in_darkness(loc)) {
+        if (word2.type == WordType_None) {
+            puts("It's pitch dark in here - I can't tell whether there's anything here\n"
+                 "that I can pick up!");
+            return loc;
+        } else if (word2.type == WordType_Object && !toting(obj) && portable(obj)) {
+            if (pct(60 - 5*(strength - holding_count))) {
+                printf("Hmmph - you're not asking for much, are you - it's pitch dark in\n"
+                       "here!  Well, I'll grope around and try to find the %s.....\n", word2.text);
+                puts(" {hunt}\n"
+                     "         {hunt}\n"
+                     "                  {rummage}\n"
+                     "                              {trip!}\n"
+                     "                                       Aaaiiii\n"
+                     "                                              iie\n"
+                     "                                                 ee\n"
+                     "                                                   e\n"
+                     "                                                    e\n"
+                     "                                                    e\n"
+                     "                                                    e\n"
+                     "                                                     >SPLAT!<\n\n"
+                     "You stumbled into a pit and broke your back!");
+                return you_are_dead_at(loc);
+            } else {
+                printf("Hmmph - you're not asking for much, are you - it's pitch dark\n"
+                       "in here, and I'll have to grope around to try to find the %s.\n", word2.text);
+                puts("Well, if I must, I must.....\n"
+                     "                                 {hunt}\n"
+                     "                                           {search}\n"
+                     "                                                      {hunt}\n"
+                     "                  {rummage}\n"
+                     "         {peer}\n"
+                     "                  {touch}\n"
+                     "             {hunt}\n"
+                     "                                 >scrape<\n"
+                     "                                          Youch! {curse}\n"
+                     "                  {hunt}\n"
+                     "                              {seek}\n");
+                printf("No luck - I can't find the %s!  If you could get me some light in\n"
+                       "here, maybe I'd be able to do better.  Sorry....", word2.text);
+                return loc;
+            }
+        }
+    }
+    if (word2.type == WordType_None) {
+        obj = default_to_something_portable(loc);
+    }
+    if (keywordv(INVENTORY)) {
+        attempt_inventory();
+        return loc;
+    } else if (word2.type == WordType_Object) {
+        switch (obj) {
+            case BIRD:
+                getbird(loc);
+                return loc;
+            case OIL:
+                if (loc == R_EPIT) {
+                    getliquid(OIL); return loc;
+                }
+                break;
+            case WATER:
+                if (places[loc].flags & F_WATER) {
+                    getliquid(WATER);
+                    return loc;
+                }
+                break;
+            case CHAIN:
+                if (there(CHAIN, loc) && !objs[CHAIN].prop) {
+                    puts("The chain is still locked.");
+                    return loc;
+                }
+                break;
+            case BEAR:
+                if (toting(BEAR)) {
+                    puts("You are being followed by a very large, tame bear.");
+                } else if (there(BEAR, loc) && (objs[BEAR].prop != 2)) {
+                    puts("The bear is still chained to the wall.");
+                    return loc;
+                }
+                break;
+            case SWORD:
+                if (there(SWORD, loc) && !objs[SWORD].prop && holding_count < strength) {
+                    if (objs[MUSHROOM].prop == 2) {
+                        puts("The singing sword slides easily out of the rock.");
+                        objs[SWORD].prop = 1;
+                        apport(SWORD, R_INHAND);
+                    } else {
+                        puts("The sword is firmly embedded in the stone, and you aren't strong\n"
+                             "enough to pull it out.");
+                    }
+                    return loc;
+                }
+                break;
+            case SCEPTRE:
+                if (there(SCEPTRE, loc) && !objs[SCEPTRE].prop && holding_count < strength) {
+                    getsceptre();
+                    return loc;
+                }
+                break;
+            case KNIFE:
+                if (objs[AXE].flags & F_SEEN) {
+                    puts("The dwarves' knives vanish as they strike the walls of the cave.");
+                    return loc;
+                }
+                break;
+        }  /* end switch */
+    }
+    if (word2.type == WordType_None)
+        return 0;  /* should be handled by main loop */
+    if (word2.type != WordType_Object) {
+        puts(hah);
+    } else if (toting(obj)) {
+        you_have_it();
+    } else if (!there(obj, loc)) {
+        I_see_no(word2.text);
+    } else if (!(objs[obj].flags & F_PORTABLE)) {
+        puts(hah);
+    } else if (holding_count == strength && obj != CAGE) {
+        /* Platt lets you pick the cage for free. This is certainly a bug. */
+        puts("You can't carry anything more.  You'll have to drop something first.");
+    } else {
+        puts(ok);
+        apport(obj, R_INHAND);
+        if (obj == CAGE && objs[BIRD].prop)
+            apport(BIRD, R_INHAND);
+        if (obj == BOTTLE && objs[BOTTLE].prop == 0)
+            apport(WATER, R_INHAND);
+        if (obj == BOTTLE && objs[BOTTLE].prop == 2)
+            apport(OIL, R_INHAND);
+        if ((objs[obj].flags & F_UNSTABLE) && !objs[obj].prop) {
+            /* Unstable objects, such as the casket and the sculpture,
+             * flip to state 1 the first time they're picked up. */
+            objs[obj].prop = 1;
+        }
+    }
+    return loc;
+}
+
+int dropbird(Location loc)
+{
+    if (there(BIRD, loc)) {
+        puts("You aren't carrying it!");
+        return loc;
+    } else if (!toting(BIRD)) {
+        I_see_no(word2.text);
+        return loc;
+    }
+    apport(BIRD, loc);
+    objs[BIRD].prop = 0;  /* uncaged */
+    if (there(SNAKE, loc)) {
+        puts("The little bird attacks the green snake, and in an astounding flurry\n"
+             "drives the snake away.");
+        apport(SNAKE, R_LIMBO);
+        places[R_HMK].flags &= ~F_HINTABLE;
+    } else if (there(DRAGON, loc) && !objs[DRAGON].prop) {
+        puts("The little bird attacks the green dragon, and in an astounding flurry\n"
+             "gets burnt to a cinder.  The ashes blow away.");
+        apport(BIRD, R_LIMBO);
+    } else if (there(TROLL, loc)) {
+        puts("The little bird attacks the troll, who blithly ignores it.  The bird\n"
+             "soon becomes discouraged, flies back to land at your feet, and begins\n"
+             "singing to itself.");
+    } else if (there(OGRE, loc)) {
+        puts("The little bird attacks the ogre, and in an astounding flurry gets\n"
+             "caught and crushed.  The mangled remains vanish into thin air.");
+        apport(BIRD, R_LIMBO);
+    } else if (there(BEAR, loc)) {
+        if (!objs[BEAR].prop) {
+            puts("The little bird attacks the ferocious cave bear, and in an astounding\n"
+                 "flurry gets ripped to shreds.  The bloody remains disappear.");
+            apport(BIRD, R_LIMBO);
+        } else {
+            puts("The little bird flies over to the bear, circles curiously around\n"
+                 "its head several times, and then flies back to land at your feet\n"
+                 "and begins singing.");
+        }
+    } else if (there(BASILISK, loc) && objs[BASILISK].prop <= 1) {
+        puts("The little bird attacks the basilisk, and in an astounding flurry\n"
+            "succeeds in awakening it.  The basilisk glares at the bird, causing\n"
+            "the bird to explode into a cloud of fine sand, and then turns and\n"
+            "stares balefully at you, turning you into a pillar of fine marble\n"
+            "suitable for decorative lawn or garden use.");
+        apport(BIRD, R_LIMBO);
+        return you_are_dead_at(loc);
+    } else if (there(DWARF, loc)) {
+        const bool plural = (objs[DWARF].prop > 1);
+        printf("The little bird attacks the dwar%s, and in an astounding flurry\n"
+               "gets cut to shreds by %s nasty sharp kni%s!  The tattered\n"
+               "remains fade from sight.\n",
+               plural?"ves":"f", plural?"their":"his", plural?"ves":"f");
+        apport(BIRD, R_LIMBO);
+    } else {
+        puts(ok);
+    }
+    return loc;
+}
+
+bool dropliquid(ObjectWord obj, Location loc)
+{
+    /* DROP WATER does not work to water the plant; you must say
+     * either WATER PLANT or POUR WATER. */
+    if (!toting(obj)) return false;
+    apport(obj, R_LIMBO);
+    objs[BOTTLE].prop = 1;
+    if (there(DWARF, loc) && keywordv(THROW)) {
+        if (objs[DWARF].prop == 1) {
+            printf("The %s flies through the air and thoroughly drenches the dwarf.  He\n", obj==OIL?"oil":"water");
+            puts("shakes himself off and curses violently; he *REALLY* looks angry!");
+        } else {
+            printf("The %s flies through the air and thoroughly drenches the dwarves.  They\n", obj==OIL?"oil":"water");
+            puts("shake themselves off and curse violently; they *REALLY* look angry!");
+        }
+        dwarves_enraged = true;
+    } else {
+        puts("Your bottle is empty and the ground is wet.");
+    }
+    return true;
+}
+
+bool freedjinn(Location loc)
+{
+    if (!there(DJINN, loc)) return false;
+    puts("The pentagram's magical barrier sparks fitfully and goes down.  The\n"
+         "Djinn stretches gratefully and smiles at you.  \"AGAIN, MY THANKS,\" he\n"
+         "says.  \"MY ADVICE TO YOU WILL TAKE THE FORM OF A HISTORY LESSON.\n"
+         "WHEN RALPH WITT, THE ARCHITECT AND CONSTRUCTOR OF THIS CAVE, WAS VERY\n"
+         "YOUNG, HE BECAME VERY INCENSED THAT HIS NAME WAS AT THE END OF THE\n"
+         "ALPHABET.  HE FELT (FOR SOME REASON) THAT THE LETTER W BELONGED NEAR\n"
+         "THE BEGINNING OF THE ALPHABET, AND THAT ALL OF THOSE \"UPSTART LETTERS\n"
+         "WHICH UNFAIRLY USURPED THE BEST PLACES\" SHOULD BE FORCED INTO EXILE\n"
+         "AT THE END OF THE ALPHABET.  HIS INSTINCT FOR MATTERS MAGICAL AND\n"
+         "MYSTICAL LED HIM TO APPLY THIS STRANGE BELIEF INTO THE CAVE'S\n"
+         "STRUCTURE WHEN HE EXCAVATED IT.  YOU HAVEN'T YET BEEN AFFECTED BY HIS\n"
+         "STRANGE HABITS, BUT YOU SHOULD REMEMBER THIS.  FAREWELL, AND GOOD\n"
+         "LUCK.\"  With that, the Djinn evaporates into a cloud of smoke and\n"
+         "drifts rapidly away.");
+    apport(DJINN, R_LIMBO);
+    djinn_is_grateful = true;
+    return true;
+}
+
+int attempt_drop(ObjectWord obj, Location loc)
+{
+    if (word2.type == WordType_None) return 0;  /* unhandled */
+    if (word2.type == WordType_Object) {
+        switch (obj) {
+            case BIRD: dropbird(loc); return loc;
+            case OIL: if (dropliquid(obj, loc)) return loc; break;
+            case WATER: if (dropliquid(obj, loc)) return loc; break;
+            case DJINN: if (freedjinn(loc)) return loc; break;
+        }
+    }
+    if (word2.type != WordType_Object) {
+        puts(hah);
+    } else if (toting(obj)) {
+        apport(obj, loc);
+        if (obj == CAGE) {
+            if (toting(BIRD))
+                apport(BIRD, loc);
+        } else if (obj == BOTTLE) {
+            apport(WATER, R_LIMBO);
+            apport(OIL, R_LIMBO);
+        } else if (obj == VASE && loc != R_SOFT) {
+            if (there(PILLOW, loc)) {
+                puts("The vase is now resting, delicately, on a velvet pillow.");
+            } else {
+                puts("The Ming vase drops with a delicate crash.");
+                apport(VASE, R_LIMBO);
+                apport(SHARDS, loc);
+            }
+            return loc;
+        } else if (obj == VIAL && pct(10)) {
+            puts("The vial strikes the ground and explodes with a violent >FOOM!<,\n"
+                 "neatly severing your foot.  You bleed to death quickly and messily.");
+            apport(VIAL, R_LIMBO);
+            return you_are_dead_at(loc);
+        }
+        /* For bear/troll logic, see at_neofchasm(). Platt's code has a
+         * subroutine named DROPBEAR, but it doesn't do anything special. */
+        puts(ok);
+    } else {
+        puts("You aren't carrying it!");
+    }
+    return loc;
+}
 
 int process_verb(Location loc)
 {
+    if (word1.type != WordType_Verb) return 0;  /* unhandled */
+    const int verb = word1.meaning;
+    const int obj = word2.meaning;
+    switch (verb) {
+        case GET:
+            return attempt_take(obj, loc);
+        case DROP:
+            return attempt_drop(obj, loc);
+            
+    }
     return 0;  /* unhandled */
 }
+
+/*========== The main loop. =============================================*/
 
 void look_around(Location loc, bool familiar)
 {
@@ -1188,13 +1744,6 @@ void look_around(Location loc, bool familiar)
     }
 }
 
-bool now_in_darkness(Location loc)
-{
-    if (places[loc].flags & F_LIGHTED) return false;
-    if (here(LAMP, loc) && objs[LAMP].prop) return false;
-    return true;
-}
-
 void phog(Location loc)
 {
     if (objs[FOG].prop < 8) {
@@ -1212,9 +1761,16 @@ void phog(Location loc)
     }
 }
 
-void lamprey(Location loc)
+/* Return true if we closed the cave on you. */
+bool lamprey(Location loc)
 {
-    if (lamplife > 0) {
+    /* Interestingly, the lamp's batteries do not run down while you are
+     * elsewhere. This is a minor difference from Woods' Adventure. It also
+     * means that this logic will not run after closing time. */
+    if (!here(LAMP, loc) || !objs[LAMP].prop)
+        return false;
+    lamplife -= 1;
+    if (lamplife == 40) {
         if (objs[BATTERIES].prop == 1) {
             puts("Your lamp is getting dim, and you're out of spare batteries.  You'd\n"
                  "best start wrapping this up.");
@@ -1231,12 +1787,13 @@ void lamprey(Location loc)
                  "you can find some fresh batteries.  I seem to recall there's a vending\n"
                  "machine in the maze.  Bring some coins with you.");
         }
-    } else if (closure == 2) {
-        /* If the lamp starts running low during closing time,
-         * just go ahead and close the cave already. */
-        close_the_cave();
-    } else {
-        if (here(BATTERIES, loc) && !objs[BATTERIES].prop) {
+    } else if (lamplife == 0) {
+        if (closure == 2) {
+            /* If the lamp runs out during closing time,
+            * just go ahead and close the cave early. */
+            close_the_cave();
+            return true;
+        } else if (here(BATTERIES, loc) && !objs[BATTERIES].prop) {
             puts("Your lamp is getting dim.  I'm taking the liberty of replacing the\n"
                  "batteries.");
             objs[BATTERIES].prop = 1;
@@ -1248,6 +1805,7 @@ void lamprey(Location loc)
             phog(loc);  /* chase glow into place */
         }
     }
+    return false;  /* cave is still open */
 }
 
 /* The administrative clock has ticked. */
@@ -1447,7 +2005,7 @@ void deal_with_syntax_errors(Location loc)
             printf("What do you want me to do with the %s?\n", word1.text);
             please_clarify = true;
         } else {
-            printf("I see no %s here.\n", word1.text);
+            I_see_no(word1.text);
         }
     } else {
         if (word2.type == WordType_None) {
@@ -1458,7 +2016,7 @@ void deal_with_syntax_errors(Location loc)
             if (there(word2.meaning, loc)) {
                 printf("I don't know how to %s such a thing.\n", word1.text);
             } else {
-                printf("I see no %s here.\n", word2.text);
+                I_see_no(word2.text);
             }
         } else {
             printf("I don't know how to %s such a thing.\n", word1.text);
@@ -1499,16 +2057,27 @@ void say_foof(void)
 
 void presay(void)
 {
-    if (word2.type != WordType_None) {
+    if (keywordv(SAY) && (word2.type != WordType_None)) {
         printf("Ok - \"%s\".\n", word2.text);
     }
 }
 
+void recount_inventory(void)
+{
+    holding_count = 0;
+    for (int i=0; i <= MAX_OBJ; ++i) {
+        if (i == BIRD) continue;  /* it's caged */
+        if (i == OIL || i == WATER) continue;  /* they're bottled */
+        if (i == BEAR) continue;  /* it's following you */
+        if (toting(i))
+            holding_count += 1;
+    }
+}
 
 void simulate_an_adventure(void)
 {
     Location oldloc;
-    Location loc = R_ROAD;
+    Location loc = R_LIMBO;
     Location newloc = R_ROAD;
 
     clock = 15+ran(10);
@@ -1527,20 +2096,21 @@ void simulate_an_adventure(void)
         if (blob_is_coming) {
             if (tick()) goto death;
         }
-        if (newloc != loc) {
-            /* If you stand still, dwarves in the room will attack. */
+        moved = (newloc != loc);
+        if (!moved) {
             if (there(DWARF, loc) && pct(backlash)) {
+                /* If you stand still, dwarves in the room will attack. */
                 if (dwarf_attack()) goto death;
             }
-        }
-        if (places[loc].flags & F_ONE_EXIT && there(DWARF, loc) && !wizard_mode) {
+        } else if ((places[loc].flags & F_ONE_EXIT) && there(DWARF, loc) && !wizard_mode) {
             puts("A little dwarf with a big knife blocks your way.");
             newloc = loc;
         } else {
-            if (there(FOG, newloc)) {
+            if (there(FOG, loc)) {
                 phog(newloc);
             }
             /* Okay, we moved! */
+            moved = false;
             oldloc = loc;
             loc = newloc;
             ++turns;
@@ -1552,24 +2122,13 @@ void simulate_an_adventure(void)
                      "you fades away into a grey nothingness.");
                 finis();
             }
-            if (here(LAMP, loc) && objs[LAMP].prop) {
-                /* Interestingly, the lamp's batteries do not
-                 * run down while you are elsewhere. This is
-                 * a minor difference from Woods' Adventure. */
-                lamplife -= 1;
-                if (lamplife == 40 || lamplife == 0) {
-                    lamprey(loc);
-                    if (closure == 3) {
-                        /* We just closed the cave on you. */
-                        continue;
-                    }
-                }
-            }
+            if (lamprey(loc))
+                continue;  /* the cave is now closed */
             if (!there(GOBLINS, R_LIMBO)) {
                 /* If the goblins are active, they follow you. */
                 apport(GOBLINS, loc);
                 if (objs[GOBLINS].prop >= 0)
-                    puts("You are being pursued by a vicious horde of little gooseberry goblins!");
+                    puts("You are being pursued by a vicious horde of little gooseberry goblins!\n");
                 objs[GOBLINS].prop += 1;
             }
             bool familiar_place = (places[loc].flags & F_BEENHERE);
@@ -1649,22 +2208,11 @@ void simulate_an_adventure(void)
             /* Rover finally makes his appearance on the scene! */
             apport(BLOB, loc);
         }
-        if (juggled) {
-            /* If we've been shuffling objects, we'd better recompute the
-             * player's inventory, so it doesn't get out of sync. */
-            juggled = false;
-            holding_count = 0;
-            for (int i=0; i <= MAX_OBJ; ++i) {
-                if (i == BIRD) continue;  /* it's caged */
-                if (i == OIL || i == WATER) continue;  /* they're bottled */
-                if (i == BEAR) continue;  /* it's following you */
-                if (toting(i))
-                    holding_count += 1;
-            }
-        }
+        recount_inventory();
         fleetfoot = 25;  /* not running */
         backlash = 35;  /* dwarves not vengeful */
         listen();
+        puts("");
         --foobar;
         /* Here Platt increments the variable TURNS. I've left it out because
          * I don't see anywhere its value is actually used. The value of
@@ -1677,10 +2225,8 @@ void simulate_an_adventure(void)
             puts("Huh??");
             continue;
         }
-        if (keyword(WordType_Verb, SAY)) {
-            presay();
-        }
-        if (word2.type == WordType_BadWord) {
+        presay();
+        if (word2.type == WordType_BadWord && !keywordv(SAY)) {
             printf("I don't know the word \"%s\".\n", word2.text);
             continue;
         }
@@ -1688,6 +2234,9 @@ void simulate_an_adventure(void)
         newloc = places[loc].f();
         if (R_LIMBO < newloc && newloc < R_YLEM) {
             continue;
+        } else if (R_YLEM < newloc && newloc < 2*R_YLEM) {
+            newloc -= R_YLEM;
+            goto death;  /* moving that direction killed you */
         } else {
             assert(newloc == 0);  /* unhandled */
             newloc = loc;
@@ -1703,11 +2252,14 @@ void simulate_an_adventure(void)
             newloc = process_verb(loc);
             if (R_LIMBO < newloc && newloc < R_YLEM) {
                 continue;
+            } else if (R_YLEM < newloc && newloc < 2*R_YLEM) {
+                newloc -= R_YLEM;
+                goto death;  /* moving that direction killed you */
             } else {
                 assert(newloc == 0);  /* unhandled */
+                newloc = loc;
             }
             deal_with_syntax_errors(loc);
-            newloc = loc;
         }
     }
 }
@@ -1728,8 +2280,9 @@ int main()
              "and hands.  Direct me with commands of 1 or 2 words.\n\n"
              "Should you get stuck, type \"HELP\" for some general hints.  For infor-\n"
              "mation on how to end your adventure, etc., type \"INFO\".\n\n"
-             "                              - - -\n\n\n");
+             "                              - - -\n\n");
     }
+    puts("");
     build_vocabulary();
     build_place_names();
     build_object_table();

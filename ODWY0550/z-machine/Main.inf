@@ -1,0 +1,19 @@
+
+#include "stubs.inf";
+#include "cstubs.s";
+#include "adv550.s";
+#include "advdat.s";
+
+Constant __c_stack_size 4096;
+Array __c_stack -> __c_stack_size;
+
+[ Main  xp;
+    __init_vars_libc();
+    __init_vars_adv550();
+    __init_vars_advdat();
+    ! C functions take an explicit "stack pointer" as their first parameter.
+    ! The "stack" is where all subsequent function arguments are placed.
+    xp = __c_stack + __c_stack_size;
+    _main(xp);
+    @quit;
+];
