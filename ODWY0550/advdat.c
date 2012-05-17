@@ -4,8 +4,12 @@
 #include "advdat.h"
 
 bool pct(int percent);
+bool yes(const char *prompt);
+void apport(ObjectWord t, Location loc);
 void say_foof(void);
+void hah(void);
 void finis(void);
+extern Location safe_exit;
 bool keywordv(VerbWord meaning);
 bool keywordo(ObjectWord meaning);
 bool keywordp(Location meaning);
@@ -16,13 +20,31 @@ extern int death_count;
 extern bool gave_up;
 extern bool panicked;
 extern bool nomagic;
+extern int lamplife;
+extern int holding_count;
+extern int cylinder_escape_count;
+extern bool have_drowned_in_quicksand;
+extern bool have_stolen_back_eggs;
+extern bool have_awoken_goblins;
 
+#define ok "OK."
 static const char cantpasslock[] = "You can't go through a locked steel grate!";
-static const char you_didnt_move[] =
-    "You have crawled around in some little holes and wound up back in the\n"
-    "main passage.";
 
-int splatter(Location newloc)
+static int you_didnt_move(Location newloc)
+{
+    puts("You have crawled around in some little holes and wound up back in the\n"
+	 "main passage.");
+    return newloc;
+}
+
+static int oof(Location newloc)
+{
+    puts("Wheeeeeeeeeeeeeeeee..........\n\n"
+	 "                                           >oof!<\n\n");
+    return newloc;
+}
+
+static int splatter(Location newloc)
 {
     switch (death_count) {
 	case 0:
@@ -45,6 +67,35 @@ int splatter(Location newloc)
     return you_are_dead_at(newloc);
 }
 
+static int plunge(void)
+{
+    if (objs[LAMP].prop) {
+	lamplife = 0;  /* "First your lamp goes out." */
+	if (toting(LAMP)) {
+	    puts("You have jumped into a bottomless pit.  You continue to fall for\n"
+		 "a very long time.  First, your lamp runs out of power and goes\n"
+		 "dead. Later, you die of hunger and thirst.");
+	} else {
+	    puts("You have jumped into a bottomless pit.  Eventually, you die of thirst.");
+	}
+    } else {
+	puts("You have jumped into a bottomless pit.  Eventually, you die of thirst.");
+    }
+    return you_are_dead_at(R_YLEM);
+}
+
+bool used_movement_obj(ObjectWord where_to)
+{
+    switch (word1.type) {
+        case WordType_Object:
+            return ((ObjectWord)word1.meaning == where_to);
+        case WordType_Verb:
+            if (word1.meaning == WALK || word1.meaning == SAY)
+                return (word2.type == WordType_Object && (ObjectWord)word2.meaning == where_to);
+            return false;
+    }
+    return false;
+}
 bool used_movement_placeword(Location where_to)
 {
     /* HOUSE FOO will take you to the house, even if FOO is unrecognized;
@@ -410,7 +461,7 @@ int at_spit(void)
      * verb) will work fine, but going STEPS or PIT will kill you.
      * TODO: perhaps fix this? */
     if (used_movement_verb(DOWN)) return R_EMIST;
-    if (used_movement_verb(STEPS) || used_movement_placeword(R_SPIT)) {
+    if (used_movement_obj(STEPS) || used_movement_placeword(R_SPIT)) {
 	if (toting(GOLD)) {
 	    puts("You are at the bottom of the pit with a broken neck.");
 	    return you_are_dead_at(R_EMIST);
@@ -437,7 +488,7 @@ int at_emist(void)
     if (used_movement_verb(DOWN)) return R_HMK;
     if (used_movement_verb(NORTH)) return R_HMK;
     if (used_movement_placeword(R_Y2)) return R_JUMBLE;
-    if (used_movement_verb(UP) || used_movement_verb(STEPS) ||
+    if (used_movement_verb(UP) || used_movement_obj(STEPS) ||
 	used_movement_placeword(R_SPIT) || used_movement_verb(DOME) ||
 	used_movement_verb(PASSAGE) || used_movement_verb(IN)) {
 	if (toting(GOLD)) {
@@ -501,8 +552,7 @@ int at_hmk(void)
 	    if (pct(35)) {
 		return R_SECRETEW_TITE;
 	    } else {
-		puts(you_didnt_move);
-		return R_HMK;
+		return you_didnt_move(R_HMK);
 	    }
 	}
     }
@@ -522,16 +572,7 @@ int at_w2pit(void)
     }
     return 0;  /* command hasn't been processed yet */
 }
-
-int at_e2pit(void)
-{
-    if (used_movement_verb(EAST)) return R_SWISS;
-    if (used_movement_verb2(WEST, CROSS)) return R_W2PIT;
-    if (used_movement_verb(DOWN)) return R_EPIT;
-    if (used_movement_placeword(R_SPIT)) return R_EPIT;
-    return 0;  /* command hasn't been processed yet */
-}
-	 
+ 
 int at_epit(void)
 {
     if (used_movement_verb2(UP, OUT)) return R_E2PIT;
@@ -611,7 +652,7 @@ int at_y2(void)
     if (used_movement_verb(SOUTH)) return R_NS;
     if (used_movement_verb(EAST)) return R_JUMBLE;
     if (used_movement_placeword(R_JUMBLE)) return R_JUMBLE;
-    if (used_movement_verb(WEST)) return R_WINDOW;
+    if (used_movement_verb(WEST)) return R_WINDOE;
     if (used_movement_verb(PLUGH) || used_movement_placeword(R_PLOVER)) {
 	if (word2.type != WordType_None && !keywordv(SAY))
 	    return 0;  /* DROP PLUGH isn't handled here */
@@ -635,8 +676,6 @@ int at_jumble(void)
     return 0;  /* command hasn't been processed yet */
 }
 
-
-
 int at_dirty(void)
 {
     if (used_movement_verb2(EAST, CRAWL)) return R_CLEAN;
@@ -650,16 +689,6 @@ int at_windoe(void)
 {
     if (used_movement_verb(EAST)) return R_Y2;
     if (used_movement_placeword(R_Y2)) return R_Y2;
-    if (used_movement_verb(JUMP)) {
-	puts("You are at the bottom of the pit with a broken neck.");
-	return you_are_dead_at(R_MIRROR);
-    }
-    return 0;  /* command hasn't been processed yet */
-}
-
-int at_window(void)
-{
-    if (used_movement_verb(WEST)) return R_SJUNC;
     if (used_movement_verb(JUMP)) {
 	puts("You are at the bottom of the pit with a broken neck.");
 	return you_are_dead_at(R_MIRROR);
@@ -918,20 +947,2137 @@ int at_bedquilt(void)
 	if (used_movement_verb(UP)) return pct(75) ? R_DUSTY : R_ABOVEP;
 	if (used_movement_verb(SOUTH)) return pct(75) ? R_SLAB : R_TALLEWCNYN;
     }
-    if (keywordv(NW)) {
-	if (pct(50)) {
-	    puts(you_didnt_move);
-	    return R_BEDQUILT;
+    if (keywordv(NW)) return pct(50) ? R_ORIENTAL : you_didnt_move(R_BEDQUILT);
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_swiss(void)
+{
+    if (used_movement_verb(NE)) return R_BEDQUILT;
+    if (used_movement_verb(WEST)) return R_E2PIT;
+    if (used_movement_placeword(R_AWK)) return R_TALLEWCNYN;
+    if (used_movement_verb(EAST)) return R_SOFT;
+    if (used_movement_placeword(R_ORIENTAL)) return R_ORIENTAL;
+    if (used_movement_placeword(R_SOFT)) return R_SOFT;
+    if (used_movement_verb(NW)) return pct(65) ? R_ORIENTAL : you_didnt_move(R_SWISS);
+    if (used_movement_verb(SOUTH)) return pct(65) ? R_TALLEWCNYN : you_didnt_move(R_SWISS);
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_e2pit(void)
+{
+    if (used_movement_verb(EAST)) return R_SWISS;
+    if (used_movement_verb2(WEST, CROSS)) return R_W2PIT;
+    if (used_movement_verb(DOWN)) return R_EPIT;
+    if (used_movement_placeword(R_SPIT)) return R_EPIT;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_slab(void)
+{
+    if (used_movement_verb(SOUTH)) return R_W2PIT;
+    if (used_movement_verb(UP)) return R_ABOVER;
+    if (used_movement_verb(CLIMB)) return R_ABOVER;
+    if (used_movement_verb(NORTH)) return R_BEDQUILT;
+    if (used_movement_placeword(R_BEDQUILT)) return R_BEDQUILT;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_abover(void)
+{
+    if (used_movement_verb(DOWN)) return R_SLAB;
+    if (used_movement_placeword(R_SLAB)) return R_SLAB;
+    if (used_movement_verb(NORTH)) return R_MIRROR;
+    if (keywordo(MIRROR)) return R_MIRROR;
+    if (used_movement_placeword(R_RES)) return R_RES;
+    if (used_movement_verb(SOUTH)) return R_SECRETCYNNE1;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_abovep(void)
+{
+    if (used_movement_verb(NORTH)) return R_SJUNC;
+    if (used_movement_verb(DOWN)) return R_BEDQUILT;
+    if (used_movement_verb(PASSAGE)) return R_BEDQUILT;
+    if (used_movement_verb(SOUTH)) return R_STALACT;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_sjunc(void)
+{
+    if (used_movement_verb(SE)) return R_BEDQUILT;
+    if (used_movement_verb(SOUTH)) return R_ABOVEP;
+    if (used_movement_verb(NORTH)) return R_WINDOW;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_low(void)
+{
+    if (used_movement_placeword(R_BEDQUILT)) return R_BEDQUILT;
+    if (used_movement_verb(SW)) return R_SLOPING;
+    if (used_movement_verb(NORTH)) return R_DEADEND2;
+    if (used_movement_verb(SE)) return R_ORIENTAL;
+    if (used_movement_placeword(R_ORIENTAL)) return R_ORIENTAL;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_deadend2(void)
+{
+    if (used_movement_verb3(SOUTH, CRAWL, OUT)) return R_LOW;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_secretew_tite(void)
+{
+    if (used_movement_verb(EAST)) return R_HMK;
+    if (used_movement_verb(DOWN)) return R_NSCANYONWIDE;
+    if (keywordv(WEST)) {
+	return objs[DRAGON].prop ? R_SECRETCYNNE1 : R_SECRETCYNNE2;
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_nscanyonwide(void)
+{
+    if (used_movement_verb(SOUTH)) return R_TIGHTERSTILL;
+    if (used_movement_verb(NORTH)) return R_TALLEWCNYN;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_tighterstill(void)
+{
+    if (used_movement_verb(NORTH)) return R_NSCANYONWIDE;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_tallewcnyn(void)
+{
+    if (used_movement_verb(EAST)) return R_NSCANYONWIDE;
+    if (used_movement_verb(WEST)) return R_DEADEND3;
+    if (used_movement_verb2(NORTH, CRAWL)) return R_SWISS;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_deadend3(void)
+{
+    if (used_movement_verb(SOUTH)) return R_TALLEWCNYN;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazea80(void)
+{
+    if (used_movement_verb(NORTH)) return R_MAZEA42;
+    if (used_movement_verb(WEST)) return R_MAZEA80;
+    if (used_movement_verb(SOUTH)) return R_MAZEA80;
+    if (used_movement_verb(EAST)) return R_MAZEA81;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazea81(void)
+{
+    if (used_movement_verb(WEST)) return R_MAZEA80;
+    if (used_movement_verb(OUT)) return R_MAZEA80;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazea82(void)
+{
+    if (used_movement_verb(SOUTH)) return R_MAZEA44;
+    if (used_movement_verb(OUT)) return R_MAZEA44;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazea83(void)
+{
+    if (used_movement_verb(SOUTH)) return R_MAZEA57_PIT;
+    if (used_movement_verb(EAST)) return R_MAZEA84;
+    if (used_movement_verb(WEST)) return R_MAZEA85;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazea84(void)
+{
+    if (used_movement_verb(NORTH)) return R_MAZEA57_PIT;
+    if (used_movement_verb(WEST)) return R_MAZEA83;
+    if (used_movement_verb(NW)) return R_PIRATES_NEST;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazea85(void)
+{
+    if (used_movement_verb(EAST)) return R_MAZEA83;
+    if (used_movement_verb(OUT)) return R_MAZEA83;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazea86(void)
+{
+    if (used_movement_verb(UP)) return R_MAZEA52;
+    if (used_movement_verb(OUT)) return R_MAZEA52;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazea87(void)
+{
+    if (used_movement_verb(UP)) return R_MAZEA45;
+    if (used_movement_verb(DOWN)) return R_MAZEA45;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_narrow(void)
+{
+    if (used_movement_verb(DOWN)) return R_WPIT;
+    if (used_movement_verb(CLIMB)) return R_WPIT;
+    if (used_movement_verb(EAST)) return R_WPIT;
+    if (used_movement_verb(WEST)) return R_GIANT;
+    if (used_movement_placeword(R_GIANT)) return R_GIANT;
+    if (keywordv(JUMP)) return splatter(R_WPIT);
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_incline(void)
+{
+    if (used_movement_verb(NORTH)) return R_FALLS;
+    if (used_movement_placeword(R_FALLS)) return R_FALLS;
+    if (used_movement_verb(PASSAGE)) return R_FALLS;
+    if (used_movement_verb2(DOWN, CLIMB)) return oof(R_LOW);
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_giant(void)
+{
+    if (used_movement_verb(SOUTH)) return R_NARROW;
+    if (used_movement_placeword(R_CORRIDOR)) return R_NARROW;
+    if (used_movement_verb(EAST)) return R_TUNNEL_1;
+    if (used_movement_verb(NORTH)) return R_IMMENSENSPASS;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_immensenspass(void)
+{
+    if (used_movement_verb2(SOUTH, PASSAGE)) return R_GIANT;
+    if (used_movement_placeword(R_GIANT)) return R_GIANT;
+    if (used_movement_verb2(NORTH, IN) || used_movement_placeword(R_FALLS)) {
+	if (objs[DOOR].prop) return R_FALLS;
+	puts("The door is extremely rusty and refuses to open.");
+	return R_IMMENSENSPASS;
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_falls(void)
+{
+    if (used_movement_verb(SOUTH)) return R_IMMENSENSPASS;
+    if (used_movement_verb(OUT)) return R_IMMENSENSPASS;
+    if (used_movement_placeword(R_GIANT)) return R_GIANT;
+    if (used_movement_verb(WEST)) return R_INCLINE;
+    if (used_movement_placeword(R_INCLINE)) return R_INCLINE;
+    if (used_movement_verb2(DOWN, JUMP)) {
+	if (!yes("Into the whirlpool??")) {
+	    puts(ok);
+	    return R_FALLS;
+	}
+	bool something_got_lost = false;
+	for (int i=1; i <= MAX_OBJ; ++i) {
+	    if (toting(i) && i != LAMP) {
+		apport(i, R_YLEM);
+		something_got_lost = true;
+	    }
+	}
+	if (toting(LAMP)) {
+	    holding_count = 1;
+	    if (something_got_lost) {
+		puts("You plunge into the water and are sucked down by the whirlpool.  The\n"
+		     "current is incredibly strong, and you barely manage to hold onto\n"
+		     "your lamp;  everything else is pulled from your grasp and is lost in\n"
+		     "the swirling waters.");
+	    } else {
+		puts("You plunge into the water and are sucked down by the whirlpool.");
+	    }
 	} else {
-	    return R_ORIENTAL;
+	    holding_count = 0;
+	    if (something_got_lost) {
+		puts("You plunge into the water and are sucked down by the whirlpool into\n"
+		     "pitch darkness.  The current is incredibly strong, and everything that\n"
+		     "you are carrying is ripped from your grasp and is lost in the swirling\n"
+		     "waters.");
+	    } else {
+		puts("You plunge into the water and are sucked down by the whirlpool into\n"
+		     "pitch darkness.");
+	    }
+	}
+	puts("\nThe swirling waters deposit you, not ungently, on solid ground.\n");
+	return R_RESERVOIR_N;
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_soft(void)
+{
+    if (used_movement_verb2(WEST, OUT)) return R_SWISS;
+    if (used_movement_placeword(R_SWISS)) return R_SWISS;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_oriental(void)
+{
+    if (used_movement_verb(SE)) return R_SWISS;
+    if (used_movement_verb(WEST)) return R_LOW;
+    if (used_movement_verb(CRAWL)) return R_LOW;
+    if (used_movement_verb(UP)) return R_MISTY;
+    if (used_movement_verb(NORTH)) return R_MISTY;
+    if (used_movement_placeword(R_FALLS)) return R_MISTY;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_misty(void)
+{
+    if (used_movement_verb(SOUTH)) return R_ORIENTAL;
+    if (used_movement_placeword(R_ORIENTAL)) return R_ORIENTAL;
+    if (used_movement_verb(WEST)) return R_ALCOVE;
+    if (keywordv(JUMP)) return splatter(R_FALLS);
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_alcove(void)
+{
+    if (used_movement_verb2(EAST, PASSAGE) || used_movement_placeword(R_PLOVER)) {
+	if (holding_count == 0) return R_PLOVER;
+	if (holding_count == 1 && toting(EMERALD)) return R_PLOVER;
+	puts("Something you're carrying won't fit through the tunnel with you.\n"
+	     "You'd best take inventory and drop something.");
+	return R_ALCOVE;
+    }
+    if (used_movement_verb(NW)) return R_MISTY;
+    if (used_movement_placeword(R_FALLS)) return R_MISTY;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_plover(void)
+{
+    if (keywordp(R_PLOVER) && (word2.type==WordType_None || keywordv(SAY))) {
+	if (toting(EMERALD)) apport(EMERALD, R_PLOVER);
+	say_foof();
+	return R_Y2;
+    }
+    if (used_movement_verb2(WEST, PASSAGE) || used_movement_placeword(R_ALCOVE)) {
+	if (holding_count == 0) return R_ALCOVE;
+	if (holding_count == 1 && toting(EMERALD)) return R_ALCOVE;
+	puts("Something you're carrying won't fit through the tunnel with you.\n"
+	     "You'd best take inventory and drop something.");
+	return R_PLOVER;	
+    }
+    if (used_movement_verb(NE)) return R_DARK;
+    if (used_movement_placeword(R_DARK)) return R_DARK;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_dark(void)
+{
+    if (used_movement_verb2(SOUTH, OUT)) return R_PLOVER;
+    if (used_movement_placeword(R_PLOVER)) return R_PLOVER;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_arched(void)
+{
+    if (used_movement_verb(DOWN)) return R_SHELL;
+    if (used_movement_placeword(R_SHELL)) return R_SHELL;
+    if (used_movement_verb(UP)) return R_ARCH_COR_1;
+    if (used_movement_verb(EAST)) return R_ARCH_COR_1;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_shell(void)
+{
+    if (used_movement_verb(UP)) return R_ARCHED;
+    if (used_movement_verb(HALL)) return R_ARCHED;
+    if (used_movement_verb(DOWN)) return R_RAGGED;
+    if (used_movement_placeword(R_CORRIDOR)) return R_RAGGED;
+    if (keywordv(SOUTH) || keywordp(R_COMPLEX)) {
+	if (toting(CLAM)) {
+	    puts("You can't fit this five-foot clam through that little passage!");
+	    return R_SHELL;
+	} else if (toting(OYSTER)) {
+	    puts("You can't fit this five-foot oyster through that little passage!");
+	    return R_SHELL;
+	} else {
+	    return R_COMPLEX;
 	}
     }
     return 0;  /* command hasn't been processed yet */
 }
 
+int at_ragged(void)
+{
+    if (used_movement_verb(UP)) return R_SHELL;
+    if (used_movement_placeword(R_SHELL)) return R_SHELL;
+    if (used_movement_verb(DOWN)) return R_CULDESAC;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_culdesac(void)
+{
+    if (used_movement_verb2(UP, OUT)) return R_RAGGED;
+    if (used_movement_placeword(R_CORRIDOR)) return R_RAGGED;
+    if (used_movement_placeword(R_SHELL)) return R_SHELL;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_anteroom(void)
+{
+    if (used_movement_verb(UP)) return R_COMPLEX;
+    if (used_movement_verb(WEST)) return R_BEDQUILT;
+    if (used_movement_verb(EAST)) return R_WITT;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazed107(void)
+{
+    if (used_movement_verb(SOUTH)) return R_MAZED131;
+    if (used_movement_verb(SW)) return R_MAZED132;
+    if (used_movement_verb(NE)) return R_MAZED133;
+    if (used_movement_verb(SE)) return R_MAZED134;
+    if (used_movement_verb(UP)) return R_MAZED135;
+    if (used_movement_verb(NW)) return R_MAZED136;
+    if (used_movement_verb(EAST)) return R_MAZED137;
+    if (used_movement_verb(WEST)) return R_MAZED138;
+    if (used_movement_verb(NORTH)) return R_MAZED139;
+    if (used_movement_verb(DOWN)) return R_WLONG;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_witt(void)
+{
+    if (used_movement_verb3(NORTH,SOUTH,UP) ||
+	used_movement_verb3(EAST,DOWN,NE) ||
+	used_movement_verb3(NW,SE,SW)) {
+	return pct(95) ? R_WITT : R_ANTE;
+    }
+    if (used_movement_verb(WEST)) return R_WITT;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mirror(void)
+{
+    if (keywordo(MIRROR)) {
+	puts("It is too far up for you to reach.");
+	return R_MIRROR;
+    }
+    if (used_movement_verb(SOUTH)) return R_ABOVER;
+    if (used_movement_verb(NORTH)) return R_RES;
+    if (used_movement_placeword(R_RES)) return R_RES;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_window(void)
+{
+    if (used_movement_verb(WEST)) return R_SJUNC;
+    if (keywordv(JUMP)) {
+	puts("You are at the bottom of the pit with a broken neck.");
+	return you_are_dead_at(R_MIRROR);
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_stalact(void)
+{
+    if (used_movement_verb(NORTH)) return R_ABOVEP;
+    if (keywordv(DOWN) || keywordv(JUMP) || keywordv(CLIMB)) {
+	return pct(40) ? R_MAZEA50 : pct(50) ? R_MAZEA53 : R_MAZEA45;
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazed112(void)
+{
+    if (used_movement_verb(SW)) return R_MAZED131;
+    if (used_movement_verb(NORTH)) return R_MAZED132;
+    if (used_movement_verb(EAST)) return R_MAZED133;
+    if (used_movement_verb(NW)) return R_MAZED134;
+    if (used_movement_verb(SE)) return R_MAZED135;
+    if (used_movement_verb(NE)) return R_MAZED136;
+    if (used_movement_verb(WEST)) return R_MAZED137;
+    if (used_movement_verb(DOWN)) return R_MAZED138;
+    if (used_movement_verb(UP)) return R_MAZED139;
+    if (used_movement_verb(SOUTH)) return R_PONY;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_res(void)
+{
+    if (used_movement_verb2(SOUTH, OUT)) return R_MIRROR;
+    if (used_movement_obj(MIRROR)) return R_MIRROR;
+    if (keywordv(NORTH) || keywordv(CROSS)) {
+	puts("I can't swim, or walk on water.  You'll have to find some other way\n"
+	     "to get across, or get someone to assist you.");
+	return R_RES;
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_reservoir_n(void)
+{
+    if (used_movement_verb2(NORTH, PASSAGE)) return R_WARM;
+    if (used_movement_placeword(R_WARM)) return R_WARM;
+    if (used_movement_placeword(R_BALCONY)) return R_BALCONY;
+    if (used_movement_verb2(SOUTH, CROSS)) {
+	if (there(TURTLE, R_RESERVOIR_N)) {
+	    puts("You step gently on Darwin the Tortoise's back, and he carries you\n"
+		 "smoothly over to the southern side of the reservoir.  He then blows\n"
+		 "a couple of bubbles at you and sinks back out of sight.\n");
+	    apport(TURTLE, R_LIMBO);
+	    return R_RES;
+	} else {
+	    puts("I can't swim, or walk on water.  You'll have to find some other way\n"
+	         "to get across, or get someone to assist you.");
+	    return R_RESERVOIR_N;
+	}
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_warm(void)
+{
+    if (used_movement_verb(SOUTH)) return R_RESERVOIR_N;
+    if (used_movement_placeword(R_RES)) return R_RESERVOIR_N;
+    if (used_movement_verb(NE)) return R_BALCONY;
+    if (used_movement_placeword(R_BALCONY)) return R_BALCONY;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_balcony(void)
+{
+    if (used_movement_verb2(WEST, OUT)) return R_WARM;
+    if (used_movement_placeword(R_WARM)) return R_WARM;
+    if (used_movement_placeword(R_RES)) return R_RESERVOIR_N;
+    /* Jumping from the balcony will make your possessions unrecoverable. */
+    if (keywordv(JUMP)) return splatter(R_YLEM);
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_pirates_nest(void)
+{
+    if (used_movement_verb(SE)) return R_MAZEA84;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_swofchasm(void)
+{
+    if (used_movement_verb(SW)) return R_SLOPING;
+    if (used_movement_placeword(R_SLOPING)) return R_SLOPING;
+    if (used_movement_placeword(R_CORRIDOR)) return R_SLOPING;
+
+    if (keywordv(THROW)) {
+	if (word2.type == WordType_None || there(TROLL2, R_SWOFCHASM))
+	    return 0;  /* unhandled */
+	if (keywordo(AXE) || keywordo(SWORD)) {
+	    if (toting(word2.meaning)) {
+		printf("The troll deftly catches the %s, examines it carefully, and tosses it\n"
+		       "back, declaring, \"Good workmanship, but it's not valuable enough.\"\n", word2.text);
+		apport(word2.meaning, R_SWOFCHASM);
+		return R_SWOFCHASM;
+	    }
+	    return 0;  /* unhandled */
+	} else if (word2.type == WordType_Object && is_treasure(word2.meaning)) {
+	    const ObjectWord o = word2.meaning;
+	    if (!toting(o)) return 0;  /* unhandled */
+	    if ((o == EGGS) && have_stolen_back_eggs) {
+		puts("The troll nimbly steps to one side and grins nastily as the nest of\n"
+		     "golden eggs flies past him and plummets into the chasm.  \"Fool me\n"
+		     "once, shame on you;  fool me twice, shame on me!\" he sneers.  \"I want\n"
+		     "something a touch more substantial this time!");
+		apport(EGGS, R_YLEM);
+		objs[TROLL].prop = 0;
+		return R_SWOFCHASM;
+	    }
+	    printf("The troll catches the %s and scurries away out of sight.\n", word2.text);
+	    objs[TROLL].prop = 1;
+	    apport(TROLL, R_LIMBO);
+	    apport(TROLL2, R_SWOFCHASM);
+	    apport(o, R_LIMBO);
+	    return R_SWOFCHASM;
+	}
+    }
+    if (used_movement_verb2(CROSS, NE)) {
+	if (objs[CHASM].prop > 0) {
+	    puts("There is no longer any way across the chasm.");
+	} else if (objs[TROLL].prop == 0) {
+	    puts("The troll refuses to let you cross.");
+	} else if (objs[TROLL].prop == 2) {
+	    puts("The troll steps out from beneath the bridge and blocks your way.");
+	    objs[TROLL].prop = 0;
+	    apport(TROLL2, R_LIMBO);
+	    apport(TROLL, R_SWOFCHASM);
+	} else if (objs[TROLL].prop == 1) {
+	    objs[TROLL].prop = 2;  /* no longer appeased */
+	    return R_NEOFCHASM;
+	}
+	return R_SWOFCHASM;
+    }
+    if (keywordv(JUMP)) {
+	if (objs[CHASM].prop) return splatter(R_YLEM);
+	puts("I respectfully suggest you go across the bridge instead of jumping.");
+	return R_SWOFCHASM;
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_sloping(void)
+{
+    if (used_movement_verb(DOWN)) return R_LOW;
+    if (used_movement_verb(UP)) return R_SWOFCHASM;
+    if (used_movement_obj(CHASM)) return R_SWOFCHASM;
+    if (used_movement_placeword(R_LOW)) return R_LOW;
+    if (used_movement_verb(OUT)) return R_LOW;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_secretcynne1(void)
+{
+    if (keywordo(RUG) && !objs[DRAGON].prop) {
+	puts("You can't get by the dragon to get at the rug.");
+	return R_SECRETCYNNE1;
+    }
+    if (used_movement_verb(NORTH)) return R_ABOVER;
+    if (used_movement_verb(OUT)) return R_ABOVER;
+    if (keywordv(FORWARD) || keywordv(EAST)) {
+	if (!objs[DRAGON].prop) {
+	    puts("The dragon looks rather nasty.  You'd best not try to get by.");
+	    return R_SECRETCYNNE1;
+	} else {
+	    return R_SECRETEW_TITE;
+	}
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_secretcynne2(void)
+{
+    if (keywordo(RUG) && !objs[DRAGON].prop) {
+	puts("You can't get by the dragon to get at the rug.");
+	return R_SECRETCYNNE2;
+    }
+    if (used_movement_verb(EAST)) return R_SECRETEW_TITE;
+    if (used_movement_verb(OUT)) return R_SECRETEW_TITE;
+    if (used_movement_verb2(FORWARD, NORTH)) {
+	if (!objs[DRAGON].prop) {
+	    puts("The dragon looks rather nasty.  You'd best not try to get by.");
+	    return R_SECRETCYNNE2;
+	} else {
+	    return R_ABOVER;
+	}
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_neofchasm(void)
+{
+    if (keywordv(DROP) && keywordo(BEAR) && toting(BEAR) && there(TROLL, R_NEOFCHASM)) {
+	objs[TROLL].prop = 4;
+	puts("The bear lumbers toward the troll, who lets out a startled shriek and\n"
+	     "scurries away.  The bear soon gives up the pursuit and wanders back.");
+	apport(TROLL, R_LIMBO);
+	apport(TROLL2, R_SWOFCHASM);
+	apport(BEAR, R_NEOFCHASM);
+	return R_NEOFCHASM;
+    }
+    if (keywordv(THROW)) {
+	if (word2.type == WordType_None || there(TROLL2, R_NEOFCHASM))
+	    return 0;  /* unhandled */
+	if (keywordo(AXE) || keywordo(SWORD)) {
+	    if (toting(word2.meaning)) {
+		printf("The troll deftly catches the %s, examines it carefully, and tosses it\n"
+		       "back, declaring, \"Good workmanship, but it's not valuable enough.\"\n", word2.text);
+		apport(word2.meaning, R_NEOFCHASM);
+		return R_NEOFCHASM;
+	    }
+	    return 0;  /* unhandled */
+	} else if (word2.type == WordType_Object && is_treasure(word2.meaning)) {
+	    const ObjectWord o = word2.meaning;
+	    if (!toting(o)) return 0;  /* unhandled */
+	    if ((o == EGGS) && have_stolen_back_eggs) {
+		puts("The troll nimbly steps to one side and grins nastily as the nest of\n"
+		     "golden eggs flies past him and plummets into the chasm.  \"Fool me\n"
+		     "once, shame on you;  fool me twice, shame on me!\" he sneers.  \"I want\n"
+		     "something a touch more substantial this time!");
+		apport(EGGS, R_YLEM);
+		objs[TROLL].prop = 0;
+		return R_NEOFCHASM;
+	    }
+	    printf("The troll catches the %s and scurries away out of sight.\n", word2.text);
+	    objs[TROLL].prop = 1;
+	    apport(TROLL, R_LIMBO);
+	    apport(TROLL2, R_SWOFCHASM);
+	    apport(o, R_LIMBO);
+	    return R_NEOFCHASM;
+	}
+    }
+
+    if (used_movement_verb2(CROSS, SW)) {
+	if (objs[CHASM].prop > 0) {
+	    puts("There is no longer any way across the chasm.");
+	} else if (objs[TROLL].prop == 0) {
+	    puts("The troll refuses to let you cross.");
+	} else if (objs[TROLL].prop == 2) {
+	    puts("The troll steps out from beneath the bridge and blocks your way.");
+	    objs[TROLL].prop = 0;
+	    apport(TROLL2, R_LIMBO);
+	    apport(TROLL, R_SWOFCHASM);
+	} else {
+	    /* We're getting away with it! */
+	    if (objs[TROLL].prop == 1)
+		objs[TROLL].prop = 2;  /* no longer appeased */
+	    if (toting(BEAR)) {
+		puts("Just as you reach the other side, the bridge buckles beneath the\n"
+		     "weight of the bear, which was still following you around.  You\n"
+		     "scrabble desperately for support, but as the bridge collapses you\n"
+		     "stumble back and fall into the chasm.");
+		objs[CHASM].prop = 1;
+		apport(TROLL2, R_LIMBO);
+		return you_are_dead_at(R_YLEM);
+	    }
+	    if (objs[TROLL].prop == 4 && have_stolen_back_eggs) {
+		puts("As you reach the middle of the bridge, the troll appears from out\n"
+		     "of the tunnel behind you, wearing a large backpack.  \"So, Mister\n"
+		     "Magician,\" he shouts, \"you like to use magic to steal back my hard-\n"
+		     "earned toll?  Let's see how you like a little of MY magic!!\"  With");
+		if (there(BEAR, R_NEOFCHASM)) {
+		    puts("that, he aims a tube running from the backpack directly at the bear\n"
+			 "and pulls a trigger.  A spout of magical fire roars out and singes the\n"
+			 "bear's fur;  the bear bellows in pain and dashes onto the bridge to\n"
+			 "escape.  The bridge shudders, groans, and collapses under the weight,\n"
+			 "and you and the bear plunge down into the chasm.");
+		    apport(BEAR, R_YLEM);
+		} else {
+		    puts("that, he aims a tube running from the backpack directly at the bridge\n"
+			 "and pulls a trigger.  A spout of magical fire roars out and incinerates\n"
+			 "the bridge supports, causing the bridge to sway giddily and collapse\n"
+			 "into the chasm.  You plunge down to your death.");
+		}
+		objs[CHASM].prop = 1;
+		return you_are_dead_at(R_YLEM);
+	    }
+	    return R_SWOFCHASM;
+	}
+	return R_NEOFCHASM;
+    }
+    if (keywordv(JUMP)) {
+	if (objs[CHASM].prop) return splatter(R_YLEM);
+	puts("I respectfully suggest you go across the bridge instead of jumping.");
+	return R_NEOFCHASM;
+    }
+    if (used_movement_verb(NE)) return R_CORRIDOR;
+    if (used_movement_placeword(R_CORRIDOR)) return R_CORRIDOR;
+    if (used_movement_placeword(R_FORK)) return R_FORK;
+    if (used_movement_verb(VIEW)) return R_VIEW;
+    if (used_movement_placeword(R_FBARR)) return R_FBARR;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_corridor(void)
+{
+    if (used_movement_verb(CHASM)) return R_NEOFCHASM;
+    if (used_movement_verb(WEST)) return R_NEOFCHASM;
+    if (used_movement_verb(EAST)) return R_FORK;
+    if (used_movement_placeword(R_FORK)) return R_FORK;
+    if (used_movement_verb(VIEW)) return R_VIEW;
+    if (used_movement_placeword(R_FBARR)) return R_FBARR;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_fork(void)
+{
+    if (used_movement_verb(CHASM)) return R_NEOFCHASM;
+    if (used_movement_verb(WEST)) return R_CORRIDOR;
+    if (used_movement_placeword(R_CORRIDOR)) return R_CORRIDOR;
+    if (used_movement_verb(NE)) return R_WARMJUNCTN;
+    if (used_movement_verb(LEFT)) return R_WARMJUNCTN;
+    if (used_movement_verb(SE)) return R_LIME;
+    if (used_movement_verb(RIGHT)) return R_LIME;
+    if (used_movement_verb(DOWN)) return R_LIME;
+    if (used_movement_verb(VIEW)) return R_VIEW;
+    if (used_movement_placeword(R_FBARR)) return R_FBARR;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_warmjunctn(void)
+{
+    if (used_movement_verb(SOUTH)) return R_FORK;
+    if (used_movement_placeword(R_FORK)) return R_FORK;
+    if (used_movement_verb(NORTH)) return R_VIEW;
+    if (used_movement_verb(VIEW)) return R_VIEW;
+    if (used_movement_verb2(EAST, CRAWL)) return R_CHAMBER;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_view(void)
+{
+    if (used_movement_verb(SOUTH)) return R_WARMJUNCTN;
+    if (used_movement_verb(PASSAGE)) return R_WARMJUNCTN;
+    if (used_movement_verb(OUT)) return R_WARMJUNCTN;
+    if (used_movement_placeword(R_FORK)) return R_FORK;
+    if (keywordv(JUMP) || keywordv(DOWN) || keywordv(CLIMB))
+	return splatter(R_YLEM);
+    if (keywordp(R_VALLEY) || keywordv(CROSS) || keywordo(GEYSER) || keywordv(NORTH)) {
+	if (objs[GEYSER].prop == 0) {
+	    puts("I'm afraid I can't go that way - walking on red-hot lava is contrary\n"
+		 "to union regulations (and is bad for your health anyhow).");
+	} else if (toting(RING)) {
+	    if (toting(BEAR)) {
+		puts("As you approach the center of the archway, hot vapors saturated with\n"
+		     "brimstone drift up from the lava in the gorge beneath your feet.  The\n"
+		     "mithril ring in your hand quivers and glows, and a swirling vortex\n"
+		     "of white vapor encircles you and protects you from the fumes.  The\n"
+		     "bear is not so lucky, though, since the vortex is rather small; the\n"
+		     "noxious gasses choke it and it staggers off of the side of the arch\n"
+		     "and plummets into the gorge below.\n");
+		apport(BEAR, R_YLEM);
+	    } else if (!(places[R_FACES].flags & F_BEENHERE)) {
+		puts("As you approach the center of the archway, hot vapors saturated with\n"
+		     "brimstone drift up from the lava in the gorge beneath your feet.  The\n"
+		     "mithril ring in your hand quivers and glows, and the fumes eddy away\n"
+		     "from the bridge without harming you.\n");
+	    }
+	    return R_FACES;
+	} else {
+	    if (toting(BEAR)) {
+		puts("As you approach the center of the archway, hot vapors saturated with\n"
+		     "brimstone drift up from the lava in the gorge beneath your feet.  You\n"
+		     "and the bear are both overcome by the noxious gasses and, with your\n"
+		     "lungs burned out, slip off of the bridge and plummet into the gorge.");
+		/* Notice that the bear winds up at R_YLEM with the
+		 * rest of your possessions, in this case. */
+	    } else {
+		puts("As you approach the center of the archway, hot vapors saturated with\n"
+		     "brimstone drift up from the lava in the gorge beneath your feet.  You\n"
+		     "are swiftly overcome by the foul gasses and, with your lungs burned\n"
+		     "out, fall off of the bridge and into the gorge.");
+	    }
+	    return you_are_dead_at(R_YLEM);
+	}
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_chamber(void)
+{
+    if (used_movement_verb(WEST)) return R_WARMJUNCTN;
+    if (used_movement_verb(OUT)) return R_WARMJUNCTN;
+    if (used_movement_verb(CRAWL)) return R_WARMJUNCTN;
+    if (used_movement_placeword(R_FORK)) return R_FORK;
+    if (used_movement_verb(VIEW)) return R_VIEW;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_lime(void)
+{
+    if (used_movement_verb(NORTH)) return R_FORK;
+    if (used_movement_verb(UP)) return R_FORK;
+    if (used_movement_placeword(R_FORK)) return R_FORK;
+    if (used_movement_verb(SOUTH)) return R_FBARR;
+    if (used_movement_verb(DOWN)) return R_FBARR;
+    if (used_movement_placeword(R_FBARR)) return R_FBARR;
+    if (used_movement_verb(VIEW)) return R_VIEW;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_fbarr(void)
+{
+    if (used_movement_verb(WEST)) return R_LIME;
+    if (used_movement_verb(UP)) return R_LIME;
+    if (used_movement_placeword(R_FORK)) return R_FORK;
+    if (used_movement_verb2(EAST, IN)) return R_BARR;
+    if (used_movement_placeword(R_FBARR)) return R_BARR;
+    if (used_movement_verb(VIEW)) return R_VIEW;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_barr(void)
+{
+    if (keywordv(GET) && keywordo(AXE) && there(AXE, R_BARR) && objs[AXE].prop) {
+	puts("As you approach the bear, it snarls threateningly;  you are forced\n"
+	     "to retreat without the axe.");
+	return R_BARR;
+    }
+    if (used_movement_verb(WEST)) return R_FBARR;
+    if (used_movement_verb(OUT)) return R_FBARR;
+    if (used_movement_placeword(R_FORK)) return R_FORK;
+    if (used_movement_verb(VIEW)) return R_VIEW;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazed131(void)
+{
+    if (used_movement_verb(WEST)) return R_MAZED107;
+    if (used_movement_verb(SE)) return R_MAZED132;
+    if (used_movement_verb(NW)) return R_MAZED133;
+    if (used_movement_verb(SW)) return R_MAZED134;
+    if (used_movement_verb(NE)) return R_MAZED135;
+    if (used_movement_verb(UP)) return R_MAZED136;
+    if (used_movement_verb(DOWN)) return R_MAZED137;
+    if (used_movement_verb(NORTH)) return R_MAZED138;
+    if (used_movement_verb(SOUTH)) return R_MAZED139;
+    if (used_movement_verb(EAST)) return R_MAZED112;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazed132(void)
+{
+    if (used_movement_verb(NW)) return R_MAZED107;
+    if (used_movement_verb(UP)) return R_MAZED131;
+    if (used_movement_verb(NORTH)) return R_MAZED133;
+    if (used_movement_verb(SOUTH)) return R_MAZED134;
+    if (used_movement_verb(WEST)) return R_MAZED135;
+    if (used_movement_verb(SW)) return R_MAZED136;
+    if (used_movement_verb(NE)) return R_MAZED137;
+    if (used_movement_verb(EAST)) return R_MAZED138;
+    if (used_movement_verb(DOWN)) return R_MAZED139;
+    if (used_movement_verb(SE)) return R_MAZED112;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazed133(void)
+{
+    if (used_movement_verb(UP)) return R_MAZED107;
+    if (used_movement_verb(DOWN)) return R_MAZED131;
+    if (used_movement_verb(WEST)) return R_MAZED132;
+    if (used_movement_verb(NE)) return R_MAZED134;
+    if (used_movement_verb(SW)) return R_MAZED135;
+    if (used_movement_verb(EAST)) return R_MAZED136;
+    if (used_movement_verb(NORTH)) return R_MAZED137;
+    if (used_movement_verb(NW)) return R_MAZED138;
+    if (used_movement_verb(SE)) return R_MAZED139;
+    if (used_movement_verb(SOUTH)) return R_MAZED112;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazed134(void)
+{
+    if (used_movement_verb(NE)) return R_MAZED107;
+    if (used_movement_verb(NORTH)) return R_MAZED131;
+    if (used_movement_verb(NW)) return R_MAZED132;
+    if (used_movement_verb(SE)) return R_MAZED133;
+    if (used_movement_verb(EAST)) return R_MAZED135;
+    if (used_movement_verb(DOWN)) return R_MAZED136;
+    if (used_movement_verb(SOUTH)) return R_MAZED137;
+    if (used_movement_verb(UP)) return R_MAZED138;
+    if (used_movement_verb(WEST)) return R_MAZED139;
+    if (used_movement_verb(SW)) return R_MAZED112;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazed135(void)
+{
+    if (used_movement_verb(NORTH)) return R_MAZED107;
+    if (used_movement_verb(SE)) return R_MAZED131;
+    if (used_movement_verb(DOWN)) return R_MAZED132;
+    if (used_movement_verb(SOUTH)) return R_MAZED133;
+    if (used_movement_verb(EAST)) return R_MAZED134;
+    if (used_movement_verb(WEST)) return R_MAZED136;
+    if (used_movement_verb(SW)) return R_MAZED137;
+    if (used_movement_verb(NE)) return R_MAZED138;
+    if (used_movement_verb(NW)) return R_MAZED139;
+    if (used_movement_verb(UP)) return R_MAZED112;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazed136(void)
+{
+    if (used_movement_verb(EAST)) return R_MAZED107;
+    if (used_movement_verb(WEST)) return R_MAZED131;
+    if (used_movement_verb(UP)) return R_MAZED132;
+    if (used_movement_verb(SW)) return R_MAZED133;
+    if (used_movement_verb(DOWN)) return R_MAZED134;
+    if (used_movement_verb(SOUTH)) return R_MAZED135;
+    if (used_movement_verb(NW)) return R_MAZED137;
+    if (used_movement_verb(SE)) return R_MAZED138;
+    if (used_movement_verb(NE)) return R_MAZED139;
+    if (used_movement_verb(NORTH)) return R_MAZED112;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazed137(void)
+{
+    if (used_movement_verb(SE)) return R_MAZED107;
+    if (used_movement_verb(NE)) return R_MAZED131;
+    if (used_movement_verb(SOUTH)) return R_MAZED132;
+    if (used_movement_verb(DOWN)) return R_MAZED133;
+    if (used_movement_verb(UP)) return R_MAZED134;
+    if (used_movement_verb(NW)) return R_MAZED135;
+    if (used_movement_verb(NORTH)) return R_MAZED136;
+    if (used_movement_verb(SW)) return R_MAZED138;
+    if (used_movement_verb(EAST)) return R_MAZED139;
+    if (used_movement_verb(WEST)) return R_MAZED112;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazed138(void)
+{
+    if (used_movement_verb(DOWN)) return R_MAZED107;
+    if (used_movement_verb(EAST)) return R_MAZED131;
+    if (used_movement_verb(NE)) return R_MAZED132;
+    if (used_movement_verb(UP)) return R_MAZED133;
+    if (used_movement_verb(WEST)) return R_MAZED134;
+    if (used_movement_verb(NORTH)) return R_MAZED135;
+    if (used_movement_verb(SOUTH)) return R_MAZED136;
+    if (used_movement_verb(SE)) return R_MAZED137;
+    if (used_movement_verb(SW)) return R_MAZED139;
+    if (used_movement_verb(NW)) return R_MAZED112;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_mazed139(void)
+{
+    if (used_movement_verb(SW)) return R_MAZED107;
+    if (used_movement_verb(NW)) return R_MAZED131;
+    if (used_movement_verb(EAST)) return R_MAZED132;
+    if (used_movement_verb(WEST)) return R_MAZED133;
+    if (used_movement_verb(NORTH)) return R_MAZED134;
+    if (used_movement_verb(DOWN)) return R_MAZED135;
+    if (used_movement_verb(SE)) return R_MAZED136;
+    if (used_movement_verb(UP)) return R_MAZED137;
+    if (used_movement_verb(SOUTH)) return R_MAZED138;
+    if (used_movement_verb(NE)) return R_MAZED112;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_pony(void)
+{
+    if (used_movement_verb(NORTH)) return R_MAZED112;
+    if (used_movement_verb(OUT)) return R_MAZED112;
+    if (keywordv(DROP) && keywordo(COINS) && toting(COINS)) {
+	apport(COINS, R_LIMBO);
+	apport(BATTERIES, R_PONY);
+	puts(ok);
+	puts("There are fresh batteries here.");
+	return R_PONY;
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_sandstone(void)
+{
+    if (used_movement_verb2(WEST, OUT)) return R_EMIST;
+    if (used_movement_placeword(R_EMIST)) return R_EMIST;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_morion(void)
+{
+    if (used_movement_verb2(SOUTH, OUT)) return R_HMK;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int enter_safe(Location start)
+{
+    if (objs[SAFE].prop == 1) {
+	safe_exit = start;
+	return R_INSAFE;
+    } else {
+	puts("The safe's door is closed, and you can't get in!");
+	return start;
+    }
+}
+
+int at_vault(void)
+{
+    if (used_movement_verb3(UP,OUT,NORTH)) {
+	if (objs[SAFE].prop == 1) {
+	    puts("The safe's door is blocking the exit passage - you'll have to close\n"
+		 "the safe to get out of here.");
+	    return R_VAULT;
+	} else {
+	    return R_HMK;
+	}
+    }
+    if (keywordv(IN)) return enter_safe(R_VAULT);
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_insafe(void)
+{
+    if (keywordv(OUT)) return safe_exit;
+    if (keywordo(SAFE)) {
+	if (word2.type == WordType_None) {
+	    puts("What do you want me to do with the safe?");
+	} else if (keywordv(CLOSE)) {
+	    puts("There is no handle on the inside of the safe door, nor any other way\n"
+		 "to get a grip on it.  You'll have to leave the safe before shutting it.");
+	} else if (keywordv(OPEN)) {
+	    puts("The safe is already open!");
+	} else {
+	    hah();
+	}
+	return R_INSAFE;
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_corrid_1(void)
+{
+    if (used_movement_verb(SOUTH)) return R_HMK;
+    if (used_movement_verb(NORTH)) return R_CORRID_2;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_corrid_2(void)
+{
+    if (used_movement_verb(SOUTH)) return R_CORRID_1;
+    if (used_movement_verb(WEST)) return R_CORRID_1;
+    if (used_movement_verb2(NORTH, EAST)) return R_TOOL;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_tool(void)
+{
+    if (used_movement_verb2(OUT, SOUTH)) return R_CORRID_2;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_corrid_3(void)
+{
+    if (used_movement_verb(SOUTH)) return R_HMK;
+    if (used_movement_verb(NORTH)) return R_SPHERICAL;
+    if (used_movement_verb(EAST)) return R_CUBICLE;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_cubicle(void)
+{
+    if (used_movement_verb(OUT)) return R_CORRID_3;
+    if (used_movement_placeword(R_CORRIDOR)) return R_CORRID_3;
+    if (used_movement_verb(SOUTH)) return R_CORRID_3;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_spherical(void)
+{
+    if (used_movement_verb(OUT)) return R_CORRID_3;
+    if (used_movement_verb(NORTH)) return R_CORRID_3;
+    if (used_movement_placeword(R_CORRIDOR)) return R_CORRID_3;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_tunnel_1(void)
+{
+    if (used_movement_verb(SOUTH)) return R_GIANT;
+    if (used_movement_verb(NORTH)) return R_GLASSY;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_glassy(void)
+{
+    if (used_movement_verb(SOUTH)) return R_TUNNEL_1;
+    if (keywordv(NORTH) || keywordp(R_LAIR)) {
+	if (there(OGRE, R_GLASSY)) {
+	    puts("The ogre growls at you and refuses to let you pass.");
+	    return R_GLASSY;
+	} else {
+	    return R_LAIR;
+	}
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_lair(void)
+{
+    if (used_movement_verb(EAST)) return R_BRINK_1;
+    if (used_movement_verb(WEST)) return R_GLASSY;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_brink_1(void)
+{
+    if (used_movement_verb(NORTH)) return R_LAIR;
+    if (used_movement_verb(WEST)) return R_BRINK_2;
+    if (used_movement_verb(EAST)) return R_BRINK_3;
+    if (keywordv(JUMP)) return plunge();
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_brink_2(void)
+{
+    if (used_movement_verb(NORTH)) return R_BRINK_1;
+    if (used_movement_verb(SE)) return R_ICE;
+    if (keywordv(JUMP)) return plunge();
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_ice(void)
+{
+    if (used_movement_verb(NW)) return R_BRINK_2;
+    if (used_movement_verb2(DOWN, EAST)) return oof(R_SLIDE);
+    if (used_movement_placeword(R_SLIDE)) return oof(R_SLIDE);
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_slide(void)
+{
+    if (used_movement_verb3(UP, NORTH, CLIMB)) {
+	puts("The icy slide is far too steep and slippery to climb.");
+	return R_SLIDE;
+    }
+    if (used_movement_verb(SOUTH)) return R_ICECAVE2A;
+    if (used_movement_verb(NW)) return R_ICECAVE4;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave1(void)
+{
+    if (used_movement_verb(WEST)) return R_ICECAVE2;
+    if (used_movement_verb(NORTH)) return R_ICECAVE1A;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave1a(void)
+{
+    if (used_movement_verb(SOUTH)) return R_ICECAVE1;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave2(void)
+{
+    if (used_movement_verb(EAST)) return R_ICECAVE1;
+    if (used_movement_verb(WEST)) return R_ICECAVE3;
+    if (used_movement_verb(NORTH)) return R_ICECAVE2A;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave2a(void)
+{
+    if (used_movement_verb(NORTH)) return R_SLIDE;
+    if (used_movement_verb(SOUTH)) return R_ICECAVE2;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave3(void)
+{
+    if (used_movement_verb(EAST)) return R_ICECAVE2;
+    if (used_movement_verb(NORTH)) return R_ICECAVE3A;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave3a(void)
+{
+    if (used_movement_verb(SOUTH)) return R_ICECAVE3;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave4(void)
+{
+    if (used_movement_verb(EAST)) return R_SLIDE;
+    if (used_movement_verb(WEST)) return R_ICECAVE5;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave5(void)
+{
+    if (used_movement_verb(NE)) return R_ICECAVE4;
+    if (used_movement_verb(SOUTH)) return R_ICECAVE6;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave6(void)
+{
+    if (used_movement_verb(NORTH)) return R_ICECAVE5;
+    if (used_movement_verb(SOUTH)) return R_ICECAVE7;
+    if (used_movement_verb(WEST)) return R_ICECAVE9;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave7(void)
+{
+    if (used_movement_verb(NORTH)) return R_ICECAVE6;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave8(void)
+{
+    if (used_movement_verb(NORTH)) return R_ICECAVE9;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave9(void)
+{
+    if (used_movement_verb(EAST)) return R_ICECAVE6;
+    if (used_movement_verb(SOUTH)) return R_ICECAVE8;
+    if (used_movement_verb(NORTH)) return R_ICECAVE10;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave10(void)
+{
+    if (used_movement_verb(SOUTH)) return R_ICECAVE9;
+    if (used_movement_verb(NW)) return R_ICECAVE11;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave11(void)
+{
+    if (used_movement_verb(EAST)) return R_ICECAVE10;
+    if (used_movement_verb(WEST)) return R_ICECAVE12;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave12(void)
+{
+    if (used_movement_verb(NE)) return R_ICECAVE11;
+    if (used_movement_verb(SOUTH)) return R_ICECAVE12A;
+    if (used_movement_verb(WEST)) return R_ICECAVE15;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave12a(void)
+{
+    if (used_movement_verb(NORTH)) return R_ICECAVE12;
+    if (used_movement_verb(SOUTH)) return R_ICECAVE13;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave13(void)
+{
+    if (used_movement_verb(NORTH)) return R_ICECAVE12A;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave14(void)
+{
+    if (used_movement_verb(NORTH)) return R_ICECAVE15A;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave15(void)
+{
+    if (used_movement_verb(EAST)) return R_ICECAVE12;
+    if (used_movement_verb(SOUTH)) return R_ICECAVE15A;
+    if (used_movement_verb(NW)) return R_ICECAVE16;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave15a(void)
+{
+    if (used_movement_verb(SOUTH)) return R_ICECAVE14;
+    if (used_movement_verb(NORTH)) return R_ICECAVE15;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave16(void)
+{
+    if (used_movement_verb(EAST)) return R_ICECAVE15;
+    if (used_movement_verb(WEST)) return R_ICECAVE17;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave17(void)
+{
+    if (used_movement_verb(NE)) return R_ICECAVE16;
+    if (used_movement_verb(SOUTH)) return R_ICECAVE18;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave18(void)
+{
+    if (used_movement_verb(NORTH)) return R_ICECAVE17;
+    if (used_movement_verb(SOUTH)) return R_ICECAVE19;
+    if (used_movement_verb(WEST)) return R_ICECAVE21;
+    if (used_movement_verb(NW)) return R_ICECAVE22;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave19(void)
+{
+    if (used_movement_verb(NORTH)) return R_ICECAVE18;
+    if (used_movement_verb(WEST)) return R_ICECAVE20;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave20(void)
+{
+    if (used_movement_verb(EAST)) return R_ICECAVE19;
+    if (used_movement_verb(NORTH)) return R_ICECAVE21;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave21(void)
+{
+    if (used_movement_verb(EAST)) return R_ICECAVE18;
+    if (used_movement_verb(SOUTH)) return R_ICECAVE20;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave22(void)
+{
+    if (used_movement_verb(SE)) return R_ICECAVE18;
+    if (used_movement_verb(NW)) return R_ICECAVE23;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave23(void)
+{
+    if (used_movement_verb(EAST)) return R_ICECAVE22;
+    if (used_movement_verb(WEST)) return R_ICECAVE24;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave24(void)
+{
+    if (used_movement_verb(NE)) return R_ICECAVE23;
+    if (used_movement_verb(SOUTH)) return R_ICECAVE25;
+    if (used_movement_verb(WEST)) return R_ICECAVE29;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave25(void)
+{
+    if (used_movement_verb(NORTH)) return R_ICECAVE24;
+    if (used_movement_verb(SOUTH)) return R_ICECAVE26;
+    if (used_movement_verb(WEST)) return R_ICECAVE28;
+    if (used_movement_verb(NW)) return R_ICECAVE28A;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave26(void)
+{
+    if (used_movement_verb(NORTH)) return R_ICECAVE25;
+    if (used_movement_verb(NW)) return R_ICECAVE27;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave27(void)
+{
+    if (used_movement_verb(SE)) return R_ICECAVE26;
+    if (used_movement_verb(NORTH)) return R_ICECAVE28;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave28(void)
+{
+    if (used_movement_verb(EAST)) return R_ICECAVE25;
+    if (used_movement_verb(SOUTH)) return R_ICECAVE27;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave28a(void)
+{
+    if (used_movement_verb(SE)) return R_ICECAVE25;
+    if (used_movement_verb(NORTH)) return R_ICECAVE29;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave29(void)
+{
+    if (used_movement_verb(EAST)) return R_ICECAVE24;
+    if (used_movement_verb(SOUTH)) return R_ICECAVE28A;
+    if (used_movement_verb(NW)) return R_ICECAVE30;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_icecave30(void)
+{
+    if (used_movement_verb(EAST)) return R_ICECAVE29;
+    if (used_movement_verb(THURB)) {
+	say_foof();
+	return R_ICE;
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_brink_3(void)
+{
+    if (used_movement_verb(NORTH)) return R_BRINK_1;
+    if (used_movement_verb(NE)) return R_CRACK_1;
+    if (used_movement_verb(CRACK)) return R_CRACK_1;
+    if (keywordv(JUMP)) return plunge();
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_crack_1(void)
+{
+    if (used_movement_verb(SW)) return R_BRINK_3;
+    if (used_movement_verb(SE)) return R_CRACK_2;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_crack_2(void)
+{
+    if (used_movement_verb(WEST)) return R_CRACK_1;
+    if (keywordv(SOUTH)) {
+	if (there(SLIME, R_CRACK_2)) {
+	    puts("As you enter into the passage, you are forced to brush up against\n"
+		 "some of the green slime.  Instantly it flows down and covers your\n"
+		 "body, and rapidly digests away all of your flesh.");
+	    return you_are_dead_at(R_CRACK_2);
+	} else {
+	    return R_CRACK_3;
+	}
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_crack_3(void)
+{
+    if (used_movement_verb(NORTH)) return R_CRACK_2;
+    if (used_movement_verb2(SOUTH, CRAWL)) return R_CRACK_4;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_crack_4(void)
+{
+    if (used_movement_verb3(NORTH, OUT, CRAWL)) return R_CRACK_3;
+    return 0;  /* command hasn't been processed yet */
+}
+
+static int quicksand(Location dest)
+{
+    if (!objs[QUICKSAND].prop || toting(CLAM) || toting(OYSTER)) {
+	objs[QUICKSAND].prop = 0;
+	if (have_drowned_in_quicksand) {
+	    puts("You know, I've heard of people who really fell in for the soft sell,\n"
+		 "but\n"
+		 "     >glub<\n"
+		 "            this\n"
+		 "                  >glub<\n"
+		 "                          is\n"
+		 "                              >glub<\n"
+		 "                                       ridiculous!\n\n"
+		 "                                                          >blop!<");
+	} else {
+	    have_drowned_in_quicksand = true;
+	    puts("Hmmmm..  This sand is rather soft, and you're sinking in a little...\n"
+		 "In fact you're sinking in a lot!   Oh, no - it's QUICKSAND!!  HELP!!\n"
+		 "HELP!! HELP!!!\n"
+		 "               >glub<\n"
+		 "                        >glub<\n"
+		 "                                   >glub<\n"
+		 "                                                 >blurp<");
+	}
+	return you_are_dead_at(R_YLEM);
+    } else {
+	objs[QUICKSAND].prop = 0;  /* it's only good for one crossing */
+	return dest;
+    }
+}
+
+int at_arch_cor_1(void)
+{
+    if (used_movement_verb(WEST)) return R_ARCHED;
+    if (keywordv(EAST)) return quicksand(R_ARCH_COR_2);
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_arch_cor_2(void)
+{
+    if (used_movement_verb(NORTH)) return R_ARCH_FORK;
+    if (keywordv(WEST)) return quicksand(R_ARCH_COR_1);
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_arch_fork(void)
+{
+    if (used_movement_verb(SOUTH)) return R_ARCH_COR_2;
+    if (used_movement_verb(NORTH)) return R_FOURIER;
+    if (used_movement_verb(EAST)) return R_JONAH;
+    if (used_movement_placeword(R_JONAH)) return R_JONAH;
+    if (used_movement_placeword(R_FOURIER)) return R_FOURIER;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_fourier(void)
+{
+    if (used_movement_verb(NW)) return R_ARCH_FORK;
+    if (used_movement_verb(SW)) return R_SHELF;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_shelf(void)
+{
+    if (used_movement_verb(WEST)) return R_FOURIER;
+    if (used_movement_verb(DOWN)) return R_BEACH;
+    if (used_movement_obj(STEPS)) return R_BEACH;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_beach(void)
+{
+    if (used_movement_verb2(UP, WEST) || keywordp(R_SHELF) || keywordo(STEPS)) {
+	objs[DINGHY].prop = 1;
+	return R_SHELF;
+    }
+    if (keywordo(WATER) || keywordv(FILL) || keywordv(DRINK)) {
+	puts("I'm afraid that all that's available here is salt water, which\n"
+	     "isn't good for anything much... you'de better try elsewhere.");
+	return R_BEACH;
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_jonah(void)
+{
+    if (used_movement_verb(SOUTH)) return R_IN_JONAH;
+    if (used_movement_verb(WEST)) return R_ARCH_FORK;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_in_jonah(void)
+{
+    if (used_movement_verb2(NORTH, OUT)) return R_JONAH;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_faces(void)
+{
+    if (used_movement_verb(NORTH)) return R_BY_FIGURE;
+    if (keywordv(CROSS) || keywordv(SOUTH) || keywordo(GEYSER)) {
+	if (!objs[GEYSER].prop) {
+	    puts("I'm afraid I can't go that way - walking on red-hot lava is contrary\n"
+		 "to union regulations (and is bad for your health anyhow).");
+	} else if (!toting(RING)) {
+	    puts("As you approach the center of the archway, hot vapors saturated with\n"
+		 "brimstone drift up from the lava in the gorge beneath your feet.  You\n"
+		 "are swiftly overcome by the foul gasses and, with your lungs burned\n"
+		 "out, fall off of the bridge and into the gorge.");
+	    return you_are_dead_at(R_YLEM);
+	} else if (toting(SCEPTRE)) {
+	    puts("As you reach the center of the bridge, a ghostly figure appears in\n"
+		 "front of you.  He (?) stands at least eight feet tall, and has the\n"
+		 "lower body of an enormous snake, six arms, and an angry expression on\n"
+		 "his face.  \"You'll not have my sceptre that easily!\" he cries, and\n"
+		 "makes a complex magical gesture with his lower right arm.  There is a\n"
+		 "brilliant flash of light and a vicious >crack<, and the bridge cracks\n"
+		 "and plummets into the gorge.");
+	    objs[GEYSER].prop = 0;
+	    return you_are_dead_at(R_YLEM);
+	} else {
+	    return R_VIEW;
+	}
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_by_figure(void)
+{
+    if (objs[STATUE].prop) {
+	/* The statue has moved, revealing dark passages. */
+       if (used_movement_verb(NW)) return R_PLAIN_1;
+       if (used_movement_verb(NORTH)) return R_BASQUE_1;
+       if (used_movement_verb(NE)) return R_BANSHEE;
+    }
+    if (used_movement_verb(SOUTH)) return R_FACES;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_plain_1(void)
+{
+    if (used_movement_verb(SOUTH)) return R_BY_FIGURE;
+    if (keywordv(NORTH)) {
+	objs[FOG].prop = 0;
+	apport(FOG, R_PLAIN_2);
+	return R_PLAIN_2;
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_plain_2(void)
+{
+    if (keywordv(NORTH) || keywordv(EAST) || keywordv(SOUTH) || keywordv(WEST) ||
+	keywordv(NE) || keywordv(NW) || keywordv(SE) || keywordv(SW)) {
+	/* If this turkey left anything here in the fog,
+	 * he's going to lose it forever. */
+	for (int i=0; i <= MAX_OBJ; ++i) {
+	    if (there(i, R_PLAIN_2) && portable(i)) {
+		apport(i, R_YLEM);
+	    }
+	}
+	if (there(GLOW, R_PLAIN_2)) {
+	    const int correct = objs[GLOW].prop + EAST;
+	    const int m1 = word1.meaning;
+	    const int m2 = word2.meaning;
+	    if ((m1 == correct || m2 == correct)) {
+		objs[FOG].prop = 8;
+		return R_PLAIN_3;
+	    }
+	}
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_plain_3(void)
+{
+    if (keywordv(DOWN)) {
+	apport(FOG, R_PLAIN_1);
+	return R_NONDESCRIPT;
+    }
+    if (keywordv(NORTH) || keywordv(EAST) || keywordv(SOUTH) || keywordv(WEST) ||
+	keywordv(NE) || keywordv(NW) || keywordv(SE) || keywordv(SW)) {
+	objs[FOG].prop = 0;  /* so it starts changing again */
+	return R_PLAIN_2;
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_nondescript(void)
+{
+    if (used_movement_verb(NORTH)) return R_PENTAGRAM;
+    if (used_movement_placeword(R_PENTAGRAM)) return R_PENTAGRAM;
+    if (used_movement_verb2(UP, SOUTH)) {
+	apport(FOG, R_PLAIN_2);
+	return R_PLAIN_3;
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_pentagram(void)
+{
+    if (keywordo(FLASK) && (keywordv(DROP) || keywordv(THROW))) {
+	if (toting(FLASK) && objs[FLASK].prop == 1) {
+	    apport(FLASK, R_PENTAGRAM);
+	    puts("You have set the flask down in the center of the pentagram.");
+	    objs[FLASK].prop = 0;
+	    return R_PENTAGRAM;
+	}
+    }
+    if (used_movement_verb2(WEST, OUT)) return R_NONDESCRIPT;
+    if (used_movement_placeword(R_NONDESCRIPT)) return R_NONDESCRIPT;
+    if (used_movement_verb2(NORTH, CRACK)) return R_CHIMNEY;
+    if (used_movement_placeword(R_CHIMNEY)) return R_CHIMNEY;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_chimney(void)
+{
+    if (used_movement_verb2(UP, CLIMB)) return R_TUBE;
+    if (used_movement_placeword(R_TUBE)) return R_TUBE;
+    if (used_movement_verb(SOUTH)) return R_PENTAGRAM;
+    if (used_movement_placeword(R_PENTAGRAM)) return R_PENTAGRAM;
+    if (used_movement_verb(CRACK)) return R_PENTAGRAM;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_tube(void)
+{
+    if (used_movement_verb(DOWN)) return R_CHIMNEY;
+    if (used_movement_placeword(R_CHIMNEY)) return R_CHIMNEY;
+    if (used_movement_verb(CLIMB)) return R_CHIMNEY;
+    if (used_movement_placeword(R_TUBE)) return R_TUBE_SLIDE;
+    if (used_movement_placeword(R_SLIDE)) return R_TUBE_SLIDE;
+    if (used_movement_verb(SOUTH)) return R_TUBE_SLIDE;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_tube_slide(void)
+{
+    if (used_movement_verb2(SOUTH, DOWN)) return oof(R_PLAIN_1);
+    if (used_movement_placeword(R_SLIDE)) return oof(R_PLAIN_1);
+    if (used_movement_verb(NORTH)) return R_TUBE;
+    if (used_movement_placeword(R_CHIMNEY)) return R_CHIMNEY;
+    if (used_movement_placeword(R_TUBE)) return R_CHIMNEY;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_basque_1(void)
+{
+    if (used_movement_verb(SOUTH)) return R_BY_FIGURE;
+    if (keywordv(NORTH)) {
+	objs[BASILISK].prop += 1;
+	if (objs[BASILISK].prop == 1) {
+	    puts("The basilisk stirs restlessly and grumbles in its sleep as you pass,\n"
+		 "but it does not awaken.\n");
+	}
+        return R_BASQUE_2;
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_basque_2(void)
+{
+    if (used_movement_verb(NORTH)) return R_BASQUE_FORK;
+    if (keywordv(SOUTH)) {
+	objs[BASILISK].prop -= 1;
+	if (objs[BASILISK].prop == 0) {
+	    if (toting(PLATE)) {
+		puts("The basilisk stirs grumpily and awakens, peering sleepily about.  It\n"
+		     "sees its reflection in the metal plate that you are carrying,\n"
+		     "shudders, and turns into solid granite.");
+		objs[BASILISK].prop = 2;
+	    } else {
+		puts("The basilisk stirs grumpily and awakens, peering sleepily about.  It\n"
+		     "spies you, growls, and stares you straight in the eye.  Your body\n"
+		     "is instantly petrified.");
+		return you_are_dead_at(R_BASQUE_2);
+	    }
+	}
+	return R_BASQUE_1;
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_basque_fork(void)
+{
+    if (used_movement_verb(NORTH)) return R_PEELGRUNT;
+    if (used_movement_placeword(R_PEELGRUNT)) return R_PEELGRUNT;
+    if (used_movement_verb(SOUTH)) return R_BASQUE_2;
+    if (used_movement_verb(DOWN)) return R_ON_STEPS;
+    if (used_movement_obj(STEPS)) return R_ON_STEPS;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_peelgrunt(void)
+{
+    if (keywordv(SOUTH) || keywordv(OUT) || keywordp(R_FORK)) {
+	if (objs[SAFE].prop == 1) {
+	    puts("The safe's door is blocking the exit passage - you'll have to close\n"
+		 "the safe to get out of here.");
+	    return R_PEELGRUNT;
+	} else {
+	    return R_BASQUE_FORK;
+	}
+    }
+    if (keywordv(IN)) return enter_safe(R_PEELGRUNT);
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_on_steps(void)
+{
+    if (used_movement_verb(UP)) return R_BASQUE_FORK;
+    if (used_movement_verb(DOWN)) return R_STEPS_EXIT;
+    if (used_movement_obj(STEPS)) return R_STEPS_EXIT;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_steps_exit(void)
+{
+    if (used_movement_verb(UP)) return R_ON_STEPS;
+    if (used_movement_verb(DOWN)) return R_STORAGE;
+    if (used_movement_verb(NORTH)) return R_FAKE_Y2;
+    if (used_movement_obj(STEPS)) return R_STORAGE;
+    if (used_movement_verb(OUT)) return R_FAKE_Y2;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_storage(void)
+{
+    if (used_movement_verb(UP)) return R_STEPS_EXIT;
+    if (used_movement_obj(STEPS)) return R_STEPS_EXIT;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_fake_y2(void)
+{
+    if (used_movement_verb(SOUTH)) return R_STEPS_EXIT;
+    if (used_movement_verb(WEST)) return R_CATACOMBS1;
+    if (used_movement_verb(EAST)) return R_FAKE_JUMBLE;
+    if (keywordv(PLUGH) || keywordp(R_PLOVER)) {
+	if (nomagic) {
+	    puts("Nothing happens.");
+	} else {
+	    say_foof();
+	    return R_PLATFORM;
+	}
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_fake_jumble(void)
+{
+    if (used_movement_verb2(DOWN, WEST)) return R_FAKE_Y2;
+    if (used_movement_verb(UP)) return R_CATACOMBS1;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_audience(void)
+{
+    if (used_movement_verb(EAST)) return R_AUDIENCE_E;
+    if (used_movement_verb(WEST)) return R_CATACOMBS11;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_audience_e(void)
+{
+    if (used_movement_verb(WEST)) return R_AUDIENCE;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs1(void)
+{
+    if (used_movement_verb(SOUTH)) return R_CATACOMBS2;
+    if (used_movement_verb3(NORTH,NW,WEST)) return R_CATACOMBS1;
+    if (used_movement_verb3(SW,SE,DOWN)) return R_CATACOMBS1;
+    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS1;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs2(void)
+{
+    if (used_movement_verb(SW)) return R_CATACOMBS3;
+    if (used_movement_verb3(NORTH,NW,WEST)) return R_CATACOMBS1;
+    if (used_movement_verb3(SOUTH,SE,DOWN)) return R_CATACOMBS1;
+    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS1;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs3(void)
+{
+    if (used_movement_verb(NW)) return R_CATACOMBS4;
+    if (used_movement_verb3(NORTH,SW,WEST)) return R_CATACOMBS2;
+    if (used_movement_verb3(SOUTH,SE,DOWN)) return R_CATACOMBS2;
+    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS2;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs4(void)
+{
+    if (used_movement_verb(SOUTH)) return R_CATACOMBS5;
+    if (used_movement_verb3(NORTH,SW,WEST)) return R_CATACOMBS3;
+    if (used_movement_verb3(NW,SE,DOWN)) return R_CATACOMBS3;
+    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS3;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs5(void)
+{
+    if (used_movement_verb(DOWN)) return R_CATACOMBS6;
+    if (used_movement_verb3(NORTH,NW,WEST)) return R_CATACOMBS4;
+    if (used_movement_verb3(SW,SE,SOUTH)) return R_CATACOMBS4;
+    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS4;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs6(void)
+{
+    if (used_movement_verb(WEST)) return R_CATACOMBS7;
+    if (used_movement_verb3(NORTH,NW,DOWN)) return R_CATACOMBS5;
+    if (used_movement_verb3(SW,SE,SOUTH)) return R_CATACOMBS5;
+    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS5;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs7(void)
+{
+    if (used_movement_verb(NW)) return R_CATACOMBS8;
+    if (used_movement_verb3(NORTH,WEST,DOWN)) return R_CATACOMBS6;
+    if (used_movement_verb3(SW,SE,SOUTH)) return R_CATACOMBS6;
+    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS6;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs8(void)
+{
+    if (used_movement_verb(NORTH)) return R_CATACOMBS9;
+    if (used_movement_verb3(NW,WEST,DOWN)) return R_CATACOMBS7;
+    if (used_movement_verb3(SW,SE,SOUTH)) return R_CATACOMBS7;
+    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS7;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs9(void)
+{
+    if (used_movement_verb(SOUTH)) return R_CATACOMBS10;
+    if (used_movement_verb3(NW,WEST,DOWN)) return R_CATACOMBS8;
+    if (used_movement_verb3(SW,SE,NORTH)) return R_CATACOMBS8;
+    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS8;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs10(void)
+{
+    if (used_movement_verb(NORTH)) return R_CATACOMBS11;
+    if (used_movement_verb3(NW,WEST,DOWN)) return R_CATACOMBS9;
+    if (used_movement_verb3(SW,SE,SOUTH)) return R_CATACOMBS9;
+    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS9;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs11(void)
+{
+    if (used_movement_verb(SW)) return R_CATACOMBS12;
+    if (used_movement_verb(EAST)) return R_AUDIENCE;
+    if (used_movement_verb3(NW,WEST,DOWN)) return R_CATACOMBS10;
+    if (used_movement_verb3(NORTH,SE,SOUTH)) return R_CATACOMBS10;
+    if (used_movement_verb2(NE,UP)) return R_CATACOMBS10;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs12(void)
+{
+    if (used_movement_verb(EAST)) return R_CATACOMBS13;
+    if (used_movement_verb3(NW,WEST,DOWN)) return R_CATACOMBS11;
+    if (used_movement_verb3(NORTH,SE,SOUTH)) return R_CATACOMBS11;
+    if (used_movement_verb3(NE,UP,SW)) return R_CATACOMBS11;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs13(void)
+{
+    if (used_movement_verb(SE)) return R_CATACOMBS14;
+    if (used_movement_verb3(NW,WEST,DOWN)) return R_CATACOMBS12;
+    if (used_movement_verb3(NORTH,EAST,SOUTH)) return R_CATACOMBS12;
+    if (used_movement_verb3(NE,UP,SW)) return R_CATACOMBS12;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs14(void)
+{
+    if (used_movement_verb(NE)) return R_CATACOMBS15;
+    if (used_movement_verb3(NW,WEST,DOWN)) return R_CATACOMBS13;
+    if (used_movement_verb3(NORTH,EAST,SOUTH)) return R_CATACOMBS13;
+    if (used_movement_verb3(SE,UP,SW)) return R_CATACOMBS13;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs15(void)
+{
+    if (used_movement_verb(EAST)) return R_CATACOMBS16;
+    if (used_movement_verb3(NW,WEST,DOWN)) return R_CATACOMBS14;
+    if (used_movement_verb3(NORTH,NE,SOUTH)) return R_CATACOMBS14;
+    if (used_movement_verb3(SE,UP,SW)) return R_CATACOMBS14;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs16(void)
+{
+    if (used_movement_verb(SE)) return R_CATACOMBS17;
+    if (used_movement_verb3(NW,WEST,DOWN)) return R_CATACOMBS15;
+    if (used_movement_verb3(NORTH,NE,SOUTH)) return R_CATACOMBS15;
+    if (used_movement_verb3(EAST,UP,SW)) return R_CATACOMBS15;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs17(void)
+{
+    if (used_movement_verb(DOWN)) return R_CATACOMBS18;
+    if (used_movement_verb3(NW,WEST,SE)) return R_CATACOMBS16;
+    if (used_movement_verb3(NORTH,NE,SOUTH)) return R_CATACOMBS16;
+    if (used_movement_verb3(EAST,UP,SW)) return R_CATACOMBS16;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs18(void)
+{
+    if (used_movement_verb(SOUTH)) return R_CATACOMBS19;
+    if (used_movement_verb3(NW,WEST,SE)) return R_CATACOMBS17;
+    if (used_movement_verb3(NORTH,NE,DOWN)) return R_CATACOMBS17;
+    if (used_movement_verb3(EAST,UP,SW)) return R_CATACOMBS17;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_catacombs19(void)
+{
+    if (used_movement_verb(NORTH)) return R_FAKE_Y2;
+    if (used_movement_verb3(NW,WEST,SE)) return R_CATACOMBS18;
+    if (used_movement_verb3(SOUTH,NE,DOWN)) return R_CATACOMBS18;
+    if (used_movement_verb3(EAST,UP,SW)) return R_CATACOMBS18;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_banshee(void)
+{
+    if (used_movement_verb(NW)) return R_BY_FIGURE;
+    if (used_movement_verb(NORTH)) return R_GOLDEN;
+    if (used_movement_placeword(R_GOLDEN)) return R_GOLDEN;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_golden(void)
+{
+    if (used_movement_verb(NE)) return R_ARABESQUE;
+    if (used_movement_verb(NW)) return R_TRANSLUCENT;
+    if (used_movement_placeword(R_ARABESQUE)) return R_ARABESQUE;
+    if (used_movement_placeword(R_TRANSLUCENT)) return R_TRANSLUCENT;
+    if (used_movement_verb(SOUTH)) return R_BANSHEE;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_arabesque(void)
+{
+    if (used_movement_verb2(SOUTH, OUT)) return R_GOLDEN;
+    if (used_movement_placeword(R_GOLDEN)) return R_GOLDEN;
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_translucent(void)
+{
+    if (used_movement_verb2(EAST, OUT) || keywordp(R_GOLDEN)) {
+	if (!have_awoken_goblins) {
+	    have_awoken_goblins = true;
+	    apport(GOBLINS, R_TRANSLUCENT);
+	    objs[GOBLINS].prop = -1;
+	}
+	return R_GOLDEN;
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int at_platform(void)
+{
+    if (used_movement_verb(PLUGH) || used_movement_placeword(R_PLOVER)) {
+	say_foof();
+	return R_FAKE_Y2;
+    }
+    if (used_movement_verb3(DOWN,CLIMB,NORTH) ||
+	used_movement_verb3(SOUTH,EAST,WEST) ||
+	used_movement_verb3(NE,NW,SE) || used_movement_verb(NW) ||
+	keywordv(JUMP)) {
+	puts("EEEEEEEEEAAAAAAAAAAAaaaaaahhhhhhhhhhhhh..........\n\n"
+        "                                                      >sizzle<");
+	return you_are_dead_at(R_YLEM);
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+static bool correctly_used_magic_word(VerbWord v)
+{
+    return (keywordv(v) && (keywordv(SAY) || word2.type == WordType_None));
+}
+
+static bool try_escaping_with_word(VerbWord word, int i)
+{
+    if (correctly_used_magic_word(word)) {
+	if (cylinder_escape_count == i && word == BLERBI) {
+	    say_foof();
+	    closure = 4;  /* On to the next stage of the endgame! */
+	} else if (cylinder_escape_count == i) {
+	    puts(ok);
+	    ++cylinder_escape_count;
+	} else {
+	    puts("Nothing happens.");
+	    cylinder_escape_count = 0;
+	}
+	return true;
+    }
+    return false;
+}
+
+int at_cylindrical(void)
+{
+    if (try_escaping_with_word(ZORTON,0) ||
+	try_escaping_with_word(XYZZY,1) ||
+	try_escaping_with_word(THURB,2) ||
+	try_escaping_with_word(SNOEZE,3) ||
+	try_escaping_with_word(SAMOHT,4) ||
+	try_escaping_with_word(PLUGH,5) ||
+	try_escaping_with_word(PHUGGG,6) ||
+	try_escaping_with_word(NOSIDE,7) ||
+	try_escaping_with_word(MELENKURION,8) ||
+	try_escaping_with_word(KNERL,9) ||
+	try_escaping_with_word(KLAETU,10) ||
+	try_escaping_with_word(FOO,11) ||
+	try_escaping_with_word(FOE,12) ||
+	try_escaping_with_word(FIE,13) ||
+	try_escaping_with_word(FEE,14))
+        return R_CYLINDRICAL;
+
+    if (try_escaping_with_word(BLERBI,15)) {
+	if (closure == 4) return R_ROAD;
+	return R_CYLINDRICAL;
+    }
+    return 0;  /* command hasn't been processed yet */
+}
 
 static const char all_alike[] = "You are in a maze of twisty little passages, all alike.";
 static const char dead_end[] = "Dead end.";
+static const char ice_tunnels[] = "You are in an intricate network of ice tunnels.";
+static const char enchanted_tunnels[] = "You are in the catacombs.  Enchanted tunnels lead in all directions.";
 
 struct Place places[] = {
     /* R_LIMBO */ {
@@ -1236,7 +3382,6 @@ struct Place places[] = {
         "To explore at random select NORTH, SOUTH, UP, or DOWN.",
 	0, &at_bedquilt
     },
-#if 0
     /* R_SWISS */ {
 	"You're in Swiss cheese room.",
         "You are in a room whose walls resemble Swiss cheese. Obvious passages\n"
@@ -1260,7 +3405,7 @@ struct Place places[] = {
     },
     /* R_ABOVEP */ {
 	NULL,
-	"You are in a secret N/S canyon above a sizable passage."
+	"You are in a secret N/S canyon above a sizable passage.",
 	0, &at_abovep
     },
     /* R_SJUNC */ {
@@ -1272,7 +3417,7 @@ struct Place places[] = {
     },
     /* R_LOW */ {
 	NULL,
-	"You are in a large low room.  Crawls lead north, SE, and SW."
+	"You are in a large low room.  Crawls lead north, SE, and SW.",
 	0, &at_low
     },
     /* R_DEADEND2 */ {
@@ -1287,7 +3432,7 @@ struct Place places[] = {
     },
     /* R_NSCANYONWIDE */ {
 	NULL,
-	"You are at a wide place in a very tight N/S canyon."
+	"You are at a wide place in a very tight N/S canyon.",
 	0, &at_nscanyonwide
     },
     /* R_TIGHTERSTILL */ {
@@ -1298,7 +3443,7 @@ struct Place places[] = {
     /* R_TALLEWCNYN */ {
 	"You are in a tall E/W canyon.",
         "You are in a tall E/W canyon. A low tight crawl goes 3 feet north and\n"
-        "seems to open up."
+        "seems to open up.",
 	0, &at_tallewcnyn
     },
     /* R_DEADEND3 */ {
@@ -1403,10 +3548,10 @@ struct Place places[] = {
         "up.  A low hands and knees passage enters from the south.",
 	0, &at_shell
     },
-    /* R_RAGGEDCORRID */ {
+    /* R_RAGGED */ {
 	NULL,
 	"You are in a long sloping corridor with ragged sharp walls.",
-	0, &at_raggedcorrid
+	0, &at_ragged
     },
     /* R_CULDESAC */ {
 	NULL,
@@ -1451,7 +3596,7 @@ struct Place places[] = {
     },
     /* R_MAZED112 */ {
 	NULL,
-	"You are in a little maze of twisting passages, all different."
+	"You are in a little maze of twisting passages, all different.",
 	0, &at_mazed112
     },
     /* R_RES */ {
@@ -1661,328 +3806,553 @@ struct Place places[] = {
 	0, &at_basque_1
     },
     /* R_BASQUE_2 */ {
+	"You're in rough passage to the north of the basilisk's den.",
+	"You are in a rough passage to the north of the basilisk's den.",
+	0, &at_basque_2
     },
     /* R_BASQUE_FORK */ {
+	"You're at fork in passage by steps.",
+        "The passage here enters from the south and divides, with a wide\n"
+        "tunnel exiting to the north and a set of steps leading downward.",
+    	0, &at_basque_fork
     },
     /* R_ON_STEPS */ {
+	"You're on the steps.",
+        "You are on a long, spiral set of steps leading downwards into the\n"
+        "earth.",
+    	0, &at_on_steps
     },
     /* R_STEPS_EXIT */ {
+	"You're at exit on steps.",
+        "A small tunnel exits from the steps and leads north.  The steps\n"
+        "continue downwards.",
+    	0, &at_steps_exit
     },
     /* R_STORAGE */ {
+	"You're in the storage room.",
+        "You're in what was once a storage room.  A set of steps lead up.",
+    	0, &at_storage
     },
     /* R_FAKE_Y2 */ {
+	"You're at \"Y2\"?",
+        "You are in a large room, with a passage to the south, a passage to the\n"
+        "west, and a wall of broken rock to the east.  There is a large \"Y2\" on\n"
+        "a rock in the room's center.",
+    	0, &at_fake_y2
     },
     /* R_FAKE_JUMBLE */ {
+	NULL,
+	"You are in a jumble of rock, with cracks everywhere.",
+	0, &at_fake_jumble
     },
-    /* R_CATACOMBS1 */ {
-    },
-    /* R_CATACOMBS2 */ {
-    },
-    /* R_CATACOMBS3 */ {
-    },
-    /* R_CATACOMBS4 */ {
-    },
-    /* R_CATACOMBS5 */ {
-    },
-    /* R_CATACOMBS6 */ {
-    },
-    /* R_CATACOMBS7 */ {
-    },
-    /* R_CATACOMBS8 */ {
-    },
-    /* R_CATACOMBS9 */ {
-    },
-    /* R_CATACOMBS10 */ {
-    },
-    /* R_CATACOMBS11 */ {
-    },
-    /* R_CATACOMBS12 */ {
-    },
-    /* R_CATACOMBS13 */ {
-    },
-    /* R_CATACOMBS14 */ {
-    },
-    /* R_CATACOMBS15 */ {
-    },
-    /* R_CATACOMBS16 */ {
-    },
-    /* R_CATACOMBS17 */ {
-    },
-    /* R_CATACOMBS18 */ {
-    },
-    /* R_CATACOMBS19 */ {
-    },
+    /* R_CATACOMBS1 */ { NULL, enchanted_tunnels, 0, &at_catacombs1 },
+    /* R_CATACOMBS2 */ { NULL, enchanted_tunnels, 0, &at_catacombs2 },
+    /* R_CATACOMBS3 */ { NULL, enchanted_tunnels, 0, &at_catacombs3 },
+    /* R_CATACOMBS4 */ { NULL, enchanted_tunnels, 0, &at_catacombs4 },
+    /* R_CATACOMBS5 */ { NULL, enchanted_tunnels, 0, &at_catacombs5 },
+    /* R_CATACOMBS6 */ { NULL, enchanted_tunnels, 0, &at_catacombs6 },
+    /* R_CATACOMBS7 */ { NULL, enchanted_tunnels, 0, &at_catacombs7 },
+    /* R_CATACOMBS8 */ { NULL, enchanted_tunnels, 0, &at_catacombs8 },
+    /* R_CATACOMBS9 */ { NULL, enchanted_tunnels, 0, &at_catacombs9 },
+    /* R_CATACOMBS10 */ { NULL, enchanted_tunnels, 0, &at_catacombs10 },
+    /* R_CATACOMBS11 */ { NULL, enchanted_tunnels, 0, &at_catacombs11 },
+    /* R_CATACOMBS12 */ { NULL, enchanted_tunnels, 0, &at_catacombs12 },
+    /* R_CATACOMBS13 */ { NULL, enchanted_tunnels, 0, &at_catacombs13 },
+    /* R_CATACOMBS14 */ { NULL, enchanted_tunnels, 0, &at_catacombs14 },
+    /* R_CATACOMBS15 */ { NULL, enchanted_tunnels, 0, &at_catacombs15 },
+    /* R_CATACOMBS16 */ { NULL, enchanted_tunnels, 0, &at_catacombs16 },
+    /* R_CATACOMBS17 */ { NULL, enchanted_tunnels, 0, &at_catacombs17 },
+    /* R_CATACOMBS18 */ { NULL, enchanted_tunnels, 0, &at_catacombs18 },
+    /* R_CATACOMBS19 */ { NULL, enchanted_tunnels, 0, &at_catacombs19 },
     /* R_AUDIENCE */ {
+	"You're at west end of Audience Hall.",
+        "You are standing at the west end of the royal Audience Hall.\n"
+        "The walls here are composed of the finest marble, and the floor is\n"
+        "built of slabs of rare onyx and bloodstone.  The ceiling is high and\n"
+        "vaulted, and is supported by pillars of rare Egyptian red granite;\n"
+        "it gives off a nacreous glow that fills the entire chamber with\n"
+        "a light like moon-light shining off of polished silver.",
+    	0, &at_audience
     },
     /* R_AUDIENCE_E */ {
+	"You're at east end of Audience Hall.",
+        "You are at the eastern end of the Audience Hall.  There is a large\n"
+        "dais rising out of the floor here;  resting upon the dais is a strange-\n"
+        "looking throne made out of interlocking bars and rods of metal.",
+    	0, &at_audience_e
     },
     /* R_BANSHEE */ {
+	"You're in winding passage.",
+        "You are in a winding passage which enters from the northwest,\n"
+        "loops around several times, and exits to the north.",
+    	0, &at_banshee
     },
     /* R_GOLDEN */ {
+	"You're in golden chamber.",
+        "You are in a chamber with golden walls and a high ceiling.  Passages\n"
+        "lead south, northeast, and northwest.",
+    	0, &at_golden
     },
     /* R_ARABESQUE */ {
+	"You're in Arabesque room.",
+        "You are in a small room whose walls are covered with an elaborate\n"
+        "pattern of arabesque figures and designs.",
+    	0, &at_arabesque
     },
     /* R_TRANSLUCENT */ {
+	"You're in room with translucent walls.",
+        "You are in a large room whose walls are composed of some translucent\n"
+        "whitish mineral.  The room is illuminated by a flickering reddish\n"
+        "glow shining through the southern wall.  A passage leads east.",
+    	0, &at_translucent
     },
     /* R_CHAMBER */ {
+	"You're in chamber of boulders.",
+        "You are in a small chamber filled with large boulders. The walls are\n"
+        "very warm, causing the air in the room to be almost stifling from the\n"
+        "heat.  The only exit is a crawl heading west, through which is coming\n"
+        "a low rumbling.",
+    	0, &at_chamber
     },
     /* R_LIME */ {
+	"You're in limestone passage.",
+        "You are walking along a gently sloping north/south passage lined with\n"
+        "oddly shaped limestone formations.",
+    	0, &at_lime
     },
     /* R_FBARR */ {
+	"You are at entrance of the barren room.",
+        "You are standing at the entrance to a large, barren room. A sign\n"
+        "posted above the entrance reads:  \"Caution!  Bear in room!\"",
+    	0, &at_fbarr
     },
     /* R_BARR */ {
+	"You are in the barren room.",
+        "You are inside a barren room. The center of the room is completely\n"
+        "empty except for some dust.  Marks in the dust lead away toward the\n"
+        "far end of the room.  The only exit is the way you came in.",
+	0, &at_barr
     },
     /* R_MAZED131 */ {
+	NULL,
+	"You are in a maze of twisting little passages, all different.",
+	0, &at_mazed131
     },
     /* R_MAZED132 */ {
+        NULL,
+        "You are in a little maze of twisty passages, all different.",
+	0, &at_mazed132
     },
     /* R_MAZED133 */ {
+        NULL,
+        "You are in a twisting maze of little passages, all different.",
+	0, &at_mazed133
     },
     /* R_MAZED134 */ {
+        NULL,
+        "You are in a twisting little maze of passages, all different.",
+	0, &at_mazed134
     },
     /* R_MAZED135 */ {
+        NULL,
+        "You are in a twisty little maze of passages, all different.",
+	0, &at_mazed135
     },
     /* R_MAZED136 */ {
+        NULL,
+        "You are in a twisty maze of little passages, all different.",
+	0, &at_mazed136
     },
     /* R_MAZED137 */ {
+        NULL,
+        "You are in a little twisty maze of passages, all different.",
+	0, &at_mazed137
     },
     /* R_MAZED138 */ {
+        NULL,
+        "You are in a maze of little twisting passages, all different.",
+	0, &at_mazed138
     },
     /* R_MAZED139 */ {
+        NULL,
+        "You are in a maze of little twisty passages, all different.",
+	0, &at_mazed139
     },
     /* R_PONY */ {
+	NULL,
+	"Dead end.",
+	0, &at_pony
     },
     /* R_SANDSTONE */ {
+        "You're in sandstone chamber.",
+        "You are in a small chamber to the east of the Hall of Mists.  The\n"
+        "walls are composed of rough red sandstone.  There is a large, cubical\n"
+        "chunk of rock in the center of the room.",
+	0, &at_sandstone
     },
     /* R_MORION */ {
+        "You're in the Morion room.",
+        "You are in a small room.  The walls are composed of a dark, almost\n"
+        "black form of smoky quartz; they glisten like teeth in the lamp-light.\n"
+        "The only exit is the passage to the south through which you entered.",
+	0, &at_morion
     },
     /* R_VAULT */ {
+        "You're in room with vaulted ceiling.",
+        "You are in a room with a high, vaulted ceiling.  A tunnel leads\n"
+        "upwards and to the north.",
+	0, &at_vault
     },
     /* R_PEELGRUNT */ {
+        "You're in Peelgrunt room.",
+        "You are in the Peelgrunt room.",
+	0, &at_peelgrunt
     },
     /* R_INSAFE */ {
+        "You are in the safe.",
+        "You are inside the safe.",
+	0, &at_insafe
     },
     /* R_CORRID_1 */ {
+	NULL,
+	"You are standing in a wide, north-and-south corridor.",
+	0, &at_corrid_1
     },
     /* R_CORRID_2 */ {
+        "You're at bend in wide corridor.",
+        "You are standing at a bend in a wide corridor which runs to the east\n"
+        "and west.  To the east, the corridor turns left and continues north;\n"
+        "to the west, it turns left and continues south.",
+	0, &at_corrid_2
     },
     /* R_TOOL */ {
+        "You're in Tool room.",
+        "You are in a small, low-ceilinged room with the words \"Witt Company\n"
+        "Tool Room - Melenkurion division\" carved into one of the walls.  A\n"
+        "wide corridor runs south from here.",
+	0, &at_tool
     },
     /* R_CORRID_3 */ {
+        "You're at division in passage.",
+        "You are at a division in a narrow passage.  Two spurs run east and\n"
+        "north;  the main passage exits to the south.",
+	0, &at_corrid_3
     },
     /* R_CUBICLE */ {
+        "You're in dank cubicle.",
+        "You are in a small, dank cubicle of rock.  A small passage leads back\n"
+        "out to the south;  there is no other obvious exit.",
+	0, &at_cubicle
     },
     /* R_SPHERICAL */ {
+        "You're in spherical room.",
+        "You're in a large, completely spherical room with polished walls.  A\n"
+        "narrow passage leads out to the north.",
+	0, &at_spherical
     },
     /* R_TUNNEL_1 */ {
+        "You're in low tunnel with irregular ceiling.",
+        "You are in a low tunnel with an irregular ceiling.  To the north, the\n"
+        "tunnel is partially blocked by a recent cave-in, but you can probably\n"
+        "get past the blockage without too much trouble.",
+	0, &at_tunnel_1
     },
     /* R_GLASSY */ {
+        "You're in large room with glassy walls.",
+        "You're standing in a very large room (which however is smaller than the\n"
+        "Giant room) which has smooth, glassy-looking walls.  A passage enters\n"
+        "from the south and exits to the north.",
+	0, &at_glassy
     },
     /* R_LAIR */ {
+        "You're in the Sorcerer's Lair.",
+        "This is the Sorcerer's Lair.  The walls are covered with exotic runes\n"
+        "written in strange, indecipherable scripts;  the only readable phrase\n"
+        "reads \"noside samoht\".  Strange shadows flit about on the walls, but\n"
+        "there is nothing visible to cast them.  Iridescent blue light drips\n"
+        "from a stalactite far above, falls towards the floor, and evaporates\n"
+        "before touching the ground.  A deep, resonant chanting sound vibrates\n"
+        "from deep in the ground beneath your feet, and a whispering sound\n"
+        "composed of the echoes of long-forgotten spells and cantrips seeps\n"
+        "from the walls and fills the air.  Passages exit to the east and west.",
+	0, &at_lair
     },
     /* R_BRINK_1 */ {
+        "You're at brink of bottomless pit.",
+        "You are standing on the brink of what appears to be a bottomless pit\n"
+        "plunging down into the bowels of the earth.  Ledges run around the\n"
+        "pit to the east and west, and a passage leads back to the north.",
+	0, &at_brink_1
     },
     /* R_BRINK_2 */ {
+        "You're on southern edge of bottomless pit.",
+        "You are standing at the south end of a ledge running around the west\n"
+        "side of a bottomless pit.  The ledge once continued around to the east\n"
+        "side of the pit, but was apparently obliterated by a rock-slide\n"
+        "years ago.  A cold wind blows out of a tunnel leading to the southeast.",
+	0, &at_brink_2
     },
     /* R_ICE */ {
+        "You're in Ice room.",
+        "You are in the Ice room.  The walls and ceiling here are composed of\n"
+        "clear blue glacial ice;  the floor is fortunately made of rock and\n"
+        "is easy to walk upon.  There is a passage leading to the northwest,\n"
+        "and a slide of polished ice leading downwards to the east - if you\n"
+        "were to slide down it you probably couldn't get back up.",
+	0, &at_ice
     },
     /* R_SLIDE */ {
+        "You're at bottom of icy slide.",
+        "You're at the entrance to an extensive and intricate network of tunnels\n"
+        "carved out of solid ice.  A slippery slope leads upwards and north, but\n"
+        "you cannot possibly climb up it.",
+	0, &at_slide
     },
-    /* R_ICECAVE1 */ {
-    },
-    /* R_ICECAVE1A */ {
-    },
-    /* R_ICECAVE2 */ {
-    },
-    /* R_ICECAVE2A */ {
-    },
-    /* R_ICECAVE3 */ {
-    },
-    /* R_ICECAVE3A */ {
-    },
-    /* R_ICECAVE4 */ {
-    },
-    /* R_ICECAVE5 */ {
-    },
-    /* R_ICECAVE6 */ {
-    },
-    /* R_ICECAVE7 */ {
-    },
-    /* R_ICECAVE8 */ {
-    },
-    /* R_ICECAVE9 */ {
-    },
-    /* R_ICECAVE10 */ {
-    },
-    /* R_ICECAVE11 */ {
-    },
-    /* R_ICECAVE12 */ {
-    },
-    /* R_ICECAVE12A */ {
-    },
-    /* R_ICECAVE13 */ {
-    },
-    /* R_ICECAVE14 */ {
-    },
-    /* R_ICECAVE15 */ {
-    },
-    /* R_ICECAVE15A */ {
-    },
-    /* R_ICECAVE16 */ {
-    },
-    /* R_ICECAVE17 */ {
-    },
-    /* R_ICECAVE18 */ {
-    },
-    /* R_ICECAVE19 */ {
-    },
-    /* R_ICECAVE20 */ {
-    },
-    /* R_ICECAVE21 */ {
-    },
-    /* R_ICECAVE22 */ {
-    },
-    /* R_ICECAVE23 */ {
-    },
-    /* R_ICECAVE24 */ {
-    },
-    /* R_ICECAVE25 */ {
-    },
-    /* R_ICECAVE26 */ {
-    },
-    /* R_ICECAVE27 */ {
-    },
-    /* R_ICECAVE28 */ {
-    },
-    /* R_ICECAVE28A */ {
-    },
-    /* R_ICECAVE29 */ {
-    },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave1 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave1a },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave2 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave2a },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave3 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave3a },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave4 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave5 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave6 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave7 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave8 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave9 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave10 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave11 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave12 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave12a },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave13 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave14 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave15 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave15a },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave16 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave17 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave18 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave19 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave20 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave21 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave22 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave23 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave24 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave25 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave26 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave27 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave28 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave28a },
+    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave29 },
     /* R_ICECAVE30 */ {
-    },
+	"You're in small, icy chamber.",
+	"You are in a small chamber melted out of the ice.  Glowing letters\n"
+        "in midair spell out the words \"This way out\".",
+	0, &at_icecave30
+	},
     /* R_BRINK_3 */ {
+        "You're on eastern side of bottomless pit.",
+        "You are standing on the eastern side of a bottomless pit.  A narrow\n"
+        "ledge runs north towards a dimly-visible passage;  the ledge once\n"
+        "continued south of this point but has been shattered by falling rock.\n"
+        "A narrow crack in the rock leads northeast.",
+        0, &at_brink_3
     },
     /* R_CRACK_1 */ {
+        "You're in narrow, twisting crack.",
+        "You are following a narrow crack in the rock which enters from the\n"
+        "southwest, turns and twists somewhat, and exits to the southeast.",
+        0, &at_crack_1
     },
     /* R_CRACK_2 */ {
+        "You're at north end of tight passage.",
+        "You are standing at the northern end of a rather tight passage.  A\n"
+        "narrow crack in the rock leads west.",
+        0, &at_crack_2
     },
     /* R_CRACK_3 */ {
+        "You're at south end of tight passage.",
+        "You are at the southern end of a tight passage.  A hands-and-knees\n"
+        "crawl continues to the south.",
+        0, &at_crack_3
     },
     /* R_CRACK_4 */ {
+        "You're in very small chamber.",
+        "You are in a very small chamber.  A narrow crawl leads north.",
+        0, &at_crack_4
     },
     /* R_ARCH_COR_1 */ {
+        "You're in coral passage.",
+        "You are in an arched coral passage which enters from the west, splits,\n"
+        "and continues on to the east over a smooth and damp-looking patch of\n"
+        "sand.  The fork in the passage once led to the south, but it is now\n"
+        "completely blocked by debris.",
+        0, &at_arch_cor_1
     },
     /* R_ARCH_COR_2 */ {
+        "You're at bend in arched coral corridor.",
+        "You are at a bend in an arched corral passage;  the passage enters\n"
+        "from the west over a patch of damp sand, turns, and continues north.",
+        0, &at_arch_cor_2
     },
     /* R_ARCH_FORK */ {
+        "You're at fork in arched corral passage.",
+        "You are at a fork in a high, arched coral passage.  The main portion\n"
+        "of the passage enters from the south;  two smaller passages lead\n"
+        "east and north.  The smell of salt water is very strong here.",
+        0, &at_arch_fork
     },
     /* R_JONAH */ {
+        "You're at entrance to the Jonah room.",
+        "You are standing at the entrance of the Jonah room, a cavernous\n"
+        "hall with high ribbed walls.  The hall extends far to the south;\n"
+        "a coral passage leads west.",
+        0, &at_jonah
     },
     /* R_IN_JONAH */ {
+        "You're at south end of the Jonah room.",
+        "You are at the south end of the Jonah room.  Ahead of you, the way\n"
+        "is barred by a large set of immense stalactites and stalagmites\n"
+        "which intermesh like clenched teeth.  Nothing except blackness is\n"
+        "visible between the stone formations.",
+        0, &at_in_jonah
     },
     /* R_FOURIER */ {
+        "You're in the Fourier passage.",
+        "You are in the Fourier passage.  This is a long and highly convoluted\n"
+        "passage composed of coral, which twists and turns like the path of\n"
+        "an earthworm tripping on LSD.  The passage here enters from the\n"
+        "northwest, convulses, and exits to the southwest (from which\n"
+        "direction can be felt a cool and salty-smelling breeze).",
+        0, &at_fourier
     },
     /* R_SHELF */ {
+        "You're on shelf of rock above beach.",
+	/* Platt has "sedementary"; I've fixed the spelling. */
+        "You are standing on a large shelf of sedimentary rock overlooking\n"
+        "a lava beach.  The shelf is an extension of an incredible cliff\n"
+        "which extends north, south, and upwards for as far as the eye can\n"
+        "see.  Crudely carved steps lead down from the shelf to the beach, and\n"
+        "a twisting coral passage exits to the west.",
+        0, &at_shelf
     },
     /* R_BEACH */ {
+        "You're on beach.",
+        "You are standing on a short, barren beach composed of hardened lava.\n"
+        "Rugged and unclimbable volcanic hills block all view to the north\n"
+        "and south, and a seemingly infinite cliff fills the entire western\n"
+        "hemisphere.  To the east, a narrow inlet of ocean water laps gently\n"
+        "upon the beach.  The scene is illuminated by the light of three small\n"
+        "moons shining through the shimmering glow of an aurora that fills\n"
+        "the entire sky with golden splendor.  Steps lead up the cliff to a\n"
+        "shelf of rock.",
+        0, &at_beach
     },
     /* R_PLATFORM */ {
+        "You're on tiny platform above volcano.",
+        "You are precariously perched on a tiny platform suspended in midair.\n"
+        "Two thousand feet below you is the mouth of a very active volcano,\n"
+        "spewing out a river of hot lava.",
+        0, &at_platform
     },
-#endif
+    /* R_LIMBO and R_YLEM don't need descriptions or exits. */
 };
 
 
 struct ObjectData objs[] = {
 #define XX {0,0,0,0}
-    { XX, 0, NULL /* NOTHING */, 0, R_LIMBO },
-    { XX, 0, NULL /* GRATE */, F_SCHIZOID, R_DEPRESSION },
-    { XX, 0, NULL /* STEPS */, F_INVISIBLE|F_SCHIZOID, R_SPIT },
-    { XX, 0, NULL /* DOOR */, 0, R_IMMENSENSPASS },
-    { XX, 0, NULL /* SNAKE */, 0, R_HMK },
-    { XX, 0, NULL /* FISSURE */, F_INVISIBLE, R_EFISS },
-    { XX, 0, NULL /* TABLET */, 0, R_DARK },
-    { XX, 0, NULL /* MIRROR */, F_INVISIBLE, R_MIRROR },
-    { XX, 0, NULL /* PLANT */, 0, R_WPIT },
-    { XX, 0, NULL /* PLANT2 */, F_INVISIBLE|F_SCHIZOID, R_W2PIT },
-    { XX, 0, NULL /* STALACTITE */, F_INVISIBLE, R_STALACT },
-    { XX, 0, NULL /* FOG */, F_INVISIBLE|F_SCHIZOID, R_PLAIN_2 },
-    { XX, 0, NULL /* GLOW */, 0, R_LIMBO },
-    { XX, 0, NULL /* SHADOW */, F_SCHIZOID, R_WINDOE },
-    { XX, 0, NULL /* BLOB */, 0, R_LIMBO },
-    { XX, 0, NULL /* DRAWINGS */, F_INVISIBLE, R_ORIENTAL },
-    { XX, 0, NULL /* PIRATE */, F_INVISIBLE, R_LIMBO },
-    { XX, 0, NULL /* DRAGON */, F_SCHIZOID, R_SECRETCYNNE1 },
-    { XX, 0, NULL /* CHASM */, F_SCHIZOID, R_SWOFCHASM },
-    { XX, 0, NULL /* TROLL */, F_SCHIZOID, R_SWOFCHASM },
-    { XX, 0, NULL /* TROLL2 */, F_SCHIZOID, R_LIMBO },
-    { XX, 0, NULL /* OGRE */, 0, R_GLASSY },
-    { XX, 0, NULL /* BASILISK */, F_SCHIZOID, R_BASQUE_1 },
-    { XX, 0, NULL /* GONG */, 0, R_RESERVOIR_N },
-    { XX, 0, NULL /* DJINN */, 0, R_LIMBO },
-    { XX, 0, NULL /* TURTLE */, 0, R_LIMBO },
-    { XX, 0, NULL /* MESSAGE */, 0, R_LIMBO },
-    { XX, 0, NULL /* GEYSER */, F_INVISIBLE|F_SCHIZOID, R_VIEW },
-    { XX, 0, NULL /* STATUE */, F_INVISIBLE, R_BY_FIGURE },
-    { XX, 0, NULL /* QUICKSAND */, F_INVISIBLE|F_SCHIZOID, R_ARCH_COR_1 },
-    { XX, 0, NULL /* SLIME */, 0, R_CRACK_2 },
-    { XX, 0, NULL /* PONY */, 0, R_PONY },
-    { XX, 0, NULL /* SAFE */, F_SCHIZOID, R_VAULT },
-    { XX, 0, NULL /* THRONE */, F_INVISIBLE, R_AUDIENCE_E },
-    { XX, 0, NULL /* SKELETON */, 0, R_AUDIENCE_E },
-    { XX, 0, NULL /* BEAR */, F_PORTABLE, R_BARR },
-    { XX, 0, NULL /* BATTERIES */, F_PORTABLE, R_LIMBO },
-    { XX, 0, NULL /* MOSS */, F_INVISIBLE, R_SOFT },
-    { XX, 0, NULL /* DINGHY */, 0, R_BEACH },
-    { XX, 0, "Worthless shards of pottery", F_PORTABLE, R_LIMBO },
-    { XX, 0, "Set of keys", F_PORTABLE, R_HOUSE },
-    { XX, 0, "Brass lantern", F_PORTABLE, R_HOUSE },
-    { XX, 0, "Wicker cage", F_PORTABLE|F_UNSTABLE, R_COBBLES },
-    { XX, 0, "Little bird in cage", F_PORTABLE, R_BIRD },
-    { XX, 0, "Black rod", F_PORTABLE, R_DEBRIS },
-    { XX, 0, "Metal plate", F_PORTABLE|F_UNSTABLE, R_STORAGE },
-    { XX, 0, "Black rod", F_PORTABLE, R_LIMBO },
-    { XX, 0, "Velvet pillow", F_PORTABLE, R_SOFT },
-    { XX, 0, "Giant clam  >grunt!<", F_PORTABLE, R_SHELL },
-    { XX, 0, "Giant oyster  >groan!<", F_PORTABLE, R_LIMBO },
-    { XX, 0, "\"Spelunker Today\"", F_PORTABLE, R_ANTE },
-    { XX, 0, NULL /* KNIFE */, F_PORTABLE, R_LIMBO },
-    { XX, 0, "Tasty food", F_PORTABLE, R_HOUSE },
-    { XX, 0, NULL /* BOTTLE */, F_PORTABLE, R_HOUSE },
-    { XX, 0, NULL /* WATER */, F_PORTABLE, R_LIMBO },
-    { XX, 0, NULL /* OIL */, F_PORTABLE, R_LIMBO },
-    { XX, 0, "Earthenware flask", F_PORTABLE|F_UNSTABLE, R_ARABESQUE },
-    { XX, 0, "Dwarf's axe", F_PORTABLE, R_LIMBO },
-    { XX, 0, "Singing sword", F_PORTABLE, R_SANDSTONE },
-    { XX, 0, "Several dragon's teeth", F_PORTABLE|F_UNSTABLE, R_LIMBO },
-    { XX, 0, "Vial of oily liquid", F_PORTABLE, R_SPHERICAL },
-    { XX, 0, "Mushroom", F_PORTABLE|F_UNSTABLE, R_CUBICLE },
-    { XX, 0, NULL /* GOBLINS */, 0, R_LIMBO },
-    { XX, 0, NULL /* DWARF */, F_INVISIBLE, R_LIMBO },
-    { XX, 0, "Bag filled with pieces of eight", F_PORTABLE|F_UNSTABLE, R_BEACH },
-    { XX, 0, "Crown", F_PORTABLE|F_UNSTABLE, R_INSAFE },
-    { XX, 0, "Large gold nugget", F_PORTABLE, R_NUGGET },
-    { XX, 0, "Several diamonds", F_PORTABLE, R_WFISS },
-    { XX, 0, "Bars of silver", F_PORTABLE, R_NS },
-    { XX, 0, "Precious jewelry", F_PORTABLE, R_SOUTH },
-    { XX, 0, "Rare coins", F_PORTABLE, R_WEST },
-    { XX, 0, "Treasure chest", F_PORTABLE|F_UNSTABLE, R_LIMBO },
-    { XX, 0, "Golden eggs", F_PORTABLE, R_GIANT },
-    { XX, 0, "Jeweled trident", F_PORTABLE, R_FALLS },
-    { XX, 0, "Helmet", F_PORTABLE, R_MORION },
-    { XX, 0, "Ming vase", F_PORTABLE, R_ORIENTAL },
-    { XX, 0, "Egg-sized emerald", F_PORTABLE, R_PLOVER },
-    { XX, 0, "Sapphire sceptre", F_PORTABLE, R_AUDIENCE_E },
-    { XX, 0, "Ruby-covered toy yacht", F_PORTABLE|F_UNSTABLE, R_NONDESCRIPT },
-    { XX, 0, "Platinum pyramid", F_PORTABLE, R_DARK },
-    { XX, 0, "Glistening pearl", F_PORTABLE, R_LIMBO },
-    { XX, 0, "Persian rug", F_PORTABLE, R_LIMBO },
-    { XX, 0, "Rare spices", F_PORTABLE, R_CHAMBER },
-    { XX, 0, "Ancient Indian turquoise beads.", F_PORTABLE|F_UNSTABLE, R_BALCONY },
-    { XX, 0, "Golden chain", F_PORTABLE, R_BARR },
-    { XX, 0, "Mithril ring", F_PORTABLE, R_LIMBO },
-    { XX, 0, "Scrimshaw spyglass", F_PORTABLE, R_IN_JONAH },
-    { XX, 0, "Rock-crystal sculpture", F_PORTABLE|F_UNSTABLE, R_ICECAVE14 },
-    { XX, 0, "Jade bracelet", F_PORTABLE, R_TRANSLUCENT },
-    { XX, 0, "Casket of opals", F_PORTABLE|F_UNSTABLE, R_CRACK_4 }
+#define in(loc) loc, loc
+#define schiz(loc) loc, loc+1
+    { XX, 0, NULL /* NOTHING */, 0, in(R_LIMBO) },
+    { XX, 0, NULL /* GRATE */, F_SCHIZOID, schiz(R_DEPRESSION) },
+    { XX, 0, NULL /* STEPS */, F_INVISIBLE|F_SCHIZOID, schiz(R_SPIT) },
+    { XX, 0, NULL /* DOOR */, 0, in(R_IMMENSENSPASS) },
+    { XX, 0, NULL /* SNAKE */, 0, in(R_HMK) },
+    { XX, 0, NULL /* FISSURE */, F_INVISIBLE|F_SCHIZOID, schiz(R_EFISS) },
+    { XX, 0, NULL /* TABLET */, 0, in(R_DARK) },
+    { XX, 0, NULL /* MIRROR */, F_INVISIBLE, in(R_MIRROR) },
+    { XX, 0, NULL /* PLANT */, 0, in(R_WPIT) },
+    { XX, 0, NULL /* PLANT2 */, F_INVISIBLE|F_SCHIZOID, schiz(R_W2PIT) },
+    { XX, 0, NULL /* STALACTITE */, F_INVISIBLE, in(R_STALACT) },
+    { XX, 0, NULL /* FOG */, F_INVISIBLE|F_SCHIZOID, schiz(R_PLAIN_2) },
+    { XX, 0, NULL /* GLOW */, 0, in(R_LIMBO) },
+    { XX, 0, NULL /* SHADOW */, F_SCHIZOID, schiz(R_WINDOE) },
+    { XX, 0, NULL /* BLOB */, 0, in(R_LIMBO) },
+    { XX, 0, NULL /* DRAWINGS */, F_INVISIBLE, in(R_ORIENTAL) },
+    { XX, 0, NULL /* PIRATE */, F_INVISIBLE, in(R_LIMBO) },
+    { XX, 0, NULL /* DRAGON */, F_SCHIZOID, in(R_SECRETCYNNE1) },
+    { XX, 0, NULL /* CHASM */, F_SCHIZOID, in(R_SWOFCHASM) },
+    { XX, 0, NULL /* TROLL */, F_SCHIZOID, in(R_SWOFCHASM) },
+    { XX, 0, NULL /* TROLL2 */, F_SCHIZOID, in(R_LIMBO) },
+    { XX, 0, NULL /* OGRE */, 0, in(R_GLASSY) },
+    { XX, 0, NULL /* BASILISK */, F_SCHIZOID, schiz(R_BASQUE_1) },
+    { XX, 0, NULL /* GONG */, 0, in(R_RESERVOIR_N) },
+    { XX, 0, NULL /* DJINN */, 0, in(R_LIMBO) },
+    { XX, 0, NULL /* TURTLE */, 0, in(R_LIMBO) },
+    { XX, 0, NULL /* MESSAGE */, 0, in(R_LIMBO) },
+    { XX, 0, NULL /* GEYSER */, F_INVISIBLE|F_SCHIZOID, schiz(R_VIEW) },
+    { XX, 0, NULL /* STATUE */, F_INVISIBLE, in(R_BY_FIGURE) },
+    { XX, 0, NULL /* QUICKSAND */, F_INVISIBLE|F_SCHIZOID, schiz(R_ARCH_COR_1) },
+    { XX, 0, NULL /* SLIME */, 0, in(R_CRACK_2) },
+    { XX, 0, NULL /* PONY */, 0, in(R_PONY) },
+    { XX, 0, NULL /* SAFE */, F_SCHIZOID, schiz(R_VAULT) },
+    { XX, 0, NULL /* THRONE */, F_INVISIBLE, in(R_AUDIENCE_E) },
+    { XX, 0, NULL /* SKELETON */, 0, in(R_AUDIENCE_E) },
+    { XX, 0, NULL /* BEAR */, F_PORTABLE, in(R_BARR) },
+    { XX, 0, NULL /* BATTERIES */, F_PORTABLE, in(R_LIMBO) },
+    { XX, 0, NULL /* MOSS */, F_INVISIBLE, in(R_SOFT) },
+    { XX, 0, NULL /* DINGHY */, 0, in(R_BEACH) },
+    { XX, 0, "Worthless shards of pottery", F_PORTABLE, in(R_LIMBO) },
+    { XX, 0, "Set of keys", F_PORTABLE, in(R_HOUSE) },
+    { XX, 0, "Brass lantern", F_PORTABLE, in(R_HOUSE) },
+    { XX, 0, "Wicker cage", F_PORTABLE|F_UNSTABLE, in(R_COBBLES) },
+    { XX, 0, "Little bird in cage", F_PORTABLE, in(R_BIRD) },
+    { XX, 0, "Black rod", F_PORTABLE, in(R_DEBRIS) },
+    { XX, 0, "Metal plate", F_PORTABLE|F_UNSTABLE, in(R_STORAGE) },
+    { XX, 0, "Black rod", F_PORTABLE, in(R_LIMBO) },
+    { XX, 0, "Velvet pillow", F_PORTABLE, in(R_SOFT) },
+    { XX, 0, "Giant clam  >grunt!<", F_PORTABLE, in(R_SHELL) },
+    { XX, 0, "Giant oyster  >groan!<", F_PORTABLE, in(R_LIMBO) },
+    { XX, 0, "\"Spelunker Today\"", F_PORTABLE, in(R_ANTE) },
+    { XX, 0, NULL /* KNIFE */, F_PORTABLE, in(R_LIMBO) },
+    { XX, 0, "Tasty food", F_PORTABLE, in(R_HOUSE) },
+    { XX, 0, NULL /* BOTTLE */, F_PORTABLE, in(R_HOUSE) },
+    { XX, 0, NULL /* WATER */, F_PORTABLE, in(R_LIMBO) },
+    { XX, 0, NULL /* OIL */, F_PORTABLE, in(R_LIMBO) },
+    { XX, 0, "Earthenware flask", F_PORTABLE|F_UNSTABLE, in(R_ARABESQUE) },
+    { XX, 0, "Dwarf's axe", F_PORTABLE, in(R_LIMBO) },
+    { XX, 0, "Singing sword", F_PORTABLE, in(R_SANDSTONE) },
+    { XX, 0, "Several dragon's teeth", F_PORTABLE|F_UNSTABLE, in(R_LIMBO) },
+    { XX, 0, "Vial of oily liquid", F_PORTABLE, in(R_SPHERICAL) },
+    { XX, 0, "Mushroom", F_PORTABLE|F_UNSTABLE, in(R_CUBICLE) },
+    { XX, 0, NULL /* GOBLINS */, 0, in(R_LIMBO) },
+    { XX, 0, NULL /* DWARF */, F_INVISIBLE, in(R_LIMBO) },
+    { XX, 0, "Bag filled with pieces of eight", F_PORTABLE|F_UNSTABLE, in(R_BEACH) },
+    { XX, 0, "Crown", F_PORTABLE|F_UNSTABLE, in(R_INSAFE) },
+    { XX, 0, "Large gold nugget", F_PORTABLE, in(R_NUGGET) },
+    { XX, 0, "Several diamonds", F_PORTABLE, in(R_WFISS) },
+    { XX, 0, "Bars of silver", F_PORTABLE, in(R_NS) },
+    { XX, 0, "Precious jewelry", F_PORTABLE, in(R_SOUTH) },
+    { XX, 0, "Rare coins", F_PORTABLE, in(R_WEST) },
+    { XX, 0, "Treasure chest", F_PORTABLE|F_UNSTABLE, in(R_LIMBO) },
+    { XX, 0, "Golden eggs", F_PORTABLE, in(R_GIANT) },
+    { XX, 0, "Jeweled trident", F_PORTABLE, in(R_FALLS) },
+    { XX, 0, "Helmet", F_PORTABLE, in(R_MORION) },
+    { XX, 0, "Ming vase", F_PORTABLE, in(R_ORIENTAL) },
+    { XX, 0, "Egg-sized emerald", F_PORTABLE, in(R_PLOVER) },
+    { XX, 0, "Sapphire sceptre", F_PORTABLE, in(R_AUDIENCE_E) },
+    { XX, 0, "Ruby-covered toy yacht", F_PORTABLE|F_UNSTABLE, in(R_NONDESCRIPT) },
+    { XX, 0, "Platinum pyramid", F_PORTABLE, in(R_DARK) },
+    { XX, 0, "Glistening pearl", F_PORTABLE, in(R_LIMBO) },
+    { XX, 0, "Persian rug", F_PORTABLE, in(R_LIMBO) },
+    { XX, 0, "Rare spices", F_PORTABLE, in(R_CHAMBER) },
+    { XX, 0, "Ancient Indian turquoise beads.", F_PORTABLE|F_UNSTABLE, in(R_BALCONY) },
+    { XX, 0, "Golden chain", F_PORTABLE, in(R_BARR) },
+    { XX, 0, "Mithril ring", F_PORTABLE, in(R_LIMBO) },
+    { XX, 0, "Scrimshaw spyglass", F_PORTABLE, in(R_IN_JONAH) },
+    { XX, 0, "Rock-crystal sculpture", F_PORTABLE|F_UNSTABLE, in(R_ICECAVE14) },
+    { XX, 0, "Jade bracelet", F_PORTABLE, in(R_TRANSLUCENT) },
+    { XX, 0, "Casket of opals", F_PORTABLE|F_UNSTABLE, in(R_CRACK_4) }
 #undef XX
+#undef in
+#undef schiz
 };

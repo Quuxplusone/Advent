@@ -70,6 +70,7 @@ int death_count;
 int penalties;  /* score modifier */
 int cylinder_escape_count = 0;  /* Platt calls this ESCAPE */
 VerbWord password;  /* for the magic safe */
+Location safe_exit;
 
 /*========== Special flags. =============================================*/
 
@@ -82,12 +83,13 @@ bool djinn_gave_hint = false;
 bool successfully_opened_safe = false;
 bool have_drowned_in_quicksand = false;
 bool have_stolen_back_eggs = false;
+bool have_awoken_goblins = false;
 bool gave_up;
 
 /*========== Some common messages. ======================================*/
 
 const char ok[] = "OK.";
-const char hah[] = "Don't be ridiculous!";
+void hah() { puts("Don't be ridiculous!"); }
 void I_see_no(const char *s) { printf("I see no %s here.\n", s); }
 void you_have_it() { puts("You are already carrying it!"); }
 
@@ -136,8 +138,6 @@ struct HashEntry *lookup(const char *w)
     }
     return NULL;
 }
-
-#define IS_TREASURE(t) ((t) >= MIN_TREASURE)
 
 void build_vocabulary(void)
 {
@@ -471,6 +471,10 @@ bool here(ObjectWord t, Location loc)
 void apport(ObjectWord t, Location loc)
 {
     objs[t].place = loc;
+    objs[t].place2 = loc;
+    if (!(objs[t].flags & F_SCHIZOID)) return;
+    if (loc == R_LIMBO || loc == R_YLEM) return;
+    objs[t].place2 = loc+1;  /* Schizoid objects are in two places at once. */
 }
 
 void build_object_table(void)
@@ -620,7 +624,19 @@ void build_object_table(void)
 void describe_object(ObjectWord t)
 {
     if (t == DWARF) {
-        /* TODO: deal with the dwarves */
+        switch (objs[DWARF].prop) {
+            case 1: puts("There is a threatening little dwarf in the room with you!"); break;
+            case 2: puts("There are two bloodthirsty little dwarves in the room with you!"); break;
+            case 3: puts("There are three nasty little dwarves in the room with you!"); break;
+            case 4: puts("There are four hostile little dwarves in the room with you!"); break;
+            case 5: puts("There are five threatening little dwarves in the room with you!"); break;
+            case 6: puts("There are six bloodthirsty little dwarves in the room with you!"); break;
+            case 7: puts("There are seven nasty, hostile little dwarves in the room with you!"); break;
+            case 8: puts("There are eight angry little dwarves in the room with you!"); break;
+            case 9: puts("There are nine hostile and nasty little dwarves in the room with you!"); break;
+            case 10: puts("There are ten very angry little dwarves in the room with you!"); break;
+            default: assert(false);
+        }
     } else if (t == GOBLINS) {
         /* TODO: deal with the gooseberry goblins */        
     } else if (t == SWORD) {
@@ -849,16 +865,39 @@ bool dwarf_attack(void)
 
 bool tick(void)
 {
-    if (objs[BLOB].prop > 0) {
-        if (objs[BLOB].prop == 16) {
-            objs[BLOB].prop = 17;
-            puts("\nThe blob >ROAR<s triumphantly and bounces straight at you with amazing\n"
-                 "speed, crushing you to the ground and cutting off your air supply\n"
-                 "with its body.  You quickly suffocate.");
-            return true;  /* you are dead */
-        }
-        puts("TODO FIXME BUG HACK blob warnings go here");
-        objs[BLOB].prop += 1;
+    if (objs[BLOB].prop == 0) return false;
+    objs[BLOB].prop += 1;
+    if (objs[BLOB].prop == 17) {
+        puts("\nThe blob >ROAR<s triumphantly and bounces straight at you with amazing\n"
+             "speed, crushing you to the ground and cutting off your air supply\n"
+             "with its body.  You quickly suffocate.");
+        return true;  /* you are dead */
+    }
+    /* Each of these messages ends with a blank line. */
+    switch (objs[BLOB].prop) {
+        case 3: puts("From somewhere in the distance comes an ominous bubbling sound.\n"); break;
+        case 4: puts("The bubbling sound grows louder.\n"); break;
+        case 5: puts("The bubbling sound ends with a loud >splash<.\n"); break;
+        case 6: puts("A hollow, echoing >ROAR< sounds in the distance.\n"); break;
+        case 7: break;
+        case 8: puts("A strange throbbing sound can be heard in the distance.\n"); break;
+        case 9: break;
+        case 10: puts("The throbbing sound is growing louder.\n"); break;
+        case 11: break;
+        case 12: puts("The source of the throbbing sound is approaching quickly.  Another\n"
+                      "hollow >ROAR< echoes through the cave.\n"); break;
+        case 13: break;
+        case 14: puts("There is a loud >ROAR< only a short distance away!!\n"); break;
+        case 15: break;
+        case 16:
+            puts("Into view there bounces a horrible creature!!  Six feet across, it\n"
+                 "resembles a large blob of translucent white jelly;  although it looks\n"
+                 "massive, it is bouncing lightly up and down as though it were as light\n"
+                 "as a feather.  It is emitting a constant throbbing sound, and it\n"
+                 ">ROAR<s loudly as it sees you.\n");
+            /* We'll apport(BLOB, loc), but only once the player has finished
+             * moving to his new location. */
+            break;
     }
     return false;  /* you have survived, so far */
 }
@@ -1197,16 +1236,16 @@ void kill_the_player(Location loc)
             puts("All right.  But don't blame me if something goes wr......\n"
                  "                     -- poof!! --\n"
                  "You are engulfed in a cloud of orange smoke.  Coughing and gasping,\n"
-                 "you emerge from the smoke and find....");
+                 "you emerge from the smoke and find....\n");
             break;
         case 2:
             puts("As you wish.  Hang on for just a second while I fire up my thurible...\n"
                  ">foof!<    An immense cloud of orange smoke fills the air.  As it\n"
-                 "clears, you find that once again....");
+                 "clears, you find that once again....\n");
             break;
         case 3:
             puts("Okay, now where did I put my orange smoke?....  >poof!<\n"
-                 "Everything disappears in a dense cloud of orange smoke.");
+                 "Everything disappears in a dense cloud of orange smoke.\n");
             break;
         case 4:
             puts("Yes....  well, that's the kind of blinkered, Philistine pig-ignorance\n"
@@ -1216,7 +1255,7 @@ void kill_the_player(Location loc)
                  "whining, mouldy-faced heap of parrot droppings!  If you're so\n"
                  "smart, then you can just reincarnate yourself, because quite\n"
                  "frankly I'm as mad as hell and I'm not going to take this\n"
-                 "anymore - I'm leaving!!!!");
+                 "anymore - I'm leaving!!!!\n");
             finis();  /* does not return; you're really dead now */
             break;
     }
@@ -1519,13 +1558,13 @@ int attempt_take(ObjectWord obj, Location loc)
     if (word2.type == WordType_None)
         return 0;  /* should be handled by main loop */
     if (word2.type != WordType_Object) {
-        puts(hah);
+        hah();
     } else if (toting(obj)) {
         you_have_it();
     } else if (!there(obj, loc)) {
         I_see_no(word2.text);
     } else if (!(objs[obj].flags & F_PORTABLE)) {
-        puts(hah);
+        hah();
     } else if (holding_count == strength && obj != CAGE) {
         /* Platt lets you pick the cage for free. This is certainly a bug. */
         puts("You can't carry anything more.  You'll have to drop something first.");
@@ -1662,7 +1701,7 @@ int attempt_drop(ObjectWord obj, Location loc)
         }
     }
     if (word2.type != WordType_Object) {
-        puts(hah);
+        hah();
     } else if (toting(obj)) {
         apport(obj, loc);
         if (obj == CAGE) {
@@ -1705,6 +1744,15 @@ int process_verb(Location loc)
             return attempt_take(obj, loc);
         case DROP:
             return attempt_drop(obj, loc);
+        case WALK:
+            if (word2.type == WordType_None) {
+                printf("Which way should I %s?\n", word1.text);
+                return loc;
+            } else if (word1.type == WordType_Verb &&
+                       is_walkable_direction(obj)) {
+                verb = obj;
+                
+            }
             
     }
     return 0;  /* unhandled */
@@ -2089,7 +2137,10 @@ void simulate_an_adventure(void)
     if (false) {
       death:
         kill_the_player(loc);
-        oldloc = loc = newloc = R_HOUSE;
+        /* Coming from R_LIMBO ensures that we'll see a room description
+         * when we resurrect. */
+        oldloc = loc = R_LIMBO;
+        newloc = R_HOUSE;
     }
     
     while (true) {

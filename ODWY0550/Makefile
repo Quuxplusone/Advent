@@ -2,7 +2,7 @@
 export VBCC:=../vbcc
 
 VBCCZ = ../vbcc/bin/vc +z -c99 -O=3 -DZ_MACHINE -Iz-machine/include
-MAXES = \$$MAX_ARRAYS=900 \
+MAXES = \$$MAX_ARRAYS=9000 \
         \$$MAX_ZCODE_SIZE=40000 \
         \$$MAX_STATIC_DATA=65000
 

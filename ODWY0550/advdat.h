@@ -59,7 +59,7 @@ typedef enum {
  R_MAZEA82, R_MAZEA83, R_MAZEA84, R_MAZEA85, R_MAZEA86, R_MAZEA87,
  R_NARROW, R_INCLINE, R_GIANT, R_IMMENSENSPASS, R_FALLS,
  R_SOFT, R_ORIENTAL, R_MISTY, R_ALCOVE, R_PLOVER, R_DARK,
- R_ARCHED, R_SHELL, R_RAGGEDCORRID, R_CULDESAC, R_ANTE,
+ R_ARCHED, R_SHELL, R_RAGGED, R_CULDESAC, R_ANTE,
  R_MAZED107, R_WITT, R_MIRROR, R_STALACT, R_MAZED112,
  R_RES, R_RESERVOIR_N, R_WARM, R_BALCONY, R_FAKE_SLIT,
  R_CYLINDRICAL, R_PIRATES_NEST, R_SWOFCHASM, R_NEOFCHASM,
@@ -152,14 +152,16 @@ struct ObjectData {
     const char *name;
     unsigned int flags;
     Location place;
+    Location place2;  /* only used for F_SCHIZOID objects */
 };
 
 extern struct Place places[];
 extern struct ObjectData objs[];
 
 #define toting(t) (objs[t].place < 0)
-#define there(t, loc) (objs[t].place == (loc))
+#define there(t, loc) (objs[t].place == (loc) || objs[t].place2 == (loc))
 #define portable(t) (objs[t].flags & F_PORTABLE)
+#define is_treasure(t) ((t) >= MIN_TREASURE)
 
 #define you_are_dead_at(loc) ((loc)+R_YLEM)
 
