@@ -96,6 +96,7 @@ bool used_movement_obj(ObjectWord where_to)
     }
     return false;
 }
+
 bool used_movement_placeword(Location where_to)
 {
     /* HOUSE FOO will take you to the house, even if FOO is unrecognized;
