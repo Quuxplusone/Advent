@@ -155,9 +155,155 @@ diff -Nur vbcc/frontend/vc.c vbcc-patched/frontend/vc.c
          if(!strncmp(parm,"-isc=",5)){scname=parm+5;*parm=0;}
          if(!strncmp(parm,"-iscv=",6)){scv=parm+6;*parm=0;}
 diff -Nur vbcc/ic.c vbcc-patched/ic.c
---- vbcc/ic.c	2012-05-13 02:42:09.554448867 -0700
-+++ vbcc-patched/ic.c	2012-05-13 02:28:40.634467454 -0700
-@@ -915,6 +915,74 @@
+--- vbcc/ic.c	2012-05-24 12:33:14.000000000 -0700
++++ vbcc-patched/ic.c	2012-05-24 12:18:51.000000000 -0700
+@@ -1,5 +1,6 @@
+ /*  $VER: vbcc (ic.c) V0.8  */
+ 
++#include <assert.h>
+ #include "vbc.h"
+ #include "opt.h"
+ 
+@@ -488,6 +489,138 @@
+   return new;
+ }
+ 
++static int is_putsable_char(int ch)
++{
++    if (ch == '\n' || ch == '\t') return 1;
++    if (ch == '^') return 0;
++    return (32 <= ch && ch <= 126);
++}
++
++static int should_optimize_puts(struct const_list *cl)
++{
++    int optimize = 1;
++    while (cl != NULL) {
++	int ch = cl->other->val.vchar;
++	cl = cl->next;
++	if (ch == '\0') break;
++	if (!is_putsable_char(ch)) return 0;
++    }
++    return 1;  /* it's okay to optimize */
++}
++
++static struct const_list *extract_putsable_suffix(struct const_list *cl)
++{
++    struct const_list *last_unputsable_char = NULL;
++    int num_putsable_chars = 0;
++    struct const_list *final_newline = NULL;
++    int ends_with_newline = 0;
++    for ( ; cl != NULL; cl = cl->next) {
++	int ch = cl->other->val.vchar;
++	if (ch == '\0') break;
++	if (cl->next && cl->next->next &&
++	    cl->next->other->val.vchar == '\n' &&
++	    cl->next->next->other->val.vchar == '\0') {
++	    final_newline = cl;
++	}
++	if (ch == '%') {
++	    if (cl->next == NULL) {
++		return NULL;  /* bad format string */
++	    }
++	    int fmt = cl->next->other->val.vchar;
++	    if (fmt == 'd' || fmt == 's') {
++		last_unputsable_char = cl->next;
++		num_putsable_chars = 0;
++		cl = cl->next;
++	    } else {
++		return NULL;  /* unrecognized format string */
++		/* or a percent sign "%%", of course */
++	    }
++	} else if (!is_putsable_char(ch)) {
++	    last_unputsable_char = cl;
++	    num_putsable_chars = 0;
++	} else {
++	    num_putsable_chars += 1;
++	}
++    }
++    if (final_newline == NULL) {
++	/* We could do some trickery in gen_optimized_puts()
++	 * to say "maybe append a \n, maybe don't", but for now
++	 * it's simplest to optimize printf("hi\n") and fail to
++	 * optimize printf("hi"). */
++	return NULL;
++    }
++    if (num_putsable_chars <= 2) {
++	/* Don't bother optimizing. */
++	return NULL;
++    }
++    assert(final_newline->next->other->val.vchar == '\n');
++    final_newline->next->other->val.vchar = '\0';
++    final_newline->next->next = NULL;
++    if (last_unputsable_char == NULL) {
++	/* The whole string is optimizable! */
++	return cl;
++    }
++    /* Only a suffix of the string is optimizable. */
++    struct const_list *suffix = last_unputsable_char->next;
++    /* Append a new null terminator to the prefix portion. */
++    last_unputsable_char->next = cl = mymalloc(CLS);
++    cl->next = NULL;
++    cl->tree = NULL;
++    cl->idx = last_unputsable_char->idx + 1;
++    cl->val.vmax = 0;
++    cl->other = mymalloc(CLS);
++    cl->other->next = cl->other->other = NULL;
++    cl->other->tree = NULL;
++    cl->other->idx = 0;
++    cl->other->val.vchar = '\0';
++    return suffix;
++}
++
++static void gen_optimized_puts(struct const_list *cl, np p)
++{
++    char *puts_buffer = mymalloc(100);
++    int len = 0, cap = 100;
++    strcpy(puts_buffer, "\tprint \"");
++    len = 8;
++    while (cl != NULL) {
++	int ch = cl->other->val.vchar;
++	cl = cl->next;
++	if (ch == '\0') break;
++	if (len == cap-16) {
++	    puts_buffer = myrealloc(puts_buffer, cap *= 2);
++	}
++	switch (ch) {
++	    case '\n': puts_buffer[len++] = '^'; break;
++	    case '\t': strcpy(puts_buffer+len, "@{9}"); len += 4; break;
++	    case '"': puts_buffer[len++] = '~'; break;
++	    case '@': strcpy(puts_buffer+len, "@{40}"); len += 5; break;
++	    case '\\': strcpy(puts_buffer+len, "@{5c}"); len += 5; break;
++	    case '~': strcpy(puts_buffer+len, "@{7e}"); len += 5; break;
++	    default:
++		assert(is_putsable_char(ch));
++		puts_buffer[len++] = ch;
++		break;
++	}
++    }
++    strcpy(puts_buffer+len, "^\";\n");
++    /* Now we need to turn this into a CALL of a made-up function
++     * with appropriate inline assembly. */
++    char pfname[50];
++    static int counter = 0;
++    struct Typ voidt = {VOID};
++    struct Typ *voidfunctyp = new_typ();
++    sprintf(pfname, "XXinternal_pf_%07x_puts", ++counter);
++    voidfunctyp->next = clone_typ(&voidt);  /* returning void */
++    voidfunctyp->exact = mymalloc(sizeof *voidfunctyp->exact);
++    voidfunctyp->exact->count = 0;  /* taking unspecified arguments */
++    voidfunctyp->flags = FUNKT;
++    struct Var *pseudofunc = add_var(pfname, voidfunctyp, EXTERN, NULL);
++    pseudofunc->fi = new_fi();
++    pseudofunc->fi->inline_asm = puts_buffer;
++    p->left->left->o.v = pseudofunc;
++    p->alist = NULL;
++    gen_IC(p, /*ltrue=*/0, /*lfalse=*/0);
++}
+ 
+ void gen_IC(np p,int ltrue,int lfalse)
+ /*  Erzeugt eine IC-Liste aus einer expression      */
+@@ -915,6 +1048,63 @@
          struct IC *merk_fp,*lp;
  	unsigned int merk_opushed=opushed;
  #endif
@@ -166,75 +312,64 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
 +	 * code size, but greatly on static data size, because (as far as I
 +	 * know) the Z-machine stores text strings differently from regular
 +	 * static data. */
-+        if (p->left->flags==ADDRESS &&
++        if (ltrue == 0 && lfalse == 0 &&
++	    p->left->flags==ADDRESS &&
 +            p->left->left->flags==IDENTIFIER &&
 +            p->left->left->o.v->storage_class==EXTERN &&
 +            !strcmp(p->left->left->o.v->identifier, "puts")) {
 +            /* Generating IC for puts() of something */
 +            struct argument_list *al = p->alist;
-+            if (al != NULL && al->arg != NULL && al->next == NULL &&
-+                al->arg->left != NULL && al->arg->left->flags == STRING) {
++            if (al != NULL && al->arg != NULL && al->arg->flags == ADDRESSA &&
++                al->arg->left != NULL && al->arg->left->flags == STRING &&
++		al->next == NULL) {
 +                /* Generating IC for puts() of a string literal */
-+                int optimize = 1;
-+                char *puts_buffer = mymalloc(100);
-+                int len = 0, cap = 100;
 +                struct const_list *cl = al->arg->left->cl;
-+                strcpy(puts_buffer, "\tprint \"");
-+                len = 8;
-+                while (cl != NULL) {
-+                    int ch = cl->other->val.vchar;
-+                    cl = cl->next;
-+                    if (ch == '\0') break;
-+                    if (len == cap-16) {
-+                        puts_buffer = myrealloc(puts_buffer, cap *= 2);
-+                    }
-+                    switch (ch) {
-+                        case '\n': puts_buffer[len++] = '^'; break;
-+                        case '\t': strcpy(puts_buffer+len, "@{9}"); len += 4; break;
-+                        case '"': puts_buffer[len++] = '~'; break;
-+                        case '@': strcpy(puts_buffer+len, "@{40}"); len += 5; break;
-+                        case '\\': strcpy(puts_buffer+len, "@{5c}"); len += 5; break;
-+                        case '^': optimize = 0; break;
-+                        case '~': strcpy(puts_buffer+len, "@{7e}"); len += 5; break;
-+                        default:
-+                            puts_buffer[len++] = ch;
-+                            if (ch < 32 || ch > 126)
-+                                optimize = 0;
-+                            break;
-+                    }
-+                }
-+                if (optimize) {
-+                    strcpy(puts_buffer+len, "^\";\n");
-+                    /* Now we need to turn this into a CALL of a made-up function
-+                     * with appropriate inline assembly. */
-+                    char pfname[50];
-+                    static int counter = 0;
-+                    struct Typ voidt = {VOID};
-+                    struct Typ *voidfunctyp = new_typ();
-+                    sprintf(pfname, "XXinternal_pf_%07x_puts", ++counter);
-+                    voidfunctyp->next = clone_typ(&voidt);  /* returning void */
-+                    voidfunctyp->exact = mymalloc(sizeof *voidfunctyp->exact);
-+                    voidfunctyp->exact->count = 0;  /* taking unspecified arguments */
-+                    voidfunctyp->flags = FUNKT;
-+                    struct Var *pseudofunc = add_var(pfname, voidfunctyp, EXTERN, NULL);
-+                    pseudofunc->fi = new_fi();
-+                    pseudofunc->fi->inline_asm = puts_buffer;
-+                    p->left->left->o.v = pseudofunc;
-+                    p->alist = NULL;
-+                    gen_IC(p, ltrue, lfalse);
-+                    return;
-+                } else {
-+                    free(puts_buffer);
-+                }
++		if (should_optimize_puts(cl)) {
++		    gen_optimized_puts(cl, p);
++		    return;
++		}
 +            }
++        }
++
++	/* [ajo] The following code optimizes printf("prefix%ssuffix\n", arg)
++	 * into printf("prefix%s", arg); puts("suffix");
++	 * Again, this is very useful on the Z-machine. */
++        if (ltrue == 0 && lfalse == 0 &&
++	    p->left->flags==ADDRESS &&
++            p->left->left->flags==IDENTIFIER &&
++            p->left->left->o.v->storage_class==EXTERN &&
++            !strcmp(p->left->left->o.v->identifier, "printf")) {
++            /* Generating IC for printf() of something */
++            struct argument_list *al = p->alist;
++            if (al != NULL && al->arg != NULL && al->arg->flags == ADDRESSA &&
++                al->arg->left != NULL && al->arg->left->flags == STRING) {
++                /* Generating IC for printf("literal", ...) */
++                struct const_list *cl = al->arg->left->cl;
++		struct const_list *suffix = extract_putsable_suffix(cl);
++		if (suffix != NULL) {
++		    /* Optimize this function call. */
++		    if (suffix != cl) {
++			/* Shrink the declared size of the char array that
++			 * we're using to hold the string literal. */
++			int length = 0;
++			for (struct const_list *sx = cl; sx; sx = sx->next)
++			    ++length;
++			assert(1 <= length && length < al->arg->left->ntyp->size);
++			al->arg->left->ntyp->size = length;
++			gen_IC(p, ltrue, lfalse);
++		    }
++		    gen_optimized_puts(suffix, p);
++		    return;
++		}
++	    }
 +        }
 +
          if(p->left->flags==ADDRESS&&p->left->left->flags==IDENTIFIER){
              struct Var *v;
              gen_IC(p->left,0,0); r=1;
 diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
---- vbcc/machines/z/machine.c	2012-05-13 02:42:09.562448869 -0700
-+++ vbcc-patched/machines/z/machine.c	2012-05-13 02:40:50.458450688 -0700
+--- vbcc/machines/z/machine.c	2012-05-24 12:33:14.000000000 -0700
++++ vbcc-patched/machines/z/machine.c	2012-05-24 12:21:25.000000000 -0700
 @@ -60,6 +60,10 @@
  static char FILE_[]=__FILE__;
  char cg_copyright[]="vbcc code-generator for Z-machine V0.0a (c) in 2001 by David Given";
@@ -299,12 +434,12 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  
  			case DOUBLE:
 -				fprintf(fp, "[double #%08X]", obj->val.vdouble);
--				break;
++				fprintf(fp, "[double #%f]", obj->val.vdouble);
+ 				break;
 -#if 0
 -			case POINTER:
 -				fprintf(fp, "[pointer #%04X]", obj->val.vpointer);
-+				fprintf(fp, "[double #%f]", obj->val.vdouble);
- 				break;
+-				break;
 -#endif
  		}
  	}
@@ -362,16 +497,17 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  			currentvar.type = STATIC;
  			currentvar.val.number = var->offset;
  			currentvar.offset = 0;
-@@ -757,7 +744,7 @@
+@@ -757,7 +744,8 @@
  
  void gen_ds(FILE *fp, zmax size, struct Typ *typ)
  {
 -	fprintf(fp, " %ld\n", size);
++	if (currentvar.offset != 0) ierror(0);
 +	fprintf(fp, " %d\n", (int)size);
  	currentvar.offset += size;
  }
  
-@@ -834,6 +821,8 @@
+@@ -834,6 +822,8 @@
  zmax voff(struct obj* obj)
  {
  	zmax offset = obj->v->offset;
@@ -380,7 +516,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  	if (offset < 0)
  		offset = stackparamadjust + stackoffset - offset - maxalign;
  	else
-@@ -892,8 +881,8 @@
+@@ -892,8 +882,8 @@
  	switch (obj->v->storage_class)
  	{
  		case STATIC:
@@ -391,7 +527,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  			break;
  
  		case EXTERN:
-@@ -956,10 +945,10 @@
+@@ -956,10 +946,10 @@
  		case AUTO:
  		case REGISTER: /* Local variable */
  		{
@@ -404,7 +540,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  					offset, regnames[reg]);
  			else
  			{
-@@ -973,7 +962,7 @@
+@@ -973,7 +963,7 @@
  					fprintf(fp, "\t@storew sp 0 %s;\n", regnames[reg]);
  				}
  				else
@@ -413,7 +549,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  						offset >> 1, regnames[reg]);
  			}
  			return;
-@@ -988,8 +977,8 @@
+@@ -988,8 +978,8 @@
  			{
  				fprintf(fp, "\t@storeb ");
  				emit_identifier(fp, obj);
@@ -424,7 +560,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  			}
  			else
  			{
-@@ -997,8 +986,8 @@
+@@ -997,8 +987,8 @@
  				{
  					fprintf(fp, "\t@add ");
  					emit_identifier(fp, obj);
@@ -435,7 +571,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  					fprintf(fp, "\t@storew sp 0 %s;\n",
  						regnames[reg]);
  				}
-@@ -1006,8 +995,8 @@
+@@ -1006,8 +996,8 @@
  				{
  					fprintf(fp, "\t@storew ");
  					emit_identifier(fp, obj);
@@ -446,7 +582,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  				}
  			}
  			return;
-@@ -1071,12 +1060,6 @@
+@@ -1071,12 +1061,6 @@
  	int flags = obj->flags &
  		(KONST|REG|VAR|DREFOBJ|VARADR);
  
@@ -459,7 +595,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  	/* Is this a memory dereference? */
  
  	if (flags & DREFOBJ)
-@@ -1096,7 +1079,7 @@
+@@ -1096,7 +1080,7 @@
  			case UNSIGNED|CHAR:	c.val.constant = obj->val.vuchar;	break;
  			case SHORT:		c.val.constant = obj->val.vshort;	break;
  			case UNSIGNED|SHORT:	c.val.constant = obj->val.vushort;	break;
@@ -468,7 +604,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  			case INT:		c.val.constant = obj->val.vint;		break;
  			case UNSIGNED|INT:	c.val.constant = obj->val.vuint;	break;
  			default:
-@@ -1127,8 +1110,8 @@
+@@ -1127,8 +1111,8 @@
  			case REGISTER: /* Local variable */
  				if (flags & VARADR)
  				{
@@ -479,7 +615,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  				}
  				else if (flags & REG)
  				{
-@@ -1138,20 +1121,20 @@
+@@ -1138,20 +1122,20 @@
  				}
  				else
  				{
@@ -504,7 +640,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  								offset >> 1, regnames[reg]);
  					}
  				}
-@@ -1170,12 +1153,12 @@
+@@ -1170,12 +1154,12 @@
  
  					fprintf(fp, "\t@add ");
  					emit_identifier(fp, obj);
@@ -520,7 +656,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  						find_varargs(), regnames[reg]);
  				}
  				else
-@@ -1186,8 +1169,8 @@
+@@ -1186,8 +1170,8 @@
  					{
  						fprintf(fp, "\t@loadb ");
  						emit_identifier(fp, obj);
@@ -531,7 +667,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  					}
  					else
  					{
-@@ -1195,8 +1178,8 @@
+@@ -1195,8 +1179,8 @@
  						{
  							fprintf(fp, "\t@add ");
  							emit_identifier(fp, obj);
@@ -542,7 +678,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  							fprintf(fp, "\t@loadw sp 0 -> %s;\n",
  								regnames[reg]);
  						}
-@@ -1204,8 +1187,8 @@
+@@ -1204,8 +1188,8 @@
  						{
  							fprintf(fp, "\t@loadw ");
  							emit_identifier(fp, obj);
@@ -553,7 +689,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  						}
  					}
  				}
-@@ -1224,7 +1207,7 @@
+@@ -1224,7 +1208,7 @@
  	obj->flags &= ~DREFOBJ;
  	read_reg(fp, obj, POINTER, 0);
  		
@@ -562,7 +698,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  	{
  		switch (typf & NQ)
  		{
-@@ -1266,18 +1249,13 @@
+@@ -1266,18 +1250,13 @@
  			case UNSIGNED|SHORT:	op->val.constant = obj->val.vushort;	break;
  			case INT:		op->val.constant = obj->val.vint;	break;
  			case UNSIGNED|INT:	op->val.constant = obj->val.vuint;	break;
@@ -582,7 +718,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  	/* This is used by the long code. The longop functions can only operate
  	 * on pointers to longs; so if we need to pass in a constant, we have
  	 * to stash it on the stack and return a pointer. */
-@@ -1309,7 +1287,7 @@
+@@ -1309,7 +1288,7 @@
  
  	if ((flags == (VAR|VARADR)) &&
  	    (obj->v->storage_class == EXTERN) &&
@@ -591,7 +727,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  	{
  		debugemit(fp, "! zop varaddr extern %s\n", obj->v->identifier);
  		op->type = ZOP_EXTERN;
-@@ -1319,7 +1297,7 @@
+@@ -1319,7 +1298,7 @@
  
  	if ((flags == (VAR|VARADR)) &&
  	    (obj->v->storage_class == STATIC) &&
@@ -600,7 +736,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  	{
  		debugemit(fp, "! zop varaddr static %ld\n", obj->v->offset);
  		op->type = ZOP_STATIC;
-@@ -1404,7 +1382,7 @@
+@@ -1404,7 +1383,7 @@
  			return;
  
  		case ZOP_CONSTANT:
@@ -609,7 +745,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  			return;
  
  		case ZOP_EXTERN:
-@@ -1412,13 +1390,13 @@
+@@ -1412,13 +1391,13 @@
  			return;
  
  		case ZOP_STATIC:
@@ -627,7 +763,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  			return;
  
  		default:
-@@ -1585,7 +1563,7 @@
+@@ -1585,7 +1564,7 @@
  		push_addrof(fp, z, POINTER, &zz);
  		fprintf(fp, "\t@call_vn __long_loadconst ");
  		emit_zop(fp, &zz);
@@ -636,7 +772,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  		return;
  	}
  
-@@ -1598,6 +1576,98 @@
+@@ -1598,6 +1577,98 @@
  	fprintf(fp, " 4;\n");
  }
  
@@ -735,7 +871,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  /* The code generator itself.
   * This big, complicated, hairy and scary function does the work to actually
   * produce the code.  fp is the output stream, ic the beginning of the ic
-@@ -1615,6 +1685,8 @@
+@@ -1615,6 +1686,8 @@
  
      int c,t,lastcomp=0,reg;
  	    
@@ -744,7 +880,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
      	function = func;
  
  	/* r0..r5 are always used for parameter passing. */
-@@ -1638,7 +1710,7 @@
+@@ -1638,7 +1711,7 @@
  	reflower(fp);
  
  	if (func->storage_class == STATIC)
@@ -753,7 +889,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  	else
  		fprintf(fp, "[ _%s xp\n", func->identifier);
  
-@@ -1658,7 +1730,7 @@
+@@ -1658,7 +1731,7 @@
  	if (g_flags[1] & USEDFLAG)
  	{
  		if (func->storage_class == STATIC)
@@ -762,7 +898,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  		else
  			fprintf(fp, "print \"_%s^\";\n", func->identifier);
  	}
-@@ -1666,7 +1738,7 @@
+@@ -1666,7 +1739,7 @@
  	/* Adjust stack for locals. */
  
  	if (stackframe)
@@ -771,7 +907,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  	//if (stackoffset)
  	//	fprintf(fp, "\txp = xp - %ld\n", stackframe);
  
-@@ -1862,17 +1934,29 @@
+@@ -1862,17 +1935,29 @@
  				continue;
  
  			case KOMPLEMENT: /* Unary komplement */
@@ -810,7 +946,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  				fin_zop(fp, &ic->z, typf, &z);
  				continue;
  
-@@ -1912,7 +1996,7 @@
+@@ -1912,7 +1997,7 @@
  						emit_zop(fp, &q1);
  						fprintf(fp, " ");
  						emit_zop(fp, &z);
@@ -819,7 +955,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  						break;
  
  					default:
-@@ -1924,15 +2008,15 @@
+@@ -1924,15 +2009,15 @@
  					 AUTO or STATIC */
  				i = voff(&ic->q1);
  				pop_value(fp, &ic->z, typf, &z);
@@ -838,7 +974,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  				//stackoffset += ic->q2.val.vlong;
  				stackparamadjust += ic->q2.val.vlong;
  
-@@ -1956,7 +2040,7 @@
+@@ -1956,7 +2041,7 @@
  						push_addrof(fp, &ic->q1, typf, &q1);
  						fprintf(fp, "\t@copy_table ");
  						emit_zop(fp, &q1);
@@ -847,7 +983,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  						break;
  				}
  				continue;
-@@ -2545,12 +2629,10 @@
+@@ -2545,12 +2630,10 @@
  				/* If any parameters have been pushed, adjust
  				 * the stack to pop them. */
  
@@ -864,7 +1000,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  				}
  				continue;
  			}
-@@ -2622,9 +2704,9 @@
+@@ -2622,9 +2705,9 @@
  
  		while (constant)
  		{
@@ -876,7 +1012,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  				xword(constant->value, 1),
  				xword(constant->value, 0));
  			constant = constant->next;
-@@ -2639,12 +2721,12 @@
+@@ -2639,12 +2722,12 @@
  		fprintf(fp, "[ __init_vars_%s;\n", modulename);
  		while (fixup)
  		{
@@ -891,7 +1027,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  						modulename, fixup->value.val.number);
  					break;
  
-@@ -2660,15 +2742,15 @@
+@@ -2660,15 +2743,15 @@
  			switch (fixup->identifier.type)
  			{
  				case STATIC:
@@ -934,4 +1070,4 @@ diff -Nur vbcc/Makefile vbcc-patched/Makefile
  LDFLAGS = -lm
  
  # native version; used to create dtgen
-
+ 
