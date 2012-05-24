@@ -88,8 +88,9 @@ bool gave_up;
 
 /*========== Some common messages. ======================================*/
 
-const char ok[] = "OK.";
+void ok() { if (verbosity_mode != FAST) puts("OK."); }
 void hah() { puts("Don't be ridiculous!"); }
+void nothing_happens() { puts("Nothing happens."); }
 void I_see_no(const char *s) { printf("I see no %s here.\n", s); }
 void you_have_it() { puts("You are already carrying it!"); }
 void You_have_no(const char *s) { printf("You have no %s!\n", s); }
@@ -98,6 +99,7 @@ void it_is_dead() { puts("For crying out loud, the poor thing is already dead!")
 
 /*========== Some forward declarations. =================================*/
 
+bool lamprey(Location loc);
 void phog(Location loc);
 void hint_logic(Location loc);
 void look_around(Location loc, bool familiar_place);
@@ -490,7 +492,6 @@ void build_object_table(void)
     objs[DOOR].desc[0] = "The way north leads through a massive, rusty, iron door.";
     objs[SNAKE].desc[0] = "A huge green fierce snake bars the way!";
     objs[FISSURE].desc[1] = "A crystalline bridge now spans the fissure.";
-    objs[FISSURE].desc[2] = "The crystalline bridge has vanished!";
     objs[TABLET].desc[0] = "A massive stone tablet imbedded in the wall reads:\n"
                            "\"Congratulations on bringing light into the Dark room!\"";
     objs[PLANT].desc[0] = "There is a tiny little plant in the pit, murmuring \"Water, water, ...\"";                
@@ -828,27 +829,41 @@ bool dwarf_attack(void)
         if (pct(80)) {
             switch (ran(4)) {
                 case 0:
-                    printf("Your magic ring shoots a bolt of lightning that splinters the\n"
-                           "kni%s into dust before %s can reach you!\n",
-                           plural?"ves":"fe", plural?"they":"it");
+                    if (plural) {
+                        puts("Your magic ring shoots a bolt of lightning that splinters the\n"
+                             "knives into dust before they can reach you!");
+                        
+                    } else {
+                        puts("Your magic ring shoots a bolt of lightning that splinters the\n"
+                             "knife into dust before it can reach you!");
+                    }
                     break;
                 case 1:
-                    printf("A glowing disk of black fire jumps out of your magic ring and swallows\n"
-                           "the hurtling kni%s before %s can harm you!\n",
-                           plural?"ves":"fe", plural?"they":"it");
+                    if (plural) {
+                        puts("A glowing disk of black fire jumps out of your magic ring and swallows\n"
+                             "the hurtling knives before they can harm you!");
+                    } else {
+                        puts("A glowing disk of black fire jumps out of your magic ring and swallows\n"
+                             "the hurtling knife before it can harm you!");
+                    }
                     break;
                 case 2:
-                    printf("%s ball%s of searing flame %s out of your magic ring, %s\n"
-                           "off of the ground, and %s the kni%s before %s can reach you!\n",
-                           plural?"Several":"A", plural?"s":"",
-                           plural?"burst":"leaps", plural?"rebound":"bounces",
-                           plural?"vaporize":"melts", plural?"ves":"fe",
-                           plural?"they":"it");
+                    if (plural) {
+                        puts("Several balls of searing flame burst out of your magic ring, rebound\n"
+                             "off of the ground, and vaporize the knives before they can reach you!");
+                    } else {
+                        puts("A ball of searing flame leaps out of your magic ring, bounces\n"
+                             "off of the ground, and melts the knife before it can reach you!");
+                    }
                     break;
                 case 3:
-                    printf("Your magic ring emits a blast of some strange magical energy that\n"
-                           "knocks the kni%s aside!\n",
-                           plural?"ves":"fe");
+                    if (plural) {
+                        puts("Your magic ring emits a blast of some strange magical energy that\n"
+                             "knocks the knives aside!");
+                    } else {
+                        puts("Your magic ring emits a blast of some strange magical energy that\n"
+                             "knocks the knife aside!");
+                    }
                     break;
             }
             return false;
@@ -1389,7 +1404,7 @@ void getbird(Location loc)
     } else if (objs[BIRD].prop) {
         apport(CAGE, R_INHAND);
         apport(BIRD, R_INHAND);
-        puts(ok);
+        ok();
     } else if (toting(CAGE)) {
         if (toting(ROD)) {
             puts("The bird was unafraid when you entered, but as you approach it becomes\n"
@@ -1398,7 +1413,7 @@ void getbird(Location loc)
             places[R_BIRD].flags &= ~F_HINTABLE;
             apport(BIRD, R_INHAND);
             objs[BIRD].prop = 1;  /* caged */
-            puts(ok);
+            ok();
         }
     } else {
         puts("You might be able to catch the bird, but you could not carry it.");
@@ -1574,7 +1589,7 @@ int attempt_take(ObjectWord obj, Location loc)
         /* Platt lets you pick the cage for free. This is certainly a bug. */
         puts("You can't carry anything more.  You'll have to drop something first.");
     } else {
-        puts(ok);
+        ok();
         apport(obj, R_INHAND);
         if (obj == CAGE && objs[BIRD].prop)
             apport(BIRD, R_INHAND);
@@ -1645,7 +1660,7 @@ int dropbird(Location loc)
                plural?"ves":"f", plural?"their":"his", plural?"ves":"f");
         apport(BIRD, R_LIMBO);
     } else {
-        puts(ok);
+        ok();
     }
     return loc;
 }
@@ -1732,7 +1747,7 @@ int attempt_drop(ObjectWord obj, Location loc)
         }
         /* For bear/troll logic, see at_neofchasm(). Platt's code has a
          * subroutine named DROPBEAR, but it doesn't do anything special. */
-        puts(ok);
+        ok();
     } else {
         puts("You aren't carrying it!");
     }
@@ -1851,9 +1866,9 @@ int weaponry(ObjectWord obj, Location loc)
                "field.  It's just as well - the djinn doesn't seem dangerous.\n",
                word2.text);
     } else if (there(GOBLINS, loc)) {
-        printf("You kill several of the gooseberry goblins with your %s, but\n"
-               "the others swarm at you, force you to the ground, and rip out\n"
-               "your throat.\n", word2.text);
+        printf("You kill several of the gooseberry goblins with your %s, but\n", word2.text);
+        puts("the others swarm at you, force you to the ground, and rip out\n"
+               "your throat.");
         return you_are_dead_at(loc);
     } else {
         /* We're just aimlessly throwing/swinging this object. */
@@ -1861,7 +1876,7 @@ int weaponry(ObjectWord obj, Location loc)
             apport(obj, R_INHAND);
             return 0;  /* not yet handled */
         } else {
-            puts(ok);
+            ok();
             return loc;
         }
     }
@@ -2087,6 +2102,104 @@ bool is_walkable_direction(VerbWord v)
     }
 }
 
+void wave_rod(Location loc)
+{
+    if (there(FISSURE, loc) && closure < 2) {
+        if (objs[FISSURE].prop) {
+            puts("The crystalline bridge has vanished!");
+            objs[FISSURE].prop = 0;
+            objs[FISSURE].flags |= F_INVISIBLE;
+        } else {
+            puts("A crystalline bridge now spans the fissure.");
+            objs[FISSURE].prop = 1;
+            objs[FISSURE].flags &= ~F_INVISIBLE;
+        }
+    } else if (there(GEYSER, loc) && closure < 2) {
+        if (objs[GEYSER].prop) {
+            puts("The earth shudders violently, and steam blasts upwards from the geyser.\n"
+                 "The wheat-stone bridge cracks and splits, and the fragments fall into\n"
+                 "the gorge.");
+            objs[GEYSER].prop = 0;
+            objs[GEYSER].flags |= F_INVISIBLE;
+        } else {
+            puts("The earth begins to shudder violently, and smoke flows up from the\n"
+                 "gorge beneath your feet.  With a violent >GLOP!<, the volcano\n"
+                 "belches out an immense blast of molten lava which flies into the\n"
+                 "air above the gorge and suddenly solidifies into a fragile-looking arch\n"
+                 "of wheat-colored stone that bridges the gorge.");
+            objs[GEYSER].prop = 2;
+            objs[GEYSER].flags &= ~F_INVISIBLE;
+        }
+    } else if (there(QUICKSAND, loc)) {
+        /* Notice that the rod bridges the quicksand regardless of
+         * the cave's closure state. This is probably unintentional. */
+        puts("Nothing obvious happens.");
+        objs[QUICKSAND].prop = 1;
+    } else {
+        nothing_happens();
+    }
+}
+
+int no_move_possible(Location loc)
+{
+    if (now_in_darkness(loc)) {
+        if (pct(25)) {
+            puts("You fell into a pit and broke every bone in your body!");
+            return you_are_dead_at(loc);
+        } else {
+            puts("You have run into a wall of rock and can go no further in this\n"
+                 "direction.");
+        }
+    } else {
+        const char *dirs[8] = {
+            "east", "west", "north", "south", "northeast", "southeast",
+            "northwest", "southwest" 
+        };
+        VerbWord dir_verb = (keywordv(WALK) ? word2.meaning : word1.meaning);
+        const char *dir = (dir_verb == UP) ? "up" :
+                          (dir_verb == DOWN) ? "down" :
+                          dirs[dir_verb - EAST];
+        switch (ran(4)) {
+            case 0: printf("I'm sorry, but there's no way you can go %s from here.\n", dir); break;
+            case 1: printf("There is no way for you to go %s.\n", dir); break;
+            case 2: printf("You cannot go %s.\n", dir); break;
+            case 3: printf("Going %s is not possible from here.  Sorry.\n", dir); break;
+        }
+    }
+    if (here(LAMP, loc) && objs[LAMP].prop) {
+        lamplife -= 1;
+        if (lamplife == 0 || lamplife == 40) {
+            if (lamprey(loc))
+                return R_CYLINDRICAL;  /* the cave is now closed */
+        }
+    }
+    return loc;
+}
+
+int examine_mist(Location loc)
+{
+    puts("Mist is a white vapor, usually water, seen from time to time in\n"
+         "caverns.  It can be found anywhere but is frequently a sign of a deep\n"
+         "pit leading down to water.");
+    return loc;
+}
+
+int examine_trees(Location loc)
+{
+    /* Platt's version contains a verb TREE,TREES, and a message labeled
+     * INFOREST containing the familiar message from Woods' Adventure;
+     * but at least in the version I have, the verb is not implemented
+     * and the message is not referenced. This is certainly a bug; I'm
+     * taking the liberty of fixing it here. */
+    puts("The trees of the forest are large hardwood oak and maple, with an\n"
+         "occasional grove of pine or spruce.  There is quite a bit of under-\n"
+         "growth, largely birch and ash saplings plus nondescript bushes of\n"
+         "various sorts.  This time of year visibility is quite restricted by\n"
+         "all the leaves, but travel is quite easy if you detour around the\n"
+         "spruce and berry bushes.");
+    return loc;
+}
+
 int process_verb(Location loc)
 {
     const int verb = word1.meaning;
@@ -2133,6 +2246,66 @@ int process_verb(Location loc)
             break;  /* unhandled */
         case THROW:
             return attempt_throw(obj, loc);
+        case WAVE:
+            if (word2.type == WordType_Object) {
+                if (!toting(obj)) {
+                    puts("You aren't carrying it!");
+                } else if (obj == ROD) {
+                    wave_rod(loc);
+                } else if (obj == AXE || obj == SWORD) {
+                    weaponry(obj, loc);
+                } else {
+                    nothing_happens();
+                }
+            } else if (word2.type == WordType_None) {
+                nothing_happens();
+            } else {
+                hah();
+            }
+            return loc;
+        case NORTH:
+        case SOUTH:
+        case EAST:
+        case WEST:
+        case NE: case NW: case SE: case SW:
+        case UP: case DOWN:
+            return no_move_possible(loc);
+        case INVENTORY:
+            attempt_inventory();
+            return loc;
+        case LOOK:
+            if (keywordo(MIST)) return examine_mist(loc);
+            if (keywordo(TREES)) return examine_trees(loc);
+            if (now_in_darkness(loc)) {
+                puts("You have no source of light.");
+            } else {
+                bool blank_line_before_objects = true;
+                if (verbosity_mode == FAST) {
+                    puts(places[loc].short_desc);
+                    blank_line_before_objects = false;
+                } else {
+                    puts(places[loc].long_desc);
+                }
+                if (places[loc].flags & F_DAMP) {
+                    puts("The ground here is damp.");
+                }
+                places[loc].flags |= F_BEENHERE;
+                for (int i=1; i < MAX_OBJ; ++i) {
+                    if (!there(i, loc)) continue;
+                    objs[i].flags |= F_SEEN;
+                    if (objs[i].flags & F_INVISIBLE) continue;
+                    if (blank_line_before_objects) {
+                        puts("");
+                        blank_line_before_objects = false;
+                    }
+                    describe_object(i);
+                }
+                if (toting(BEAR)) {
+                    puts("You are being followed by a very large, tame bear.");
+                }
+            }
+            return loc;
+            
     }
     else if (word1.type == WordType_Object)
     switch (verb) {

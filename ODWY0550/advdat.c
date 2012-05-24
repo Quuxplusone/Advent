@@ -7,7 +7,9 @@ bool pct(int percent);
 bool yes(const char *prompt);
 void apport(ObjectWord t, Location loc);
 void say_foof(void);
+void ok(void);
 void hah(void);
+void nothing_happens(void);
 void finis(void);
 extern Location safe_exit;
 bool keywordv(VerbWord meaning);
@@ -27,7 +29,6 @@ extern bool have_drowned_in_quicksand;
 extern bool have_stolen_back_eggs;
 extern bool have_awoken_goblins;
 
-#define ok "OK."
 static const char cantpasslock[] = "You can't go through a locked steel grate!";
 
 static int you_didnt_move(Location newloc)
@@ -383,7 +384,7 @@ int at_debris(void)
     }
     if (keywordv(XYZZY)) {
 	if (closure >= 2 || nomagic) {
-	    puts("Nothing happens.");
+	    nothing_happens();
 	    panicked = true;
 	    return R_DEBRIS;
 	} else if (used_movement_verb(XYZZY)) {
@@ -658,7 +659,7 @@ int at_y2(void)
 	if (word2.type != WordType_None && !keywordv(SAY))
 	    return 0;  /* DROP PLUGH isn't handled here */
 	if (closure >= 2 || nomagic) {
-	    puts("Nothing happens.");
+	    nothing_happens();
 	    panicked = true;
 	    return R_Y2;
 	} else {
@@ -1175,7 +1176,7 @@ int at_falls(void)
     if (used_movement_placeword(R_INCLINE)) return R_INCLINE;
     if (used_movement_verb2(DOWN, JUMP)) {
 	if (!yes("Into the whirlpool??")) {
-	    puts(ok);
+	    ok();
 	    return R_FALLS;
 	}
 	bool something_got_lost = false;
@@ -1950,7 +1951,7 @@ int at_pony(void)
     if (keywordv(DROP) && keywordo(COINS) && toting(COINS)) {
 	apport(COINS, R_LIMBO);
 	apport(BATTERIES, R_PONY);
-	puts(ok);
+	ok();
 	puts("There are fresh batteries here.");
 	return R_PONY;
     }
@@ -2770,7 +2771,7 @@ int at_fake_y2(void)
     if (used_movement_verb(EAST)) return R_FAKE_JUMBLE;
     if (keywordv(PLUGH) || keywordp(R_PLOVER)) {
 	if (nomagic) {
-	    puts("Nothing happens.");
+	    nothing_happens();
 	} else {
 	    say_foof();
 	    return R_PLATFORM;
@@ -3038,10 +3039,10 @@ static bool try_escaping_with_word(VerbWord word, int i)
 	    say_foof();
 	    closure = 4;  /* On to the next stage of the endgame! */
 	} else if (cylinder_escape_count == i) {
-	    puts(ok);
+	    ok();
 	    ++cylinder_escape_count;
 	} else {
-	    puts("Nothing happens.");
+	    nothing_happens();
 	    cylinder_escape_count = 0;
 	}
 	return true;
