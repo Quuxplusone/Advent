@@ -1169,8 +1169,8 @@ void finis(void)
 {
     /* Print the score and say adieu. */
     int s = score();
-    printf("You have scored a total of %d points, out of a possible maximum of\n", s);
-    puts("550 points.  During this game of Adventure, you have taken a total of");
+    printf("You have scored a total of %d points, out of a possible maximum of\n"
+           "550 points.  During this game of Adventure, you have taken a total of\n", s);
     printf("%d turns.\n", turns);
 
     int rank;
@@ -1507,7 +1507,7 @@ int attempt_take(ObjectWord obj, Location loc)
                      "                  {hunt}\n"
                      "                              {seek}\n");
                 printf("No luck - I can't find the %s!  If you could get me some light in\n"
-                       "here, maybe I'd be able to do better.  Sorry....", word2.text);
+                       "here, maybe I'd be able to do better.  Sorry....\n", word2.text);
                 return loc;
             }
         }
@@ -1674,11 +1674,11 @@ bool dropliquid(ObjectWord obj, Location loc)
     objs[BOTTLE].prop = 1;
     if (there(DWARF, loc) && keywordv(THROW)) {
         if (objs[DWARF].prop == 1) {
-            printf("The %s flies through the air and thoroughly drenches the dwarf.  He\n", obj==OIL?"oil":"water");
-            puts("shakes himself off and curses violently; he *REALLY* looks angry!");
+            printf("The %s flies through the air and thoroughly drenches the dwarf.  He\n"
+                   "shakes himself off and curses violently; he *REALLY* looks angry!\n", obj==OIL?"oil":"water");
         } else {
-            printf("The %s flies through the air and thoroughly drenches the dwarves.  They\n", obj==OIL?"oil":"water");
-            puts("shake themselves off and curse violently; they *REALLY* look angry!");
+            printf("The %s flies through the air and thoroughly drenches the dwarves.  They\n"
+                   "shake themselves off and curse violently; they *REALLY* look angry!\n", obj==OIL?"oil":"water");
         }
         dwarves_enraged = true;
     } else {
@@ -1770,10 +1770,10 @@ int weaponry(ObjectWord obj, Location loc)
             hit_chance += 15;
         if (pct(hit_chance)) {
             if (pct(5) && !quipped) {
-                printf("You have mortally injured a little dwarf with your %s.  The dwarf\n", word2.text);
-                puts("staggers, slumps to the ground, gasps \"Epo'u mfu uifn vtf fncbmnjoh\n"
-                     "gmvje.  J xbou up cf tuvggfe xjui dsbc nfbu!\" and then expires in\n"
-                     "a puff of oily black smoke.");
+                printf("You have mortally injured a little dwarf with your %s.  The dwarf\n"
+                       "staggers, slumps to the ground, gasps \"Epo'u mfu uifn vtf fncbmnjoh\n"
+                       "gmvje.  J xbou up cf tuvggfe xjui dsbc nfbu!\" and then expires in\n"
+                       "a puff of oily black smoke.\n", word2.text);
                 quipped = true;
             } else {
                 puts("You killed a little dwarf.  The body vanishes in a cloud of greasy\n"
@@ -1824,7 +1824,10 @@ int weaponry(ObjectWord obj, Location loc)
              "that of a rhinoceros.  The troll fends off your blows effortlessly.");
     } else if (there(OGRE, loc)) {
         if (keywordv(WAVE)) {
-            printf("The ogre contemptously catches the %s in mid-swing, rips it out\n"
+            /* Platt has "contemptously".
+             * It's pretty evil that SWING SWORD is fatal, given that the
+             * solution to this puzzle is the less plausible THROW SWORD. */
+            printf("The ogre contemptuously catches the %s in mid-swing, rips it out\n"
                    "of your hands, and uses it to chop off your head.\n", word2.text);
             return you_are_dead_at(loc);
         } else if (obj == AXE) {
@@ -1855,10 +1858,10 @@ int weaponry(ObjectWord obj, Location loc)
             it_is_dead();
             apport(obj, R_INHAND);
         } else {
-            printf("The %s rebounds harmlessly from the basilisk's tough scales.  The\n", word2.text);
-            puts("basilisk awakens, grunting in shock, and glares at you.  You are\n"
-                 "instantly turned into a solid rock statue (and not a particularly\n"
-                 "impressive one, at that).");
+            printf("The %s rebounds harmlessly from the basilisk's tough scales.  The\n"
+                   "basilisk awakens, grunting in shock, and glares at you.  You are\n"
+                   "instantly turned into a solid rock statue (and not a particularly\n"
+                   "impressive one, at that).\n", word2.text);
             return you_are_dead_at(loc);
         }
     } else if (there(DJINN, loc)) {
@@ -1866,9 +1869,9 @@ int weaponry(ObjectWord obj, Location loc)
                "field.  It's just as well - the djinn doesn't seem dangerous.\n",
                word2.text);
     } else if (there(GOBLINS, loc)) {
-        printf("You kill several of the gooseberry goblins with your %s, but\n", word2.text);
-        puts("the others swarm at you, force you to the ground, and rip out\n"
-               "your throat.");
+        printf("You kill several of the gooseberry goblins with your %s, but\n"
+               "the others swarm at you, force you to the ground, and rip out\n"
+               "your throat.\n", word2.text);
         return you_are_dead_at(loc);
     } else {
         /* We're just aimlessly throwing/swinging this object. */
@@ -2276,36 +2279,61 @@ int process_verb(Location loc)
         case LOOK:
             if (keywordo(MIST)) return examine_mist(loc);
             if (keywordo(TREES)) return examine_trees(loc);
-            if (now_in_darkness(loc)) {
-                puts("You have no source of light.");
-            } else {
-                bool blank_line_before_objects = true;
-                if (verbosity_mode == FAST) {
-                    puts(places[loc].short_desc);
-                    blank_line_before_objects = false;
-                } else {
-                    puts(places[loc].long_desc);
-                }
-                if (places[loc].flags & F_DAMP) {
-                    puts("The ground here is damp.");
-                }
-                places[loc].flags |= F_BEENHERE;
-                for (int i=1; i < MAX_OBJ; ++i) {
-                    if (!there(i, loc)) continue;
-                    objs[i].flags |= F_SEEN;
-                    if (objs[i].flags & F_INVISIBLE) continue;
-                    if (blank_line_before_objects) {
-                        puts("");
-                        blank_line_before_objects = false;
+            look_around(loc, /*familiar=*/false);
+            return loc;
+        case ON:
+            if (keywordo(LAMP) || word2.type == WordType_None) {
+                if (!here(LAMP, loc)) {
+                    if (keywordo(LAMP)) {
+                        I_see_no("lamp");
+                    } else {
+                        puts("You have no source of light.");
                     }
-                    describe_object(i);
+                } else if (objs[LAMP].prop) {
+                    puts("Your lamp was already on!");
+                } else {
+                    if (lamplife < 40 && here(BATTERIES, loc) && !objs[BATTERIES].prop) {
+                        /* Notice that Platt has "the the". I'm leaving it. */
+                        puts("The old batteries in your lamp were pretty well shot - I've taken the\n"
+                             "the liberty of putting in the new ones.");
+                        objs[BATTERIES].prop = 1;
+                        lamplife += 300;
+                        have_used_noside_samoht = false;
+                    }
+                    if (lamplife == 0) {
+                        puts("Your lamp has run out of power.");
+                    } else {
+                        objs[LAMP].prop = 1;
+                        puts("Your lamp is now on.");
+                        if (!(places[loc].flags & F_LIGHTED))
+                            look_around(loc, /*familiar=*/false);
+                        phog(loc);
+                    }
                 }
-                if (toting(BEAR)) {
-                    puts("You are being followed by a very large, tame bear.");
+                return loc;
+            }
+            return 0;  /* LIGHT AXE, e.g., is unhandled */
+        case OFF:
+            if (keywordo(LAMP) || word2.type == WordType_None) {
+                if (!here(LAMP, loc)) {
+                    if (keywordo(LAMP)) {
+                        I_see_no("lamp");
+                    } else {
+                        return 0;  /* unhandled */
+                    }
+                } else if (!objs[LAMP].prop) {
+                    puts("Your lamp was already off!");
+                } else {
+                    objs[LAMP].prop = 0;
+                    puts("Your lamp is now off.");
+                    if (!(places[loc].flags & F_LIGHTED))
+                       puts("It is now pitch dark.  If you proceed you will likely fall into a pit.");
+                    phog(loc);
                 }
+            } else {
+                puts("I don't know how.");
             }
             return loc;
-            
     }
     else if (word1.type == WordType_Object)
     switch (verb) {
