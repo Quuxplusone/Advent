@@ -3081,6 +3081,9 @@ static const char dead_end[] = "Dead end.";
 static const char ice_tunnels[] = "You are in an intricate network of ice tunnels.";
 static const char enchanted_tunnels[] = "You are in the catacombs.  Enchanted tunnels lead in all directions.";
 
+/* R_INSAFE and R_BALCONY are both marked F_NODWARF|F_ONE_EXIT, which is
+  * somewhat silly, as F_ONE_EXIT has no effect without a dwarf in the room. */
+
 struct Place places[] = {
     /* R_LIMBO */ {
 	NULL, NULL, 0, NULL
@@ -3090,46 +3093,46 @@ struct Place places[] = {
         "You are standing at the end of a road before a small brick building.\n"
         "Around you is a forest.  A small stream flows out of the building and\n"
         "down a gully.",
-        F_LIGHTED | F_NOTINCAVE,
+        F_LIGHTED|F_WATER|F_NOTINCAVE,
         &at_road
     },
     /* R_HILL */ {
 	"You're at hill in road.",
         "You have walked up a hill, still in the forest. The road slopes back\n"
         "down the other side of the hill.  There is a building in the distance.",
-	F_LIGHTED | F_NOTINCAVE,
+	F_LIGHTED|F_NOTINCAVE,
 	&at_hill
     },
     /* R_HOUSE */ {
 	"You're inside building.",
         "You are inside a building, a well house for a large spring.",
-	F_LIGHTED | F_NOTINCAVE | F_WATER,
+	F_LIGHTED|F_NOTINCAVE|F_WATER,
 	&at_house
     },
     /* R_VALLEY */ {
         "You're in valley.",
         "You are in a valley in the forest beside a stream tumbling along a\n"
         "rocky bed.",
-	F_LIGHTED | F_NOTINCAVE | F_WATER,
+	F_LIGHTED|F_NOTINCAVE|F_WATER,
 	&at_valley
     },
     /* R_FOREST */ {
 	"You're in forest.",
         "You are in open forest, with a deep valley to one side.",
-	F_LIGHTED | F_NOTINCAVE,
+	F_LIGHTED|F_NOTINCAVE,
 	&at_forest
     },
     /* R_FOREST2 */ {
 	"You're in forest.",
         "You are in open forest near both a valley and a road.",
-	F_LIGHTED | F_NOTINCAVE,
+	F_LIGHTED|F_NOTINCAVE,
 	&at_forest2
     },
     /* R_SLIT */ {
 	"You're at slit in streambed.",
         "At your feet all the water of the stream splashes into a 2-inch slit\n"
         "in the rock.  Downstream the streambed is bare rock.",
-	F_LIGHTED | F_NOTINCAVE | F_WATER,
+	F_LIGHTED|F_NOTINCAVE|F_WATER,
 	&at_slit
     },
     /* R_DEPRESSION */ {
@@ -3137,21 +3140,21 @@ struct Place places[] = {
         "You are in a 20-foot depression floored with bare dirt. Set into the\n"
         "dirt is a strong steel grate mounted in concrete.  A dry streambed\n"
         "leads into the depression.",
-	F_LIGHTED | F_NOTINCAVE,
+	F_LIGHTED|F_HINTABLE|F_NOTINCAVE,
 	&at_depression
     },
     /* R_INSIDE */ {
 	"You're below the grate.",
         "You are in a small chamber beneath a 3x3 steel grate to the surface.\n"
 	"A low crawl over cobbles leads inward to the west.",
-	F_LIGHTED,
+	F_LIGHTED|F_NODWARF,
 	&at_inside
     },
     /* R_COBBLES */ {
 	"You're in cobble crawl.",
         "You are crawling over cobbles in a low passage. There is a dim light\n"
         "at the east end of the passage.",
-	F_LIGHTED,
+	F_LIGHTED|F_NODWARF,
 	&at_cobbles
     },
     /* R_DEBRIS */ {
@@ -3207,7 +3210,7 @@ struct Place places[] = {
 	"You're in nugget of gold room.",
         "This is a low room with a crude note on the wall. The note says,\n"
         "\"You won't get it up the steps\".",
-	0, &at_nugget
+	F_ONE_EXIT, &at_nugget
     },
     /* R_HMK */ {
 	"You're in Hall of Mt King.",
@@ -3234,13 +3237,13 @@ struct Place places[] = {
 	"You're in east pit.\nThere is a small pool of oil here.",
         "You are at the bottom of the eastern pit in the Twopit room. There is\n"
         "a small pool of oil in one corner of the pit.",
-	0, &at_epit
+	F_NODWARF, &at_epit
     },
     /* R_WPIT */ {
 	"You're in west pit.",
         "You are at the bottom of the western pit in the Twopit room. There is\n"
         "a large hole in the wall about 25 feet above you.",
-	0, &at_wpit
+	F_NODWARF, &at_wpit
     },
     /* R_NS */ {
 	"You're in a low N/S passage.",
@@ -3251,7 +3254,7 @@ struct Place places[] = {
     /* R_SOUTH */ {
 	NULL,
 	"You are in the south side chamber.",
-	0, &at_south
+	F_ONE_EXIT, &at_south
     },
     /* R_WEST */ {
 	"You're in the west side chamber.",
@@ -3280,7 +3283,7 @@ struct Place places[] = {
         "someone has been here recently.  Directly across the pit from you and\n"
         "25 feet away there is a similar window looking into a lighted room.  A\n"
         "shadowy figure can be seen there peering back at you.",
-	0, &at_windoe
+	F_ONE_EXIT, &at_windoe
     },
     /* R_WINDOW */ {
 	"You're at window on pit.",
@@ -3291,7 +3294,7 @@ struct Place places[] = {
         "someone has been here recently.  Directly across the pit from you and\n"
         "25 feet away there is a similar window looking into a lighted room.  A\n"
         "shadowy figure can be seen there peering back at you.",
-	0, &at_window
+	F_ONE_EXIT, &at_window
     },
     /* R_DIRTY */ {
 	"You're in dirty passage.",
@@ -3309,7 +3312,7 @@ struct Place places[] = {
 	"You are at the pit's bottom with a stream nearby.",
         "You are in the bottom of a small pit with a little stream, which\n"
         "enters and exits through tiny slits.",
-	F_WATER, &at_wet
+	F_WATER|F_NODWARF, &at_wet
     },
     /* R_DUSTY */ {
 	"You're in dusty rock room.",
@@ -3324,29 +3327,30 @@ struct Place places[] = {
         "off the floor.",
 	0, &at_wmist
     },
-    /* R_MAZEA42 */ { NULL, all_alike, F_HINTABLE, &at_mazea42 },
-    /* R_MAZEA43 */ { NULL, all_alike, F_HINTABLE, &at_mazea43 },
-    /* R_MAZEA44 */ { NULL, all_alike, F_HINTABLE, &at_mazea44 },
-    /* R_MAZEA45 */ { NULL, all_alike, F_HINTABLE, &at_mazea45 },
-    /* R_MAZEA46 */ { NULL, dead_end, F_HINTABLE, &at_mazea46 },
-    /* R_MAZEA47 */ { NULL, dead_end, F_HINTABLE, &at_mazea47 },
-    /* R_MAZEA48 */ { NULL, dead_end, F_HINTABLE, &at_mazea48 },
-    /* R_MAZEA49 */ { NULL, all_alike, F_HINTABLE, &at_mazea49 },
-    /* R_MAZEA50 */ { NULL, all_alike, F_HINTABLE, &at_mazea50 },
-    /* R_MAZEA51 */ { NULL, all_alike, F_HINTABLE, &at_mazea51 },
-    /* R_MAZEA52 */ { NULL, all_alike, F_HINTABLE, &at_mazea52 },
-    /* R_MAZEA53 */ { NULL, all_alike, F_HINTABLE, &at_mazea53 },
-    /* R_MAZEA54 */ { NULL, dead_end, F_HINTABLE, &at_mazea54 },
-    /* R_MAZEA55 */ { NULL, all_alike, F_HINTABLE, &at_mazea55 },
-    /* R_MAZEA56 */ { NULL, dead_end, F_HINTABLE, &at_mazea56 },
+    /* R_MAZEA42 */ { NULL, all_alike, F_HINTABLE|F_INMAZE, &at_mazea42 },
+    /* R_MAZEA43 */ { NULL, all_alike, F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazea43 },
+    /* R_MAZEA44 */ { NULL, all_alike, F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazea44 },
+    /* R_MAZEA45 */ { NULL, all_alike, F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazea45 },
+    /* R_MAZEA46 */ { NULL, dead_end, F_HINTABLE|F_INMAZE|F_NOBACK|F_ONE_EXIT, &at_mazea46 },
+    /* R_MAZEA47 */ { NULL, dead_end, F_HINTABLE|F_INMAZE|F_NOBACK|F_ONE_EXIT, &at_mazea47 },
+    /* R_MAZEA48 */ { NULL, dead_end, F_HINTABLE|F_INMAZE|F_NOBACK|F_ONE_EXIT, &at_mazea48 },
+    /* Platt marks MAZEA.49 as ONE.EXIT, even though there are two. */
+    /* R_MAZEA49 */ { NULL, all_alike, F_HINTABLE|F_INMAZE|F_NOBACK|F_ONE_EXIT, &at_mazea49 },
+    /* R_MAZEA50 */ { NULL, all_alike, F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazea50 },
+    /* R_MAZEA51 */ { NULL, all_alike, F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazea51 },
+    /* R_MAZEA52 */ { NULL, all_alike, F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazea52 },
+    /* R_MAZEA53 */ { NULL, all_alike, F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazea53 },
+    /* R_MAZEA54 */ { NULL, dead_end, F_HINTABLE|F_INMAZE|F_NOBACK|F_ONE_EXIT, &at_mazea54 },
+    /* R_MAZEA55 */ { NULL, all_alike, F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazea55 },
+    /* R_MAZEA56 */ { NULL, dead_end, F_HINTABLE|F_INMAZE|F_NOBACK|F_ONE_EXIT, &at_mazea56 },
     /* R_MAZEA57_PIT */ {
 	"You're at brink of pit.",
         "You are on the brink of a thirty foot pit with a massive orange column\n"
         "down one wall.  You could climb down here but you could not get back\n"
         "up.  The maze continues at this level.",
-	0, &at_mazea57_pit
+	F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazea57_pit
     },
-    /* R_MAZEA58 */ { NULL, dead_end, F_HINTABLE, &at_mazea58 },
+    /* R_MAZEA58 */ { NULL, dead_end, F_HINTABLE|F_INMAZE|F_NOBACK|F_ONE_EXIT, &at_mazea58 },
     /* R_ELONG */ {
 	"You're at east end of long hall.",
         "You are at the east end of a very long hall apparently without side\n"
@@ -3369,7 +3373,7 @@ struct Place places[] = {
 	NULL,
 	"Dead end passage. Scratched on a rock is the message, \"Stand where\n"
         "the statue gazes, and make use of the proper tool.\"",
-	0, &at_deadend1
+	F_ONE_EXIT, &at_deadend1
     },
     /* R_COMPLEX */ {
 	"You're at complex junction.",
@@ -3423,7 +3427,7 @@ struct Place places[] = {
 	0, &at_low
     },
     /* R_DEADEND2 */ {
-	NULL, "Dead end crawl.", 0, &at_deadend2
+	NULL, "Dead end crawl.", F_ONE_EXIT, &at_deadend2
     },
     /* R_SECRETEW_TITE */ {
 	"You're in secret E/W canyon above tight canyon.",
@@ -3435,7 +3439,7 @@ struct Place places[] = {
     /* R_NSCANYONWIDE */ {
 	NULL,
 	"You are at a wide place in a very tight N/S canyon.",
-	0, &at_nscanyonwide
+	F_NOBACK, &at_nscanyonwide
     },
     /* R_TIGHTERSTILL */ {
 	NULL,
@@ -3452,16 +3456,16 @@ struct Place places[] = {
 	"The canyon runs into a mass of boulders -- dead end.",
         "The canyon runs into a mass of boulders -- dead end.  Scratched on\n"
         "one of the boulders are the words, \"Jerry Cornelius was here.\"",
-	0, &at_deadend3
+	F_ONE_EXIT, &at_deadend3
     },
-    /* R_MAZEA80 */ { NULL, all_alike, F_HINTABLE, &at_mazea80 },
-    /* R_MAZEA81 */ { NULL, dead_end, F_HINTABLE, &at_mazea81 },
-    /* R_MAZEA82 */ { NULL, dead_end, F_HINTABLE, &at_mazea82 },
-    /* R_MAZEA83 */ { NULL, all_alike, F_HINTABLE, &at_mazea83 },
-    /* R_MAZEA84 */ { NULL, all_alike, F_HINTABLE, &at_mazea84 },
-    /* R_MAZEA85 */ { NULL, dead_end, F_HINTABLE, &at_mazea85 },
-    /* R_MAZEA86 */ { NULL, dead_end, F_HINTABLE, &at_mazea86 },
-    /* R_MAZEA87 */ { NULL, all_alike, F_HINTABLE, &at_mazea87 },
+    /* R_MAZEA80 */ { NULL, all_alike, F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazea80 },
+    /* R_MAZEA81 */ { NULL, dead_end, F_HINTABLE|F_INMAZE|F_NOBACK|F_ONE_EXIT, &at_mazea81 },
+    /* R_MAZEA82 */ { NULL, dead_end, F_HINTABLE|F_INMAZE|F_NOBACK|F_ONE_EXIT, &at_mazea82 },
+    /* R_MAZEA83 */ { NULL, all_alike, F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazea83 },
+    /* R_MAZEA84 */ { NULL, all_alike, F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazea84 },
+    /* R_MAZEA85 */ { NULL, dead_end, F_HINTABLE|F_INMAZE|F_NOBACK|F_ONE_EXIT, &at_mazea85 },
+    /* R_MAZEA86 */ { NULL, dead_end, F_HINTABLE|F_INMAZE|F_NOBACK|F_ONE_EXIT, &at_mazea86 },
+    /* R_MAZEA87 */ { NULL, all_alike, F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazea87 },
     /* R_NARROW */ {
 	"You're in narrow corridor.",
         "You are in a long, narrow corridor stretching out of sight to the\n"
@@ -3474,7 +3478,7 @@ struct Place places[] = {
         "You are at the top of a steep incline above a large room. You could\n"
         "climb down here, but you would not be able to climb up.  There is a\n"
         "passage leading back to the north.",
-	0, &at_incline
+	F_NOBACK, &at_incline
     },
     /* R_GIANT */ {
 	"You're in Giant room.",
@@ -3495,13 +3499,13 @@ struct Place places[] = {
         "You are in a magnificent cavern with a rushing stream, which cascades\n"
         "over a sparkling waterfall into a roaring whirlpool which disappears\n"
         "through a hole in the floor.  Passages exit to the south and west.",
-	0, &at_falls
+	F_WATER, &at_falls
     },
     /* R_SOFT */ {
 	"You're in soft room.",
         "You are in the soft room. The walls are covered with heavy curtains,\n"
         "the floor with a thick pile carpet.  Moss covers the ceiling.",
-	0, &at_soft
+	F_ONE_EXIT, &at_soft
     },
     /* R_ORIENTAL */ {
 	"You're in Oriental room.",
@@ -3523,18 +3527,18 @@ struct Place places[] = {
         "You are in an alcove. A small NW path seems to widen after a short\n"
         "distance.  An extremely tight tunnel leads east.  It looks like a very\n"
         "tight squeeze.  An eerie light can be seen at the other end.",
-	0, &at_alcove
+	F_NOBACK|F_NODWARF|F_HINTABLE, &at_alcove
     },
     /* R_PLOVER */ {
 	"You're in Plover room.",
         "You're in a small chamber lit by an eerie green light. An extremely\n"
         "narrow tunnel exits to the west.  A dark corridor leads NE.",
-	F_LIGHTED, &at_plover
+	F_LIGHTED|F_NOBACK|F_NODWARF|F_HINTABLE, &at_plover
     },
     /* R_DARK */ {
 	"You're in Dark room.",
         "You're in the Dark room. A corridor leading south is the only exit.",
-	0, &at_dark
+	F_NOBACK|F_NODWARF|F_HINTABLE, &at_dark
     },
     /* R_ARCHED */ {
 	"You're in arched hall.",
@@ -3548,7 +3552,7 @@ struct Place places[] = {
         "walls are littered with bits of shells imbedded in the stone.  A\n"
         "shallow passage proceeds downward, and a somewhat steeper one leads\n"
         "up.  A low hands and knees passage enters from the south.",
-	0, &at_shell
+	F_NOBACK, &at_shell
     },
     /* R_RAGGED */ {
 	NULL,
@@ -3558,7 +3562,7 @@ struct Place places[] = {
     /* R_CULDESAC */ {
 	NULL,
 	"You are in a cul-de-sac about eight feet across.",
-	0, &at_culdesac
+	F_ONE_EXIT, &at_culdesac
     },
     /* R_ANTE */ {
 	"You're in anteroom.",
@@ -3571,12 +3575,14 @@ struct Place places[] = {
     /* R_MAZED107 */ {
 	NULL,
 	"You are in a maze of twisty little passages, all different.",
-	0, &at_mazed107
+	F_HINTABLE|F_INMAZE, &at_mazed107
+	/* This room is deliberately *not* marked F_NOBACK, so that a player
+	 * who wanders into the maze by mistake can get back out if they want. */
     },
     /* R_WITT */ {
 	"You're at Witt's End.",
         "You are at Witt's End. Passages lead off in *all* directions.",
-	0, &at_witt
+	F_HINTABLE|F_NOBACK, &at_witt
     },
     /* R_MIRROR */ {
 	"You're in mirror canyon.",
@@ -3594,12 +3600,12 @@ struct Place places[] = {
         "A large stalactite extends from the roof and almost reaches the floor\n"
         "below.  You could climb down it, and jump from it to the floor, but\n"
         "having done so you would be unable to reach it to climb back up.",
-	0, &at_stalact
+	F_NOBACK, &at_stalact
     },
     /* R_MAZED112 */ {
 	NULL,
 	"You are in a little maze of twisting passages, all different.",
-	0, &at_mazed112
+	F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazed112
     },
     /* R_RES */ {
 	"You're on southern edge of reservoir.",
@@ -3610,7 +3616,7 @@ struct Place places[] = {
         "and splashes noisily into the water near the reservoir's northern wall.\n"
         "A dimly-seen passage exits through the northern wall, but you can't get\n"
         "across the water to get to it.  Another passage leads south from here.",
-	F_WATER, &at_res
+	F_WATER|F_ONE_EXIT, &at_res
     },
     /* R_RESERVOIR_N */ {
 	"You are at the northern end of the reservoir.",
@@ -3618,14 +3624,14 @@ struct Place places[] = {
         "the water to the south, a dark passage is visible.  Another passage\n"
         "leads north from here.  Large, clawed tracks are visible in the damp\n"
         "ground, leading from the passage into the water.",
-	F_WATER, &at_reservoir_n
+	F_WATER|F_NODWARF|F_NOBACK, &at_reservoir_n
     },
     /* R_WARM */ {
 	"You're in small, warm chamber.",
         "You are in a small chamber with warm walls.  Mist drifts into the\n"
         "chamber from a passage entering from the south and evaporates in\n"
         "the heat.  Another passage leads out to the northeast.",
-	0, &at_warm
+	F_NODWARF, &at_warm
     },
     /* R_BALCONY */ {
 	"You're on balcony above treasure chamber.",
@@ -3639,33 +3645,33 @@ struct Place places[] = {
         "that all adventurers are created equal (although some are more equal\n"
         "than others).  NO ADMITTANCE VIA THIS ENTRANCE!\"  A small, dark\n"
         "tunnel leads out to the west.",
-	0, &at_balcony
+	F_LIGHTED|F_NODWARF|F_ONE_EXIT, &at_balcony
     },
     /* R_FAKE_SLIT */ {
 	"You're at slit in streambed.",
         "At your feet all the water of the stream splashes into a 2-foot slit\n"
         "in the rock.  Downstream the streambed is bare rock.",
-	F_LIGHTED | F_NOTINCAVE, &at_fake_slit
+	F_LIGHTED|F_NOTINCAVE, &at_fake_slit
     },
     /* R_CYLINDRICAL */ {
 	"You're in cylindrical chamber.",
         "You are in a small cylindrical room with very smooth walls and a flat\n"
         "floor and ceiling.  There are no exits visible anywhere.",
-	F_LIGHTED, &at_cylindrical
+	F_LIGHTED|F_NOBACK, &at_cylindrical
     },
-    /* R_PIRATES_NEST */ { NULL, dead_end, 0, &at_pirates_nest },
+    /* R_PIRATES_NEST */ { NULL, dead_end, F_INMAZE|F_NODWARF, &at_pirates_nest },
     /* R_SWOFCHASM */ {
 	"You're on SW side of chasm.",
         "You are on one side of a large, deep chasm. A heavy white mist rising\n"
         "up from below obscures all view of the far side.  A SW path leads away\n"
         "from the chasm into a winding corridor.",
-	0, &at_swofchasm
+	F_NOBACK|F_NODWARF, &at_swofchasm
     },
     /* R_NEOFCHASM */ {
 	"You're on NE side of chasm.",
         "You are on the far side of the chasm. A NE path leads away from the\n"
         "chasm on this side.",
-	0, &at_neofchasm
+	F_NOBACK|F_NODWARF, &at_neofchasm
     },
     /* R_SLOPING */ {
 	"You're in sloping corridor.",
@@ -3687,21 +3693,21 @@ struct Place places[] = {
 	"You're in corridor.",
         "You're in a long east/west corridor. A faint rumbling noise can be\n"
         "heard in the distance.",
-	0, &at_corridor
+	F_NODWARF, &at_corridor
     },
     /* R_FORK */ {
 	"You're at fork in path.",
         "The path forks here. The left fork leads northeast. A dull rumbling\n"
         "seems to get louder in that direction.  The right fork leads southeast\n"
         "down a gentle slope.  The main corridor enters from the west.",
-	0, &at_fork
+	F_NODWARF, &at_fork
     },
     /* R_WARMJUNCTN */ {
 	"You're at junction with warm walls.",
         "The walls are quite warm here. From the north can be heard a steady\n"
         "roar, so loud that the entire cave seems to be trembling.  Another\n"
         "passage leads south, and a low crawl goes east.",
-	0, &at_warmjunctn
+	F_NODWARF, &at_warmjunctn
     },
     /* R_VIEW */ {
 	"You're at breath-taking view.",
@@ -3725,7 +3731,7 @@ struct Place places[] = {
         "ominously.  The far right wall is aflame with an incandescence of its\n"
         "own, which lends an additional infernal splendor to the already\n"
         "hellish scene.  A dark, foreboding passage exits to the south.",
-    	0, &at_view
+    	F_LIGHTED|F_NODWARF, &at_view
     },
     /* R_FACES */ {
 	"You're at the south end of the Valley of the Stone Faces.",
@@ -3739,7 +3745,7 @@ struct Place places[] = {
         "the volcano.  The entire far end of the valley is taken up by an\n"
         "immense carving of a seated figure;  its exact form cannot be seen\n"
         "from here due to the uncertainty of the light.",
-	0, &at_faces
+	F_LIGHTED|F_NOBACK|F_NODWARF, &at_faces
     },
     /* R_BY_FIGURE */ {
 	"You're at north end of the Valley of the Stone Faces.",
@@ -3749,7 +3755,7 @@ struct Place places[] = {
         "gazing down at you with a faint but definite expression of amusement.\n"
         "Between its feet and the floor is a rock wall about ten feet high\n"
         "which extends across the entire north end of the valley.",
-	0, &at_by_figure
+	F_LIGHTED|F_NODWARF, &at_by_figure
     },
     /* R_PLAIN_1 */ {
 	"You're at south end of fog-filled room.",
@@ -3758,114 +3764,114 @@ struct Place places[] = {
         "of the room cannot be seen due to the thickness of the fog - it's\n"
         "a real pea-souper (even to the color in places!).  A passage leads\n"
         "back to the south;  a dull rumbling sound issues from the passage.",
-	0, &at_plain_1
+	F_NOBACK|F_NODWARF, &at_plain_1
     },
     /* R_PLAIN_2 */ {
-	NULL, NULL, 0, &at_plain_2
+	NULL, NULL, F_NOBACK|F_NODWARF|F_HINTABLE, &at_plain_2
     },
     /* R_PLAIN_3 */ {
 	"You're in foggy room by cairn of rocks.",
         "You are standing in a fog-filled room next to a tall cairn of glowing\n"
         "rocks.  An opening in the cairn leads down to a dark passage.",
-	0, &at_plain_3
+	F_NODWARF, &at_plain_3
     },
     /* R_NONDESCRIPT */ {
 	"You're in nondescript chamber.",
         "You're in a small, nondescript chamber.  A dark passage leads up\n"
         "and to the south, and a wide but low crawl leads north.",
-	0, &at_nondescript
+	F_NODWARF, &at_nondescript
     },
     /* R_PENTAGRAM */ {
 	"You're in room with pentagram.",
         "You're in a small room with a very smooth rock floor, onto which\n"
         "has been marked a pentagram.  A low crawl leads out to the west, and\n"
         "a crack in the rock leads north.",
-	0, &at_pentagram
+	F_NODWARF, &at_pentagram
     },
     /* R_CHIMNEY */ {
 	"You're at the end of the crack, at the bottom of the chimney.",
         "The crack in the rock ends here, but a narrow chimney leads up.  You\n"
         "should be able to climb it.",
-	0, &at_chimney
+	F_NODWARF, &at_chimney
     },
     /* R_TUBE */ {
 	"You're in lava tube at top of chimney.",
         "You're at the top of a narrow chimney in the rock.  A cylindrical\n"
         "tube composed of hardened lava leads south.",
-	0, &at_tube
+	F_NODWARF, &at_tube
     },
     /* R_TUBE_SLIDE */ {
 	"You're at steep slide in lava tube.",
         "The lava tube continues down and to the south, but it becomes very\n"
         "steep here - if you go down it you probably won't be able to get\n"
         "back up.",
-	0, &at_tube_slide
+	F_NODWARF, &at_tube_slide
     },
     /* R_BASQUE_1 */ {
 	"You're in rough and narrow passage.",
         "You are in a narrow and rough passage running north and south.\n"
         "A dull rumbling sound can be heard from the south.",
-	0, &at_basque_1
+	F_NOBACK|F_NODWARF, &at_basque_1
     },
     /* R_BASQUE_2 */ {
 	"You're in rough passage to the north of the basilisk's den.",
 	"You are in a rough passage to the north of the basilisk's den.",
-	0, &at_basque_2
+	F_NODWARF, &at_basque_2
     },
     /* R_BASQUE_FORK */ {
 	"You're at fork in passage by steps.",
         "The passage here enters from the south and divides, with a wide\n"
         "tunnel exiting to the north and a set of steps leading downward.",
-    	0, &at_basque_fork
+    	F_NODWARF, &at_basque_fork
     },
     /* R_ON_STEPS */ {
 	"You're on the steps.",
         "You are on a long, spiral set of steps leading downwards into the\n"
         "earth.",
-    	0, &at_on_steps
+    	F_NODWARF, &at_on_steps
     },
     /* R_STEPS_EXIT */ {
 	"You're at exit on steps.",
         "A small tunnel exits from the steps and leads north.  The steps\n"
         "continue downwards.",
-    	0, &at_steps_exit
+    	F_NODWARF, &at_steps_exit
     },
     /* R_STORAGE */ {
 	"You're in the storage room.",
         "You're in what was once a storage room.  A set of steps lead up.",
-    	0, &at_storage
+    	F_NODWARF, &at_storage
     },
     /* R_FAKE_Y2 */ {
 	"You're at \"Y2\"?",
         "You are in a large room, with a passage to the south, a passage to the\n"
         "west, and a wall of broken rock to the east.  There is a large \"Y2\" on\n"
         "a rock in the room's center.",
-    	0, &at_fake_y2
+    	F_NODWARF, &at_fake_y2
     },
     /* R_FAKE_JUMBLE */ {
 	NULL,
 	"You are in a jumble of rock, with cracks everywhere.",
-	0, &at_fake_jumble
+	F_NODWARF, &at_fake_jumble
     },
-    /* R_CATACOMBS1 */ { NULL, enchanted_tunnels, 0, &at_catacombs1 },
-    /* R_CATACOMBS2 */ { NULL, enchanted_tunnels, 0, &at_catacombs2 },
-    /* R_CATACOMBS3 */ { NULL, enchanted_tunnels, 0, &at_catacombs3 },
-    /* R_CATACOMBS4 */ { NULL, enchanted_tunnels, 0, &at_catacombs4 },
-    /* R_CATACOMBS5 */ { NULL, enchanted_tunnels, 0, &at_catacombs5 },
-    /* R_CATACOMBS6 */ { NULL, enchanted_tunnels, 0, &at_catacombs6 },
-    /* R_CATACOMBS7 */ { NULL, enchanted_tunnels, 0, &at_catacombs7 },
-    /* R_CATACOMBS8 */ { NULL, enchanted_tunnels, 0, &at_catacombs8 },
-    /* R_CATACOMBS9 */ { NULL, enchanted_tunnels, 0, &at_catacombs9 },
-    /* R_CATACOMBS10 */ { NULL, enchanted_tunnels, 0, &at_catacombs10 },
-    /* R_CATACOMBS11 */ { NULL, enchanted_tunnels, 0, &at_catacombs11 },
-    /* R_CATACOMBS12 */ { NULL, enchanted_tunnels, 0, &at_catacombs12 },
-    /* R_CATACOMBS13 */ { NULL, enchanted_tunnels, 0, &at_catacombs13 },
-    /* R_CATACOMBS14 */ { NULL, enchanted_tunnels, 0, &at_catacombs14 },
-    /* R_CATACOMBS15 */ { NULL, enchanted_tunnels, 0, &at_catacombs15 },
-    /* R_CATACOMBS16 */ { NULL, enchanted_tunnels, 0, &at_catacombs16 },
-    /* R_CATACOMBS17 */ { NULL, enchanted_tunnels, 0, &at_catacombs17 },
-    /* R_CATACOMBS18 */ { NULL, enchanted_tunnels, 0, &at_catacombs18 },
-    /* R_CATACOMBS19 */ { NULL, enchanted_tunnels, 0, &at_catacombs19 },
+    /* R_CATACOMBS1 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs1 },
+    /* R_CATACOMBS2 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs2 },
+    /* R_CATACOMBS3 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs3 },
+    /* R_CATACOMBS4 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs4 },
+    /* R_CATACOMBS5 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs5 },
+    /* R_CATACOMBS6 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs6 },
+    /* R_CATACOMBS7 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs7 },
+    /* R_CATACOMBS8 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs8 },
+    /* R_CATACOMBS9 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs9 },
+    /* R_CATACOMBS10 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs10 },
+    /* R_CATACOMBS11 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs11 },
+    /* R_CATACOMBS12 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs12 },
+    /* R_CATACOMBS13 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs13 },
+    /* R_CATACOMBS14 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs14 },
+    /* R_CATACOMBS15 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs15 },
+    /* R_CATACOMBS16 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs16 },
+    /* R_CATACOMBS17 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs17 },
+    /* R_CATACOMBS18 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs18 },
+    /* R_CATACOMBS19 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs19 },
     /* R_AUDIENCE */ {
 	"You're at west end of Audience Hall.",
         "You are standing at the west end of the royal Audience Hall.\n"
@@ -3874,39 +3880,39 @@ struct Place places[] = {
         "vaulted, and is supported by pillars of rare Egyptian red granite;\n"
         "it gives off a nacreous glow that fills the entire chamber with\n"
         "a light like moon-light shining off of polished silver.",
-    	0, &at_audience
+    	F_LIGHTED|F_NODWARF, &at_audience
     },
     /* R_AUDIENCE_E */ {
 	"You're at east end of Audience Hall.",
         "You are at the eastern end of the Audience Hall.  There is a large\n"
         "dais rising out of the floor here;  resting upon the dais is a strange-\n"
         "looking throne made out of interlocking bars and rods of metal.",
-    	0, &at_audience_e
+    	F_LIGHTED|F_NODWARF, &at_audience_e
     },
     /* R_BANSHEE */ {
 	"You're in winding passage.",
         "You are in a winding passage which enters from the northwest,\n"
         "loops around several times, and exits to the north.",
-    	0, &at_banshee
+    	F_NODWARF, &at_banshee
     },
     /* R_GOLDEN */ {
 	"You're in golden chamber.",
         "You are in a chamber with golden walls and a high ceiling.  Passages\n"
         "lead south, northeast, and northwest.",
-    	0, &at_golden
+    	F_NODWARF, &at_golden
     },
     /* R_ARABESQUE */ {
 	"You're in Arabesque room.",
         "You are in a small room whose walls are covered with an elaborate\n"
         "pattern of arabesque figures and designs.",
-    	0, &at_arabesque
+    	F_NODWARF, &at_arabesque
     },
     /* R_TRANSLUCENT */ {
 	"You're in room with translucent walls.",
         "You are in a large room whose walls are composed of some translucent\n"
         "whitish mineral.  The room is illuminated by a flickering reddish\n"
         "glow shining through the southern wall.  A passage leads east.",
-    	0, &at_translucent
+    	F_LIGHTED|F_NODWARF, &at_translucent
     },
     /* R_CHAMBER */ {
 	"You're in chamber of boulders.",
@@ -3914,83 +3920,83 @@ struct Place places[] = {
         "very warm, causing the air in the room to be almost stifling from the\n"
         "heat.  The only exit is a crawl heading west, through which is coming\n"
         "a low rumbling.",
-    	0, &at_chamber
+    	F_NODWARF, &at_chamber
     },
     /* R_LIME */ {
 	"You're in limestone passage.",
         "You are walking along a gently sloping north/south passage lined with\n"
         "oddly shaped limestone formations.",
-    	0, &at_lime
+    	F_NODWARF, &at_lime
     },
     /* R_FBARR */ {
 	"You are at entrance of the barren room.",
         "You are standing at the entrance to a large, barren room. A sign\n"
         "posted above the entrance reads:  \"Caution!  Bear in room!\"",
-    	0, &at_fbarr
+    	F_NODWARF, &at_fbarr
     },
     /* R_BARR */ {
 	"You are in the barren room.",
         "You are inside a barren room. The center of the room is completely\n"
         "empty except for some dust.  Marks in the dust lead away toward the\n"
         "far end of the room.  The only exit is the way you came in.",
-	0, &at_barr
+	F_NODWARF, &at_barr
     },
     /* R_MAZED131 */ {
 	NULL,
 	"You are in a maze of twisting little passages, all different.",
-	0, &at_mazed131
+	F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazed131
     },
     /* R_MAZED132 */ {
         NULL,
         "You are in a little maze of twisty passages, all different.",
-	0, &at_mazed132
+	F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazed132
     },
     /* R_MAZED133 */ {
         NULL,
         "You are in a twisting maze of little passages, all different.",
-	0, &at_mazed133
+	F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazed133
     },
     /* R_MAZED134 */ {
         NULL,
         "You are in a twisting little maze of passages, all different.",
-	0, &at_mazed134
+	F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazed134
     },
     /* R_MAZED135 */ {
         NULL,
         "You are in a twisty little maze of passages, all different.",
-	0, &at_mazed135
+	F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazed135
     },
     /* R_MAZED136 */ {
         NULL,
         "You are in a twisty maze of little passages, all different.",
-	0, &at_mazed136
+	F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazed136
     },
     /* R_MAZED137 */ {
         NULL,
         "You are in a little twisty maze of passages, all different.",
-	0, &at_mazed137
+	F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazed137
     },
     /* R_MAZED138 */ {
         NULL,
         "You are in a maze of little twisting passages, all different.",
-	0, &at_mazed138
+	F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazed138
     },
     /* R_MAZED139 */ {
         NULL,
         "You are in a maze of little twisty passages, all different.",
-	0, &at_mazed139
+	F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazed139
     },
     /* R_PONY */ {
 	NULL,
 	"Dead end.",
-	0, &at_pony
+	F_HINTABLE|F_INMAZE|F_NOBACK|F_ONE_EXIT, &at_pony
     },
     /* R_SANDSTONE */ {
         "You're in sandstone chamber.",
         "You are in a small chamber to the east of the Hall of Mists.  The\n"
         "walls are composed of rough red sandstone.  There is a large, cubical\n"
         "chunk of rock in the center of the room.",
-	0, &at_sandstone
+	F_ONE_EXIT, &at_sandstone
     },
     /* R_MORION */ {
         "You're in the Morion room.",
@@ -4013,7 +4019,7 @@ struct Place places[] = {
     /* R_INSAFE */ {
         "You are in the safe.",
         "You are inside the safe.",
-	0, &at_insafe
+	F_ONE_EXIT|F_NODWARF, &at_insafe
     },
     /* R_CORRID_1 */ {
 	NULL,
@@ -4032,7 +4038,7 @@ struct Place places[] = {
         "You are in a small, low-ceilinged room with the words \"Witt Company\n"
         "Tool Room - Melenkurion division\" carved into one of the walls.  A\n"
         "wide corridor runs south from here.",
-	0, &at_tool
+	F_ONE_EXIT, &at_tool
     },
     /* R_CORRID_3 */ {
         "You're at division in passage.",
@@ -4044,13 +4050,13 @@ struct Place places[] = {
         "You're in dank cubicle.",
         "You are in a small, dank cubicle of rock.  A small passage leads back\n"
         "out to the south;  there is no other obvious exit.",
-	0, &at_cubicle
+	F_ONE_EXIT, &at_cubicle
     },
     /* R_SPHERICAL */ {
         "You're in spherical room.",
         "You're in a large, completely spherical room with polished walls.  A\n"
         "narrow passage leads out to the north.",
-	0, &at_spherical
+	F_ONE_EXIT, &at_spherical
     },
     /* R_TUNNEL_1 */ {
         "You're in low tunnel with irregular ceiling.",
@@ -4077,7 +4083,7 @@ struct Place places[] = {
         "from deep in the ground beneath your feet, and a whispering sound\n"
         "composed of the echoes of long-forgotten spells and cantrips seeps\n"
         "from the walls and fills the air.  Passages exit to the east and west.",
-	0, &at_lair
+	F_LIGHTED, &at_lair
     },
     /* R_BRINK_1 */ {
         "You're at brink of bottomless pit.",
@@ -4101,55 +4107,58 @@ struct Place places[] = {
         "is easy to walk upon.  There is a passage leading to the northwest,\n"
         "and a slide of polished ice leading downwards to the east - if you\n"
         "were to slide down it you probably couldn't get back up.",
-	0, &at_ice
+	F_NOBACK, &at_ice
     },
     /* R_SLIDE */ {
         "You're at bottom of icy slide.",
         "You're at the entrance to an extensive and intricate network of tunnels\n"
         "carved out of solid ice.  A slippery slope leads upwards and north, but\n"
         "you cannot possibly climb up it.",
-	0, &at_slide
+	F_INMAZE|F_HINTABLE|F_NOBACK, &at_slide
     },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave1 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave1a },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave2 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave2a },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave3 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave3a },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave4 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave5 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave6 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave7 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave8 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave9 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave10 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave11 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave12 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave12a },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave13 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave14 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave15 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave15a },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave16 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave17 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave18 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave19 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave20 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave21 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave22 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave23 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave24 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave25 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave26 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave27 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave28 },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave28a },
-    /* R_ICECAVE */ { NULL, ice_tunnels, 0, &at_icecave29 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave1 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK|F_ONE_EXIT, &at_icecave1a },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave2 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave2a },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave3 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK|F_ONE_EXIT, &at_icecave3a },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave4 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave5 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave6 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK|F_ONE_EXIT, &at_icecave7 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK|F_ONE_EXIT, &at_icecave8 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave9 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave10 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave11 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave12 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave12a },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK|F_ONE_EXIT, &at_icecave13 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK|F_ONE_EXIT, &at_icecave14 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave15 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave15a },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave16 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave17 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave18 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave19 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave20 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE|F_NOBACK, &at_icecave21 },
+    /* Strangely, Platt stops marking these rooms NOBACK at number 21.
+     * Maybe this is a reward for the player's persistence, or maybe
+     * it's just a bug. */
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE, &at_icecave22 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE, &at_icecave23 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE, &at_icecave24 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE, &at_icecave25 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE, &at_icecave26 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE, &at_icecave27 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE, &at_icecave28 },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE, &at_icecave28a },
+    /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE, &at_icecave29 },
     /* R_ICECAVE30 */ {
 	"You're in small, icy chamber.",
 	"You are in a small chamber melted out of the ice.  Glowing letters\n"
         "in midair spell out the words \"This way out\".",
-	0, &at_icecave30
+	F_INMAZE|F_HINTABLE, &at_icecave30
 	},
     /* R_BRINK_3 */ {
         "You're on eastern side of bottomless pit.",
@@ -4180,7 +4189,7 @@ struct Place places[] = {
     /* R_CRACK_4 */ {
         "You're in very small chamber.",
         "You are in a very small chamber.  A narrow crawl leads north.",
-        0, &at_crack_4
+        F_ONE_EXIT, &at_crack_4
     },
     /* R_ARCH_COR_1 */ {
         "You're in coral passage.",
@@ -4188,13 +4197,13 @@ struct Place places[] = {
         "and continues on to the east over a smooth and damp-looking patch of\n"
         "sand.  The fork in the passage once led to the south, but it is now\n"
         "completely blocked by debris.",
-        0, &at_arch_cor_1
+        F_NOBACK, &at_arch_cor_1
     },
     /* R_ARCH_COR_2 */ {
         "You're at bend in arched coral corridor.",
         "You are at a bend in an arched corral passage;  the passage enters\n"
         "from the west over a patch of damp sand, turns, and continues north.",
-        0, &at_arch_cor_2
+        F_NOBACK, &at_arch_cor_2
     },
     /* R_ARCH_FORK */ {
         "You're at fork in arched corral passage.",
@@ -4235,7 +4244,7 @@ struct Place places[] = {
         "which extends north, south, and upwards for as far as the eye can\n"
         "see.  Crudely carved steps lead down from the shelf to the beach, and\n"
         "a twisting coral passage exits to the west.",
-        0, &at_shelf
+        F_LIGHTED, &at_shelf
     },
     /* R_BEACH */ {
         "You're on beach.",
@@ -4247,14 +4256,14 @@ struct Place places[] = {
         "moons shining through the shimmering glow of an aurora that fills\n"
         "the entire sky with golden splendor.  Steps lead up the cliff to a\n"
         "shelf of rock.",
-        0, &at_beach
+        F_LIGHTED|F_ONE_EXIT, &at_beach
     },
     /* R_PLATFORM */ {
         "You're on tiny platform above volcano.",
         "You are precariously perched on a tiny platform suspended in midair.\n"
         "Two thousand feet below you is the mouth of a very active volcano,\n"
         "spewing out a river of hot lava.",
-        0, &at_platform
+        F_LIGHTED|F_NOBACK, &at_platform
     },
     /* R_LIMBO and R_YLEM don't need descriptions or exits. */
 };

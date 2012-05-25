@@ -84,6 +84,7 @@ bool successfully_opened_safe = false;
 bool have_drowned_in_quicksand = false;
 bool have_stolen_back_eggs = false;
 bool have_awoken_goblins = false;
+bool panicked_at_grate = false;
 bool gave_up;
 
 /*========== Some common messages. ======================================*/
@@ -2203,6 +2204,170 @@ int examine_trees(Location loc)
     return loc;
 }
 
+bool openable(ObjectWord o)
+{
+    return (o == GRATE || o == DOOR || o == CLAM || o == OYSTER ||
+            o == FLASK || o == CHAIN || o == SAFE || o == VIAL);
+}
+
+ObjectWord default_to_something_openable(Location loc)
+{
+    int candidate = NOTHING;
+    for (int i=1; i <= MAX_OBJ; ++i) {
+        if (!there(i, loc)) continue;
+        if (!openable(i)) continue;
+        if (candidate != NOTHING) return NOTHING;
+        candidate = i;
+    }
+    /* We don't update word2.text, but that's okay, because the caller
+     * never tries to print the name of the object in this case. */
+    if (candidate != NOTHING) {
+        word2.type = WordType_Object;
+        word2.meaning = candidate;
+    }
+    return candidate;
+}
+
+int attempt_open(Location loc)
+{
+    if (word2.type == WordType_None) {
+        default_to_something_openable(loc);
+    }
+    if (keywordo(GRATE) && there(GRATE, loc)) {
+        if (!toting(KEYS)) {
+            puts("You have no keys!");
+        } else if (closure >= 2 || nomagic) {
+            puts("The lock seems to be stuck - the key refuses to turn!");
+            if (closure >= 2) {
+                panicked = true;
+                if (!panicked_at_grate) {
+                    puts("\nA mysterious recorded voice groans into life and announces:\n"
+                         "   \"This exit is closed.  Please report to the treasure room via\n"
+                         "   the alternate entrance to claim your treasure.\"\n");
+                    panicked_at_grate = true;
+                }
+            }
+        } else {
+            puts("The grate is now unlocked.");
+            objs[GRATE].prop = 1;
+            places[R_DEPRESSION].flags &= ~F_HINTABLE;
+        }
+    } else if (keywordo(CHAIN) && here(CHAIN, loc)) {
+        if (!toting(KEYS)) {
+            puts("You have no keys!");
+        } else if (!objs[CHAIN].prop) {
+            /* Platt provides a message "It was already unlocked.", but doesn't
+             * refer to it anywhere. This is probably a bug. */
+            puts("The chain is now unlocked.");
+        } else if (objs[CHAIN].prop == 1) {
+            if (objs[BEAR].prop == 0) {
+                puts("There is no way to get past the bear to unlock the chain, which is\n"
+                     "probably just as well.");
+            } else {
+                puts("The chain is now unlocked.");
+                objs[CHAIN].prop = 0;
+                objs[BEAR].prop = 2;
+            }
+        } else {
+            puts("The chain is now unlocked.");
+            objs[CHAIN].prop = 0;
+        }
+    } else if (keywordo(DOOR) && there(DOOR, loc)) {
+        puts("It has no lock.");
+    } else if (keywordo(KEYS)) {
+        /* Platt forgets to check NEAR KEYS; this is certainly a bug. */
+        puts("You can't unlock the keys.");
+    } else if (keywordo(SAFE) && there(SAFE, loc)) {
+        if (objs[SAFE].prop == 0) {
+            puts("The door to the safe has no keyhole, dial, or handle - I can't figure\n"
+                 "out how to open it!");
+        } else if (objs[SAFE].prop == 1) {
+            puts("The safe is already open!");
+        } else {
+            puts("The door to the safe seems to be fused shut - I can't open it.");
+        }
+    } else if (keywordo(CLAM) && here(CLAM, loc)) {
+        if (toting(CLAM)) {
+            puts("I advise you to put down the clam before opening it.  >strain!<");
+        } else if (toting(TRIDENT)) {
+            apport(CLAM, R_LIMBO);
+            apport(OYSTER, loc);
+            apport(PEARL, R_CULDESAC);
+            puts("A glistening pearl falls out of the clam and rolls away.  Goodness,\n"
+                 "this must really be an oyster.  (I never was very good at identifying\n"
+                 "bivalves.)  Whatever it is, it has now snapped shut again.");
+        } else {
+            puts("You don't have anything strong enough to open the clam.");
+        }
+    } else if (keywordo(OYSTER) && here(OYSTER, loc)) {
+        if (toting(OYSTER)) {
+            puts("I advise you to put down the oyster before opening it.  >wrench!<");
+        } else if (toting(TRIDENT)) {
+            puts("The oyster creaks open, revealing nothing but oyster inside.  It\n"
+                 "promptly snaps shut again.");
+        } else {
+            puts("You don't have anything strong enough to open the oyster.");
+        }
+    } else if (keywordo(VIAL) && here(VIAL, loc)) {
+        return break_vial(loc);
+    } else if (keywordo(FLASK) && here(FLASK, loc)) {
+        if (objs[FLASK].prop <= 1) {
+            if (there(FLASK, R_PENTAGRAM)) {
+                apport(DJINN, R_PENTAGRAM);
+                puts("The wax seal breaks away easily.  A cloud of dark smoke pours up from\n"
+                     "the mouth of the flask and condenses into the form of a twelve-foot\n"
+                     "Djinn standing in the pentagram.  He pushes experimentally at the\n"
+                     "magical wall of the pentagram (which holds), and nods politely to\n"
+                     "you.  \"MY THANKS, OH MORTAL,\" he says in an incredibly deep bass\n"
+                     "voice.  \"IT HAS BEEN THREE THOUSAND YEARS SINCE SOLOMON SEALED ME\n"
+                     "INTO THAT BOTTLE, AND I AM GRATEFUL THAT YOU HAVE RELEASED ME.  IF\n"
+                     "YOU WILL OPEN THIS PENTAGRAM AND LET ME GO FREE, I WILL GIVE YOU SOME\n"
+                     "ADVICE THAT YOU MAY ONE DAY WISH TO POSSESS.\"");
+            } else {
+                puts("The flask's wax seal crumbles at your touch.  A large cloud of black\n"
+                     "smoke pours out, solidifying into the form of a twelve-foot Djinn.\n"
+                     "\"AT LAST!\" he says in an earth-shaking voice, \"I KNEW THAT SOMEDAY\n"
+                     "SOMEONE WOULD RELEASE ME!  I WOULD REWARD YOU FOR THIS, MORTAL, BUT\n"
+                     "IT HAS BEEN THREE THOUSAND YEARS SINCE I HAD A SOLID MEAL, AND I'M\n"
+                     "NOT GOING TO STAND HERE CHATTERING WHEN I COULD BE OUT EATING A SIX-\n"
+                     "INCH SIRLOIN STEAK.  FAREWELL.\"  With that, he somewhat rudely explodes\n"
+                     "back into smoke and drifts quickly out of sight.");
+            }
+            objs[FLASK].prop = 2;
+        } else {
+            puts("The flask is already open!");
+        }
+    } else if (keywordp(R_PENTAGRAM)) {
+        if (loc == R_PENTAGRAM) {
+            if (there(DJINN, loc)) {
+                puts("The pentagram's magical barrier sparks fitfully and goes down.  The\n"
+                     "Djinn stretches gratefully and smiles at you.  \"AGAIN, MY THANKS,\" he\n"
+                     "says.  \"MY ADVICE TO YOU WILL TAKE THE FORM OF A HISTORY LESSON.\n"
+                     "WHEN RALPH WITT, THE ARCHITECT AND CONSTRUCTOR OF THIS CAVE, WAS VERY\n"
+                     "YOUNG, HE BECAME VERY INCENSED THAT HIS NAME WAS AT THE END OF THE\n"
+                     "ALPHABET.  HE FELT (FOR SOME REASON) THAT THE LETTER W BELONGED NEAR\n"
+                     "THE BEGINNING OF THE ALPHABET, AND THAT ALL OF THOSE \"UPSTART LETTERS\n"
+                     "WHICH UNFAIRLY USURPED THE BEST PLACES\" SHOULD BE FORCED INTO EXILE\n"
+                     "AT THE END OF THE ALPHABET.  HIS INSTINCT FOR MATTERS MAGICAL AND\n"
+                     "MYSTICAL LED HIM TO APPLY THIS STRANGE BELIEF INTO THE CAVE'S\n"
+                     "STRUCTURE WHEN HE EXCAVATED IT.  YOU HAVEN'T YET BEEN AFFECTED BY HIS\n"
+                     "STRANGE HABITS, BUT YOU SHOULD REMEMBER THIS.  FAREWELL, AND GOOD\n"
+                     "LUCK.\"  With that, the Djinn evaporates into a cloud of smoke and\n"
+                     "drifts rapidly away.");
+                apport(DJINN, R_LIMBO);
+                djinn_is_grateful = true;
+            } else {
+                puts("The pentagram is empty - there's nothing to let out!");
+            }
+        } else {
+            I_see_no("pentagram");
+        }
+    } else {
+        return 0;  /* unhandled */
+    }
+    return loc;  /* it must have been handled somewhere above */
+}
+
 int process_verb(Location loc)
 {
     const int verb = word1.meaning;
@@ -2334,6 +2499,8 @@ int process_verb(Location loc)
                 puts("I don't know how.");
             }
             return loc;
+        case OPEN:
+            return attempt_open(loc);
     }
     else if (word1.type == WordType_Object)
     switch (verb) {
