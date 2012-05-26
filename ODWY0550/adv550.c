@@ -97,6 +97,9 @@ void you_have_it() { puts("You are already carrying it!"); }
 void You_have_no(const char *s) { printf("You have no %s!\n", s); }
 void what_do(const char *s) { printf("What do you want me to do with the %s?\n", s); }
 void it_is_dead() { puts("For crying out loud, the poor thing is already dead!"); }
+void already_open(const char *s) { printf("The %s is already open!\n", s); }
+void already_shut(const char *s) { printf("The %s is already closed!\n", s); }
+void dunno_hao(const char *s) { printf("I don't know how to %s such a thing.\n", s); }
 
 /*========== Some forward declarations. =================================*/
 
@@ -2282,7 +2285,7 @@ int attempt_open(Location loc)
             puts("The door to the safe has no keyhole, dial, or handle - I can't figure\n"
                  "out how to open it!");
         } else if (objs[SAFE].prop == 1) {
-            puts("The safe is already open!");
+            already_open(word2.text);
         } else {
             puts("The door to the safe seems to be fused shut - I can't open it.");
         }
@@ -2335,7 +2338,7 @@ int attempt_open(Location loc)
             }
             objs[FLASK].prop = 2;
         } else {
-            puts("The flask is already open!");
+            already_open(word2.text);
         }
     } else if (keywordp(R_PENTAGRAM)) {
         if (loc == R_PENTAGRAM) {
@@ -2366,6 +2369,104 @@ int attempt_open(Location loc)
         return 0;  /* unhandled */
     }
     return loc;  /* it must have been handled somewhere above */
+}
+
+int attempt_close(Location loc)
+{
+    if (word2.type == WordType_None) {
+        default_to_something_openable(loc);
+    }
+    if (keywordo(GRATE) && there(GRATE, loc)) {
+        objs[GRATE].prop = 0;
+        puts("The grate is now locked.");
+    } else if (keywordo(CHAIN) && here(CHAIN, loc)) {
+        if (loc == R_BARR) {
+            apport(CHAIN, loc);  /* drop it */
+            if (objs[CHAIN].prop == 0) {
+                if (here(BEAR, loc)) {
+                    apport(BEAR, loc);
+                    objs[BEAR].prop = 1;
+                    objs[CHAIN].prop = 1;
+                } else {
+                    objs[CHAIN].prop = 2;
+                }
+            }
+            puts("The chain is now locked.");
+        } else {
+            puts("There is nothing here to which the chain can be locked.");
+        }
+    } else if (keywordo(DOOR) && there(DOOR, loc)) {
+        puts("It has no lock.");
+    } else if (keywordo(SAFE) && there(SAFE, loc)) {
+        if (objs[SAFE].prop == 1) {
+            puts(">screeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeech<\n"
+                 "                                              >ker-CHUNK!<");
+            objs[SAFE].prop = 0;
+        } else {
+            already_shut(word2.text);
+        }
+    } else if (keywordo(FLASK) && here(FLASK, loc)) {
+        if (objs[FLASK].prop == 0) {
+            already_shut(word2.text);
+        } else {
+            dunno_hao(word1.text);
+        }
+    } else if (keywordv(CAVE) && wizard_mode) {
+        /* CLOSE CAVE works for wizards! */
+        close_the_cave();
+        return R_CYLINDRICAL;
+    } else {
+        return 0;  /* unhandled */
+    }
+    return loc;  /* it must have been handled somewhere above */
+}
+
+int attempt_help(Location loc)
+{
+    if (hint_time == 0)
+        hint_time = 1;
+    hint_logic(loc);
+    if (hint_time > 0) {
+        /* We didn't find a hint for this location. */
+        if (there(DWARF, loc) || there(DRAGON, loc) || there(TROLL, loc) ||
+                there(OGRE, loc) || there(QUICKSAND, loc) || there(BASILISK, loc) ||
+                objs[BLOB].prop || objs[GOBLINS].prop) {
+            puts("Well, you do seem to be having problems, don't you?  Unfortunately,\n"
+                 "I'm not allowed to help you out;  you got yourself into this, and\n"
+                 "you'll have to find a solution to your problems yourself.");
+        } else {
+            static bool been_here_before = false;
+            if (been_here_before) {
+                puts("I'm afraid that I can't tell you anything more that would be useful;\n"
+                     "you'll have to figure out what to do on your own.");
+            } else {
+                puts("\n"
+                     "I know of places, actions, and things.  Most of my vocabulary\n"
+                     "describes places and is used to move you there.  To move, try words\n"
+                     "like FOREST, BUILDING, DOWNSTREAM, ENTER, EAST, WEST, NORTH, SOUTH,\n"
+                     "UP, or DOWN.  I know about a few special objects, like a black rod\n"
+                     "hidden in the cave.  These objects can be manipulated using some of\n"
+                     "the action words that I know.  Usually you will need to give both the\n"
+                     "object and action words (in either order), but sometimes I can infer\n"
+                     "the object from the verb alone.  Some objects also imply verbs; in\n"
+                     "particular, \"INVENTORY\" implies \"TAKE INVENTORY\", which causes me to\n"
+                     "give you a list of the things you're carrying (you can say just\n"
+                     "\"INV\" instead of \"INVENTORY\" if you wish).  The objects have side\n"
+                     "effects; for instance, the rod scares the bird.  Usually people having\n"
+                     "trouble moving just need to try a few more words.  Usually people\n"
+                     "trying unsuccessfully to manipulate an object are attempting something\n"
+                     "beyond their (or my!) capabilities and should try a completely\n"
+                     "different tack.  To speed the game you can sometimes move long\n"
+                     "distances with a single word.  For example, \"BUILDING\" usually gets\n"
+                     "you to the building from anywhere above ground except when lost in the\n"
+                     "forest.  Also, note that cave passages turn a lot, and that leaving a\n"
+                     "room to the north does not guarantee entering the next from the south.\n"
+                     "Good luck!\n");
+                been_here_before = true;
+            }
+        }
+    }
+    return loc;
 }
 
 int process_verb(Location loc)
@@ -2501,6 +2602,10 @@ int process_verb(Location loc)
             return loc;
         case OPEN:
             return attempt_open(loc);
+        case CLOSE:
+            return attempt_close(loc);
+        case HELP:
+            return attempt_help(loc);
     }
     else if (word1.type == WordType_Object)
     switch (verb) {
@@ -2900,12 +3005,12 @@ void deal_with_syntax_errors(Location loc)
             please_clarify = true;
         } else if (word2.type == WordType_Object) {
             if (there(word2.meaning, loc)) {
-                printf("I don't know how to %s such a thing.\n", word1.text);
+                dunno_hao(word1.text);
             } else {
                 I_see_no(word2.text);
             }
         } else {
-            printf("I don't know how to %s such a thing.\n", word1.text);
+            dunno_hao(word1.text);
         }
     }
 }

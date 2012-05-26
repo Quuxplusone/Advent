@@ -10,6 +10,7 @@ void say_foof(void);
 void ok(void);
 void hah(void);
 void nothing_happens(void);
+void already_open(const char *s);
 void finis(void);
 extern Location safe_exit;
 bool keywordv(VerbWord meaning);
@@ -2007,7 +2008,7 @@ int at_insafe(void)
 	    puts("There is no handle on the inside of the safe door, nor any other way\n"
 		 "to get a grip on it.  You'll have to leave the safe before shutting it.");
 	} else if (keywordv(OPEN)) {
-	    puts("The safe is already open!");
+	    already_open(word2.text);
 	} else {
 	    hah();
 	}
