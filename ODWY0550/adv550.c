@@ -100,6 +100,9 @@ void it_is_dead() { puts("For crying out loud, the poor thing is already dead!")
 void already_open(const char *s) { printf("The %s is already open!\n", s); }
 void already_shut(const char *s) { printf("The %s is already closed!\n", s); }
 void dunno_hao(const char *s) { printf("I don't know how to %s such a thing.\n", s); }
+void dunno_how() { puts("I don't know how."); }
+void say_what() { puts("Huh??"); }
+void except_perhaps_you() { puts("There's nothing here it wants to eat (except perhaps you)."); }
 
 /*========== Some forward declarations. =================================*/
 
@@ -1343,6 +1346,37 @@ void close_the_cave(void)
 
 /*========== Verb processing. ===========================================*/
 
+void say_foof(void)
+{
+    if (pct(95)) {
+        switch (ran(6)) {
+            case 0: puts("\n>>Foof!<<\n"); break;
+            case 1: puts("\n>>Foom!<<\n"); break;
+            case 2: puts("\n>>Poof!<<\n"); break;
+            case 3: puts("\n>>Whoooosh!<<\n"); break;
+            case 4: puts("\nA thick cloud of orange smoke appears from thin air and blocks your\n"
+                         "view.   When it vanishes, you find:\n"); break;
+            case 5: puts("\nThere is a brilliant flash of light and a sudden fanfare of trumpets!\n"
+                         "When your eyes recover from the flash, you find that:\n"); break;
+        }
+    } else {
+        puts("\n>sputter<\n"
+        "            >spark<\n"
+        "      >phut<\n"
+        "               >hsssssssssss\n"
+        "                            ssssss\n"
+        "                                  sss\n"
+        "                                     s\n"
+        "                                      s\n"
+        "                                       .\n"
+        "                                        .\n"
+        "                                         .\n\n"
+        "Oh, blast.  Excuse me for a moment, please......\n\n"
+        "                                                          {KICK!}\n\n"
+        ">>Foof!<<");
+    }
+}
+
 bool now_in_darkness(Location loc)
 {
     if (places[loc].flags & F_LIGHTED) return false;
@@ -1381,12 +1415,32 @@ void attempt_inventory(void)
     /* Platt doesn't mention the bear. */
 }
 
-ObjectWord default_to_something_portable(Location loc)
+bool portable(ObjectWord o)
+{
+    return (objs[o].flags & F_PORTABLE);
+}
+
+bool openable(ObjectWord o)
+{
+    return (o == GRATE || o == DOOR || o == CLAM || o == OYSTER ||
+            o == FLASK || o == CHAIN || o == SAFE || o == VIAL);
+}
+
+bool mortal(ObjectWord o)
+{
+    /* The GONG is "mortal" because it's a legitimate target for HIT. */
+    return (o == TROLL || o == DWARF || o == DRAGON || o == SNAKE ||
+            o == BLOB || o == BEAR || o == CLAM || o == OYSTER ||
+            o == OGRE || o == BIRD || o == DJINN || o == GOBLINS ||
+            o == BASILISK || o == GONG);
+}
+
+ObjectWord default_to_something(bool (*predicate)(ObjectWord), Location loc)
 {
     int candidate = NOTHING;
     for (int i=1; i <= MAX_OBJ; ++i) {
         if (!there(i, loc)) continue;
-        if (!portable(i)) continue;
+        if (!predicate(i)) continue;
         if (candidate != NOTHING) return NOTHING;
         candidate = i;
     }
@@ -1517,7 +1571,7 @@ int attempt_take(ObjectWord obj, Location loc)
         }
     }
     if (word2.type == WordType_None) {
-        obj = default_to_something_portable(loc);
+        obj = default_to_something(portable, loc);
     }
     if (keywordv(INVENTORY)) {
         attempt_inventory();
@@ -2207,34 +2261,10 @@ int examine_trees(Location loc)
     return loc;
 }
 
-bool openable(ObjectWord o)
-{
-    return (o == GRATE || o == DOOR || o == CLAM || o == OYSTER ||
-            o == FLASK || o == CHAIN || o == SAFE || o == VIAL);
-}
-
-ObjectWord default_to_something_openable(Location loc)
-{
-    int candidate = NOTHING;
-    for (int i=1; i <= MAX_OBJ; ++i) {
-        if (!there(i, loc)) continue;
-        if (!openable(i)) continue;
-        if (candidate != NOTHING) return NOTHING;
-        candidate = i;
-    }
-    /* We don't update word2.text, but that's okay, because the caller
-     * never tries to print the name of the object in this case. */
-    if (candidate != NOTHING) {
-        word2.type = WordType_Object;
-        word2.meaning = candidate;
-    }
-    return candidate;
-}
-
 int attempt_open(Location loc)
 {
     if (word2.type == WordType_None) {
-        default_to_something_openable(loc);
+        default_to_something(openable, loc);
     }
     if (keywordo(GRATE) && there(GRATE, loc)) {
         if (!toting(KEYS)) {
@@ -2374,7 +2404,7 @@ int attempt_open(Location loc)
 int attempt_close(Location loc)
 {
     if (word2.type == WordType_None) {
-        default_to_something_openable(loc);
+        default_to_something(openable, loc);
     }
     if (keywordo(GRATE) && there(GRATE, loc)) {
         objs[GRATE].prop = 0;
@@ -2421,7 +2451,7 @@ int attempt_close(Location loc)
     return loc;  /* it must have been handled somewhere above */
 }
 
-int attempt_help(Location loc)
+void attempt_help(Location loc)
 {
     if (hint_time == 0)
         hint_time = 1;
@@ -2465,6 +2495,314 @@ int attempt_help(Location loc)
                 been_here_before = true;
             }
         }
+    }
+}
+
+void attempt_info(void)
+{
+    puts("If you want to end your adventure early, say \"QUIT\".\n"
+         "To suspend your adventure such that you can continue later, say\n"
+         "\"SUSPEND\" (or \"PAUSE\" or \"SAVE\").  To re-start your game at a later\n"
+         "time, start up a new adventure and after I say \"You are standing...\",\n"
+         "you must say \"RESTORE\".  You can also name your game by saying\n"
+         "\"SUSPEND mine\" (and \"RESTORE mine\") where \"mine\" is the name that\n"
+         "you wish your suspended name to be known by (1-12 characters).\n"
+         "To see what hours the cave is normally open, say \"HOURS\".\n"
+         "To see how well you're doing, say \"SCORE\".  To get full credit for a\n"
+         "treasure, you must have left it safely in the building, though you get\n"
+         "partial credit just for locating it.  You lose points for getting\n"
+         "killed, or for quitting, though the former costs you more.  There are\n"
+         "also points based on how much (if any) of the cave you've managed to\n"
+         "explore; in particular, there is a large bonus just for getting in (to\n"
+         "distinguish the beginners from the rest of the pack), and there are\n"
+         "other ways to determine whether you've been through some of the more\n"
+         "harrowing sections.  If you think you've found all the treasures, just\n"
+         "keep exploring for a while.  If nothing interesting happens, you\n"
+         "haven't found them all yet.  If something interesting *does* happen,\n"
+         "it means you're getting a bonus and have an opportunity to garner many\n"
+         "more points in the master's section.  I may occasionally offer hints\n"
+         "if you seem to be having trouble.  If I do, I'll warn you in advance\n"
+         "how much it will affect your score.  To save paper, you may specify\n"
+         "\"BRIEF\", which tells me never to repeat the full description of a\n"
+         "place unless you explicitly ask me to by saying \"LOOK\".  If you\n"
+         "are an experienced adventurer, you may wish to specify \"FAST\", which\n"
+         "is like \"BRIEF\" but more so;  in \"FAST\" mode I will *never* under\n"
+         "any circumstances give the full description of a place.  Finally, if\n"
+         "you are in \"BRIEF\" or \"FAST\" modes, you may return to the normal mode\n"
+         "of operation by saying \"FULL\".\n");
+}
+
+bool with_your_bare_hands_p(void)
+{
+    if (yes("With your bare hands??"))
+        return true;
+    printf("That may be just as well.  If you do insist upon trying to %s\n"
+           "the %s, you might be well advised to use a weapon of some sort.\n",
+           word1.text, word2.text);
+    return false;
+}
+
+int kill_dwarf(Location loc)
+{
+    if (with_your_bare_hands_p()) {
+        int chance = 20 + 10*(strength - holding_count);
+        if (pct(chance)) {
+            puts("You killed a little dwarf.");
+            objs[DWARF].prop -= 1;
+            dwarfcount -= 1;
+            if (objs[DWARF].prop == 0) {
+                apport(DWARF, R_LIMBO);  /* no more dwarves in this room */
+            }
+        } else if (pct(chance)) {
+            puts("You attack a little dwarf, but he dodges out of the way.");
+        } else {
+            puts("You attack a little dwarf, but he dodges out of the way and stabs\n"
+                 "you with his nasty sharp knife!");
+            return you_are_dead_at(loc);
+        }
+    }
+    return loc;
+}
+
+int kill_dragon(Location loc)
+{
+    if (objs[DRAGON].prop) {
+        it_is_dead();
+    } else if (with_your_bare_hands_p()) {
+        puts("Congratulations! You have just vanquished a dragon with your bare\n"
+             "hands!  (Unbelievable, isn't it?)");
+        objs[DRAGON].prop = 2;
+        apport(RUG, R_SECRETCYNNE1);
+        apport(TEETH, R_SECRETCYNNE1);
+        objs[DRAGON].flags &= ~F_SCHIZOID;
+        for (ObjectWord i=1; i < MAX_OBJ; ++i) {
+            /* This condition isn't quite correct. If you drop something at
+             * R_SECRETCYNNE2 and then circle around to R_SECRETCYNNE1 before
+             * killing the dragon, you'll find that the dropped object has
+             * become completely inaccessible: might as well be in R_YLEM.
+             * This is certainly a bug in Platt's code. */
+            if (there(i, loc))
+                apport(i, R_SECRETCYNNE1);
+        }
+        return R_SECRETCYNNE1;
+    }
+    return loc;
+}
+
+int kill_ogre(Location loc)
+{
+    if (with_your_bare_hands_p()) {
+        if (pct(50)) {
+            puts("You attack the ogre, but he fends off your attack easily and comes\n"
+                 "very close to crushing your skull with *his* bare (but extremely\n"
+                 "strong) hands.  You are forced to retreat in disgrace.");
+        } else {
+            puts("You attack the ogre - a brave but foolish action.  He quickly grabs\n"
+                 "you and with a heave of his mighty arms rips your body limb from limb.");
+            return you_are_dead_at(loc);
+        }
+    }
+    return loc;
+}
+
+int attempt_kill(Location loc)
+{
+    if (word2.type == WordType_None) {
+        default_to_something(mortal, loc);
+    }
+    ObjectWord obj = word2.meaning;
+    if (word2.type == WordType_Object && here(obj, loc)) {
+        switch (obj) {
+            case TROLL:
+                puts("Trolls are close relatives with the rocks and have skin as tough as\n"
+                     "that of a rhinoceros.  The troll fends off your blows effortlessly.");
+                return loc;
+            case DWARF:
+                return kill_dwarf(loc);
+            case DRAGON:
+                return kill_dragon(loc);
+            case SNAKE:
+                puts("Attacking the snake both doesn't work and is very dangerous.");
+                return loc;
+            case BLOB:
+                puts("You attack the strange blob, but bounce harmlessly off of its strong\n"
+                     "but very rubbery skin.");
+                return loc;
+            case BEAR: 
+                if (objs[BEAR].prop == 0) {
+                    puts("With what?  Your bare hands??  Against *his* bear hands???  Don't be\n"
+                         "ridiculous - he'd tear you to shreds!");
+                } else {
+                    puts("The bear is confused; he only wants to be your friend.");
+                }
+                return loc;
+            case CLAM: case OYSTER:
+                puts("The shell is very strong and is impervious to attack.");
+                return loc;
+            case OGRE:
+                return kill_ogre(loc);
+            case BIRD:
+                if (closure <= 2) {
+                    apport(BIRD, R_LIMBO);
+                    puts("The little bird is now dead.  Its body disappears.");
+                } else {
+                    puts("Oh, leave the poor unhappy bird alone.");
+                }
+                return loc;
+            case DJINN:
+                /* This seems like a rather broad hint. */
+                puts("That's not a wise thing to try - djinni are essentially immortal\n"
+                     "and thus are pretty hard to hurt.  Besides, this one seems rather\n"
+                     "friendly - why don't you just try releasing him?");
+                return loc;
+            case GOBLINS:
+                puts("You attack the goblins and manage to squash a few, but the others\n"
+                     "overwhelm you, forcing you to the ground and ripping out your throat.");
+                return you_are_dead_at(loc);
+            case BASILISK:
+                if (objs[BASILISK].prop <= 1) {
+                    puts("You attack the basilisk mightily.  It instantly awakens and looks you\n"
+                         "dead in the eye, and your body turns to solid rock.");
+                    return you_are_dead_at(loc);
+                } else {
+                    it_is_dead();
+                }
+                return loc;
+            case GONG:
+                puts(">BONNNNGGGGGGGGGG<\n");
+                if (there(TURTLE, loc)) {
+                    puts("Darwin the Tortoise blinks in surprise at the noise, but does nothing.");
+                } else {
+                    puts("A hollow voice says, \"The GallopingGhost Tortoise Express is now at\n"
+                         "your service!\n\n"
+                         "With a swoosh and a swirl of water, a large tortoise rises to the\n"
+                         "surface of the reservoir and paddles over to the shore near you.\n"
+                         "The message, \"I'm Darwin - ride me!\" is inscribed on his back in\n"
+                         "ornate letters.\n");
+                    apport(TURTLE, loc);
+                }
+                return loc;
+            default: return 0;  /* other nouns are unhandled */
+        }
+        return loc;  /* handled */
+    }
+    if (word2.type == WordType_None) {
+        puts("There is nothing here to attack.");
+        return loc;
+    }
+    return 0;  /* unhandled */
+}
+
+int attempt_feed(Location loc)
+{
+    ObjectWord o = word2.meaning;
+    if (word2.type == WordType_Object && mortal(o)) {
+        if (!here(o, loc)) {
+            I_see_no(word2.text);
+            return loc;
+        }
+        switch (o) {
+            case BEAR:
+                if (here(FOOD, loc)) {
+                    puts("The bear eagerly wolfs down your food, after which he seems to calm\n"
+                         "down considerably and even becomes rather friendly.");
+                    apport(FOOD, R_LIMBO);
+                    objs[BEAR].prop = 1;  /* tame but still chained */
+                    objs[AXE].prop = 0;  /* re-mobilize it */
+                } else {
+                    except_perhaps_you();
+                }
+                break;
+            case TROLL:
+                puts("Gluttony is not one of the troll's vices.  Avarice, however, is.");
+                break;
+            case SNAKE:
+                if (toting(BIRD)) {
+                    puts("The snake has now devoured your bird.");
+                    apport(BIRD, R_LIMBO);
+                } else {
+                    except_perhaps_you();
+                }
+                break;
+            case DWARF:
+                puts("You fool, dwarves eat only coal!  Now you've made him *really* mad!!");
+                dwarves_enraged = true;
+                break;
+            case BIRD:
+                puts("It's not hungry (it's merely pinin' for the fjords).  Besides, you\n"
+                     "have no bird seed.");
+                break;
+            case DRAGON:
+                if (objs[DRAGON].prop == 0) {
+                    except_perhaps_you();
+                } else {
+                    it_is_dead();
+                }
+                break;
+            case BASILISK:
+                if (objs[BASILISK].prop <= 1) {
+                    except_perhaps_you();
+                } else {
+                    it_is_dead();
+                }
+                break;
+            case GOBLINS:
+                puts("Goblins live exclusively on human flesh, and you can't spare\n"
+                     "any of your own to placate them.  On the other hand, I suspect\n"
+                     "that they're going to eat you pretty soon whether you like it\n"
+                     "or not - you'd better find some way of killing them or driving\n"
+                     "them away!");
+                break;
+        }
+    } else if (word2.type == WordType_None) {
+        say_what();
+    } else {
+        hah();
+    }
+    return loc;
+}
+
+void attempt_score()
+{
+    gave_up = true;
+    printf("If you were to quit now, you would score a total of %d points, out\n"
+           "of a possible maximum of 550 points.\n", score());
+    gave_up = false;
+}
+
+void cant_find()
+{
+    puts("I can only tell you what you see as you move about and manipulate\n"
+         "things.  I cannot tell you where remote things or places are.");
+}
+
+int attempt_find(Location loc)
+{
+    if (keywordv(CAVE)) {
+        if ((places[loc].flags & F_NOTINCAVE) && !(places[R_INSIDE].flags & F_BEENHERE)) {
+            puts("I don't know where the cave is, but hereabouts no stream can run on\n"
+                 "the surface for long.  I would try the stream.");
+        } else {
+            puts("I need more detailed instructions to do that.");
+        }
+    } else if (word2.type == WordType_Object) {
+        ObjectWord o = word2.meaning;
+        if (toting(o)) {
+            puts("I believe what you want is right here with you.");
+        } else if (there(o, loc)) {
+            puts("I daresay whatever you want is around here somewhere.");
+        } else {
+            cant_find();
+        }
+    } else if (word2.type == WordType_Place) {
+        Location dest = word2.meaning;
+        if (loc == dest) {
+            puts("That's where you are now!");
+        } else {
+            cant_find();
+        }
+    } else {
+        say_what();
     }
     return loc;
 }
@@ -2597,7 +2935,7 @@ int process_verb(Location loc)
                     phog(loc);
                 }
             } else {
-                puts("I don't know how.");
+                dunno_how();
             }
             return loc;
         case OPEN:
@@ -2605,7 +2943,128 @@ int process_verb(Location loc)
         case CLOSE:
             return attempt_close(loc);
         case HELP:
-            return attempt_help(loc);
+            attempt_help(loc);
+            return loc;
+        case INFO:
+            attempt_info();
+            return loc;
+        case QUIT:
+            if (yes("Do you really want to quit now?")) {
+                gave_up = true;
+                finis();
+            }
+            ok();
+            return loc;
+        case BRIEF:
+            puts("Okay, from now on I'll only describe a place in full the first time\n"
+                 "you come to it.  To get the full description, say \"LOOK\".");
+            verbosity_mode = BRIEF;
+            return loc;
+        case FAST:
+            ok();
+            verbosity_mode = FAST;
+            return loc;
+        case FULL:
+            verbosity_mode = FULL;
+            ok();
+            return loc;
+        case LPSD:
+            if (wizard_mode && word2.type == WordType_Place) {
+                say_foof();
+                return word2.meaning;
+            } else {
+                say_what();
+            }
+            return loc;
+        case KILL:
+            return attempt_kill(loc);
+        case FEED:
+            return attempt_feed(loc);
+        case SCORE:
+            attempt_score();
+            return loc;
+        case JUMP:
+            puts("There is nowhere for me to jump to.");
+            return loc;
+        case IN:
+        case OUT:
+            puts("I don't know in from out here.  Use compass points or name something\n"
+                 "in the general direction you want to go.");
+            return loc;
+        case SESAME:
+            puts("Good try, but that is an old worn-out magic word.");
+            return loc;
+        case FEE:
+            if (keywordv(FIE) || keywordv(FOE) || keywordv(FOO) || keywordv(FUM)) {
+                foobar = 0;
+                nothing_happens();
+            } else {
+                /* FEE LAMP will still work! */
+                foobar = 1;
+                ok();
+            }
+            return loc;
+        case FIE:
+            if (foobar == 0) {
+                foobar = 2;
+                ok();
+            } else {
+                foobar = 0;
+                nothing_happens();
+            }
+            return loc;
+        case FOE:
+            if (foobar == 1) {
+                foobar = 3;
+                ok();
+            } else {
+                foobar = 0;
+                nothing_happens();
+            }
+            return loc;
+        case FUM:
+            foobar = 0;
+            nothing_happens();
+            return loc;
+        case FOO:
+            if (foobar == 2) {
+                if (there(EGGS, R_GIANT) || there(EGGS, R_YLEM)) {
+                    nothing_happens();
+                } else if (here(EGGS, loc)) {
+                    puts("The nest of golden eggs has vanished!");
+                } else if (loc == R_GIANT) {
+                    puts("There is a large nest here, full of golden eggs!");
+                } else {
+                    puts("Done!");
+                }
+                if (there(EGGS, R_LIMBO)) {
+                    have_stolen_back_eggs = true;
+                    if (objs[TROLL].prop == 1 || objs[TROLL].prop == 2) {
+                        if (there(TROLL2, loc)) {
+                            puts("From beneath the bridge there sounds a muffled bellow of frustrated\n"
+                                 "avarice.  The troll stomps out, resumes his position by the end of\n"
+                                 "the bridge, and glowers fiercely in your direction.  \"Very funny,\"\n"
+                                 "you hear him mutter, \"but not very smart - you'll pay for that!\"");
+                        }
+                        objs[TROLL].prop = 0;
+                        apport(TROLL, R_SWOFCHASM);
+                        apport(TROLL2, R_LIMBO);
+                    }
+                }
+                apport(EGGS, R_GIANT);
+            } else {
+                nothing_happens();
+            }
+            return loc;
+        case XYZZY:
+        case PLUGH:
+            nothing_happens();
+            return loc;
+        case FIND:
+            return attempt_find(loc);
+        case SWIM:
+            dunno_how();
+            return loc;
     }
     else if (word1.type == WordType_Object)
     switch (verb) {
@@ -3015,37 +3474,6 @@ void deal_with_syntax_errors(Location loc)
     }
 }
 
-void say_foof(void)
-{
-    if (pct(95)) {
-        switch (ran(6)) {
-            case 0: puts("\n>>Foof!<<\n"); break;
-            case 1: puts("\n>>Foom!<<\n"); break;
-            case 2: puts("\n>>Poof!<<\n"); break;
-            case 3: puts("\n>>Whoooosh!<<\n"); break;
-            case 4: puts("\nA thick cloud of orange smoke appears from thin air and blocks your\n"
-                         "view.   When it vanishes, you find:\n"); break;
-            case 5: puts("\nThere is a brilliant flash of light and a sudden fanfare of trumpets!\n"
-                         "When your eyes recover from the flash, you find that:\n"); break;
-        }
-    } else {
-        puts("\n>sputter<\n"
-        "            >spark<\n"
-        "      >phut<\n"
-        "               >hsssssssssss\n"
-        "                            ssssss\n"
-        "                                  sss\n"
-        "                                     s\n"
-        "                                      s\n"
-        "                                       .\n"
-        "                                        .\n"
-        "                                         .\n\n"
-        "Oh, blast.  Excuse me for a moment, please......\n\n"
-        "                                                          {KICK!}\n\n"
-        ">>Foof!<<");
-    }
-}
-
 void presay(void)
 {
     if (keywordv(SAY) && (word2.type != WordType_None)) {
@@ -3216,7 +3644,7 @@ void simulate_an_adventure(void)
         if (word1.type == WordType_None)
             continue;
         if (word1.type == WordType_BadWord) {
-            puts("Huh??");
+            say_what();
             continue;
         }
         presay();

@@ -160,7 +160,6 @@ extern struct ObjectData objs[];
 
 #define toting(t) (objs[t].place < 0)
 #define there(t, loc) (objs[t].place == (loc) || objs[t].place2 == (loc))
-#define portable(t) (objs[t].flags & F_PORTABLE)
 #define is_treasure(t) ((t) >= MIN_TREASURE)
 
 #define you_are_dead_at(loc) ((loc)+R_YLEM)

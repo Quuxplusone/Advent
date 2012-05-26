@@ -16,6 +16,7 @@ extern Location safe_exit;
 bool keywordv(VerbWord meaning);
 bool keywordo(ObjectWord meaning);
 bool keywordp(Location meaning);
+bool portable(ObjectWord o);
 
 extern VerbWord verbosity_mode;
 extern int closure;
