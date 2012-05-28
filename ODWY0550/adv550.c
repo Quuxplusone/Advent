@@ -1435,6 +1435,11 @@ bool mortal(ObjectWord o)
             o == BASILISK || o == GONG);
 }
 
+bool edible(ObjectWord o)
+{
+    return (o == FOOD || o == MUSHROOM);
+}
+
 ObjectWord default_to_something(bool (*predicate)(ObjectWord), Location loc)
 {
     int candidate = NOTHING;
@@ -2807,6 +2812,101 @@ int attempt_find(Location loc)
     return loc;
 }
 
+void pour_water(Location loc)
+{
+    assert(toting(WATER));
+    apport(WATER, R_LIMBO);
+    objs[BOTTLE].prop = 1;  /* empty the bottle */
+    if (there(DOOR, loc)) {
+        puts("The hinges are quite thoroughly rusted now and won't budge.");
+        objs[DOOR].prop = 0;
+    } else if (there(PLANT, loc)) {
+        if (objs[PLANT].prop == 0) {
+           puts("The plant spurts into furious growth for a few seconds.");
+           objs[PLANT].prop = 1;
+           objs[PLANT2].flags &= ~F_INVISIBLE;
+        } else if (objs[PLANT].prop == 1) {
+           puts("The plant grows explosively, almost filling the bottom of the pit.");
+           objs[PLANT].prop = 2;
+        } else if (objs[PLANT].prop == 2) {
+           puts("You've over-watered the plant! It's shriveling up! It's, it's...");
+           objs[PLANT].prop = 0;
+           objs[PLANT2].flags |= F_INVISIBLE;
+        }
+        objs[PLANT2].prop = objs[PLANT].prop;
+        look_around(loc, /*familiar_place=*/true);
+    } else {
+        puts("Your bottle is empty and the ground is wet.");
+        places[loc].flags |= F_DAMP;
+    }
+}
+
+void pour_oil(Location loc)
+{
+    assert(toting(OIL));
+    apport(OIL, R_LIMBO);
+    objs[BOTTLE].prop = 1;
+    if (there(DOOR, loc)) {
+        puts("The oil has freed up the hinges so that the door will now move,\n"
+             "although it requires some effort.");
+        objs[DOOR].prop = 1;
+    } else if (there(PLANT, loc)) {
+        puts("The plant indignantly shakes the oil off its leaves and asks, \"Water?\"");
+    } else {
+        puts("Your bottle is empty and the ground is wet.");
+        places[loc].flags |= F_DAMP;
+    }
+}
+
+int attempt_eat(Location loc)
+{
+    if (word2.type == WordType_None) {
+        default_to_something(edible, loc);
+    }
+    ObjectWord obj = word2.meaning;
+    if (word2.type == WordType_None) {
+        puts("There is nothing here to eat.");
+        return loc;
+    } else if (word2.type == WordType_Object) {
+        switch (obj) {
+            case MUSHROOM:
+                if (here(MUSHROOM, loc)) {
+                    puts("As you swallow the mushroom your mouth becomes numb, and everything\n"
+                         "seems to swirl around you.  The effect quickly passes, and you find\n"
+                         "that your muscles have bulged unbelievably.");
+                    mushtime = 30;
+                    mushtime += lastclock;
+                    apport(MUSHROOM, R_LIMBO);
+                    strength = 12;
+                    return loc;
+                }
+                return 0;  /* unhandled */
+            case FOOD:
+                if (here(FOOD, loc)) {
+                    apport(FOOD, R_LIMBO);
+                    puts("Thank you, it was delicious!");
+                    return loc;
+                }
+                return 0;  /* unhandled */
+            case DWARF: case DRAGON: case BIRD: case SNAKE: case BEAR:
+            case TROLL: case PLANT: case OGRE: case BASILISK: case GOBLINS:
+                if (here(obj, loc)) {
+                    puts("Yeetttch!  I think I just lost my appetite.");
+                } else {
+                    I_see_no(word2.text);
+                }
+                return loc;
+            default:
+                if (here(obj, loc)) {
+                    puts("That's a repulsive idea!");
+                    return loc;
+                }
+                return 0;
+        }
+    }
+    return 0;  /* unhandled */
+}
+
 int process_verb(Location loc)
 {
     const int verb = word1.meaning;
@@ -3065,6 +3165,88 @@ int process_verb(Location loc)
         case SWIM:
             dunno_how();
             return loc;
+        case BREAK:
+            if (keywordo(VASE) && here(VASE, loc)) {
+                puts("You have taken the vase and hurled it delicately to the ground.");
+                apport(VASE, R_LIMBO);
+                apport(SHARDS, loc);
+                return loc;
+            } else if (keywordo(VIAL) && here(VIAL, loc)) {
+                return break_vial(loc);
+            }
+            return 0;  /* unhandled */
+        case FIX:
+            if (keywordo(VASE) && here(SHARDS, loc)) {
+                puts("It is beyond your power to do that.");
+            }
+            return 0;  /* unhandled */
+        case FILL:
+            if (keywordo(VASE) && here(VASE, loc)) {
+                if ((places[loc].flags & F_WATER) || loc == R_EPIT) {
+                    puts("The sudden change in temperature has delicately shattered the vase.");
+                    apport(VASE, R_LIMBO);
+                    apport(SHARDS, loc);
+                } else {
+                    puts("There is nothing here with which to fill the vase.");
+                }
+                return loc;
+            } else if (keywordo(BOTTLE) && here(BOTTLE, loc)) {
+                if (objs[BOTTLE].prop != 1) {
+                    puts("Your bottle is already full.");
+                } else if (places[loc].flags & F_WATER) {
+                    puts("Your bottle is now full of water.");
+                    objs[BOTTLE].prop = 0;
+                    if (toting(BOTTLE)) apport(WATER, R_INHAND);
+                } else if (loc == R_EPIT) {
+                    puts("Your bottle is now full of oil.");
+                    objs[BOTTLE].prop = 2;
+                    if (toting(BOTTLE)) apport(OIL, R_INHAND);
+                } else {
+                    puts("There is nothing here with which to fill the bottle.");
+                }
+                return loc;
+            } else if (word2.type != WordType_None) {
+                puts("You can't fill that.");
+                return loc;
+            }
+            return 0;  /* unhandled */
+        case POUR:
+            if (keywordo(WATER)) {
+                if (toting(WATER)) {
+                    pour_water(loc);
+                } else {
+                    You_have_no("water");
+                }
+                return loc;
+            } else if (keywordo(OIL)) {
+                if (toting(OIL)) {
+                    pour_oil(loc);
+                } else {
+                    You_have_no("oil");
+                }
+                return loc;
+            }
+            return 0;  /* unhandled */
+        case PLACATE:
+            if (there(DWARF, loc) || there(SNAKE, loc) || there(BIRD, loc) ||
+                there(DRAGON, loc) || there(TROLL, loc) || there(BEAR, loc) ||
+                there(OGRE, loc) || there(BASILISK, loc) || there(GOBLINS, loc)) {
+                puts("I'm game.  Would you care to explain how?");
+                return loc;
+            }
+            return 0;  /* unhandled */
+        case EAT:
+            return attempt_eat(loc);
+        case RUB:
+            if (keywordo(LAMP) && here(LAMP, loc)) {
+                printf("Rubbing the electric %s is not particularly rewarding.  Anyway,\n"
+                       "nothing exciting happens.\n", word2.text);
+                return loc;
+            } else if (word2.type == WordType_Object && here(word2.meaning, loc)) {
+                puts("Peculiar.  Nothing unexpected happens.");
+                return loc;
+            }
+            return 0;  /* unhandled */
     }
     else if (word1.type == WordType_Object)
     switch (verb) {
@@ -3072,10 +3254,7 @@ int process_verb(Location loc)
             if (word2.type == WordType_Object && word2.meaning == DOOR) {
                 if (there(DOOR, loc)) {
                     if (toting(WATER)) {
-                        apport(WATER, R_LIMBO);
-                        objs[BOTTLE].prop = 1;
-                        puts("The hinges are quite thoroughly rusted now and won't budge.");
-                        objs[DOOR].prop = 0;
+                        pour_water(loc);
                     } else {
                         You_have_no("water");
                     }
@@ -3085,22 +3264,7 @@ int process_verb(Location loc)
             } else if (word2.type == WordType_Object && word2.meaning == PLANT) {
                 if (there(PLANT, loc)) {
                     if (toting(WATER)) {
-                        apport(WATER, R_LIMBO);
-                        objs[BOTTLE].prop = 1;
-                        if (objs[PLANT].prop == 0) {
-                           puts("The plant spurts into furious growth for a few seconds.");
-                           objs[PLANT].prop = 1;
-                           objs[PLANT2].flags &= ~F_INVISIBLE;
-                        } else if (objs[PLANT].prop == 1) {
-                           puts("The plant grows explosively, almost filling the bottom of the pit.");
-                           objs[PLANT].prop = 2;
-                        } else if (objs[PLANT].prop == 2) {
-                           puts("You've over-watered the plant! It's shriveling up! It's, it's...");
-                           objs[PLANT].prop = 0;
-                           objs[PLANT2].flags |= F_INVISIBLE;
-                        }
-                        objs[PLANT2].prop = objs[PLANT].prop;
-                        look_around(loc, /*familiar_place=*/true);
+                        pour_water(loc);
                     } else {
                         You_have_no("water");
                     }
@@ -3122,11 +3286,7 @@ int process_verb(Location loc)
             if (word2.type == WordType_Object && word2.meaning == DOOR) {
                 if (there(DOOR, loc)) {
                     if (toting(OIL)) {
-                        apport(OIL, R_LIMBO);
-                        objs[BOTTLE].prop = 1;
-                        puts("The oil has freed up the hinges so that the door will now move,\n"
-                             "although it requires some effort.");
-                        objs[DOOR].prop = 1;
+                        pour_oil(loc);
                     } else {
                         You_have_no("oil");
                     }
@@ -3136,14 +3296,12 @@ int process_verb(Location loc)
             } else if (word2.type == WordType_Object && word2.meaning == PLANT) {
                 if (there(PLANT, loc)) {
                     if (toting(OIL)) {
-                        apport(OIL, R_LIMBO);
-                        objs[BOTTLE].prop = 1;
-                        puts("The plant indignantly shakes the oil off its leaves and asks, \"Water?\"");
+                        pour_oil(loc);
                     } else {
                         You_have_no("oil");
                     }
                 } else {
-                    I_see_no("door");
+                    I_see_no("plant");
                 }
             } else if (word2.type == WordType_None) {
                 if ((there(BOTTLE, loc) && objs[BOTTLE].prop == 2) ||
