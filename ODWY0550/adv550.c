@@ -499,7 +499,8 @@ void build_object_table(void)
     objs[DOOR].desc[0] = "The way north leads through a massive, rusty, iron door.";
     objs[SNAKE].desc[0] = "A huge green fierce snake bars the way!";
     objs[FISSURE].desc[1] = "A crystalline bridge now spans the fissure.";
-    objs[TABLET].desc[0] = "A massive stone tablet imbedded in the wall reads:\n"
+    /* Platt has "imbedded". */
+    objs[TABLET].desc[0] = "A massive stone tablet embedded in the wall reads:\n"
                            "\"Congratulations on bringing light into the Dark room!\"";
     objs[PLANT].desc[0] = "There is a tiny little plant in the pit, murmuring \"Water, water, ...\"";                
     objs[PLANT].desc[1] = "There is a 12-foot-tall beanstalk stretching up out of the pit,\n"
@@ -2537,6 +2538,49 @@ void attempt_info(void)
          "of operation by saying \"FULL\".\n");
 }
 
+void attempt_news(void)
+{
+    puts("This version of Adventure is based on a version by David Platt.\n"
+         "Here is the NEWS command as presented by that version:\n\n"
+         "9/18/84 - A set of maps which describe Colossal Cave may be ordered\n"
+         "from the following address:\n\n"
+         "         David Platt\n"
+         "         c/o Honeywell Information Systems\n"
+         "         5250 West Century Boulevard\n"
+         "         Los Angeles, CA  90045\n\n"
+         "There is no charge for the maps;  however, each request MUST include\n"
+         "a large (legal-sized or better) self-addressed envelope with at least\n"
+         "two first-class stamps.  Requests received without envelopes, or with\n"
+         "insufficient return postage, will be tossed into a bottomless pit and\n"
+         "never heard from again.\n\n"
+         "The set of maps consists of a two-page map of the main cave, plus\n"
+         "detail maps of the mazes, tunnels, and other complex areas.\n"
+         "The locations of various treasures and tools are given in the main\n"
+         "map... however, the maps do not reveal ways past the cave's obstacles.\n\n"
+         "1/19/82 - Based on many requests, the SAVE/RESTORE logic has been\n"
+         "modified in a way that makes exploration of dangerous sections of the\n"
+         "cave rather easier.  Three changes are effective:  (1) you need not\n"
+         "wait 30 minutes after SAVE'ing a game to RESTORE it;  (2) when you\n"
+         "have SAVE'd a game, you will have the chance to continue with your\n"
+         "exploration immediately;  (3) when you RESTORE a game, you will have\n"
+         "the option to keep the saved game on disk, and can thus RESTORE it\n"
+         "an unlimited number of times.\n\n"
+         "A minor bug in the pirate logic has been fixed.\n\n"
+         "10/18/79 - Several problems have been fixed in this version of\n"
+         "Adventure.  Both the new run unit and the new database file should\n"
+         "be installed at the same time.  (1)  The interpreter trap during\n"
+         "\"RESTORE\" operations has been fixed.  (2)  The 'vanishing fog' problem\n"
+         "has been corrected.  (3)  If you pour water or oil on the ground, the\n"
+         "ground will remain wet (although you can't get the water or oil back\n"
+         "by mopping up the floor or any such thing).  (4)  Games saved under\n"
+         "previous versions of the database cannot be restored using this\n"
+         "version due to some slight changes in the object status controls.\n\n"
+         "Suggestions are being entertained for possible additions to the\n"
+         "cave.  If you have any interesting ideas, please write them down\n"
+         "and mail them to Dave Platt, c/o Honeywell, 5250 W. Century Blvd,\n"
+         "Los Angeles CA 90254, or give me a call at (213)216-6232.\n");
+}
+
 bool with_your_bare_hands_p(void)
 {
     if (yes("With your bare hands??"))
@@ -2907,6 +2951,229 @@ int attempt_eat(Location loc)
     return 0;  /* unhandled */
 }
 
+int passphrase(Location loc)
+{
+    if (there(SAFE, loc) && objs[SAFE].prop == 0) {
+        if ((word2.type == WordType_None && keywordv(password)) ||
+            (word2.type == WordType_Verb && word2.meaning == (int)password)) {
+            puts(">ker-THUNK<\n"
+                 "            >screeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeech<\n\n"
+                 "The (somewhat rusty) safe is now open.");
+            objs[SAFE].prop = 1;
+            successfully_opened_safe = true;
+        } else if (!successfully_opened_safe) {
+            puts("\n>bong<                 The very air quivers with sound as though\n"
+                 "   >bong<               someone, somewhere in the distance, has struck\n"
+                 "      >bong<             three powerful blows on an immense brass gong.\n\n"
+                 "Smoke trickles out from around the edges of the safe's door, and the\n"
+                 "door itself glows red with heat for a moment.\n\n"
+                 "A hollow voice says,  \"This is a Class 1 security alarm.  All cave\n"
+                 "security forces go to Orange Alert.  I repeat - Orange Alert.\"\n");
+            objs[SAFE].prop = 2;  /* melted */
+            objs[BLOB].prop = 1;  /* wake up the blob */
+            blob_is_coming = true;
+            nomagic = true;  /* inhibit magic words */
+            objs[GRATE].prop = 0;  /* locked */
+        }
+    } else {
+        nothing_happens();
+    }
+    return loc;
+}
+
+void wizmode_passphrase(void)
+{
+    static int magick = 0;
+    assert(word1.type == WordType_Verb);
+    switch (word1.meaning) {
+        case CURIOUS:
+            if (magick == 0) {
+                magick = 1;
+                return;
+            }
+            break;
+        case GREEN:
+            if (magick == 1) {
+                magick = 2;
+                return;
+            }
+            break;
+        case IDEAS:
+            if (magick == 2) {
+                magick = 3;
+                return;
+            }
+            break;
+        case SLEPT:
+            if (magick == 3) {
+                magick = 4;
+                return;
+            }
+            break;
+        case FURIOUSLY:
+            if (magick == 4) {
+                magick = -1;
+                wizard_mode = true;
+                ok();
+                return;
+            }
+            break;
+    }
+    magick = -1;
+    say_what();
+}
+
+void destroy_cave(void)
+{
+    puts("The ground begins to shudder ominously, and the very cave walls around\n"
+         "you begin to creak and groan!  A sulphurious stench fills the air!\n\n"
+         "With an incredible lurch, the ground begins to dance and ripple as\n"
+         "though it were liquid!  You are thrown off of your feet and tossed\n"
+         "violently up and down!  The cave walls begin to crumble and split from\n"
+         "the stress!\n\n"
+         "There is a terrible ROAR of rending rock!!  The cave ceiling splits,\n"
+         "and rocks plunge down and smash your lower body to a gooey paste!!\n\n"
+         "There is a violent blast in the distance!  Steam and smoke drift into\n"
+         "view through the rents in the walls, and furiously-bubbling red-hot\n"
+         "lava flows in and surrounds you.  The cave ceiling disintegrates in\n"
+         "an incredible orgy of grinding destruction, and the cave walls fall\n"
+         "and are pounded into fine dust.\n\n\n\n"
+         "You are lying, badly mangled, on a small rock island in a sea of\n"
+         "molten lava.  Above you, the sky is faintly visible through a thick\n"
+         "pall of smoke and steam.  A short distance to the north, the remains\n"
+         "of a well-house are sinking slowly into the bubbling ooze.\n\n\n"
+         "There is a distant, sourceless screech of incredible anguish!  With\n"
+         "a sharp >poof< and a small puff of orange smoke, a bent and bearded\n"
+         "elf appears.  He is dressed in working clothes, and has a name-tag\n"
+         "marked \"Ralph\" on his shirt.  \"You blithering idiot!\" he storms.\n"
+         /* Platt has "work" for "word" again. */
+         "\"You were warned quite clearly not to use that word near water!!  I\n"
+         "hadn't gotten all of the bugs out of it yet, and now your incredible\n"
+         /* Platt has "incompetance". */
+         "incompetence has totally destroyed Colossal Cave!!  Do you have the\n"
+         "faintest scintilla of an iota of an understanding of how much work\n"
+         "I'm going to have to do to get the cave rebuilt?!?  I'll have to go\n"
+         "all the way to Peking for another dragon, and I'll have to convince\n"
+         "the Goblin's Union to send me another team of gooseberry goblins;\n"
+         "I'll have to sub-contract the building of the volcano out to the\n"
+         "local totrugs, and worst of all I'll have to go through eight months\n"
+         "of paperwork and red tape to file a new Environmental Impact\n"
+         "statement!!  All because you couldn't follow directions, you\n"
+         "purblind and meatbrained moron!  I'm rescinding all of your game\n"
+         "points and throwing you out!  Out!   OUT!   GET OUT!$!%#&'@%!!%%!\"\n");
+    /* You expected your score to be printed, perhaps?
+     * You get NOTHING! Good DAY sir! */
+    exit(0);
+}
+
+int attempt_phuggg(Location loc)
+{
+    djinn_gave_hint = true;  /* since you obviously don't need the hint */
+    if (places[loc].flags & F_NOTINCAVE) {
+        nothing_happens();
+    } else if ((here(BOTTLE, loc) && !objs[BOTTLE].prop) || (places[loc].flags & F_WATER)) {
+        if (pct(85)) {
+            nothing_happens();
+        } else if (pct(95)) {
+            puts("\n>splurch!<\n\n"
+                 "Oh, no!  You've turned yourself into a jellyfish, and fallen to the\n"
+                 "ground and been splattered far and wide!  Well, that certainly wasn't\n"
+                 /* Platt has "work" instead of "word"; I'm fixing it. */
+                 "very smart!!!  You were warned not to use that word near water!");
+            return you_are_dead_at(loc);
+        } else {
+            destroy_cave();
+        }
+    } else if (here(AXE, loc) || here(SWORD, loc)) {
+        if (here(AXE, loc)) {
+            puts("Your axe glows bright orange and fades into nothingness.");
+            apport(AXE, R_LIMBO);
+        }
+        if (here(SWORD, loc)) {
+            puts("Your sword jumps into the air, chants several bars of the \"Volga\n"
+                 "Boatman\", shoots off several fitful blue sparks, and disintegrates.");
+            apport(SWORD, R_LIMBO);
+        }
+    } else {
+        int i = 2*ran(3) + (objs[DWARF].prop > 1);
+        if (there(DWARF, loc)) {
+            if (pct(70)) {
+                switch (i) {
+                    case 0:
+                        puts("A clear, liquid chime sounds in midair.  A large, four-clawed hand\n"
+                             "reaches out of the ground, grabs the dwarf, and pulls it down into\n"
+                             "nothingness.");
+                        break;
+                    case 1:
+                        puts("A clear, liquid chime sounds in midair.  A long green tentacle\n"
+                             "covered with sucker disks reaches out from nowhere, grabs the\n"
+                             "dwarves, and pulls them back to wherever it came from.");
+                        break;
+                    case 2:
+                        puts("There is a sharp sizzling sound.  The dwarf explodes into flame\n"
+                             "and vanishes.");
+                        break;
+                    case 3:
+                        puts("There is a sharp sizzling sound.  The dwarves are engulfed in\n"
+                             "a wave of fire that appears from nowhere, and are completely\n"
+                             "incinerated;  the flames then vanish into nothingness again.");
+                        break;
+                    case 4:
+                        puts("There is a sharp whistling sound from nowhere.  The dwarf shudders\n"
+                             "and turns into a moth, which then flies away.");
+                        break;
+                    case 5:
+                        puts("There is a sharp whistling sound from nowhere.  The dwarves stiffen,\n"
+                             "shudder, and melt down into a large puddle of soggy goo that quickly\n"
+                             "soaks into the ground and vanishes.");
+                        break;
+                }
+                apport(DWARF, R_LIMBO);
+                dwarfcount -= objs[DWARF].prop;
+                objs[DWARF].prop = 0;
+            } else {
+                switch (i) {
+                    case 0:
+                        puts("A clear, liquid chime sounds in midair.  A large, four-clawed foot\n"
+                             "appears in midair and stomps violently downward, missing the dwarf\n"
+                             "but thoroughly squashing you.");
+                        break;
+                    case 1:
+                        puts("A clear, liquid chime sounds in midair.  A large and very toothy\n"
+                             "mouth appears in midair and chomps ferociously.  The dwarves manage\n"
+                             "to evade it, but it bites you in half.");
+                        break;
+                    case 2:
+                        puts("There is a sharp sizzling sound.  A ball of fire roars out of nowhere,\n"
+                             "misses the dwarf, bounces off of a wall, and incinerates you.");
+                        break;
+                    case 3:
+                        puts("There is a sharp sizzling sound.  A ball of fire appears from nowhere,\n"
+                             "bounces off of the ground, and explodes violently, incinerating both\n"
+                             "you and the dwarves.");
+                        break;
+                    case 4:
+                        puts("There is a sharp crackling sound from the air above you.  The dwarf\n"
+                             "shudders and turns into a sabre-toothed tiger, which attacks and\n"
+                             "kills you in short order.");
+                        break;
+                    case 5:
+                        puts("There is a sharp crackling sound from the air above you.  The dwarves\n"
+                             "stiffen, fall to the ground, and melt into a large puddle of soggy\n"
+                             "goo.  The goo twitches a few times and then flows at you with\n"
+                             "incredible speed;  it attacks and strangles you with little\n"
+                             "difficulty.");
+                        break;
+                }
+                return you_are_dead_at(loc);
+            }
+        } else {
+            nothing_happens();
+        }
+    }
+    return loc;
+}
+
 int process_verb(Location loc)
 {
     const int verb = word1.meaning;
@@ -3247,6 +3514,218 @@ int process_verb(Location loc)
                 return loc;
             }
             return 0;  /* unhandled */
+        case SAY:
+            if (keywordv(PLUGH) || keywordv(XYZZY) || keywordp(R_PLOVER) ||
+                keywordv(THURB) || keywordv(MELENKURION) || keywordv(NOSIDE) ||
+                keywordv(SAMOHT) || keywordv(KNERL) || keywordv(ZORTON) ||
+                keywordv(KLAETU) || keywordv(SNOEZE) || keywordv(BLERBI) ||
+                keywordv(PHUGGG)) {
+                word1 = word2;
+                word2.type = WordType_None;
+                return process_verb(loc);
+            } else if (word2.type != WordType_None) {
+                /* We've already printed a message via presay(). */
+                return loc;
+            }
+            return 0;  /* unhandled */
+#ifdef SAVE_AND_RESTORE
+        case SAVE:
+            switch (attempt_save()) {
+                case 0: puts("Save failed!"); break;
+                case 1:
+                    /* Saved. Parchment already prints a nice
+                     * message, so we don't need to. */
+                    break;
+                case 2: puts("Restored."); break;
+            }
+            continue;
+        case RESTORE:
+            /* On the fizmo interpreter, @restore yields 2
+             * when the save file doesn't exist, or when it
+             * has the wrong serial number for this game.
+             * I don't know what return value 0 would mean. */
+            attempt_restore();
+            puts("Restore failed!");
+            continue;
+#endif /* SAVE_AND_RESTORE */
+        case DRINK:
+            /* This action produces a different message at R_BEACH. */
+            if ((word2.type == WordType_None) || keywordo(WATER)) {
+                if (places[loc].flags & F_WATER) {
+                    puts("You have taken a drink from the stream.  The water tastes strongly of\n"
+                         "minerals, but is not unpleasant.  It is extremely cold.");
+                } else if (here(BOTTLE, loc) && objs[BOTTLE].prop == 0) {
+                    puts("The bottle of water is now empty.");
+                    apport(WATER, R_LIMBO);
+                    objs[BOTTLE].prop = 1;
+                } else if (keywordo(WATER)) {
+                    I_see_no("water");
+                } else {
+                    puts("There is nothing here that I can drink!");
+                }
+            } else if (word2.type == WordType_Object) {
+                if (here(word2.meaning, loc)) {
+                    hah();
+                } else {
+                    I_see_no(word2.text);
+                }
+            } else {
+                hah();
+            }
+            return loc;
+        case NEWS:
+            attempt_news();
+            return loc;
+        case READ:
+            if (word2.type == WordType_Object) {
+                ObjectWord obj = word2.meaning;
+                if (here(obj, loc)) {
+                    switch (obj) {
+                        case MAG:
+                            puts("I'm afraid the magazine is written in a form of Dwarvish runes\n"
+                                 "with which I am not familiar.");
+                            break;
+                        case MESSAGE:
+                            puts("\"This is not the maze where the pirate leaves his treasure chest.\"");
+                            break;
+                        case TABLET:
+                            puts("It says, \"Congratulations on bringing light into the Dark-room!\"");
+                            break;
+                        /* Platt has a label for READ.MACHINE, but it is unused. */
+                        default:
+                            dunno_hao(word1.text);
+                            break;
+                    }
+                } else {
+                    I_see_no(word2.text);
+                }
+            } else if (word2.type != WordType_None) {
+                hah();
+            } else {
+                return 0;  /* unhandled */
+            }
+            return loc;
+        case HOURS:
+            puts("\nColossal Cave is always open.\n");
+            break;
+        case WIZARD:
+            /* This is an amusing codepath. Platt includes a command WIZARD,
+             * which prompts the player for the "magic word"; but in fact
+             * no matter what the player types, he'll be docked ten points
+             * for attempting to enter wizard mode by such an obvious route. */
+            if (yes("Are you actually a wizard?")) {
+                puts("Prove it - say the magic word!");
+                listen();
+                puts("Oh, pooh - you are nothing but a charlatan!  That little piece of\n"
+                     "deception is going to cost you 10 points!!");
+                penalties += 10;
+            } else {
+                ok();
+            }
+            return loc;
+            /* The actual way into wizard mode is to type the five-word
+             * passphrase "CURIOUS GREEN IDEAS SLEPT FURIOUSLY" (a distortion
+             * of Noam Chomsky's "colorless green ideas sleep furiously")
+             * one word at a time, the same way as FEE FIE FOE FOO.
+             * Presumably Platt picked SLEPT over SLEEP because the latter
+             * is a plausible "in-character" input. As for CURIOUS versus
+             * COLORLESS, perhaps the five-character limit on input words
+             * was relevant; to the Adventure interpreter, COLORLESS and
+             * COLORFUL are considered the same word. */
+        case CURIOUS:
+        case GREEN:
+        case IDEAS:
+        case SLEPT:
+        case FURIOUSLY:
+            wizmode_passphrase();
+            return loc;
+        case CLIMB:
+            puts("There's nothing climbable here.");
+            return loc;
+        case LOST:
+            puts("I'm as confused as you are.");
+            return loc;
+        case MELENKURION:
+            if (loc == R_BY_FIGURE && objs[STATUE].prop == 0) {
+                /* TODO: This codepath should really be in at_by_figure(). */
+                puts("Rock silently crumbles off of the wall in front of you, revealing\n"
+                     "dark passages leading northwest, north, and northeast.");
+                objs[STATUE].prop = 1;
+            } else {
+                nothing_happens();
+            }
+            return loc;
+        case NOSIDE:
+            if (keywordv(SAMOHT)) {
+                if (have_used_noside_samoht ||
+                    (places[loc].flags & F_LIGHTED) ||
+                    !(places[R_LAIR].flags & F_BEENHERE) ||
+                    !here(LAMP, loc)) {
+                    nothing_happens();
+                } else if (lamplife > 40) {
+                    /* Using the magic word prematurely will kill your lamp...
+                     * permanently. */
+                    apport(LAMP, R_YLEM);
+                    objs[BATTERIES].prop = 1;
+                    objs[LAMP].prop = 0;
+                    lamplife = 0;
+                    if (pct(50)) {
+                        puts("With a loud \"zap\" a bolt of lightning springs out of midair and strikes\n"
+                             "your lamp, which immediately and violently explodes.  You narrowly\n"
+                             "miss being torn to shreds by the flying metal.\n\n"
+                             "It is now pitch dark.  If you proceed you will likely fall into a pit.");
+                    } else {
+                        puts("In a loud crackle of electricity, a bolt of lightning jumps out of\n"
+                             "nowhere and strikes your lamp.  The lamp instantly explodes like a\n"
+                             "grenade, and you are mown down by a cloud of shrapnel.");
+                        return you_are_dead_at(loc);
+                    }
+                } else {
+                    puts("The air fills with tension, and there is a subdued crackling sound.\n"
+                         "A blue aura forms about your lantern, and small sparks jump from the\n"
+                         "lantern to the ground.  The aura fades away after several seconds,\n"
+                         "and your lamp is once again shining brightly.");
+                    lamplife += 150;
+                    objs[LAMP].prop = 1;  /* shining brightly */
+                    have_used_noside_samoht = true;
+                }
+            } else {
+                nothing_happens();
+            }
+            return loc;
+        case SAMOHT:
+        case THURB:
+            /* THURB is handled in at_icecave30(). */
+            nothing_happens();
+            return loc;
+        case KNERL:
+        case ZORTON:
+        case KLAETU:
+        case SNOEZE:
+        case BLERBI:
+            return passphrase(loc);
+        case RIDE:
+            if (word2.type == WordType_None || keywordo(TURTLE)) {
+                if (there(TURTLE, loc)) {
+                    puts("You step gently on Darwin the Tortoise's back, and he carries you\n"
+                         "smoothly over to the southern side of the reservoir.  He then blows\n"
+                         "a couple of bubbles at you and sinks back out of sight.\n");
+                    apport(TURTLE, R_LIMBO);
+                    return R_RES;
+                }
+            }
+            return 0;  /* unhandled */
+        case PHUGGG:
+            return attempt_phuggg(loc);
+        case RUNOUT:
+            if (wizard_mode) {
+                clock = 0;
+                look_around(loc, /*familiar=*/true);
+                ok();
+            } else {
+                say_what();
+            }
+            return loc;
     }
     else if (word1.type == WordType_Object)
     switch (verb) {
@@ -3314,6 +3793,8 @@ int process_verb(Location loc)
                 hah();
             }
             return loc;
+        case MIST:
+            return examine_mist(loc);
     }
     return 0;  /* unhandled */
 }
@@ -3667,7 +4148,7 @@ void simulate_an_adventure(void)
       death:
         kill_the_player(loc);
         /* Coming from R_LIMBO ensures that we'll see a room description
-         * when we resurrect. */
+         * when we resurrect. Notice that R_LIMBO has F_NOBACK. */
         oldloc = loc = R_LIMBO;
         newloc = R_HOUSE;
     }
@@ -3827,6 +4308,12 @@ void simulate_an_adventure(void)
                 puts("That's where you are now!");
             } else {
                 puts("I don't know how to get there from here.");
+            }
+        } else if (word1.type == WordType_Verb && word1.meaning == BACK) {
+            if ((places[oldloc].flags | places[loc].flags) & F_NOBACK) {
+                puts("Sorry, but I no longer seem to remember how it was you got here.");
+            } else {
+                newloc = oldloc;
             }
         } else {
             newloc = process_verb(loc);

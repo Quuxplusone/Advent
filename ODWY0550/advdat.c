@@ -3088,7 +3088,7 @@ static const char enchanted_tunnels[] = "You are in the catacombs.  Enchanted tu
 
 struct Place places[] = {
     /* R_LIMBO */ {
-	NULL, NULL, 0, NULL
+	NULL, NULL, F_NOBACK, NULL
     },
     /* R_ROAD */ {
         "You're at end of road again.",
@@ -3551,7 +3551,8 @@ struct Place places[] = {
     /* R_SHELL */ {
 	"You're in Shell room.",
         "You're in a large room carved out of sedimentary rock. The floor and\n"
-        "walls are littered with bits of shells imbedded in the stone.  A\n"
+	/* Platt has "imbedded". */
+        "walls are littered with bits of shells embedded in the stone.  A\n"
         "shallow passage proceeds downward, and a somewhat steeper one leads\n"
         "up.  A low hands and knees passage enters from the south.",
 	F_NOBACK, &at_shell
