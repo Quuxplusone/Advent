@@ -52,7 +52,7 @@ bool quipped;  /* set when a dwarf dies dramatically */
 int closure;
 
 bool moved;  /* true if we've moved recently */
-VerbWord verbosity_mode = BRIEF;  /* one of FAST, BRIEF, FULL */
+VerbWord verbosity_mode = FULL;  /* one of FAST, BRIEF, FULL */
 bool please_clarify;
 int turns;  /* how many times we've read your commands */
 int foobar;  /* progress in the FEE FIE FOE FOO incantation */
@@ -638,6 +638,8 @@ void build_object_table(void)
 void describe_object(ObjectWord t)
 {
     if (t == DWARF) {
+        assert(objs[DWARF].prop >= 1);
+        puts("");  /* ensure that the dwarf message is preceded by a blank line */
         switch (objs[DWARF].prop) {
             case 1: puts("There is a threatening little dwarf in the room with you!"); break;
             case 2: puts("There are two bloodthirsty little dwarves in the room with you!"); break;
@@ -652,13 +654,120 @@ void describe_object(ObjectWord t)
             default: assert(false);
         }
     } else if (t == GOBLINS) {
-        /* TODO: deal with the gooseberry goblins */        
+        switch (objs[GOBLINS].prop) {
+            case 0:
+                puts("\nSuddenly and without warning, there appears from within the very\n"
+                     "cave walls around you a horde of vicious little goblins!  Each one\n"
+                     "stands about eight inches high on a pair of spindly black legs, has\n"
+                     "a globular, spine-covered body resembling a giant gooseberry, a\n"
+                     "wide mouth filled with sharp teeth, and a pair of glittering little\n"
+                     "green eyes!  They swarm around you and try to block your way.\n");
+                break;
+            case 1:
+                puts("You are surrounded by a horde of silent little gooseberry goblins!");
+                break;
+            case 2:
+                puts("\nOne of the gooseberry goblins begins to giggle in a high-pitched\n"
+                     "voice.  Another takes up the giggling, then another....  soon all\n"
+                     "of them are giggling insanely and jumping up and down with glee!\n");
+                break;
+            case 3:
+                puts("You are surrounded by a giggling horde of little gooseberry goblins!");
+                break;
+            case 4:
+                puts("\nThe goblins are jumping up and down frantically, and are working\n"
+                     "themselves into a real slavering frenzy!!\n");
+                break;
+            case 5:
+                puts("You are surrounded by a slavering horde of gooseberry goblins!");
+                break;
+            case 6:
+                puts("\nWith a shrill cry, the gooseberry goblins hurl themselves upon you,\n"
+                     "tickling you mercilessly.  You crush and hurl away several of them,\n"
+                     "but are soon borne down to the ground by the endless attack.  The\n"
+                     "goblins then gleefully rip out your throat, and you sink into\n"
+                     "unconsciousness.");
+                break;
+            default: assert(false);
+        }
     } else if (t == SWORD) {
-        /* TODO: deal with the singing sword */
+        switch (objs[SWORD].prop) {
+            case 0:
+                puts("There is a sword here with its blade plunged deep into the block\n"
+                     "of stone.  The sword is singing quietly to itself.");
+                break;
+            case 1:
+                puts("There is a magic sword here, chiming out the bell-like tones of\n"
+                     "\"Khumbu Ice-fall\" by ringing its blade against the ground.");
+                break;
+            case 2:
+                puts("There is a sword here, singing \"A Day in the Life\" in a quiet,\n"
+                     "introspective voice.");
+                break;
+            case 3:
+                puts("There is a magic sword here, singing \"Cold Blue Steel and Sweet\n"
+                     "Fire\" to itself in a plaintive, hopeless voice.");
+                break;
+            case 4:
+                puts("There is a sharp and obviously magical sword here. It is\n"
+                     "quietly humming excerpts from Prokofiev's \"Romeo and Juliet\"\n"
+                     "ballet to itself.");
+                break;
+            case 5:
+                puts("There is a sword lying on the ground, jauntily whistling the\n"
+                     "March from Tchaikovsky's \"Nutcracker Suite\".");
+                break;
+            case 6:
+                puts("There is a sharp sword lying here. It is (somehow) singing\n"
+                     "Tchaikovsky's \"1812 Overture\" in twelve parts, by itself!");
+                break;
+            case 7:
+                puts("The stirring strains of Rossini's \"William Tell\" overture fill\n"
+                     "the room, coming from a singing sword lying on the ground.");
+                break;
+            case 8:
+                puts("There is a singing sword lying on the ground. From it resound the\n"
+                     "massed voices of a two-hundred-singer choir, filling the air with\n"
+                     "the stirring sound of the Hallelujah Chorus from Handel's \"Messiah\".");
+                break;
+            case 9:
+                puts("There is a sharp and shiny sword here. It is somehow managing to\n"
+                     "sing Harry Partch's \"Daphne of the Dunes\" without destroying its\n"
+                     "singing organs (whatever they happen to be...)");
+                break;
+            case 10:
+                puts("There is a sword here, singing \"Witchi-Tai-To\" in two-part harmony\n"
+                     "with itself.");
+                break;
+            case 11:
+                puts("There is a very strange singing sword here - it is glowing and\n"
+                     "vibrating, and the eerie electronic notes of Charles Wuorinen's\n"
+                     "\"Time's Encomium\" issue from its blade and fill the air.");
+                break;
+            default:
+                assert(false);
+        }
     } else if (t == SCULPTURE) {
-        /* TODO: deal with the rock-crystal sculpture */
+        const int x = objs[SCULPTURE].prop;
+        if (x == 0) {
+            puts("A finely-carved crystalline sculpture of a pig is resting in a niche\n"
+                 "melted out of the icy wall of the tunnel!");
+        } else if (x == 14) {
+            puts("There is a crude sculpture of a very bedraggled phoenix here!");
+        } else {
+            assert(1 <= x && x <= 13);
+            static const char *animals[] = {
+                "pig", "eel", "emu", "elf", "mouse", "rabbit", "ibex", "frog", "tiger",
+                "mule", "moose", "dog", "spider"
+            };
+            const char *animal = animals[x-1];
+            printf("There is a fine crystalline sculpture of a%s %s here!\n",
+                   (animal[0]=='e' || animal[0] == 'i') ? "n" : "",
+                   animal);
+        }
     } else if (t == BLOB) {
-        /* TODO: deal with Rover */
+        assert(objs[BLOB].prop == 16);
+        puts("There is an immense and unfriendly-looking blob in the room with you!");
     } else if (t == FOG) {
         switch (objs[FOG].prop) {
             case 0: puts("You are standing, badly befuddled, in a pale purple fog."); break;
@@ -785,7 +894,7 @@ void listen(void)
 
     parse(&word1);
     parse(&word2);
-    if (please_clarify && word2.type != WordType_None) {
+    if (please_clarify && word1.type != WordType_None && word2.type == WordType_None) {
         /* If we just asked the user for a verb or noun, we should
          * see if maybe they gave us one. */
         if ((word1.type == WordType_Verb) != (saved_word.type == WordType_Verb))
@@ -798,6 +907,7 @@ void listen(void)
         word1 = word2;
         word2 = saved_word;
     }
+    please_clarify = false;
 }
 
 static bool keyword(WordType type, int meaning)
@@ -3820,12 +3930,21 @@ void look_around(Location loc, bool familiar)
         if (there(i, loc)) {
             objs[i].flags |= F_SEEN;
             if (!(objs[i].flags & F_INVISIBLE)) {
+                /* F_INVISIBLE seems to be a kludge to avoid printing
+                 * the blank line in front of objects whose description
+                 * is going to be NULL anyway. Platt gives the DWARF
+                 * F_INVISIBLE, and then has each of the dwarf's
+                 * descriptions begin with a blank line; this ensures
+                 * that the dwarf's description is always preceded by
+                 * exactly one blank line, regardless of what else is
+                 * in the room.*/
                 if (blank_line_before_objects) {
                     puts("");
                     blank_line_before_objects = false;
                 }
-                describe_object(i);
             }
+            /* Yes, even F_INVISIBLE objects are described; see above. */
+            describe_object(i);
         }
     }
     if (toting(BEAR)) {
@@ -4033,6 +4152,7 @@ bool clock4(Location loc)
                             objs[DWARF].prop += 1;
                             if (objs[DWARF].prop == 1) {
                                 /* Announce the arrival of this dwarf. */
+                                describe_object(DWARF);
                                 dwarf_warning_shot = true;
                                 dwarves_enraged = false;
                             }
@@ -4090,7 +4210,7 @@ bool clock4(Location loc)
 void deal_with_syntax_errors(Location loc)
 {
     if (word1.type == WordType_Object) {
-        if (there(word1.meaning, loc)) {
+        if (here(word1.meaning, loc)) {
             printf("What do you want me to do with the %s?\n", word1.text);
             please_clarify = true;
         } else {

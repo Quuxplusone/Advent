@@ -4327,7 +4327,7 @@ struct ObjectData objs[] = {
     { XX, 0, "Giant clam  >grunt!<", F_PORTABLE, in(R_SHELL) },
     { XX, 0, "Giant oyster  >groan!<", F_PORTABLE, in(R_LIMBO) },
     { XX, 0, "\"Spelunker Today\"", F_PORTABLE, in(R_ANTE) },
-    { XX, 0, NULL /* KNIFE */, F_PORTABLE, in(R_LIMBO) },
+    { XX, 0, NULL /* KNIFE */, F_INVISIBLE|F_PORTABLE, in(R_LIMBO) },
     { XX, 0, "Tasty food", F_PORTABLE, in(R_HOUSE) },
     { XX, 0, NULL /* BOTTLE */, F_PORTABLE, in(R_HOUSE) },
     { XX, 0, NULL /* WATER */, F_PORTABLE, in(R_LIMBO) },
