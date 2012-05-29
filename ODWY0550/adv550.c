@@ -1718,7 +1718,7 @@ int attempt_take(ObjectWord obj, Location loc)
                 }
                 break;
             case CHAIN:
-                if (there(CHAIN, loc) && !objs[CHAIN].prop) {
+                if (there(CHAIN, loc) && objs[CHAIN].prop) {
                     puts("The chain is still locked.");
                     return loc;
                 }
@@ -2242,8 +2242,11 @@ int attempt_throw(ObjectWord obj, Location loc)
     if (word2.type == WordType_Object) {
         switch (obj) {
             case AXE:
-            case SWORD:
-                return weaponry(obj, loc);
+            case SWORD: {
+                int newloc = weaponry(obj, loc);
+                if (newloc != 0) return newloc;
+                break;  /* go on to the following cases */
+            }
             case FOOD:
                 if (throw_food(loc)) return loc;
                 break;  /* unhandled so far */
