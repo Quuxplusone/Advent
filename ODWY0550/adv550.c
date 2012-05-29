@@ -1276,7 +1276,7 @@ int score(void)
 }
 
 #define HIGHEST_CLASS 8
-static int class_score[] = { 19, 129, 239, 349, 469, 509, 529, 549, 9999 };
+static int class_score[] = { 20, 130, 240, 350, 470, 510, 530, 550, 9999 };
 static const char *class_message[] = {
     "You are obviously a rank amateur.  Better luck next time.",
     "Your score qualifies you as a novice-class adventurer.",
