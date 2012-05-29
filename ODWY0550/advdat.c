@@ -2511,7 +2511,8 @@ int at_beach(void)
     }
     if (keywordo(WATER) || keywordv(FILL) || keywordv(DRINK)) {
 	puts("I'm afraid that all that's available here is salt water, which\n"
-	     "isn't good for anything much... you'de better try elsewhere.");
+	     /* Platt has "you'de". */
+	     "isn't good for anything much... you'd better try elsewhere.");
 	return R_BEACH;
     }
     return 0;  /* command hasn't been processed yet */
@@ -4205,12 +4206,14 @@ struct Place places[] = {
     },
     /* R_ARCH_COR_2 */ {
         "You're at bend in arched coral corridor.",
-        "You are at a bend in an arched corral passage;  the passage enters\n"
+	/* Platt has "corral". */
+        "You are at a bend in an arched coral passage;  the passage enters\n"
         "from the west over a patch of damp sand, turns, and continues north.",
         F_NOBACK, &at_arch_cor_2
     },
     /* R_ARCH_FORK */ {
-        "You're at fork in arched corral passage.",
+	/* Platt has "corral". */
+        "You're at fork in arched coral passage.",
         "You are at a fork in a high, arched coral passage.  The main portion\n"
         "of the passage enters from the south;  two smaller passages lead\n"
         "east and north.  The smell of salt water is very strong here.",

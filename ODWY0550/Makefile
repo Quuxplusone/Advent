@@ -1,8 +1,8 @@
 # vbcc needs this environment variable so it can find its config file.
 export VBCC:=../vbcc
 
-VBCCZ = ../vbcc/bin/vc +z -c99 -O=3 -DZ_MACHINE -Iz-machine/include
-MAXES = \$$MAX_ARRAYS=9000 \
+VBCCZ = ../vbcc/bin/vc +z -c99 -O=3 -DZ_MACHINE -DSAVE_AND_RESTORE -Iz-machine/include
+MAXES = \$$MAX_ARRAYS=1100 \
         \$$MAX_ZCODE_SIZE=40000 \
         \$$MAX_STATIC_DATA=65000
 

@@ -3567,6 +3567,7 @@ int process_verb(Location loc)
         case FIX:
             if (keywordo(VASE) && here(SHARDS, loc)) {
                 puts("It is beyond your power to do that.");
+                return loc;
             }
             return 0;  /* unhandled */
         case FILL:
@@ -3660,7 +3661,7 @@ int process_verb(Location loc)
                     break;
                 case 2: puts("Restored."); break;
             }
-            continue;
+            return loc;
         case RESTORE:
             /* On the fizmo interpreter, @restore yields 2
              * when the save file doesn't exist, or when it
@@ -3668,7 +3669,13 @@ int process_verb(Location loc)
              * I don't know what return value 0 would mean. */
             attempt_restore();
             puts("Restore failed!");
-            continue;
+            return loc;
+#else
+        case SAVE:
+        case RESTORE:
+            puts("Sorry, saving and restoring games is not implemented in this version\n"
+                 "of Adventure.");
+            return loc;
 #endif /* SAVE_AND_RESTORE */
         case DRINK:
             /* This action produces a different message at R_BEACH. */
@@ -4235,7 +4242,7 @@ void deal_with_syntax_errors(Location loc)
             printf("%s what?\n", word1.text);
             please_clarify = true;
         } else if (word2.type == WordType_Object) {
-            if (there(word2.meaning, loc)) {
+            if (here(word2.meaning, loc)) {
                 dunno_hao(word1.text);
             } else {
                 I_see_no(word2.text);
