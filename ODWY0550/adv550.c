@@ -81,9 +81,7 @@ bool pirate_stalking_you = false;
 bool djinn_is_grateful = false;
 bool djinn_gave_hint = false;
 bool successfully_opened_safe = false;
-bool have_drowned_in_quicksand = false;
 bool have_stolen_back_eggs = false;
-bool have_awoken_goblins = false;
 bool panicked_at_grate = false;
 bool gave_up;
 

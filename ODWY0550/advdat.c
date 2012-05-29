@@ -28,9 +28,7 @@ extern bool nomagic;
 extern int lamplife;
 extern int holding_count;
 extern int cylinder_escape_count;
-extern bool have_drowned_in_quicksand;
 extern bool have_stolen_back_eggs;
-extern bool have_awoken_goblins;
 
 void cantpasslock(void) { puts("You can't go through a locked steel grate!"); }
 
@@ -2436,6 +2434,7 @@ int at_crack_4(void)
 
 static int quicksand(Location dest)
 {
+    static bool have_drowned_in_quicksand = false;
     if (!objs[QUICKSAND].prop || toting(CLAM) || toting(OYSTER)) {
 	objs[QUICKSAND].prop = 0;
 	if (have_drowned_in_quicksand) {
@@ -3006,6 +3005,7 @@ int at_arabesque(void)
 int at_translucent(void)
 {
     if (used_movement_verb2(EAST, OUT) || keywordp(R_GOLDEN)) {
+	static bool have_awoken_goblins = false;
 	if (!have_awoken_goblins) {
 	    have_awoken_goblins = true;
 	    apport(GOBLINS, R_TRANSLUCENT);
