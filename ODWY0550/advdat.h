@@ -26,14 +26,16 @@ typedef enum {
     PLANT2, STALACTITE, FOG, GLOW, SHADOW, BLOB, DRAWINGS, PIRATE, DRAGON,
     CHASM, TROLL, TROLL2, OGRE, BASILISK, GONG, DJINN, TURTLE, MESSAGE, GEYSER,
     STATUE, QUICKSAND, SLIME, PONY, SAFE, THRONE, SKELETON, BEAR,
-    BATTERIES, MOSS, DINGHY, SHARDS, KEYS, LAMP, CAGE, BIRD, ROD, PLATE,
+    BATTERIES, MOSS, DINGHY, BAG, CROWN, GOLD, DIAMONDS, SILVER, JEWELS,
+    COINS, CHEST, EGGS, TRIDENT, HELMET, VASE, SHARDS, EMERALD, SCEPTRE,
+    YACHT, PYRAMID, PEARL, RUG, SPICES, BEADS, CHAIN, RING, SPYGLASS,
+    SCULPTURE, BRACELET, CASKET, KEYS, LAMP, CAGE, BIRD, ROD, PLATE,
     DYNAMITE, PILLOW, CLAM, OYSTER, MAG, KNIFE, FOOD, BOTTLE, WATER, OIL,
-    FLASK, AXE, SWORD, TEETH, VIAL, MUSHROOM, GOBLINS, DWARF, 
-    MIN_TREASURE,
-    BAG=MIN_TREASURE, CROWN, GOLD, DIAMONDS, SILVER, JEWELS, COINS, CHEST,
-    EGGS, TRIDENT, HELMET, VASE, EMERALD, SCEPTRE, YACHT, PYRAMID, PEARL,
-    RUG, SPICES, BEADS, CHAIN, RING, SPYGLASS, SCULPTURE, BRACELET, CASKET,
-    MAX_OBJ=CASKET
+    FLASK, AXE, SWORD, TEETH, VIAL, MUSHROOM, GOBLINS, DWARF,
+    MAX_OBJ=DWARF
+    /* DWARF must be the last object, because look_around() prints everything
+     * in the room in order, and we want to make sure the "threatening little
+     * dwarf" is always the last object description printed. */
 } ObjectWord;
 
 typedef enum {
@@ -160,7 +162,6 @@ extern struct ObjectData objs[];
 
 #define toting(t) (objs[t].place < 0)
 #define there(t, loc) (objs[t].place == (loc) || objs[t].place2 == (loc))
-#define is_treasure(t) ((t) >= MIN_TREASURE)
 
 #define you_are_dead_at(loc) ((loc)+R_YLEM)
 

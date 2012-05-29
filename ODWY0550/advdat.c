@@ -17,6 +17,7 @@ bool keywordv(VerbWord meaning);
 bool keywordo(ObjectWord meaning);
 bool keywordp(Location meaning);
 bool portable(ObjectWord o);
+bool is_treasure(ObjectWord o);
 
 extern VerbWord verbosity_mode;
 extern int closure;
@@ -590,7 +591,7 @@ int at_wpit(void)
 	if (objs[PLANT].prop == 0) {
 	    puts("There's nothing to climb here.  Say \"UP\" or \"OUT\" to leave the pit.");
 	    return R_WPIT;
-	} else if (objs[PLANT].prop == 2) {
+	} else if (objs[PLANT].prop == 1) {
 	    puts("You have climbed up the plant and out of the pit.");
 	    return R_W2PIT;
 	} else {
@@ -4315,7 +4316,33 @@ struct ObjectData objs[] = {
     { XX, 0, NULL /* BATTERIES */, F_PORTABLE, in(R_LIMBO) },
     { XX, 0, NULL /* MOSS */, F_INVISIBLE, in(R_SOFT) },
     { XX, 0, NULL /* DINGHY */, 0, in(R_BEACH) },
+    { XX, 0, "Bag filled with pieces of eight", F_PORTABLE|F_UNSTABLE, in(R_BEACH) },
+    { XX, 0, "Crown", F_PORTABLE|F_UNSTABLE, in(R_INSAFE) },
+    { XX, 0, "Large gold nugget", F_PORTABLE, in(R_NUGGET) },
+    { XX, 0, "Several diamonds", F_PORTABLE, in(R_WFISS) },
+    { XX, 0, "Bars of silver", F_PORTABLE, in(R_NS) },
+    { XX, 0, "Precious jewelry", F_PORTABLE, in(R_SOUTH) },
+    { XX, 0, "Rare coins", F_PORTABLE, in(R_WEST) },
+    { XX, 0, "Treasure chest", F_PORTABLE|F_UNSTABLE, in(R_LIMBO) },
+    { XX, 0, "Golden eggs", F_PORTABLE, in(R_GIANT) },
+    { XX, 0, "Jeweled trident", F_PORTABLE, in(R_FALLS) },
+    { XX, 0, "Helmet", F_PORTABLE, in(R_MORION) },
+    { XX, 0, "Ming vase", F_PORTABLE, in(R_ORIENTAL) },
     { XX, 0, "Worthless shards of pottery", F_PORTABLE, in(R_LIMBO) },
+    { XX, 0, "Egg-sized emerald", F_PORTABLE, in(R_PLOVER) },
+    { XX, 0, "Sapphire sceptre", F_PORTABLE, in(R_AUDIENCE_E) },
+    { XX, 0, "Ruby-covered toy yacht", F_PORTABLE|F_UNSTABLE, in(R_NONDESCRIPT) },
+    { XX, 0, "Platinum pyramid", F_PORTABLE, in(R_DARK) },
+    { XX, 0, "Glistening pearl", F_PORTABLE, in(R_LIMBO) },
+    { XX, 0, "Persian rug", F_PORTABLE, in(R_LIMBO) },
+    { XX, 0, "Rare spices", F_PORTABLE, in(R_CHAMBER) },
+    { XX, 0, "Ancient Indian turquoise beads.", F_PORTABLE|F_UNSTABLE, in(R_BALCONY) },
+    { XX, 0, "Golden chain", F_PORTABLE, in(R_BARR) },
+    { XX, 0, "Mithril ring", F_PORTABLE, in(R_LIMBO) },
+    { XX, 0, "Scrimshaw spyglass", F_PORTABLE, in(R_IN_JONAH) },
+    { XX, 0, "Rock-crystal sculpture", F_PORTABLE|F_UNSTABLE, in(R_ICECAVE14) },
+    { XX, 0, "Jade bracelet", F_PORTABLE, in(R_TRANSLUCENT) },
+    { XX, 0, "Casket of opals", F_PORTABLE|F_UNSTABLE, in(R_CRACK_4) },
     { XX, 0, "Set of keys", F_PORTABLE, in(R_HOUSE) },
     { XX, 0, "Brass lantern", F_PORTABLE, in(R_HOUSE) },
     { XX, 0, "Wicker cage", F_PORTABLE|F_UNSTABLE, in(R_COBBLES) },
@@ -4339,33 +4366,7 @@ struct ObjectData objs[] = {
     { XX, 0, "Vial of oily liquid", F_PORTABLE, in(R_SPHERICAL) },
     { XX, 0, "Mushroom", F_PORTABLE|F_UNSTABLE, in(R_CUBICLE) },
     { XX, 0, NULL /* GOBLINS */, 0, in(R_LIMBO) },
-    { XX, 0, NULL /* DWARF */, F_INVISIBLE, in(R_LIMBO) },
-    { XX, 0, "Bag filled with pieces of eight", F_PORTABLE|F_UNSTABLE, in(R_BEACH) },
-    { XX, 0, "Crown", F_PORTABLE|F_UNSTABLE, in(R_INSAFE) },
-    { XX, 0, "Large gold nugget", F_PORTABLE, in(R_NUGGET) },
-    { XX, 0, "Several diamonds", F_PORTABLE, in(R_WFISS) },
-    { XX, 0, "Bars of silver", F_PORTABLE, in(R_NS) },
-    { XX, 0, "Precious jewelry", F_PORTABLE, in(R_SOUTH) },
-    { XX, 0, "Rare coins", F_PORTABLE, in(R_WEST) },
-    { XX, 0, "Treasure chest", F_PORTABLE|F_UNSTABLE, in(R_LIMBO) },
-    { XX, 0, "Golden eggs", F_PORTABLE, in(R_GIANT) },
-    { XX, 0, "Jeweled trident", F_PORTABLE, in(R_FALLS) },
-    { XX, 0, "Helmet", F_PORTABLE, in(R_MORION) },
-    { XX, 0, "Ming vase", F_PORTABLE, in(R_ORIENTAL) },
-    { XX, 0, "Egg-sized emerald", F_PORTABLE, in(R_PLOVER) },
-    { XX, 0, "Sapphire sceptre", F_PORTABLE, in(R_AUDIENCE_E) },
-    { XX, 0, "Ruby-covered toy yacht", F_PORTABLE|F_UNSTABLE, in(R_NONDESCRIPT) },
-    { XX, 0, "Platinum pyramid", F_PORTABLE, in(R_DARK) },
-    { XX, 0, "Glistening pearl", F_PORTABLE, in(R_LIMBO) },
-    { XX, 0, "Persian rug", F_PORTABLE, in(R_LIMBO) },
-    { XX, 0, "Rare spices", F_PORTABLE, in(R_CHAMBER) },
-    { XX, 0, "Ancient Indian turquoise beads.", F_PORTABLE|F_UNSTABLE, in(R_BALCONY) },
-    { XX, 0, "Golden chain", F_PORTABLE, in(R_BARR) },
-    { XX, 0, "Mithril ring", F_PORTABLE, in(R_LIMBO) },
-    { XX, 0, "Scrimshaw spyglass", F_PORTABLE, in(R_IN_JONAH) },
-    { XX, 0, "Rock-crystal sculpture", F_PORTABLE|F_UNSTABLE, in(R_ICECAVE14) },
-    { XX, 0, "Jade bracelet", F_PORTABLE, in(R_TRANSLUCENT) },
-    { XX, 0, "Casket of opals", F_PORTABLE|F_UNSTABLE, in(R_CRACK_4) }
+    { XX, 0, NULL /* DWARF */, F_INVISIBLE, in(R_LIMBO) }
 #undef XX
 #undef in
 #undef schiz

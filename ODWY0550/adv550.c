@@ -106,6 +106,7 @@ void except_perhaps_you() { puts("There's nothing here it wants to eat (except p
 
 /*========== Some forward declarations. =================================*/
 
+bool is_treasure(ObjectWord o);
 bool lamprey(Location loc);
 void phog(Location loc);
 void hint_logic(Location loc);
@@ -1247,7 +1248,8 @@ int score(void)
 {
     int s = 0;
     if (!gave_up || closure > 2) s += 9;
-    for (int i = MIN_TREASURE; i <= MAX_OBJ; ++i) {
+    for (int i = 1; i <= MAX_OBJ; ++i) {
+        if (!is_treasure(i)) continue;
         /* Each treasure is worth a flat 15 points. */
         if (there(i, R_HOUSE) || closure > 2)
             s += 15;
@@ -1270,16 +1272,18 @@ int score(void)
 }
 
 #define HIGHEST_CLASS 8
-static int class_score[] = { 35, 100, 130, 200, 250, 300, 330, 349, 9999 };
+static int class_score[] = { 19, 129, 239, 349, 469, 509, 529, 549, 9999 };
 static const char *class_message[] = {
     "You are obviously a rank amateur.  Better luck next time.",
     "Your score qualifies you as a novice-class adventurer.",
+    /* Platt has an extraneous semicolon here: "rating;". */
     "You have achieved the rating \"Experienced Adventurer\".",
     "You may now consider yourself a \"Seasoned Adventurer\".",
     "You have reached \"Junior Master\" status.",
     "Your score puts you in Master Adventurer class C.",
     "Your score puts you in Master Adventurer class B.",
     "Your score puts you in Master Adventurer class A.",
+    /* Woods has "Adventure Grandmaster". Personally, I like Platt's version better. */
     "All of Adventuredom gives tribute to you, Adventurer Grandmaster!"
 };
 
@@ -1288,8 +1292,8 @@ void finis(void)
     /* Print the score and say adieu. */
     int s = score();
     printf("You have scored a total of %d points, out of a possible maximum of\n"
-           "550 points.  During this game of Adventure, you have taken a total of\n", s);
-    printf("%d turns.\n", turns);
+           "550 points.  During this game of Adventure, you have taken a total of\n"
+           "%d turns.\n", s, turns);
 
     int rank;
     for (rank = 0; class_score[rank] <= s; ++rank) ;
@@ -1549,6 +1553,11 @@ bool mortal(ObjectWord o)
 bool edible(ObjectWord o)
 {
     return (o == FOOD || o == MUSHROOM);
+}
+
+bool is_treasure(ObjectWord o)
+{
+    return (BAG <= o && o <= CASKET) && (o != SHARDS);
 }
 
 ObjectWord default_to_something(bool (*predicate)(ObjectWord), Location loc)
@@ -4021,8 +4030,8 @@ bool clock4(Location loc)
 {
     if (closure == 0) {
         closure = 1;
-        for (int i = MIN_TREASURE; i <= MAX_OBJ; ++i) {
-            if (!there(i, R_HOUSE))
+        for (int i = 1; i <= MAX_OBJ; ++i) {
+            if (is_treasure(i) && !there(i, R_HOUSE))
                 closure = 0;
         }
         if (closure == 1) {
@@ -4106,7 +4115,8 @@ bool clock4(Location loc)
                 if (pirate_appears) {
                     pirate_stalking_you = false;
                     bool pirate_stole_something = false;
-                    for (int i = MIN_TREASURE; i <= MAX_OBJ; ++i) {
+                    for (int i = 1; i <= MAX_OBJ; ++i) {
+                        if (!is_treasure(i)) continue;
                         if (i == RING) continue;  /* never steal this */
                         if (here(i, loc)) {
                             apport(i, R_PIRATES_NEST);
@@ -4115,12 +4125,12 @@ bool clock4(Location loc)
                     }
                     if (pirate_stole_something) {
                         if (objs[PIRATE].flags & F_SEEN) {
-                            puts("Out from the darkness behind you leaps the pirate!  \"Har, har,\" he\n"
+                            puts("\nOut from the darkness behind you leaps the pirate!  \"Har, har,\" he\n"
                                  "chortles nastily, \"I see you've found some more treasure for me!\n"
                                  "Thanks, me hearty, you're doing just fine!\"  With that, he snatches\n"
                                  "your treasure and slips away into the gloom, chuckling with glee.");
                         } else {
-                            puts("Out from the shadows behind you pounces a bearded pirate!  \"Har, har,\"\n"
+                            puts("\nOut from the shadows behind you pounces a bearded pirate!  \"Har, har,\"\n"
                                  "he chortles, \"I'll just take all this booty and hide it away with me\n"
                                  "chest deep in the maze!\"  He snatches your treasure and vanishes into\n"
                                  "the gloom.");
