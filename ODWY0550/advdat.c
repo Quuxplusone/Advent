@@ -32,13 +32,13 @@ extern bool have_drowned_in_quicksand;
 extern bool have_stolen_back_eggs;
 extern bool have_awoken_goblins;
 
-static const char cantpasslock[] = "You can't go through a locked steel grate!";
+void cantpasslock(void) { puts("You can't go through a locked steel grate!"); }
 
-static int you_didnt_move(Location newloc)
+static int you_didnt_move(void)
 {
     puts("You have crawled around in some little holes and wound up back in the\n"
 	 "main passage.");
-    return newloc;
+    return STAY_STILL;
 }
 
 static int oof(Location newloc)
@@ -228,7 +228,7 @@ int at_slit(void)
     if (used_movement_verb3(ROCK, BED, SOUTH)) return R_DEPRESSION;
     if (used_movement_placeword(R_SLIT) || used_movement_verb3(STREAM, DOWN, IN)) {
 	puts("You don't fit through a two-inch slit!");
-	return R_SLIT;
+	return STAY_STILL;
     }
     return 0;  /* command hasn't been processed yet */
 }
@@ -247,7 +247,6 @@ int at_fake_slit(void)
     if (used_movement_verb(SOUTH)) return R_DEPRESSION;
     if (used_movement_placeword(R_SLIT) || used_movement_verb3(STREAM, DOWN, IN)) {
 	closure = 5;  /* victory! */
-	verbosity_mode = BRIEF;
 	puts("You plunge into the stream and are carried down into total blackness.\n\n"
         "Deeper\n"
         "        and\n"
@@ -324,8 +323,8 @@ int at_depression(void)
 	if (objs[GRATE].prop == 1) {
 	    return R_INSIDE;
 	} else {
-	    puts("You can't go through a locked steel grate!");
-	    return R_DEPRESSION;
+	    cantpasslock();
+	    return STAY_STILL;
 	}
     }
     return 0;  /* command hasn't been processed yet */
@@ -337,8 +336,8 @@ int at_inside(void)
 	if (objs[GRATE].prop == 1) {
 	    return R_DEPRESSION;
 	} else {
-	    puts("You can't go through a locked steel grate!");
-	    return R_INSIDE;
+	    cantpasslock();
+	    return STAY_STILL;
 	}
     }
     if (used_movement_verb(CRAWL)) return R_COBBLES;
@@ -381,7 +380,7 @@ int at_debris(void)
 	if (used_movement_placeword(R_DEPRESSION)) return R_DEPRESSION;
     } else {
 	if (used_movement_placeword(R_DEPRESSION)) {
-	    puts(cantpasslock);
+	    cantpasslock();
 	    return R_INSIDE;
 	}
     }
@@ -389,13 +388,13 @@ int at_debris(void)
 	if (closure >= 2 || nomagic) {
 	    nothing_happens();
 	    panicked = true;
-	    return R_DEBRIS;
+	    return STAY_STILL;
 	} else if (used_movement_verb(XYZZY)) {
 	    say_foof();
 	    return R_HOUSE;
 	} else {
 	    /* This seems like a bug in Platt's code. */
-	    return R_DEBRIS;
+	    return STAY_STILL;
 	}
     }
     return 0;  /* command hasn't been processed yet */
@@ -416,7 +415,7 @@ int at_awk(void)
 	    return R_DEPRESSION;
     } else {
 	if (used_movement_placeword(R_DEPRESSION)) {
-	    puts(cantpasslock);
+	    cantpasslock();
 	    return R_INSIDE;
 	}
     }
@@ -437,7 +436,7 @@ int at_bird(void)
 	    return R_DEPRESSION;
     } else {
 	if (used_movement_placeword(R_DEPRESSION)) {
-	    puts(cantpasslock);
+	    cantpasslock();
 	    return R_INSIDE;
 	}
     }
@@ -454,13 +453,13 @@ int at_spit(void)
 	    return R_DEPRESSION;
     } else {
 	if (used_movement_placeword(R_DEPRESSION)) {
-	    puts(cantpasslock);
+	    cantpasslock();
 	    return R_INSIDE;
 	}
     }
     if (used_movement_verb(WEST) || used_movement_verb(CRACK)) {
 	puts("The crack is far too small for you to enter.");
-	return R_SPIT;
+	return STAY_STILL;
     }
     /* This is clearly a bug in Platt's code. Going DOWN (the most natural
      * verb) will work fine, but going STEPS or PIT will kill you.
@@ -498,10 +497,28 @@ int at_emist(void)
 	used_movement_verb(PASSAGE) || used_movement_verb(IN)) {
 	if (toting(GOLD)) {
 	    puts("The dome is unclimbable.");
-	    return R_EMIST;
+	    return STAY_STILL;
 	} else {
 	    return R_SPIT;
 	}
+    }
+    return 0;  /* command hasn't been processed yet */
+}
+
+int cross_fissure(VerbWord direction, Location destination)
+{
+    if (used_movement_verb3(FORWARD, CROSS, direction)) {
+	if (objs[FISSURE].prop) return destination;
+	puts("There is no way across the fissure.");
+	return STAY_STILL;
+    }
+    if (used_movement_verb(JUMP)) {
+	if (objs[FISSURE].prop) {
+	    puts("I respectfully suggest you go across the bridge instead of jumping.");
+	    return STAY_STILL;
+	}
+	/* This connection is original to Platt's version. */
+	return splatter(R_FALLS);
     }
     return 0;  /* command hasn't been processed yet */
 }
@@ -510,20 +527,7 @@ int at_efiss(void)
 {
     if (used_movement_verb(HALL)) return R_EMIST;
     if (used_movement_verb(EAST)) return R_EMIST;
-    if (used_movement_verb3(FORWARD, CROSS, WEST)) {
-	if (objs[FISSURE].prop) return R_WFISS;
-	puts("There is no way across the fissure.");
-	return R_EFISS;
-    }
-    if (used_movement_verb(JUMP)) {
-	if (objs[FISSURE].prop) {
-	    puts("I respectfully suggest you go across the bridge instead of jumping.");
-	    return R_EFISS;
-	}
-	/* This connection is original to Platt's version. */
-	return splatter(R_FALLS);
-    }
-    return 0;  /* command hasn't been processed yet */
+    return cross_fissure(WEST, R_WFISS);
 }
 
 int at_nugget(void)
@@ -541,7 +545,7 @@ int at_hmk(void)
 	    used_movement_verb3(SW, NW, SE) ||
 	    used_movement_verb3(NE, DOWN, SECRET)) {
 	    puts("You can't get past the snake.");
-	    return R_HMK;
+	    return STAY_STILL;
 	}
     } else {
 	/* no snake */
@@ -557,7 +561,7 @@ int at_hmk(void)
 	    if (pct(35)) {
 		return R_SECRETEW_TITE;
 	    } else {
-		return you_didnt_move(R_HMK);
+		return you_didnt_move();
 	    }
 	}
     }
@@ -573,7 +577,7 @@ int at_w2pit(void)
     if (used_movement_placeword(R_SPIT)) return R_WPIT;
     if (keywordv(HOLE)) {
 	puts("It is too far up for you to reach.");
-	return R_W2PIT;
+	return STAY_STILL;
     }
     return 0;  /* command hasn't been processed yet */
 }
@@ -590,7 +594,7 @@ int at_wpit(void)
     if (keywordv(CLIMB)) {
 	if (objs[PLANT].prop == 0) {
 	    puts("There's nothing to climb here.  Say \"UP\" or \"OUT\" to leave the pit.");
-	    return R_WPIT;
+	    return STAY_STILL;
 	} else if (objs[PLANT].prop == 1) {
 	    puts("You have climbed up the plant and out of the pit.");
 	    return R_W2PIT;
@@ -601,7 +605,7 @@ int at_wpit(void)
     }
     if (keywordv(GET) && keywordo(PLANT)) {
 	puts("The plant has exceptionally deep roots and cannot be pulled free.");
-	return R_WPIT;
+	return STAY_STILL;
     }
     return 0;  /* command hasn't been processed yet */
 }
@@ -609,19 +613,10 @@ int at_wpit(void)
 int at_wfiss(void)
 {
     if (used_movement_verb(WEST)) return R_WMIST;
-    if (used_movement_verb3(FORWARD, CROSS, EAST)) {
-	if (objs[FISSURE].prop) return R_EFISS;
-	puts("There is no way across the fissure.");
-	return R_WFISS;
-    }
-    if (used_movement_verb(JUMP)) {
-	if (objs[FISSURE].prop) {
-	    puts("I respectfully suggest you go across the bridge instead of jumping.");
-	    return R_WFISS;
-	}
-	/* This connection is original to Platt's version. */
-	return splatter(R_FALLS);
-    }
+    /* The only reason I use this awkward construction is to preserve
+     * the behavior of the command "NORTH EAST". */
+    int result = cross_fissure(EAST, R_EFISS);
+    if (result != 0) return result;
     if (keywordv(NORTH)) {
 	puts("You have crawled around in a little passage north of and parallel\n"
 	     "to the Hall of Mists.");
@@ -664,7 +659,7 @@ int at_y2(void)
 	if (closure >= 2 || nomagic) {
 	    nothing_happens();
 	    panicked = true;
-	    return R_Y2;
+	    return STAY_STILL;
 	} else {
 	    say_foof();
 	    return used_movement_verb(PLUGH) ? R_HOUSE : R_PLOVER;
@@ -716,7 +711,7 @@ int at_wet(void)
     if (used_movement_verb3(STREAM, DOWN, UPSTREAM) ||
 	    used_movement_verb(DOWNSTREAM) || used_movement_placeword(R_SLIT)) {
 	puts("You don't fit through a two-inch slit!");
-	return R_WET;
+	return STAY_STILL;
     }
     return 0;  /* command hasn't been processed yet */
 }
@@ -945,14 +940,14 @@ int at_bedquilt(void)
 	if (pct(65)) {
 	    puts("You have crawled around in some little holes and found your way\n"
 	         "blocked by a recent cave-in.  You are now back in the main passage.");
-	    return R_BEDQUILT;
+	    return STAY_STILL;
 	}
 	if (used_movement_verb(DOWN)) return R_ANTE;
 	if (used_movement_verb(NORTH)) return pct(75) ? R_LOW : R_SJUNC;
 	if (used_movement_verb(UP)) return pct(75) ? R_DUSTY : R_ABOVEP;
 	if (used_movement_verb(SOUTH)) return pct(75) ? R_SLAB : R_TALLEWCNYN;
     }
-    if (keywordv(NW)) return pct(50) ? R_ORIENTAL : you_didnt_move(R_BEDQUILT);
+    if (keywordv(NW)) return pct(50) ? R_ORIENTAL : you_didnt_move();
     return 0;  /* command hasn't been processed yet */
 }
 
@@ -964,8 +959,8 @@ int at_swiss(void)
     if (used_movement_verb(EAST)) return R_SOFT;
     if (used_movement_placeword(R_ORIENTAL)) return R_ORIENTAL;
     if (used_movement_placeword(R_SOFT)) return R_SOFT;
-    if (used_movement_verb(NW)) return pct(65) ? R_ORIENTAL : you_didnt_move(R_SWISS);
-    if (used_movement_verb(SOUTH)) return pct(65) ? R_TALLEWCNYN : you_didnt_move(R_SWISS);
+    if (used_movement_verb(NW)) return pct(65) ? R_ORIENTAL : you_didnt_move();
+    if (used_movement_verb(SOUTH)) return pct(65) ? R_TALLEWCNYN : you_didnt_move();
     return 0;  /* command hasn't been processed yet */
 }
 
@@ -1165,7 +1160,7 @@ int at_immensenspass(void)
     if (used_movement_verb2(NORTH, IN) || used_movement_placeword(R_FALLS)) {
 	if (objs[DOOR].prop) return R_FALLS;
 	puts("The door is extremely rusty and refuses to open.");
-	return R_IMMENSENSPASS;
+	return STAY_STILL;
     }
     return 0;  /* command hasn't been processed yet */
 }
@@ -1180,7 +1175,7 @@ int at_falls(void)
     if (used_movement_verb2(DOWN, JUMP)) {
 	if (!yes("Into the whirlpool??")) {
 	    ok();
-	    return R_FALLS;
+	    return STAY_STILL;
 	}
 	bool something_got_lost = false;
 	for (int i=1; i <= MAX_OBJ; ++i) {
@@ -1244,14 +1239,19 @@ int at_misty(void)
     return 0;  /* command hasn't been processed yet */
 }
 
+int tight_squeeze(void)
+{
+    puts("Something you're carrying won't fit through the tunnel with you.\n"
+         "You'd best take inventory and drop something.");
+    return STAY_STILL;
+}
+
 int at_alcove(void)
 {
     if (used_movement_verb2(EAST, PASSAGE) || used_movement_placeword(R_PLOVER)) {
 	if (holding_count == 0) return R_PLOVER;
 	if (holding_count == 1 && toting(EMERALD)) return R_PLOVER;
-	puts("Something you're carrying won't fit through the tunnel with you.\n"
-	     "You'd best take inventory and drop something.");
-	return R_ALCOVE;
+	return tight_squeeze();
     }
     if (used_movement_verb(NW)) return R_MISTY;
     if (used_movement_placeword(R_FALLS)) return R_MISTY;
@@ -1268,9 +1268,7 @@ int at_plover(void)
     if (used_movement_verb2(WEST, PASSAGE) || used_movement_placeword(R_ALCOVE)) {
 	if (holding_count == 0) return R_ALCOVE;
 	if (holding_count == 1 && toting(EMERALD)) return R_ALCOVE;
-	puts("Something you're carrying won't fit through the tunnel with you.\n"
-	     "You'd best take inventory and drop something.");
-	return R_PLOVER;	
+	return tight_squeeze();
     }
     if (used_movement_verb(NE)) return R_DARK;
     if (used_movement_placeword(R_DARK)) return R_DARK;
@@ -1302,10 +1300,10 @@ int at_shell(void)
     if (keywordv(SOUTH) || keywordp(R_COMPLEX)) {
 	if (toting(CLAM)) {
 	    puts("You can't fit this five-foot clam through that little passage!");
-	    return R_SHELL;
+	    return STAY_STILL;
 	} else if (toting(OYSTER)) {
 	    puts("You can't fit this five-foot oyster through that little passage!");
-	    return R_SHELL;
+	    return STAY_STILL;
 	} else {
 	    return R_COMPLEX;
 	}
@@ -1367,7 +1365,7 @@ int at_mirror(void)
 {
     if (keywordo(MIRROR)) {
 	puts("It is too far up for you to reach.");
-	return R_MIRROR;
+	return STAY_STILL;
     }
     if (used_movement_verb(SOUTH)) return R_ABOVER;
     if (used_movement_verb(NORTH)) return R_RES;
@@ -1409,14 +1407,19 @@ int at_mazed112(void)
     return 0;  /* command hasn't been processed yet */
 }
 
+int cant_walk_on_water(void)
+{
+    puts("I can't swim, or walk on water.  You'll have to find some other way\n"
+	 "to get across, or get someone to assist you.");
+    return STAY_STILL;
+}
+
 int at_res(void)
 {
     if (used_movement_verb2(SOUTH, OUT)) return R_MIRROR;
     if (used_movement_obj(MIRROR)) return R_MIRROR;
     if (keywordv(NORTH) || keywordv(CROSS)) {
-	puts("I can't swim, or walk on water.  You'll have to find some other way\n"
-	     "to get across, or get someone to assist you.");
-	return R_RES;
+	return cant_walk_on_water();
     }
     return 0;  /* command hasn't been processed yet */
 }
@@ -1434,9 +1437,7 @@ int at_reservoir_n(void)
 	    apport(TURTLE, R_LIMBO);
 	    return R_RES;
 	} else {
-	    puts("I can't swim, or walk on water.  You'll have to find some other way\n"
-	         "to get across, or get someone to assist you.");
-	    return R_RESERVOIR_N;
+	    return cant_walk_on_water();
 	}
     }
     return 0;  /* command hasn't been processed yet */
@@ -1481,7 +1482,7 @@ int at_swofchasm(void)
 		printf("The troll deftly catches the %s, examines it carefully, and tosses it\n"
 		       "back, declaring, \"Good workmanship, but it's not valuable enough.\"\n", word2.text);
 		apport(word2.meaning, R_SWOFCHASM);
-		return R_SWOFCHASM;
+		return STAY_STILL;
 	    }
 	    return 0;  /* unhandled */
 	} else if (word2.type == WordType_Object && is_treasure(word2.meaning)) {
@@ -1494,14 +1495,14 @@ int at_swofchasm(void)
 		     "something a touch more substantial this time!");
 		apport(EGGS, R_YLEM);
 		objs[TROLL].prop = 0;
-		return R_SWOFCHASM;
+		return STAY_STILL;
 	    }
 	    printf("The troll catches the %s and scurries away out of sight.\n", word2.text);
 	    objs[TROLL].prop = 1;
 	    apport(TROLL, R_LIMBO);
 	    apport(TROLL2, R_SWOFCHASM);
 	    apport(o, R_LIMBO);
-	    return R_SWOFCHASM;
+	    return STAY_STILL;
 	}
     }
     if (used_movement_verb2(CROSS, NE)) {
@@ -1518,12 +1519,12 @@ int at_swofchasm(void)
 	    objs[TROLL].prop = 2;  /* no longer appeased */
 	    return R_NEOFCHASM;
 	}
-	return R_SWOFCHASM;
+	return STAY_STILL;
     }
     if (keywordv(JUMP)) {
 	if (objs[CHASM].prop) return splatter(R_YLEM);
 	puts("I respectfully suggest you go across the bridge instead of jumping.");
-	return R_SWOFCHASM;
+	return STAY_STILL;
     }
     return 0;  /* command hasn't been processed yet */
 }
@@ -1542,14 +1543,14 @@ int at_secretcynne1(void)
 {
     if (keywordo(RUG) && !objs[DRAGON].prop) {
 	puts("You can't get by the dragon to get at the rug.");
-	return R_SECRETCYNNE1;
+	return STAY_STILL;
     }
     if (used_movement_verb(NORTH)) return R_ABOVER;
     if (used_movement_verb(OUT)) return R_ABOVER;
     if (keywordv(FORWARD) || keywordv(EAST)) {
 	if (!objs[DRAGON].prop) {
 	    puts("The dragon looks rather nasty.  You'd best not try to get by.");
-	    return R_SECRETCYNNE1;
+	    return STAY_STILL;
 	} else {
 	    return R_SECRETEW_TITE;
 	}
@@ -1561,14 +1562,14 @@ int at_secretcynne2(void)
 {
     if (keywordo(RUG) && !objs[DRAGON].prop) {
 	puts("You can't get by the dragon to get at the rug.");
-	return R_SECRETCYNNE2;
+	return STAY_STILL;
     }
     if (used_movement_verb(EAST)) return R_SECRETEW_TITE;
     if (used_movement_verb(OUT)) return R_SECRETEW_TITE;
     if (used_movement_verb2(FORWARD, NORTH)) {
 	if (!objs[DRAGON].prop) {
 	    puts("The dragon looks rather nasty.  You'd best not try to get by.");
-	    return R_SECRETCYNNE2;
+	    return STAY_STILL;
 	} else {
 	    return R_ABOVER;
 	}
@@ -1585,7 +1586,7 @@ int at_neofchasm(void)
 	apport(TROLL, R_LIMBO);
 	apport(TROLL2, R_SWOFCHASM);
 	apport(BEAR, R_NEOFCHASM);
-	return R_NEOFCHASM;
+	return STAY_STILL;
     }
     if (keywordv(THROW)) {
 	if (word2.type == WordType_None || there(TROLL2, R_NEOFCHASM))
@@ -1595,7 +1596,7 @@ int at_neofchasm(void)
 		printf("The troll deftly catches the %s, examines it carefully, and tosses it\n"
 		       "back, declaring, \"Good workmanship, but it's not valuable enough.\"\n", word2.text);
 		apport(word2.meaning, R_NEOFCHASM);
-		return R_NEOFCHASM;
+		return STAY_STILL;
 	    }
 	    return 0;  /* unhandled */
 	} else if (word2.type == WordType_Object && is_treasure(word2.meaning)) {
@@ -1608,14 +1609,14 @@ int at_neofchasm(void)
 		     "something a touch more substantial this time!");
 		apport(EGGS, R_YLEM);
 		objs[TROLL].prop = 0;
-		return R_NEOFCHASM;
+		return STAY_STILL;
 	    }
 	    printf("The troll catches the %s and scurries away out of sight.\n", word2.text);
 	    objs[TROLL].prop = 1;
 	    apport(TROLL, R_LIMBO);
 	    apport(TROLL2, R_SWOFCHASM);
 	    apport(o, R_LIMBO);
-	    return R_NEOFCHASM;
+	    return STAY_STILL;
 	}
     }
 
@@ -1665,12 +1666,12 @@ int at_neofchasm(void)
 	    }
 	    return R_SWOFCHASM;
 	}
-	return R_NEOFCHASM;
+	return STAY_STILL;
     }
     if (keywordv(JUMP)) {
 	if (objs[CHASM].prop) return splatter(R_YLEM);
 	puts("I respectfully suggest you go across the bridge instead of jumping.");
-	return R_NEOFCHASM;
+	return STAY_STILL;
     }
     if (used_movement_verb(NE)) return R_CORRIDOR;
     if (used_movement_placeword(R_CORRIDOR)) return R_CORRIDOR;
@@ -1803,7 +1804,7 @@ int at_barr(void)
     if (keywordv(GET) && keywordo(AXE) && there(AXE, R_BARR) && objs[AXE].prop) {
 	puts("As you approach the bear, it snarls threateningly;  you are forced\n"
 	     "to retreat without the axe.");
-	return R_BARR;
+	return STAY_STILL;
     }
     if (used_movement_verb(WEST)) return R_FBARR;
     if (used_movement_verb(OUT)) return R_FBARR;
@@ -1956,7 +1957,7 @@ int at_pony(void)
 	apport(BATTERIES, R_PONY);
 	ok();
 	puts("There are fresh batteries here.");
-	return R_PONY;
+	return STAY_STILL;
     }
     return 0;  /* command hasn't been processed yet */
 }
@@ -1981,7 +1982,7 @@ int enter_safe(Location start)
 	return R_INSAFE;
     } else {
 	puts("The safe's door is closed, and you can't get in!");
-	return start;
+	return STAY_STILL;
     }
 }
 
@@ -1991,7 +1992,7 @@ int at_vault(void)
 	if (objs[SAFE].prop == 1) {
 	    puts("The safe's door is blocking the exit passage - you'll have to close\n"
 		 "the safe to get out of here.");
-	    return R_VAULT;
+	    return STAY_STILL;
 	} else {
 	    return R_HMK;
 	}
@@ -2014,7 +2015,7 @@ int at_insafe(void)
 	} else {
 	    hah();
 	}
-	return R_INSAFE;
+	return STAY_STILL;
     }
     return 0;  /* command hasn't been processed yet */
 }
@@ -2077,7 +2078,7 @@ int at_glassy(void)
     if (keywordv(NORTH) || keywordp(R_LAIR)) {
 	if (there(OGRE, R_GLASSY)) {
 	    puts("The ogre growls at you and refuses to let you pass.");
-	    return R_GLASSY;
+	    return STAY_STILL;
 	} else {
 	    return R_LAIR;
 	}
@@ -2121,7 +2122,7 @@ int at_slide(void)
 {
     if (used_movement_verb3(UP, NORTH, CLIMB)) {
 	puts("The icy slide is far too steep and slippery to climb.");
-	return R_SLIDE;
+	return STAY_STILL;
     }
     if (used_movement_verb(SOUTH)) return R_ICECAVE2A;
     if (used_movement_verb(NW)) return R_ICECAVE4;
@@ -2513,7 +2514,7 @@ int at_beach(void)
 	puts("I'm afraid that all that's available here is salt water, which\n"
 	     /* Platt has "you'de". */
 	     "isn't good for anything much... you'd better try elsewhere.");
-	return R_BEACH;
+	return STAY_STILL;
     }
     return 0;  /* command hasn't been processed yet */
 }
@@ -2640,7 +2641,7 @@ int at_pentagram(void)
 	    apport(FLASK, R_PENTAGRAM);
 	    puts("You have set the flask down in the center of the pentagram.");
 	    objs[FLASK].prop = 0;
-	    return R_PENTAGRAM;
+	    return STAY_STILL;
 	}
     }
     if (used_movement_verb2(WEST, OUT)) return R_NONDESCRIPT;
@@ -2734,7 +2735,7 @@ int at_peelgrunt(void)
 	if (objs[SAFE].prop == 1) {
 	    puts("The safe's door is blocking the exit passage - you'll have to close\n"
 		 "the safe to get out of here.");
-	    return R_PEELGRUNT;
+	    return STAY_STILL;
 	} else {
 	    return R_BASQUE_FORK;
 	}
@@ -2776,6 +2777,7 @@ int at_fake_y2(void)
     if (keywordv(PLUGH) || keywordp(R_PLOVER)) {
 	if (nomagic) {
 	    nothing_happens();
+	    return STAY_STILL;
 	} else {
 	    say_foof();
 	    return R_PLATFORM;
@@ -3071,11 +3073,11 @@ int at_cylindrical(void)
 	try_escaping_with_word(FOE,12) ||
 	try_escaping_with_word(FIE,13) ||
 	try_escaping_with_word(FEE,14))
-        return R_CYLINDRICAL;
+        return STAY_STILL;
 
     if (try_escaping_with_word(BLERBI,15)) {
 	if (closure == 4) return R_ROAD;
-	return R_CYLINDRICAL;
+	return STAY_STILL;
     }
     return 0;  /* command hasn't been processed yet */
 }
@@ -4297,9 +4299,9 @@ struct ObjectData objs[] = {
     { XX, 0, NULL /* BLOB */, 0, in(R_LIMBO) },
     { XX, 0, NULL /* DRAWINGS */, F_INVISIBLE, in(R_ORIENTAL) },
     { XX, 0, NULL /* PIRATE */, F_INVISIBLE, in(R_LIMBO) },
-    { XX, 0, NULL /* DRAGON */, F_SCHIZOID, in(R_SECRETCYNNE1) },
-    { XX, 0, NULL /* CHASM */, F_SCHIZOID, in(R_SWOFCHASM) },
-    { XX, 0, NULL /* TROLL */, F_SCHIZOID, in(R_SWOFCHASM) },
+    { XX, 0, NULL /* DRAGON */, F_SCHIZOID, schiz(R_SECRETCYNNE1) },
+    { XX, 0, NULL /* CHASM */, F_SCHIZOID, schiz(R_SWOFCHASM) },
+    { XX, 0, NULL /* TROLL */, F_SCHIZOID, schiz(R_SWOFCHASM) },
     { XX, 0, NULL /* TROLL2 */, F_SCHIZOID, in(R_LIMBO) },
     { XX, 0, NULL /* OGRE */, 0, in(R_GLASSY) },
     { XX, 0, NULL /* BASILISK */, F_SCHIZOID, schiz(R_BASQUE_1) },

@@ -89,20 +89,20 @@ bool gave_up;
 
 /*========== Some common messages. ======================================*/
 
-void ok() { if (verbosity_mode != FAST) puts("OK."); }
-void hah() { puts("Don't be ridiculous!"); }
-void nothing_happens() { puts("Nothing happens."); }
+void ok(void) { if (verbosity_mode != FAST) puts("Ok."); }
+void hah(void) { puts("Don't be ridiculous!"); }
+void nothing_happens(void) { puts("Nothing happens."); }
 void I_see_no(const char *s) { printf("I see no %s here.\n", s); }
-void you_have_it() { puts("You are already carrying it!"); }
+void you_have_it(void) { puts("You are already carrying it!"); }
 void You_have_no(const char *s) { printf("You have no %s!\n", s); }
 void what_do(const char *s) { printf("What do you want me to do with the %s?\n", s); }
-void it_is_dead() { puts("For crying out loud, the poor thing is already dead!"); }
+void it_is_dead(void) { puts("For crying out loud, the poor thing is already dead!"); }
 void already_open(const char *s) { printf("The %s is already open!\n", s); }
 void already_shut(const char *s) { printf("The %s is already closed!\n", s); }
 void dunno_hao(const char *s) { printf("I don't know how to %s such a thing.\n", s); }
-void dunno_how() { puts("I don't know how."); }
-void say_what() { puts("Huh??"); }
-void except_perhaps_you() { puts("There's nothing here it wants to eat (except perhaps you)."); }
+void dunno_how(void) { puts("I don't know how."); }
+void say_what(void) { puts("Huh??"); }
+void except_perhaps_you(void) { puts("There's nothing here it wants to eat (except perhaps you)."); }
 
 /*========== Some forward declarations. =================================*/
 
@@ -850,6 +850,7 @@ void listen(void)
 {
     static struct InputWordInfo saved_word;
     static char *p = NULL;
+    static bool reversed = false;
     char *q;
     bool got_a_command = false;
     saved_word = word1;
@@ -857,6 +858,7 @@ void listen(void)
     if (p != NULL && *p == ',') {
         /* GET KEYS, LAMP does the expected thing.
          * GET KEYS, DROP KEYS is an error. */
+        if (reversed) word1 = word2;
         for (++p; isspace(*p); ++p) ;
         if (*p != '\0') {
             for (q = word2.text; !isspace(*p) && *p != ','; ++p, ++q) {
@@ -903,10 +905,12 @@ void listen(void)
     }
     /* BIRD GET works just as well as GET BIRD.
      * KEYS DROP, GET works just as well as DROP KEYS followed by GET KEYS. */
+    reversed = false;
     if (word1.type != WordType_Verb && word2.type == WordType_Verb) {
         saved_word = word1;
         word1 = word2;
         word2 = saved_word;
+        reversed = true;
     }
     please_clarify = false;
 }
@@ -1655,7 +1659,7 @@ int attempt_take(ObjectWord obj, Location loc)
         if (word2.type == WordType_None) {
             puts("It's pitch dark in here - I can't tell whether there's anything here\n"
                  "that I can pick up!");
-            return loc;
+            return STAY_STILL;
         } else if (word2.type == WordType_Object && !toting(obj) && portable(obj)) {
             if (pct(60 - 5*(strength - holding_count))) {
                 printf("Hmmph - you're not asking for much, are you - it's pitch dark in\n"
@@ -1691,7 +1695,7 @@ int attempt_take(ObjectWord obj, Location loc)
                      "                              {seek}\n");
                 printf("No luck - I can't find the %s!  If you could get me some light in\n"
                        "here, maybe I'd be able to do better.  Sorry....\n", word2.text);
-                return loc;
+                return STAY_STILL;
             }
         }
     }
@@ -1700,27 +1704,28 @@ int attempt_take(ObjectWord obj, Location loc)
     }
     if (keywordv(INVENTORY)) {
         attempt_inventory();
-        return loc;
+        return STAY_STILL;
     } else if (word2.type == WordType_Object) {
         switch (obj) {
             case BIRD:
                 getbird(loc);
-                return loc;
+                return STAY_STILL;
             case OIL:
                 if (loc == R_EPIT) {
-                    getliquid(OIL); return loc;
+                    getliquid(OIL);
+                    return STAY_STILL;
                 }
                 break;
             case WATER:
                 if (places[loc].flags & F_WATER) {
                     getliquid(WATER);
-                    return loc;
+                    return STAY_STILL;
                 }
                 break;
             case CHAIN:
                 if (there(CHAIN, loc) && objs[CHAIN].prop) {
                     puts("The chain is still locked.");
-                    return loc;
+                    return STAY_STILL;
                 }
                 break;
             case BEAR:
@@ -1728,7 +1733,7 @@ int attempt_take(ObjectWord obj, Location loc)
                     puts("You are being followed by a very large, tame bear.");
                 } else if (there(BEAR, loc) && (objs[BEAR].prop != 2)) {
                     puts("The bear is still chained to the wall.");
-                    return loc;
+                    return STAY_STILL;
                 }
                 break;
             case SWORD:
@@ -1741,19 +1746,19 @@ int attempt_take(ObjectWord obj, Location loc)
                         puts("The sword is firmly embedded in the stone, and you aren't strong\n"
                              "enough to pull it out.");
                     }
-                    return loc;
+                    return STAY_STILL;
                 }
                 break;
             case SCEPTRE:
                 if (there(SCEPTRE, loc) && !objs[SCEPTRE].prop && holding_count < strength) {
                     getsceptre();
-                    return loc;
+                    return STAY_STILL;
                 }
                 break;
             case KNIFE:
                 if (objs[AXE].flags & F_SEEN) {
                     puts("The dwarves' knives vanish as they strike the walls of the cave.");
-                    return loc;
+                    return STAY_STILL;
                 }
                 break;
         }  /* end switch */
@@ -1786,17 +1791,17 @@ int attempt_take(ObjectWord obj, Location loc)
             objs[obj].prop = 1;
         }
     }
-    return loc;
+    return STAY_STILL;
 }
 
 int dropbird(Location loc)
 {
     if (there(BIRD, loc)) {
         puts("You aren't carrying it!");
-        return loc;
+        return STAY_STILL;
     } else if (!toting(BIRD)) {
         I_see_no(word2.text);
-        return loc;
+        return STAY_STILL;
     }
     apport(BIRD, loc);
     objs[BIRD].prop = 0;  /* uncaged */
@@ -1845,7 +1850,7 @@ int dropbird(Location loc)
     } else {
         ok();
     }
-    return loc;
+    return STAY_STILL;
 }
 
 bool dropliquid(ObjectWord obj, Location loc)
@@ -1897,10 +1902,10 @@ int attempt_drop(ObjectWord obj, Location loc)
     if (word2.type == WordType_None) return 0;  /* unhandled */
     if (word2.type == WordType_Object) {
         switch (obj) {
-            case BIRD: dropbird(loc); return loc;
-            case OIL: if (dropliquid(obj, loc)) return loc; break;
-            case WATER: if (dropliquid(obj, loc)) return loc; break;
-            case DJINN: if (freedjinn(loc)) return loc; break;
+            case BIRD: dropbird(loc); return STAY_STILL;
+            case OIL: if (dropliquid(obj, loc)) return STAY_STILL; break;
+            case WATER: if (dropliquid(obj, loc)) return STAY_STILL; break;
+            case DJINN: if (freedjinn(loc)) return STAY_STILL; break;
         }
     }
     if (word2.type != WordType_Object) {
@@ -1921,7 +1926,7 @@ int attempt_drop(ObjectWord obj, Location loc)
                 apport(VASE, R_LIMBO);
                 apport(SHARDS, loc);
             }
-            return loc;
+            return STAY_STILL;
         } else if (obj == VIAL && pct(10)) {
             puts("The vial strikes the ground and explodes with a violent >FOOM!<,\n"
                  "neatly severing your foot.  You bleed to death quickly and messily.");
@@ -1934,14 +1939,14 @@ int attempt_drop(ObjectWord obj, Location loc)
     } else {
         puts("You aren't carrying it!");
     }
-    return loc;
+    return STAY_STILL;
 }
 
 int weaponry(ObjectWord obj, Location loc)
 {
     if (!toting(obj)) {
         You_have_no(word2.text);
-        return loc;
+        return STAY_STILL;
     }
     if (keywordv(THROW)) {
         apport(obj, loc);
@@ -2001,7 +2006,7 @@ int weaponry(ObjectWord obj, Location loc)
         } else {
             puts("The bear is confused; he only wants to be your friend.");
         }
-        return loc;
+        return STAY_STILL;
     } else if (there(TROLL, loc)) {
         puts("Trolls are close relatives with the rocks and have skin as tough as\n"
              "that of a rhinoceros.  The troll fends off your blows effortlessly.");
@@ -2063,10 +2068,9 @@ int weaponry(ObjectWord obj, Location loc)
             return 0;  /* not yet handled */
         } else {
             ok();
-            return loc;
         }
     }
-    return loc;
+    return STAY_STILL;
 }
 
 bool throw_food(Location loc)
@@ -2159,7 +2163,7 @@ int break_vial(Location loc)
              "into the distance.");
         apport(GOBLINS, R_LIMBO);
     }
-    return loc;
+    return STAY_STILL;
 }
 
 int upchuck(ObjectWord obj, Location loc)
@@ -2234,7 +2238,7 @@ int upchuck(ObjectWord obj, Location loc)
     } else if (obj == BIRD) {
         objs[BIRD].prop = 0;  /* free the bird */
     }
-    return loc;
+    return STAY_STILL;
 }
 
 int attempt_throw(ObjectWord obj, Location loc)
@@ -2248,7 +2252,7 @@ int attempt_throw(ObjectWord obj, Location loc)
                 break;  /* go on to the following cases */
             }
             case FOOD:
-                if (throw_food(loc)) return loc;
+                if (throw_food(loc)) return STAY_STILL;
                 break;  /* unhandled so far */
             case TEETH:
                 if (toting(TEETH)) {
@@ -2261,7 +2265,7 @@ int attempt_throw(ObjectWord obj, Location loc)
                              "and rusty swords, and fade silently into nothingness.\n");
                         apport(TEETH, R_LIMBO);
                         apport(GOBLINS, R_LIMBO);
-                        return loc;
+                        return STAY_STILL;
                     }
                 }
                 break;  /* unhandled or only partly handled */
@@ -2362,18 +2366,18 @@ int no_move_possible(Location loc)
                 return R_CYLINDRICAL;  /* the cave is now closed */
         }
     }
-    return loc;
+    return STAY_STILL;
 }
 
-int examine_mist(Location loc)
+int examine_mist(void)
 {
     puts("Mist is a white vapor, usually water, seen from time to time in\n"
          "caverns.  It can be found anywhere but is frequently a sign of a deep\n"
          "pit leading down to water.");
-    return loc;
+    return STAY_STILL;
 }
 
-int examine_trees(Location loc)
+int examine_trees(void)
 {
     /* Platt's version contains a verb TREE,TREES, and a message labeled
      * INFOREST containing the familiar message from Woods' Adventure;
@@ -2386,7 +2390,7 @@ int examine_trees(Location loc)
          "various sorts.  This time of year visibility is quite restricted by\n"
          "all the leaves, but travel is quite easy if you detour around the\n"
          "spruce and berry bushes.");
-    return loc;
+    return STAY_STILL;
 }
 
 int attempt_open(Location loc)
@@ -2526,7 +2530,7 @@ int attempt_open(Location loc)
     } else {
         return 0;  /* unhandled */
     }
-    return loc;  /* it must have been handled somewhere above */
+    return STAY_STILL;  /* it must have been handled somewhere above */
 }
 
 int attempt_close(Location loc)
@@ -2576,7 +2580,7 @@ int attempt_close(Location loc)
     } else {
         return 0;  /* unhandled */
     }
-    return loc;  /* it must have been handled somewhere above */
+    return STAY_STILL;  /* it must have been handled somewhere above */
 }
 
 void attempt_help(Location loc)
@@ -2732,7 +2736,7 @@ int kill_dwarf(Location loc)
             return you_are_dead_at(loc);
         }
     }
-    return loc;
+    return STAY_STILL;
 }
 
 int kill_dragon(Location loc)
@@ -2757,7 +2761,7 @@ int kill_dragon(Location loc)
         }
         return R_SECRETCYNNE1;
     }
-    return loc;
+    return STAY_STILL;
 }
 
 int kill_ogre(Location loc)
@@ -2773,7 +2777,7 @@ int kill_ogre(Location loc)
             return you_are_dead_at(loc);
         }
     }
-    return loc;
+    return STAY_STILL;
 }
 
 int attempt_kill(Location loc)
@@ -2787,18 +2791,18 @@ int attempt_kill(Location loc)
             case TROLL:
                 puts("Trolls are close relatives with the rocks and have skin as tough as\n"
                      "that of a rhinoceros.  The troll fends off your blows effortlessly.");
-                return loc;
+                return STAY_STILL;
             case DWARF:
                 return kill_dwarf(loc);
             case DRAGON:
                 return kill_dragon(loc);
             case SNAKE:
                 puts("Attacking the snake both doesn't work and is very dangerous.");
-                return loc;
+                return STAY_STILL;
             case BLOB:
                 puts("You attack the strange blob, but bounce harmlessly off of its strong\n"
                      "but very rubbery skin.");
-                return loc;
+                return STAY_STILL;
             case BEAR: 
                 if (objs[BEAR].prop == 0) {
                     puts("With what?  Your bare hands??  Against *his* bear hands???  Don't be\n"
@@ -2806,10 +2810,10 @@ int attempt_kill(Location loc)
                 } else {
                     puts("The bear is confused; he only wants to be your friend.");
                 }
-                return loc;
+                return STAY_STILL;
             case CLAM: case OYSTER:
                 puts("The shell is very strong and is impervious to attack.");
-                return loc;
+                return STAY_STILL;
             case OGRE:
                 return kill_ogre(loc);
             case BIRD:
@@ -2819,13 +2823,13 @@ int attempt_kill(Location loc)
                 } else {
                     puts("Oh, leave the poor unhappy bird alone.");
                 }
-                return loc;
+                return STAY_STILL;
             case DJINN:
                 /* This seems like a rather broad hint. */
                 puts("That's not a wise thing to try - djinni are essentially immortal\n"
                      "and thus are pretty hard to hurt.  Besides, this one seems rather\n"
                      "friendly - why don't you just try releasing him?");
-                return loc;
+                return STAY_STILL;
             case GOBLINS:
                 puts("You attack the goblins and manage to squash a few, but the others\n"
                      "overwhelm you, forcing you to the ground and ripping out your throat.");
@@ -2838,7 +2842,7 @@ int attempt_kill(Location loc)
                 } else {
                     it_is_dead();
                 }
-                return loc;
+                return STAY_STILL;
             case GONG:
                 puts(">BONNNNGGGGGGGGGG<\n");
                 if (there(TURTLE, loc)) {
@@ -2852,14 +2856,14 @@ int attempt_kill(Location loc)
                          "ornate letters.\n");
                     apport(TURTLE, loc);
                 }
-                return loc;
+                return STAY_STILL;
             default: return 0;  /* other nouns are unhandled */
         }
-        return loc;  /* handled */
+        return STAY_STILL;  /* handled */
     }
     if (word2.type == WordType_None) {
         puts("There is nothing here to attack.");
-        return loc;
+        return STAY_STILL;
     }
     return 0;  /* unhandled */
 }
@@ -2870,7 +2874,7 @@ int attempt_feed(Location loc)
     if (word2.type == WordType_Object && mortal(o)) {
         if (!here(o, loc)) {
             I_see_no(word2.text);
-            return loc;
+            return STAY_STILL;
         }
         switch (o) {
             case BEAR:
@@ -2930,18 +2934,19 @@ int attempt_feed(Location loc)
     } else {
         hah();
     }
-    return loc;
+    return STAY_STILL;
 }
 
-void attempt_score()
+int attempt_score(void)
 {
     gave_up = true;
     printf("If you were to quit now, you would score a total of %d points, out\n"
            "of a possible maximum of 550 points.\n", score());
     gave_up = false;
+    return STAY_STILL;
 }
 
-void cant_find()
+void cant_find(void)
 {
     puts("I can only tell you what you see as you move about and manipulate\n"
          "things.  I cannot tell you where remote things or places are.");
@@ -2975,7 +2980,7 @@ int attempt_find(Location loc)
     } else {
         say_what();
     }
-    return loc;
+    return STAY_STILL;
 }
 
 void pour_water(Location loc)
@@ -3032,7 +3037,7 @@ int attempt_eat(Location loc)
     ObjectWord obj = word2.meaning;
     if (word2.type == WordType_None) {
         puts("There is nothing here to eat.");
-        return loc;
+        return STAY_STILL;
     } else if (word2.type == WordType_Object) {
         switch (obj) {
             case MUSHROOM:
@@ -3044,14 +3049,14 @@ int attempt_eat(Location loc)
                     mushtime += lastclock;
                     apport(MUSHROOM, R_LIMBO);
                     strength = 12;
-                    return loc;
+                    return STAY_STILL;
                 }
                 return 0;  /* unhandled */
             case FOOD:
                 if (here(FOOD, loc)) {
                     apport(FOOD, R_LIMBO);
                     puts("Thank you, it was delicious!");
-                    return loc;
+                    return STAY_STILL;
                 }
                 return 0;  /* unhandled */
             case DWARF: case DRAGON: case BIRD: case SNAKE: case BEAR:
@@ -3061,11 +3066,11 @@ int attempt_eat(Location loc)
                 } else {
                     I_see_no(word2.text);
                 }
-                return loc;
+                return STAY_STILL;
             default:
                 if (here(obj, loc)) {
                     puts("That's a repulsive idea!");
-                    return loc;
+                    return STAY_STILL;
                 }
                 return 0;
         }
@@ -3100,7 +3105,7 @@ int passphrase(Location loc)
     } else {
         nothing_happens();
     }
-    return loc;
+    return STAY_STILL;
 }
 
 void wizmode_passphrase(void)
@@ -3293,7 +3298,7 @@ int attempt_phuggg(Location loc)
             nothing_happens();
         }
     }
-    return loc;
+    return STAY_STILL;
 }
 
 int process_verb(Location loc)
@@ -3309,7 +3314,7 @@ int process_verb(Location loc)
         case WALK:
             if (word2.type == WordType_None) {
                 printf("Which way should I %s?\n", word1.text);
-                return loc;
+                return STAY_STILL;
             } else if (word2.type == WordType_Verb &&
                        is_walkable_direction(obj)) {
                 /* Redirect WALK SOUTH to just SOUTH. */
@@ -3326,18 +3331,18 @@ int process_verb(Location loc)
             } else {
                 puts("I don't understand that!");
             }
-            return loc;
+            return STAY_STILL;
         case DIG:
             puts("Digging without a shovel is quite impractical.  Even with a shovel\n"
                  "progress is unlikely.");
-            return loc;
+            return STAY_STILL;
         case CAVE:
             /* Platt misses R_HILL in his explicit list of not-cave
              * locations. This is certainly a bug. */
             if ((places[loc].flags & F_NOTINCAVE) && (loc != R_HILL)) {
                 puts("I don't know where the cave is, but hereabouts no stream can run on\n"
                      "the surface for long.  I would try the stream.");
-                return loc;
+                return STAY_STILL;
             }
             break;  /* unhandled */
         case THROW:
@@ -3358,7 +3363,7 @@ int process_verb(Location loc)
             } else {
                 hah();
             }
-            return loc;
+            return STAY_STILL;
         case NORTH:
         case SOUTH:
         case EAST:
@@ -3368,12 +3373,12 @@ int process_verb(Location loc)
             return no_move_possible(loc);
         case INVENTORY:
             attempt_inventory();
-            return loc;
+            return STAY_STILL;
         case LOOK:
-            if (keywordo(MIST)) return examine_mist(loc);
-            if (keywordo(TREES)) return examine_trees(loc);
+            if (keywordo(MIST)) return examine_mist();
+            if (keywordo(TREES)) return examine_trees();
             look_around(loc, /*familiar=*/false);
-            return loc;
+            return STAY_STILL;
         case ON:
             if (keywordo(LAMP) || word2.type == WordType_None) {
                 if (!here(LAMP, loc)) {
@@ -3403,7 +3408,7 @@ int process_verb(Location loc)
                         phog(loc);
                     }
                 }
-                return loc;
+                return STAY_STILL;
             }
             return 0;  /* LIGHT AXE, e.g., is unhandled */
         case OFF:
@@ -3426,37 +3431,37 @@ int process_verb(Location loc)
             } else {
                 dunno_how();
             }
-            return loc;
+            return STAY_STILL;
         case OPEN:
             return attempt_open(loc);
         case CLOSE:
             return attempt_close(loc);
         case HELP:
             attempt_help(loc);
-            return loc;
+            return STAY_STILL;
         case INFO:
             attempt_info();
-            return loc;
+            return STAY_STILL;
         case QUIT:
             if (yes("Do you really want to quit now?")) {
                 gave_up = true;
                 finis();
             }
             ok();
-            return loc;
+            return STAY_STILL;
         case BRIEF:
             puts("Okay, from now on I'll only describe a place in full the first time\n"
                  "you come to it.  To get the full description, say \"LOOK\".");
             verbosity_mode = BRIEF;
-            return loc;
+            return STAY_STILL;
         case FAST:
             ok();
             verbosity_mode = FAST;
-            return loc;
+            return STAY_STILL;
         case FULL:
             verbosity_mode = FULL;
             ok();
-            return loc;
+            return STAY_STILL;
         case LPSD:
             if (wizard_mode && word2.type == WordType_Place) {
                 say_foof();
@@ -3464,25 +3469,24 @@ int process_verb(Location loc)
             } else {
                 say_what();
             }
-            return loc;
+            return STAY_STILL;
         case KILL:
             return attempt_kill(loc);
         case FEED:
             return attempt_feed(loc);
         case SCORE:
-            attempt_score();
-            return loc;
+            return attempt_score();
         case JUMP:
             puts("There is nowhere for me to jump to.");
-            return loc;
+            return STAY_STILL;
         case IN:
         case OUT:
             puts("I don't know in from out here.  Use compass points or name something\n"
                  "in the general direction you want to go.");
-            return loc;
+            return STAY_STILL;
         case SESAME:
             puts("Good try, but that is an old worn-out magic word.");
-            return loc;
+            return STAY_STILL;
         case FEE:
             if (keywordv(FIE) || keywordv(FOE) || keywordv(FOO) || keywordv(FUM)) {
                 foobar = 0;
@@ -3492,7 +3496,7 @@ int process_verb(Location loc)
                 foobar = 1;
                 ok();
             }
-            return loc;
+            return STAY_STILL;
         case FIE:
             if (foobar == 0) {
                 foobar = 2;
@@ -3501,7 +3505,7 @@ int process_verb(Location loc)
                 foobar = 0;
                 nothing_happens();
             }
-            return loc;
+            return STAY_STILL;
         case FOE:
             if (foobar == 1) {
                 foobar = 3;
@@ -3510,11 +3514,11 @@ int process_verb(Location loc)
                 foobar = 0;
                 nothing_happens();
             }
-            return loc;
+            return STAY_STILL;
         case FUM:
             foobar = 0;
             nothing_happens();
-            return loc;
+            return STAY_STILL;
         case FOO:
             if (foobar == 2) {
                 if (there(EGGS, R_GIANT) || there(EGGS, R_YLEM)) {
@@ -3544,22 +3548,22 @@ int process_verb(Location loc)
             } else {
                 nothing_happens();
             }
-            return loc;
+            return STAY_STILL;
         case XYZZY:
         case PLUGH:
             nothing_happens();
-            return loc;
+            return STAY_STILL;
         case FIND:
             return attempt_find(loc);
         case SWIM:
             dunno_how();
-            return loc;
+            return STAY_STILL;
         case BREAK:
             if (keywordo(VASE) && here(VASE, loc)) {
                 puts("You have taken the vase and hurled it delicately to the ground.");
                 apport(VASE, R_LIMBO);
                 apport(SHARDS, loc);
-                return loc;
+                return STAY_STILL;
             } else if (keywordo(VIAL) && here(VIAL, loc)) {
                 return break_vial(loc);
             }
@@ -3567,7 +3571,7 @@ int process_verb(Location loc)
         case FIX:
             if (keywordo(VASE) && here(SHARDS, loc)) {
                 puts("It is beyond your power to do that.");
-                return loc;
+                return STAY_STILL;
             }
             return 0;  /* unhandled */
         case FILL:
@@ -3579,7 +3583,7 @@ int process_verb(Location loc)
                 } else {
                     puts("There is nothing here with which to fill the vase.");
                 }
-                return loc;
+                return STAY_STILL;
             } else if (keywordo(BOTTLE) && here(BOTTLE, loc)) {
                 if (objs[BOTTLE].prop != 1) {
                     puts("Your bottle is already full.");
@@ -3594,10 +3598,10 @@ int process_verb(Location loc)
                 } else {
                     puts("There is nothing here with which to fill the bottle.");
                 }
-                return loc;
+                return STAY_STILL;
             } else if (word2.type != WordType_None) {
                 puts("You can't fill that.");
-                return loc;
+                return STAY_STILL;
             }
             return 0;  /* unhandled */
         case POUR:
@@ -3607,14 +3611,14 @@ int process_verb(Location loc)
                 } else {
                     You_have_no("water");
                 }
-                return loc;
+                return STAY_STILL;
             } else if (keywordo(OIL)) {
                 if (toting(OIL)) {
                     pour_oil(loc);
                 } else {
                     You_have_no("oil");
                 }
-                return loc;
+                return STAY_STILL;
             }
             return 0;  /* unhandled */
         case PLACATE:
@@ -3622,7 +3626,7 @@ int process_verb(Location loc)
                 there(DRAGON, loc) || there(TROLL, loc) || there(BEAR, loc) ||
                 there(OGRE, loc) || there(BASILISK, loc) || there(GOBLINS, loc)) {
                 puts("I'm game.  Would you care to explain how?");
-                return loc;
+                return STAY_STILL;
             }
             return 0;  /* unhandled */
         case EAT:
@@ -3631,10 +3635,10 @@ int process_verb(Location loc)
             if (keywordo(LAMP) && here(LAMP, loc)) {
                 printf("Rubbing the electric %s is not particularly rewarding.  Anyway,\n"
                        "nothing exciting happens.\n", word2.text);
-                return loc;
+                return STAY_STILL;
             } else if (word2.type == WordType_Object && here(word2.meaning, loc)) {
                 puts("Peculiar.  Nothing unexpected happens.");
-                return loc;
+                return STAY_STILL;
             }
             return 0;  /* unhandled */
         case SAY:
@@ -3648,7 +3652,7 @@ int process_verb(Location loc)
                 return process_verb(loc);
             } else if (word2.type != WordType_None) {
                 /* We've already printed a message via presay(). */
-                return loc;
+                return STAY_STILL;
             }
             return 0;  /* unhandled */
 #ifdef SAVE_AND_RESTORE
@@ -3661,7 +3665,7 @@ int process_verb(Location loc)
                     break;
                 case 2: puts("Restored."); break;
             }
-            return loc;
+            return STAY_STILL;
         case RESTORE:
             /* On the fizmo interpreter, @restore yields 2
              * when the save file doesn't exist, or when it
@@ -3669,13 +3673,13 @@ int process_verb(Location loc)
              * I don't know what return value 0 would mean. */
             attempt_restore();
             puts("Restore failed!");
-            return loc;
+            return STAY_STILL;
 #else
         case SAVE:
         case RESTORE:
             puts("Sorry, saving and restoring games is not implemented in this version\n"
                  "of Adventure.");
-            return loc;
+            return STAY_STILL;
 #endif /* SAVE_AND_RESTORE */
         case DRINK:
             /* This action produces a different message at R_BEACH. */
@@ -3701,10 +3705,10 @@ int process_verb(Location loc)
             } else {
                 hah();
             }
-            return loc;
+            return STAY_STILL;
         case NEWS:
             attempt_news();
-            return loc;
+            return STAY_STILL;
         case READ:
             if (word2.type == WordType_Object) {
                 ObjectWord obj = word2.meaning;
@@ -3733,10 +3737,10 @@ int process_verb(Location loc)
             } else {
                 return 0;  /* unhandled */
             }
-            return loc;
+            return STAY_STILL;
         case HOURS:
             puts("\nColossal Cave is always open.\n");
-            break;
+            return STAY_STILL;
         case WIZARD:
             /* This is an amusing codepath. Platt includes a command WIZARD,
              * which prompts the player for the "magic word"; but in fact
@@ -3751,7 +3755,7 @@ int process_verb(Location loc)
             } else {
                 ok();
             }
-            return loc;
+            return STAY_STILL;
             /* The actual way into wizard mode is to type the five-word
              * passphrase "CURIOUS GREEN IDEAS SLEPT FURIOUSLY" (a distortion
              * of Noam Chomsky's "colorless green ideas sleep furiously")
@@ -3767,13 +3771,13 @@ int process_verb(Location loc)
         case SLEPT:
         case FURIOUSLY:
             wizmode_passphrase();
-            return loc;
+            return STAY_STILL;
         case CLIMB:
             puts("There's nothing climbable here.");
-            return loc;
+            return STAY_STILL;
         case LOST:
             puts("I'm as confused as you are.");
-            return loc;
+            return STAY_STILL;
         case MELENKURION:
             if (loc == R_BY_FIGURE && objs[STATUE].prop == 0) {
                 /* TODO: This codepath should really be in at_by_figure(). */
@@ -3783,7 +3787,7 @@ int process_verb(Location loc)
             } else {
                 nothing_happens();
             }
-            return loc;
+            return STAY_STILL;
         case NOSIDE:
             if (keywordv(SAMOHT)) {
                 if (have_used_noside_samoht ||
@@ -3821,12 +3825,12 @@ int process_verb(Location loc)
             } else {
                 nothing_happens();
             }
-            return loc;
+            return STAY_STILL;
         case SAMOHT:
         case THURB:
             /* THURB is handled in at_icecave30(). */
             nothing_happens();
-            return loc;
+            return STAY_STILL;
         case KNERL:
         case ZORTON:
         case KLAETU:
@@ -3854,7 +3858,7 @@ int process_verb(Location loc)
             } else {
                 say_what();
             }
-            return loc;
+            return STAY_STILL;
     }
     else if (word1.type == WordType_Object)
     switch (verb) {
@@ -3889,7 +3893,7 @@ int process_verb(Location loc)
             } else {
                 hah();
             }
-            return loc;
+            return STAY_STILL;
         case OIL:
             if (word2.type == WordType_Object && word2.meaning == DOOR) {
                 if (there(DOOR, loc)) {
@@ -3921,9 +3925,9 @@ int process_verb(Location loc)
             } else {
                 hah();
             }
-            return loc;
+            return STAY_STILL;
         case MIST:
-            return examine_mist(loc);
+            return examine_mist();
     }
     return 0;  /* unhandled */
 }
@@ -4293,11 +4297,11 @@ void simulate_an_adventure(void)
         newloc = R_HOUSE;
     }
     
+    moved = true;
     while (true) {
         if (blob_is_coming) {
             if (tick()) goto death;
         }
-        moved = (newloc != loc);
         if (!moved) {
             if (there(DWARF, loc) && pct(backlash)) {
                 /* If you stand still, dwarves in the room will attack. */
@@ -4434,14 +4438,18 @@ void simulate_an_adventure(void)
 
         newloc = places[loc].f();
         if (R_LIMBO < newloc && newloc < R_YLEM) {
+            moved = true;
             continue;
         } else if (R_YLEM < newloc && newloc < 2*R_YLEM) {
             newloc -= R_YLEM;
             goto death;  /* moving that direction killed you */
-        } else {
-            assert(newloc == 0);  /* unhandled */
+        } else if (newloc == STAY_STILL) {
             newloc = loc;
+            moved = false;
+            continue;
         }
+        assert(newloc == 0);  /* unhandled */
+        newloc = loc;
 
         if (word1.type == WordType_Place) {
             if (word1.meaning == loc) {
@@ -4454,24 +4462,30 @@ void simulate_an_adventure(void)
                 puts("Sorry, but I no longer seem to remember how it was you got here.");
             } else {
                 newloc = oldloc;
+                moved = true;
             }
         } else {
             newloc = process_verb(loc);
             if (R_LIMBO < newloc && newloc < R_YLEM) {
+                moved = true;
                 continue;
             } else if (R_YLEM < newloc && newloc < 2*R_YLEM) {
                 newloc -= R_YLEM;
                 goto death;  /* moving that direction killed you */
-            } else {
-                assert(newloc == 0);  /* unhandled */
+            } else if (newloc == STAY_STILL) {
                 newloc = loc;
+                moved = false;
+                continue;
             }
+            assert(newloc == 0);  /* unhandled */
+            newloc = loc;
+            moved = false;
             deal_with_syntax_errors(loc);
         }
     }
 }
 
-int main()
+int main(void)
 {
 #ifdef Z_MACHINE
     puts("\n\n\n\n\n\n\n\n");

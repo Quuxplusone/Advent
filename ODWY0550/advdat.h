@@ -164,5 +164,6 @@ extern struct ObjectData objs[];
 #define there(t, loc) (objs[t].place == (loc) || objs[t].place2 == (loc))
 
 #define you_are_dead_at(loc) ((loc)+R_YLEM)
+#define STAY_STILL (-1)
 
 #endif /* H_ADVDAT */
