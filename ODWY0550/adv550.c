@@ -1295,7 +1295,7 @@ void finis(void)
     int s = score();
     printf("You have scored a total of %d points, out of a possible maximum of\n"
            "550 points.  During this game of Adventure, you have taken a total of\n"
-           "%d turns.\n", s, turns);
+           "%d turns.\n\n\n", s, turns);
 
     int rank;
     for (rank = 0; class_score[rank] <= s; ++rank) ;
@@ -1311,24 +1311,6 @@ void finis(void)
     }
     exit(0);
 }
-
-
-const char *death_wishes[2*MAX_DEATHS] = {
-    "Oh dear, you seem to have gotten yourself killed. I might be able to\n"
-      "help you out, but I've never really done this before. Do you want me\n"
-      "to try to reincarnate you?",
-    "All right. But don't blame me if something goes wr......\n"
-      "                   --- POOF!! ---\n"
-      "You are engulfed in a cloud of orange smoke. Coughing and gasping,\n"
-      "you emerge from the smoke and find....",
-    "You clumsy oaf, you've done it again! I don't know how long I can\n"
-      "keep this up. Do you want me to try reincarnating you again?",
-    "Okay, now where did I put my resurrection kit?.... >POOF!<\n"
-      "Everything disappears in a dense cloud of orange smoke.",
-    "Now you've really done it! I'm out of orange smoke! You don't expect\n"
-      "me to do a decent reincarnation without any orange smoke, do you?",
-    "Okay, if you're so smart, do it yourself! I'm leaving!"
-};
 
 void kill_the_player(Location loc)
 {
@@ -1372,7 +1354,7 @@ void kill_the_player(Location loc)
                  "me to do a decent reincarnation without any orange smoke, do you?");
             break;
     }
-    if (!yes(NULL)) {
+    if (!yes("")) {
         finis();
     }
     switch (death_count) {
@@ -4438,7 +4420,7 @@ void simulate_an_adventure(void)
         if (R_LIMBO < newloc && newloc < R_YLEM) {
             moved = true;
             continue;
-        } else if (R_YLEM < newloc && newloc < 2*R_YLEM) {
+        } else if (R_YLEM < newloc && newloc <= 2*R_YLEM) {
             newloc -= R_YLEM;
             goto death;  /* moving that direction killed you */
         } else if (newloc == STAY_STILL) {
