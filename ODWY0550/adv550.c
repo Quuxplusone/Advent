@@ -1546,6 +1546,13 @@ bool is_treasure(ObjectWord o)
     return (BAG <= o && o <= CASKET) && (o != SHARDS);
 }
 
+/* Platt's kernel has a DEFAULT instruction that finds a nearby object
+ * with the given attribute (portable, edible, mortal, or openable).
+ * Objects in the player's inventory are ignored. This makes perfect sense
+ * when the predicate is "portable"; GET works even when we're carrying
+ * things. It's a little odd that KILL defaults to the bird when it's in
+ * the room, but not when it's carried; and OPEN defaults to the clam in
+ * the same manner. For EAT, see the comment in attempt_eat(). */
 ObjectWord default_to_something(bool (*predicate)(ObjectWord), Location loc)
 {
     int candidate = NOTHING;
@@ -1853,6 +1860,7 @@ bool dropliquid(ObjectWord obj, Location loc)
         dwarves_enraged = true;
     } else {
         puts("Your bottle is empty and the ground is wet.");
+        /* THROW WATER doesn't dampen the ground; only POUR WATER does that. */
     }
     return true;
 }
@@ -3010,7 +3018,18 @@ void pour_oil(Location loc)
 int attempt_eat(Location loc)
 {
     if (word2.type == WordType_None) {
+        /* Platt's logic here may or may not have been intentional.
+         * If only one edible thing is here (toted or otherwise), we'll
+         * eat it. Tiebreaker: we'll prefer the thing on the ground.
+         * Second tiebreaker: we'll prefer the mushroom. */
         default_to_something(edible, loc);
+        if (word2.type == WordType_None && here(MUSHROOM, loc)) {
+            word2.type = WordType_Object;
+            word2.meaning = MUSHROOM;
+        } else if (word2.type == WordType_None && here(FOOD, loc)) {
+            word2.type = WordType_Object;
+            word2.meaning = FOOD;
+        }
     }
     ObjectWord obj = word2.meaning;
     if (word2.type == WordType_None) {
@@ -3026,6 +3045,7 @@ int attempt_eat(Location loc)
                     mushtime = 30;
                     mushtime += lastclock;
                     apport(MUSHROOM, R_LIMBO);
+                    objs[MUSHROOM].prop = 2;
                     strength = 12;
                     return STAY_STILL;
                 }
@@ -3332,7 +3352,7 @@ int process_verb(Location loc)
                 } else if (obj == ROD) {
                     wave_rod(loc);
                 } else if (obj == AXE || obj == SWORD) {
-                    weaponry(obj, loc);
+                    return weaponry(obj, loc);
                 } else {
                     nothing_happens();
                 }
@@ -4075,10 +4095,10 @@ bool clock4(Location loc)
                      * to the cubicle during the next admin-cycle. */
                     objs[MUSHROOM].prop = 3;
                     mushtime = 40;
-                    puts("A strange malaise suddenly afflicts you.  You shiver with chill,\n"
+                    puts("\nA strange malaise suddenly afflicts you.  You shiver with chill,\n"
                          "and your muscles seem to turn to putty;  everything around you becomes\n"
                          "grey and unreal.  The fit quickly passes, and you find that your body\n"
-                         "has degenerated back to what it was like before you ate the mushroom.");
+                         "has degenerated back to what it was like before you ate the mushroom.\n");
                     strength = 7;
                     lastclock = clock = 8;
                 } else {
