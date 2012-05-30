@@ -1723,8 +1723,8 @@ int at_view(void)
     if (used_movement_placeword(R_FORK)) return R_FORK;
     if (keywordv(JUMP) || keywordv(DOWN) || keywordv(CLIMB))
 	return splatter(R_YLEM);
-    if (keywordp(R_VALLEY) || keywordv(CROSS) || keywordo(GEYSER) || keywordv(NORTH)) {
-	if (objs[GEYSER].prop == 0) {
+    if (keywordp(R_VALLEY) || keywordv(CROSS) || keywordo(GORGE) || keywordv(NORTH)) {
+	if (objs[GORGE].prop == 0) {
 	    puts("I'm afraid I can't go that way - walking on red-hot lava is contrary\n"
 		 "to union regulations (and is bad for your health anyhow).");
 	} else if (toting(RING)) {
@@ -2534,8 +2534,8 @@ int at_in_jonah(void)
 int at_faces(void)
 {
     if (used_movement_verb(NORTH)) return R_BY_FIGURE;
-    if (keywordv(CROSS) || keywordv(SOUTH) || keywordo(GEYSER)) {
-	if (!objs[GEYSER].prop) {
+    if (keywordv(CROSS) || keywordv(SOUTH) || keywordo(GORGE)) {
+	if (!objs[GORGE].prop) {
 	    puts("I'm afraid I can't go that way - walking on red-hot lava is contrary\n"
 		 "to union regulations (and is bad for your health anyhow).");
 	} else if (!toting(RING)) {
@@ -2552,7 +2552,7 @@ int at_faces(void)
 		 "makes a complex magical gesture with his lower right arm.  There is a\n"
 		 "brilliant flash of light and a vicious >crack<, and the bridge cracks\n"
 		 "and plummets into the gorge.");
-	    objs[GEYSER].prop = 0;
+	    objs[GORGE].prop = 0;
 	    return you_are_dead_at(R_YLEM);
 	} else {
 	    return R_VIEW;
@@ -4309,7 +4309,7 @@ struct ObjectData objs[] = {
     { XX, 0, NULL /* DJINN */, 0, in(R_LIMBO) },
     { XX, 0, NULL /* TURTLE */, 0, in(R_LIMBO) },
     { XX, 0, NULL /* MESSAGE */, 0, in(R_LIMBO) },
-    { XX, 0, NULL /* GEYSER */, F_INVISIBLE|F_SCHIZOID, schiz(R_VIEW) },
+    { XX, 0, NULL /* GORGE */, F_INVISIBLE|F_SCHIZOID, schiz(R_VIEW) },
     { XX, 0, NULL /* STATUE */, F_INVISIBLE, in(R_BY_FIGURE) },
     { XX, 0, NULL /* QUICKSAND */, F_INVISIBLE|F_SCHIZOID, schiz(R_ARCH_COR_1) },
     { XX, 0, NULL /* SLIME */, 0, in(R_CRACK_2) },

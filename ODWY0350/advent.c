@@ -99,7 +99,7 @@ typedef enum {
     MAG, DWARF, KNIFE, FOOD, BOTTLE, WATER, OIL, MIRROR, MIRROR_, PLANT,
     PLANT2, PLANT2_, STALACTITE, SHADOW, SHADOW_, AXE, DRAWINGS, PIRATE,
     DRAGON, DRAGON_, BRIDGE, BRIDGE_, TROLL, TROLL_, TROLL2, TROLL2_,
-    BEAR, MESSAGE, GEYSER, PONY, BATTERIES, MOSS,
+    BEAR, MESSAGE, GORGE, PONY, BATTERIES, MOSS,
     MIN_TREASURE,
     GOLD=MIN_TREASURE, DIAMONDS, SILVER, JEWELS, COINS, CHEST, EGGS,
     TRIDENT, VASE, EMERALD, PYRAMID, PEARL, RUG, RUG_, SPICES, CHAIN,
@@ -241,7 +241,7 @@ void build_vocabulary(void)
     new_object_word("troll", TROLL);
     new_object_word("bear", BEAR);
     new_object_word("messa", MESSAGE);
-    new_object_word("volca", GEYSER); new_object_word("geyse", GEYSER);
+    new_object_word("volca", GORGE); new_object_word("geyse", GORGE);
     new_object_word("vendi", PONY); new_object_word("machi", PONY);
     new_object_word("batte", BATTERIES);
     new_object_word("moss", MOSS); new_object_word("carpe", MOSS);
@@ -1643,8 +1643,8 @@ void build_object_table(void)
     objs[PONY].desc[0] =
         "There is a massive vending machine here. The instructions on it read:\n"
         "\"Drop coins here to receive fresh batteries.\"";
-    new_obj(GEYSER, 0, GEYSER, R_VIEW);
-    objs[GEYSER].desc[0] = NULL;
+    new_obj(GORGE, 0, GORGE, R_VIEW);
+    objs[GORGE].desc[0] = NULL;
     new_obj(MESSAGE, 0, MESSAGE, R_LIMBO);
     objs[MESSAGE].desc[0] =
         "There is a message scrawled in the dust in a flowery script, reading:\n"

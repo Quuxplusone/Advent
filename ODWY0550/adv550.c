@@ -308,7 +308,7 @@ void build_vocabulary(void)
     new_noun("turtle", TURTLE); new_noun("tortoise", TURTLE);
     new_noun("darwin", TURTLE);
     new_noun("message", MESSAGE);
-    new_noun("volca", GEYSER); new_noun("geyse", GEYSER); new_noun("gorge", GEYSER);
+    new_noun("volca", GORGE); new_noun("geyse", GORGE); new_noun("gorge", GORGE);
     new_noun("statue", STATUE); new_noun("minotaur", STATUE);
     new_noun("quicksand", QUICKSAND);
     new_noun("slime", SLIME);
@@ -537,7 +537,7 @@ void build_object_table(void)
     objs[TURTLE].desc[0] = "Darwin the tortoise is swimming in the reservoir nearby.";
     objs[MESSAGE].desc[0] = "There is a message scrawled in the dust in a flowery script, reading:\n"
                             "\"This is not the maze where the pirate leaves his treasure chest.\"";
-    objs[GEYSER].desc[2] = "There is a wheat-colored stone bridge arching over the gorge.";
+    objs[GORGE].desc[2] = "There is a wheat-colored stone bridge arching over the gorge.";
     objs[STATUE].desc[1] = "Dark tunnels lead northeast, north, and northwest.";
     objs[SLIME].desc[0] = "The passage to the south is swathed with sheets of evil-looking\n"
                           "green slime, which twitches and flows as if aware of your presence.";
@@ -2297,21 +2297,21 @@ void wave_rod(Location loc)
             objs[FISSURE].prop = 1;
             objs[FISSURE].flags &= ~F_INVISIBLE;
         }
-    } else if (there(GEYSER, loc) && closure < 2) {
-        if (objs[GEYSER].prop) {
+    } else if (there(GORGE, loc) && closure < 2) {
+        if (objs[GORGE].prop) {
             puts("The earth shudders violently, and steam blasts upwards from the geyser.\n"
                  "The wheat-stone bridge cracks and splits, and the fragments fall into\n"
                  "the gorge.");
-            objs[GEYSER].prop = 0;
-            objs[GEYSER].flags |= F_INVISIBLE;
+            objs[GORGE].prop = 0;
+            objs[GORGE].flags |= F_INVISIBLE;
         } else {
             puts("The earth begins to shudder violently, and smoke flows up from the\n"
                  "gorge beneath your feet.  With a violent >GLOP!<, the volcano\n"
                  "belches out an immense blast of molten lava which flies into the\n"
                  "air above the gorge and suddenly solidifies into a fragile-looking arch\n"
                  "of wheat-colored stone that bridges the gorge.");
-            objs[GEYSER].prop = 2;
-            objs[GEYSER].flags &= ~F_INVISIBLE;
+            objs[GORGE].prop = 2;
+            objs[GORGE].flags &= ~F_INVISIBLE;
         }
     } else if (there(QUICKSAND, loc)) {
         /* Notice that the rod bridges the quicksand regardless of
@@ -4204,13 +4204,13 @@ bool clock4(Location loc)
         objs[DWARF].prop = 0;
         dwarfcount = 0;  /* kill all the dwarves */
         objs[FISSURE].prop = 0;  /* destroy crystal bridge */
-        objs[GEYSER].prop = 0;  /* destroy wheatstone bridge */
+        objs[GORGE].prop = 0;  /* destroy wheatstone bridge */
         apport(TROLL, R_LIMBO); objs[TROLL].prop = 5;
         apport(TROLL2, R_SWOFCHASM);  /* fetch fake troll */
         apport(DRAGON, R_LIMBO);
         apport(TROLL, R_LIMBO);
         objs[FISSURE].flags |= F_INVISIBLE;
-        objs[GEYSER].flags |= F_INVISIBLE;
+        objs[GORGE].flags |= F_INVISIBLE;
         clock = 25;
     } else {
         /* It's closing time! This is a more evil trick than the
