@@ -301,7 +301,7 @@ int at_fake_slit(void)
          "a large green snake, a cute little bird (which is sitting, unmolested,\n"
          "on the snake's head), a peaceful basilisk, and a large Arabian Djinn.\n\n"
          "Everyone turns and sees you, and lets out a heart-warming cheer\n"
-         "of welcome!");
+         "of welcome!\n");
 	gave_up = false;
 	finis();  /* end the game in triumph */
     }

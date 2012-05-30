@@ -812,7 +812,7 @@ bool yes(const char *q)
          * I think it looks better this way. */
         printf("%s\n> ", q); fflush(stdout);
         fgets(buffer, sizeof(buffer), stdin);
-        if (*buffer == '\0' || tolower(*buffer) == 'y') {
+        if (*buffer == '\n' || tolower(*buffer) == 'y') {
             /* A blank response is treated as YES.
              * This makes the dragon puzzle a little easier, but whatever. */
             return true;
@@ -875,7 +875,7 @@ void listen(void)
         if (*p == '\0') {
             word1.text[0] = '\0';
         } else {
-            for (q = word1.text; !isspace(*p); ++p, ++q) {
+            for (q = word1.text; !isspace(*p) && *p != ','; ++p, ++q) {
                 if (q == word1.text+15) break;  /* buffer overflow prevention */
                 *q = tolower(*p);
             }
@@ -895,7 +895,8 @@ void listen(void)
 
     parse(&word1);
     parse(&word2);
-    if (please_clarify && word1.type != WordType_None && word2.type == WordType_None) {
+    if (please_clarify && word1.type != WordType_None &&
+            word1.type != WordType_BadWord && word2.type == WordType_None) {
         /* If we just asked the user for a verb or noun, we should
          * see if maybe they gave us one. */
         if ((word1.type == WordType_Verb) != (saved_word.type == WordType_Verb))
@@ -911,6 +912,7 @@ void listen(void)
         reversed = true;
     }
     please_clarify = false;
+    puts("");
 }
 
 static bool keyword(WordType type, int meaning)
@@ -2339,12 +2341,8 @@ int no_move_possible(Location loc)
             case 3: printf("Going %s is not possible from here.  Sorry.\n", dir); break;
         }
     }
-    if (here(LAMP, loc) && objs[LAMP].prop) {
-        lamplife -= 1;
-        if (lamplife == 0 || lamplife == 40) {
-            if (lamprey(loc))
-                return R_CYLINDRICAL;  /* the cave is now closed */
-        }
+    if (lamprey(loc)) {
+        return R_CYLINDRICAL;  /* the cave is now closed */
     }
     return STAY_STILL;
 }
@@ -4275,7 +4273,12 @@ void simulate_an_adventure(void)
          * when we resurrect. Notice that R_LIMBO has F_NOBACK. */
         oldloc = loc = R_LIMBO;
         newloc = R_HOUSE;
+    } else if (false) {
+      cave_just_closed:
+        oldloc = loc = R_LIMBO;
+        newloc = R_CYLINDRICAL;
     }
+    
     
     moved = true;
     while (true) {
@@ -4307,8 +4310,9 @@ void simulate_an_adventure(void)
                      "you fades away into a grey nothingness.");
                 finis();
             }
-            if (lamprey(loc))
-                continue;  /* the cave is now closed */
+            if (lamprey(loc)) {
+                goto cave_just_closed;
+            }
             if (!there(GOBLINS, R_LIMBO)) {
                 /* If the goblins are active, they follow you. */
                 apport(GOBLINS, loc);
@@ -4362,8 +4366,7 @@ void simulate_an_adventure(void)
                 clock -= (familiar_place ? 2 : 3);
                 if (clock <= 0) {
                     if (clock4(loc)) {
-                        /* We just closed the cave on you. */
-                        continue;
+                        goto cave_just_closed;
                     }
                 }
             }
@@ -4397,7 +4400,6 @@ void simulate_an_adventure(void)
         fleetfoot = 25;  /* not running */
         backlash = 35;  /* dwarves not vengeful */
         listen();
-        puts("");
         --foobar;
         /* Here Platt increments the variable TURNS. I've left it out because
          * I don't see anywhere its value is actually used. The value of
