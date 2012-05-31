@@ -308,7 +308,7 @@ void build_vocabulary(void)
     new_noun("turtle", TURTLE); new_noun("tortoise", TURTLE);
     new_noun("darwin", TURTLE);
     new_noun("message", MESSAGE);
-    new_noun("volca", GORGE); new_noun("geyse", GORGE); new_noun("gorge", GORGE);
+    new_noun("volcano", GORGE); new_noun("geyser", GORGE); new_noun("gorge", GORGE);
     new_noun("statue", STATUE); new_noun("minotaur", STATUE);
     new_noun("quicksand", QUICKSAND);
     new_noun("slime", SLIME);
@@ -430,7 +430,7 @@ void build_place_names(void)
     new_place_word("boulders", R_CHAMBER);
     new_place_word("limestone", R_LIME);
     new_place_word("barren", R_FBARR);
-    new_place_word("limbo", R_LIMBO);  /* Odd. Platt has this. */
+    new_place_word("limbo", R_LIMBO);  /* Helpful to wizards. */
     new_place_word("lair", R_LAIR);
     new_place_word("ice", R_ICE);
     new_place_word("glassy", R_GLASSY);
@@ -637,7 +637,6 @@ void build_object_table(void)
 void describe_object(ObjectWord t)
 {
     if (t == DWARF) {
-        assert(objs[DWARF].prop >= 1);
         puts("");  /* ensure that the dwarf message is preceded by a blank line */
         switch (objs[DWARF].prop) {
             case 1: puts("There is a threatening little dwarf in the room with you!"); break;
@@ -650,7 +649,7 @@ void describe_object(ObjectWord t)
             case 8: puts("There are eight angry little dwarves in the room with you!"); break;
             case 9: puts("There are nine hostile and nasty little dwarves in the room with you!"); break;
             case 10: puts("There are ten very angry little dwarves in the room with you!"); break;
-            default: assert(false);
+            default: puts("There is a nonexistent little dwarf in the room with you!"); assert(wizard_mode); break;
         }
     } else if (t == GOBLINS) {
         switch (objs[GOBLINS].prop) {
@@ -765,8 +764,10 @@ void describe_object(ObjectWord t)
                    animal);
         }
     } else if (t == BLOB) {
-        assert(objs[BLOB].prop == 16);
         puts("There is an immense and unfriendly-looking blob in the room with you!");
+        if (!wizard_mode) {
+            assert(objs[BLOB].prop == 16);
+        }
     } else if (t == FOG) {
         switch (objs[FOG].prop) {
             case 0: puts("You are standing, badly befuddled, in a pale purple fog."); break;
@@ -3375,7 +3376,11 @@ int process_verb(Location loc)
         case LOOK:
             if (keywordo(MIST)) return examine_mist();
             if (keywordo(TREES)) return examine_trees();
-            look_around(loc, /*familiar=*/false);
+            if (now_in_darkness(loc)) {
+                puts("You have no source of light.");
+            } else {
+                look_around(loc, /*familiar=*/false);
+            }
             return STAY_STILL;
         case ON:
             if (keywordo(LAMP) || word2.type == WordType_None) {
@@ -4277,7 +4282,7 @@ void recount_inventory(void)
 void simulate_an_adventure(void)
 {
     Location oldloc;
-    Location loc = R_LIMBO;
+    Location loc = R_YLEM;
     Location newloc = R_ROAD;
 
     clock = 15+ran(10);
@@ -4289,13 +4294,13 @@ void simulate_an_adventure(void)
     if (false) {
       death:
         kill_the_player(loc);
-        /* Coming from R_LIMBO ensures that we'll see a room description
-         * when we resurrect. Notice that R_LIMBO has F_NOBACK. */
-        oldloc = loc = R_LIMBO;
+        /* Coming from R_YLEM ensures that we'll see a room description
+         * when we resurrect. Notice that R_YLEM has F_NOBACK. */
+        oldloc = loc = R_YLEM;
         newloc = R_HOUSE;
     } else if (false) {
       cave_just_closed:
-        oldloc = loc = R_LIMBO;
+        oldloc = loc = R_YLEM;
         newloc = R_CYLINDRICAL;
     }
     
@@ -4468,7 +4473,15 @@ void simulate_an_adventure(void)
             }
         } else {
             newloc = process_verb(loc);
-            if (R_LIMBO < newloc && newloc < R_YLEM) {
+            if (wizard_mode && keywordv(LPSD) && newloc == R_LIMBO) {
+                /* Special case, since I'm using 0 (R_LIMBO) to mean
+                 * "unhandled". If a wizard types "LPSD LIMBO", we do
+                 * in fact want to move to room number zero. Why?
+                 * To get the mithril ring, of course!
+                 * There's no way to LPSD to R_YLEM, so that's okay. */
+                moved = true;
+                continue;
+            } else if (R_LIMBO < newloc && newloc < R_YLEM) {
                 moved = true;
                 continue;
             } else if (R_YLEM < newloc && newloc < 2*R_YLEM) {

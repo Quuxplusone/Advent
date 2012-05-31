@@ -134,6 +134,12 @@ bool used_movement_verb3(VerbWord a, VerbWord b, VerbWord c)
     return used_movement_verb(a) || used_movement_verb(b) || used_movement_verb(c);
 }
 
+int at_limbo(void)
+{
+    if (used_movement_verb(OUT)) return R_HOUSE;
+    return 0;  /* command hasn't been processed yet */
+}
+
 int at_road(void)
 {
     if (used_movement_placeword(R_ROAD)) return R_HILL;
@@ -1727,6 +1733,7 @@ int at_view(void)
 	if (objs[GORGE].prop == 0) {
 	    puts("I'm afraid I can't go that way - walking on red-hot lava is contrary\n"
 		 "to union regulations (and is bad for your health anyhow).");
+	    return STAY_STILL;
 	} else if (toting(RING)) {
 	    if (toting(BEAR)) {
 		puts("As you approach the center of the archway, hot vapors saturated with\n"
@@ -2538,6 +2545,7 @@ int at_faces(void)
 	if (!objs[GORGE].prop) {
 	    puts("I'm afraid I can't go that way - walking on red-hot lava is contrary\n"
 		 "to union regulations (and is bad for your health anyhow).");
+	    return STAY_STILL;
 	} else if (!toting(RING)) {
 	    puts("As you approach the center of the archway, hot vapors saturated with\n"
 		 "brimstone drift up from the lava in the gorge beneath your feet.  You\n"
@@ -3092,7 +3100,9 @@ static const char enchanted_tunnels[] = "You are in the catacombs.  Enchanted tu
 
 struct Place places[] = {
     /* R_LIMBO */ {
-	NULL, NULL, F_NOBACK, NULL
+	"You are in Limbo.",
+	"You are in Limbo (program bug!).  Say OUT to get out of here.",
+	0, &at_limbo
     },
     /* R_ROAD */ {
         "You're at end of road again.",
@@ -4274,7 +4284,9 @@ struct Place places[] = {
         "spewing out a river of hot lava.",
         F_LIGHTED|F_NOBACK, &at_platform
     },
-    /* R_LIMBO and R_YLEM don't need descriptions or exits. */
+    /* R_YLEM */ {
+	NULL, NULL, F_NOBACK, NULL
+    }
 };
 
 
