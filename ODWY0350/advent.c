@@ -3398,10 +3398,7 @@ void simulate_an_adventure(void)
                 case SAVE:
                     switch (attempt_save()) {
                         case 0: puts("Save failed!"); break;
-                        case 1:
-                            /* Saved. Parchment already prints a nice
-                             * message, so we don't need to. */
-                            break;
+                        case 1: puts("Saved."); break;
                         case 2: puts("Restored."); break;
                     }
                     continue;
