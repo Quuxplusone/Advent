@@ -2612,6 +2612,7 @@ int at_plain_2(void)
 		return R_PLAIN_3;
 	    }
 	}
+	return R_PLAIN_2;
     }
     return 0;  /* command hasn't been processed yet */
 }
@@ -2712,7 +2713,7 @@ int at_basque_2(void)
 	    if (toting(PLATE)) {
 		puts("The basilisk stirs grumpily and awakens, peering sleepily about.  It\n"
 		     "sees its reflection in the metal plate that you are carrying,\n"
-		     "shudders, and turns into solid granite.");
+		     "shudders, and turns into solid granite.\n");
 		objs[BASILISK].prop = 2;
 	    } else {
 		puts("The basilisk stirs grumpily and awakens, peering sleepily about.  It\n"
@@ -3109,69 +3110,59 @@ struct Place places[] = {
         "You are standing at the end of a road before a small brick building.\n"
         "Around you is a forest.  A small stream flows out of the building and\n"
         "down a gully.",
-        F_LIGHTED|F_WATER|F_NOTINCAVE,
-        &at_road
+        F_LIGHTED|F_WATER|F_NOTINCAVE, &at_road
     },
     /* R_HILL */ {
 	"You're at hill in road.",
         "You have walked up a hill, still in the forest. The road slopes back\n"
         "down the other side of the hill.  There is a building in the distance.",
-	F_LIGHTED|F_NOTINCAVE,
-	&at_hill
+	F_LIGHTED|F_NOTINCAVE, &at_hill
     },
     /* R_HOUSE */ {
 	"You're inside building.",
         "You are inside a building, a well house for a large spring.",
-	F_LIGHTED|F_NOTINCAVE|F_WATER,
-	&at_house
+	F_LIGHTED|F_NOTINCAVE|F_WATER, &at_house
     },
     /* R_VALLEY */ {
         "You're in valley.",
         "You are in a valley in the forest beside a stream tumbling along a\n"
         "rocky bed.",
-	F_LIGHTED|F_NOTINCAVE|F_WATER,
-	&at_valley
+	F_LIGHTED|F_NOTINCAVE|F_WATER, &at_valley
     },
     /* R_FOREST */ {
 	"You're in forest.",
         "You are in open forest, with a deep valley to one side.",
-	F_LIGHTED|F_NOTINCAVE,
-	&at_forest
+	F_LIGHTED|F_NOTINCAVE, &at_forest
     },
     /* R_FOREST2 */ {
 	"You're in forest.",
         "You are in open forest near both a valley and a road.",
-	F_LIGHTED|F_NOTINCAVE,
-	&at_forest2
+	F_LIGHTED|F_NOTINCAVE, &at_forest2
     },
     /* R_SLIT */ {
 	"You're at slit in streambed.",
         "At your feet all the water of the stream splashes into a 2-inch slit\n"
         "in the rock.  Downstream the streambed is bare rock.",
-	F_LIGHTED|F_NOTINCAVE|F_WATER,
-	&at_slit
+	F_LIGHTED|F_NOTINCAVE|F_WATER, &at_slit
     },
     /* R_DEPRESSION */ {
 	"You're outside grate.",
         "You are in a 20-foot depression floored with bare dirt. Set into the\n"
         "dirt is a strong steel grate mounted in concrete.  A dry streambed\n"
         "leads into the depression.",
-	F_LIGHTED|F_HINTABLE|F_NOTINCAVE,
-	&at_depression
+	F_LIGHTED|F_HINTABLE|F_NOTINCAVE, &at_depression
     },
     /* R_INSIDE */ {
 	"You're below the grate.",
         "You are in a small chamber beneath a 3x3 steel grate to the surface.\n"
 	"A low crawl over cobbles leads inward to the west.",
-	F_LIGHTED|F_NODWARF,
-	&at_inside
+	F_LIGHTED|F_NODWARF, &at_inside
     },
     /* R_COBBLES */ {
 	"You're in cobble crawl.",
         "You are crawling over cobbles in a low passage. There is a dim light\n"
         "at the east end of the passage.",
-	F_LIGHTED|F_NODWARF,
-	&at_cobbles
+	F_LIGHTED|F_NODWARF, &at_cobbles
     },
     /* R_DEBRIS */ {
 	"You're in debris room.",
@@ -3191,8 +3182,7 @@ struct Place places[] = {
         "You are in a splendid chamber thirty feet high. The walls are frozen\n"
         "rivers of orange stone.  An awkward canyon and a good passage exit\n"
         "from east and west sides of the chamber.",
-	F_HINTABLE,
-	&at_bird
+	F_HINTABLE, &at_bird
     },
     /* R_SPIT */ {
 	"You're at top of small pit.",
@@ -3784,13 +3774,13 @@ struct Place places[] = {
 	F_NOBACK|F_NODWARF, &at_plain_1
     },
     /* R_PLAIN_2 */ {
-	NULL, NULL, F_NOBACK|F_NODWARF|F_HINTABLE, &at_plain_2
+	NULL, NULL, F_LIGHTED|F_NOBACK|F_NODWARF|F_HINTABLE, &at_plain_2
     },
     /* R_PLAIN_3 */ {
 	"You're in foggy room by cairn of rocks.",
         "You are standing in a fog-filled room next to a tall cairn of glowing\n"
         "rocks.  An opening in the cairn leads down to a dark passage.",
-	F_NODWARF, &at_plain_3
+	F_LIGHTED|F_NODWARF, &at_plain_3
     },
     /* R_NONDESCRIPT */ {
 	"You're in nondescript chamber.",
@@ -4031,7 +4021,7 @@ struct Place places[] = {
     /* R_PEELGRUNT */ {
         "You're in Peelgrunt room.",
         "You are in the Peelgrunt room.",
-	0, &at_peelgrunt
+	F_NODWARF, &at_peelgrunt
     },
     /* R_INSAFE */ {
         "You are in the safe.",
@@ -4305,7 +4295,7 @@ struct ObjectData objs[] = {
     { XX, 0, NULL /* PLANT */, 0, in(R_WPIT) },
     { XX, 0, NULL /* PLANT2 */, F_INVISIBLE|F_SCHIZOID, schiz(R_W2PIT) },
     { XX, 0, NULL /* STALACTITE */, F_INVISIBLE, in(R_STALACT) },
-    { XX, 0, NULL /* FOG */, F_INVISIBLE|F_SCHIZOID, schiz(R_PLAIN_2) },
+    { XX, 8, NULL /* FOG */, F_INVISIBLE|F_SCHIZOID, schiz(R_PLAIN_2) },
     { XX, 0, NULL /* GLOW */, 0, in(R_LIMBO) },
     { XX, 0, NULL /* SHADOW */, F_SCHIZOID, schiz(R_WINDOE) },
     { XX, 0, NULL /* BLOB */, 0, in(R_LIMBO) },
@@ -4354,7 +4344,7 @@ struct ObjectData objs[] = {
     { XX, 0, "Persian rug", F_PORTABLE, in(R_LIMBO) },
     { XX, 0, "Rare spices", F_PORTABLE, in(R_CHAMBER) },
     { XX, 0, "Ancient Indian turquoise beads.", F_PORTABLE|F_UNSTABLE, in(R_BALCONY) },
-    { XX, 0, "Golden chain", F_PORTABLE, in(R_BARR) },
+    { XX, 1, "Golden chain", F_PORTABLE, in(R_BARR) },
     { XX, 0, "Mithril ring", F_PORTABLE, in(R_LIMBO) },
     { XX, 0, "Scrimshaw spyglass", F_PORTABLE, in(R_IN_JONAH) },
     { XX, 0, "Rock-crystal sculpture", F_PORTABLE|F_UNSTABLE, in(R_ICECAVE14) },
@@ -4376,7 +4366,7 @@ struct ObjectData objs[] = {
     { XX, 0, NULL /* BOTTLE */, F_PORTABLE, in(R_HOUSE) },
     { XX, 0, NULL /* WATER */, F_PORTABLE, in(R_LIMBO) },
     { XX, 0, NULL /* OIL */, F_PORTABLE, in(R_LIMBO) },
-    { XX, 0, "Earthenware flask", F_PORTABLE|F_UNSTABLE, in(R_ARABESQUE) },
+    { XX, 1, "Earthenware flask", F_PORTABLE|F_UNSTABLE, in(R_ARABESQUE) },
     { XX, 0, "Dwarf's axe", F_PORTABLE, in(R_LIMBO) },
     { XX, 0, "Singing sword", F_PORTABLE, in(R_SANDSTONE) },
     { XX, 0, "Several dragon's teeth", F_PORTABLE|F_UNSTABLE, in(R_LIMBO) },

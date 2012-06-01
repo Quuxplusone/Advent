@@ -778,6 +778,7 @@ void describe_object(ObjectWord t)
             case 5: puts("You are standing, badly bedazzled, in a day-glow orange fog."); break;
             case 6: puts("You are hunting your way through a shimmering magenta fog."); break;
             case 7: puts("You are somewhere in the center of a weird, pearly pink fog."); break;
+            case 8: break;  /* this is the fog's "non-puzzling" state, visible only in R_PLAIN_3 */
             default: assert(false);
         }
     } else if (t == GLOW) {
@@ -1017,24 +1018,24 @@ bool tick(void)
              "with its body.  You quickly suffocate.");
         return true;  /* you are dead */
     }
-    /* Each of these messages ends with a blank line. */
+    /* Each of these messages begins and ends with a blank line. */
     switch (objs[BLOB].prop) {
-        case 3: puts("From somewhere in the distance comes an ominous bubbling sound.\n"); break;
-        case 4: puts("The bubbling sound grows louder.\n"); break;
-        case 5: puts("The bubbling sound ends with a loud >splash<.\n"); break;
-        case 6: puts("A hollow, echoing >ROAR< sounds in the distance.\n"); break;
+        case 3: puts("\nFrom somewhere in the distance comes an ominous bubbling sound.\n"); break;
+        case 4: puts("\nThe bubbling sound grows louder.\n"); break;
+        case 5: puts("\nThe bubbling sound ends with a loud >splash<.\n"); break;
+        case 6: puts("\nA hollow, echoing >ROAR< sounds in the distance.\n"); break;
         case 7: break;
-        case 8: puts("A strange throbbing sound can be heard in the distance.\n"); break;
+        case 8: puts("\nA strange throbbing sound can be heard in the distance.\n"); break;
         case 9: break;
-        case 10: puts("The throbbing sound is growing louder.\n"); break;
+        case 10: puts("\nThe throbbing sound is growing louder.\n"); break;
         case 11: break;
-        case 12: puts("The source of the throbbing sound is approaching quickly.  Another\n"
+        case 12: puts("\nThe source of the throbbing sound is approaching quickly.  Another\n"
                       "hollow >ROAR< echoes through the cave.\n"); break;
         case 13: break;
-        case 14: puts("There is a loud >ROAR< only a short distance away!!\n"); break;
+        case 14: puts("\nThere is a loud >ROAR< only a short distance away!!\n"); break;
         case 15: break;
         case 16:
-            puts("Into view there bounces a horrible creature!!  Six feet across, it\n"
+            puts("\nInto view there bounces a horrible creature!!  Six feet across, it\n"
                  "resembles a large blob of translucent white jelly;  although it looks\n"
                  "massive, it is bouncing lightly up and down as though it were as light\n"
                  "as a feather.  It is emitting a constant throbbing sound, and it\n"
@@ -1632,11 +1633,10 @@ void getsceptre(void)
              "pile of fine dust which quickly vanishes.");
     } else {
         printf("You pluck the sceptre from the skeleton's bony hand.  As you do, the\n"
-               "skeleton raises its head and whispers \"Remember - %s!\" in a\n",
-               spelling);
-        /* Platt has "forboding"; I'm fixing it. */
-        puts("foreboding tone; it then sags to the ground and crumbles into dust which\n"
-             "drifts away into the still air of the cave.");
+               "skeleton raises its head and whispers \"Remember - %s!\" in a\n"
+               /* Platt has "forboding". */
+               "foreboding tone; it then sags to the ground and crumbles into dust which\n"
+               "drifts away into the still air of the cave.\n", spelling);
     }
     apport(SKELETON, R_LIMBO);
     apport(SCEPTRE, R_INHAND);
@@ -2157,7 +2157,7 @@ int break_vial(Location loc)
     return STAY_STILL;
 }
 
-int upchuck(ObjectWord obj, Location loc)
+bool upchuck(ObjectWord obj, Location loc)
 {
     static const char pit[] = "down into the pit";
     static const char fissure[] = "down into the fissure";
@@ -2229,7 +2229,7 @@ int upchuck(ObjectWord obj, Location loc)
     } else if (obj == BIRD) {
         objs[BIRD].prop = 0;  /* free the bird */
     }
-    return STAY_STILL;
+    return true;
 }
 
 int attempt_throw(ObjectWord obj, Location loc)
@@ -2265,8 +2265,8 @@ int attempt_throw(ObjectWord obj, Location loc)
                 break;  /* unhandled */
         }
     }
-    if (word2.type == WordType_Object && toting(obj) && (places[loc].flags & F_THROWER)) {
-        return upchuck(obj, loc);
+    if (word2.type == WordType_Object && toting(obj)) {
+        if (upchuck(obj, loc)) return STAY_STILL;
     }
     word1.meaning = DROP;
     strcpy(word1.text, "drop");
@@ -3938,12 +3938,15 @@ void look_around(Location loc, bool familiar)
 {
     bool blank_line_before_objects = false;
     if (verbosity_mode == FULL ||
-        (verbosity_mode == BRIEF && !familiar) ||
-        places[loc].short_desc == NULL) {
-        puts(places[loc].long_desc);
+        (verbosity_mode == BRIEF && !familiar)) {
+        if (places[loc].long_desc != NULL)
+            puts(places[loc].long_desc);
         blank_line_before_objects = true;
     } else {
-        puts(places[loc].short_desc);
+        if (places[loc].short_desc != NULL)
+            puts(places[loc].short_desc);
+        else if (places[loc].long_desc != NULL)
+            puts(places[loc].long_desc);
     }
     if (places[loc].flags & F_DAMP)
         puts("The ground here is damp.");
@@ -3981,7 +3984,7 @@ void phog(Location loc)
         objs[FOG].prop = ran(8);
     }
     objs[GLOW].prop = ran(8);
-    if (now_in_darkness(loc)) {
+    if (here(LAMP, loc) && objs[LAMP].prop) {
         /* If your lamp is on, you can't see the faint glow. */
         apport(GLOW, R_LIMBO);
     } else {
@@ -4284,9 +4287,6 @@ void simulate_an_adventure(void)
 
     clock = 15+ran(10);
     dwarfcount = 4+ran(5);
-    objs[CHAIN].prop = 1;
-    objs[FOG].prop = 8;
-    objs[FLASK].prop = 1;
 
     if (false) {
       death:
@@ -4300,8 +4300,7 @@ void simulate_an_adventure(void)
         oldloc = loc = R_YLEM;
         newloc = R_CYLINDRICAL;
     }
-    
-    
+
     moved = true;
     while (true) {
         if (blob_is_coming) {
@@ -4316,7 +4315,7 @@ void simulate_an_adventure(void)
             puts("A little dwarf with a big knife blocks your way.");
             newloc = loc;
         } else {
-            if (there(FOG, loc)) {
+            if (there(FOG, newloc)) {
                 phog(newloc);
             }
             /* Okay, we moved! */

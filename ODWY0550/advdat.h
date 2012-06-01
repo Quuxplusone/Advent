@@ -125,7 +125,6 @@ enum flagsBits {
     F_WATER      = 0x040,
     F_INMAZE     = 0x080,
     F_ONE_EXIT   = 0x100,
-    F_THROWER    = 0x200,
     F_DAMP       = 0x400,
     
     /* Bits that can be set in objs[].flags */
