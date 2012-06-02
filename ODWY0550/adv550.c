@@ -2561,7 +2561,9 @@ int attempt_close(Location loc)
             dunno_hao(word1.text);
         }
     } else if (keywordv(CAVE) && wizard_mode) {
-        /* CLOSE CAVE works for wizards! */
+        /* CLOSE CAVE works for wizards! But since this bypasses the clock4()
+         * code that re-locks the grate, the wizard will be able to explore
+         * the cave after it's been closed. */
         close_the_cave();
         return R_CYLINDRICAL;
     } else {
@@ -2855,10 +2857,16 @@ int attempt_kill(Location loc)
     return 0;  /* unhandled */
 }
 
+bool feedable(ObjectWord o)
+{
+    return (o == BEAR || o == TROLL || o == BIRD || o == SNAKE ||
+            o == DWARF || o == DRAGON || o == BASILISK || o == GOBLINS);
+}
+
 int attempt_feed(Location loc)
 {
     ObjectWord o = word2.meaning;
-    if (word2.type == WordType_Object && mortal(o)) {
+    if (word2.type == WordType_Object && feedable(o)) {
         if (!here(o, loc)) {
             I_see_no(word2.text);
             return STAY_STILL;
