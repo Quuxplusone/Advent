@@ -132,7 +132,7 @@ enum flagsBits {
     F_SEEN       = 0x002,
     F_SCHIZOID   = 0x004,
     F_UNSTABLE   = 0x008,  /* the object has an "initial" shortdesc different
-			    * from its normal one, so ++prop when it's taken */
+                            * from its normal one, so ++prop when it's taken */
     F_INVISIBLE  = 0x010
     /* Platt had a lot more flags, but they encoded static data that it's
      * easy to turn into regular code. For example, the food and mushroom had
