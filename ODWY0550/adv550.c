@@ -1721,6 +1721,7 @@ int attempt_take(ObjectWord obj, Location loc)
             case BEAR:
                 if (toting(BEAR)) {
                     puts("You are being followed by a very large, tame bear.");
+                    return STAY_STILL;
                 } else if (there(BEAR, loc) && (objs[BEAR].prop != 2)) {
                     puts("The bear is still chained to the wall.");
                     return STAY_STILL;
@@ -2268,9 +2269,13 @@ int attempt_throw(ObjectWord obj, Location loc)
     if (word2.type == WordType_Object && toting(obj)) {
         if (upchuck(obj, loc)) return STAY_STILL;
     }
-    word1.meaning = DROP;
-    strcpy(word1.text, "drop");
-    return process_verb(loc);
+    if (word2.type != WordType_None) {
+        word1.meaning = DROP;
+        strcpy(word1.text, "drop");
+        return process_verb(loc);
+    } else {
+        return 0;  /* unhandled */
+    }
 }
 
 bool is_walkable_direction(VerbWord v)
@@ -3531,8 +3536,8 @@ int process_verb(Location loc)
             nothing_happens();
             return STAY_STILL;
         case FOO:
-            if (foobar == 2) {
-                if (there(EGGS, R_GIANT) || there(EGGS, R_YLEM)) {
+            if (there(EGGS, R_YLEM) || foobar == 2) {
+                if (there(EGGS, R_GIANT)) {
                     nothing_happens();
                 } else if (here(EGGS, loc)) {
                     puts("The nest of golden eggs has vanished!");

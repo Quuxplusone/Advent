@@ -1496,7 +1496,7 @@ int at_swofchasm(void)
 		puts("The troll nimbly steps to one side and grins nastily as the nest of\n"
 		     "golden eggs flies past him and plummets into the chasm.  \"Fool me\n"
 		     "once, shame on you;  fool me twice, shame on me!\" he sneers.  \"I want\n"
-		     "something a touch more substantial this time!");
+		     "something a touch more substantial this time!\"");
 		apport(EGGS, R_YLEM);
 		objs[TROLL].prop = 0;
 		return STAY_STILL;
@@ -1510,7 +1510,7 @@ int at_swofchasm(void)
 	}
     }
     if (used_movement_verb2(CROSS, NE)) {
-	if (objs[CHASM].prop > 0) {
+	if (objs[CHASM].prop) {
 	    puts("There is no longer any way across the chasm.");
 	} else if (objs[TROLL].prop == 0) {
 	    puts("The troll refuses to let you cross.");
@@ -1519,8 +1519,9 @@ int at_swofchasm(void)
 	    objs[TROLL].prop = 0;
 	    apport(TROLL2, R_LIMBO);
 	    apport(TROLL, R_SWOFCHASM);
-	} else if (objs[TROLL].prop == 1) {
-	    objs[TROLL].prop = 2;  /* no longer appeased */
+	} else {
+	    if (objs[TROLL].prop == 1)
+		objs[TROLL].prop = 2;  /* no longer appeased */
 	    return R_NEOFCHASM;
 	}
 	return STAY_STILL;
@@ -1659,13 +1660,14 @@ int at_neofchasm(void)
 			 "escape.  The bridge shudders, groans, and collapses under the weight,\n"
 			 "and you and the bear plunge down into the chasm.");
 		    apport(BEAR, R_YLEM);
+        	    objs[CHASM].prop = 1;
 		} else {
 		    puts("that, he aims a tube running from the backpack directly at the bridge\n"
 			 "and pulls a trigger.  A spout of magical fire roars out and incinerates\n"
 			 "the bridge supports, causing the bridge to sway giddily and collapse\n"
 			 "into the chasm.  You plunge down to your death.");
+        	    objs[CHASM].prop = 2;
 		}
-		objs[CHASM].prop = 1;
 		return you_are_dead_at(R_YLEM);
 	    }
 	    return R_SWOFCHASM;
