@@ -1,6 +1,6 @@
 diff -Nur vbcc/config/z vbcc-patched/config/z
---- vbcc/config/z       1969-12-31 16:00:00.000000000 -0800
-+++ vbcc-patched/config/z       2012-05-07 00:56:27.554504650 -0700
+--- vbcc/config/z	1969-12-31 16:00:00.000000000 -0800
++++ vbcc-patched/config/z	2012-06-05 11:17:56.000000000 -0700
 @@ -0,0 +1,5 @@
 +-cc=../bin/vbccz -quiet %s -o=%s %s -O=%ld
 +-ccv=../bin/vbccz %s -o=%s %s -O=%ld
@@ -8,8 +8,8 @@ diff -Nur vbcc/config/z vbcc-patched/config/z
 +-ld=echo "Don't know how to link Z-machine code" 1>&2; exit 0
 +-rm=rm %s
 diff -Nur vbcc/datatypes/dtgen.c vbcc-patched/datatypes/dtgen.c
---- vbcc/datatypes/dtgen.c	2012-05-13 02:42:09.550448868 -0700
-+++ vbcc-patched/datatypes/dtgen.c	2012-05-13 02:28:40.630467456 -0700
+--- vbcc/datatypes/dtgen.c	2012-06-05 12:54:33.000000000 -0700
++++ vbcc-patched/datatypes/dtgen.c	2012-06-05 11:17:56.000000000 -0700
 @@ -133,8 +133,8 @@
    do{
      printf("Type y or n [%s]: ",def);
@@ -22,8 +22,8 @@ diff -Nur vbcc/datatypes/dtgen.c vbcc-patched/datatypes/dtgen.c
    return *in=='y';
  }
 diff -Nur vbcc/frontend/vc.c vbcc-patched/frontend/vc.c
---- vbcc/frontend/vc.c	2012-05-13 02:42:09.554448867 -0700
-+++ vbcc-patched/frontend/vc.c	2012-05-13 02:28:40.634467454 -0700
+--- vbcc/frontend/vc.c	2012-06-05 12:54:33.000000000 -0700
++++ vbcc-patched/frontend/vc.c	2012-06-05 11:17:56.000000000 -0700
 @@ -2,6 +2,7 @@
  /*  (c) in 1995-2010 by Volker Barthelmann  */
  /*  #define AMIGA for Amiga-Version         */
@@ -155,8 +155,8 @@ diff -Nur vbcc/frontend/vc.c vbcc-patched/frontend/vc.c
          if(!strncmp(parm,"-isc=",5)){scname=parm+5;*parm=0;}
          if(!strncmp(parm,"-iscv=",6)){scv=parm+6;*parm=0;}
 diff -Nur vbcc/ic.c vbcc-patched/ic.c
---- vbcc/ic.c	2012-05-24 12:33:14.000000000 -0700
-+++ vbcc-patched/ic.c	2012-05-24 12:18:51.000000000 -0700
+--- vbcc/ic.c	2012-06-05 12:54:33.000000000 -0700
++++ vbcc-patched/ic.c	2012-06-05 12:51:55.000000000 -0700
 @@ -1,5 +1,6 @@
  /*  $VER: vbcc (ic.c) V0.8  */
  
@@ -164,126 +164,121 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
  #include "vbc.h"
  #include "opt.h"
  
-@@ -488,6 +489,138 @@
+@@ -488,6 +489,139 @@
    return new;
  }
  
-+static int is_putsable_char(int ch)
++/* This function serves a dual purpose: it turns the const_list into a nice
++ * C string, but it also checks to see if it's all printable ASCII, and if
++ * it's not, we simply return NULL. Our caller is responsible for doing the
++ * right thing in that case. */
++static char *const_list_to_string(struct const_list *cl)
 +{
-+    if (ch == '\n' || ch == '\t') return 1;
-+    if (ch == '^') return 0;
-+    return (32 <= ch && ch <= 126);
-+}
-+
-+static int should_optimize_puts(struct const_list *cl)
-+{
-+    int optimize = 1;
-+    while (cl != NULL) {
-+	int ch = cl->other->val.vchar;
-+	cl = cl->next;
-+	if (ch == '\0') break;
-+	if (!is_putsable_char(ch)) return 0;
-+    }
-+    return 1;  /* it's okay to optimize */
-+}
-+
-+static struct const_list *extract_putsable_suffix(struct const_list *cl)
-+{
-+    struct const_list *last_unputsable_char = NULL;
-+    int num_putsable_chars = 0;
-+    struct const_list *final_newline = NULL;
-+    int ends_with_newline = 0;
-+    for ( ; cl != NULL; cl = cl->next) {
-+	int ch = cl->other->val.vchar;
-+	if (ch == '\0') break;
-+	if (cl->next && cl->next->next &&
-+	    cl->next->other->val.vchar == '\n' &&
-+	    cl->next->next->other->val.vchar == '\0') {
-+	    final_newline = cl;
-+	}
-+	if (ch == '%') {
-+	    if (cl->next == NULL) {
-+		return NULL;  /* bad format string */
-+	    }
-+	    int fmt = cl->next->other->val.vchar;
-+	    if (fmt == 'd' || fmt == 's') {
-+		last_unputsable_char = cl->next;
-+		num_putsable_chars = 0;
-+		cl = cl->next;
-+	    } else {
-+		return NULL;  /* unrecognized format string */
-+		/* or a percent sign "%%", of course */
-+	    }
-+	} else if (!is_putsable_char(ch)) {
-+	    last_unputsable_char = cl;
-+	    num_putsable_chars = 0;
-+	} else {
-+	    num_putsable_chars += 1;
-+	}
-+    }
-+    if (final_newline == NULL) {
-+	/* We could do some trickery in gen_optimized_puts()
-+	 * to say "maybe append a \n, maybe don't", but for now
-+	 * it's simplest to optimize printf("hi\n") and fail to
-+	 * optimize printf("hi"). */
-+	return NULL;
-+    }
-+    if (num_putsable_chars <= 2) {
-+	/* Don't bother optimizing. */
-+	return NULL;
-+    }
-+    assert(final_newline->next->other->val.vchar == '\n');
-+    final_newline->next->other->val.vchar = '\0';
-+    final_newline->next->next = NULL;
-+    if (last_unputsable_char == NULL) {
-+	/* The whole string is optimizable! */
-+	return cl;
-+    }
-+    /* Only a suffix of the string is optimizable. */
-+    struct const_list *suffix = last_unputsable_char->next;
-+    /* Append a new null terminator to the prefix portion. */
-+    last_unputsable_char->next = cl = mymalloc(CLS);
-+    cl->next = NULL;
-+    cl->tree = NULL;
-+    cl->idx = last_unputsable_char->idx + 1;
-+    cl->val.vmax = 0;
-+    cl->other = mymalloc(CLS);
-+    cl->other->next = cl->other->other = NULL;
-+    cl->other->tree = NULL;
-+    cl->other->idx = 0;
-+    cl->other->val.vchar = '\0';
-+    return suffix;
-+}
-+
-+static void gen_optimized_puts(struct const_list *cl, np p)
-+{
-+    char *puts_buffer = mymalloc(100);
-+    int len = 0, cap = 100;
-+    strcpy(puts_buffer, "\tprint \"");
-+    len = 8;
-+    while (cl != NULL) {
-+	int ch = cl->other->val.vchar;
-+	cl = cl->next;
-+	if (ch == '\0') break;
-+	if (len == cap-16) {
-+	    puts_buffer = myrealloc(puts_buffer, cap *= 2);
-+	}
++    int len = 0;
++    for (struct const_list *cx = cl; cx != NULL; cx = cx->next, ++len) {
++	int ch = cx->other->val.vchar;
 +	switch (ch) {
-+	    case '\n': puts_buffer[len++] = '^'; break;
-+	    case '\t': strcpy(puts_buffer+len, "@{9}"); len += 4; break;
-+	    case '"': puts_buffer[len++] = '~'; break;
-+	    case '@': strcpy(puts_buffer+len, "@{40}"); len += 5; break;
-+	    case '\\': strcpy(puts_buffer+len, "@{5c}"); len += 5; break;
-+	    case '~': strcpy(puts_buffer+len, "@{7e}"); len += 5; break;
++	    case '\0': if (cx->next != NULL) return NULL; break;
++	    case '\t': case '\n': /* okay */ break;
 +	    default:
-+		assert(is_putsable_char(ch));
-+		puts_buffer[len++] = ch;
++		if (ch < 32 || 126 < ch) return NULL;
++		if (cx->next == NULL) return NULL;  /* not null-terminated */
 +		break;
 +	}
 +    }
-+    strcpy(puts_buffer+len, "^\";\n");
-+    /* Now we need to turn this into a CALL of a made-up function
-+     * with appropriate inline assembly. */
++    /* Okay, the string is a valid, printable string. */
++    char *text = mymalloc(len);
++    int i = 0;
++    for (struct const_list *cx = cl; cx != NULL; cx = cx->next, ++i) {
++	text[i] = cx->other->val.vchar;
++    }
++    return text;
++}
++
++static struct const_list *string_to_const_list(const char *text)
++{
++    struct const_list *cl = NULL;
++    struct const_list **pp = &cl;
++    for (int i=0; /*true*/; ++i) {
++	*pp = mymalloc(CLS);
++	(*pp)->tree = NULL;
++	(*pp)->idx = i;
++	(*pp)->val.vmax = 0;
++	(*pp)->other = mymalloc(CLS);
++	(*pp)->other->next = (*pp)->other->other = NULL;
++	(*pp)->other->tree = NULL;
++	(*pp)->other->idx = 0;
++	(*pp)->other->val.vchar = text[i];
++	pp = &(*pp)->next;
++	*pp = NULL;
++	if (text[i] == '\0')
++	    break;
++    }
++    return cl;
++}
++
++/* Emit a call to printf() with the given arguments. We expect that parameter "p"
++ * will point to an existing printf call, so all we need to do is swap out the
++ * arguments. */
++static void emit_printf(np p, const char *fmt, struct argument_list *other_args)
++{
++    struct argument_list *al = p->alist;
++    assert(al->arg->flags == ADDRESSA);
++    assert(al->arg->left->flags == STRING);
++    struct const_list *saved_cl = al->arg->left->cl;
++    struct const_list *cl = string_to_const_list(fmt);
++    al->arg->left->cl = cl;
++    /* Shrink the declared size of the string literal's char-array type. */
++    int saved_size = al->arg->left->ntyp->size;
++    int length = 0;
++    for (struct const_list *sx = cl; sx; sx = sx->next)
++	++length;
++    assert(length >= 1);
++    al->arg->left->ntyp->size = length;
++    
++    struct argument_list *saved_alist = p->alist;
++    struct argument_list *new_alist = mymalloc(sizeof(struct argument_list));
++    new_alist->arg = al->arg;
++    new_alist->next = other_args;
++    p->alist = new_alist;
++
++    assert(strcmp(p->left->left->o.v->identifier, "printf") == 0);
++    gen_IC(p, /*ltrue=*/0, /*lfalse=*/0);
++
++    p->alist = saved_alist;
++    al->arg->left->cl = saved_cl;
++    al->arg->left->ntyp->size = saved_size;
++    free(new_alist);
++}
++
++static void emit_puts(np p, const char *text)
++{
++    int cap = strlen(text) + 16;
++    char *inline_asm = mymalloc(cap);
++    int len = 8;
++    strcpy(inline_asm, "\tprint \"");
++    for (int i=0; text[i] != '\0'; ++i) {
++	if (len+10 >= cap) {
++	    cap += 20;
++	    inline_asm = myrealloc(inline_asm, cap);
++	}
++	switch (text[i]) {
++	    case '\n': inline_asm[len++] = '^'; break;
++	    case '\t': strcpy(inline_asm+len, "@{9}"); len += 4; break;
++	    case '"': inline_asm[len++] = '~'; break;
++	    case '@': strcpy(inline_asm+len, "@{40}"); len += 5; break;
++	    case '\\': strcpy(inline_asm+len, "@{5c}"); len += 5; break;
++	    case '~': strcpy(inline_asm+len, "@{7e}"); len += 5; break;
++	    case '^': strcpy(inline_asm+len, "@@94\",\""); len += 7; break;
++	    default:
++		/* This should have been assured by const_list_to_string(). */
++		assert(32 <= text[i] && text[i] <= 126);
++		inline_asm[len++] = text[i];
++		break;
++	}
++    }
++    strcpy(inline_asm+len, "\";\n");
++
 +    char pfname[50];
 +    static int counter = 0;
 +    struct Typ voidt = {VOID};
@@ -295,15 +290,21 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
 +    voidfunctyp->flags = FUNKT;
 +    struct Var *pseudofunc = add_var(pfname, voidfunctyp, EXTERN, NULL);
 +    pseudofunc->fi = new_fi();
-+    pseudofunc->fi->inline_asm = puts_buffer;
++    pseudofunc->fi->inline_asm = inline_asm;
++
++    struct Var *saved_v = p->left->left->o.v;
++    struct argument_list *saved_alist = p->alist;
 +    p->left->left->o.v = pseudofunc;
 +    p->alist = NULL;
 +    gen_IC(p, /*ltrue=*/0, /*lfalse=*/0);
++    p->left->left->o.v = saved_v;
++    p->alist = saved_alist;
 +}
++
  
  void gen_IC(np p,int ltrue,int lfalse)
  /*  Erzeugt eine IC-Liste aus einer expression      */
-@@ -915,6 +1048,63 @@
+@@ -915,6 +1049,100 @@
          struct IC *merk_fp,*lp;
  	unsigned int merk_opushed=opushed;
  #endif
@@ -323,9 +324,12 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
 +                al->arg->left != NULL && al->arg->left->flags == STRING &&
 +		al->next == NULL) {
 +                /* Generating IC for puts() of a string literal */
-+                struct const_list *cl = al->arg->left->cl;
-+		if (should_optimize_puts(cl)) {
-+		    gen_optimized_puts(cl, p);
++                char *text = const_list_to_string(al->arg->left->cl);
++		if (text != NULL) {
++		    text = myrealloc(text, strlen(text)+2);
++		    strcat(text, "\n");
++		    emit_puts(p, text);
++		    free(text);
 +		    return;
 +		}
 +            }
@@ -344,32 +348,66 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
 +            if (al != NULL && al->arg != NULL && al->arg->flags == ADDRESSA &&
 +                al->arg->left != NULL && al->arg->left->flags == STRING) {
 +                /* Generating IC for printf("literal", ...) */
-+                struct const_list *cl = al->arg->left->cl;
-+		struct const_list *suffix = extract_putsable_suffix(cl);
-+		if (suffix != NULL) {
-+		    /* Optimize this function call. */
-+		    if (suffix != cl) {
-+			/* Shrink the declared size of the char array that
-+			 * we're using to hold the string literal. */
-+			int length = 0;
-+			for (struct const_list *sx = cl; sx; sx = sx->next)
-+			    ++length;
-+			assert(1 <= length && length < al->arg->left->ntyp->size);
-+			al->arg->left->ntyp->size = length;
-+			gen_IC(p, ltrue, lfalse);
++		char *fmt = const_list_to_string(al->arg->left->cl);
++		if (fmt != NULL) {
++		    int start = 0;
++		    int end;
++		    struct argument_list *current_argument = al->next;
++		    for (end = 0; fmt[end] != '\0'; ++end) {
++			if (fmt[end] != '%')
++			    continue;
++			/* We've hit a format specifier. */
++			if (start != end) {
++			    /* There's some plaintext to print before we
++			     * get to this format specifier. */
++			    fmt[end] = '\0';
++			    emit_puts(p, fmt+start);
++			    fmt[end] = '%';
++			    start = end;
++			}
++			if (fmt[end+1] == 's' || fmt[end+1] == 'd') {
++			    /* We can handle this. */
++			    char saved_ch = fmt[end+2];
++			    if (saved_ch == '\0') goto dont_optimize_printf;
++			    struct argument_list *saved_al = current_argument->next;
++			    fmt[end+2] = '\0';
++			    current_argument->next = NULL;
++			    emit_printf(p, fmt+end, current_argument);
++			    fmt[end+2] = saved_ch;
++			    current_argument->next = saved_al;
++			    /* Advance to the next unconsumed argument. */
++			    current_argument = current_argument->next;
++			    start = end = end+2;
++			} else {
++			    /* Unknown format specifier. Be conservative. */
++			    if (start != 0) {
++				/* Chop off the bit we've already printed. */
++				emit_printf(p, fmt+start, current_argument);
++				return;
++			    } else {
++				goto dont_optimize_printf;
++			    }
++			}
 +		    }
-+		    gen_optimized_puts(suffix, p);
++		    if (start != end) {
++			/* There's plaintext at the end of the format string. */
++			emit_puts(p, fmt+start);
++		    }
++		    /* If we've reached here, we're done emitting the
++		     * optimized code, and we can stop. */
++		    free(fmt);
 +		    return;
 +		}
 +	    }
 +        }
++    dont_optimize_printf:
 +
          if(p->left->flags==ADDRESS&&p->left->left->flags==IDENTIFIER){
              struct Var *v;
              gen_IC(p->left,0,0); r=1;
 diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
---- vbcc/machines/z/machine.c	2012-05-24 12:33:14.000000000 -0700
-+++ vbcc-patched/machines/z/machine.c	2012-05-24 12:21:25.000000000 -0700
+--- vbcc/machines/z/machine.c	2012-06-05 12:54:33.000000000 -0700
++++ vbcc-patched/machines/z/machine.c	2012-06-05 11:17:56.000000000 -0700
 @@ -60,6 +60,10 @@
  static char FILE_[]=__FILE__;
  char cg_copyright[]="vbcc code-generator for Z-machine V0.0a (c) in 2001 by David Given";
@@ -1048,8 +1086,8 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  
  				default:
 diff -Nur vbcc/machines/z/machine.h vbcc-patched/machines/z/machine.h
---- vbcc/machines/z/machine.h	2012-05-07 00:56:43.834504276 -0700
-+++ vbcc-patched/machines/z/machine.h	2012-05-07 00:56:27.562504650 -0700
+--- vbcc/machines/z/machine.h	2012-06-05 12:54:33.000000000 -0700
++++ vbcc-patched/machines/z/machine.h	2012-06-05 11:17:56.000000000 -0700
 @@ -18,7 +18,7 @@
  
  /* Number of command-line options we accept. */
@@ -1060,8 +1098,8 @@ diff -Nur vbcc/machines/z/machine.h vbcc-patched/machines/z/machine.h
  /* If this is set to zero vbcc will not generate ICs where the target operand
   * is the same as the 2nd source operand. This can sometimes simplify the
 diff -Nur vbcc/Makefile vbcc-patched/Makefile
---- vbcc/Makefile	2012-05-07 00:56:43.818504278 -0700
-+++ vbcc-patched/Makefile	2012-05-07 00:56:27.562504650 -0700
+--- vbcc/Makefile	2012-06-05 12:54:33.000000000 -0700
++++ vbcc-patched/Makefile	2012-06-05 11:17:56.000000000 -0700
 @@ -1,6 +1,6 @@
  
  # used to create vbcc, vc and ucpp
@@ -1070,4 +1108,3 @@ diff -Nur vbcc/Makefile vbcc-patched/Makefile
  LDFLAGS = -lm
  
  # native version; used to create dtgen
- 
