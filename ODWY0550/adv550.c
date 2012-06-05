@@ -1196,11 +1196,6 @@ struct Hint {
         "you this - it's always a vital question if you wish to survive.", false
         /* The question is something like "Should I turn on my lantern?" */
     }, {
-    "Do you need help getting out of here?",
-        /* Platt's help text is less subtle than Woods'. */
-        "You can make the passages look less alike by dropping things.  You\n"
-        "could then make a map that would let you find your way around.", false
-    }, {
     "Are you having problems getting out of the ice tunnels?",
         /* Platt's help text is not subtle at all. But the puzzle in question
          * is ingenious. */
@@ -1211,6 +1206,11 @@ struct Hint {
         "Once you've got a complete and accurate map, examine it carefully; if\n"
         "your thoughts refuse to clarify, you might try using the old Yoga\n"
         "trick of standing on your head, and see if that helps.", false
+    }, {
+    "Do you need help getting out of here?",
+        /* Platt's help text is less subtle than Woods'. */
+        "You can make the passages look less alike by dropping things.  You\n"
+        "could then make a map that would let you find your way around.", false
     }
 };
 
@@ -1229,9 +1229,9 @@ void hint_logic(Location loc)
         which_hint = 4;
     } else if (loc == R_PLAIN_2) {
         which_hint = 5;
-    } else if (places[loc].flags & F_INMAZE) {
-        which_hint = 6;
     } else if (R_SLIDE <= loc && loc <= R_ICECAVE30) {
+        which_hint = 6;
+    } else if (places[loc].flags & F_INMAZE) {
         which_hint = 7;
     }
     if (which_hint == -1) return;
