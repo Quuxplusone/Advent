@@ -1086,7 +1086,7 @@ void maybe_do_cameo(Location loc)
     if (there(DWARF, loc) || there(DRAGON, loc) || there(TROLL, loc)) return;
     if (there(SNAKE, loc) || there(QUICKSAND, loc)) return;
     puts("");
-    switch (ran(5)) {
+    switch (ran(7)) {
         case 0:
             /* Platt has a knack for these sentences that don't quite parse
              * on the first reading: a skirl of light? Perhaps this is a nod
@@ -1134,6 +1134,7 @@ void maybe_do_cameo(Location loc)
                 "worth eighty pazools an ounce after all,\" mumbles the cyclops, who\n"
                 "casts one final look at you, shudders, and staggers away out of\n"
                 "sight.\n");
+            break;
         case 5:
             puts("From somewhere in the distance comes a heart-wrenching scream of\n"
                  "mortal terror!  \"NO!  DON'T!  NO!  NO!  HELP!!!!\" cries the voice,\n"
