@@ -58,7 +58,7 @@ int turns;  /* how many times we've read your commands */
 int foobar;  /* progress in the FEE FIE FOE FOO incantation */
 int backlash = 35;  /* percent chance of dwarf attack */
 int fleetfoot = 25;  /* player's modifier to dodge an attack */
-int clock, lastclock;
+int curclock, lastclock;
 int lamplife = 300;
 bool lamp_just_ran_out = false;
 int dwarfcount;  /* total number of dwarves in the cave */
@@ -1078,8 +1078,8 @@ void maybe_do_cameo(Location loc)
     if (pct(95)) return;
     if (turns >= 100+ran(400)) return;
   
-    clock = 10+ran(10);
-    lastclock = clock = 10+ran(10);
+    curclock = 10+ran(10);
+    lastclock = curclock = 10+ran(10);
     if (places[loc].flags & (F_NODWARF | F_LIGHTED | F_ONE_EXIT)) return;
     if (!toting(LAMP) || !objs[LAMP].prop) return;
     if (pirate_stalking_you) return;
@@ -1443,7 +1443,7 @@ void close_the_cave(void)
     }
   
     closure = 3;
-    clock = 999;
+    curclock = 999;
     cylinder_escape_count = 0;
 }
 
@@ -3865,7 +3865,7 @@ int process_verb(Location loc)
             return attempt_phuggg(loc);
         case RUNOUT:
             if (wizard_mode) {
-                clock = 0;
+                curclock = 0;
                 look_around(loc, /*familiar=*/true);
                 ok();
             } else {
@@ -4065,9 +4065,9 @@ bool clock4(Location loc)
                 closure = 0;
         }
         if (closure == 1) {
-            clock = 35;
+            curclock = 35;
         } else {
-            clock = 30+ran(10);
+            curclock = 30+ran(10);
         }
         if (objs[SCULPTURE].prop != 0) {
             /* Once you pick up the sculpture, it starts morphing. */
@@ -4103,7 +4103,7 @@ bool clock4(Location loc)
                  "IF IT IS TO HAVE THE PROPER EFFECT.  FAREWELL AGAIN, AND GOOD LUCK!\"\n"
                  "With that, the djinn-cloud drifts away out of sight.");
             djinn_gave_hint = true;
-            lastclock = clock = 5;
+            lastclock = curclock = 5;
         }
         if (objs[MUSHROOM].prop > 1) {
             mushtime -= lastclock;
@@ -4118,7 +4118,7 @@ bool clock4(Location loc)
                          "grey and unreal.  The fit quickly passes, and you find that your body\n"
                          "has degenerated back to what it was like before you ate the mushroom.\n");
                     strength = 7;
-                    lastclock = clock = 8;
+                    lastclock = curclock = 8;
                 } else {
                     /* The mushroom grows back, in the cubicle. */
                     objs[MUSHROOM].prop = 0;
@@ -4129,7 +4129,7 @@ bool clock4(Location loc)
         maybe_do_cameo(loc);
         if ((places[R_EMIST].flags | places[R_Y2].flags) & F_BEENHERE) {
             if (places[loc].flags & F_NODWARF) {
-                clock = 8+ran(10);
+                curclock = 8+ran(10);
             } else {
                 /* Have we been here a while without seeing the pirate?
                  * Maybe he should show up. */
@@ -4181,7 +4181,7 @@ bool clock4(Location loc)
                         } else {
                             puts("There are faint rustling noises from the darkness behind you.");
                             pirate_stalking_you = true;
-                            clock = 4+ran(10);
+                            curclock = 4+ran(10);
                         }
                     }
                 } else {
@@ -4229,7 +4229,7 @@ bool clock4(Location loc)
         apport(TROLL, R_LIMBO);
         objs[FISSURE].flags |= F_INVISIBLE;
         objs[GORGE].flags |= F_INVISIBLE;
-        clock = 25;
+        curclock = 25;
     } else {
         /* It's closing time! This is a more evil trick than the
          * one in Woods' code: as long as the panicked player keeps
@@ -4238,12 +4238,12 @@ bool clock4(Location loc)
          * will the cave finally close on its own. */
         if (panicked) {
             panicked = false;
-            clock = 15;
+            curclock = 15;
         } else {
             close_the_cave();
         }
     }
-    lastclock = clock;
+    lastclock = curclock;
     return (closure == 3);  /* true if the cave is now closed */
 }
 
@@ -4298,7 +4298,7 @@ void simulate_an_adventure(void)
     Location loc = R_YLEM;
     Location newloc = R_ROAD;
 
-    clock = 15+ran(10);
+    curclock = 15+ran(10);
     dwarfcount = 4+ran(5);
 
     if (false) {
@@ -4397,8 +4397,8 @@ void simulate_an_adventure(void)
                  * you can reach the endgame in ~350 turns, you will never see
                  * the bug introduced by this shortcut. This code is cleaner
                  * if I don't preserve that bug, so I haven't. */
-                clock -= (familiar_place ? 2 : 3);
-                if (clock <= 0) {
+                curclock -= (familiar_place ? 2 : 3);
+                if (curclock <= 0) {
                     if (clock4(loc)) {
                         goto cave_just_closed;
                     }
