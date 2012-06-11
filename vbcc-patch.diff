@@ -155,8 +155,8 @@ diff -Nur vbcc/frontend/vc.c vbcc-patched/frontend/vc.c
          if(!strncmp(parm,"-isc=",5)){scname=parm+5;*parm=0;}
          if(!strncmp(parm,"-iscv=",6)){scv=parm+6;*parm=0;}
 diff -Nur vbcc/ic.c vbcc-patched/ic.c
---- vbcc/ic.c	2012-06-05 12:54:33.000000000 -0700
-+++ vbcc-patched/ic.c	2012-06-05 12:51:55.000000000 -0700
+--- vbcc/ic.c	2012-06-11 15:52:23.000000000 -0700
++++ vbcc-patched/ic.c	2012-06-11 15:46:59.000000000 -0700
 @@ -1,5 +1,6 @@
  /*  $VER: vbcc (ic.c) V0.8  */
  
@@ -164,7 +164,7 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
  #include "vbc.h"
  #include "opt.h"
  
-@@ -488,6 +489,139 @@
+@@ -488,6 +489,177 @@
    return new;
  }
  
@@ -217,6 +217,43 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
 +    return cl;
 +}
 +
++static void emit_print_num(np p, struct argument_list *arg)
++{
++    assert(strcmp(p->left->left->o.v->identifier, "printf") == 0);
++    
++    static struct Var *internal_print_num = NULL;
++    static struct Typ *voidfunc_ptr_typ = NULL;
++    if (internal_print_num == NULL) {
++	struct Typ voidt = {VOID};
++	struct Typ *voidfunctyp = new_typ();
++	voidfunctyp->next = clone_typ(&voidt);  /* returning void */
++	voidfunctyp->exact = mymalloc(sizeof *voidfunctyp->exact);
++	voidfunctyp->exact->count = 0;  /* taking unspecified arguments */
++	voidfunctyp->flags = FUNKT;
++	internal_print_num = add_var("XXinternal_print_num", voidfunctyp, EXTERN, NULL);
++	internal_print_num->fi = new_fi();
++	internal_print_num->fi->inline_asm = malloc(sizeof("\t@print_num r0;\n"));
++	strcpy(internal_print_num->fi->inline_asm, "\t@print_num r0;\n");
++	
++	voidfunc_ptr_typ = new_typ();
++	voidfunc_ptr_typ->next = clone_typ(voidfunctyp);
++	voidfunc_ptr_typ->flags = POINTER_TYPE(voidfunc_ptr_typ->next);
++    }
++    
++    struct argument_list *saved_alist = p->alist;
++    struct Var *saved_ov = p->left->left->o.v;
++    struct Typ *saved_ntyp = p->left->ntyp;
++    p->alist = arg;
++    assert(arg->next == NULL);
++    p->left->left->o.v = internal_print_num;
++    p->left->ntyp = voidfunc_ptr_typ;
++    gen_IC(p, /*ltrue=*/0, /*lfalse=*/0);
++
++    p->left->left->o.v = saved_ov;
++    p->left->ntyp = saved_ntyp;
++    p->alist = saved_alist;
++}
++
 +/* Emit a call to printf() with the given arguments. We expect that parameter "p"
 + * will point to an existing printf call, so all we need to do is swap out the
 + * arguments. */
@@ -253,6 +290,7 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
 +
 +static void emit_puts(np p, const char *text)
 +{
++    assert(*text != '\0');
 +    int cap = strlen(text) + 16;
 +    char *inline_asm = mymalloc(cap);
 +    int len = 8;
@@ -304,7 +342,7 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
  
  void gen_IC(np p,int ltrue,int lfalse)
  /*  Erzeugt eine IC-Liste aus einer expression      */
-@@ -915,6 +1049,100 @@
+@@ -915,6 +1087,129 @@
          struct IC *merk_fp,*lp;
  	unsigned int merk_opushed=opushed;
  #endif
@@ -349,13 +387,25 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
 +                al->arg->left != NULL && al->arg->left->flags == STRING) {
 +                /* Generating IC for printf("literal", ...) */
 +		char *fmt = const_list_to_string(al->arg->left->cl);
-+		if (fmt != NULL) {
++		if (fmt == NULL) {
++		    /* The format string contains some unprintable characters.
++		     * Fall back on the standard library's printf()
++		     * implementation. */
++		} else if (strcmp(fmt, "%s") == 0) {
++		    /* This should compile to fputs(), but for now let's allow
++		     * it also to fall back on the default printf(). */
++		} else if (fmt[0] == '%' && fmt[1] != 'd' && fmt[1] != 's') {
++		    /* The format string *begins* with an unrecognized
++		     * format specifier. We can't optimize this one. */
++		} else {
 +		    int start = 0;
 +		    int end;
 +		    struct argument_list *current_argument = al->next;
-+		    for (end = 0; fmt[end] != '\0'; ++end) {
-+			if (fmt[end] != '%')
++		    for (end = 0; fmt[end] != '\0'; ) {
++			if (fmt[end] != '%') {
++			    ++end;
 +			    continue;
++			}
 +			/* We've hit a format specifier. */
 +			if (start != end) {
 +			    /* There's some plaintext to print before we
@@ -365,28 +415,37 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
 +			    fmt[end] = '%';
 +			    start = end;
 +			}
-+			if (fmt[end+1] == 's' || fmt[end+1] == 'd') {
-+			    /* We can handle this. */
-+			    char saved_ch = fmt[end+2];
-+			    if (saved_ch == '\0') goto dont_optimize_printf;
++			assert(start == end);
++			assert(fmt[start] == '%');
++			if (fmt[start+1] == 'd') {
 +			    struct argument_list *saved_al = current_argument->next;
-+			    fmt[end+2] = '\0';
 +			    current_argument->next = NULL;
-+			    emit_printf(p, fmt+end, current_argument);
-+			    fmt[end+2] = saved_ch;
++			    emit_print_num(p, current_argument);
 +			    current_argument->next = saved_al;
 +			    /* Advance to the next unconsumed argument. */
 +			    current_argument = current_argument->next;
-+			    start = end = end+2;
++			    start = end = start+2;
++			} else if (fmt[start+1] == 's') {
++			    struct argument_list *saved_al = current_argument->next;
++			    current_argument->next = NULL;
++			    /* Recurse to handle this one. */
++			    emit_printf(p, "%s", current_argument);
++			    current_argument->next = saved_al;
++			    /* Advance to the next unconsumed argument. */
++			    current_argument = current_argument->next;
++			    start = end = start+2;
++			} else if (fmt[start+1] == '%') {
++			    emit_puts(p, "%");
++			    start = end = start+2;
 +			} else {
-+			    /* Unknown format specifier. Be conservative. */
-+			    if (start != 0) {
-+				/* Chop off the bit we've already printed. */
-+				emit_printf(p, fmt+start, current_argument);
-+				return;
-+			    } else {
-+				goto dont_optimize_printf;
-+			    }
++			    /* This format specifier is unrecognized. It might
++			     * for example be "%x" or "%02.5d". We must be
++			     * conservative and fall back on the standard
++			     * library's printf() for the entire rest of the
++			     * format string. */
++			    emit_printf(p, fmt+start, current_argument);
++			    free(fmt);
++			    return;
 +			}
 +		    }
 +		    if (start != end) {
@@ -394,13 +453,21 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
 +			emit_puts(p, fmt+start);
 +		    }
 +		    /* If we've reached here, we're done emitting the
-+		     * optimized code, and we can stop. */
++		     * optimized code, and we can stop. But we do need
++		     * to make sure we've evaluated all the arguments,
++		     * even if the user wrote something like
++		     *     printf("hello world\n", ++foo);
++		     * where the arguments go unused. */
++		    while (current_argument != NULL) {
++			gen_IC(current_argument->arg, /*ltrue=*/0, /*lfalse=*/0);
++			current_argument = current_argument->next;
++		    }
 +		    free(fmt);
 +		    return;
 +		}
++		free(fmt);
 +	    }
 +        }
-+    dont_optimize_printf:
 +
          if(p->left->flags==ADDRESS&&p->left->left->flags==IDENTIFIER){
              struct Var *v;
