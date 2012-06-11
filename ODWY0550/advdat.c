@@ -585,7 +585,7 @@ int at_w2pit(void)
     }
     return 0;  /* command hasn't been processed yet */
 }
- 
+
 int at_epit(void)
 {
     if (used_movement_verb2(UP, OUT)) return R_E2PIT;

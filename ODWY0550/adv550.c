@@ -501,10 +501,10 @@ void build_object_table(void)
     /* Platt has "imbedded". */
     objs[TABLET].desc[0] = "A massive stone tablet embedded in the wall reads:\n"
                            "\"Congratulations on bringing light into the Dark room!\"";
-    objs[PLANT].desc[0] = "There is a tiny little plant in the pit, murmuring \"Water, water, ...\"";                
+    objs[PLANT].desc[0] = "There is a tiny little plant in the pit, murmuring \"Water, water, ...\"";              
     objs[PLANT].desc[1] = "There is a 12-foot-tall beanstalk stretching up out of the pit,\n"
                           "bellowing \"WATER!! WATER!!\"";
-    objs[PLANT].desc[2] = "There is a gigantic beanstalk stretching all the way up to the hole.";                
+    objs[PLANT].desc[2] = "There is a gigantic beanstalk stretching all the way up to the hole.";              
 
     objs[PLANT2].desc[1] = "The top of a 12-foot-tall beanstalk is poking out of the west pit.";
     objs[PLANT2].desc[2] = "There is a huge beanstalk growing out of the west pit up to the hole.";
@@ -869,7 +869,7 @@ void listen(void)
             got_a_command = true;
         }
     }
-    
+  
     if (!got_a_command) {
         printf("> "); fflush(stdout);
         fgets(buffer, sizeof buffer, stdin);
@@ -957,7 +957,7 @@ bool dwarf_attack(void)
                     if (plural) {
                         puts("Your magic ring shoots a bolt of lightning that splinters the\n"
                              "knives into dust before they can reach you!");
-                        
+                      
                     } else {
                         puts("Your magic ring shoots a bolt of lightning that splinters the\n"
                              "knife into dust before it can reach you!");
@@ -1073,11 +1073,11 @@ void maybe_do_cameo(Location loc)
      */
     static bool no_more_cameos = false;
     if (no_more_cameos) return;
-    
+  
     no_more_cameos = true;
     if (pct(95)) return;
     if (turns >= 100+ran(400)) return;
-    
+  
     clock = 10+ran(10);
     lastclock = clock = 10+ran(10);
     if (places[loc].flags & (F_NODWARF | F_LIGHTED | F_ONE_EXIT)) return;
@@ -1441,7 +1441,7 @@ void close_the_cave(void)
         if (places[i].flags & F_NOTINCAVE)
             places[i].flags &= ~F_BEENHERE;
     }
-    
+  
     closure = 3;
     clock = 999;
     cylinder_escape_count = 0;
@@ -2342,7 +2342,7 @@ int no_move_possible(Location loc)
     } else {
         const char *dirs[8] = {
             "east", "west", "north", "south", "northeast", "southeast",
-            "northwest", "southwest" 
+            "northwest", "southwest"
         };
         VerbWord dir_verb = (keywordv(WALK) ? word2.meaning : word1.meaning);
         const char *dir = (dir_verb == UP) ? "up" :
@@ -2797,7 +2797,7 @@ int attempt_kill(Location loc)
                 puts("You attack the strange blob, but bounce harmlessly off of its strong\n"
                      "but very rubbery skin.");
                 return STAY_STILL;
-            case BEAR: 
+            case BEAR:
                 if (objs[BEAR].prop == 0) {
                     puts("With what?  Your bare hands??  Against *his* bear hands???  Don't be\n"
                          "ridiculous - he'd tear you to shreds!");
@@ -4372,7 +4372,7 @@ void simulate_an_adventure(void)
                 if (!there(DWARF, R_LIMBO) && !(places[loc].flags & (F_NOTINCAVE|F_NODWARF))) {
                     apport(DWARF, loc);
                 }
-                
+              
                 look_around(loc, familiar_place);
             }
             lamp_just_ran_out = false;

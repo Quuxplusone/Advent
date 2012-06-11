@@ -26,8 +26,8 @@ FILE *stdout = (FILE *)&stdout;
 void puts(const char *s)
 {
     while (*s) {
-	putc(*s, stdout);
-	++s;
+        putc(*s, stdout);
+        ++s;
     }
     putc('\n', stdout);
 }
@@ -35,7 +35,7 @@ void puts(const char *s)
 void strcpy(char *dst, const char *src)
 {
     while (*src) {
-	*dst++ = *src++;
+        *dst++ = *src++;
     }
     *dst = '\0';
 }
@@ -44,10 +44,10 @@ int strncmp(const char *a, const char *b, int n)
 {
     unsigned char ca, cb;
     while (n > 0 && *a == *b) {
-	--n;
-	if (n == 0 || *a == '\0')
-	    return 0;
-	++a, ++b;
+        --n;
+        if (n == 0 || *a == '\0')
+            return 0;
+        ++a, ++b;
     }
     ca = *a;
     cb = *b;
@@ -62,27 +62,27 @@ void printf(const char *format, ...)
     va_list ap;
     va_start(ap, format);
     while (c = *format++) {
-	if (c == '%') {
-	    switch (c = *format++) {
-		case 'd': {
-		    int i = va_arg(ap, int);
-		    _print_int(i);
-		    break;
-		}
-		case 's': {
-		    char *s = va_arg(ap, char*);
-		    while (c = *s++)
-			putc(c, stdout);
-		    break;
-		}
-		default: {
-		    putc(c, stdout);
-		    break;
-		}
-	    }
-	} else {
-	    putc(c, stdout);
-	}
+        if (c == '%') {
+            switch (c = *format++) {
+                case 'd': {
+                    int i = va_arg(ap, int);
+                    _print_int(i);
+                    break;
+                }
+                case 's': {
+                    char *s = va_arg(ap, char*);
+                    while (c = *s++)
+                        putc(c, stdout);
+                    break;
+                }
+                default: {
+                    putc(c, stdout);
+                    break;
+                }
+            }
+        } else {
+            putc(c, stdout);
+        }
     }
     va_end(ap);
 }

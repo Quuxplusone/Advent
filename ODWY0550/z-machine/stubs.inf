@@ -29,24 +29,24 @@ Array fgets_buffer -> 253;
 [ _fgets xp buf size stdin  len i;
     fgets_buffer->0 = 250;
     read fgets_buffer 0;
-	len = fgets_buffer->1;
-	! Copy as many characters as we can from fgets_buffer to the caller's buffer.
-	if (len > size-2) len = size-2;
+    len = fgets_buffer->1;
+    ! Copy as many characters as we can from fgets_buffer to the caller's buffer.
+    if (len > size-2) len = size-2;
     for (i=0 : i < len : ++i) {
-	    buf->i = fgets_buffer->(2+i);
-	}
-	! Newline- and null-terminate the string.
-	buf->i = 10;
-	buf->(i+1) = 0;
-	return buf;
+        buf->i = fgets_buffer->(2+i);
+    }
+    ! Newline- and null-terminate the string.
+    buf->i = 10;
+    buf->(i+1) = 0;
+    return buf;
 ];
 
 [ _putc xp ch stdout;
     if (ch == 10)
-		ch = 13;
-	print (char) ch;
+        ch = 13;
+    print (char) ch;
 ];
 
 [ _exit xp zero;
-	@quit;
+    @quit;
 ];
