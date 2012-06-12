@@ -121,6 +121,7 @@ struct HashEntry {
 
 #define HASH_PRIME 1009
 struct HashEntry hash_table[HASH_PRIME];
+const char *default_object_spelling[MAX_OBJ+1];
 
 void new_word(WordType t, const char *w, int m)
 {
@@ -133,6 +134,8 @@ void new_word(WordType t, const char *w, int m)
     hash_table[h].text = w;
     hash_table[h].word_type = t;
     hash_table[h].meaning = m;
+    if (t == WordType_Object && default_object_spelling[m] == NULL)
+        default_object_spelling[m] = w;
 }
 
 void new_verb(const char *w, VerbWord m) { new_word(WordType_Verb, w, m); }
@@ -1566,11 +1569,10 @@ ObjectWord default_to_something(bool (*predicate)(ObjectWord), Location loc)
         if (candidate != NOTHING) return NOTHING;
         candidate = i;
     }
-    /* We don't update word2.text, but that's okay, because the caller
-     * never tries to print the name of the object in this case. */
     if (candidate != NOTHING) {
         word2.type = WordType_Object;
         word2.meaning = candidate;
+        strcpy(word2.text, default_object_spelling[candidate]);
     }
     return candidate;
 }
@@ -2388,8 +2390,6 @@ int attempt_open(Location loc)
 {
     if (word2.type == WordType_None) {
         default_to_something(openable, loc);
-        if (word2.meaning == FLASK)
-            strcpy(word2.text, "flask");
     }
     if (keywordo(GRATE) && there(GRATE, loc)) {
         if (!toting(KEYS)) {
