@@ -593,6 +593,7 @@ void build_object_table(void)
     objs[SPICES].desc[0] = "There are rare spices here!";
     objs[BEADS].desc[0] = "There is a string of ancient Indian turquoise beads draped casually\n"
                           "over the edge of the balcony!";
+    objs[BEADS].desc[1] = "There is a string of ancient Indian turquoise beads here!";
     objs[CHAIN].desc[0] = "There is a golden chain lying in a heap on the floor!";
     objs[CHAIN].desc[1] = "The bear is locked to the wall with a golden chain!";
     objs[CHAIN].desc[2] = "There is a golden chain locked to the wall!";
@@ -4168,21 +4169,19 @@ bool clock4(Location loc)
                             apport(CHEST, R_PIRATES_NEST);
                             apport(MESSAGE, R_PONY);
                         }
+                    } else if (turns > 150 && !(objs[PIRATE].flags & F_SEEN)) {
+                        apport(CHEST, R_PIRATES_NEST);
+                        apport(MESSAGE, R_PONY);
+                        puts("\nThere are faint rustling noises from the darkness behind you.  As you\n"
+                             "turn toward them, the beam of your lamp falls across a bearded pirate.\n"
+                             "He is carrying a large chest.  \"Shiver me timbers!\" he cries, \"I've\n"
+                             "been spotted!  I'd best hie meself off to the maze to hide me chest!\"\n"
+                             "With that, he vanishes into the gloom.");
+                        objs[PIRATE].flags |= F_SEEN;
                     } else {
-                        if (turns > 150 && !(objs[PIRATE].flags & F_SEEN)) {
-                            apport(CHEST, R_PIRATES_NEST);
-                            apport(MESSAGE, R_PONY);
-                            puts("\nThere are faint rustling noises from the darkness behind you.  As you\n"
-                                 "turn toward them, the beam of your lamp falls across a bearded pirate.\n"
-                                 "He is carrying a large chest.  \"Shiver me timbers!\" he cries, \"I've\n"
-                                 "been spotted!  I'd best hie meself off to the maze to hide me chest!\"\n"
-                                 "With that, he vanishes into the gloom.");
-                            objs[PIRATE].flags |= F_SEEN;
-                        } else {
-                            puts("There are faint rustling noises from the darkness behind you.");
-                            pirate_stalking_you = true;
-                            curclock = 4+ran(10);
-                        }
+                        puts("There are faint rustling noises from the darkness behind you.");
+                        pirate_stalking_you = true;
+                        curclock = 4+ran(10);
                     }
                 } else {
                     /* The pirate is not appearing right now. */

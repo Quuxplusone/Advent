@@ -3099,7 +3099,7 @@ static const char ice_tunnels[] = "You are in an intricate network of ice tunnel
 static const char enchanted_tunnels[] = "You are in the catacombs.  Enchanted tunnels lead in all directions.";
 
 /* R_INSAFE and R_BALCONY are both marked F_NODWARF|F_ONE_EXIT, which is
-  * somewhat silly, as F_ONE_EXIT has no effect without a dwarf in the room. */
+ * somewhat silly, as F_ONE_EXIT has no effect without a dwarf in the room. */
 
 struct Place places[] = {
     /* R_LIMBO */ {
@@ -3112,47 +3112,47 @@ struct Place places[] = {
         "You are standing at the end of a road before a small brick building.\n"
         "Around you is a forest.  A small stream flows out of the building and\n"
         "down a gully.",
-        F_LIGHTED|F_WATER|F_NOTINCAVE, &at_road
+        F_LIGHTED|F_WATER|F_NOTINCAVE|F_NODWARF, &at_road
     },
     /* R_HILL */ {
         "You're at hill in road.",
         "You have walked up a hill, still in the forest. The road slopes back\n"
         "down the other side of the hill.  There is a building in the distance.",
-        F_LIGHTED|F_NOTINCAVE, &at_hill
+        F_LIGHTED|F_NOTINCAVE|F_NODWARF, &at_hill
     },
     /* R_HOUSE */ {
         "You're inside building.",
         "You are inside a building, a well house for a large spring.",
-        F_LIGHTED|F_NOTINCAVE|F_WATER, &at_house
+        F_LIGHTED|F_NOTINCAVE|F_NODWARF|F_WATER, &at_house
     },
     /* R_VALLEY */ {
         "You're in valley.",
         "You are in a valley in the forest beside a stream tumbling along a\n"
         "rocky bed.",
-        F_LIGHTED|F_NOTINCAVE|F_WATER, &at_valley
+        F_LIGHTED|F_NOTINCAVE|F_NODWARF|F_WATER, &at_valley
     },
     /* R_FOREST */ {
         "You're in forest.",
         "You are in open forest, with a deep valley to one side.",
-        F_LIGHTED|F_NOTINCAVE, &at_forest
+        F_LIGHTED|F_NOTINCAVE|F_NODWARF, &at_forest
     },
     /* R_FOREST2 */ {
         "You're in forest.",
         "You are in open forest near both a valley and a road.",
-        F_LIGHTED|F_NOTINCAVE, &at_forest2
+        F_LIGHTED|F_NOTINCAVE|F_NODWARF, &at_forest2
     },
     /* R_SLIT */ {
         "You're at slit in streambed.",
         "At your feet all the water of the stream splashes into a 2-inch slit\n"
         "in the rock.  Downstream the streambed is bare rock.",
-        F_LIGHTED|F_NOTINCAVE|F_WATER, &at_slit
+        F_LIGHTED|F_NOTINCAVE|F_NODWARF|F_WATER, &at_slit
     },
     /* R_DEPRESSION */ {
         "You're outside grate.",
         "You are in a 20-foot depression floored with bare dirt. Set into the\n"
         "dirt is a strong steel grate mounted in concrete.  A dry streambed\n"
         "leads into the depression.",
-        F_LIGHTED|F_HINTABLE|F_NOTINCAVE, &at_depression
+        F_LIGHTED|F_HINTABLE|F_NOTINCAVE|F_NODWARF, &at_depression
     },
     /* R_INSIDE */ {
         "You're below the grate.",
@@ -3660,7 +3660,7 @@ struct Place places[] = {
         "You're at slit in streambed.",
         "At your feet all the water of the stream splashes into a 2-foot slit\n"
         "in the rock.  Downstream the streambed is bare rock.",
-        F_LIGHTED|F_NOTINCAVE, &at_fake_slit
+        F_LIGHTED|F_NOTINCAVE|F_NODWARF, &at_fake_slit
     },
     /* R_CYLINDRICAL */ {
         "You're in cylindrical chamber.",

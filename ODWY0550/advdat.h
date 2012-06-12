@@ -120,7 +120,7 @@ enum flagsBits {
     F_BEENHERE   = 0x002,
     F_NODWARF    = 0x004,
     F_NOBACK     = 0x008,
-    F_NOTINCAVE  = 0x014,  /* All places NOTINCAVE are also forbidden to dwarves. */
+    F_NOTINCAVE  = 0x010,
     F_HINTABLE   = 0x020,
     F_WATER      = 0x040,
     F_INMAZE     = 0x080,
