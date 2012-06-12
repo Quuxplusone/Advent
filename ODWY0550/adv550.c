@@ -1788,11 +1788,8 @@ int attempt_take(ObjectWord obj, Location loc)
 
 int dropbird(Location loc)
 {
-    if (there(BIRD, loc)) {
+    if (!toting(BIRD)) {
         puts("You aren't carrying it!");
-        return STAY_STILL;
-    } else if (!toting(BIRD)) {
-        I_see_no(word2.text);
         return STAY_STILL;
     }
     apport(BIRD, loc);
@@ -2390,6 +2387,8 @@ int attempt_open(Location loc)
 {
     if (word2.type == WordType_None) {
         default_to_something(openable, loc);
+        if (word2.meaning == FLASK)
+            strcpy(word2.text, "flask");
     }
     if (keywordo(GRATE) && there(GRATE, loc)) {
         if (!toting(KEYS)) {
