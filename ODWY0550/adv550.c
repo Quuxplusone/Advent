@@ -850,6 +850,21 @@ void parse(struct InputWordInfo *w)
     }
 }
 
+bool is_ignoreable_word(const struct InputWordInfo *w)
+{
+    /* Certain words don't contribute to the input command at all. */
+    const char *s = w->text;
+    if (streq(s, "a")) return true;
+    if (streq(s, "an")) return true;
+    if (streq(s, "it")) return true;
+    if (streq(s, "that")) return true;
+    if (streq(s, "the")) return true;
+    if (streq(s, "them")) return true;
+    if (streq(s, "this")) return true;
+    if (streq(s, "to")) return true;
+    return false;
+}
+
 void listen(void)
 {
     static struct InputWordInfo saved_word;
@@ -878,25 +893,30 @@ void listen(void)
         printf("> "); fflush(stdout);
         fgets(buffer, sizeof buffer, stdin);
         for (p = buffer; isspace(*p); ++p) ;
-        if (*p == '\0') {
-            word1.text[0] = '\0';
-        } else {
-            for (q = word1.text; !isspace(*p) && *p != ','; ++p, ++q) {
-                if (q == word1.text+15) break;  /* buffer overflow prevention */
-                *q = tolower(*p);
+        do {
+            if (*p == '\0') {
+                word1.text[0] = '\0';
+            } else {
+                for (q = word1.text; !isspace(*p) && *p != ','; ++p, ++q) {
+                    if (q == word1.text+15) break;  /* buffer overflow prevention */
+                    *q = tolower(*p);
+                }
+                *q = '\0';
+                for (++p; isspace(*p); ++p) ;
             }
-            *q = '\0';
-            for (++p; isspace(*p); ++p) ;
-        }
-        if (*p == '\0') {
-            word2.text[0] = '\0';
-        } else {
-            for (q = word2.text; !isspace(*p) && *p != ','; ++p, ++q) {
-                if (q == word2.text+15) break;  /* buffer overflow prevention */
-                *q = tolower(*p);
+        } while (is_ignoreable_word(&word1));
+        do {
+            if (*p == '\0') {
+                word2.text[0] = '\0';
+            } else {
+                for (q = word2.text; !isspace(*p) && *p != ','; ++p, ++q) {
+                    if (q == word2.text+15) break;  /* buffer overflow prevention */
+                    *q = tolower(*p);
+                }
+                *q = '\0';
+                for (++p; isspace(*p); ++p) ;
             }
-            *q = '\0';
-        }
+        } while (is_ignoreable_word(&word2));
     }
 
     parse(&word1);
