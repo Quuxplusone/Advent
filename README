@@ -1,6 +1,6 @@
 
-This is a translation of Crowther and Woods' "Adventure" into
-modern, modular C99.
+This project provides translations into modern, modular C99 of two classic
+games: Crowther and Woods' "Adventure" and David Platt's "Adventure 550".
 
 ===========================================================================
 
@@ -36,7 +36,7 @@ a code snippet than to create a C function call for it.
 
 But even though Knuth's "tangled" C program is indeed a tangled mass of
 code (it uses 81 global variables, and the main() function is 3270 lines
-long), it's mostly modular in its construction. I've followed Knuth's
+long), its construction is mostly modular. I've followed Knuth's
 organization very closely in my translation.
 
 ===========================================================================
@@ -64,6 +64,38 @@ The history of "Adventure" on the Z-machine, as far as I know, is:
   and got it running on the Z-machine. Play it here:
   http://quuxplusone.github.com/Advent/play.html
 
+===========================================================================
+
+The history of David Platt's "Adventure 550" is much shorter:
+
+  The original "Adventure" was written in Fortran IV by Will Crowther,
+  and extended also in Fortran by Don Woods.
+
+  Circa 1979, Dave Platt released the first version of "Adventure 550",
+  while he was working for Honeywell. He continued maintaining it for
+  several years, up until at least 1984. "Adventure 550" had a parser
+  written in standard Fortran 77, and all the game-specific logic written
+  in Platt's own language called "A-code", which was compiled into a set
+  of external data files consumed by the Adventure program itself.
+
+  Circa 1989, Mike Arnautov released "Adventure 4+", which merged Platt's
+  extension and Jack Pike's "Adventure II" extension (a.k.a. ADV440)
+  into a single 660-point game.
+
+  For this translation, my primary source was Platt's A-code circa
+  September 1984 (according to the in-game NEWS command), plus a
+  copy of Platt's Fortran 77 kernel as reconstructed by Mike Arnautov
+  by removing features from his own "Adventure 4+" kernel, as described
+  in the file "PLAT0550/README.txt". 
+
+The history of "Adventure 550" on the Z-machine, as far as I know, is:
+
+  In June 2012, Arthur O'Dwyer (that's me!) ported "Adventure 550" to C
+  and got it running on the Z-machine. Play it here:
+  http://quuxplusone.github.com/Advent/play-550.html
+
+===========================================================================
+
 To run C code on the Z-machine, I'm using "vbccz", a Z-machine backend
 written by David Given in 2008 for Volker Barthelmann's open-source C
 compiler "vbcc". This git repository hosts an unmodified copy of "vbcc"
@@ -80,3 +112,6 @@ I haven't bothered to include David Given's "runtime.s" library in
 this repository. And don't even talk to me about floating point!
 The unimplemented areas might give an internal assertion error, if
 you're lucky, but they might just generate bad code. Use with caution.
+
+                                                  Arthur O'Dwyer
+                                                  June 2012
