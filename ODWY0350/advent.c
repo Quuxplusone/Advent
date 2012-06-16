@@ -1947,18 +1947,18 @@ bool move_dwarves_and_pirate(Location loc)
             if (dtotal == 1) {
                 puts("There is a threatening little dwarf in the room with you!");
             } else {
-                printf("There are %d threatening little dwarves in the room with you!\n", dtotal);
+                printf("There are %d threatening little dwarves in the room with you.\n", dtotal);
             }
             if (attack) {
                 if (dflag == 2) dflag = 3;
                 if (attack == 1) {
-                    printf("One sharp nasty knife is thrown at you --- ");
-                    if (stick == 0) puts("it misses!");
-                    else puts("it gets you!");
+                    puts("One sharp nasty knife is thrown at you!");
+                    if (stick == 0) puts("It misses!");
+                    else puts("It gets you!");
                 } else {
-                    printf(" %d of them throw knives at you --- ", attack);
-                    if (stick == 0) puts("none of them hit you!");
-                    else if (stick == 1) puts("one of them gets you!");
+                    printf("%d of them throw knives at you!\n", attack);
+                    if (stick == 0) puts("None of them hit you!");
+                    else if (stick == 1) puts("One of them gets you!");
                     else printf("%d of them get you!\n", stick);
                 }
                 if (stick) return true;  /* goto death */
