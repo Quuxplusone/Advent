@@ -86,118 +86,79 @@ static int plunge(void)
     return you_are_dead_at(R_YLEM);
 }
 
-bool used_movement_obj(ObjectWord where_to)
-{
-    switch (word1.type) {
-        case WordType_Object:
-            return ((ObjectWord)word1.meaning == where_to);
-        case WordType_Verb:
-            if (word1.meaning == WALK || word1.meaning == SAY)
-                return (word2.type == WordType_Object && (ObjectWord)word2.meaning == where_to);
-            return false;
-	default:
-	    break;
-    }
-    return false;
-}
-
-bool used_movement_placeword(Location where_to)
+bool movement(WordType t, int meaning)
 {
     /* HOUSE FOO will take you to the house, even if FOO is unrecognized;
      * whereas FOO HOUSE will not. SAY HOUSE does basically the same thing
      * as HOUSE. */
-    switch (word1.type) {
-        case WordType_Place:
-            return (word1.meaning == where_to);
-        case WordType_Verb:
-            if (word1.meaning == WALK || word1.meaning == SAY)
-                return (word2.type == WordType_Place && word2.meaning == where_to);
-            return false;
-	default:
-	    break;
+    if (word1.type == t && word1.meaning == meaning)
+	return true;
+    if (word1.type == WordType_Verb) {
+	if (word1.meaning == WALK || word1.meaning == SAY)
+	    return (word2.type == t && word2.meaning == meaning);
     }
     return false;
 }
 
-bool used_movement_objword(ObjectWord where_to)
+bool movemento(ObjectWord m) { return movement(WordType_Object, m); }
+bool movementp(Location m) { return movement(WordType_Place, m); }
+bool movementv(VerbWord m) { return movement(WordType_Verb, m); }
+
+bool movementv2(VerbWord a, VerbWord b)
 {
-    switch (word1.type) {
-        case WordType_Object:
-            return (word1.meaning == (int)where_to);
-        case WordType_Verb:
-            if (word1.meaning == WALK || word1.meaning == SAY)
-                return (word2.type == WordType_Object && word2.meaning == (int)where_to);
-            return false;
-	default:
-	    break;
-    }
-    return false;
+    return movementv(a) || movementv(b);
 }
 
-bool used_movement_verb(VerbWord where_to)
+bool movementv3(VerbWord a, VerbWord b, VerbWord c)
 {
-    if (word1.type != WordType_Verb) return false;
-    if (word1.meaning == (int)where_to) return true;
-    if (word1.meaning == WALK || word1.meaning == SAY)
-        return (word2.type == WordType_Verb && word2.meaning == (int)where_to);
-    return false;
-}
-
-bool used_movement_verb2(VerbWord a, VerbWord b)
-{
-    return used_movement_verb(a) || used_movement_verb(b);
-}
-
-bool used_movement_verb3(VerbWord a, VerbWord b, VerbWord c)
-{
-    return used_movement_verb(a) || used_movement_verb(b) || used_movement_verb(c);
+    return movementv2(a, b) || movementv(c);
 }
 
 int at_limbo(void)
 {
-    if (used_movement_verb(OUT)) return R_HOUSE;
+    if (movementv(OUT)) return R_HOUSE;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_road(void)
 {
-    if (used_movement_placeword(R_ROAD)) return R_HILL;
-    if (used_movement_verb2(WEST, UP)) return R_HILL;
-    if (used_movement_verb2(IN, EAST)) return R_HOUSE;
-    if (used_movement_placeword(R_HOUSE)) return R_HOUSE;
-    if (used_movement_verb3(DOWNSTREAM, GULLY, STREAM)) return R_VALLEY;
-    if (used_movement_verb2(SOUTH, DOWN)) return R_VALLEY;
-    if (used_movement_placeword(R_FOREST)) return R_FOREST;
-    if (used_movement_verb2(NORTH, EAST)) return R_FOREST;
-    if (used_movement_placeword(R_DEPRESSION)) return R_DEPRESSION;
+    if (movementp(R_ROAD)) return R_HILL;
+    if (movementv2(WEST, UP)) return R_HILL;
+    if (movementv2(IN, EAST)) return R_HOUSE;
+    if (movementp(R_HOUSE)) return R_HOUSE;
+    if (movementv3(DOWNSTREAM, GULLY, STREAM)) return R_VALLEY;
+    if (movementv2(SOUTH, DOWN)) return R_VALLEY;
+    if (movementp(R_FOREST)) return R_FOREST;
+    if (movementv2(NORTH, EAST)) return R_FOREST;
+    if (movementp(R_DEPRESSION)) return R_DEPRESSION;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_hill(void)
 {
-    if (used_movement_placeword(R_ROAD)) return R_ROAD;
-    if (used_movement_placeword(R_HOUSE)) return R_ROAD;
-    if (used_movement_verb3(FORWARD, EAST, NORTH)) return R_ROAD;
-    if (used_movement_placeword(R_FOREST)) return R_FOREST;
-    if (used_movement_verb2(NORTH, SOUTH)) return R_FOREST;
+    if (movementp(R_ROAD)) return R_ROAD;
+    if (movementp(R_HOUSE)) return R_ROAD;
+    if (movementv3(FORWARD, EAST, NORTH)) return R_ROAD;
+    if (movementp(R_FOREST)) return R_FOREST;
+    if (movementv2(NORTH, SOUTH)) return R_FOREST;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_house(void)
 {
-    if (used_movement_placeword(R_ROAD)) return R_ROAD;
-    if (used_movement_verb3(OUT, OUTDOORS, WEST)) return R_ROAD;
+    if (movementp(R_ROAD)) return R_ROAD;
+    if (movementv3(OUT, OUTDOORS, WEST)) return R_ROAD;
     if (closure < 2) {
-        if (used_movement_verb(XYZZY)) {
+        if (movementv(XYZZY)) {
             say_foof();
             return R_DEBRIS;
         }
-        if (used_movement_verb(PLUGH)) {
+        if (movementv(PLUGH)) {
             say_foof();
             return R_Y2;
         }
     }
-    if (used_movement_verb2(STREAM, DOWNSTREAM)) {
+    if (movementv2(STREAM, DOWNSTREAM)) {
         puts("The stream flows out through a pair of 1 foot diameter sewer pipes.\n"
              "It would be advisable to leave via the exit.");
         return R_HOUSE;
@@ -207,49 +168,49 @@ int at_house(void)
 
 int at_valley(void)
 {
-    if (used_movement_verb2(UPSTREAM, NORTH)) return R_ROAD;
-    if (used_movement_placeword(R_HOUSE)) return R_ROAD;
-    if (used_movement_placeword(R_FOREST)) return R_FOREST;
-    if (used_movement_verb3(EAST, WEST, UP)) return R_FOREST;
-    if (used_movement_placeword(R_DEPRESSION)) return R_DEPRESSION;
-    if (used_movement_verb3(SOUTH, DOWN, DOWNSTREAM))
+    if (movementv2(UPSTREAM, NORTH)) return R_ROAD;
+    if (movementp(R_HOUSE)) return R_ROAD;
+    if (movementp(R_FOREST)) return R_FOREST;
+    if (movementv3(EAST, WEST, UP)) return R_FOREST;
+    if (movementp(R_DEPRESSION)) return R_DEPRESSION;
+    if (movementv3(SOUTH, DOWN, DOWNSTREAM))
         return (closure < 2) ? R_SLIT : R_FAKE_SLIT;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_forest(void)
 {
-    if (used_movement_placeword(R_VALLEY)) return R_VALLEY;
-    if (used_movement_verb(EAST)) return R_VALLEY;
-    if (used_movement_verb(DOWN)) return R_VALLEY;
-    if (used_movement_verb(WEST)) return R_FOREST;
-    if (used_movement_verb(SOUTH)) return R_FOREST;
-    if (used_movement_placeword(R_FOREST) || used_movement_verb2(FORWARD, NORTH))
+    if (movementp(R_VALLEY)) return R_VALLEY;
+    if (movementv(EAST)) return R_VALLEY;
+    if (movementv(DOWN)) return R_VALLEY;
+    if (movementv(WEST)) return R_FOREST;
+    if (movementv(SOUTH)) return R_FOREST;
+    if (movementp(R_FOREST) || movementv2(FORWARD, NORTH))
         return pct(50) ? R_FOREST : R_FOREST2;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_forest2(void)
 {
-    if (used_movement_placeword(R_ROAD)) return R_ROAD;
-    if (used_movement_verb(NORTH)) return R_ROAD;
-    if (used_movement_placeword(R_VALLEY)) return R_VALLEY;
-    if (used_movement_verb3(EAST, WEST, DOWN)) return R_VALLEY;
-    if (used_movement_placeword(R_FOREST)) return R_FOREST;
-    if (used_movement_verb(SOUTH)) return R_FOREST;
+    if (movementp(R_ROAD)) return R_ROAD;
+    if (movementv(NORTH)) return R_ROAD;
+    if (movementp(R_VALLEY)) return R_VALLEY;
+    if (movementv3(EAST, WEST, DOWN)) return R_VALLEY;
+    if (movementp(R_FOREST)) return R_FOREST;
+    if (movementv(SOUTH)) return R_FOREST;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_slit(void)
 {
-    if (used_movement_placeword(R_HOUSE)) return R_ROAD;
-    if (used_movement_verb(UPSTREAM)) return R_VALLEY;
-    if (used_movement_verb(NORTH)) return R_VALLEY;
-    if (used_movement_placeword(R_FOREST)) return R_FOREST;
-    if (used_movement_verb2(EAST, WEST)) return R_FOREST;
-    if (used_movement_verb(DOWNSTREAM)) return R_DEPRESSION;
-    if (used_movement_verb3(ROCK, BED, SOUTH)) return R_DEPRESSION;
-    if (used_movement_placeword(R_SLIT) || used_movement_verb3(STREAM, DOWN, IN)) {
+    if (movementp(R_HOUSE)) return R_ROAD;
+    if (movementv(UPSTREAM)) return R_VALLEY;
+    if (movementv(NORTH)) return R_VALLEY;
+    if (movementp(R_FOREST)) return R_FOREST;
+    if (movementv2(EAST, WEST)) return R_FOREST;
+    if (movementv(DOWNSTREAM)) return R_DEPRESSION;
+    if (movementv3(ROCK, BED, SOUTH)) return R_DEPRESSION;
+    if (movementp(R_SLIT) || movementv3(STREAM, DOWN, IN)) {
         puts("You don't fit through a two-inch slit!");
         return STAY_STILL;
     }
@@ -258,17 +219,17 @@ int at_slit(void)
 
 int at_fake_slit(void)
 {
-    if (used_movement_placeword(R_HOUSE)) return R_ROAD;
-    if (used_movement_verb(UPSTREAM)) return R_VALLEY;
-    if (used_movement_verb(NORTH)) return R_VALLEY;
-    if (used_movement_placeword(R_FOREST)) return R_FOREST;
-    if (used_movement_verb(EAST)) return R_FOREST;
-    if (used_movement_verb(WEST)) return R_FOREST;
-    if (used_movement_verb(DOWNSTREAM)) return R_DEPRESSION;
-    if (used_movement_verb(ROCK)) return R_DEPRESSION;
-    if (used_movement_verb(BED)) return R_DEPRESSION;
-    if (used_movement_verb(SOUTH)) return R_DEPRESSION;
-    if (used_movement_placeword(R_SLIT) || used_movement_verb3(STREAM, DOWN, IN)) {
+    if (movementp(R_HOUSE)) return R_ROAD;
+    if (movementv(UPSTREAM)) return R_VALLEY;
+    if (movementv(NORTH)) return R_VALLEY;
+    if (movementp(R_FOREST)) return R_FOREST;
+    if (movementv(EAST)) return R_FOREST;
+    if (movementv(WEST)) return R_FOREST;
+    if (movementv(DOWNSTREAM)) return R_DEPRESSION;
+    if (movementv(ROCK)) return R_DEPRESSION;
+    if (movementv(BED)) return R_DEPRESSION;
+    if (movementv(SOUTH)) return R_DEPRESSION;
+    if (movementp(R_SLIT) || movementv3(STREAM, DOWN, IN)) {
         closure = 5;  /* victory! */
         puts("You plunge into the stream and are carried down into total blackness.\n\n"
         "Deeper\n"
@@ -335,14 +296,14 @@ int at_fake_slit(void)
 
 int at_depression(void)
 {
-    if (used_movement_placeword(R_FOREST)) return R_FOREST;
-    if (used_movement_verb2(EAST, SOUTH)) return R_FOREST2;
-    if (used_movement_verb(WEST)) return R_FOREST;
-    if (used_movement_placeword(R_HOUSE)) return R_ROAD;
-    if (used_movement_verb3(UPSTREAM, GULLY, NORTH) || used_movement_placeword(R_SLIT)) {
+    if (movementp(R_FOREST)) return R_FOREST;
+    if (movementv2(EAST, SOUTH)) return R_FOREST2;
+    if (movementv(WEST)) return R_FOREST;
+    if (movementp(R_HOUSE)) return R_ROAD;
+    if (movementv3(UPSTREAM, GULLY, NORTH) || movementp(R_SLIT)) {
         return (closure < 2) ? R_SLIT : R_FAKE_SLIT;
     }
-    if (used_movement_verb2(IN, DOWN)) {
+    if (movementv2(IN, DOWN)) {
         if (objs[GRATE].prop == 1) {
             return R_INSIDE;
         } else {
@@ -355,7 +316,7 @@ int at_depression(void)
 
 int at_inside(void)
 {
-    if (used_movement_verb3(UP, OUT, SURFACE)) {
+    if (movementv3(UP, OUT, SURFACE)) {
         if (objs[GRATE].prop == 1) {
             return R_DEPRESSION;
         } else {
@@ -363,46 +324,46 @@ int at_inside(void)
             return STAY_STILL;
         }
     }
-    if (used_movement_verb(CRAWL)) return R_COBBLES;
-    if (used_movement_placeword(R_COBBLES)) return R_COBBLES;
-    if (used_movement_verb2(IN, WEST)) return R_COBBLES;
-    if (used_movement_placeword(R_SPIT)) return R_SPIT;
-    if (used_movement_placeword(R_DEBRIS)) return R_DEBRIS;
+    if (movementv(CRAWL)) return R_COBBLES;
+    if (movementp(R_COBBLES)) return R_COBBLES;
+    if (movementv2(IN, WEST)) return R_COBBLES;
+    if (movementp(R_SPIT)) return R_SPIT;
+    if (movementp(R_DEBRIS)) return R_DEBRIS;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_cobbles(void)
 {
-    if (used_movement_verb(OUT)) return R_INSIDE;
-    if (used_movement_verb(SURFACE)) return R_INSIDE;
-    if (used_movement_verb(NOWHERE)) return R_INSIDE;  /* what the heck? */
-    if (used_movement_verb(ENTRANCE)) return R_INSIDE;
-    if (used_movement_verb(EAST)) return R_INSIDE;
-    if (used_movement_verb(IN)) return R_DEBRIS;
-    if (used_movement_placeword(R_DARK)) return R_DEBRIS;
-    if (used_movement_verb(WEST)) return R_DEBRIS;
-    if (used_movement_placeword(R_DEBRIS)) return R_DEBRIS;
-    if (used_movement_placeword(R_SPIT)) return R_SPIT;
+    if (movementv(OUT)) return R_INSIDE;
+    if (movementv(SURFACE)) return R_INSIDE;
+    if (movementv(NOWHERE)) return R_INSIDE;  /* what the heck? */
+    if (movementv(ENTRANCE)) return R_INSIDE;
+    if (movementv(EAST)) return R_INSIDE;
+    if (movementv(IN)) return R_DEBRIS;
+    if (movementp(R_DARK)) return R_DEBRIS;
+    if (movementv(WEST)) return R_DEBRIS;
+    if (movementp(R_DEBRIS)) return R_DEBRIS;
+    if (movementp(R_SPIT)) return R_SPIT;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_debris(void)
 {
-    if (used_movement_verb(ENTRANCE)) return R_INSIDE;
-    if (used_movement_verb(CRAWL)) return R_COBBLES;
-    if (used_movement_placeword(R_COBBLES)) return R_COBBLES;
-    if (used_movement_verb(PASSAGE)) return R_COBBLES;
-    if (used_movement_placeword(R_LOW)) return R_COBBLES;
-    if (used_movement_verb(EAST)) return R_COBBLES;
-    if (used_movement_placeword(R_AWK)) return R_AWK;
-    if (used_movement_verb(IN)) return R_AWK;
-    if (used_movement_verb(UP)) return R_AWK;
-    if (used_movement_verb(WEST)) return R_AWK;
-    if (used_movement_placeword(R_SPIT)) return R_SPIT;
+    if (movementv(ENTRANCE)) return R_INSIDE;
+    if (movementv(CRAWL)) return R_COBBLES;
+    if (movementp(R_COBBLES)) return R_COBBLES;
+    if (movementv(PASSAGE)) return R_COBBLES;
+    if (movementp(R_LOW)) return R_COBBLES;
+    if (movementv(EAST)) return R_COBBLES;
+    if (movementp(R_AWK)) return R_AWK;
+    if (movementv(IN)) return R_AWK;
+    if (movementv(UP)) return R_AWK;
+    if (movementv(WEST)) return R_AWK;
+    if (movementp(R_SPIT)) return R_SPIT;
     if (objs[GRATE].prop) {
-        if (used_movement_placeword(R_DEPRESSION)) return R_DEPRESSION;
+        if (movementp(R_DEPRESSION)) return R_DEPRESSION;
     } else {
-        if (used_movement_placeword(R_DEPRESSION)) {
+        if (movementp(R_DEPRESSION)) {
             cantpasslock();
             return R_INSIDE;
         }
@@ -412,7 +373,7 @@ int at_debris(void)
             nothing_happens();
             panicked = true;
             return STAY_STILL;
-        } else if (used_movement_verb(XYZZY)) {
+        } else if (movementv(XYZZY)) {
             say_foof();
             return R_HOUSE;
         } else {
@@ -425,19 +386,19 @@ int at_debris(void)
 
 int at_awk(void)
 {
-    if (used_movement_verb(ENTRANCE)) return R_INSIDE;
-    if (used_movement_verb(DOWN)) return R_DEBRIS;
-    if (used_movement_verb(EAST)) return R_DEBRIS;
-    if (used_movement_placeword(R_DEBRIS)) return R_DEBRIS;
-    if (used_movement_verb(IN)) return R_BIRD;
-    if (used_movement_verb(UP)) return R_BIRD;
-    if (used_movement_verb(WEST)) return R_BIRD;
-    if (used_movement_placeword(R_SPIT)) return R_SPIT;
+    if (movementv(ENTRANCE)) return R_INSIDE;
+    if (movementv(DOWN)) return R_DEBRIS;
+    if (movementv(EAST)) return R_DEBRIS;
+    if (movementp(R_DEBRIS)) return R_DEBRIS;
+    if (movementv(IN)) return R_BIRD;
+    if (movementv(UP)) return R_BIRD;
+    if (movementv(WEST)) return R_BIRD;
+    if (movementp(R_SPIT)) return R_SPIT;
     if (objs[GRATE].prop) {
-        if (used_movement_placeword(R_DEPRESSION))
+        if (movementp(R_DEPRESSION))
             return R_DEPRESSION;
     } else {
-        if (used_movement_placeword(R_DEPRESSION)) {
+        if (movementp(R_DEPRESSION)) {
             cantpasslock();
             return R_INSIDE;
         }
@@ -447,18 +408,18 @@ int at_awk(void)
 
 int at_bird(void)
 {
-    if (used_movement_verb(ENTRANCE)) return R_INSIDE;
-    if (used_movement_placeword(R_DEBRIS)) return R_DEBRIS;
-    if (used_movement_placeword(R_AWK)) return R_AWK;
-    if (used_movement_verb(EAST)) return R_AWK;
-    if (used_movement_verb(PASSAGE)) return R_SPIT;
-    if (used_movement_placeword(R_SPIT)) return R_SPIT;
-    if (used_movement_verb(WEST)) return R_SPIT;
+    if (movementv(ENTRANCE)) return R_INSIDE;
+    if (movementp(R_DEBRIS)) return R_DEBRIS;
+    if (movementp(R_AWK)) return R_AWK;
+    if (movementv(EAST)) return R_AWK;
+    if (movementv(PASSAGE)) return R_SPIT;
+    if (movementp(R_SPIT)) return R_SPIT;
+    if (movementv(WEST)) return R_SPIT;
     if (objs[GRATE].prop) {
-        if (used_movement_placeword(R_DEPRESSION))
+        if (movementp(R_DEPRESSION))
             return R_DEPRESSION;
     } else {
-        if (used_movement_placeword(R_DEPRESSION)) {
+        if (movementp(R_DEPRESSION)) {
             cantpasslock();
             return R_INSIDE;
         }
@@ -468,27 +429,27 @@ int at_bird(void)
 
 int at_spit(void)
 {
-    if (used_movement_verb(ENTRANCE)) return R_INSIDE;
-    if (used_movement_placeword(R_DEBRIS)) return R_DEBRIS;
-    if (used_movement_verb2(PASSAGE, EAST)) return R_BIRD;
+    if (movementv(ENTRANCE)) return R_INSIDE;
+    if (movementp(R_DEBRIS)) return R_DEBRIS;
+    if (movementv2(PASSAGE, EAST)) return R_BIRD;
     if (objs[GRATE].prop) {
-        if (used_movement_placeword(R_DEPRESSION))
+        if (movementp(R_DEPRESSION))
             return R_DEPRESSION;
     } else {
-        if (used_movement_placeword(R_DEPRESSION)) {
+        if (movementp(R_DEPRESSION)) {
             cantpasslock();
             return R_INSIDE;
         }
     }
-    if (used_movement_verb(WEST) || used_movement_verb(CRACK)) {
+    if (movementv(WEST) || movementv(CRACK)) {
         puts("The crack is far too small for you to enter.");
         return STAY_STILL;
     }
     /* This is clearly a bug in Platt's code. Going DOWN (the most natural
      * verb) will work fine, but going STEPS or PIT will kill you.
      * TODO: perhaps fix this? */
-    if (used_movement_verb(DOWN)) return R_EMIST;
-    if (used_movement_obj(STEPS) || used_movement_placeword(R_SPIT)) {
+    if (movementv(DOWN)) return R_EMIST;
+    if (movemento(STEPS) || movementp(R_SPIT)) {
         if (toting(GOLD)) {
             puts("You are at the bottom of the pit with a broken neck.");
             return you_are_dead_at(R_EMIST);
@@ -506,18 +467,18 @@ int at_spit(void)
 
 int at_emist(void)
 {
-    if (used_movement_verb2(LEFT, SOUTH)) return R_NUGGET;
-    if (used_movement_verb(EAST)) return R_SANDSTONE;
-    if (used_movement_verb(FORWARD)) return R_EFISS;
-    if (used_movement_verb(HALL)) return R_EFISS;
-    if (used_movement_verb(WEST)) return R_EFISS;
-    if (used_movement_verb(STAIRS)) return R_HMK;
-    if (used_movement_verb(DOWN)) return R_HMK;
-    if (used_movement_verb(NORTH)) return R_HMK;
-    if (used_movement_placeword(R_Y2)) return R_JUMBLE;
-    if (used_movement_verb(UP) || used_movement_obj(STEPS) ||
-        used_movement_placeword(R_SPIT) || used_movement_verb(DOME) ||
-        used_movement_verb(PASSAGE) || used_movement_verb(IN)) {
+    if (movementv2(LEFT, SOUTH)) return R_NUGGET;
+    if (movementv(EAST)) return R_SANDSTONE;
+    if (movementv(FORWARD)) return R_EFISS;
+    if (movementv(HALL)) return R_EFISS;
+    if (movementv(WEST)) return R_EFISS;
+    if (movementv(STAIRS)) return R_HMK;
+    if (movementv(DOWN)) return R_HMK;
+    if (movementv(NORTH)) return R_HMK;
+    if (movementp(R_Y2)) return R_JUMBLE;
+    if (movementv(UP) || movemento(STEPS) ||
+        movementp(R_SPIT) || movementv(DOME) ||
+        movementv(PASSAGE) || movementv(IN)) {
         if (toting(GOLD)) {
             puts("The dome is unclimbable.");
             return STAY_STILL;
@@ -530,12 +491,12 @@ int at_emist(void)
 
 int cross_fissure(VerbWord direction, Location destination)
 {
-    if (used_movement_verb3(FORWARD, CROSS, direction)) {
+    if (movementv3(FORWARD, CROSS, direction)) {
         if (objs[FISSURE].prop) return destination;
         puts("There is no way across the fissure.");
         return STAY_STILL;
     }
-    if (used_movement_verb(JUMP)) {
+    if (movementv(JUMP)) {
         if (objs[FISSURE].prop) {
             puts("I respectfully suggest you go across the bridge instead of jumping.");
             return STAY_STILL;
@@ -548,39 +509,39 @@ int cross_fissure(VerbWord direction, Location destination)
 
 int at_efiss(void)
 {
-    if (used_movement_verb(HALL)) return R_EMIST;
-    if (used_movement_verb(EAST)) return R_EMIST;
+    if (movementv(HALL)) return R_EMIST;
+    if (movementv(EAST)) return R_EMIST;
     return cross_fissure(WEST, R_WFISS);
 }
 
 int at_nugget(void)
 {
-    if (used_movement_verb3(HALL, OUT, NORTH)) return R_EMIST;
+    if (movementv3(HALL, OUT, NORTH)) return R_EMIST;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_hmk(void)
 {
-    if (used_movement_verb3(STAIRS, UP, EAST)) return R_EMIST;
+    if (movementv3(STAIRS, UP, EAST)) return R_EMIST;
     if (there(SNAKE, R_HMK)) {
-        if (used_movement_verb3(NORTH, LEFT, SOUTH) ||
-            used_movement_verb3(RIGHT, WEST, FORWARD) ||
-            used_movement_verb3(SW, NW, SE) ||
-            used_movement_verb3(NE, DOWN, SECRET)) {
+        if (movementv3(NORTH, LEFT, SOUTH) ||
+            movementv3(RIGHT, WEST, FORWARD) ||
+            movementv3(SW, NW, SE) ||
+            movementv3(NE, DOWN, SECRET)) {
             puts("You can't get past the snake.");
             return STAY_STILL;
         }
     } else {
         /* no snake */
-        if (used_movement_verb2(NORTH, LEFT)) return R_NS;
-        if (used_movement_verb2(SOUTH, RIGHT)) return R_SOUTH;
-        if (used_movement_verb2(WEST, FORWARD)) return R_WEST;
-        if (used_movement_verb(DOWN)) return R_VAULT;
-        if (used_movement_verb(NE)) return R_MORION;
-        if (used_movement_verb(NW)) return R_CORRID_3;
-        if (used_movement_verb(SE)) return R_CORRID_1;
-        if (used_movement_verb(SECRET)) return R_SECRETEW_TITE;
-        if (used_movement_verb(SW)) {
+        if (movementv2(NORTH, LEFT)) return R_NS;
+        if (movementv2(SOUTH, RIGHT)) return R_SOUTH;
+        if (movementv2(WEST, FORWARD)) return R_WEST;
+        if (movementv(DOWN)) return R_VAULT;
+        if (movementv(NE)) return R_MORION;
+        if (movementv(NW)) return R_CORRID_3;
+        if (movementv(SE)) return R_CORRID_1;
+        if (movementv(SECRET)) return R_SECRETEW_TITE;
+        if (movementv(SW)) {
             if (pct(35)) {
                 return R_SECRETEW_TITE;
             } else {
@@ -593,11 +554,11 @@ int at_hmk(void)
 
 int at_w2pit(void)
 {
-    if (used_movement_verb2(EAST, CROSS)) return R_E2PIT;
-    if (used_movement_verb(WEST)) return R_SLAB;
-    if (used_movement_placeword(R_SLAB)) return R_SLAB;
-    if (used_movement_verb(DOWN)) return R_WPIT;
-    if (used_movement_placeword(R_SPIT)) return R_WPIT;
+    if (movementv2(EAST, CROSS)) return R_E2PIT;
+    if (movementv(WEST)) return R_SLAB;
+    if (movementp(R_SLAB)) return R_SLAB;
+    if (movementv(DOWN)) return R_WPIT;
+    if (movementp(R_SPIT)) return R_WPIT;
     if (keywordv(HOLE)) {
         puts("It is too far up for you to reach.");
         return STAY_STILL;
@@ -607,13 +568,13 @@ int at_w2pit(void)
 
 int at_epit(void)
 {
-    if (used_movement_verb2(UP, OUT)) return R_E2PIT;
+    if (movementv2(UP, OUT)) return R_E2PIT;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_wpit(void)
 {
-    if (used_movement_verb2(UP, OUT)) return R_W2PIT;
+    if (movementv2(UP, OUT)) return R_W2PIT;
     if (keywordv(CLIMB)) {
         if (objs[PLANT].prop == 0) {
             puts("There's nothing to climb here.  Say \"UP\" or \"OUT\" to leave the pit.");
@@ -635,7 +596,7 @@ int at_wpit(void)
 
 int at_wfiss(void)
 {
-    if (used_movement_verb(WEST)) return R_WMIST;
+    if (movementv(WEST)) return R_WMIST;
     /* The only reason I use this awkward construction is to preserve
      * the behavior of the command "NORTH EAST". */
     int result = cross_fissure(EAST, R_EFISS);
@@ -650,33 +611,33 @@ int at_wfiss(void)
 
 int at_ns(void)
 {
-    if (used_movement_verb3(HALL, OUT, SOUTH)) return R_HMK;
-    if (used_movement_verb(NORTH)) return R_Y2;
-    if (used_movement_placeword(R_Y2)) return R_Y2;
-    if (used_movement_verb2(DOWN, HOLE)) return R_DIRTY;
+    if (movementv3(HALL, OUT, SOUTH)) return R_HMK;
+    if (movementv(NORTH)) return R_Y2;
+    if (movementp(R_Y2)) return R_Y2;
+    if (movementv2(DOWN, HOLE)) return R_DIRTY;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_south(void)
 {
-    if (used_movement_verb3(HALL, OUT, NORTH)) return R_HMK;
+    if (movementv3(HALL, OUT, NORTH)) return R_HMK;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_west(void)
 {
-    if (used_movement_verb3(HALL, OUT, EAST)) return R_HMK;
-    if (used_movement_verb2(WEST, UP)) return R_CROSS;
+    if (movementv3(HALL, OUT, EAST)) return R_HMK;
+    if (movementv2(WEST, UP)) return R_CROSS;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_y2(void)
 {
-    if (used_movement_verb(SOUTH)) return R_NS;
-    if (used_movement_verb(EAST)) return R_JUMBLE;
-    if (used_movement_placeword(R_JUMBLE)) return R_JUMBLE;
-    if (used_movement_verb(WEST)) return R_WINDOE;
-    if (used_movement_verb(PLUGH) || used_movement_placeword(R_PLOVER)) {
+    if (movementv(SOUTH)) return R_NS;
+    if (movementv(EAST)) return R_JUMBLE;
+    if (movementp(R_JUMBLE)) return R_JUMBLE;
+    if (movementv(WEST)) return R_WINDOE;
+    if (movementv(PLUGH) || movementp(R_PLOVER)) {
         if (word2.type != WordType_None && !keywordv(SAY))
             return 0;  /* DROP PLUGH isn't handled here */
         if (closure >= 2 || nomagic) {
@@ -685,7 +646,7 @@ int at_y2(void)
             return STAY_STILL;
         } else {
             say_foof();
-            return used_movement_verb(PLUGH) ? R_HOUSE : R_PLOVER;
+            return movementv(PLUGH) ? R_HOUSE : R_PLOVER;
         }
     }
     return 0;  /* command hasn't been processed yet */
@@ -693,26 +654,26 @@ int at_y2(void)
 
 int at_jumble(void)
 {
-    if (used_movement_verb(DOWN)) return R_Y2;
-    if (used_movement_placeword(R_Y2)) return R_Y2;
-    if (used_movement_verb(UP)) return R_EMIST;
+    if (movementv(DOWN)) return R_Y2;
+    if (movementp(R_Y2)) return R_Y2;
+    if (movementv(UP)) return R_EMIST;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_dirty(void)
 {
-    if (used_movement_verb2(EAST, CRAWL)) return R_CLEAN;
-    if (used_movement_verb2(UP, HOLE)) return R_NS;
-    if (used_movement_verb(WEST)) return R_DUSTY;
-    if (used_movement_placeword(R_BEDQUILT)) return R_BEDQUILT;
+    if (movementv2(EAST, CRAWL)) return R_CLEAN;
+    if (movementv2(UP, HOLE)) return R_NS;
+    if (movementv(WEST)) return R_DUSTY;
+    if (movementp(R_BEDQUILT)) return R_BEDQUILT;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_windoe(void)
 {
-    if (used_movement_verb(EAST)) return R_Y2;
-    if (used_movement_placeword(R_Y2)) return R_Y2;
-    if (used_movement_verb(JUMP)) {
+    if (movementv(EAST)) return R_Y2;
+    if (movementp(R_Y2)) return R_Y2;
+    if (movementv(JUMP)) {
         puts("You are at the bottom of the pit with a broken neck.");
         return you_are_dead_at(R_MIRROR);
     }
@@ -721,18 +682,18 @@ int at_windoe(void)
 
 int at_clean(void)
 {
-    if (used_movement_verb2(WEST, CRAWL)) return R_DIRTY;
-    if (used_movement_verb(DOWN)) return R_WET;
-    if (used_movement_placeword(R_SPIT)) return R_WET;
-    if (used_movement_verb(CLIMB)) return R_WET;
+    if (movementv2(WEST, CRAWL)) return R_DIRTY;
+    if (movementv(DOWN)) return R_WET;
+    if (movementp(R_SPIT)) return R_WET;
+    if (movementv(CLIMB)) return R_WET;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_wet(void)
 {
-    if (used_movement_verb3(CLIMB, UP, OUT)) return R_CLEAN;
-    if (used_movement_verb3(STREAM, DOWN, UPSTREAM) ||
-            used_movement_verb(DOWNSTREAM) || used_movement_placeword(R_SLIT)) {
+    if (movementv3(CLIMB, UP, OUT)) return R_CLEAN;
+    if (movementv3(STREAM, DOWN, UPSTREAM) ||
+            movementv(DOWNSTREAM) || movementp(R_SLIT)) {
         puts("You don't fit through a two-inch slit!");
         return STAY_STILL;
     }
@@ -741,21 +702,21 @@ int at_wet(void)
 
 int at_dusty(void)
 {
-    if (used_movement_verb2(EAST, PASSAGE)) return R_DIRTY;
-    if (used_movement_verb2(DOWN, HOLE)) return R_COMPLEX;
-    if (used_movement_placeword(R_BEDQUILT)) return R_BEDQUILT;
+    if (movementv2(EAST, PASSAGE)) return R_DIRTY;
+    if (movementv2(DOWN, HOLE)) return R_COMPLEX;
+    if (movementp(R_BEDQUILT)) return R_BEDQUILT;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_wmist(void)
 {
-    if (used_movement_verb(SOUTH)) return R_MAZEA42;
-    if (used_movement_verb(UP)) return R_MAZEA42;
-    if (used_movement_verb(PASSAGE)) return R_MAZEA42;
-    if (used_movement_verb(CLIMB)) return R_MAZEA42;
-    if (used_movement_verb(EAST)) return R_WFISS;
-    if (used_movement_verb(WEST)) return R_ELONG;
-    if (used_movement_verb(CRAWL)) return R_ELONG;
+    if (movementv(SOUTH)) return R_MAZEA42;
+    if (movementv(UP)) return R_MAZEA42;
+    if (movementv(PASSAGE)) return R_MAZEA42;
+    if (movementv(CLIMB)) return R_MAZEA42;
+    if (movementv(EAST)) return R_WFISS;
+    if (movementv(WEST)) return R_ELONG;
+    if (movementv(CRAWL)) return R_ELONG;
     if (keywordv(NORTH)) {
         puts("You have crawled around in a little passage north of and parallel\n"
              "to the Hall of Mists.");
@@ -766,209 +727,209 @@ int at_wmist(void)
 
 int at_mazea42(void)
 {
-    if (used_movement_verb(UP)) return R_WMIST;
-    if (used_movement_verb(NORTH)) return R_MAZEA42;
-    if (used_movement_verb(EAST)) return R_MAZEA43;
-    if (used_movement_verb(SOUTH)) return R_MAZEA45;
-    if (used_movement_verb(WEST)) return R_MAZEA80;
+    if (movementv(UP)) return R_WMIST;
+    if (movementv(NORTH)) return R_MAZEA42;
+    if (movementv(EAST)) return R_MAZEA43;
+    if (movementv(SOUTH)) return R_MAZEA45;
+    if (movementv(WEST)) return R_MAZEA80;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea43(void)
 {
-    if (used_movement_verb(WEST)) return R_MAZEA42;
-    if (used_movement_verb(SOUTH)) return R_MAZEA44;
-    if (used_movement_verb(EAST)) return R_MAZEA45;
+    if (movementv(WEST)) return R_MAZEA42;
+    if (movementv(SOUTH)) return R_MAZEA44;
+    if (movementv(EAST)) return R_MAZEA45;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea44(void)
 {
-    if (used_movement_verb(EAST)) return R_MAZEA43;
-    if (used_movement_verb(DOWN)) return R_MAZEA48;
-    if (used_movement_verb(SOUTH)) return R_MAZEA50;
-    if (used_movement_verb(NORTH)) return R_MAZEA82;
+    if (movementv(EAST)) return R_MAZEA43;
+    if (movementv(DOWN)) return R_MAZEA48;
+    if (movementv(SOUTH)) return R_MAZEA50;
+    if (movementv(NORTH)) return R_MAZEA82;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea45(void)
 {
-    if (used_movement_verb(WEST)) return R_MAZEA42;
-    if (used_movement_verb(NORTH)) return R_MAZEA43;
-    if (used_movement_verb(EAST)) return R_MAZEA46;
-    if (used_movement_verb(SOUTH)) return R_MAZEA47;
-    if (used_movement_verb(UP)) return R_MAZEA87;
-    if (used_movement_verb(DOWN)) return R_MAZEA87;
+    if (movementv(WEST)) return R_MAZEA42;
+    if (movementv(NORTH)) return R_MAZEA43;
+    if (movementv(EAST)) return R_MAZEA46;
+    if (movementv(SOUTH)) return R_MAZEA47;
+    if (movementv(UP)) return R_MAZEA87;
+    if (movementv(DOWN)) return R_MAZEA87;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea46(void)
 {
-    if (used_movement_verb(WEST)) return R_MAZEA45;
-    if (used_movement_verb(OUT)) return R_MAZEA45;
+    if (movementv(WEST)) return R_MAZEA45;
+    if (movementv(OUT)) return R_MAZEA45;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea47(void)
 {
-    if (used_movement_verb(EAST)) return R_MAZEA45;
-    if (used_movement_verb(OUT)) return R_MAZEA45;
+    if (movementv(EAST)) return R_MAZEA45;
+    if (movementv(OUT)) return R_MAZEA45;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea48(void)
 {
-    if (used_movement_verb(UP)) return R_MAZEA44;
-    if (used_movement_verb(OUT)) return R_MAZEA44;
+    if (movementv(UP)) return R_MAZEA44;
+    if (movementv(OUT)) return R_MAZEA44;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea49(void)
 {
-    if (used_movement_verb(EAST)) return R_MAZEA50;
-    if (used_movement_verb(WEST)) return R_MAZEA51;
+    if (movementv(EAST)) return R_MAZEA50;
+    if (movementv(WEST)) return R_MAZEA51;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea50(void)
 {
-    if (used_movement_verb(EAST)) return R_MAZEA44;
-    if (used_movement_verb(WEST)) return R_MAZEA49;
-    if (used_movement_verb(DOWN)) return R_MAZEA51;
-    if (used_movement_verb(SOUTH)) return R_MAZEA52;
+    if (movementv(EAST)) return R_MAZEA44;
+    if (movementv(WEST)) return R_MAZEA49;
+    if (movementv(DOWN)) return R_MAZEA51;
+    if (movementv(SOUTH)) return R_MAZEA52;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea51(void)
 {
-    if (used_movement_verb(WEST)) return R_MAZEA49;
-    if (used_movement_verb(UP)) return R_MAZEA50;
-    if (used_movement_verb(EAST)) return R_MAZEA52;
-    if (used_movement_verb(SOUTH)) return R_MAZEA53;
+    if (movementv(WEST)) return R_MAZEA49;
+    if (movementv(UP)) return R_MAZEA50;
+    if (movementv(EAST)) return R_MAZEA52;
+    if (movementv(SOUTH)) return R_MAZEA53;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea52(void)
 {
-    if (used_movement_verb(WEST)) return R_MAZEA50;
-    if (used_movement_verb(EAST)) return R_MAZEA51;
-    if (used_movement_verb(SOUTH)) return R_MAZEA52;
-    if (used_movement_verb(UP)) return R_MAZEA53;
-    if (used_movement_verb(NORTH)) return R_MAZEA55;
-    if (used_movement_verb(DOWN)) return R_MAZEA86;
+    if (movementv(WEST)) return R_MAZEA50;
+    if (movementv(EAST)) return R_MAZEA51;
+    if (movementv(SOUTH)) return R_MAZEA52;
+    if (movementv(UP)) return R_MAZEA53;
+    if (movementv(NORTH)) return R_MAZEA55;
+    if (movementv(DOWN)) return R_MAZEA86;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea53(void)
 {
-    if (used_movement_verb(WEST)) return R_MAZEA51;
-    if (used_movement_verb(NORTH)) return R_MAZEA52;
-    if (used_movement_verb(SOUTH)) return R_MAZEA54;
+    if (movementv(WEST)) return R_MAZEA51;
+    if (movementv(NORTH)) return R_MAZEA52;
+    if (movementv(SOUTH)) return R_MAZEA54;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea54(void)
 {
-    if (used_movement_verb(WEST)) return R_MAZEA53;
-    if (used_movement_verb(OUT)) return R_MAZEA53;
+    if (movementv(WEST)) return R_MAZEA53;
+    if (movementv(OUT)) return R_MAZEA53;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea55(void)
 {
-    if (used_movement_verb(WEST)) return R_MAZEA52;
-    if (used_movement_verb(NORTH)) return R_MAZEA55;
-    if (used_movement_verb(DOWN)) return R_MAZEA56;
-    if (used_movement_verb(EAST)) return R_MAZEA57_PIT;
+    if (movementv(WEST)) return R_MAZEA52;
+    if (movementv(NORTH)) return R_MAZEA55;
+    if (movementv(DOWN)) return R_MAZEA56;
+    if (movementv(EAST)) return R_MAZEA57_PIT;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea56(void)
 {
-    if (used_movement_verb(UP)) return R_MAZEA55;
-    if (used_movement_verb(OUT)) return R_MAZEA55;
+    if (movementv(UP)) return R_MAZEA55;
+    if (movementv(OUT)) return R_MAZEA55;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea57_pit(void)
 {
-    if (used_movement_verb(DOWN)) return R_BIRD;
-    if (used_movement_verb(CLIMB)) return R_BIRD;
-    if (used_movement_verb(WEST)) return R_MAZEA55;
-    if (used_movement_verb(SOUTH)) return R_MAZEA58;
-    if (used_movement_verb(NORTH)) return R_MAZEA83;
-    if (used_movement_verb(EAST)) return R_MAZEA84;
+    if (movementv(DOWN)) return R_BIRD;
+    if (movementv(CLIMB)) return R_BIRD;
+    if (movementv(WEST)) return R_MAZEA55;
+    if (movementv(SOUTH)) return R_MAZEA58;
+    if (movementv(NORTH)) return R_MAZEA83;
+    if (movementv(EAST)) return R_MAZEA84;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea58(void)
 {
-    if (used_movement_verb(EAST)) return R_MAZEA57_PIT;
-    if (used_movement_verb(OUT)) return R_MAZEA57_PIT;
+    if (movementv(EAST)) return R_MAZEA57_PIT;
+    if (movementv(OUT)) return R_MAZEA57_PIT;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_elong(void)
 {
-    if (used_movement_verb(EAST)) return R_WMIST;
-    if (used_movement_verb(UP)) return R_WMIST;
-    if (used_movement_verb(CRAWL)) return R_WMIST;
-    if (used_movement_verb(WEST)) return R_WLONG;
-    if (used_movement_verb(NORTH)) return R_CROSS;
-    if (used_movement_verb(DOWN)) return R_CROSS;
-    if (used_movement_verb(HOLE)) return R_CROSS;
+    if (movementv(EAST)) return R_WMIST;
+    if (movementv(UP)) return R_WMIST;
+    if (movementv(CRAWL)) return R_WMIST;
+    if (movementv(WEST)) return R_WLONG;
+    if (movementv(NORTH)) return R_CROSS;
+    if (movementv(DOWN)) return R_CROSS;
+    if (movementv(HOLE)) return R_CROSS;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_wlong(void)
 {
-    if (used_movement_verb(EAST)) return R_ELONG;
-    if (used_movement_verb(NORTH)) return R_CROSS;
-    if (used_movement_verb(SOUTH)) return R_MAZED107;
+    if (movementv(EAST)) return R_ELONG;
+    if (movementv(NORTH)) return R_CROSS;
+    if (movementv(SOUTH)) return R_MAZED107;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_cross(void)
 {
-    if (used_movement_verb(WEST)) return R_ELONG;
-    if (used_movement_verb(NORTH)) return R_DEADEND1;
-    if (used_movement_verb(EAST)) return R_WEST;
-    if (used_movement_verb(SOUTH)) return R_WLONG;
+    if (movementv(WEST)) return R_ELONG;
+    if (movementv(NORTH)) return R_DEADEND1;
+    if (movementv(EAST)) return R_WEST;
+    if (movementv(SOUTH)) return R_WLONG;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_deadend1(void)
 {
-    if (used_movement_verb2(SOUTH, OUT)) return R_CROSS;
+    if (movementv2(SOUTH, OUT)) return R_CROSS;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_complex(void)
 {
-    if (used_movement_verb2(CLIMB, UP)) return R_DUSTY;
-    if (used_movement_verb(WEST)) return R_BEDQUILT;
-    if (used_movement_placeword(R_BEDQUILT)) return R_BEDQUILT;
-    if (used_movement_verb(NORTH)) return R_SHELL;
-    if (used_movement_placeword(R_SHELL)) return R_SHELL;
-    if (used_movement_verb(EAST)) return R_ANTE;
+    if (movementv2(CLIMB, UP)) return R_DUSTY;
+    if (movementv(WEST)) return R_BEDQUILT;
+    if (movementp(R_BEDQUILT)) return R_BEDQUILT;
+    if (movementv(NORTH)) return R_SHELL;
+    if (movementp(R_SHELL)) return R_SHELL;
+    if (movementv(EAST)) return R_ANTE;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_bedquilt(void)
 {
-    if (used_movement_verb(EAST)) return R_COMPLEX;
-    if (used_movement_verb(WEST)) return R_SWISS;
-    if (used_movement_placeword(R_SLAB)) return R_SLAB;
-    if (used_movement_verb2(NORTH, SOUTH) || used_movement_verb2(UP, DOWN)) {
+    if (movementv(EAST)) return R_COMPLEX;
+    if (movementv(WEST)) return R_SWISS;
+    if (movementp(R_SLAB)) return R_SLAB;
+    if (movementv2(NORTH, SOUTH) || movementv2(UP, DOWN)) {
         if (pct(65)) {
             puts("You have crawled around in some little holes and found your way\n"
                  "blocked by a recent cave-in.  You are now back in the main passage.");
             return STAY_STILL;
         }
-        if (used_movement_verb(DOWN)) return R_ANTE;
-        if (used_movement_verb(NORTH)) return pct(75) ? R_LOW : R_SJUNC;
-        if (used_movement_verb(UP)) return pct(75) ? R_DUSTY : R_ABOVEP;
-        if (used_movement_verb(SOUTH)) return pct(75) ? R_SLAB : R_TALLEWCNYN;
+        if (movementv(DOWN)) return R_ANTE;
+        if (movementv(NORTH)) return pct(75) ? R_LOW : R_SJUNC;
+        if (movementv(UP)) return pct(75) ? R_DUSTY : R_ABOVEP;
+        if (movementv(SOUTH)) return pct(75) ? R_SLAB : R_TALLEWCNYN;
     }
     if (keywordv(NW)) return pct(50) ? R_ORIENTAL : you_didnt_move();
     return 0;  /* command hasn't been processed yet */
@@ -976,84 +937,84 @@ int at_bedquilt(void)
 
 int at_swiss(void)
 {
-    if (used_movement_verb(NE)) return R_BEDQUILT;
-    if (used_movement_verb(WEST)) return R_E2PIT;
-    if (used_movement_placeword(R_AWK)) return R_TALLEWCNYN;
-    if (used_movement_verb(EAST)) return R_SOFT;
-    if (used_movement_placeword(R_ORIENTAL)) return R_ORIENTAL;
-    if (used_movement_placeword(R_SOFT)) return R_SOFT;
-    if (used_movement_verb(NW)) return pct(65) ? R_ORIENTAL : you_didnt_move();
-    if (used_movement_verb(SOUTH)) return pct(65) ? R_TALLEWCNYN : you_didnt_move();
+    if (movementv(NE)) return R_BEDQUILT;
+    if (movementv(WEST)) return R_E2PIT;
+    if (movementp(R_AWK)) return R_TALLEWCNYN;
+    if (movementv(EAST)) return R_SOFT;
+    if (movementp(R_ORIENTAL)) return R_ORIENTAL;
+    if (movementp(R_SOFT)) return R_SOFT;
+    if (movementv(NW)) return pct(65) ? R_ORIENTAL : you_didnt_move();
+    if (movementv(SOUTH)) return pct(65) ? R_TALLEWCNYN : you_didnt_move();
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_e2pit(void)
 {
-    if (used_movement_verb(EAST)) return R_SWISS;
-    if (used_movement_verb2(WEST, CROSS)) return R_W2PIT;
-    if (used_movement_verb(DOWN)) return R_EPIT;
-    if (used_movement_placeword(R_SPIT)) return R_EPIT;
+    if (movementv(EAST)) return R_SWISS;
+    if (movementv2(WEST, CROSS)) return R_W2PIT;
+    if (movementv(DOWN)) return R_EPIT;
+    if (movementp(R_SPIT)) return R_EPIT;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_slab(void)
 {
-    if (used_movement_verb(SOUTH)) return R_W2PIT;
-    if (used_movement_verb(UP)) return R_ABOVER;
-    if (used_movement_verb(CLIMB)) return R_ABOVER;
-    if (used_movement_verb(NORTH)) return R_BEDQUILT;
-    if (used_movement_placeword(R_BEDQUILT)) return R_BEDQUILT;
+    if (movementv(SOUTH)) return R_W2PIT;
+    if (movementv(UP)) return R_ABOVER;
+    if (movementv(CLIMB)) return R_ABOVER;
+    if (movementv(NORTH)) return R_BEDQUILT;
+    if (movementp(R_BEDQUILT)) return R_BEDQUILT;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_abover(void)
 {
-    if (used_movement_verb(DOWN)) return R_SLAB;
-    if (used_movement_placeword(R_SLAB)) return R_SLAB;
-    if (used_movement_verb(NORTH)) return R_MIRROR;
+    if (movementv(DOWN)) return R_SLAB;
+    if (movementp(R_SLAB)) return R_SLAB;
+    if (movementv(NORTH)) return R_MIRROR;
     if (keywordo(MIRROR)) return R_MIRROR;
-    if (used_movement_placeword(R_RES)) return R_RES;
-    if (used_movement_verb(SOUTH)) return R_SECRETCYNNE1;
+    if (movementp(R_RES)) return R_RES;
+    if (movementv(SOUTH)) return R_SECRETCYNNE1;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_abovep(void)
 {
-    if (used_movement_verb(NORTH)) return R_SJUNC;
-    if (used_movement_verb(DOWN)) return R_BEDQUILT;
-    if (used_movement_verb(PASSAGE)) return R_BEDQUILT;
-    if (used_movement_verb(SOUTH)) return R_STALACT;
+    if (movementv(NORTH)) return R_SJUNC;
+    if (movementv(DOWN)) return R_BEDQUILT;
+    if (movementv(PASSAGE)) return R_BEDQUILT;
+    if (movementv(SOUTH)) return R_STALACT;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_sjunc(void)
 {
-    if (used_movement_verb(SE)) return R_BEDQUILT;
-    if (used_movement_verb(SOUTH)) return R_ABOVEP;
-    if (used_movement_verb(NORTH)) return R_WINDOW;
+    if (movementv(SE)) return R_BEDQUILT;
+    if (movementv(SOUTH)) return R_ABOVEP;
+    if (movementv(NORTH)) return R_WINDOW;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_low(void)
 {
-    if (used_movement_placeword(R_BEDQUILT)) return R_BEDQUILT;
-    if (used_movement_verb(SW)) return R_SLOPING;
-    if (used_movement_verb(NORTH)) return R_DEADEND2;
-    if (used_movement_verb(SE)) return R_ORIENTAL;
-    if (used_movement_placeword(R_ORIENTAL)) return R_ORIENTAL;
+    if (movementp(R_BEDQUILT)) return R_BEDQUILT;
+    if (movementv(SW)) return R_SLOPING;
+    if (movementv(NORTH)) return R_DEADEND2;
+    if (movementv(SE)) return R_ORIENTAL;
+    if (movementp(R_ORIENTAL)) return R_ORIENTAL;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_deadend2(void)
 {
-    if (used_movement_verb3(SOUTH, CRAWL, OUT)) return R_LOW;
+    if (movementv3(SOUTH, CRAWL, OUT)) return R_LOW;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_secretew_tite(void)
 {
-    if (used_movement_verb(EAST)) return R_HMK;
-    if (used_movement_verb(DOWN)) return R_NSCANYONWIDE;
+    if (movementv(EAST)) return R_HMK;
+    if (movementv(DOWN)) return R_NSCANYONWIDE;
     if (keywordv(WEST)) {
         return objs[DRAGON].prop ? R_SECRETCYNNE1 : R_SECRETCYNNE2;
     }
@@ -1062,125 +1023,125 @@ int at_secretew_tite(void)
 
 int at_nscanyonwide(void)
 {
-    if (used_movement_verb(SOUTH)) return R_TIGHTERSTILL;
-    if (used_movement_verb(NORTH)) return R_TALLEWCNYN;
+    if (movementv(SOUTH)) return R_TIGHTERSTILL;
+    if (movementv(NORTH)) return R_TALLEWCNYN;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_tighterstill(void)
 {
-    if (used_movement_verb(NORTH)) return R_NSCANYONWIDE;
+    if (movementv(NORTH)) return R_NSCANYONWIDE;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_tallewcnyn(void)
 {
-    if (used_movement_verb(EAST)) return R_NSCANYONWIDE;
-    if (used_movement_verb(WEST)) return R_DEADEND3;
-    if (used_movement_verb2(NORTH, CRAWL)) return R_SWISS;
+    if (movementv(EAST)) return R_NSCANYONWIDE;
+    if (movementv(WEST)) return R_DEADEND3;
+    if (movementv2(NORTH, CRAWL)) return R_SWISS;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_deadend3(void)
 {
-    if (used_movement_verb(SOUTH)) return R_TALLEWCNYN;
+    if (movementv(SOUTH)) return R_TALLEWCNYN;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea80(void)
 {
-    if (used_movement_verb(NORTH)) return R_MAZEA42;
-    if (used_movement_verb(WEST)) return R_MAZEA80;
-    if (used_movement_verb(SOUTH)) return R_MAZEA80;
-    if (used_movement_verb(EAST)) return R_MAZEA81;
+    if (movementv(NORTH)) return R_MAZEA42;
+    if (movementv(WEST)) return R_MAZEA80;
+    if (movementv(SOUTH)) return R_MAZEA80;
+    if (movementv(EAST)) return R_MAZEA81;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea81(void)
 {
-    if (used_movement_verb(WEST)) return R_MAZEA80;
-    if (used_movement_verb(OUT)) return R_MAZEA80;
+    if (movementv(WEST)) return R_MAZEA80;
+    if (movementv(OUT)) return R_MAZEA80;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea82(void)
 {
-    if (used_movement_verb(SOUTH)) return R_MAZEA44;
-    if (used_movement_verb(OUT)) return R_MAZEA44;
+    if (movementv(SOUTH)) return R_MAZEA44;
+    if (movementv(OUT)) return R_MAZEA44;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea83(void)
 {
-    if (used_movement_verb(SOUTH)) return R_MAZEA57_PIT;
-    if (used_movement_verb(EAST)) return R_MAZEA84;
-    if (used_movement_verb(WEST)) return R_MAZEA85;
+    if (movementv(SOUTH)) return R_MAZEA57_PIT;
+    if (movementv(EAST)) return R_MAZEA84;
+    if (movementv(WEST)) return R_MAZEA85;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea84(void)
 {
-    if (used_movement_verb(NORTH)) return R_MAZEA57_PIT;
-    if (used_movement_verb(WEST)) return R_MAZEA83;
-    if (used_movement_verb(NW)) return R_PIRATES_NEST;
+    if (movementv(NORTH)) return R_MAZEA57_PIT;
+    if (movementv(WEST)) return R_MAZEA83;
+    if (movementv(NW)) return R_PIRATES_NEST;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea85(void)
 {
-    if (used_movement_verb(EAST)) return R_MAZEA83;
-    if (used_movement_verb(OUT)) return R_MAZEA83;
+    if (movementv(EAST)) return R_MAZEA83;
+    if (movementv(OUT)) return R_MAZEA83;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea86(void)
 {
-    if (used_movement_verb(UP)) return R_MAZEA52;
-    if (used_movement_verb(OUT)) return R_MAZEA52;
+    if (movementv(UP)) return R_MAZEA52;
+    if (movementv(OUT)) return R_MAZEA52;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea87(void)
 {
-    if (used_movement_verb(UP)) return R_MAZEA45;
-    if (used_movement_verb(DOWN)) return R_MAZEA45;
+    if (movementv(UP)) return R_MAZEA45;
+    if (movementv(DOWN)) return R_MAZEA45;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_narrow(void)
 {
-    if (used_movement_verb(DOWN)) return R_WPIT;
-    if (used_movement_verb(CLIMB)) return R_WPIT;
-    if (used_movement_verb(EAST)) return R_WPIT;
-    if (used_movement_verb(WEST)) return R_GIANT;
-    if (used_movement_placeword(R_GIANT)) return R_GIANT;
+    if (movementv(DOWN)) return R_WPIT;
+    if (movementv(CLIMB)) return R_WPIT;
+    if (movementv(EAST)) return R_WPIT;
+    if (movementv(WEST)) return R_GIANT;
+    if (movementp(R_GIANT)) return R_GIANT;
     if (keywordv(JUMP)) return splatter(R_WPIT);
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_incline(void)
 {
-    if (used_movement_verb(NORTH)) return R_FALLS;
-    if (used_movement_placeword(R_FALLS)) return R_FALLS;
-    if (used_movement_verb(PASSAGE)) return R_FALLS;
-    if (used_movement_verb2(DOWN, CLIMB)) return oof(R_LOW);
+    if (movementv(NORTH)) return R_FALLS;
+    if (movementp(R_FALLS)) return R_FALLS;
+    if (movementv(PASSAGE)) return R_FALLS;
+    if (movementv2(DOWN, CLIMB)) return oof(R_LOW);
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_giant(void)
 {
-    if (used_movement_verb(SOUTH)) return R_NARROW;
-    if (used_movement_placeword(R_CORRIDOR)) return R_NARROW;
-    if (used_movement_verb(EAST)) return R_TUNNEL_1;
-    if (used_movement_verb(NORTH)) return R_IMMENSENSPASS;
+    if (movementv(SOUTH)) return R_NARROW;
+    if (movementp(R_CORRIDOR)) return R_NARROW;
+    if (movementv(EAST)) return R_TUNNEL_1;
+    if (movementv(NORTH)) return R_IMMENSENSPASS;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_immensenspass(void)
 {
-    if (used_movement_verb2(SOUTH, PASSAGE)) return R_GIANT;
-    if (used_movement_placeword(R_GIANT)) return R_GIANT;
-    if (used_movement_verb2(NORTH, IN) || used_movement_placeword(R_FALLS)) {
+    if (movementv2(SOUTH, PASSAGE)) return R_GIANT;
+    if (movementp(R_GIANT)) return R_GIANT;
+    if (movementv2(NORTH, IN) || movementp(R_FALLS)) {
         if (objs[DOOR].prop) return R_FALLS;
         puts("The door is extremely rusty and refuses to open.");
         return STAY_STILL;
@@ -1190,12 +1151,12 @@ int at_immensenspass(void)
 
 int at_falls(void)
 {
-    if (used_movement_verb(SOUTH)) return R_IMMENSENSPASS;
-    if (used_movement_verb(OUT)) return R_IMMENSENSPASS;
-    if (used_movement_placeword(R_GIANT)) return R_GIANT;
-    if (used_movement_verb(WEST)) return R_INCLINE;
-    if (used_movement_placeword(R_INCLINE)) return R_INCLINE;
-    if (used_movement_verb2(DOWN, JUMP)) {
+    if (movementv(SOUTH)) return R_IMMENSENSPASS;
+    if (movementv(OUT)) return R_IMMENSENSPASS;
+    if (movementp(R_GIANT)) return R_GIANT;
+    if (movementv(WEST)) return R_INCLINE;
+    if (movementp(R_INCLINE)) return R_INCLINE;
+    if (movementv2(DOWN, JUMP)) {
         if (!yes("Into the whirlpool??")) {
             ok();
             return STAY_STILL;
@@ -1237,27 +1198,27 @@ int at_falls(void)
 
 int at_soft(void)
 {
-    if (used_movement_verb2(WEST, OUT)) return R_SWISS;
-    if (used_movement_placeword(R_SWISS)) return R_SWISS;
+    if (movementv2(WEST, OUT)) return R_SWISS;
+    if (movementp(R_SWISS)) return R_SWISS;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_oriental(void)
 {
-    if (used_movement_verb(SE)) return R_SWISS;
-    if (used_movement_verb(WEST)) return R_LOW;
-    if (used_movement_verb(CRAWL)) return R_LOW;
-    if (used_movement_verb(UP)) return R_MISTY;
-    if (used_movement_verb(NORTH)) return R_MISTY;
-    if (used_movement_placeword(R_FALLS)) return R_MISTY;
+    if (movementv(SE)) return R_SWISS;
+    if (movementv(WEST)) return R_LOW;
+    if (movementv(CRAWL)) return R_LOW;
+    if (movementv(UP)) return R_MISTY;
+    if (movementv(NORTH)) return R_MISTY;
+    if (movementp(R_FALLS)) return R_MISTY;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_misty(void)
 {
-    if (used_movement_verb(SOUTH)) return R_ORIENTAL;
-    if (used_movement_placeword(R_ORIENTAL)) return R_ORIENTAL;
-    if (used_movement_verb(WEST)) return R_ALCOVE;
+    if (movementv(SOUTH)) return R_ORIENTAL;
+    if (movementp(R_ORIENTAL)) return R_ORIENTAL;
+    if (movementv(WEST)) return R_ALCOVE;
     if (keywordv(JUMP)) return splatter(R_FALLS);
     return 0;  /* command hasn't been processed yet */
 }
@@ -1271,13 +1232,13 @@ int tight_squeeze(void)
 
 int at_alcove(void)
 {
-    if (used_movement_verb2(EAST, PASSAGE) || used_movement_placeword(R_PLOVER)) {
+    if (movementv2(EAST, PASSAGE) || movementp(R_PLOVER)) {
         if (holding_count == 0) return R_PLOVER;
         if (holding_count == 1 && toting(EMERALD)) return R_PLOVER;
         return tight_squeeze();
     }
-    if (used_movement_verb(NW)) return R_MISTY;
-    if (used_movement_placeword(R_FALLS)) return R_MISTY;
+    if (movementv(NW)) return R_MISTY;
+    if (movementp(R_FALLS)) return R_MISTY;
     return 0;  /* command hasn't been processed yet */
 }
 
@@ -1288,38 +1249,38 @@ int at_plover(void)
         say_foof();
         return R_Y2;
     }
-    if (used_movement_verb2(WEST, PASSAGE) || used_movement_placeword(R_ALCOVE)) {
+    if (movementv2(WEST, PASSAGE) || movementp(R_ALCOVE)) {
         if (holding_count == 0) return R_ALCOVE;
         if (holding_count == 1 && toting(EMERALD)) return R_ALCOVE;
         return tight_squeeze();
     }
-    if (used_movement_verb(NE)) return R_DARK;
-    if (used_movement_placeword(R_DARK)) return R_DARK;
+    if (movementv(NE)) return R_DARK;
+    if (movementp(R_DARK)) return R_DARK;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_dark(void)
 {
-    if (used_movement_verb2(SOUTH, OUT)) return R_PLOVER;
-    if (used_movement_placeword(R_PLOVER)) return R_PLOVER;
+    if (movementv2(SOUTH, OUT)) return R_PLOVER;
+    if (movementp(R_PLOVER)) return R_PLOVER;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_arched(void)
 {
-    if (used_movement_verb(DOWN)) return R_SHELL;
-    if (used_movement_placeword(R_SHELL)) return R_SHELL;
-    if (used_movement_verb(UP)) return R_ARCH_COR_1;
-    if (used_movement_verb(EAST)) return R_ARCH_COR_1;
+    if (movementv(DOWN)) return R_SHELL;
+    if (movementp(R_SHELL)) return R_SHELL;
+    if (movementv(UP)) return R_ARCH_COR_1;
+    if (movementv(EAST)) return R_ARCH_COR_1;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_shell(void)
 {
-    if (used_movement_verb(UP)) return R_ARCHED;
-    if (used_movement_verb(HALL)) return R_ARCHED;
-    if (used_movement_verb(DOWN)) return R_RAGGED;
-    if (used_movement_placeword(R_CORRIDOR)) return R_RAGGED;
+    if (movementv(UP)) return R_ARCHED;
+    if (movementv(HALL)) return R_ARCHED;
+    if (movementv(DOWN)) return R_RAGGED;
+    if (movementp(R_CORRIDOR)) return R_RAGGED;
     if (keywordv(SOUTH) || keywordp(R_COMPLEX)) {
         if (toting(CLAM)) {
             puts("You can't fit this five-foot clam through that little passage!");
@@ -1336,51 +1297,51 @@ int at_shell(void)
 
 int at_ragged(void)
 {
-    if (used_movement_verb(UP)) return R_SHELL;
-    if (used_movement_placeword(R_SHELL)) return R_SHELL;
-    if (used_movement_verb(DOWN)) return R_CULDESAC;
+    if (movementv(UP)) return R_SHELL;
+    if (movementp(R_SHELL)) return R_SHELL;
+    if (movementv(DOWN)) return R_CULDESAC;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_culdesac(void)
 {
-    if (used_movement_verb2(UP, OUT)) return R_RAGGED;
-    if (used_movement_placeword(R_CORRIDOR)) return R_RAGGED;
-    if (used_movement_placeword(R_SHELL)) return R_SHELL;
+    if (movementv2(UP, OUT)) return R_RAGGED;
+    if (movementp(R_CORRIDOR)) return R_RAGGED;
+    if (movementp(R_SHELL)) return R_SHELL;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_anteroom(void)
 {
-    if (used_movement_verb(UP)) return R_COMPLEX;
-    if (used_movement_verb(WEST)) return R_BEDQUILT;
-    if (used_movement_verb(EAST)) return R_WITT;
+    if (movementv(UP)) return R_COMPLEX;
+    if (movementv(WEST)) return R_BEDQUILT;
+    if (movementv(EAST)) return R_WITT;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazed107(void)
 {
-    if (used_movement_verb(SOUTH)) return R_MAZED131;
-    if (used_movement_verb(SW)) return R_MAZED132;
-    if (used_movement_verb(NE)) return R_MAZED133;
-    if (used_movement_verb(SE)) return R_MAZED134;
-    if (used_movement_verb(UP)) return R_MAZED135;
-    if (used_movement_verb(NW)) return R_MAZED136;
-    if (used_movement_verb(EAST)) return R_MAZED137;
-    if (used_movement_verb(WEST)) return R_MAZED138;
-    if (used_movement_verb(NORTH)) return R_MAZED139;
-    if (used_movement_verb(DOWN)) return R_WLONG;
+    if (movementv(SOUTH)) return R_MAZED131;
+    if (movementv(SW)) return R_MAZED132;
+    if (movementv(NE)) return R_MAZED133;
+    if (movementv(SE)) return R_MAZED134;
+    if (movementv(UP)) return R_MAZED135;
+    if (movementv(NW)) return R_MAZED136;
+    if (movementv(EAST)) return R_MAZED137;
+    if (movementv(WEST)) return R_MAZED138;
+    if (movementv(NORTH)) return R_MAZED139;
+    if (movementv(DOWN)) return R_WLONG;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_witt(void)
 {
-    if (used_movement_verb3(NORTH,SOUTH,UP) ||
-        used_movement_verb3(EAST,DOWN,NE) ||
-        used_movement_verb3(NW,SE,SW)) {
+    if (movementv3(NORTH,SOUTH,UP) ||
+        movementv3(EAST,DOWN,NE) ||
+        movementv3(NW,SE,SW)) {
         return pct(95) ? R_WITT : R_ANTE;
     }
-    if (used_movement_verb(WEST)) return R_WITT;
+    if (movementv(WEST)) return R_WITT;
     return 0;  /* command hasn't been processed yet */
 }
 
@@ -1390,15 +1351,15 @@ int at_mirror(void)
         puts("It is too far up for you to reach.");
         return STAY_STILL;
     }
-    if (used_movement_verb(SOUTH)) return R_ABOVER;
-    if (used_movement_verb(NORTH)) return R_RES;
-    if (used_movement_placeword(R_RES)) return R_RES;
+    if (movementv(SOUTH)) return R_ABOVER;
+    if (movementv(NORTH)) return R_RES;
+    if (movementp(R_RES)) return R_RES;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_window(void)
 {
-    if (used_movement_verb(WEST)) return R_SJUNC;
+    if (movementv(WEST)) return R_SJUNC;
     if (keywordv(JUMP)) {
         puts("You are at the bottom of the pit with a broken neck.");
         return you_are_dead_at(R_MIRROR);
@@ -1408,7 +1369,7 @@ int at_window(void)
 
 int at_stalact(void)
 {
-    if (used_movement_verb(NORTH)) return R_ABOVEP;
+    if (movementv(NORTH)) return R_ABOVEP;
     if (keywordv(DOWN) || keywordv(JUMP) || keywordv(CLIMB)) {
         return pct(40) ? R_MAZEA50 : pct(50) ? R_MAZEA53 : R_MAZEA45;
     }
@@ -1417,16 +1378,16 @@ int at_stalact(void)
 
 int at_mazed112(void)
 {
-    if (used_movement_verb(SW)) return R_MAZED131;
-    if (used_movement_verb(NORTH)) return R_MAZED132;
-    if (used_movement_verb(EAST)) return R_MAZED133;
-    if (used_movement_verb(NW)) return R_MAZED134;
-    if (used_movement_verb(SE)) return R_MAZED135;
-    if (used_movement_verb(NE)) return R_MAZED136;
-    if (used_movement_verb(WEST)) return R_MAZED137;
-    if (used_movement_verb(DOWN)) return R_MAZED138;
-    if (used_movement_verb(UP)) return R_MAZED139;
-    if (used_movement_verb(SOUTH)) return R_PONY;
+    if (movementv(SW)) return R_MAZED131;
+    if (movementv(NORTH)) return R_MAZED132;
+    if (movementv(EAST)) return R_MAZED133;
+    if (movementv(NW)) return R_MAZED134;
+    if (movementv(SE)) return R_MAZED135;
+    if (movementv(NE)) return R_MAZED136;
+    if (movementv(WEST)) return R_MAZED137;
+    if (movementv(DOWN)) return R_MAZED138;
+    if (movementv(UP)) return R_MAZED139;
+    if (movementv(SOUTH)) return R_PONY;
     return 0;  /* command hasn't been processed yet */
 }
 
@@ -1439,8 +1400,8 @@ int cant_walk_on_water(void)
 
 int at_res(void)
 {
-    if (used_movement_verb2(SOUTH, OUT)) return R_MIRROR;
-    if (used_movement_obj(MIRROR)) return R_MIRROR;
+    if (movementv2(SOUTH, OUT)) return R_MIRROR;
+    if (movemento(MIRROR)) return R_MIRROR;
     if (keywordv(NORTH) || keywordv(CROSS)) {
         return cant_walk_on_water();
     }
@@ -1449,10 +1410,10 @@ int at_res(void)
 
 int at_reservoir_n(void)
 {
-    if (used_movement_verb2(NORTH, PASSAGE)) return R_WARM;
-    if (used_movement_placeword(R_WARM)) return R_WARM;
-    if (used_movement_placeword(R_BALCONY)) return R_BALCONY;
-    if (used_movement_verb2(SOUTH, CROSS)) {
+    if (movementv2(NORTH, PASSAGE)) return R_WARM;
+    if (movementp(R_WARM)) return R_WARM;
+    if (movementp(R_BALCONY)) return R_BALCONY;
+    if (movementv2(SOUTH, CROSS)) {
         if (there(TURTLE, R_RESERVOIR_N)) {
             puts("You step gently on Darwin the Tortoise's back, and he carries you\n"
                  "smoothly over to the southern side of the reservoir.  He then blows\n"
@@ -1468,18 +1429,18 @@ int at_reservoir_n(void)
 
 int at_warm(void)
 {
-    if (used_movement_verb(SOUTH)) return R_RESERVOIR_N;
-    if (used_movement_placeword(R_RES)) return R_RESERVOIR_N;
-    if (used_movement_verb(NE)) return R_BALCONY;
-    if (used_movement_placeword(R_BALCONY)) return R_BALCONY;
+    if (movementv(SOUTH)) return R_RESERVOIR_N;
+    if (movementp(R_RES)) return R_RESERVOIR_N;
+    if (movementv(NE)) return R_BALCONY;
+    if (movementp(R_BALCONY)) return R_BALCONY;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_balcony(void)
 {
-    if (used_movement_verb2(WEST, OUT)) return R_WARM;
-    if (used_movement_placeword(R_WARM)) return R_WARM;
-    if (used_movement_placeword(R_RES)) return R_RESERVOIR_N;
+    if (movementv2(WEST, OUT)) return R_WARM;
+    if (movementp(R_WARM)) return R_WARM;
+    if (movementp(R_RES)) return R_RESERVOIR_N;
     /* Jumping from the balcony will make your possessions unrecoverable. */
     if (keywordv(JUMP)) return splatter(R_YLEM);
     return 0;  /* command hasn't been processed yet */
@@ -1487,15 +1448,15 @@ int at_balcony(void)
 
 int at_pirates_nest(void)
 {
-    if (used_movement_verb(SE)) return R_MAZEA84;
+    if (movementv(SE)) return R_MAZEA84;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_swofchasm(void)
 {
-    if (used_movement_verb(SW)) return R_SLOPING;
-    if (used_movement_placeword(R_SLOPING)) return R_SLOPING;
-    if (used_movement_placeword(R_CORRIDOR)) return R_SLOPING;
+    if (movementv(SW)) return R_SLOPING;
+    if (movementp(R_SLOPING)) return R_SLOPING;
+    if (movementp(R_CORRIDOR)) return R_SLOPING;
 
     if (keywordv(THROW)) {
         if (word2.type == WordType_None || there(TROLL2, R_SWOFCHASM))
@@ -1528,7 +1489,7 @@ int at_swofchasm(void)
             return STAY_STILL;
         }
     }
-    if (used_movement_verb2(CROSS, NE)) {
+    if (movementv2(CROSS, NE)) {
         if (objs[CHASM].prop) {
             puts("There is no longer any way across the chasm.");
         } else if (objs[TROLL].prop == 0) {
@@ -1555,11 +1516,11 @@ int at_swofchasm(void)
 
 int at_sloping(void)
 {
-    if (used_movement_verb(DOWN)) return R_LOW;
-    if (used_movement_verb(UP)) return R_SWOFCHASM;
-    if (used_movement_objword(CHASM)) return R_SWOFCHASM;
-    if (used_movement_placeword(R_LOW)) return R_LOW;
-    if (used_movement_verb(OUT)) return R_LOW;
+    if (movementv(DOWN)) return R_LOW;
+    if (movementv(UP)) return R_SWOFCHASM;
+    if (movemento(CHASM)) return R_SWOFCHASM;
+    if (movementp(R_LOW)) return R_LOW;
+    if (movementv(OUT)) return R_LOW;
     return 0;  /* command hasn't been processed yet */
 }
 
@@ -1569,8 +1530,8 @@ int at_secretcynne1(void)
         puts("You can't get by the dragon to get at the rug.");
         return STAY_STILL;
     }
-    if (used_movement_verb(NORTH)) return R_ABOVER;
-    if (used_movement_verb(OUT)) return R_ABOVER;
+    if (movementv(NORTH)) return R_ABOVER;
+    if (movementv(OUT)) return R_ABOVER;
     if (keywordv(FORWARD) || keywordv(EAST)) {
         if (!objs[DRAGON].prop) {
             puts("The dragon looks rather nasty.  You'd best not try to get by.");
@@ -1588,9 +1549,9 @@ int at_secretcynne2(void)
         puts("You can't get by the dragon to get at the rug.");
         return STAY_STILL;
     }
-    if (used_movement_verb(EAST)) return R_SECRETEW_TITE;
-    if (used_movement_verb(OUT)) return R_SECRETEW_TITE;
-    if (used_movement_verb2(FORWARD, NORTH)) {
+    if (movementv(EAST)) return R_SECRETEW_TITE;
+    if (movementv(OUT)) return R_SECRETEW_TITE;
+    if (movementv2(FORWARD, NORTH)) {
         if (!objs[DRAGON].prop) {
             puts("The dragon looks rather nasty.  You'd best not try to get by.");
             return STAY_STILL;
@@ -1644,7 +1605,7 @@ int at_neofchasm(void)
         }
     }
 
-    if (used_movement_verb2(CROSS, SW)) {
+    if (movementv2(CROSS, SW)) {
         if (objs[CHASM].prop > 0) {
             puts("There is no longer any way across the chasm.");
         } else if (objs[TROLL].prop == 0) {
@@ -1698,56 +1659,56 @@ int at_neofchasm(void)
         puts("I respectfully suggest you go across the bridge instead of jumping.");
         return STAY_STILL;
     }
-    if (used_movement_verb(NE)) return R_CORRIDOR;
-    if (used_movement_placeword(R_CORRIDOR)) return R_CORRIDOR;
-    if (used_movement_placeword(R_FORK)) return R_FORK;
-    if (used_movement_verb(VIEW)) return R_VIEW;
-    if (used_movement_placeword(R_FBARR)) return R_FBARR;
+    if (movementv(NE)) return R_CORRIDOR;
+    if (movementp(R_CORRIDOR)) return R_CORRIDOR;
+    if (movementp(R_FORK)) return R_FORK;
+    if (movementv(VIEW)) return R_VIEW;
+    if (movementp(R_FBARR)) return R_FBARR;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_corridor(void)
 {
-    if (used_movement_objword(CHASM)) return R_NEOFCHASM;
-    if (used_movement_verb(WEST)) return R_NEOFCHASM;
-    if (used_movement_verb(EAST)) return R_FORK;
-    if (used_movement_placeword(R_FORK)) return R_FORK;
-    if (used_movement_verb(VIEW)) return R_VIEW;
-    if (used_movement_placeword(R_FBARR)) return R_FBARR;
+    if (movemento(CHASM)) return R_NEOFCHASM;
+    if (movementv(WEST)) return R_NEOFCHASM;
+    if (movementv(EAST)) return R_FORK;
+    if (movementp(R_FORK)) return R_FORK;
+    if (movementv(VIEW)) return R_VIEW;
+    if (movementp(R_FBARR)) return R_FBARR;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_fork(void)
 {
-    if (used_movement_objword(CHASM)) return R_NEOFCHASM;
-    if (used_movement_verb(WEST)) return R_CORRIDOR;
-    if (used_movement_placeword(R_CORRIDOR)) return R_CORRIDOR;
-    if (used_movement_verb(NE)) return R_WARMJUNCTN;
-    if (used_movement_verb(LEFT)) return R_WARMJUNCTN;
-    if (used_movement_verb(SE)) return R_LIME;
-    if (used_movement_verb(RIGHT)) return R_LIME;
-    if (used_movement_verb(DOWN)) return R_LIME;
-    if (used_movement_verb(VIEW)) return R_VIEW;
-    if (used_movement_placeword(R_FBARR)) return R_FBARR;
+    if (movemento(CHASM)) return R_NEOFCHASM;
+    if (movementv(WEST)) return R_CORRIDOR;
+    if (movementp(R_CORRIDOR)) return R_CORRIDOR;
+    if (movementv(NE)) return R_WARMJUNCTN;
+    if (movementv(LEFT)) return R_WARMJUNCTN;
+    if (movementv(SE)) return R_LIME;
+    if (movementv(RIGHT)) return R_LIME;
+    if (movementv(DOWN)) return R_LIME;
+    if (movementv(VIEW)) return R_VIEW;
+    if (movementp(R_FBARR)) return R_FBARR;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_warmjunctn(void)
 {
-    if (used_movement_verb(SOUTH)) return R_FORK;
-    if (used_movement_placeword(R_FORK)) return R_FORK;
-    if (used_movement_verb(NORTH)) return R_VIEW;
-    if (used_movement_verb(VIEW)) return R_VIEW;
-    if (used_movement_verb2(EAST, CRAWL)) return R_CHAMBER;
+    if (movementv(SOUTH)) return R_FORK;
+    if (movementp(R_FORK)) return R_FORK;
+    if (movementv(NORTH)) return R_VIEW;
+    if (movementv(VIEW)) return R_VIEW;
+    if (movementv2(EAST, CRAWL)) return R_CHAMBER;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_view(void)
 {
-    if (used_movement_verb(SOUTH)) return R_WARMJUNCTN;
-    if (used_movement_verb(PASSAGE)) return R_WARMJUNCTN;
-    if (used_movement_verb(OUT)) return R_WARMJUNCTN;
-    if (used_movement_placeword(R_FORK)) return R_FORK;
+    if (movementv(SOUTH)) return R_WARMJUNCTN;
+    if (movementv(PASSAGE)) return R_WARMJUNCTN;
+    if (movementv(OUT)) return R_WARMJUNCTN;
+    if (movementp(R_FORK)) return R_FORK;
     if (keywordv(JUMP) || keywordv(DOWN) || keywordv(CLIMB))
         return splatter(R_YLEM);
     if (keywordp(R_VALLEY) || keywordv(CROSS) || keywordo(GORGE) || keywordv(NORTH)) {
@@ -1794,34 +1755,34 @@ int at_view(void)
 
 int at_chamber(void)
 {
-    if (used_movement_verb(WEST)) return R_WARMJUNCTN;
-    if (used_movement_verb(OUT)) return R_WARMJUNCTN;
-    if (used_movement_verb(CRAWL)) return R_WARMJUNCTN;
-    if (used_movement_placeword(R_FORK)) return R_FORK;
-    if (used_movement_verb(VIEW)) return R_VIEW;
+    if (movementv(WEST)) return R_WARMJUNCTN;
+    if (movementv(OUT)) return R_WARMJUNCTN;
+    if (movementv(CRAWL)) return R_WARMJUNCTN;
+    if (movementp(R_FORK)) return R_FORK;
+    if (movementv(VIEW)) return R_VIEW;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_lime(void)
 {
-    if (used_movement_verb(NORTH)) return R_FORK;
-    if (used_movement_verb(UP)) return R_FORK;
-    if (used_movement_placeword(R_FORK)) return R_FORK;
-    if (used_movement_verb(SOUTH)) return R_FBARR;
-    if (used_movement_verb(DOWN)) return R_FBARR;
-    if (used_movement_placeword(R_FBARR)) return R_FBARR;
-    if (used_movement_verb(VIEW)) return R_VIEW;
+    if (movementv(NORTH)) return R_FORK;
+    if (movementv(UP)) return R_FORK;
+    if (movementp(R_FORK)) return R_FORK;
+    if (movementv(SOUTH)) return R_FBARR;
+    if (movementv(DOWN)) return R_FBARR;
+    if (movementp(R_FBARR)) return R_FBARR;
+    if (movementv(VIEW)) return R_VIEW;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_fbarr(void)
 {
-    if (used_movement_verb(WEST)) return R_LIME;
-    if (used_movement_verb(UP)) return R_LIME;
-    if (used_movement_placeword(R_FORK)) return R_FORK;
-    if (used_movement_verb2(EAST, IN)) return R_BARR;
-    if (used_movement_placeword(R_FBARR)) return R_BARR;
-    if (used_movement_verb(VIEW)) return R_VIEW;
+    if (movementv(WEST)) return R_LIME;
+    if (movementv(UP)) return R_LIME;
+    if (movementp(R_FORK)) return R_FORK;
+    if (movementv2(EAST, IN)) return R_BARR;
+    if (movementp(R_FBARR)) return R_BARR;
+    if (movementv(VIEW)) return R_VIEW;
     return 0;  /* command hasn't been processed yet */
 }
 
@@ -1832,152 +1793,152 @@ int at_barr(void)
              "to retreat without the axe.");
         return STAY_STILL;
     }
-    if (used_movement_verb(WEST)) return R_FBARR;
-    if (used_movement_verb(OUT)) return R_FBARR;
-    if (used_movement_placeword(R_FORK)) return R_FORK;
-    if (used_movement_verb(VIEW)) return R_VIEW;
+    if (movementv(WEST)) return R_FBARR;
+    if (movementv(OUT)) return R_FBARR;
+    if (movementp(R_FORK)) return R_FORK;
+    if (movementv(VIEW)) return R_VIEW;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazed131(void)
 {
-    if (used_movement_verb(WEST)) return R_MAZED107;
-    if (used_movement_verb(SE)) return R_MAZED132;
-    if (used_movement_verb(NW)) return R_MAZED133;
-    if (used_movement_verb(SW)) return R_MAZED134;
-    if (used_movement_verb(NE)) return R_MAZED135;
-    if (used_movement_verb(UP)) return R_MAZED136;
-    if (used_movement_verb(DOWN)) return R_MAZED137;
-    if (used_movement_verb(NORTH)) return R_MAZED138;
-    if (used_movement_verb(SOUTH)) return R_MAZED139;
-    if (used_movement_verb(EAST)) return R_MAZED112;
+    if (movementv(WEST)) return R_MAZED107;
+    if (movementv(SE)) return R_MAZED132;
+    if (movementv(NW)) return R_MAZED133;
+    if (movementv(SW)) return R_MAZED134;
+    if (movementv(NE)) return R_MAZED135;
+    if (movementv(UP)) return R_MAZED136;
+    if (movementv(DOWN)) return R_MAZED137;
+    if (movementv(NORTH)) return R_MAZED138;
+    if (movementv(SOUTH)) return R_MAZED139;
+    if (movementv(EAST)) return R_MAZED112;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazed132(void)
 {
-    if (used_movement_verb(NW)) return R_MAZED107;
-    if (used_movement_verb(UP)) return R_MAZED131;
-    if (used_movement_verb(NORTH)) return R_MAZED133;
-    if (used_movement_verb(SOUTH)) return R_MAZED134;
-    if (used_movement_verb(WEST)) return R_MAZED135;
-    if (used_movement_verb(SW)) return R_MAZED136;
-    if (used_movement_verb(NE)) return R_MAZED137;
-    if (used_movement_verb(EAST)) return R_MAZED138;
-    if (used_movement_verb(DOWN)) return R_MAZED139;
-    if (used_movement_verb(SE)) return R_MAZED112;
+    if (movementv(NW)) return R_MAZED107;
+    if (movementv(UP)) return R_MAZED131;
+    if (movementv(NORTH)) return R_MAZED133;
+    if (movementv(SOUTH)) return R_MAZED134;
+    if (movementv(WEST)) return R_MAZED135;
+    if (movementv(SW)) return R_MAZED136;
+    if (movementv(NE)) return R_MAZED137;
+    if (movementv(EAST)) return R_MAZED138;
+    if (movementv(DOWN)) return R_MAZED139;
+    if (movementv(SE)) return R_MAZED112;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazed133(void)
 {
-    if (used_movement_verb(UP)) return R_MAZED107;
-    if (used_movement_verb(DOWN)) return R_MAZED131;
-    if (used_movement_verb(WEST)) return R_MAZED132;
-    if (used_movement_verb(NE)) return R_MAZED134;
-    if (used_movement_verb(SW)) return R_MAZED135;
-    if (used_movement_verb(EAST)) return R_MAZED136;
-    if (used_movement_verb(NORTH)) return R_MAZED137;
-    if (used_movement_verb(NW)) return R_MAZED138;
-    if (used_movement_verb(SE)) return R_MAZED139;
-    if (used_movement_verb(SOUTH)) return R_MAZED112;
+    if (movementv(UP)) return R_MAZED107;
+    if (movementv(DOWN)) return R_MAZED131;
+    if (movementv(WEST)) return R_MAZED132;
+    if (movementv(NE)) return R_MAZED134;
+    if (movementv(SW)) return R_MAZED135;
+    if (movementv(EAST)) return R_MAZED136;
+    if (movementv(NORTH)) return R_MAZED137;
+    if (movementv(NW)) return R_MAZED138;
+    if (movementv(SE)) return R_MAZED139;
+    if (movementv(SOUTH)) return R_MAZED112;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazed134(void)
 {
-    if (used_movement_verb(NE)) return R_MAZED107;
-    if (used_movement_verb(NORTH)) return R_MAZED131;
-    if (used_movement_verb(NW)) return R_MAZED132;
-    if (used_movement_verb(SE)) return R_MAZED133;
-    if (used_movement_verb(EAST)) return R_MAZED135;
-    if (used_movement_verb(DOWN)) return R_MAZED136;
-    if (used_movement_verb(SOUTH)) return R_MAZED137;
-    if (used_movement_verb(UP)) return R_MAZED138;
-    if (used_movement_verb(WEST)) return R_MAZED139;
-    if (used_movement_verb(SW)) return R_MAZED112;
+    if (movementv(NE)) return R_MAZED107;
+    if (movementv(NORTH)) return R_MAZED131;
+    if (movementv(NW)) return R_MAZED132;
+    if (movementv(SE)) return R_MAZED133;
+    if (movementv(EAST)) return R_MAZED135;
+    if (movementv(DOWN)) return R_MAZED136;
+    if (movementv(SOUTH)) return R_MAZED137;
+    if (movementv(UP)) return R_MAZED138;
+    if (movementv(WEST)) return R_MAZED139;
+    if (movementv(SW)) return R_MAZED112;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazed135(void)
 {
-    if (used_movement_verb(NORTH)) return R_MAZED107;
-    if (used_movement_verb(SE)) return R_MAZED131;
-    if (used_movement_verb(DOWN)) return R_MAZED132;
-    if (used_movement_verb(SOUTH)) return R_MAZED133;
-    if (used_movement_verb(EAST)) return R_MAZED134;
-    if (used_movement_verb(WEST)) return R_MAZED136;
-    if (used_movement_verb(SW)) return R_MAZED137;
-    if (used_movement_verb(NE)) return R_MAZED138;
-    if (used_movement_verb(NW)) return R_MAZED139;
-    if (used_movement_verb(UP)) return R_MAZED112;
+    if (movementv(NORTH)) return R_MAZED107;
+    if (movementv(SE)) return R_MAZED131;
+    if (movementv(DOWN)) return R_MAZED132;
+    if (movementv(SOUTH)) return R_MAZED133;
+    if (movementv(EAST)) return R_MAZED134;
+    if (movementv(WEST)) return R_MAZED136;
+    if (movementv(SW)) return R_MAZED137;
+    if (movementv(NE)) return R_MAZED138;
+    if (movementv(NW)) return R_MAZED139;
+    if (movementv(UP)) return R_MAZED112;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazed136(void)
 {
-    if (used_movement_verb(EAST)) return R_MAZED107;
-    if (used_movement_verb(WEST)) return R_MAZED131;
-    if (used_movement_verb(UP)) return R_MAZED132;
-    if (used_movement_verb(SW)) return R_MAZED133;
-    if (used_movement_verb(DOWN)) return R_MAZED134;
-    if (used_movement_verb(SOUTH)) return R_MAZED135;
-    if (used_movement_verb(NW)) return R_MAZED137;
-    if (used_movement_verb(SE)) return R_MAZED138;
-    if (used_movement_verb(NE)) return R_MAZED139;
-    if (used_movement_verb(NORTH)) return R_MAZED112;
+    if (movementv(EAST)) return R_MAZED107;
+    if (movementv(WEST)) return R_MAZED131;
+    if (movementv(UP)) return R_MAZED132;
+    if (movementv(SW)) return R_MAZED133;
+    if (movementv(DOWN)) return R_MAZED134;
+    if (movementv(SOUTH)) return R_MAZED135;
+    if (movementv(NW)) return R_MAZED137;
+    if (movementv(SE)) return R_MAZED138;
+    if (movementv(NE)) return R_MAZED139;
+    if (movementv(NORTH)) return R_MAZED112;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazed137(void)
 {
-    if (used_movement_verb(SE)) return R_MAZED107;
-    if (used_movement_verb(NE)) return R_MAZED131;
-    if (used_movement_verb(SOUTH)) return R_MAZED132;
-    if (used_movement_verb(DOWN)) return R_MAZED133;
-    if (used_movement_verb(UP)) return R_MAZED134;
-    if (used_movement_verb(NW)) return R_MAZED135;
-    if (used_movement_verb(NORTH)) return R_MAZED136;
-    if (used_movement_verb(SW)) return R_MAZED138;
-    if (used_movement_verb(EAST)) return R_MAZED139;
-    if (used_movement_verb(WEST)) return R_MAZED112;
+    if (movementv(SE)) return R_MAZED107;
+    if (movementv(NE)) return R_MAZED131;
+    if (movementv(SOUTH)) return R_MAZED132;
+    if (movementv(DOWN)) return R_MAZED133;
+    if (movementv(UP)) return R_MAZED134;
+    if (movementv(NW)) return R_MAZED135;
+    if (movementv(NORTH)) return R_MAZED136;
+    if (movementv(SW)) return R_MAZED138;
+    if (movementv(EAST)) return R_MAZED139;
+    if (movementv(WEST)) return R_MAZED112;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazed138(void)
 {
-    if (used_movement_verb(DOWN)) return R_MAZED107;
-    if (used_movement_verb(EAST)) return R_MAZED131;
-    if (used_movement_verb(NE)) return R_MAZED132;
-    if (used_movement_verb(UP)) return R_MAZED133;
-    if (used_movement_verb(WEST)) return R_MAZED134;
-    if (used_movement_verb(NORTH)) return R_MAZED135;
-    if (used_movement_verb(SOUTH)) return R_MAZED136;
-    if (used_movement_verb(SE)) return R_MAZED137;
-    if (used_movement_verb(SW)) return R_MAZED139;
-    if (used_movement_verb(NW)) return R_MAZED112;
+    if (movementv(DOWN)) return R_MAZED107;
+    if (movementv(EAST)) return R_MAZED131;
+    if (movementv(NE)) return R_MAZED132;
+    if (movementv(UP)) return R_MAZED133;
+    if (movementv(WEST)) return R_MAZED134;
+    if (movementv(NORTH)) return R_MAZED135;
+    if (movementv(SOUTH)) return R_MAZED136;
+    if (movementv(SE)) return R_MAZED137;
+    if (movementv(SW)) return R_MAZED139;
+    if (movementv(NW)) return R_MAZED112;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazed139(void)
 {
-    if (used_movement_verb(SW)) return R_MAZED107;
-    if (used_movement_verb(NW)) return R_MAZED131;
-    if (used_movement_verb(EAST)) return R_MAZED132;
-    if (used_movement_verb(WEST)) return R_MAZED133;
-    if (used_movement_verb(NORTH)) return R_MAZED134;
-    if (used_movement_verb(DOWN)) return R_MAZED135;
-    if (used_movement_verb(SE)) return R_MAZED136;
-    if (used_movement_verb(UP)) return R_MAZED137;
-    if (used_movement_verb(SOUTH)) return R_MAZED138;
-    if (used_movement_verb(NE)) return R_MAZED112;
+    if (movementv(SW)) return R_MAZED107;
+    if (movementv(NW)) return R_MAZED131;
+    if (movementv(EAST)) return R_MAZED132;
+    if (movementv(WEST)) return R_MAZED133;
+    if (movementv(NORTH)) return R_MAZED134;
+    if (movementv(DOWN)) return R_MAZED135;
+    if (movementv(SE)) return R_MAZED136;
+    if (movementv(UP)) return R_MAZED137;
+    if (movementv(SOUTH)) return R_MAZED138;
+    if (movementv(NE)) return R_MAZED112;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_pony(void)
 {
-    if (used_movement_verb(NORTH)) return R_MAZED112;
-    if (used_movement_verb(OUT)) return R_MAZED112;
+    if (movementv(NORTH)) return R_MAZED112;
+    if (movementv(OUT)) return R_MAZED112;
     if (keywordv(DROP) && keywordo(COINS) && toting(COINS)) {
         apport(COINS, R_LIMBO);
         apport(BATTERIES, R_PONY);
@@ -1990,14 +1951,14 @@ int at_pony(void)
 
 int at_sandstone(void)
 {
-    if (used_movement_verb2(WEST, OUT)) return R_EMIST;
-    if (used_movement_placeword(R_EMIST)) return R_EMIST;
+    if (movementv2(WEST, OUT)) return R_EMIST;
+    if (movementp(R_EMIST)) return R_EMIST;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_morion(void)
 {
-    if (used_movement_verb2(SOUTH, OUT)) return R_HMK;
+    if (movementv2(SOUTH, OUT)) return R_HMK;
     return 0;  /* command hasn't been processed yet */
 }
 
@@ -2014,7 +1975,7 @@ int enter_safe(Location start)
 
 int at_vault(void)
 {
-    if (used_movement_verb3(UP,OUT,NORTH)) {
+    if (movementv3(UP,OUT,NORTH)) {
         if (objs[SAFE].prop == 1) {
             puts("The safe's door is blocking the exit passage - you'll have to close\n"
                  "the safe to get out of here.");
@@ -2048,59 +2009,59 @@ int at_insafe(void)
 
 int at_corrid_1(void)
 {
-    if (used_movement_verb(SOUTH)) return R_HMK;
-    if (used_movement_verb(NORTH)) return R_CORRID_2;
+    if (movementv(SOUTH)) return R_HMK;
+    if (movementv(NORTH)) return R_CORRID_2;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_corrid_2(void)
 {
-    if (used_movement_verb(SOUTH)) return R_CORRID_1;
-    if (used_movement_verb(WEST)) return R_CORRID_1;
-    if (used_movement_verb2(NORTH, EAST)) return R_TOOL;
+    if (movementv(SOUTH)) return R_CORRID_1;
+    if (movementv(WEST)) return R_CORRID_1;
+    if (movementv2(NORTH, EAST)) return R_TOOL;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_tool(void)
 {
-    if (used_movement_verb2(OUT, SOUTH)) return R_CORRID_2;
+    if (movementv2(OUT, SOUTH)) return R_CORRID_2;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_corrid_3(void)
 {
-    if (used_movement_verb(SOUTH)) return R_HMK;
-    if (used_movement_verb(NORTH)) return R_SPHERICAL;
-    if (used_movement_verb(EAST)) return R_CUBICLE;
+    if (movementv(SOUTH)) return R_HMK;
+    if (movementv(NORTH)) return R_SPHERICAL;
+    if (movementv(EAST)) return R_CUBICLE;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_cubicle(void)
 {
-    if (used_movement_verb(OUT)) return R_CORRID_3;
-    if (used_movement_placeword(R_CORRIDOR)) return R_CORRID_3;
-    if (used_movement_verb(SOUTH)) return R_CORRID_3;
+    if (movementv(OUT)) return R_CORRID_3;
+    if (movementp(R_CORRIDOR)) return R_CORRID_3;
+    if (movementv(SOUTH)) return R_CORRID_3;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_spherical(void)
 {
-    if (used_movement_verb(OUT)) return R_CORRID_3;
-    if (used_movement_verb(NORTH)) return R_CORRID_3;
-    if (used_movement_placeword(R_CORRIDOR)) return R_CORRID_3;
+    if (movementv(OUT)) return R_CORRID_3;
+    if (movementv(NORTH)) return R_CORRID_3;
+    if (movementp(R_CORRIDOR)) return R_CORRID_3;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_tunnel_1(void)
 {
-    if (used_movement_verb(SOUTH)) return R_GIANT;
-    if (used_movement_verb(NORTH)) return R_GLASSY;
+    if (movementv(SOUTH)) return R_GIANT;
+    if (movementv(NORTH)) return R_GLASSY;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_glassy(void)
 {
-    if (used_movement_verb(SOUTH)) return R_TUNNEL_1;
+    if (movementv(SOUTH)) return R_TUNNEL_1;
     if (keywordv(NORTH) || keywordp(R_LAIR)) {
         if (there(OGRE, R_GLASSY)) {
             puts("The ogre growls at you and refuses to let you pass.");
@@ -2114,301 +2075,301 @@ int at_glassy(void)
 
 int at_lair(void)
 {
-    if (used_movement_verb(EAST)) return R_BRINK_1;
-    if (used_movement_verb(WEST)) return R_GLASSY;
+    if (movementv(EAST)) return R_BRINK_1;
+    if (movementv(WEST)) return R_GLASSY;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_brink_1(void)
 {
-    if (used_movement_verb(NORTH)) return R_LAIR;
-    if (used_movement_verb(WEST)) return R_BRINK_2;
-    if (used_movement_verb(EAST)) return R_BRINK_3;
+    if (movementv(NORTH)) return R_LAIR;
+    if (movementv(WEST)) return R_BRINK_2;
+    if (movementv(EAST)) return R_BRINK_3;
     if (keywordv(JUMP)) return plunge();
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_brink_2(void)
 {
-    if (used_movement_verb(NORTH)) return R_BRINK_1;
-    if (used_movement_verb(SE)) return R_ICE;
+    if (movementv(NORTH)) return R_BRINK_1;
+    if (movementv(SE)) return R_ICE;
     if (keywordv(JUMP)) return plunge();
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_ice(void)
 {
-    if (used_movement_verb(NW)) return R_BRINK_2;
-    if (used_movement_verb2(DOWN, EAST)) return oof(R_SLIDE);
-    if (used_movement_placeword(R_SLIDE)) return oof(R_SLIDE);
+    if (movementv(NW)) return R_BRINK_2;
+    if (movementv2(DOWN, EAST)) return oof(R_SLIDE);
+    if (movementp(R_SLIDE)) return oof(R_SLIDE);
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_slide(void)
 {
-    if (used_movement_verb3(UP, NORTH, CLIMB)) {
+    if (movementv3(UP, NORTH, CLIMB)) {
         puts("The icy slide is far too steep and slippery to climb.");
         return STAY_STILL;
     }
-    if (used_movement_verb(SOUTH)) return R_ICECAVE2A;
-    if (used_movement_verb(NW)) return R_ICECAVE4;
+    if (movementv(SOUTH)) return R_ICECAVE2A;
+    if (movementv(NW)) return R_ICECAVE4;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave1(void)
 {
-    if (used_movement_verb(WEST)) return R_ICECAVE2;
-    if (used_movement_verb(NORTH)) return R_ICECAVE1A;
+    if (movementv(WEST)) return R_ICECAVE2;
+    if (movementv(NORTH)) return R_ICECAVE1A;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave1a(void)
 {
-    if (used_movement_verb(SOUTH)) return R_ICECAVE1;
+    if (movementv(SOUTH)) return R_ICECAVE1;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave2(void)
 {
-    if (used_movement_verb(EAST)) return R_ICECAVE1;
-    if (used_movement_verb(WEST)) return R_ICECAVE3;
-    if (used_movement_verb(NORTH)) return R_ICECAVE2A;
+    if (movementv(EAST)) return R_ICECAVE1;
+    if (movementv(WEST)) return R_ICECAVE3;
+    if (movementv(NORTH)) return R_ICECAVE2A;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave2a(void)
 {
-    if (used_movement_verb(NORTH)) return R_SLIDE;
-    if (used_movement_verb(SOUTH)) return R_ICECAVE2;
+    if (movementv(NORTH)) return R_SLIDE;
+    if (movementv(SOUTH)) return R_ICECAVE2;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave3(void)
 {
-    if (used_movement_verb(EAST)) return R_ICECAVE2;
-    if (used_movement_verb(NORTH)) return R_ICECAVE3A;
+    if (movementv(EAST)) return R_ICECAVE2;
+    if (movementv(NORTH)) return R_ICECAVE3A;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave3a(void)
 {
-    if (used_movement_verb(SOUTH)) return R_ICECAVE3;
+    if (movementv(SOUTH)) return R_ICECAVE3;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave4(void)
 {
-    if (used_movement_verb(EAST)) return R_SLIDE;
-    if (used_movement_verb(WEST)) return R_ICECAVE5;
+    if (movementv(EAST)) return R_SLIDE;
+    if (movementv(WEST)) return R_ICECAVE5;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave5(void)
 {
-    if (used_movement_verb(NE)) return R_ICECAVE4;
-    if (used_movement_verb(SOUTH)) return R_ICECAVE6;
+    if (movementv(NE)) return R_ICECAVE4;
+    if (movementv(SOUTH)) return R_ICECAVE6;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave6(void)
 {
-    if (used_movement_verb(NORTH)) return R_ICECAVE5;
-    if (used_movement_verb(SOUTH)) return R_ICECAVE7;
-    if (used_movement_verb(WEST)) return R_ICECAVE9;
+    if (movementv(NORTH)) return R_ICECAVE5;
+    if (movementv(SOUTH)) return R_ICECAVE7;
+    if (movementv(WEST)) return R_ICECAVE9;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave7(void)
 {
-    if (used_movement_verb(NORTH)) return R_ICECAVE6;
+    if (movementv(NORTH)) return R_ICECAVE6;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave8(void)
 {
-    if (used_movement_verb(NORTH)) return R_ICECAVE9;
+    if (movementv(NORTH)) return R_ICECAVE9;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave9(void)
 {
-    if (used_movement_verb(EAST)) return R_ICECAVE6;
-    if (used_movement_verb(SOUTH)) return R_ICECAVE8;
-    if (used_movement_verb(NORTH)) return R_ICECAVE10;
+    if (movementv(EAST)) return R_ICECAVE6;
+    if (movementv(SOUTH)) return R_ICECAVE8;
+    if (movementv(NORTH)) return R_ICECAVE10;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave10(void)
 {
-    if (used_movement_verb(SOUTH)) return R_ICECAVE9;
-    if (used_movement_verb(NW)) return R_ICECAVE11;
+    if (movementv(SOUTH)) return R_ICECAVE9;
+    if (movementv(NW)) return R_ICECAVE11;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave11(void)
 {
-    if (used_movement_verb(EAST)) return R_ICECAVE10;
-    if (used_movement_verb(WEST)) return R_ICECAVE12;
+    if (movementv(EAST)) return R_ICECAVE10;
+    if (movementv(WEST)) return R_ICECAVE12;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave12(void)
 {
-    if (used_movement_verb(NE)) return R_ICECAVE11;
-    if (used_movement_verb(SOUTH)) return R_ICECAVE12A;
-    if (used_movement_verb(WEST)) return R_ICECAVE15;
+    if (movementv(NE)) return R_ICECAVE11;
+    if (movementv(SOUTH)) return R_ICECAVE12A;
+    if (movementv(WEST)) return R_ICECAVE15;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave12a(void)
 {
-    if (used_movement_verb(NORTH)) return R_ICECAVE12;
-    if (used_movement_verb(SOUTH)) return R_ICECAVE13;
+    if (movementv(NORTH)) return R_ICECAVE12;
+    if (movementv(SOUTH)) return R_ICECAVE13;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave13(void)
 {
-    if (used_movement_verb(NORTH)) return R_ICECAVE12A;
+    if (movementv(NORTH)) return R_ICECAVE12A;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave14(void)
 {
-    if (used_movement_verb(NORTH)) return R_ICECAVE15A;
+    if (movementv(NORTH)) return R_ICECAVE15A;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave15(void)
 {
-    if (used_movement_verb(EAST)) return R_ICECAVE12;
-    if (used_movement_verb(SOUTH)) return R_ICECAVE15A;
-    if (used_movement_verb(NW)) return R_ICECAVE16;
+    if (movementv(EAST)) return R_ICECAVE12;
+    if (movementv(SOUTH)) return R_ICECAVE15A;
+    if (movementv(NW)) return R_ICECAVE16;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave15a(void)
 {
-    if (used_movement_verb(SOUTH)) return R_ICECAVE14;
-    if (used_movement_verb(NORTH)) return R_ICECAVE15;
+    if (movementv(SOUTH)) return R_ICECAVE14;
+    if (movementv(NORTH)) return R_ICECAVE15;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave16(void)
 {
-    if (used_movement_verb(EAST)) return R_ICECAVE15;
-    if (used_movement_verb(WEST)) return R_ICECAVE17;
+    if (movementv(EAST)) return R_ICECAVE15;
+    if (movementv(WEST)) return R_ICECAVE17;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave17(void)
 {
-    if (used_movement_verb(NE)) return R_ICECAVE16;
-    if (used_movement_verb(SOUTH)) return R_ICECAVE18;
+    if (movementv(NE)) return R_ICECAVE16;
+    if (movementv(SOUTH)) return R_ICECAVE18;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave18(void)
 {
-    if (used_movement_verb(NORTH)) return R_ICECAVE17;
-    if (used_movement_verb(SOUTH)) return R_ICECAVE19;
-    if (used_movement_verb(WEST)) return R_ICECAVE21;
-    if (used_movement_verb(NW)) return R_ICECAVE22;
+    if (movementv(NORTH)) return R_ICECAVE17;
+    if (movementv(SOUTH)) return R_ICECAVE19;
+    if (movementv(WEST)) return R_ICECAVE21;
+    if (movementv(NW)) return R_ICECAVE22;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave19(void)
 {
-    if (used_movement_verb(NORTH)) return R_ICECAVE18;
-    if (used_movement_verb(WEST)) return R_ICECAVE20;
+    if (movementv(NORTH)) return R_ICECAVE18;
+    if (movementv(WEST)) return R_ICECAVE20;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave20(void)
 {
-    if (used_movement_verb(EAST)) return R_ICECAVE19;
-    if (used_movement_verb(NORTH)) return R_ICECAVE21;
+    if (movementv(EAST)) return R_ICECAVE19;
+    if (movementv(NORTH)) return R_ICECAVE21;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave21(void)
 {
-    if (used_movement_verb(EAST)) return R_ICECAVE18;
-    if (used_movement_verb(SOUTH)) return R_ICECAVE20;
+    if (movementv(EAST)) return R_ICECAVE18;
+    if (movementv(SOUTH)) return R_ICECAVE20;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave22(void)
 {
-    if (used_movement_verb(SE)) return R_ICECAVE18;
-    if (used_movement_verb(NW)) return R_ICECAVE23;
+    if (movementv(SE)) return R_ICECAVE18;
+    if (movementv(NW)) return R_ICECAVE23;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave23(void)
 {
-    if (used_movement_verb(EAST)) return R_ICECAVE22;
-    if (used_movement_verb(WEST)) return R_ICECAVE24;
+    if (movementv(EAST)) return R_ICECAVE22;
+    if (movementv(WEST)) return R_ICECAVE24;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave24(void)
 {
-    if (used_movement_verb(NE)) return R_ICECAVE23;
-    if (used_movement_verb(SOUTH)) return R_ICECAVE25;
-    if (used_movement_verb(WEST)) return R_ICECAVE29;
+    if (movementv(NE)) return R_ICECAVE23;
+    if (movementv(SOUTH)) return R_ICECAVE25;
+    if (movementv(WEST)) return R_ICECAVE29;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave25(void)
 {
-    if (used_movement_verb(NORTH)) return R_ICECAVE24;
-    if (used_movement_verb(SOUTH)) return R_ICECAVE26;
-    if (used_movement_verb(WEST)) return R_ICECAVE28;
-    if (used_movement_verb(NW)) return R_ICECAVE28A;
+    if (movementv(NORTH)) return R_ICECAVE24;
+    if (movementv(SOUTH)) return R_ICECAVE26;
+    if (movementv(WEST)) return R_ICECAVE28;
+    if (movementv(NW)) return R_ICECAVE28A;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave26(void)
 {
-    if (used_movement_verb(NORTH)) return R_ICECAVE25;
-    if (used_movement_verb(NW)) return R_ICECAVE27;
+    if (movementv(NORTH)) return R_ICECAVE25;
+    if (movementv(NW)) return R_ICECAVE27;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave27(void)
 {
-    if (used_movement_verb(SE)) return R_ICECAVE26;
-    if (used_movement_verb(NORTH)) return R_ICECAVE28;
+    if (movementv(SE)) return R_ICECAVE26;
+    if (movementv(NORTH)) return R_ICECAVE28;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave28(void)
 {
-    if (used_movement_verb(EAST)) return R_ICECAVE25;
-    if (used_movement_verb(SOUTH)) return R_ICECAVE27;
+    if (movementv(EAST)) return R_ICECAVE25;
+    if (movementv(SOUTH)) return R_ICECAVE27;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave28a(void)
 {
-    if (used_movement_verb(SE)) return R_ICECAVE25;
-    if (used_movement_verb(NORTH)) return R_ICECAVE29;
+    if (movementv(SE)) return R_ICECAVE25;
+    if (movementv(NORTH)) return R_ICECAVE29;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave29(void)
 {
-    if (used_movement_verb(EAST)) return R_ICECAVE24;
-    if (used_movement_verb(SOUTH)) return R_ICECAVE28A;
-    if (used_movement_verb(NW)) return R_ICECAVE30;
+    if (movementv(EAST)) return R_ICECAVE24;
+    if (movementv(SOUTH)) return R_ICECAVE28A;
+    if (movementv(NW)) return R_ICECAVE30;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_icecave30(void)
 {
-    if (used_movement_verb(EAST)) return R_ICECAVE29;
-    if (used_movement_verb(THURB)) {
+    if (movementv(EAST)) return R_ICECAVE29;
+    if (movementv(THURB)) {
         say_foof();
         return R_ICE;
     }
@@ -2417,23 +2378,23 @@ int at_icecave30(void)
 
 int at_brink_3(void)
 {
-    if (used_movement_verb(NORTH)) return R_BRINK_1;
-    if (used_movement_verb(NE)) return R_CRACK_1;
-    if (used_movement_verb(CRACK)) return R_CRACK_1;
+    if (movementv(NORTH)) return R_BRINK_1;
+    if (movementv(NE)) return R_CRACK_1;
+    if (movementv(CRACK)) return R_CRACK_1;
     if (keywordv(JUMP)) return plunge();
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_crack_1(void)
 {
-    if (used_movement_verb(SW)) return R_BRINK_3;
-    if (used_movement_verb(SE)) return R_CRACK_2;
+    if (movementv(SW)) return R_BRINK_3;
+    if (movementv(SE)) return R_CRACK_2;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_crack_2(void)
 {
-    if (used_movement_verb(WEST)) return R_CRACK_1;
+    if (movementv(WEST)) return R_CRACK_1;
     if (keywordv(SOUTH)) {
         if (there(SLIME, R_CRACK_2)) {
             puts("As you enter into the passage, you are forced to brush up against\n"
@@ -2449,14 +2410,14 @@ int at_crack_2(void)
 
 int at_crack_3(void)
 {
-    if (used_movement_verb(NORTH)) return R_CRACK_2;
-    if (used_movement_verb2(SOUTH, CRAWL)) return R_CRACK_4;
+    if (movementv(NORTH)) return R_CRACK_2;
+    if (movementv2(SOUTH, CRAWL)) return R_CRACK_4;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_crack_4(void)
 {
-    if (used_movement_verb3(NORTH, OUT, CRAWL)) return R_CRACK_3;
+    if (movementv3(NORTH, OUT, CRAWL)) return R_CRACK_3;
     return 0;  /* command hasn't been processed yet */
 }
 
@@ -2494,46 +2455,46 @@ static int quicksand(Location dest)
 
 int at_arch_cor_1(void)
 {
-    if (used_movement_verb(WEST)) return R_ARCHED;
+    if (movementv(WEST)) return R_ARCHED;
     if (keywordv(EAST)) return quicksand(R_ARCH_COR_2);
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_arch_cor_2(void)
 {
-    if (used_movement_verb(NORTH)) return R_ARCH_FORK;
+    if (movementv(NORTH)) return R_ARCH_FORK;
     if (keywordv(WEST)) return quicksand(R_ARCH_COR_1);
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_arch_fork(void)
 {
-    if (used_movement_verb(SOUTH)) return R_ARCH_COR_2;
-    if (used_movement_verb(NORTH)) return R_FOURIER;
-    if (used_movement_verb(EAST)) return R_JONAH;
-    if (used_movement_placeword(R_JONAH)) return R_JONAH;
-    if (used_movement_placeword(R_FOURIER)) return R_FOURIER;
+    if (movementv(SOUTH)) return R_ARCH_COR_2;
+    if (movementv(NORTH)) return R_FOURIER;
+    if (movementv(EAST)) return R_JONAH;
+    if (movementp(R_JONAH)) return R_JONAH;
+    if (movementp(R_FOURIER)) return R_FOURIER;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_fourier(void)
 {
-    if (used_movement_verb(NW)) return R_ARCH_FORK;
-    if (used_movement_verb(SW)) return R_SHELF;
+    if (movementv(NW)) return R_ARCH_FORK;
+    if (movementv(SW)) return R_SHELF;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_shelf(void)
 {
-    if (used_movement_verb(WEST)) return R_FOURIER;
-    if (used_movement_verb(DOWN)) return R_BEACH;
-    if (used_movement_obj(STEPS)) return R_BEACH;
+    if (movementv(WEST)) return R_FOURIER;
+    if (movementv(DOWN)) return R_BEACH;
+    if (movemento(STEPS)) return R_BEACH;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_beach(void)
 {
-    if (used_movement_verb2(UP, WEST) || keywordp(R_SHELF) || keywordo(STEPS)) {
+    if (movementv2(UP, WEST) || keywordp(R_SHELF) || keywordo(STEPS)) {
         objs[DINGHY].prop = 1;
         return R_SHELF;
     }
@@ -2548,20 +2509,20 @@ int at_beach(void)
 
 int at_jonah(void)
 {
-    if (used_movement_verb(SOUTH)) return R_IN_JONAH;
-    if (used_movement_verb(WEST)) return R_ARCH_FORK;
+    if (movementv(SOUTH)) return R_IN_JONAH;
+    if (movementv(WEST)) return R_ARCH_FORK;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_in_jonah(void)
 {
-    if (used_movement_verb2(NORTH, OUT)) return R_JONAH;
+    if (movementv2(NORTH, OUT)) return R_JONAH;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_faces(void)
 {
-    if (used_movement_verb(NORTH)) return R_BY_FIGURE;
+    if (movementv(NORTH)) return R_BY_FIGURE;
     if (keywordv(CROSS) || keywordv(SOUTH) || keywordo(GORGE)) {
         if (!objs[GORGE].prop) {
             puts("I'm afraid I can't go that way - walking on red-hot lava is contrary\n"
@@ -2594,17 +2555,17 @@ int at_by_figure(void)
 {
     if (objs[STATUE].prop) {
         /* The statue has moved, revealing dark passages. */
-       if (used_movement_verb(NW)) return R_PLAIN_1;
-       if (used_movement_verb(NORTH)) return R_BASQUE_1;
-       if (used_movement_verb(NE)) return R_BANSHEE;
+       if (movementv(NW)) return R_PLAIN_1;
+       if (movementv(NORTH)) return R_BASQUE_1;
+       if (movementv(NE)) return R_BANSHEE;
     }
-    if (used_movement_verb(SOUTH)) return R_FACES;
+    if (movementv(SOUTH)) return R_FACES;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_plain_1(void)
 {
-    if (used_movement_verb(SOUTH)) return R_BY_FIGURE;
+    if (movementv(SOUTH)) return R_BY_FIGURE;
     if (keywordv(NORTH)) {
         objs[FOG].prop = 0;
         apport(FOG, R_PLAIN_2);
@@ -2654,9 +2615,9 @@ int at_plain_3(void)
 
 int at_nondescript(void)
 {
-    if (used_movement_verb(NORTH)) return R_PENTAGRAM;
-    if (used_movement_placeword(R_PENTAGRAM)) return R_PENTAGRAM;
-    if (used_movement_verb2(UP, SOUTH)) {
+    if (movementv(NORTH)) return R_PENTAGRAM;
+    if (movementp(R_PENTAGRAM)) return R_PENTAGRAM;
+    if (movementv2(UP, SOUTH)) {
         apport(FOG, R_PLAIN_2);
         return R_PLAIN_3;
     }
@@ -2673,47 +2634,47 @@ int at_pentagram(void)
             return STAY_STILL;
         }
     }
-    if (used_movement_verb2(WEST, OUT)) return R_NONDESCRIPT;
-    if (used_movement_placeword(R_NONDESCRIPT)) return R_NONDESCRIPT;
-    if (used_movement_verb2(NORTH, CRACK)) return R_CHIMNEY;
-    if (used_movement_placeword(R_CHIMNEY)) return R_CHIMNEY;
+    if (movementv2(WEST, OUT)) return R_NONDESCRIPT;
+    if (movementp(R_NONDESCRIPT)) return R_NONDESCRIPT;
+    if (movementv2(NORTH, CRACK)) return R_CHIMNEY;
+    if (movementp(R_CHIMNEY)) return R_CHIMNEY;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_chimney(void)
 {
-    if (used_movement_verb2(UP, CLIMB)) return R_TUBE;
-    if (used_movement_placeword(R_TUBE)) return R_TUBE;
-    if (used_movement_verb(SOUTH)) return R_PENTAGRAM;
-    if (used_movement_placeword(R_PENTAGRAM)) return R_PENTAGRAM;
-    if (used_movement_verb(CRACK)) return R_PENTAGRAM;
+    if (movementv2(UP, CLIMB)) return R_TUBE;
+    if (movementp(R_TUBE)) return R_TUBE;
+    if (movementv(SOUTH)) return R_PENTAGRAM;
+    if (movementp(R_PENTAGRAM)) return R_PENTAGRAM;
+    if (movementv(CRACK)) return R_PENTAGRAM;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_tube(void)
 {
-    if (used_movement_verb(DOWN)) return R_CHIMNEY;
-    if (used_movement_placeword(R_CHIMNEY)) return R_CHIMNEY;
-    if (used_movement_verb(CLIMB)) return R_CHIMNEY;
-    if (used_movement_placeword(R_TUBE)) return R_TUBE_SLIDE;
-    if (used_movement_placeword(R_SLIDE)) return R_TUBE_SLIDE;
-    if (used_movement_verb(SOUTH)) return R_TUBE_SLIDE;
+    if (movementv(DOWN)) return R_CHIMNEY;
+    if (movementp(R_CHIMNEY)) return R_CHIMNEY;
+    if (movementv(CLIMB)) return R_CHIMNEY;
+    if (movementp(R_TUBE)) return R_TUBE_SLIDE;
+    if (movementp(R_SLIDE)) return R_TUBE_SLIDE;
+    if (movementv(SOUTH)) return R_TUBE_SLIDE;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_tube_slide(void)
 {
-    if (used_movement_verb2(SOUTH, DOWN)) return oof(R_PLAIN_1);
-    if (used_movement_placeword(R_SLIDE)) return oof(R_PLAIN_1);
-    if (used_movement_verb(NORTH)) return R_TUBE;
-    if (used_movement_placeword(R_CHIMNEY)) return R_CHIMNEY;
-    if (used_movement_placeword(R_TUBE)) return R_CHIMNEY;
+    if (movementv2(SOUTH, DOWN)) return oof(R_PLAIN_1);
+    if (movementp(R_SLIDE)) return oof(R_PLAIN_1);
+    if (movementv(NORTH)) return R_TUBE;
+    if (movementp(R_CHIMNEY)) return R_CHIMNEY;
+    if (movementp(R_TUBE)) return R_CHIMNEY;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_basque_1(void)
 {
-    if (used_movement_verb(SOUTH)) return R_BY_FIGURE;
+    if (movementv(SOUTH)) return R_BY_FIGURE;
     if (keywordv(NORTH)) {
         objs[BASILISK].prop += 1;
         if (objs[BASILISK].prop == 1) {
@@ -2727,7 +2688,7 @@ int at_basque_1(void)
 
 int at_basque_2(void)
 {
-    if (used_movement_verb(NORTH)) return R_BASQUE_FORK;
+    if (movementv(NORTH)) return R_BASQUE_FORK;
     if (keywordv(SOUTH)) {
         objs[BASILISK].prop -= 1;
         if (objs[BASILISK].prop == 0) {
@@ -2750,11 +2711,11 @@ int at_basque_2(void)
 
 int at_basque_fork(void)
 {
-    if (used_movement_verb(NORTH)) return R_PEELGRUNT;
-    if (used_movement_placeword(R_PEELGRUNT)) return R_PEELGRUNT;
-    if (used_movement_verb(SOUTH)) return R_BASQUE_2;
-    if (used_movement_verb(DOWN)) return R_ON_STEPS;
-    if (used_movement_obj(STEPS)) return R_ON_STEPS;
+    if (movementv(NORTH)) return R_PEELGRUNT;
+    if (movementp(R_PEELGRUNT)) return R_PEELGRUNT;
+    if (movementv(SOUTH)) return R_BASQUE_2;
+    if (movementv(DOWN)) return R_ON_STEPS;
+    if (movemento(STEPS)) return R_ON_STEPS;
     return 0;  /* command hasn't been processed yet */
 }
 
@@ -2775,34 +2736,34 @@ int at_peelgrunt(void)
 
 int at_on_steps(void)
 {
-    if (used_movement_verb(UP)) return R_BASQUE_FORK;
-    if (used_movement_verb(DOWN)) return R_STEPS_EXIT;
-    if (used_movement_obj(STEPS)) return R_STEPS_EXIT;
+    if (movementv(UP)) return R_BASQUE_FORK;
+    if (movementv(DOWN)) return R_STEPS_EXIT;
+    if (movemento(STEPS)) return R_STEPS_EXIT;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_steps_exit(void)
 {
-    if (used_movement_verb(UP)) return R_ON_STEPS;
-    if (used_movement_verb(DOWN)) return R_STORAGE;
-    if (used_movement_verb(NORTH)) return R_FAKE_Y2;
-    if (used_movement_obj(STEPS)) return R_STORAGE;
-    if (used_movement_verb(OUT)) return R_FAKE_Y2;
+    if (movementv(UP)) return R_ON_STEPS;
+    if (movementv(DOWN)) return R_STORAGE;
+    if (movementv(NORTH)) return R_FAKE_Y2;
+    if (movemento(STEPS)) return R_STORAGE;
+    if (movementv(OUT)) return R_FAKE_Y2;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_storage(void)
 {
-    if (used_movement_verb(UP)) return R_STEPS_EXIT;
-    if (used_movement_obj(STEPS)) return R_STEPS_EXIT;
+    if (movementv(UP)) return R_STEPS_EXIT;
+    if (movemento(STEPS)) return R_STEPS_EXIT;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_fake_y2(void)
 {
-    if (used_movement_verb(SOUTH)) return R_STEPS_EXIT;
-    if (used_movement_verb(WEST)) return R_CATACOMBS1;
-    if (used_movement_verb(EAST)) return R_FAKE_JUMBLE;
+    if (movementv(SOUTH)) return R_STEPS_EXIT;
+    if (movementv(WEST)) return R_CATACOMBS1;
+    if (movementv(EAST)) return R_FAKE_JUMBLE;
     if (keywordv(PLUGH) || keywordp(R_PLOVER)) {
         if (nomagic) {
             nothing_happens();
@@ -2817,224 +2778,224 @@ int at_fake_y2(void)
 
 int at_fake_jumble(void)
 {
-    if (used_movement_verb2(DOWN, WEST)) return R_FAKE_Y2;
-    if (used_movement_verb(UP)) return R_CATACOMBS1;
+    if (movementv2(DOWN, WEST)) return R_FAKE_Y2;
+    if (movementv(UP)) return R_CATACOMBS1;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_audience(void)
 {
-    if (used_movement_verb(EAST)) return R_AUDIENCE_E;
-    if (used_movement_verb(WEST)) return R_CATACOMBS11;
+    if (movementv(EAST)) return R_AUDIENCE_E;
+    if (movementv(WEST)) return R_CATACOMBS11;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_audience_e(void)
 {
-    if (used_movement_verb(WEST)) return R_AUDIENCE;
+    if (movementv(WEST)) return R_AUDIENCE;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs1(void)
 {
-    if (used_movement_verb(SOUTH)) return R_CATACOMBS2;
-    if (used_movement_verb3(NORTH,NW,WEST)) return R_CATACOMBS1;
-    if (used_movement_verb3(SW,SE,DOWN)) return R_CATACOMBS1;
-    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS1;
+    if (movementv(SOUTH)) return R_CATACOMBS2;
+    if (movementv3(NORTH,NW,WEST)) return R_CATACOMBS1;
+    if (movementv3(SW,SE,DOWN)) return R_CATACOMBS1;
+    if (movementv3(EAST,NE,UP)) return R_CATACOMBS1;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs2(void)
 {
-    if (used_movement_verb(SW)) return R_CATACOMBS3;
-    if (used_movement_verb3(NORTH,NW,WEST)) return R_CATACOMBS1;
-    if (used_movement_verb3(SOUTH,SE,DOWN)) return R_CATACOMBS1;
-    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS1;
+    if (movementv(SW)) return R_CATACOMBS3;
+    if (movementv3(NORTH,NW,WEST)) return R_CATACOMBS1;
+    if (movementv3(SOUTH,SE,DOWN)) return R_CATACOMBS1;
+    if (movementv3(EAST,NE,UP)) return R_CATACOMBS1;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs3(void)
 {
-    if (used_movement_verb(NW)) return R_CATACOMBS4;
-    if (used_movement_verb3(NORTH,SW,WEST)) return R_CATACOMBS2;
-    if (used_movement_verb3(SOUTH,SE,DOWN)) return R_CATACOMBS2;
-    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS2;
+    if (movementv(NW)) return R_CATACOMBS4;
+    if (movementv3(NORTH,SW,WEST)) return R_CATACOMBS2;
+    if (movementv3(SOUTH,SE,DOWN)) return R_CATACOMBS2;
+    if (movementv3(EAST,NE,UP)) return R_CATACOMBS2;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs4(void)
 {
-    if (used_movement_verb(SOUTH)) return R_CATACOMBS5;
-    if (used_movement_verb3(NORTH,SW,WEST)) return R_CATACOMBS3;
-    if (used_movement_verb3(NW,SE,DOWN)) return R_CATACOMBS3;
-    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS3;
+    if (movementv(SOUTH)) return R_CATACOMBS5;
+    if (movementv3(NORTH,SW,WEST)) return R_CATACOMBS3;
+    if (movementv3(NW,SE,DOWN)) return R_CATACOMBS3;
+    if (movementv3(EAST,NE,UP)) return R_CATACOMBS3;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs5(void)
 {
-    if (used_movement_verb(DOWN)) return R_CATACOMBS6;
-    if (used_movement_verb3(NORTH,NW,WEST)) return R_CATACOMBS4;
-    if (used_movement_verb3(SW,SE,SOUTH)) return R_CATACOMBS4;
-    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS4;
+    if (movementv(DOWN)) return R_CATACOMBS6;
+    if (movementv3(NORTH,NW,WEST)) return R_CATACOMBS4;
+    if (movementv3(SW,SE,SOUTH)) return R_CATACOMBS4;
+    if (movementv3(EAST,NE,UP)) return R_CATACOMBS4;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs6(void)
 {
-    if (used_movement_verb(WEST)) return R_CATACOMBS7;
-    if (used_movement_verb3(NORTH,NW,DOWN)) return R_CATACOMBS5;
-    if (used_movement_verb3(SW,SE,SOUTH)) return R_CATACOMBS5;
-    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS5;
+    if (movementv(WEST)) return R_CATACOMBS7;
+    if (movementv3(NORTH,NW,DOWN)) return R_CATACOMBS5;
+    if (movementv3(SW,SE,SOUTH)) return R_CATACOMBS5;
+    if (movementv3(EAST,NE,UP)) return R_CATACOMBS5;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs7(void)
 {
-    if (used_movement_verb(NW)) return R_CATACOMBS8;
-    if (used_movement_verb3(NORTH,WEST,DOWN)) return R_CATACOMBS6;
-    if (used_movement_verb3(SW,SE,SOUTH)) return R_CATACOMBS6;
-    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS6;
+    if (movementv(NW)) return R_CATACOMBS8;
+    if (movementv3(NORTH,WEST,DOWN)) return R_CATACOMBS6;
+    if (movementv3(SW,SE,SOUTH)) return R_CATACOMBS6;
+    if (movementv3(EAST,NE,UP)) return R_CATACOMBS6;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs8(void)
 {
-    if (used_movement_verb(NORTH)) return R_CATACOMBS9;
-    if (used_movement_verb3(NW,WEST,DOWN)) return R_CATACOMBS7;
-    if (used_movement_verb3(SW,SE,SOUTH)) return R_CATACOMBS7;
-    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS7;
+    if (movementv(NORTH)) return R_CATACOMBS9;
+    if (movementv3(NW,WEST,DOWN)) return R_CATACOMBS7;
+    if (movementv3(SW,SE,SOUTH)) return R_CATACOMBS7;
+    if (movementv3(EAST,NE,UP)) return R_CATACOMBS7;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs9(void)
 {
-    if (used_movement_verb(SOUTH)) return R_CATACOMBS10;
-    if (used_movement_verb3(NW,WEST,DOWN)) return R_CATACOMBS8;
-    if (used_movement_verb3(SW,SE,NORTH)) return R_CATACOMBS8;
-    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS8;
+    if (movementv(SOUTH)) return R_CATACOMBS10;
+    if (movementv3(NW,WEST,DOWN)) return R_CATACOMBS8;
+    if (movementv3(SW,SE,NORTH)) return R_CATACOMBS8;
+    if (movementv3(EAST,NE,UP)) return R_CATACOMBS8;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs10(void)
 {
-    if (used_movement_verb(NORTH)) return R_CATACOMBS11;
-    if (used_movement_verb3(NW,WEST,DOWN)) return R_CATACOMBS9;
-    if (used_movement_verb3(SW,SE,SOUTH)) return R_CATACOMBS9;
-    if (used_movement_verb3(EAST,NE,UP)) return R_CATACOMBS9;
+    if (movementv(NORTH)) return R_CATACOMBS11;
+    if (movementv3(NW,WEST,DOWN)) return R_CATACOMBS9;
+    if (movementv3(SW,SE,SOUTH)) return R_CATACOMBS9;
+    if (movementv3(EAST,NE,UP)) return R_CATACOMBS9;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs11(void)
 {
-    if (used_movement_verb(SW)) return R_CATACOMBS12;
-    if (used_movement_verb(EAST)) return R_AUDIENCE;
-    if (used_movement_verb3(NW,WEST,DOWN)) return R_CATACOMBS10;
-    if (used_movement_verb3(NORTH,SE,SOUTH)) return R_CATACOMBS10;
-    if (used_movement_verb2(NE,UP)) return R_CATACOMBS10;
+    if (movementv(SW)) return R_CATACOMBS12;
+    if (movementv(EAST)) return R_AUDIENCE;
+    if (movementv3(NW,WEST,DOWN)) return R_CATACOMBS10;
+    if (movementv3(NORTH,SE,SOUTH)) return R_CATACOMBS10;
+    if (movementv2(NE,UP)) return R_CATACOMBS10;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs12(void)
 {
-    if (used_movement_verb(EAST)) return R_CATACOMBS13;
-    if (used_movement_verb3(NW,WEST,DOWN)) return R_CATACOMBS11;
-    if (used_movement_verb3(NORTH,SE,SOUTH)) return R_CATACOMBS11;
-    if (used_movement_verb3(NE,UP,SW)) return R_CATACOMBS11;
+    if (movementv(EAST)) return R_CATACOMBS13;
+    if (movementv3(NW,WEST,DOWN)) return R_CATACOMBS11;
+    if (movementv3(NORTH,SE,SOUTH)) return R_CATACOMBS11;
+    if (movementv3(NE,UP,SW)) return R_CATACOMBS11;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs13(void)
 {
-    if (used_movement_verb(SE)) return R_CATACOMBS14;
-    if (used_movement_verb3(NW,WEST,DOWN)) return R_CATACOMBS12;
-    if (used_movement_verb3(NORTH,EAST,SOUTH)) return R_CATACOMBS12;
-    if (used_movement_verb3(NE,UP,SW)) return R_CATACOMBS12;
+    if (movementv(SE)) return R_CATACOMBS14;
+    if (movementv3(NW,WEST,DOWN)) return R_CATACOMBS12;
+    if (movementv3(NORTH,EAST,SOUTH)) return R_CATACOMBS12;
+    if (movementv3(NE,UP,SW)) return R_CATACOMBS12;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs14(void)
 {
-    if (used_movement_verb(NE)) return R_CATACOMBS15;
-    if (used_movement_verb3(NW,WEST,DOWN)) return R_CATACOMBS13;
-    if (used_movement_verb3(NORTH,EAST,SOUTH)) return R_CATACOMBS13;
-    if (used_movement_verb3(SE,UP,SW)) return R_CATACOMBS13;
+    if (movementv(NE)) return R_CATACOMBS15;
+    if (movementv3(NW,WEST,DOWN)) return R_CATACOMBS13;
+    if (movementv3(NORTH,EAST,SOUTH)) return R_CATACOMBS13;
+    if (movementv3(SE,UP,SW)) return R_CATACOMBS13;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs15(void)
 {
-    if (used_movement_verb(EAST)) return R_CATACOMBS16;
-    if (used_movement_verb3(NW,WEST,DOWN)) return R_CATACOMBS14;
-    if (used_movement_verb3(NORTH,NE,SOUTH)) return R_CATACOMBS14;
-    if (used_movement_verb3(SE,UP,SW)) return R_CATACOMBS14;
+    if (movementv(EAST)) return R_CATACOMBS16;
+    if (movementv3(NW,WEST,DOWN)) return R_CATACOMBS14;
+    if (movementv3(NORTH,NE,SOUTH)) return R_CATACOMBS14;
+    if (movementv3(SE,UP,SW)) return R_CATACOMBS14;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs16(void)
 {
-    if (used_movement_verb(SE)) return R_CATACOMBS17;
-    if (used_movement_verb3(NW,WEST,DOWN)) return R_CATACOMBS15;
-    if (used_movement_verb3(NORTH,NE,SOUTH)) return R_CATACOMBS15;
-    if (used_movement_verb3(EAST,UP,SW)) return R_CATACOMBS15;
+    if (movementv(SE)) return R_CATACOMBS17;
+    if (movementv3(NW,WEST,DOWN)) return R_CATACOMBS15;
+    if (movementv3(NORTH,NE,SOUTH)) return R_CATACOMBS15;
+    if (movementv3(EAST,UP,SW)) return R_CATACOMBS15;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs17(void)
 {
-    if (used_movement_verb(DOWN)) return R_CATACOMBS18;
-    if (used_movement_verb3(NW,WEST,SE)) return R_CATACOMBS16;
-    if (used_movement_verb3(NORTH,NE,SOUTH)) return R_CATACOMBS16;
-    if (used_movement_verb3(EAST,UP,SW)) return R_CATACOMBS16;
+    if (movementv(DOWN)) return R_CATACOMBS18;
+    if (movementv3(NW,WEST,SE)) return R_CATACOMBS16;
+    if (movementv3(NORTH,NE,SOUTH)) return R_CATACOMBS16;
+    if (movementv3(EAST,UP,SW)) return R_CATACOMBS16;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs18(void)
 {
-    if (used_movement_verb(SOUTH)) return R_CATACOMBS19;
-    if (used_movement_verb3(NW,WEST,SE)) return R_CATACOMBS17;
-    if (used_movement_verb3(NORTH,NE,DOWN)) return R_CATACOMBS17;
-    if (used_movement_verb3(EAST,UP,SW)) return R_CATACOMBS17;
+    if (movementv(SOUTH)) return R_CATACOMBS19;
+    if (movementv3(NW,WEST,SE)) return R_CATACOMBS17;
+    if (movementv3(NORTH,NE,DOWN)) return R_CATACOMBS17;
+    if (movementv3(EAST,UP,SW)) return R_CATACOMBS17;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_catacombs19(void)
 {
-    if (used_movement_verb(NORTH)) return R_FAKE_Y2;
-    if (used_movement_verb3(NW,WEST,SE)) return R_CATACOMBS18;
-    if (used_movement_verb3(SOUTH,NE,DOWN)) return R_CATACOMBS18;
-    if (used_movement_verb3(EAST,UP,SW)) return R_CATACOMBS18;
+    if (movementv(NORTH)) return R_FAKE_Y2;
+    if (movementv3(NW,WEST,SE)) return R_CATACOMBS18;
+    if (movementv3(SOUTH,NE,DOWN)) return R_CATACOMBS18;
+    if (movementv3(EAST,UP,SW)) return R_CATACOMBS18;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_banshee(void)
 {
-    if (used_movement_verb(NW)) return R_BY_FIGURE;
-    if (used_movement_verb(NORTH)) return R_GOLDEN;
-    if (used_movement_placeword(R_GOLDEN)) return R_GOLDEN;
+    if (movementv(NW)) return R_BY_FIGURE;
+    if (movementv(NORTH)) return R_GOLDEN;
+    if (movementp(R_GOLDEN)) return R_GOLDEN;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_golden(void)
 {
-    if (used_movement_verb(NE)) return R_ARABESQUE;
-    if (used_movement_verb(NW)) return R_TRANSLUCENT;
-    if (used_movement_placeword(R_ARABESQUE)) return R_ARABESQUE;
-    if (used_movement_placeword(R_TRANSLUCENT)) return R_TRANSLUCENT;
-    if (used_movement_verb(SOUTH)) return R_BANSHEE;
+    if (movementv(NE)) return R_ARABESQUE;
+    if (movementv(NW)) return R_TRANSLUCENT;
+    if (movementp(R_ARABESQUE)) return R_ARABESQUE;
+    if (movementp(R_TRANSLUCENT)) return R_TRANSLUCENT;
+    if (movementv(SOUTH)) return R_BANSHEE;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_arabesque(void)
 {
-    if (used_movement_verb2(SOUTH, OUT)) return R_GOLDEN;
-    if (used_movement_placeword(R_GOLDEN)) return R_GOLDEN;
+    if (movementv2(SOUTH, OUT)) return R_GOLDEN;
+    if (movementp(R_GOLDEN)) return R_GOLDEN;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_translucent(void)
 {
-    if (used_movement_verb2(EAST, OUT) || keywordp(R_GOLDEN)) {
+    if (movementv2(EAST, OUT) || keywordp(R_GOLDEN)) {
         static bool have_awoken_goblins = false;
         if (!have_awoken_goblins) {
             have_awoken_goblins = true;
@@ -3048,13 +3009,13 @@ int at_translucent(void)
 
 int at_platform(void)
 {
-    if (used_movement_verb(PLUGH) || used_movement_placeword(R_PLOVER)) {
+    if (movementv(PLUGH) || movementp(R_PLOVER)) {
         say_foof();
         return R_FAKE_Y2;
     }
-    if (used_movement_verb3(DOWN,CLIMB,NORTH) ||
-        used_movement_verb3(SOUTH,EAST,WEST) ||
-        used_movement_verb3(NE,NW,SE) || used_movement_verb(NW) ||
+    if (movementv3(DOWN,CLIMB,NORTH) ||
+        movementv3(SOUTH,EAST,WEST) ||
+        movementv3(NE,NW,SE) || movementv(NW) ||
         keywordv(JUMP)) {
         puts("EEEEEEEEEAAAAAAAAAAAaaaaaahhhhhhhhhhhhh..........\n\n"
         "                                                      >sizzle<");
