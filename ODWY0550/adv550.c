@@ -1322,7 +1322,7 @@ void finis(void)
 {
     /* Print the score and say adieu. */
     int s = score();
-    printf("You have scored a total of %d points, out of a possible maximum of\n"
+    printf("\n\nYou have scored a total of %d points, out of a possible maximum of\n"
            "550 points.  During this game of Adventure, you have taken a total of\n"
            "%d turns.\n\n\n", s, turns);
 
