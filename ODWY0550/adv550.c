@@ -2228,8 +2228,8 @@ bool upchuck(ObjectWord obj, Location loc)
         case R_BRINK_1: case R_BRINK_2: case R_BRINK_3: newloc = R_YLEM; how = pit; break;
         case R_ICE: newloc = R_SLIDE; how = slide; break;
         case R_SHELF: newloc = R_BEACH; tossed = "thrown"; how = beach; break;
+        default: return false;  /* not at a THROWER location */
     }
-    if (how == NULL) return false;  /* not at an F_THROWER location */
     if (obj == BEAR) return false;  /* can't THROW BEAR into the chasm! */
     printf("You have %s the %s %s.\n", tossed, word2.text, how);
     apport(obj, newloc);
@@ -2382,27 +2382,16 @@ int no_move_possible(Location loc)
     return STAY_STILL;
 }
 
+/* Platt's version contains a verb TREE,TREES, and a message labeled
+ * INFOREST containing the familiar message from Woods' Adventure;
+ * but at least in the version I have, the verb is not implemented
+ * and the message is not referenced. */
+
 int examine_mist(void)
 {
     puts("Mist is a white vapor, usually water, seen from time to time in\n"
          "caverns.  It can be found anywhere but is frequently a sign of a deep\n"
          "pit leading down to water.");
-    return STAY_STILL;
-}
-
-int examine_trees(void)
-{
-    /* Platt's version contains a verb TREE,TREES, and a message labeled
-     * INFOREST containing the familiar message from Woods' Adventure;
-     * but at least in the version I have, the verb is not implemented
-     * and the message is not referenced. This is certainly a bug; I'm
-     * taking the liberty of fixing it here. */
-    puts("The trees of the forest are large hardwood oak and maple, with an\n"
-         "occasional grove of pine or spruce.  There is quite a bit of under-\n"
-         "growth, largely birch and ash saplings plus nondescript bushes of\n"
-         "various sorts.  This time of year visibility is quite restricted by\n"
-         "all the leaves, but travel is quite easy if you detour around the\n"
-         "spruce and berry bushes.");
     return STAY_STILL;
 }
 
@@ -3408,8 +3397,7 @@ int process_verb(Location loc)
             attempt_inventory();
             return STAY_STILL;
         case LOOK:
-            if (keywordo(MIST)) return examine_mist();
-            if (keywordo(TREES)) return examine_trees();
+            if (keywordv(MIST)) return examine_mist();
             if (now_in_darkness(loc)) {
                 puts("You have no source of light.");
             } else {
@@ -3812,6 +3800,8 @@ int process_verb(Location loc)
         case LOST:
             puts("I'm as confused as you are.");
             return STAY_STILL;
+        case MIST:
+            return examine_mist();
         case MELENKURION:
             if (loc == R_BY_FIGURE && objs[STATUE].prop == 0) {
                 /* TODO: This codepath should really be in at_by_figure(). */
@@ -3960,8 +3950,6 @@ int process_verb(Location loc)
                 hah();
             }
             return STAY_STILL;
-        case MIST:
-            return examine_mist();
     }
     return 0;  /* unhandled */
 }

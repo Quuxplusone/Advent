@@ -95,6 +95,8 @@ bool used_movement_obj(ObjectWord where_to)
             if (word1.meaning == WALK || word1.meaning == SAY)
                 return (word2.type == WordType_Object && (ObjectWord)word2.meaning == where_to);
             return false;
+	default:
+	    break;
     }
     return false;
 }
@@ -111,6 +113,23 @@ bool used_movement_placeword(Location where_to)
             if (word1.meaning == WALK || word1.meaning == SAY)
                 return (word2.type == WordType_Place && word2.meaning == where_to);
             return false;
+	default:
+	    break;
+    }
+    return false;
+}
+
+bool used_movement_objword(ObjectWord where_to)
+{
+    switch (word1.type) {
+        case WordType_Object:
+            return (word1.meaning == (int)where_to);
+        case WordType_Verb:
+            if (word1.meaning == WALK || word1.meaning == SAY)
+                return (word2.type == WordType_Object && word2.meaning == (int)where_to);
+            return false;
+	default:
+	    break;
     }
     return false;
 }
@@ -1538,7 +1557,7 @@ int at_sloping(void)
 {
     if (used_movement_verb(DOWN)) return R_LOW;
     if (used_movement_verb(UP)) return R_SWOFCHASM;
-    if (used_movement_obj(CHASM)) return R_SWOFCHASM;
+    if (used_movement_objword(CHASM)) return R_SWOFCHASM;
     if (used_movement_placeword(R_LOW)) return R_LOW;
     if (used_movement_verb(OUT)) return R_LOW;
     return 0;  /* command hasn't been processed yet */
@@ -1689,7 +1708,7 @@ int at_neofchasm(void)
 
 int at_corridor(void)
 {
-    if (used_movement_verb(CHASM)) return R_NEOFCHASM;
+    if (used_movement_objword(CHASM)) return R_NEOFCHASM;
     if (used_movement_verb(WEST)) return R_NEOFCHASM;
     if (used_movement_verb(EAST)) return R_FORK;
     if (used_movement_placeword(R_FORK)) return R_FORK;
@@ -1700,7 +1719,7 @@ int at_corridor(void)
 
 int at_fork(void)
 {
-    if (used_movement_verb(CHASM)) return R_NEOFCHASM;
+    if (used_movement_objword(CHASM)) return R_NEOFCHASM;
     if (used_movement_verb(WEST)) return R_CORRIDOR;
     if (used_movement_placeword(R_CORRIDOR)) return R_CORRIDOR;
     if (used_movement_verb(NE)) return R_WARMJUNCTN;
