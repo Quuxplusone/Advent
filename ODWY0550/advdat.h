@@ -164,4 +164,8 @@ extern struct ObjectData objs[];
 #define you_are_dead_at(loc) ((loc)+R_YLEM)
 #define STAY_STILL (-1)
 
+#define SOFT_NL "\n"
+#define SOFT_HYPHEN "-\n"
+#define HARD_HYPHEN "-\n"
+
 #endif /* H_ADVDAT */

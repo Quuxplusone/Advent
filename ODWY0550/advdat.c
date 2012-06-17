@@ -34,7 +34,7 @@ void cantpasslock(void) { puts("You can't go through a locked steel grate!"); }
 
 static int you_didnt_move(void)
 {
-    puts("You have crawled around in some little holes and wound up back in the\n"
+    puts("You have crawled around in some little holes and wound up back in the" SOFT_NL
          "main passage.");
     return STAY_STILL;
 }
@@ -74,8 +74,8 @@ static int plunge(void)
     if (objs[LAMP].prop) {
         lamplife = 0;  /* "First your lamp goes out." */
         if (toting(LAMP)) {
-            puts("You have jumped into a bottomless pit.  You continue to fall for\n"
-                 "a very long time.  First, your lamp runs out of power and goes\n"
+            puts("You have jumped into a bottomless pit.  You continue to fall for" SOFT_NL
+                 "a very long time.  First, your lamp runs out of power and goes" SOFT_NL
                  "dead. Later, you die of hunger and thirst.");
         } else {
             puts("You have jumped into a bottomless pit.  Eventually, you die of thirst.");
@@ -159,7 +159,7 @@ int at_house(void)
         }
     }
     if (movementv2(STREAM, DOWNSTREAM)) {
-        puts("The stream flows out through a pair of 1 foot diameter sewer pipes.\n"
+        puts("The stream flows out through a pair of 1 foot diameter sewer pipes." SOFT_NL
              "It would be advisable to leave via the exit.");
         return R_HOUSE;
     }
@@ -261,32 +261,32 @@ int at_fake_slit(void)
         "                                             a\n"
         "                                          violent\n"
         "                                                >splash!!<\n\n"
-         "you find yourself sitting on the edge of a pool of water in\n"
+         "you find yourself sitting on the edge of a pool of water in" SOFT_NL
          "a vast chamber lit by dozens of flaring torches.\n\n"
          "The floor is covered with thick layers of precious Persian rugs!\n\n"
-         "Rare coins, bars of silver, and lumps of gold and platinum are\n"
+         "Rare coins, bars of silver, and lumps of gold and platinum are" SOFT_NL
          "strewn carelessly about!\n\n"
-         "There are diamonds, rubies, sapphires, emeralds, opals, pearls, and\n"
-         "fabulous sculptures and ornaments carved out of jade and imperishable\n"
-         "crystal resting on display shelves, along with rare Ming vases and\n"
+         "There are diamonds, rubies, sapphires, emeralds, opals, pearls, and" SOFT_NL
+         "fabulous sculptures and ornaments carved out of jade and imperishable" SOFT_NL
+         "crystal resting on display shelves, along with rare Ming vases and" SOFT_NL
          "ancient Indian turquoise beads!\n\n"
-         "A flotilla of ruby-encrusted toy boats is floating in the pool of\n"
+         "A flotilla of ruby-encrusted toy boats is floating in the pool of" SOFT_NL
          "water beside you!\n\n"
          /* Platt capitalized "Iridium" here; I'm lowercasing it. */
          "A network of golden chains supports a fantastic iridium crown!\n\n"
-         "There is a display case on the wall filled with a fantastic selection\n"
-         "of magical swords, which are singing \"Hail to the Chief\" in perfect\n"
+         "There is a display case on the wall filled with a fantastic selection" SOFT_NL
+         "of magical swords, which are singing \"Hail to the Chief\" in perfect" SOFT_NL
          "pitch and rhythm!\n\n"
-         "There are a dozen friendly little dwarves in the room, displaying\n"
+         "There are a dozen friendly little dwarves in the room, displaying" SOFT_NL
          "their talents by deftly juggling hundreds of golden eggs!\n\n"
-         "A large troll, a gigantic ogre, and a bearded pirate are tossing\n"
-         "knives, axes, and clubs back and forth in a friendly demonstration\n"
+         "A large troll, a gigantic ogre, and a bearded pirate are tossing" SOFT_NL
+         "knives, axes, and clubs back and forth in a friendly demonstration" SOFT_NL
          "of martial skill!\n\n"
-         "A horde of cheerful little gooseberry goblins are performing\n"
-         "talented acrobatics to an appreciative audience composed of a dragon,\n"
-         "a large green snake, a cute little bird (which is sitting, unmolested,\n"
+         "A horde of cheerful little gooseberry goblins are performing" SOFT_NL
+         "talented acrobatics to an appreciative audience composed of a dragon," SOFT_NL
+         "a large green snake, a cute little bird (which is sitting, unmolested," SOFT_NL
          "on the snake's head), a peaceful basilisk, and a large Arabian Djinn.\n\n"
-         "Everyone turns and sees you, and lets out a heart-warming cheer\n"
+         "Everyone turns and sees you, and lets out a heart-warming cheer" SOFT_NL
          "of welcome!\n");
         gave_up = false;
         finis();  /* end the game in triumph */
@@ -602,7 +602,7 @@ int at_wfiss(void)
     int result = cross_fissure(EAST, R_EFISS);
     if (result != 0) return result;
     if (keywordv(NORTH)) {
-        puts("You have crawled around in a little passage north of and parallel\n"
+        puts("You have crawled around in a little passage north of and parallel" SOFT_NL
              "to the Hall of Mists.");
         return R_WMIST;
     }
@@ -718,7 +718,7 @@ int at_wmist(void)
     if (movementv(WEST)) return R_ELONG;
     if (movementv(CRAWL)) return R_ELONG;
     if (keywordv(NORTH)) {
-        puts("You have crawled around in a little passage north of and parallel\n"
+        puts("You have crawled around in a little passage north of and parallel" SOFT_NL
              "to the Hall of Mists.");
         return R_WFISS;
     }
@@ -922,7 +922,7 @@ int at_bedquilt(void)
     if (movementp(R_SLAB)) return R_SLAB;
     if (movementv2(NORTH, SOUTH) || movementv2(UP, DOWN)) {
         if (pct(65)) {
-            puts("You have crawled around in some little holes and found your way\n"
+            puts("You have crawled around in some little holes and found your way" SOFT_NL
                  "blocked by a recent cave-in.  You are now back in the main passage.");
             return STAY_STILL;
         }
@@ -1171,9 +1171,9 @@ int at_falls(void)
         if (toting(LAMP)) {
             holding_count = 1;
             if (something_got_lost) {
-                puts("You plunge into the water and are sucked down by the whirlpool.  The\n"
-                     "current is incredibly strong, and you barely manage to hold onto\n"
-                     "your lamp;  everything else is pulled from your grasp and is lost in\n"
+                puts("You plunge into the water and are sucked down by the whirlpool.  The" SOFT_NL
+                     "current is incredibly strong, and you barely manage to hold onto" SOFT_NL
+                     "your lamp;  everything else is pulled from your grasp and is lost in" SOFT_NL
                      "the swirling waters.");
             } else {
                 puts("You plunge into the water and are sucked down by the whirlpool.");
@@ -1181,12 +1181,12 @@ int at_falls(void)
         } else {
             holding_count = 0;
             if (something_got_lost) {
-                puts("You plunge into the water and are sucked down by the whirlpool into\n"
-                     "pitch darkness.  The current is incredibly strong, and everything that\n"
-                     "you are carrying is ripped from your grasp and is lost in the swirling\n"
+                puts("You plunge into the water and are sucked down by the whirlpool into" SOFT_NL
+                     "pitch darkness.  The current is incredibly strong, and everything that" SOFT_NL
+                     "you are carrying is ripped from your grasp and is lost in the swirling" SOFT_NL
                      "waters.");
             } else {
-                puts("You plunge into the water and are sucked down by the whirlpool into\n"
+                puts("You plunge into the water and are sucked down by the whirlpool into" SOFT_NL
                      "pitch darkness.");
             }
         }
@@ -1225,7 +1225,7 @@ int at_misty(void)
 
 int tight_squeeze(void)
 {
-    puts("Something you're carrying won't fit through the tunnel with you.\n"
+    puts("Something you're carrying won't fit through the tunnel with you." SOFT_NL
          "You'd best take inventory and drop something.");
     return STAY_STILL;
 }
@@ -1393,7 +1393,7 @@ int at_mazed112(void)
 
 int cant_walk_on_water(void)
 {
-    puts("I can't swim, or walk on water.  You'll have to find some other way\n"
+    puts("I can't swim, or walk on water.  You'll have to find some other way" SOFT_NL
          "to get across, or get someone to assist you.");
     return STAY_STILL;
 }
@@ -1415,8 +1415,8 @@ int at_reservoir_n(void)
     if (movementp(R_BALCONY)) return R_BALCONY;
     if (movementv2(SOUTH, CROSS)) {
         if (there(TURTLE, R_RESERVOIR_N)) {
-            puts("You step gently on Darwin the Tortoise's back, and he carries you\n"
-                 "smoothly over to the southern side of the reservoir.  He then blows\n"
+            puts("You step gently on Darwin the Tortoise's back, and he carries you" SOFT_NL
+                 "smoothly over to the southern side of the reservoir.  He then blows" SOFT_NL
                  "a couple of bubbles at you and sinks back out of sight.\n");
             apport(TURTLE, R_LIMBO);
             return R_RES;
@@ -1463,7 +1463,7 @@ int at_swofchasm(void)
             return 0;  /* unhandled */
         if (keywordo(AXE) || keywordo(SWORD)) {
             if (toting(word2.meaning)) {
-                printf("The troll deftly catches the %s, examines it carefully, and tosses it\n"
+                printf("The troll deftly catches the %s, examines it carefully, and tosses it" SOFT_NL
                        "back, declaring, \"Good workmanship, but it's not valuable enough.\"\n", word2.text);
                 apport(word2.meaning, R_SWOFCHASM);
                 return STAY_STILL;
@@ -1473,9 +1473,9 @@ int at_swofchasm(void)
             const ObjectWord o = word2.meaning;
             if (!toting(o)) return 0;  /* unhandled */
             if ((o == EGGS) && have_stolen_back_eggs) {
-                puts("The troll nimbly steps to one side and grins nastily as the nest of\n"
-                     "golden eggs flies past him and plummets into the chasm.  \"Fool me\n"
-                     "once, shame on you;  fool me twice, shame on me!\" he sneers.  \"I want\n"
+                puts("The troll nimbly steps to one side and grins nastily as the nest of" SOFT_NL
+                     "golden eggs flies past him and plummets into the chasm.  \"Fool me" SOFT_NL
+                     "once, shame on you;  fool me twice, shame on me!\" he sneers.  \"I want" SOFT_NL
                      "something a touch more substantial this time!\"");
                 apport(EGGS, R_YLEM);
                 objs[TROLL].prop = 0;
@@ -1566,7 +1566,7 @@ int at_neofchasm(void)
 {
     if (keywordv(DROP) && keywordo(BEAR) && toting(BEAR) && there(TROLL, R_NEOFCHASM)) {
         objs[TROLL].prop = 4;
-        puts("The bear lumbers toward the troll, who lets out a startled shriek and\n"
+        puts("The bear lumbers toward the troll, who lets out a startled shriek and" SOFT_NL
              "scurries away.  The bear soon gives up the pursuit and wanders back.");
         apport(TROLL, R_LIMBO);
         apport(TROLL2, R_SWOFCHASM);
@@ -1578,7 +1578,7 @@ int at_neofchasm(void)
             return 0;  /* unhandled */
         if (keywordo(AXE) || keywordo(SWORD)) {
             if (toting(word2.meaning)) {
-                printf("The troll deftly catches the %s, examines it carefully, and tosses it\n"
+                printf("The troll deftly catches the %s, examines it carefully, and tosses it" SOFT_NL
                        "back, declaring, \"Good workmanship, but it's not valuable enough.\"\n", word2.text);
                 apport(word2.meaning, R_NEOFCHASM);
                 return STAY_STILL;
@@ -1588,9 +1588,9 @@ int at_neofchasm(void)
             const ObjectWord o = word2.meaning;
             if (!toting(o)) return 0;  /* unhandled */
             if ((o == EGGS) && have_stolen_back_eggs) {
-                puts("The troll nimbly steps to one side and grins nastily as the nest of\n"
-                     "golden eggs flies past him and plummets into the chasm.  \"Fool me\n"
-                     "once, shame on you;  fool me twice, shame on me!\" he sneers.  \"I want\n"
+                puts("The troll nimbly steps to one side and grins nastily as the nest of" SOFT_NL
+                     "golden eggs flies past him and plummets into the chasm.  \"Fool me" SOFT_NL
+                     "once, shame on you;  fool me twice, shame on me!\" he sneers.  \"I want" SOFT_NL
                      "something a touch more substantial this time!");
                 apport(EGGS, R_YLEM);
                 objs[TROLL].prop = 0;
@@ -1620,31 +1620,31 @@ int at_neofchasm(void)
             if (objs[TROLL].prop == 1)
                 objs[TROLL].prop = 2;  /* no longer appeased */
             if (toting(BEAR)) {
-                puts("Just as you reach the other side, the bridge buckles beneath the\n"
-                     "weight of the bear, which was still following you around.  You\n"
-                     "scrabble desperately for support, but as the bridge collapses you\n"
+                puts("Just as you reach the other side, the bridge buckles beneath the" SOFT_NL
+                     "weight of the bear, which was still following you around.  You" SOFT_NL
+                     "scrabble desperately for support, but as the bridge collapses you" SOFT_NL
                      "stumble back and fall into the chasm.");
                 objs[CHASM].prop = 1;
                 apport(TROLL2, R_LIMBO);
                 return you_are_dead_at(R_YLEM);
             }
             if (objs[TROLL].prop == 4 && have_stolen_back_eggs) {
-                puts("As you reach the middle of the bridge, the troll appears from out\n"
-                     "of the tunnel behind you, wearing a large backpack.  \"So, Mister\n"
-                     "Magician,\" he shouts, \"you like to use magic to steal back my hard-\n"
-                     "earned toll?  Let's see how you like a little of MY magic!!\"  With");
+                printf("As you reach the middle of the bridge, the troll appears from out" SOFT_NL
+                       "of the tunnel behind you, wearing a large backpack.  \"So, Mister" SOFT_NL
+                       "Magician,\" he shouts, \"you like to use magic to steal back my hard" HARD_HYPHEN
+                       "earned toll?  Let's see how you like a little of MY magic!!\"  With" SOFT_NL);
                 if (there(BEAR, R_NEOFCHASM)) {
-                    puts("that, he aims a tube running from the backpack directly at the bear\n"
-                         "and pulls a trigger.  A spout of magical fire roars out and singes the\n"
-                         "bear's fur;  the bear bellows in pain and dashes onto the bridge to\n"
-                         "escape.  The bridge shudders, groans, and collapses under the weight,\n"
+                    puts("that, he aims a tube running from the backpack directly at the bear" SOFT_NL
+                         "and pulls a trigger.  A spout of magical fire roars out and singes the" SOFT_NL
+                         "bear's fur;  the bear bellows in pain and dashes onto the bridge to" SOFT_NL
+                         "escape.  The bridge shudders, groans, and collapses under the weight," SOFT_NL
                          "and you and the bear plunge down into the chasm.");
                     apport(BEAR, R_YLEM);
                     objs[CHASM].prop = 1;
                 } else {
-                    puts("that, he aims a tube running from the backpack directly at the bridge\n"
-                         "and pulls a trigger.  A spout of magical fire roars out and incinerates\n"
-                         "the bridge supports, causing the bridge to sway giddily and collapse\n"
+                    puts("that, he aims a tube running from the backpack directly at the bridge" SOFT_NL
+                         "and pulls a trigger.  A spout of magical fire roars out and incinerates" SOFT_NL
+                         "the bridge supports, causing the bridge to sway giddily and collapse" SOFT_NL
                          "into the chasm.  You plunge down to your death.");
                     objs[CHASM].prop = 2;
                 }
@@ -1713,38 +1713,38 @@ int at_view(void)
         return splatter(R_YLEM);
     if (keywordp(R_VALLEY) || keywordv(CROSS) || keywordo(GORGE) || keywordv(NORTH)) {
         if (objs[GORGE].prop == 0) {
-            puts("I'm afraid I can't go that way - walking on red-hot lava is contrary\n"
+            puts("I'm afraid I can't go that way - walking on red-hot lava is contrary" SOFT_NL
                  "to union regulations (and is bad for your health anyhow).");
             return STAY_STILL;
         } else if (toting(RING)) {
             if (toting(BEAR)) {
-                puts("As you approach the center of the archway, hot vapors saturated with\n"
-                     "brimstone drift up from the lava in the gorge beneath your feet.  The\n"
-                     "mithril ring in your hand quivers and glows, and a swirling vortex\n"
-                     "of white vapor encircles you and protects you from the fumes.  The\n"
-                     "bear is not so lucky, though, since the vortex is rather small; the\n"
-                     "noxious gasses choke it and it staggers off of the side of the arch\n"
+                puts("As you approach the center of the archway, hot vapors saturated with" SOFT_NL
+                     "brimstone drift up from the lava in the gorge beneath your feet.  The" SOFT_NL
+                     "mithril ring in your hand quivers and glows, and a swirling vortex" SOFT_NL
+                     "of white vapor encircles you and protects you from the fumes.  The" SOFT_NL
+                     "bear is not so lucky, though, since the vortex is rather small; the" SOFT_NL
+                     "noxious gasses choke it and it staggers off of the side of the arch" SOFT_NL
                      "and plummets into the gorge below.\n");
                 apport(BEAR, R_YLEM);
             } else if (!(places[R_FACES].flags & F_BEENHERE)) {
-                puts("As you approach the center of the archway, hot vapors saturated with\n"
-                     "brimstone drift up from the lava in the gorge beneath your feet.  The\n"
-                     "mithril ring in your hand quivers and glows, and the fumes eddy away\n"
+                puts("As you approach the center of the archway, hot vapors saturated with" SOFT_NL
+                     "brimstone drift up from the lava in the gorge beneath your feet.  The" SOFT_NL
+                     "mithril ring in your hand quivers and glows, and the fumes eddy away" SOFT_NL
                      "from the bridge without harming you.\n");
             }
             return R_FACES;
         } else {
             if (toting(BEAR)) {
-                puts("As you approach the center of the archway, hot vapors saturated with\n"
-                     "brimstone drift up from the lava in the gorge beneath your feet.  You\n"
-                     "and the bear are both overcome by the noxious gasses and, with your\n"
+                puts("As you approach the center of the archway, hot vapors saturated with" SOFT_NL
+                     "brimstone drift up from the lava in the gorge beneath your feet.  You" SOFT_NL
+                     "and the bear are both overcome by the noxious gasses and, with your" SOFT_NL
                      "lungs burned out, slip off of the bridge and plummet into the gorge.");
                 /* Notice that the bear winds up at R_YLEM with the
                  * rest of your possessions, in this case. */
             } else {
-                puts("As you approach the center of the archway, hot vapors saturated with\n"
-                     "brimstone drift up from the lava in the gorge beneath your feet.  You\n"
-                     "are swiftly overcome by the foul gasses and, with your lungs burned\n"
+                puts("As you approach the center of the archway, hot vapors saturated with" SOFT_NL
+                     "brimstone drift up from the lava in the gorge beneath your feet.  You" SOFT_NL
+                     "are swiftly overcome by the foul gasses and, with your lungs burned" SOFT_NL
                      "out, fall off of the bridge and into the gorge.");
             }
             return you_are_dead_at(R_YLEM);
@@ -1789,7 +1789,7 @@ int at_fbarr(void)
 int at_barr(void)
 {
     if (keywordv(GET) && keywordo(AXE) && there(AXE, R_BARR) && objs[AXE].prop) {
-        puts("As you approach the bear, it snarls threateningly;  you are forced\n"
+        puts("As you approach the bear, it snarls threateningly;  you are forced" SOFT_NL
              "to retreat without the axe.");
         return STAY_STILL;
     }
@@ -1977,7 +1977,7 @@ int at_vault(void)
 {
     if (movementv3(UP,OUT,NORTH)) {
         if (objs[SAFE].prop == 1) {
-            puts("The safe's door is blocking the exit passage - you'll have to close\n"
+            puts("The safe's door is blocking the exit passage - you'll have to close" SOFT_NL
                  "the safe to get out of here.");
             return STAY_STILL;
         } else {
@@ -1995,7 +1995,7 @@ int at_insafe(void)
         if (word2.type == WordType_None) {
             puts("What do you want me to do with the safe?");
         } else if (keywordv(CLOSE)) {
-            puts("There is no handle on the inside of the safe door, nor any other way\n"
+            puts("There is no handle on the inside of the safe door, nor any other way" SOFT_NL
                  "to get a grip on it.  You'll have to leave the safe before shutting it.");
         } else if (keywordv(OPEN)) {
             already_open(word2.text);
@@ -2397,8 +2397,8 @@ int at_crack_2(void)
     if (movementv(WEST)) return R_CRACK_1;
     if (keywordv(SOUTH)) {
         if (there(SLIME, R_CRACK_2)) {
-            puts("As you enter into the passage, you are forced to brush up against\n"
-                 "some of the green slime.  Instantly it flows down and covers your\n"
+            puts("As you enter into the passage, you are forced to brush up against" SOFT_NL
+                 "some of the green slime.  Instantly it flows down and covers your" SOFT_NL
                  "body, and rapidly digests away all of your flesh.");
             return you_are_dead_at(R_CRACK_2);
         } else {
@@ -2427,7 +2427,7 @@ static int quicksand(Location dest)
     if (!objs[QUICKSAND].prop || toting(CLAM) || toting(OYSTER)) {
         objs[QUICKSAND].prop = 0;
         if (have_drowned_in_quicksand) {
-            puts("You know, I've heard of people who really fell in for the soft sell,\n"
+            puts("You know, I've heard of people who really fell in for the soft sell," SOFT_NL
                  "but\n"
                  "     >glub<\n"
                  "            this\n"
@@ -2438,8 +2438,8 @@ static int quicksand(Location dest)
                  "                                                          >blop!<");
         } else {
             have_drowned_in_quicksand = true;
-            puts("Hmmmm..  This sand is rather soft, and you're sinking in a little...\n"
-                 "In fact you're sinking in a lot!   Oh, no - it's QUICKSAND!!  HELP!!\n"
+            puts("Hmmmm..  This sand is rather soft, and you're sinking in a little..." SOFT_NL
+                 "In fact you're sinking in a lot!   Oh, no - it's QUICKSAND!!  HELP!!" SOFT_NL
                  "HELP!! HELP!!!\n"
                  "               >glub<\n"
                  "                        >glub<\n"
@@ -2499,7 +2499,7 @@ int at_beach(void)
         return R_SHELF;
     }
     if (keywordo(WATER) || keywordv(FILL) || keywordv(DRINK)) {
-        puts("I'm afraid that all that's available here is salt water, which\n"
+        puts("I'm afraid that all that's available here is salt water, which" SOFT_NL
              /* Platt has "you'de". */
              "isn't good for anything much... you'd better try elsewhere.");
         return STAY_STILL;
@@ -2525,22 +2525,22 @@ int at_faces(void)
     if (movementv(NORTH)) return R_BY_FIGURE;
     if (keywordv(CROSS) || keywordv(SOUTH) || keywordo(GORGE)) {
         if (!objs[GORGE].prop) {
-            puts("I'm afraid I can't go that way - walking on red-hot lava is contrary\n"
+            puts("I'm afraid I can't go that way - walking on red-hot lava is contrary" SOFT_NL
                  "to union regulations (and is bad for your health anyhow).");
             return STAY_STILL;
         } else if (!toting(RING)) {
-            puts("As you approach the center of the archway, hot vapors saturated with\n"
-                 "brimstone drift up from the lava in the gorge beneath your feet.  You\n"
-                 "are swiftly overcome by the foul gasses and, with your lungs burned\n"
+            puts("As you approach the center of the archway, hot vapors saturated with" SOFT_NL
+                 "brimstone drift up from the lava in the gorge beneath your feet.  You" SOFT_NL
+                 "are swiftly overcome by the foul gasses and, with your lungs burned" SOFT_NL
                  "out, fall off of the bridge and into the gorge.");
             return you_are_dead_at(R_YLEM);
         } else if (toting(SCEPTRE)) {
-            puts("As you reach the center of the bridge, a ghostly figure appears in\n"
-                 "front of you.  He (?) stands at least eight feet tall, and has the\n"
-                 "lower body of an enormous snake, six arms, and an angry expression on\n"
-                 "his face.  \"You'll not have my sceptre that easily!\" he cries, and\n"
-                 "makes a complex magical gesture with his lower right arm.  There is a\n"
-                 "brilliant flash of light and a vicious >crack<, and the bridge cracks\n"
+            puts("As you reach the center of the bridge, a ghostly figure appears in" SOFT_NL
+                 "front of you.  He (?) stands at least eight feet tall, and has the" SOFT_NL
+                 "lower body of an enormous snake, six arms, and an angry expression on" SOFT_NL
+                 "his face.  \"You'll not have my sceptre that easily!\" he cries, and" SOFT_NL
+                 "makes a complex magical gesture with his lower right arm.  There is a" SOFT_NL
+                 "brilliant flash of light and a vicious >crack<, and the bridge cracks" SOFT_NL
                  "and plummets into the gorge.");
             objs[GORGE].prop = 0;
             return you_are_dead_at(R_YLEM);
@@ -2678,7 +2678,7 @@ int at_basque_1(void)
     if (keywordv(NORTH)) {
         objs[BASILISK].prop += 1;
         if (objs[BASILISK].prop == 1) {
-            puts("The basilisk stirs restlessly and grumbles in its sleep as you pass,\n"
+            puts("The basilisk stirs restlessly and grumbles in its sleep as you pass," SOFT_NL
                  "but it does not awaken.\n");
         }
         return R_BASQUE_2;
@@ -2693,13 +2693,13 @@ int at_basque_2(void)
         objs[BASILISK].prop -= 1;
         if (objs[BASILISK].prop == 0) {
             if (toting(PLATE)) {
-                puts("The basilisk stirs grumpily and awakens, peering sleepily about.  It\n"
-                     "sees its reflection in the metal plate that you are carrying,\n"
+                puts("The basilisk stirs grumpily and awakens, peering sleepily about.  It" SOFT_NL
+                     "sees its reflection in the metal plate that you are carrying," SOFT_NL
                      "shudders, and turns into solid granite.\n");
                 objs[BASILISK].prop = 2;
             } else {
-                puts("The basilisk stirs grumpily and awakens, peering sleepily about.  It\n"
-                     "spies you, growls, and stares you straight in the eye.  Your body\n"
+                puts("The basilisk stirs grumpily and awakens, peering sleepily about.  It" SOFT_NL
+                     "spies you, growls, and stares you straight in the eye.  Your body" SOFT_NL
                      "is instantly petrified.");
                 return you_are_dead_at(R_BASQUE_2);
             }
@@ -2723,7 +2723,7 @@ int at_peelgrunt(void)
 {
     if (keywordv(SOUTH) || keywordv(OUT) || keywordp(R_FORK)) {
         if (objs[SAFE].prop == 1) {
-            puts("The safe's door is blocking the exit passage - you'll have to close\n"
+            puts("The safe's door is blocking the exit passage - you'll have to close" SOFT_NL
                  "the safe to get out of here.");
             return STAY_STILL;
         } else {
@@ -3089,14 +3089,14 @@ struct Place places[] = {
     },
     /* R_ROAD */ {
         "You're at end of road again.",
-        "You are standing at the end of a road before a small brick building.\n"
-        "Around you is a forest.  A small stream flows out of the building and\n"
+        "You are standing at the end of a road before a small brick building." SOFT_NL
+        "Around you is a forest.  A small stream flows out of the building and" SOFT_NL
         "down a gully.",
         F_LIGHTED|F_WATER|F_NOTINCAVE|F_NODWARF, &at_road
     },
     /* R_HILL */ {
         "You're at hill in road.",
-        "You have walked up a hill, still in the forest. The road slopes back\n"
+        "You have walked up a hill, still in the forest. The road slopes back" SOFT_NL
         "down the other side of the hill.  There is a building in the distance.",
         F_LIGHTED|F_NOTINCAVE|F_NODWARF, &at_hill
     },
@@ -3107,7 +3107,7 @@ struct Place places[] = {
     },
     /* R_VALLEY */ {
         "You're in valley.",
-        "You are in a valley in the forest beside a stream tumbling along a\n"
+        "You are in a valley in the forest beside a stream tumbling along a" SOFT_NL
         "rocky bed.",
         F_LIGHTED|F_NOTINCAVE|F_NODWARF|F_WATER, &at_valley
     },
@@ -3123,34 +3123,34 @@ struct Place places[] = {
     },
     /* R_SLIT */ {
         "You're at slit in streambed.",
-        "At your feet all the water of the stream splashes into a 2-inch slit\n"
+        "At your feet all the water of the stream splashes into a 2-inch slit" SOFT_NL
         "in the rock.  Downstream the streambed is bare rock.",
         F_LIGHTED|F_NOTINCAVE|F_NODWARF|F_WATER, &at_slit
     },
     /* R_DEPRESSION */ {
         "You're outside grate.",
-        "You are in a 20-foot depression floored with bare dirt. Set into the\n"
-        "dirt is a strong steel grate mounted in concrete.  A dry streambed\n"
+        "You are in a 20-foot depression floored with bare dirt. Set into the" SOFT_NL
+        "dirt is a strong steel grate mounted in concrete.  A dry streambed" SOFT_NL
         "leads into the depression.",
         F_LIGHTED|F_HINTABLE|F_NOTINCAVE|F_NODWARF, &at_depression
     },
     /* R_INSIDE */ {
         "You're below the grate.",
-        "You are in a small chamber beneath a 3x3 steel grate to the surface.\n"
+        "You are in a small chamber beneath a 3x3 steel grate to the surface." SOFT_NL
         "A low crawl over cobbles leads inward to the west.",
         F_LIGHTED|F_NODWARF, &at_inside
     },
     /* R_COBBLES */ {
         "You're in cobble crawl.",
-        "You are crawling over cobbles in a low passage. There is a dim light\n"
+        "You are crawling over cobbles in a low passage. There is a dim light" SOFT_NL
         "at the east end of the passage.",
         F_LIGHTED|F_NODWARF, &at_cobbles
     },
     /* R_DEBRIS */ {
         "You're in debris room.",
-        "You are in a debris room filled with stuff washed in from the surface.\n"
-        "A low wide passage with cobbles becomes plugged with mud and debris\n"
-        "here, but an awkward canyon leads upward and west.  A note on the wall\n"
+        "You are in a debris room filled with stuff washed in from the surface." SOFT_NL
+        "A low wide passage with cobbles becomes plugged with mud and debris" SOFT_NL
+        "here, but an awkward canyon leads upward and west.  A note on the wall" SOFT_NL
         "says \"Magic word XYZZY\".",
         0, &at_debris
     },
@@ -3161,31 +3161,31 @@ struct Place places[] = {
     },
     /* R_BIRD */ {
         "You're in bird chamber.",
-        "You are in a splendid chamber thirty feet high. The walls are frozen\n"
-        "rivers of orange stone.  An awkward canyon and a good passage exit\n"
+        "You are in a splendid chamber thirty feet high. The walls are frozen" SOFT_NL
+        "rivers of orange stone.  An awkward canyon and a good passage exit" SOFT_NL
         "from east and west sides of the chamber.",
         F_HINTABLE, &at_bird
     },
     /* R_SPIT */ {
         "You're at top of small pit.",
-        "At your feet is a small pit breathing traces of white mist. An east\n"
-        "passage ends here except for a small crack leading on.  Rough stone\n"
+        "At your feet is a small pit breathing traces of white mist. An east" SOFT_NL
+        "passage ends here except for a small crack leading on.  Rough stone" SOFT_NL
         "steps lead down the pit.",
         0, &at_spit
     },
     /* R_EMIST */ {
         "You're in Hall of Mists.",
-        "You are at one end of a vast hall stretching forward out of sight to\n"
-        "the west, filled with wisps of white mist that sway to and fro\n"
-        "almost as if alive.  Rough stone steps lead up to a passage at the\n"
-        "top of a dome above you.  A wide staircase runs downward into\n"
-        "the darkness;  a chill wind blows up from below.  There are small\n"
+        "You are at one end of a vast hall stretching forward out of sight to" SOFT_NL
+        "the west, filled with wisps of white mist that sway to and fro" SOFT_NL
+        "almost as if alive.  Rough stone steps lead up to a passage at the" SOFT_NL
+        "top of a dome above you.  A wide staircase runs downward into" SOFT_NL
+        "the darkness;  a chill wind blows up from below.  There are small" SOFT_NL
         "passages to the north and south, and a small crack leads east.",
         0, &at_emist
     },
     /* R_EFISS */ {
         "You're on east bank of fissure.",
-        "You are on the east bank of a fissure slicing clear across the hall.\n"
+        "You are on the east bank of a fissure slicing clear across the hall." SOFT_NL
         "The mist is quite thick here, and the fissure is too wide to jump.",
         0, &at_efiss
     },
@@ -3196,46 +3196,46 @@ struct Place places[] = {
     },
     /* R_NUGGET */ {
         "You're in nugget of gold room.",
-        "This is a low room with a crude note on the wall. The note says,\n"
+        "This is a low room with a crude note on the wall. The note says," SOFT_NL
         "\"You won't get it up the steps\".",
         F_ONE_EXIT, &at_nugget
     },
     /* R_HMK */ {
         "You're in Hall of Mt King.",
-        "You are in the Hall of the Mountain King, with passages off in all\n"
+        "You are in the Hall of the Mountain King, with passages off in all" SOFT_NL
         "directions.",
         F_HINTABLE, &at_hmk
     },
     /* R_W2PIT */ {
         "You're at west end of Twopit room.",
-        "You are at the west end of the Twopit room. There is a large hole in\n"
+        "You are at the west end of the Twopit room. There is a large hole in" SOFT_NL
         "the wall above the pit at this end of the room.",
         0, &at_w2pit
     },
     /* R_E2PIT */ {
         "You're at east end of Twopit room.",
-        "You are at the east end of the Twopit room. The floor here is\n"
-        "littered with thin rock slabs, which make it easy to descend the pits.\n"
-        "There is a path here bypassing the pits to connect passages from east\n"
-        "and west.  There are holes all over, but the only big one is on the\n"
+        "You are at the east end of the Twopit room. The floor here is" SOFT_NL
+        "littered with thin rock slabs, which make it easy to descend the pits." SOFT_NL
+        "There is a path here bypassing the pits to connect passages from east" SOFT_NL
+        "and west.  There are holes all over, but the only big one is on the" SOFT_NL
         "wall directly over the west pit where you can't get to it.",
         0, &at_e2pit
     },
     /* R_EPIT */ {
         "You're in east pit.\nThere is a small pool of oil here.",
-        "You are at the bottom of the eastern pit in the Twopit room. There is\n"
+        "You are at the bottom of the eastern pit in the Twopit room. There is" SOFT_NL
         "a small pool of oil in one corner of the pit.",
         F_NODWARF, &at_epit
     },
     /* R_WPIT */ {
         "You're in west pit.",
-        "You are at the bottom of the western pit in the Twopit room. There is\n"
+        "You are at the bottom of the western pit in the Twopit room. There is" SOFT_NL
         "a large hole in the wall about 25 feet above you.",
         F_NODWARF, &at_wpit
     },
     /* R_NS */ {
         "You're in a low N/S passage.",
-        "You are in a low N/S passage at a hole in the floor. The hole goes\n"
+        "You are in a low N/S passage at a hole in the floor. The hole goes" SOFT_NL
         "down to an E/W passage.",
         0, &at_ns
     },
@@ -3246,14 +3246,14 @@ struct Place places[] = {
     },
     /* R_WEST */ {
         "You're in the west side chamber.",
-        "You are in the west side chamber of the Hall of the Mountain King.\n"
+        "You are in the west side chamber of the Hall of the Mountain King." SOFT_NL
         "A passage continues west and up here.",
         0, &at_west
     },
     /* R_Y2 */ {
         "You're at \"Y2\".",
-        "You are in a large room, with a passage to the south, a passage to the\n"
-        "west, and a wall of broken rock to the east.  There is a large \"Y2\" on\n"
+        "You are in a large room, with a passage to the south, a passage to the" SOFT_NL
+        "west, and a wall of broken rock to the east.  There is a large \"Y2\" on" SOFT_NL
         "a rock in the room's center.",
         0, &at_y2
     },
@@ -3264,54 +3264,54 @@ struct Place places[] = {
     },
     /* R_WINDOE */ {
         "You're at window on pit.",
-        "You're at a low window overlooking a huge pit, which extends up out of\n"
-        "sight.  A floor is indistinctly visible over 50 feet below.  Traces of\n"
-        "white mist cover the floor of the pit, becoming thicker to the right.\n"
-        "Marks in the dust around the window would seem to indicate that\n"
-        "someone has been here recently.  Directly across the pit from you and\n"
-        "25 feet away there is a similar window looking into a lighted room.  A\n"
+        "You're at a low window overlooking a huge pit, which extends up out of" SOFT_NL
+        "sight.  A floor is indistinctly visible over 50 feet below.  Traces of" SOFT_NL
+        "white mist cover the floor of the pit, becoming thicker to the right." SOFT_NL
+        "Marks in the dust around the window would seem to indicate that" SOFT_NL
+        "someone has been here recently.  Directly across the pit from you and" SOFT_NL
+        "25 feet away there is a similar window looking into a lighted room.  A" SOFT_NL
         "shadowy figure can be seen there peering back at you.",
         F_ONE_EXIT, &at_windoe
     },
     /* R_WINDOW */ {
         "You're at window on pit.",
-        "You're at a low window overlooking a huge pit, which extends up out of\n"
-        "sight.  A floor is indistinctly visible over 50 feet below.  Traces of\n"
-        "white mist cover the floor of the pit, becoming thicker to the left.\n"
-        "Marks in the dust around the window would seem to indicate that\n"
-        "someone has been here recently.  Directly across the pit from you and\n"
-        "25 feet away there is a similar window looking into a lighted room.  A\n"
+        "You're at a low window overlooking a huge pit, which extends up out of" SOFT_NL
+        "sight.  A floor is indistinctly visible over 50 feet below.  Traces of" SOFT_NL
+        "white mist cover the floor of the pit, becoming thicker to the left." SOFT_NL
+        "Marks in the dust around the window would seem to indicate that" SOFT_NL
+        "someone has been here recently.  Directly across the pit from you and" SOFT_NL
+        "25 feet away there is a similar window looking into a lighted room.  A" SOFT_NL
         "shadowy figure can be seen there peering back at you.",
         F_ONE_EXIT, &at_window
     },
     /* R_DIRTY */ {
         "You're in dirty passage.",
-        "You are in a dirty broken passage. To the east is a crawl. To the\n"
+        "You are in a dirty broken passage. To the east is a crawl. To the" SOFT_NL
         "west is a large passage.  Above you is a hole to another passage.",
         0, &at_dirty
     },
     /* R_CLEAN */ {
         "You are on the brink of a small clean climbable pit.",
-        "You are on the brink of a small clean climbable pit. A crawl leads\n"
+        "You are on the brink of a small clean climbable pit. A crawl leads" SOFT_NL
         "west.",
         0, &at_clean
     },
     /* R_WET */ {
         "You are at the pit's bottom with a stream nearby.",
-        "You are in the bottom of a small pit with a little stream, which\n"
+        "You are in the bottom of a small pit with a little stream, which" SOFT_NL
         "enters and exits through tiny slits.",
         F_WATER|F_NODWARF, &at_wet
     },
     /* R_DUSTY */ {
         "You're in dusty rock room.",
-        "You are in a large room full of dusty rocks. There is a big hole in\n"
+        "You are in a large room full of dusty rocks. There is a big hole in" SOFT_NL
         "the floor.  There are cracks everywhere, and a passage leading east.",
         0, &at_dusty
     },
     /* R_WMIST */ {
         "You're at west end of Hall of Mists.",
-        "You are at the west end of Hall of Mists. A low wide crawl continues\n"
-        "west and another goes north.  To the south is a little passage 6 feet\n"
+        "You are at the west end of Hall of Mists. A low wide crawl continues" SOFT_NL
+        "west and another goes north.  To the south is a little passage 6 feet" SOFT_NL
         "off the floor.",
         0, &at_wmist
     },
@@ -3333,22 +3333,22 @@ struct Place places[] = {
     /* R_MAZEA56 */ { NULL, dead_end, F_HINTABLE|F_INMAZE|F_NOBACK|F_ONE_EXIT, &at_mazea56 },
     /* R_MAZEA57_PIT */ {
         "You're at brink of pit.",
-        "You are on the brink of a thirty foot pit with a massive orange column\n"
-        "down one wall.  You could climb down here but you could not get back\n"
+        "You are on the brink of a thirty foot pit with a massive orange column" SOFT_NL
+        "down one wall.  You could climb down here but you could not get back" SOFT_NL
         "up.  The maze continues at this level.",
         F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazea57_pit
     },
     /* R_MAZEA58 */ { NULL, dead_end, F_HINTABLE|F_INMAZE|F_NOBACK|F_ONE_EXIT, &at_mazea58 },
     /* R_ELONG */ {
         "You're at east end of long hall.",
-        "You are at the east end of a very long hall apparently without side\n"
-        "chambers.  To the east a low wide crawl slants up.  To the north a\n"
+        "You are at the east end of a very long hall apparently without side" SOFT_NL
+        "chambers.  To the east a low wide crawl slants up.  To the north a" SOFT_NL
         "round two foot hole slants down.",
         0, &at_elong
     },
     /* R_WLONG */ {
         "You're at west end of long hall.",
-        "You are at the west end of a very long featureless hall. The hall\n"
+        "You are at the west end of a very long featureless hall. The hall" SOFT_NL
         "joins up with a narrow north/south passage.",
         0, &at_wlong
     },
@@ -3359,36 +3359,36 @@ struct Place places[] = {
     },
     /* R_DEADEND1 */ {
         NULL,
-        "Dead end passage. Scratched on a rock is the message, \"Stand where\n"
+        "Dead end passage. Scratched on a rock is the message, \"Stand where" SOFT_NL
         "the statue gazes, and make use of the proper tool.\"",
         F_ONE_EXIT, &at_deadend1
     },
     /* R_COMPLEX */ {
         "You're at complex junction.",
-        "You are at a complex junction. A low hands and knees passage from the\n"
-        "north joins a higher crawl from the east to make a walking passage\n"
+        "You are at a complex junction. A low hands and knees passage from the" SOFT_NL
+        "north joins a higher crawl from the east to make a walking passage" SOFT_NL
         "going west.  There is also a large room above.  The air is damp here.",
         0, &at_complex
     },
     /* R_BEDQUILT */ {
         "You're back at Bedquilt.",
-        "You are in Bedquilt, a long east/west passage with holes everywhere.\n"
+        "You are in Bedquilt, a long east/west passage with holes everywhere." SOFT_NL
         "To explore at random select NORTH, SOUTH, UP, or DOWN.",
         0, &at_bedquilt
     },
     /* R_SWISS */ {
         "You're in Swiss cheese room.",
-        "You are in a room whose walls resemble Swiss cheese. Obvious passages\n"
-        "go west, east, NE, and NW.  Part of the room is occupied by a large\n"
+        "You are in a room whose walls resemble Swiss cheese. Obvious passages" SOFT_NL
+        "go west, east, NE, and NW.  Part of the room is occupied by a large" SOFT_NL
         "bedrock block.",
         0, &at_swiss
     },
     /* R_SLAB */ {
         "You're in Slab room.",
-        "You are in a large low circular chamber whose floor is an immense slab\n"
-        "fallen from the ceiling (Slab room).  East and west there once were\n"
-        "large passages, but they are now filled with boulders.  Low small\n"
-        "passages go north and south, and the south one quickly bends west\n"
+        "You are in a large low circular chamber whose floor is an immense slab" SOFT_NL
+        "fallen from the ceiling (Slab room).  East and west there once were" SOFT_NL
+        "large passages, but they are now filled with boulders.  Low small" SOFT_NL
+        "passages go north and south, and the south one quickly bends west" SOFT_NL
         "around the boulders.",
         0, &at_slab
     },
@@ -3404,8 +3404,8 @@ struct Place places[] = {
     },
     /* R_SJUNC */ {
         "You're at junction of three secret canyons.",
-        "You are in a secret canyon at a junction of three canyons, bearing\n"
-        "north, south, and SE.  The north one is as tall as the other two\n"
+        "You are in a secret canyon at a junction of three canyons, bearing" SOFT_NL
+        "north, south, and SE.  The north one is as tall as the other two" SOFT_NL
         "combined.",
         0, &at_sjunc
     },
@@ -3419,8 +3419,8 @@ struct Place places[] = {
     },
     /* R_SECRETEW_TITE */ {
         "You're in secret E/W canyon above tight canyon.",
-        "You are in a secret canyon which here runs E/W. It crosses over a\n"
-        "very tight canyon 15 feet below.  If you go down you may not be able\n"
+        "You are in a secret canyon which here runs E/W. It crosses over a" SOFT_NL
+        "very tight canyon 15 feet below.  If you go down you may not be able" SOFT_NL
         "to get back up.",
         0, &at_secretew_tite
     },
@@ -3436,13 +3436,13 @@ struct Place places[] = {
     },
     /* R_TALLEWCNYN */ {
         "You are in a tall E/W canyon.",
-        "You are in a tall E/W canyon. A low tight crawl goes 3 feet north and\n"
+        "You are in a tall E/W canyon. A low tight crawl goes 3 feet north and" SOFT_NL
         "seems to open up.",
         0, &at_tallewcnyn
     },
     /* R_DEADEND3 */ {
         "The canyon runs into a mass of boulders -- dead end.",
-        "The canyon runs into a mass of boulders -- dead end.  Scratched on\n"
+        "The canyon runs into a mass of boulders -- dead end.  Scratched on" SOFT_NL
         "one of the boulders are the words, \"Jerry Cornelius was here.\"",
         F_ONE_EXIT, &at_deadend3
     },
@@ -3456,22 +3456,22 @@ struct Place places[] = {
     /* R_MAZEA87 */ { NULL, all_alike, F_HINTABLE|F_INMAZE|F_NOBACK, &at_mazea87 },
     /* R_NARROW */ {
         "You're in narrow corridor.",
-        "You are in a long, narrow corridor stretching out of sight to the\n"
-        "west.  At the eastern end is a hole through which you can see a\n"
+        "You are in a long, narrow corridor stretching out of sight to the" SOFT_NL
+        "west.  At the eastern end is a hole through which you can see a" SOFT_NL
         "profusion of leaves.",
         0, &at_narrow
     },
     /* R_INCLINE */ {
         "You're at steep incline above large room.",
-        "You are at the top of a steep incline above a large room. You could\n"
-        "climb down here, but you would not be able to climb up.  There is a\n"
+        "You are at the top of a steep incline above a large room. You could" SOFT_NL
+        "climb down here, but you would not be able to climb up.  There is a" SOFT_NL
         "passage leading back to the north.",
         F_NOBACK, &at_incline
     },
     /* R_GIANT */ {
         "You're in Giant room.",
-        "You are in the Giant room. The ceiling here is too high up for your\n"
-        "lamp to show it.  Cavernous passages lead east, north, and south.  On\n"
+        "You are in the Giant room. The ceiling here is too high up for your" SOFT_NL
+        "lamp to show it.  Cavernous passages lead east, north, and south.  On" SOFT_NL
         "the west wall is scrawled the inscription, \"Fee Fie Foe Foo\" {sic}.",
         /* Platt only uses curly braces because square brackets mean something
          * special to the A-code interpreter. */
@@ -3484,42 +3484,42 @@ struct Place places[] = {
     },
     /* R_FALLS */ {
         "You're in cavern with waterfall.",
-        "You are in a magnificent cavern with a rushing stream, which cascades\n"
-        "over a sparkling waterfall into a roaring whirlpool which disappears\n"
+        "You are in a magnificent cavern with a rushing stream, which cascades" SOFT_NL
+        "over a sparkling waterfall into a roaring whirlpool which disappears" SOFT_NL
         "through a hole in the floor.  Passages exit to the south and west.",
         F_WATER, &at_falls
     },
     /* R_SOFT */ {
         "You're in soft room.",
-        "You are in the soft room. The walls are covered with heavy curtains,\n"
+        "You are in the soft room. The walls are covered with heavy curtains," SOFT_NL
         "the floor with a thick pile carpet.  Moss covers the ceiling.",
         F_ONE_EXIT, &at_soft
     },
     /* R_ORIENTAL */ {
         "You're in Oriental room.",
-        "This is the Oriental room. Ancient oriental cave drawings cover the\n"
-        "walls.  A gently sloping passage leads upward to the north, another\n"
+        "This is the Oriental room. Ancient oriental cave drawings cover the" SOFT_NL
+        "walls.  A gently sloping passage leads upward to the north, another" SOFT_NL
         "passage leads SE, and a hands and knees crawl leads west.",
         0, &at_oriental
     },
     /* R_MISTY */ {
         "You're in misty cavern.",
-        "You are following a wide path around the outer edge of a large cavern.\n"
-        "Far below, through a heavy white mist, strange splashing noises can be\n"
-        "heard.  The mist rises up through a fissure in the ceiling.  The path\n"
+        "You are following a wide path around the outer edge of a large cavern." SOFT_NL
+        "Far below, through a heavy white mist, strange splashing noises can be" SOFT_NL
+        "heard.  The mist rises up through a fissure in the ceiling.  The path" SOFT_NL
         "exits to the south and west.",
         0, &at_misty
     },
     /* R_ALCOVE */ {
         "You're in alcove.",
-        "You are in an alcove. A small NW path seems to widen after a short\n"
-        "distance.  An extremely tight tunnel leads east.  It looks like a very\n"
+        "You are in an alcove. A small NW path seems to widen after a short" SOFT_NL
+        "distance.  An extremely tight tunnel leads east.  It looks like a very" SOFT_NL
         "tight squeeze.  An eerie light can be seen at the other end.",
         F_NOBACK|F_NODWARF|F_HINTABLE, &at_alcove
     },
     /* R_PLOVER */ {
         "You're in Plover room.",
-        "You're in a small chamber lit by an eerie green light. An extremely\n"
+        "You're in a small chamber lit by an eerie green light. An extremely" SOFT_NL
         "narrow tunnel exits to the west.  A dark corridor leads NE.",
         F_LIGHTED|F_NOBACK|F_NODWARF|F_HINTABLE, &at_plover
     },
@@ -3530,16 +3530,16 @@ struct Place places[] = {
     },
     /* R_ARCHED */ {
         "You're in arched hall.",
-        "You are in an arched hall. A coral passage continues up and east.\n"
+        "You are in an arched hall. A coral passage continues up and east." SOFT_NL
         "The air smells of sea water.",
         0, &at_arched
     },
     /* R_SHELL */ {
         "You're in Shell room.",
-        "You're in a large room carved out of sedimentary rock. The floor and\n"
+        "You're in a large room carved out of sedimentary rock. The floor and" SOFT_NL
         /* Platt has "imbedded". */
-        "walls are littered with bits of shells embedded in the stone.  A\n"
-        "shallow passage proceeds downward, and a somewhat steeper one leads\n"
+        "walls are littered with bits of shells embedded in the stone.  A" SOFT_NL
+        "shallow passage proceeds downward, and a somewhat steeper one leads" SOFT_NL
         "up.  A low hands and knees passage enters from the south.",
         F_NOBACK, &at_shell
     },
@@ -3555,9 +3555,9 @@ struct Place places[] = {
     },
     /* R_ANTE */ {
         "You're in anteroom.",
-        "You are in an anteroom leading to a large passage to the east. Small\n"
-        "passages go west and up.  The remnants of recent digging are evident.\n"
-        "A sign in midair here says \"Cave under construction beyond this point.\n"
+        "You are in an anteroom leading to a large passage to the east. Small" SOFT_NL
+        "passages go west and up.  The remnants of recent digging are evident." SOFT_NL
+        "A sign in midair here says \"Cave under construction beyond this point." SOFT_NL
         "Proceed at own risk.  {Witt Construction Company}\"",
         0, &at_anteroom
     },
@@ -3575,19 +3575,19 @@ struct Place places[] = {
     },
     /* R_MIRROR */ {
         "You're in mirror canyon.",
-        "You are in a north/south canyon about 25 feet across. The floor is\n"
-        "covered by white mist seeping in from the north.  The walls extend\n"
-        "upward for well over 100 feet.  Suspended from some unseen point far\n"
-        "above you, an enormous two-sided mirror is hanging parallel to and\n"
-        "midway between the canyon walls.  (The mirror is obviously provided\n"
-        "for the use of the dwarves, who as you know, are extremely vain.)  A\n"
+        "You are in a north/south canyon about 25 feet across. The floor is" SOFT_NL
+        "covered by white mist seeping in from the north.  The walls extend" SOFT_NL
+        "upward for well over 100 feet.  Suspended from some unseen point far" SOFT_NL
+        "above you, an enormous two-sided mirror is hanging parallel to and" SOFT_NL
+        "midway between the canyon walls.  (The mirror is obviously provided" SOFT_NL
+        "for the use of the dwarves, who as you know, are extremely vain.)  A" SOFT_NL
         "small window can be seen in either wall, some fifty feet up.",
         0, &at_mirror
     },
     /* R_STALACT */ {
         "You're at top of stalactite.",
-        "A large stalactite extends from the roof and almost reaches the floor\n"
-        "below.  You could climb down it, and jump from it to the floor, but\n"
+        "A large stalactite extends from the roof and almost reaches the floor" SOFT_NL
+        "below.  You could climb down it, and jump from it to the floor, but" SOFT_NL
         "having done so you would be unable to reach it to climb back up.",
         F_NOBACK, &at_stalact
     },
@@ -3598,73 +3598,73 @@ struct Place places[] = {
     },
     /* R_RES */ {
         "You're on southern edge of reservoir.",
-        "You are on the southern edge of a large underground reservoir.  A\n"
-        "thick cloud of white mist fills the room, rising from the surface\n"
-        "of the water and drifting rapidly upwards.  The lake is fed by a\n"
-        "stream, which tumbles out of a hole in the wall about 10 feet overhead\n"
-        "and splashes noisily into the water near the reservoir's northern wall.\n"
-        "A dimly-seen passage exits through the northern wall, but you can't get\n"
+        "You are on the southern edge of a large underground reservoir.  A" SOFT_NL
+        "thick cloud of white mist fills the room, rising from the surface" SOFT_NL
+        "of the water and drifting rapidly upwards.  The lake is fed by a" SOFT_NL
+        "stream, which tumbles out of a hole in the wall about 10 feet overhead" SOFT_NL
+        "and splashes noisily into the water near the reservoir's northern wall." SOFT_NL
+        "A dimly-seen passage exits through the northern wall, but you can't get" SOFT_NL
         "across the water to get to it.  Another passage leads south from here.",
         F_WATER|F_ONE_EXIT, &at_res
     },
     /* R_RESERVOIR_N */ {
         "You are at the northern end of the reservoir.",
-        "You are at the northern end of a large underground reservoir.  Across\n"
-        "the water to the south, a dark passage is visible.  Another passage\n"
-        "leads north from here.  Large, clawed tracks are visible in the damp\n"
+        "You are at the northern end of a large underground reservoir.  Across" SOFT_NL
+        "the water to the south, a dark passage is visible.  Another passage" SOFT_NL
+        "leads north from here.  Large, clawed tracks are visible in the damp" SOFT_NL
         "ground, leading from the passage into the water.",
         F_WATER|F_NODWARF|F_NOBACK, &at_reservoir_n
     },
     /* R_WARM */ {
         "You're in small, warm chamber.",
-        "You are in a small chamber with warm walls.  Mist drifts into the\n"
-        "chamber from a passage entering from the south and evaporates in\n"
+        "You are in a small chamber with warm walls.  Mist drifts into the" SOFT_NL
+        "chamber from a passage entering from the south and evaporates in" SOFT_NL
         "the heat.  Another passage leads out to the northeast.",
         F_NODWARF, &at_warm
     },
     /* R_BALCONY */ {
         "You're on balcony above treasure chamber.",
-        "You are in a high balcony carved out of solid rock overlooking a large,\n"
-        "bare chamber lit by dozens of flickering torches.  A rushing stream\n"
-        "pours into the chamber through a two-foot slit in the east wall and\n"
-        "drains into a large pool along the north side of the chamber.  A small\n"
-        "plaque riveted to the edge of the balcony reads, \"You are looking at\n"
-        "the Witt Company's main treasure room, constructed by the famous\n"
-        "architect Ralph Witt in 4004 B.C., and dedicated to the proposition\n"
-        "that all adventurers are created equal (although some are more equal\n"
-        "than others).  NO ADMITTANCE VIA THIS ENTRANCE!\"  A small, dark\n"
+        "You are in a high balcony carved out of solid rock overlooking a large," SOFT_NL
+        "bare chamber lit by dozens of flickering torches.  A rushing stream" SOFT_NL
+        "pours into the chamber through a two-foot slit in the east wall and" SOFT_NL
+        "drains into a large pool along the north side of the chamber.  A small" SOFT_NL
+        "plaque riveted to the edge of the balcony reads, \"You are looking at" SOFT_NL
+        "the Witt Company's main treasure room, constructed by the famous" SOFT_NL
+        "architect Ralph Witt in 4004 B.C., and dedicated to the proposition" SOFT_NL
+        "that all adventurers are created equal (although some are more equal" SOFT_NL
+        "than others).  NO ADMITTANCE VIA THIS ENTRANCE!\"  A small, dark" SOFT_NL
         "tunnel leads out to the west.",
         F_LIGHTED|F_NODWARF|F_ONE_EXIT, &at_balcony
     },
     /* R_FAKE_SLIT */ {
         "You're at slit in streambed.",
-        "At your feet all the water of the stream splashes into a 2-foot slit\n"
+        "At your feet all the water of the stream splashes into a 2-foot slit" SOFT_NL
         "in the rock.  Downstream the streambed is bare rock.",
         F_LIGHTED|F_NOTINCAVE|F_NODWARF, &at_fake_slit
     },
     /* R_CYLINDRICAL */ {
         "You're in cylindrical chamber.",
-        "You are in a small cylindrical room with very smooth walls and a flat\n"
+        "You are in a small cylindrical room with very smooth walls and a flat" SOFT_NL
         "floor and ceiling.  There are no exits visible anywhere.",
         F_LIGHTED|F_NOBACK, &at_cylindrical
     },
     /* R_PIRATES_NEST */ { NULL, dead_end, F_INMAZE|F_NODWARF, &at_pirates_nest },
     /* R_SWOFCHASM */ {
         "You're on SW side of chasm.",
-        "You are on one side of a large, deep chasm. A heavy white mist rising\n"
-        "up from below obscures all view of the far side.  A SW path leads away\n"
+        "You are on one side of a large, deep chasm. A heavy white mist rising" SOFT_NL
+        "up from below obscures all view of the far side.  A SW path leads away" SOFT_NL
         "from the chasm into a winding corridor.",
         F_NOBACK|F_NODWARF, &at_swofchasm
     },
     /* R_NEOFCHASM */ {
         "You're on NE side of chasm.",
-        "You are on the far side of the chasm. A NE path leads away from the\n"
+        "You are on the far side of the chasm. A NE path leads away from the" SOFT_NL
         "chasm on this side.",
         F_NOBACK|F_NODWARF, &at_neofchasm
     },
     /* R_SLOPING */ {
         "You're in sloping corridor.",
-        "You are in a long winding corridor sloping out of sight in both\n"
+        "You are in a long winding corridor sloping out of sight in both" SOFT_NL
         "directions.",
         0, &at_sloping
     },
@@ -3680,78 +3680,78 @@ struct Place places[] = {
     },
     /* R_CORRIDOR */ {
         "You're in corridor.",
-        "You're in a long east/west corridor. A faint rumbling noise can be\n"
+        "You're in a long east/west corridor. A faint rumbling noise can be" SOFT_NL
         "heard in the distance.",
         F_NODWARF, &at_corridor
     },
     /* R_FORK */ {
         "You're at fork in path.",
-        "The path forks here. The left fork leads northeast. A dull rumbling\n"
-        "seems to get louder in that direction.  The right fork leads southeast\n"
+        "The path forks here. The left fork leads northeast. A dull rumbling" SOFT_NL
+        "seems to get louder in that direction.  The right fork leads southeast" SOFT_NL
         "down a gentle slope.  The main corridor enters from the west.",
         F_NODWARF, &at_fork
     },
     /* R_WARMJUNCTN */ {
         "You're at junction with warm walls.",
-        "The walls are quite warm here. From the north can be heard a steady\n"
-        "roar, so loud that the entire cave seems to be trembling.  Another\n"
+        "The walls are quite warm here. From the north can be heard a steady" SOFT_NL
+        "roar, so loud that the entire cave seems to be trembling.  Another" SOFT_NL
         "passage leads south, and a low crawl goes east.",
         F_NODWARF, &at_warmjunctn
     },
     /* R_VIEW */ {
         "You're at breath-taking view.",
-        "You are on the edge of a breath-taking view. Far below you is an\n"
-        "active volcano, from which great gouts of molten lava come surging\n"
-        "out, cascading back down into the depths.  The glowing rock fills the\n"
-        "farthest reaches of the cavern with a blood-red glare, giving every-\n"
-        "thing an eerie, macabre appearance.  The air is filled with flickering\n"
-        "sparks of ash and a heavy smell of brimstone.  The walls are hot to\n"
-        "the touch, and the thundering of the volcano drowns out all other\n"
-        "sounds.  Embedded in the jagged roof far overhead are myriad twisted\n"
-        "formations composed of pure white alabaster, which scatter the murky\n"
-        "light into sinister apparitions upon the walls.  To one side is a deep\n"
-        "gorge, filled with a bizarre chaos of tortured rock which seems to\n"
-        "have been crafted by the devil himself.  An immense river of fire\n"
-        "crashes out from the depths of the volcano, burns its way through the\n"
-        "gorge, and plummets into a bottomless pit far off to your left.\n"
-        "Across the gorge, the entrance to a valley is dimly visible.  To\n"
-        "the right, an immense geyser of blistering steam erupts continuously\n"
-        "from a barren island in the center of a sulfurous lake, which bubbles\n"
-        "ominously.  The far right wall is aflame with an incandescence of its\n"
-        "own, which lends an additional infernal splendor to the already\n"
+        "You are on the edge of a breath-taking view. Far below you is an" SOFT_NL
+        "active volcano, from which great gouts of molten lava come surging" SOFT_NL
+        "out, cascading back down into the depths.  The glowing rock fills the" SOFT_NL
+        "farthest reaches of the cavern with a blood-red glare, giving every" SOFT_HYPHEN
+        "thing an eerie, macabre appearance.  The air is filled with flickering" SOFT_NL
+        "sparks of ash and a heavy smell of brimstone.  The walls are hot to" SOFT_NL
+        "the touch, and the thundering of the volcano drowns out all other" SOFT_NL
+        "sounds.  Embedded in the jagged roof far overhead are myriad twisted" SOFT_NL
+        "formations composed of pure white alabaster, which scatter the murky" SOFT_NL
+        "light into sinister apparitions upon the walls.  To one side is a deep" SOFT_NL
+        "gorge, filled with a bizarre chaos of tortured rock which seems to" SOFT_NL
+        "have been crafted by the devil himself.  An immense river of fire" SOFT_NL
+        "crashes out from the depths of the volcano, burns its way through the" SOFT_NL
+        "gorge, and plummets into a bottomless pit far off to your left." SOFT_NL
+        "Across the gorge, the entrance to a valley is dimly visible.  To" SOFT_NL
+        "the right, an immense geyser of blistering steam erupts continuously" SOFT_NL
+        "from a barren island in the center of a sulfurous lake, which bubbles" SOFT_NL
+        "ominously.  The far right wall is aflame with an incandescence of its" SOFT_NL
+        "own, which lends an additional infernal splendor to the already" SOFT_NL
         "hellish scene.  A dark, foreboding passage exits to the south.",
             F_LIGHTED|F_NODWARF, &at_view
     },
     /* R_FACES */ {
         "You're at the south end of the Valley of the Stone Faces.",
-        "You are standing at the southern end of a long valley illuminated by\n"
-        "flickering red light from the volcanic gorge behind you.  Carved\n"
-        "into the walls of the valley is an incredible series of stone faces.\n"
-        "Some of them look down into the valley with expressions of\n"
-        "benevolence that would credit a saint;  others glare with a malice\n"
-        "that makes the heart grow faint.  All of them are imbued with a\n"
-        "fantastic seeming of life by the shifting and flickering light of\n"
-        "the volcano.  The entire far end of the valley is taken up by an\n"
-        "immense carving of a seated figure;  its exact form cannot be seen\n"
+        "You are standing at the southern end of a long valley illuminated by" SOFT_NL
+        "flickering red light from the volcanic gorge behind you.  Carved" SOFT_NL
+        "into the walls of the valley is an incredible series of stone faces." SOFT_NL
+        "Some of them look down into the valley with expressions of" SOFT_NL
+        "benevolence that would credit a saint;  others glare with a malice" SOFT_NL
+        "that makes the heart grow faint.  All of them are imbued with a" SOFT_NL
+        "fantastic seeming of life by the shifting and flickering light of" SOFT_NL
+        "the volcano.  The entire far end of the valley is taken up by an" SOFT_NL
+        "immense carving of a seated figure;  its exact form cannot be seen" SOFT_NL
         "from here due to the uncertainty of the light.",
         F_LIGHTED|F_NOBACK|F_NODWARF, &at_faces
     },
     /* R_BY_FIGURE */ {
         "You're at north end of the Valley of the Stone Faces.",
-        "You are standing at the north end of the Valley of the Stone Faces.\n"
-        "Above you, an incredible bas-relief statue of an immense minotaur\n"
-        "has been carved out of the rock.  At least sixty feet high, it sits\n"
-        "gazing down at you with a faint but definite expression of amusement.\n"
-        "Between its feet and the floor is a rock wall about ten feet high\n"
+        "You are standing at the north end of the Valley of the Stone Faces." SOFT_NL
+        "Above you, an incredible bas-relief statue of an immense minotaur" SOFT_NL
+        "has been carved out of the rock.  At least sixty feet high, it sits" SOFT_NL
+        "gazing down at you with a faint but definite expression of amusement." SOFT_NL
+        "Between its feet and the floor is a rock wall about ten feet high" SOFT_NL
         "which extends across the entire north end of the valley.",
         F_LIGHTED|F_NODWARF, &at_by_figure
     },
     /* R_PLAIN_1 */ {
         "You're at south end of fog-filled room.",
-        "You are standing at the southern end of what appears to be a\n"
-        "large room filled with multicolored fog.  The sides and far end\n"
-        "of the room cannot be seen due to the thickness of the fog - it's\n"
-        "a real pea-souper (even to the color in places!).  A passage leads\n"
+        "You are standing at the southern end of what appears to be a" SOFT_NL
+        "large room filled with multicolored fog.  The sides and far end" SOFT_NL
+        "of the room cannot be seen due to the thickness of the fog - it's" SOFT_NL
+        "a real pea-souper (even to the color in places!).  A passage leads" SOFT_NL
         "back to the south;  a dull rumbling sound issues from the passage.",
         F_NOBACK|F_NODWARF, &at_plain_1
     },
@@ -3760,45 +3760,45 @@ struct Place places[] = {
     },
     /* R_PLAIN_3 */ {
         "You're in foggy room by cairn of rocks.",
-        "You are standing in a fog-filled room next to a tall cairn of glowing\n"
+        "You are standing in a fog-filled room next to a tall cairn of glowing" SOFT_NL
         "rocks.  An opening in the cairn leads down to a dark passage.",
         F_LIGHTED|F_NODWARF, &at_plain_3
     },
     /* R_NONDESCRIPT */ {
         "You're in nondescript chamber.",
-        "You're in a small, nondescript chamber.  A dark passage leads up\n"
+        "You're in a small, nondescript chamber.  A dark passage leads up" SOFT_NL
         "and to the south, and a wide but low crawl leads north.",
         F_NODWARF, &at_nondescript
     },
     /* R_PENTAGRAM */ {
         "You're in room with pentagram.",
-        "You're in a small room with a very smooth rock floor, onto which\n"
-        "has been marked a pentagram.  A low crawl leads out to the west, and\n"
+        "You're in a small room with a very smooth rock floor, onto which" SOFT_NL
+        "has been marked a pentagram.  A low crawl leads out to the west, and" SOFT_NL
         "a crack in the rock leads north.",
         F_NODWARF, &at_pentagram
     },
     /* R_CHIMNEY */ {
         "You're at the end of the crack, at the bottom of the chimney.",
-        "The crack in the rock ends here, but a narrow chimney leads up.  You\n"
+        "The crack in the rock ends here, but a narrow chimney leads up.  You" SOFT_NL
         "should be able to climb it.",
         F_NODWARF, &at_chimney
     },
     /* R_TUBE */ {
         "You're in lava tube at top of chimney.",
-        "You're at the top of a narrow chimney in the rock.  A cylindrical\n"
+        "You're at the top of a narrow chimney in the rock.  A cylindrical" SOFT_NL
         "tube composed of hardened lava leads south.",
         F_NODWARF, &at_tube
     },
     /* R_TUBE_SLIDE */ {
         "You're at steep slide in lava tube.",
-        "The lava tube continues down and to the south, but it becomes very\n"
-        "steep here - if you go down it you probably won't be able to get\n"
+        "The lava tube continues down and to the south, but it becomes very" SOFT_NL
+        "steep here - if you go down it you probably won't be able to get" SOFT_NL
         "back up.",
         F_NODWARF, &at_tube_slide
     },
     /* R_BASQUE_1 */ {
         "You're in rough and narrow passage.",
-        "You are in a narrow and rough passage running north and south.\n"
+        "You are in a narrow and rough passage running north and south." SOFT_NL
         "A dull rumbling sound can be heard from the south.",
         F_NOBACK|F_NODWARF, &at_basque_1
     },
@@ -3809,19 +3809,19 @@ struct Place places[] = {
     },
     /* R_BASQUE_FORK */ {
         "You're at fork in passage by steps.",
-        "The passage here enters from the south and divides, with a wide\n"
+        "The passage here enters from the south and divides, with a wide" SOFT_NL
         "tunnel exiting to the north and a set of steps leading downward.",
             F_NODWARF, &at_basque_fork
     },
     /* R_ON_STEPS */ {
         "You're on the steps.",
-        "You are on a long, spiral set of steps leading downwards into the\n"
+        "You are on a long, spiral set of steps leading downwards into the" SOFT_NL
         "earth.",
             F_NODWARF, &at_on_steps
     },
     /* R_STEPS_EXIT */ {
         "You're at exit on steps.",
-        "A small tunnel exits from the steps and leads north.  The steps\n"
+        "A small tunnel exits from the steps and leads north.  The steps" SOFT_NL
         "continue downwards.",
             F_NODWARF, &at_steps_exit
     },
@@ -3832,8 +3832,8 @@ struct Place places[] = {
     },
     /* R_FAKE_Y2 */ {
         "You're at \"Y2\"?",
-        "You are in a large room, with a passage to the south, a passage to the\n"
-        "west, and a wall of broken rock to the east.  There is a large \"Y2\" on\n"
+        "You are in a large room, with a passage to the south, a passage to the" SOFT_NL
+        "west, and a wall of broken rock to the east.  There is a large \"Y2\" on" SOFT_NL
         "a rock in the room's center.",
             F_NODWARF, &at_fake_y2
     },
@@ -3863,70 +3863,70 @@ struct Place places[] = {
     /* R_CATACOMBS19 */ { NULL, enchanted_tunnels, F_NOBACK|F_NODWARF, &at_catacombs19 },
     /* R_AUDIENCE */ {
         "You're at west end of Audience Hall.",
-        "You are standing at the west end of the royal Audience Hall.\n"
-        "The walls here are composed of the finest marble, and the floor is\n"
-        "built of slabs of rare onyx and bloodstone.  The ceiling is high and\n"
-        "vaulted, and is supported by pillars of rare Egyptian red granite;\n"
-        "it gives off a nacreous glow that fills the entire chamber with\n"
+        "You are standing at the west end of the royal Audience Hall." SOFT_NL
+        "The walls here are composed of the finest marble, and the floor is" SOFT_NL
+        "built of slabs of rare onyx and bloodstone.  The ceiling is high and" SOFT_NL
+        "vaulted, and is supported by pillars of rare Egyptian red granite;" SOFT_NL
+        "it gives off a nacreous glow that fills the entire chamber with" SOFT_NL
         "a light like moon-light shining off of polished silver.",
             F_LIGHTED|F_NODWARF, &at_audience
     },
     /* R_AUDIENCE_E */ {
         "You're at east end of Audience Hall.",
-        "You are at the eastern end of the Audience Hall.  There is a large\n"
-        "dais rising out of the floor here;  resting upon the dais is a strange-\n"
+        "You are at the eastern end of the Audience Hall.  There is a large" SOFT_NL
+        "dais rising out of the floor here;  resting upon the dais is a strange" HARD_HYPHEN
         "looking throne made out of interlocking bars and rods of metal.",
             F_LIGHTED|F_NODWARF, &at_audience_e
     },
     /* R_BANSHEE */ {
         "You're in winding passage.",
-        "You are in a winding passage which enters from the northwest,\n"
+        "You are in a winding passage which enters from the northwest," SOFT_NL
         "loops around several times, and exits to the north.",
             F_NODWARF, &at_banshee
     },
     /* R_GOLDEN */ {
         "You're in golden chamber.",
-        "You are in a chamber with golden walls and a high ceiling.  Passages\n"
+        "You are in a chamber with golden walls and a high ceiling.  Passages" SOFT_NL
         "lead south, northeast, and northwest.",
             F_NODWARF, &at_golden
     },
     /* R_ARABESQUE */ {
         "You're in Arabesque room.",
-        "You are in a small room whose walls are covered with an elaborate\n"
+        "You are in a small room whose walls are covered with an elaborate" SOFT_NL
         "pattern of arabesque figures and designs.",
             F_NODWARF, &at_arabesque
     },
     /* R_TRANSLUCENT */ {
         "You're in room with translucent walls.",
-        "You are in a large room whose walls are composed of some translucent\n"
-        "whitish mineral.  The room is illuminated by a flickering reddish\n"
+        "You are in a large room whose walls are composed of some translucent" SOFT_NL
+        "whitish mineral.  The room is illuminated by a flickering reddish" SOFT_NL
         "glow shining through the southern wall.  A passage leads east.",
             F_LIGHTED|F_NODWARF, &at_translucent
     },
     /* R_CHAMBER */ {
         "You're in chamber of boulders.",
-        "You are in a small chamber filled with large boulders. The walls are\n"
-        "very warm, causing the air in the room to be almost stifling from the\n"
-        "heat.  The only exit is a crawl heading west, through which is coming\n"
+        "You are in a small chamber filled with large boulders. The walls are" SOFT_NL
+        "very warm, causing the air in the room to be almost stifling from the" SOFT_NL
+        "heat.  The only exit is a crawl heading west, through which is coming" SOFT_NL
         "a low rumbling.",
             F_NODWARF, &at_chamber
     },
     /* R_LIME */ {
         "You're in limestone passage.",
-        "You are walking along a gently sloping north/south passage lined with\n"
+        "You are walking along a gently sloping north/south passage lined with" SOFT_NL
         "oddly shaped limestone formations.",
             F_NODWARF, &at_lime
     },
     /* R_FBARR */ {
         "You are at entrance of the barren room.",
-        "You are standing at the entrance to a large, barren room. A sign\n"
+        "You are standing at the entrance to a large, barren room. A sign" SOFT_NL
         "posted above the entrance reads:  \"Caution!  Bear in room!\"",
             F_NODWARF, &at_fbarr
     },
     /* R_BARR */ {
         "You are in the barren room.",
-        "You are inside a barren room. The center of the room is completely\n"
-        "empty except for some dust.  Marks in the dust lead away toward the\n"
+        "You are inside a barren room. The center of the room is completely" SOFT_NL
+        "empty except for some dust.  Marks in the dust lead away toward the" SOFT_NL
         "far end of the room.  The only exit is the way you came in.",
         F_NODWARF, &at_barr
     },
@@ -3982,21 +3982,21 @@ struct Place places[] = {
     },
     /* R_SANDSTONE */ {
         "You're in sandstone chamber.",
-        "You are in a small chamber to the east of the Hall of Mists.  The\n"
-        "walls are composed of rough red sandstone.  There is a large, cubical\n"
+        "You are in a small chamber to the east of the Hall of Mists.  The" SOFT_NL
+        "walls are composed of rough red sandstone.  There is a large, cubical" SOFT_NL
         "chunk of rock in the center of the room.",
         F_ONE_EXIT, &at_sandstone
     },
     /* R_MORION */ {
         "You're in the Morion room.",
-        "You are in a small room.  The walls are composed of a dark, almost\n"
-        "black form of smoky quartz; they glisten like teeth in the lamp-light.\n"
+        "You are in a small room.  The walls are composed of a dark, almost" SOFT_NL
+        "black form of smoky quartz; they glisten like teeth in the lamp-light." SOFT_NL
         "The only exit is the passage to the south through which you entered.",
         0, &at_morion
     },
     /* R_VAULT */ {
         "You're in room with vaulted ceiling.",
-        "You are in a room with a high, vaulted ceiling.  A tunnel leads\n"
+        "You are in a room with a high, vaulted ceiling.  A tunnel leads" SOFT_NL
         "upwards and to the north.",
         0, &at_vault
     },
@@ -4017,91 +4017,91 @@ struct Place places[] = {
     },
     /* R_CORRID_2 */ {
         "You're at bend in wide corridor.",
-        "You are standing at a bend in a wide corridor which runs to the east\n"
-        "and west.  To the east, the corridor turns left and continues north;\n"
+        "You are standing at a bend in a wide corridor which runs to the east" SOFT_NL
+        "and west.  To the east, the corridor turns left and continues north;" SOFT_NL
         "to the west, it turns left and continues south.",
         0, &at_corrid_2
     },
     /* R_TOOL */ {
         "You're in Tool room.",
-        "You are in a small, low-ceilinged room with the words \"Witt Company\n"
-        "Tool Room - Melenkurion division\" carved into one of the walls.  A\n"
+        "You are in a small, low-ceilinged room with the words \"Witt Company" SOFT_NL
+        "Tool Room - Melenkurion division\" carved into one of the walls.  A" SOFT_NL
         "wide corridor runs south from here.",
         F_ONE_EXIT, &at_tool
     },
     /* R_CORRID_3 */ {
         "You're at division in passage.",
-        "You are at a division in a narrow passage.  Two spurs run east and\n"
+        "You are at a division in a narrow passage.  Two spurs run east and" SOFT_NL
         "north;  the main passage exits to the south.",
         0, &at_corrid_3
     },
     /* R_CUBICLE */ {
         "You're in dank cubicle.",
-        "You are in a small, dank cubicle of rock.  A small passage leads back\n"
+        "You are in a small, dank cubicle of rock.  A small passage leads back" SOFT_NL
         "out to the south;  there is no other obvious exit.",
         F_ONE_EXIT, &at_cubicle
     },
     /* R_SPHERICAL */ {
         "You're in spherical room.",
-        "You're in a large, completely spherical room with polished walls.  A\n"
+        "You're in a large, completely spherical room with polished walls.  A" SOFT_NL
         "narrow passage leads out to the north.",
         F_ONE_EXIT, &at_spherical
     },
     /* R_TUNNEL_1 */ {
         "You're in low tunnel with irregular ceiling.",
-        "You are in a low tunnel with an irregular ceiling.  To the north, the\n"
-        "tunnel is partially blocked by a recent cave-in, but you can probably\n"
+        "You are in a low tunnel with an irregular ceiling.  To the north, the" SOFT_NL
+        "tunnel is partially blocked by a recent cave-in, but you can probably" SOFT_NL
         "get past the blockage without too much trouble.",
         0, &at_tunnel_1
     },
     /* R_GLASSY */ {
         "You're in large room with glassy walls.",
-        "You're standing in a very large room (which however is smaller than the\n"
-        "Giant room) which has smooth, glassy-looking walls.  A passage enters\n"
+        "You're standing in a very large room (which however is smaller than the" SOFT_NL
+        "Giant room) which has smooth, glassy-looking walls.  A passage enters" SOFT_NL
         "from the south and exits to the north.",
         0, &at_glassy
     },
     /* R_LAIR */ {
         "You're in the Sorcerer's Lair.",
-        "This is the Sorcerer's Lair.  The walls are covered with exotic runes\n"
-        "written in strange, indecipherable scripts;  the only readable phrase\n"
-        "reads \"noside samoht\".  Strange shadows flit about on the walls, but\n"
-        "there is nothing visible to cast them.  Iridescent blue light drips\n"
-        "from a stalactite far above, falls towards the floor, and evaporates\n"
-        "before touching the ground.  A deep, resonant chanting sound vibrates\n"
-        "from deep in the ground beneath your feet, and a whispering sound\n"
-        "composed of the echoes of long-forgotten spells and cantrips seeps\n"
+        "This is the Sorcerer's Lair.  The walls are covered with exotic runes" SOFT_NL
+        "written in strange, indecipherable scripts;  the only readable phrase" SOFT_NL
+        "reads \"noside samoht\".  Strange shadows flit about on the walls, but" SOFT_NL
+        "there is nothing visible to cast them.  Iridescent blue light drips" SOFT_NL
+        "from a stalactite far above, falls towards the floor, and evaporates" SOFT_NL
+        "before touching the ground.  A deep, resonant chanting sound vibrates" SOFT_NL
+        "from deep in the ground beneath your feet, and a whispering sound" SOFT_NL
+        "composed of the echoes of long-forgotten spells and cantrips seeps" SOFT_NL
         "from the walls and fills the air.  Passages exit to the east and west.",
         F_LIGHTED, &at_lair
     },
     /* R_BRINK_1 */ {
         "You're at brink of bottomless pit.",
-        "You are standing on the brink of what appears to be a bottomless pit\n"
-        "plunging down into the bowels of the earth.  Ledges run around the\n"
+        "You are standing on the brink of what appears to be a bottomless pit" SOFT_NL
+        "plunging down into the bowels of the earth.  Ledges run around the" SOFT_NL
         "pit to the east and west, and a passage leads back to the north.",
         0, &at_brink_1
     },
     /* R_BRINK_2 */ {
         "You're on southern edge of bottomless pit.",
-        "You are standing at the south end of a ledge running around the west\n"
-        "side of a bottomless pit.  The ledge once continued around to the east\n"
-        "side of the pit, but was apparently obliterated by a rock-slide\n"
+        "You are standing at the south end of a ledge running around the west" SOFT_NL
+        "side of a bottomless pit.  The ledge once continued around to the east" SOFT_NL
+        "side of the pit, but was apparently obliterated by a rock-slide" SOFT_NL
         "years ago.  A cold wind blows out of a tunnel leading to the southeast.",
         0, &at_brink_2
     },
     /* R_ICE */ {
         "You're in Ice room.",
-        "You are in the Ice room.  The walls and ceiling here are composed of\n"
-        "clear blue glacial ice;  the floor is fortunately made of rock and\n"
-        "is easy to walk upon.  There is a passage leading to the northwest,\n"
-        "and a slide of polished ice leading downwards to the east - if you\n"
+        "You are in the Ice room.  The walls and ceiling here are composed of" SOFT_NL
+        "clear blue glacial ice;  the floor is fortunately made of rock and" SOFT_NL
+        "is easy to walk upon.  There is a passage leading to the northwest," SOFT_NL
+        "and a slide of polished ice leading downwards to the east - if you" SOFT_NL
         "were to slide down it you probably couldn't get back up.",
         F_NOBACK, &at_ice
     },
     /* R_SLIDE */ {
         "You're at bottom of icy slide.",
-        "You're at the entrance to an extensive and intricate network of tunnels\n"
-        "carved out of solid ice.  A slippery slope leads upwards and north, but\n"
+        "You're at the entrance to an extensive and intricate network of tunnels" SOFT_NL
+        "carved out of solid ice.  A slippery slope leads upwards and north, but" SOFT_NL
         "you cannot possibly climb up it.",
         F_INMAZE|F_HINTABLE|F_NOBACK, &at_slide
     },
@@ -4145,33 +4145,33 @@ struct Place places[] = {
     /* R_ICECAVE */ { NULL, ice_tunnels, F_INMAZE|F_HINTABLE, &at_icecave29 },
     /* R_ICECAVE30 */ {
         "You're in small, icy chamber.",
-        "You are in a small chamber melted out of the ice.  Glowing letters\n"
+        "You are in a small chamber melted out of the ice.  Glowing letters" SOFT_NL
         "in midair spell out the words \"This way out\".",
         F_INMAZE|F_HINTABLE, &at_icecave30
         },
     /* R_BRINK_3 */ {
         "You're on eastern side of bottomless pit.",
-        "You are standing on the eastern side of a bottomless pit.  A narrow\n"
-        "ledge runs north towards a dimly-visible passage;  the ledge once\n"
-        "continued south of this point but has been shattered by falling rock.\n"
+        "You are standing on the eastern side of a bottomless pit.  A narrow" SOFT_NL
+        "ledge runs north towards a dimly-visible passage;  the ledge once" SOFT_NL
+        "continued south of this point but has been shattered by falling rock." SOFT_NL
         "A narrow crack in the rock leads northeast.",
         0, &at_brink_3
     },
     /* R_CRACK_1 */ {
         "You're in narrow, twisting crack.",
-        "You are following a narrow crack in the rock which enters from the\n"
+        "You are following a narrow crack in the rock which enters from the" SOFT_NL
         "southwest, turns and twists somewhat, and exits to the southeast.",
         0, &at_crack_1
     },
     /* R_CRACK_2 */ {
         "You're at north end of tight passage.",
-        "You are standing at the northern end of a rather tight passage.  A\n"
+        "You are standing at the northern end of a rather tight passage.  A" SOFT_NL
         "narrow crack in the rock leads west.",
         0, &at_crack_2
     },
     /* R_CRACK_3 */ {
         "You're at south end of tight passage.",
-        "You are at the southern end of a tight passage.  A hands-and-knees\n"
+        "You are at the southern end of a tight passage.  A hands-and-knees" SOFT_NL
         "crawl continues to the south.",
         0, &at_crack_3
     },
@@ -4182,77 +4182,77 @@ struct Place places[] = {
     },
     /* R_ARCH_COR_1 */ {
         "You're in coral passage.",
-        "You are in an arched coral passage which enters from the west, splits,\n"
-        "and continues on to the east over a smooth and damp-looking patch of\n"
-        "sand.  The fork in the passage once led to the south, but it is now\n"
+        "You are in an arched coral passage which enters from the west, splits," SOFT_NL
+        "and continues on to the east over a smooth and damp-looking patch of" SOFT_NL
+        "sand.  The fork in the passage once led to the south, but it is now" SOFT_NL
         "completely blocked by debris.",
         F_NOBACK, &at_arch_cor_1
     },
     /* R_ARCH_COR_2 */ {
         "You're at bend in arched coral corridor.",
         /* Platt has "corral". */
-        "You are at a bend in an arched coral passage;  the passage enters\n"
+        "You are at a bend in an arched coral passage;  the passage enters" SOFT_NL
         "from the west over a patch of damp sand, turns, and continues north.",
         F_NOBACK, &at_arch_cor_2
     },
     /* R_ARCH_FORK */ {
         /* Platt has "corral". */
         "You're at fork in arched coral passage.",
-        "You are at a fork in a high, arched coral passage.  The main portion\n"
-        "of the passage enters from the south;  two smaller passages lead\n"
+        "You are at a fork in a high, arched coral passage.  The main portion" SOFT_NL
+        "of the passage enters from the south;  two smaller passages lead" SOFT_NL
         "east and north.  The smell of salt water is very strong here.",
         0, &at_arch_fork
     },
     /* R_JONAH */ {
         "You're at entrance to the Jonah room.",
-        "You are standing at the entrance of the Jonah room, a cavernous\n"
-        "hall with high ribbed walls.  The hall extends far to the south;\n"
+        "You are standing at the entrance of the Jonah room, a cavernous" SOFT_NL
+        "hall with high ribbed walls.  The hall extends far to the south;" SOFT_NL
         "a coral passage leads west.",
         0, &at_jonah
     },
     /* R_IN_JONAH */ {
         "You're at south end of the Jonah room.",
-        "You are at the south end of the Jonah room.  Ahead of you, the way\n"
-        "is barred by a large set of immense stalactites and stalagmites\n"
-        "which intermesh like clenched teeth.  Nothing except blackness is\n"
+        "You are at the south end of the Jonah room.  Ahead of you, the way" SOFT_NL
+        "is barred by a large set of immense stalactites and stalagmites" SOFT_NL
+        "which intermesh like clenched teeth.  Nothing except blackness is" SOFT_NL
         "visible between the stone formations.",
         0, &at_in_jonah
     },
     /* R_FOURIER */ {
         "You're in the Fourier passage.",
-        "You are in the Fourier passage.  This is a long and highly convoluted\n"
-        "passage composed of coral, which twists and turns like the path of\n"
-        "an earthworm tripping on LSD.  The passage here enters from the\n"
-        "northwest, convulses, and exits to the southwest (from which\n"
+        "You are in the Fourier passage.  This is a long and highly convoluted" SOFT_NL
+        "passage composed of coral, which twists and turns like the path of" SOFT_NL
+        "an earthworm tripping on LSD.  The passage here enters from the" SOFT_NL
+        "northwest, convulses, and exits to the southwest (from which" SOFT_NL
         "direction can be felt a cool and salty-smelling breeze).",
         0, &at_fourier
     },
     /* R_SHELF */ {
         "You're on shelf of rock above beach.",
         /* Platt has "sedementary"; I've fixed the spelling. */
-        "You are standing on a large shelf of sedimentary rock overlooking\n"
-        "a lava beach.  The shelf is an extension of an incredible cliff\n"
-        "which extends north, south, and upwards for as far as the eye can\n"
-        "see.  Crudely carved steps lead down from the shelf to the beach, and\n"
+        "You are standing on a large shelf of sedimentary rock overlooking" SOFT_NL
+        "a lava beach.  The shelf is an extension of an incredible cliff" SOFT_NL
+        "which extends north, south, and upwards for as far as the eye can" SOFT_NL
+        "see.  Crudely carved steps lead down from the shelf to the beach, and" SOFT_NL
         "a twisting coral passage exits to the west.",
         F_LIGHTED, &at_shelf
     },
     /* R_BEACH */ {
         "You're on beach.",
-        "You are standing on a short, barren beach composed of hardened lava.\n"
-        "Rugged and unclimbable volcanic hills block all view to the north\n"
-        "and south, and a seemingly infinite cliff fills the entire western\n"
-        "hemisphere.  To the east, a narrow inlet of ocean water laps gently\n"
-        "upon the beach.  The scene is illuminated by the light of three small\n"
-        "moons shining through the shimmering glow of an aurora that fills\n"
-        "the entire sky with golden splendor.  Steps lead up the cliff to a\n"
+        "You are standing on a short, barren beach composed of hardened lava." SOFT_NL
+        "Rugged and unclimbable volcanic hills block all view to the north" SOFT_NL
+        "and south, and a seemingly infinite cliff fills the entire western" SOFT_NL
+        "hemisphere.  To the east, a narrow inlet of ocean water laps gently" SOFT_NL
+        "upon the beach.  The scene is illuminated by the light of three small" SOFT_NL
+        "moons shining through the shimmering glow of an aurora that fills" SOFT_NL
+        "the entire sky with golden splendor.  Steps lead up the cliff to a" SOFT_NL
         "shelf of rock.",
         F_LIGHTED|F_ONE_EXIT, &at_beach
     },
     /* R_PLATFORM */ {
         "You're on tiny platform above volcano.",
-        "You are precariously perched on a tiny platform suspended in midair.\n"
-        "Two thousand feet below you is the mouth of a very active volcano,\n"
+        "You are precariously perched on a tiny platform suspended in midair." SOFT_NL
+        "Two thousand feet below you is the mouth of a very active volcano," SOFT_NL
         "spewing out a river of hot lava.",
         F_LIGHTED|F_NOBACK, &at_platform
     },

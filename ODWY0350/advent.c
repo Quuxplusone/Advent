@@ -23,6 +23,9 @@ int ran(int range) =
 int ran(int range) { return rand() % range; }
 #endif /* Z_MACHINE */
 
+#define SOFT_NL "\n"
+#define SOFT_HYPHEN "-\n"
+
 bool pct(int percent) { return (ran(100) < percent); }
 bool streq(const char *a, const char *b) { return !strncmp(a, b, 5); }
 
@@ -333,65 +336,65 @@ void build_vocabulary(void)
     new_message_word("help", 1);
     new_message_word("?", 1);
     message[1] =
-        "I know of places, actions, and things. Most of my vocabulary\n"
-        "describes places and is used to move you there. To move, try words\n"
-        "like forest, building, downstream, enter, east, west, north, south,\n"
-        "up, or down. I know about a few special objects, like a black rod\n"
-        "hidden in the cave. These objects can be manipulated using some of\n"
-        "the action words that I know. Usually you will need to give both the\n"
-        "object and action words (in either order), but sometimes I can infer\n"
-        "the object from the verb alone. Some objects also imply verbs; in\n"
-        "particular, \"inventory\" implies \"take inventory\", which causes me to\n"
-        "give you a list of what you're carrying. The objects have side\n"
-        "effects; for instance, the rod scares the bird. Usually people having\n"
-        "trouble moving just need to try a few more words. Usually people\n"
-        "trying unsuccessfully to manipulate an object are attempting something\n"
-        "beyond their (or my!) capabilities and should try a completely\n"
-        "different tack. To speed the game you can sometimes move long\n"
-        "distances with a single word. For example, \"building\" usually gets\n"
-        "you to the building from anywhere above ground except when lost in the\n"
-        "forest. Also, note that cave passages turn a lot, and that leaving a\n"
-        "room to the north does not guarantee entering the next from the south.\n"
+        "I know of places, actions, and things. Most of my vocabulary" SOFT_NL
+        "describes places and is used to move you there. To move, try words" SOFT_NL
+        "like forest, building, downstream, enter, east, west, north, south," SOFT_NL
+        "up, or down. I know about a few special objects, like a black rod" SOFT_NL
+        "hidden in the cave. These objects can be manipulated using some of" SOFT_NL
+        "the action words that I know. Usually you will need to give both the" SOFT_NL
+        "object and action words (in either order), but sometimes I can infer" SOFT_NL
+        "the object from the verb alone. Some objects also imply verbs; in" SOFT_NL
+        "particular, \"inventory\" implies \"take inventory\", which causes me to" SOFT_NL
+        "give you a list of what you're carrying. The objects have side" SOFT_NL
+        "effects; for instance, the rod scares the bird. Usually people having" SOFT_NL
+        "trouble moving just need to try a few more words. Usually people" SOFT_NL
+        "trying unsuccessfully to manipulate an object are attempting something" SOFT_NL
+        "beyond their (or my!) capabilities and should try a completely" SOFT_NL
+        "different tack. To speed the game you can sometimes move long" SOFT_NL
+        "distances with a single word. For example, \"building\" usually gets" SOFT_NL
+        "you to the building from anywhere above ground except when lost in the" SOFT_NL
+        "forest. Also, note that cave passages turn a lot, and that leaving a" SOFT_NL
+        "room to the north does not guarantee entering the next from the south." SOFT_NL
         "Good luck!";
 
     new_message_word("tree", 2);
     new_message_word("trees", 2);
     message[2] =
-        "The trees of the forest are large hardwood oak and maple, with an\n"
-        "occasional grove of pine or spruce.  There is quite a bit of under-\n"
-        "growth, largely birch and ash saplings plus nondescript bushes of\n"
-        "various sorts.  This time of year visibility is quite restricted by\n"
-        "all the leaves, but travel is quite easy if you detour around the\n"
+        "The trees of the forest are large hardwood oak and maple, with an" SOFT_NL
+        "occasional grove of pine or spruce.  There is quite a bit of under" SOFT_HYPHEN
+        "growth, largely birch and ash saplings plus nondescript bushes of" SOFT_NL
+        "various sorts.  This time of year visibility is quite restricted by" SOFT_NL
+        "all the leaves, but travel is quite easy if you detour around the" SOFT_NL
         "spruce and berry bushes.";
 
     new_message_word("dig", 3);
     new_message_word("excav", 3);
     message[3] =
-        "Digging without a shovel is quite impractical.  Even with a shovel\n"
+        "Digging without a shovel is quite impractical.  Even with a shovel" SOFT_NL
         "progress is unlikely.";
 
     new_message_word("lost", 4);
     message[4] = "I'm as confused as you are.";
     message[5] =
-        "There is a loud explosion and you are suddenly splashed across the\n"
+        "There is a loud explosion and you are suddenly splashed across the" SOFT_NL
         "walls of the room.";
     message[6] =
-        "There is a loud explosion and a twenty-foot hole appears in the far\n"
-        "wall, burying the snakes in the rubble. A river of molten lava pours\n"
+        "There is a loud explosion and a twenty-foot hole appears in the far" SOFT_NL
+        "wall, burying the snakes in the rubble. A river of molten lava pours" SOFT_NL
         "in through the hole, destroying everything in its path, including you!";
 
     new_message_word("mist", 7);
     message[7] =
-        "Mist is a white vapor, usually water, seen from time to time in\n"
-        "caverns.  It can be found anywhere but is frequently a sign of a deep\n"
+        "Mist is a white vapor, usually water, seen from time to time in" SOFT_NL
+        "caverns.  It can be found anywhere but is frequently a sign of a deep" SOFT_NL
         "pit leading down to water.";
 
     new_message_word("fuck", 8);
     message[8] = "Watch it!";
     message[9] =
-        "There is a loud explosion and a twenty-foot hole appears in the far\n"
-        "wall, burying the dwarves in the rubble.  You march through the hole\n"
-        "and find yourself in the main office, where a cheering band of\n"
+        "There is a loud explosion and a twenty-foot hole appears in the far" SOFT_NL
+        "wall, burying the dwarves in the rubble.  You march through the hole" SOFT_NL
+        "and find yourself in the main office, where a cheering band of" SOFT_NL
         "friendly elves carry the conquering adventurer off into the sunset.";
 
     new_message_word("stop", 10);
@@ -399,23 +402,23 @@ void build_vocabulary(void)
     new_message_word("info", 11);
     new_message_word("infor", 11);
     message[11] =
-        "If you want to end your adventure early, say \"quit\". To get full\n"
-        "credit for a treasure, you must have left it safely in the building,\n"
-        "though you get partial credit just for locating it. You lose points\n"
-        "for getting killed, or for quitting, though the former costs you more.\n"
-        "There are also points based on how much (if any) of the cave you've\n"
-        "managed to explore; in particular, there is a large bonus just for\n"
-        "getting in (to distinguish the beginners from the rest of the pack),\n"
-        "and there are other ways to determine whether you've been through some\n"
-        "of the more harrowing sections. If you think you've found all the\n"
-        "treasures, just keep exploring for a while. If nothing interesting\n"
-        "happens, you haven't found them all yet. If something interesting\n"
-        "DOES happen, it means you're getting a bonus and have an opportunity\n"
-        "to garner many more points in the master's section.\n"
-        "I may occasionally offer hints if you seem to be having trouble.\n"
-        "If I do, I'll warn you in advance how much it will affect your score\n"
-        "to accept the hints. Finally, to save paper, you may specify \"brief\",\n"
-        "which tells me never to repeat the full description of a place\n"
+        "If you want to end your adventure early, say \"quit\". To get full" SOFT_NL
+        "credit for a treasure, you must have left it safely in the building," SOFT_NL
+        "though you get partial credit just for locating it. You lose points" SOFT_NL
+        "for getting killed, or for quitting, though the former costs you more." SOFT_NL
+        "There are also points based on how much (if any) of the cave you've" SOFT_NL
+        "managed to explore; in particular, there is a large bonus just for" SOFT_NL
+        "getting in (to distinguish the beginners from the rest of the pack)," SOFT_NL
+        "and there are other ways to determine whether you've been through some" SOFT_NL
+        "of the more harrowing sections. If you think you've found all the" SOFT_NL
+        "treasures, just keep exploring for a while. If nothing interesting" SOFT_NL
+        "happens, you haven't found them all yet. If something interesting" SOFT_NL
+        "DOES happen, it means you're getting a bonus and have an opportunity" SOFT_NL
+        "to garner many more points in the master's section." SOFT_NL
+        "I may occasionally offer hints if you seem to be having trouble." SOFT_NL
+        "If I do, I'll warn you in advance how much it will affect your score" SOFT_NL
+        "to accept the hints. Finally, to save paper, you may specify \"brief\"," SOFT_NL
+        "which tells me never to repeat the full description of a place" SOFT_NL
         "unless you explicitly ask me to.";
 
     new_message_word("swim", 12);
@@ -522,8 +525,8 @@ void build_travel_table(void)
     static const char all_alike[] = "You are in a maze of twisty little passages, all alike.";
     static const char dead_end[] = "Dead end.";
     make_loc(q, R_ROAD,
-             "You are standing at the end of a road before a small brick building.\n"
-             "Around you is a forest.  A small stream flows out of the building and\n"
+             "You are standing at the end of a road before a small brick building." SOFT_NL
+             "Around you is a forest.  A small stream flows out of the building and" SOFT_NL
              "down a gully.",
              "You're at end of road again.", F_LIGHTED | F_WATER);
     make_ins(W, R_HILL); ditto(U); ditto(ROAD);
@@ -532,7 +535,7 @@ void build_travel_table(void)
     make_ins(N, R_FOREST); ditto(FOREST);
     make_ins(DEPRESSION, R_OUTSIDE);
     make_loc(q, R_HILL,
-             "You have walked up a hill, still in the forest.  The road slopes back\n"
+             "You have walked up a hill, still in the forest.  The road slopes back" SOFT_NL
              "down the other side of the hill.  There is a building in the distance.",
              "You're at hill in road.", F_LIGHTED);
     make_ins(ROAD, R_ROAD); ditto(HOUSE); ditto(FORWARD); ditto(E); ditto(D);
@@ -545,7 +548,7 @@ void build_travel_table(void)
     make_ins(PLUGH, R_Y2);
     make_ins(DOWNSTREAM, R_SEWER); ditto(STREAM);
     make_loc(q, R_VALLEY,
-             "You are in a valley in the forest beside a stream tumbling along a\n"
+             "You are in a valley in the forest beside a stream tumbling along a" SOFT_NL
              "rocky bed.",
              "You're in valley.", F_LIGHTED | F_WATER);
     make_ins(UPSTREAM, R_ROAD); ditto(HOUSE); ditto(N);
@@ -566,7 +569,7 @@ void build_travel_table(void)
     make_ins(VALLEY, R_VALLEY); ditto(E); ditto(W); ditto(D);
     make_ins(FOREST, R_FOREST); ditto(S);
     make_loc(q, R_SLIT,
-             "At your feet all the water of the stream splashes into a 2-inch slit\n"
+             "At your feet all the water of the stream splashes into a 2-inch slit" SOFT_NL
              "in the rock.  Downstream the streambed is bare rock.",
              "You're at slit in streambed.", F_LIGHTED | F_WATER);
     make_ins(HOUSE, R_ROAD);
@@ -576,8 +579,8 @@ void build_travel_table(void)
     remarks[0] = "You don't fit through a two-inch slit!";
     make_ins(SLIT, FIRST_REMARK+0); ditto(STREAM); ditto(D);
     make_loc(q, R_OUTSIDE,
-             "You are in a 20-foot depression floored with bare dirt.  Set into the\n"
-             "dirt is a strong steel grate mounted in concrete.  A dry streambed\n"
+             "You are in a 20-foot depression floored with bare dirt.  Set into the" SOFT_NL
+             "dirt is a strong steel grate mounted in concrete.  A dry streambed" SOFT_NL
              "leads into the depression.",
              "You're outside grate.", F_LIGHTED | F_CAVE_HINT);
     make_ins(FOREST, R_FOREST); ditto(E); ditto(W); ditto(S);
@@ -587,7 +590,7 @@ void build_travel_table(void)
     remarks[1] = "You can't go through a locked steel grate!";
     make_ins(ENTER, FIRST_REMARK+1);
     make_loc(q, R_INSIDE,
-             "You are in a small chamber beneath a 3x3 steel grate to the surface.\n"
+             "You are in a small chamber beneath a 3x3 steel grate to the surface." SOFT_NL
              "A low crawl over cobbles leads inwards to the west.",
              "You're below the grate.", F_LIGHTED);
     make_cond_ins(OUT, 300+GRATE, R_OUTSIDE); ditto(U);
@@ -596,16 +599,16 @@ void build_travel_table(void)
     make_ins(PIT, R_SPIT);
     make_ins(DEBRIS, R_DEBRIS);
     make_loc(q, R_COBBLES,
-             "You are crawling over cobbles in a low passage.  There is a dim light\n"
+             "You are crawling over cobbles in a low passage.  There is a dim light" SOFT_NL
              "at the east end of the passage.",
              "You're in cobble crawl.", F_LIGHTED);
     make_ins(OUT, R_INSIDE); ditto(SURFACE); ditto(NOWHERE); ditto(E);
     make_ins(IN, R_DEBRIS); ditto(DARK); ditto(W); ditto(DEBRIS);
     make_ins(PIT, R_SPIT);
     make_loc(q, R_DEBRIS,
-             "You are in a debris room filled with stuff washed in from the surface.\n"
-             "A low wide passage with cobbles becomes plugged with mud and debris\n"
-             "here, but an awkward canyon leads upward and west.  A note on the wall\n"
+             "You are in a debris room filled with stuff washed in from the surface." SOFT_NL
+             "A low wide passage with cobbles becomes plugged with mud and debris" SOFT_NL
+             "here, but an awkward canyon leads upward and west.  A note on the wall" SOFT_NL
              "says \"MAGIC WORD XYZZY\".",
              "You're in debris room.", 0);
     make_cond_ins(DEPRESSION, 300+GRATE, R_OUTSIDE);
@@ -623,8 +626,8 @@ void build_travel_table(void)
     make_ins(IN, R_BIRD); ditto(U); ditto(W);
     make_ins(PIT, R_SPIT);
     make_loc(q, R_BIRD,
-             "You are in a splendid chamber thirty feet high. The walls are frozen\n"
-             "rivers of orange stone. An awkward canyon and a good passage exit\n"
+             "You are in a splendid chamber thirty feet high. The walls are frozen" SOFT_NL
+             "rivers of orange stone. An awkward canyon and a good passage exit" SOFT_NL
              "from east and west sides of the chamber.",
              "You're in bird chamber.", F_BIRD_HINT);
     make_cond_ins(DEPRESSION, 300+GRATE, R_OUTSIDE);
@@ -633,7 +636,7 @@ void build_travel_table(void)
     make_ins(CANYON, R_AWK); ditto(E);
     make_ins(PASSAGE, R_SPIT); ditto(PIT); ditto(W);
     make_loc(q, R_SPIT,
-             "At your feet is a small pit breathing traces of white mist. An east\n"
+             "At your feet is a small pit breathing traces of white mist. An east" SOFT_NL
              "passage ends here except for a small crack leading on.",
              "You're at top of small pit.", 0);
     make_cond_ins(DEPRESSION, 300+GRATE, R_OUTSIDE);
@@ -645,10 +648,10 @@ void build_travel_table(void)
     make_ins(D, R_EMIST);
     make_ins(CRACK, R_CRACK); ditto(W);
     make_loc(q, R_EMIST,
-             "You are at one end of a vast hall stretching forward out of sight to\n"
-             "the west.  There are openings to either side.  Nearby, a wide stone\n"
-             "staircase leads downward.  The hall is filled with wisps of white mist\n"
-             "swaying to and fro almost as if alive.  A cold wind blows up the\n"
+             "You are at one end of a vast hall stretching forward out of sight to" SOFT_NL
+             "the west.  There are openings to either side.  Nearby, a wide stone" SOFT_NL
+             "staircase leads downward.  The hall is filled with wisps of white mist" SOFT_NL
+             "swaying to and fro almost as if alive.  A cold wind blows up the" SOFT_NL
              "staircase.  There is a passage at the top of a dome behind you.",
              "You're in Hall of Mists.", 0);
     make_ins(L, R_NUGGET); ditto(S);
@@ -658,12 +661,12 @@ void build_travel_table(void)
     make_ins(U, R_SPIT);
     make_ins(Y2, R_JUMBLE);
     make_loc(q, R_NUGGET,
-             "This is a low room with a crude note on the wall. The note says,\n"
+             "This is a low room with a crude note on the wall. The note says," SOFT_NL
              "\"You won't get it up the steps\".",
              "You're in nugget of gold room.", 0);
     make_ins(HALL, R_EMIST); ditto(OUT); ditto(N);
     make_loc(q, R_EFISS,
-             "You are on the east bank of a fissure slicing clear across the hall.\n"
+             "You are on the east bank of a fissure slicing clear across the hall." SOFT_NL
              "The mist is quite thick here, and the fissure is too wide to jump.",
              "You're on east bank of fissure.", 0);
     make_ins(HALL, R_EMIST); ditto(E);
@@ -684,8 +687,8 @@ void build_travel_table(void)
     make_ins(W, R_WMIST);
 
     make_loc(q, R_WMIST,
-             "You are at the west end of the Hall of Mists. A low wide crawl\n"
-             "continues west and another goes north. To the south is a little\n"
+             "You are at the west end of the Hall of Mists. A low wide crawl" SOFT_NL
+             "continues west and another goes north. To the south is a little" SOFT_NL
              "passage 6 feet off the floor.",
              "You're at west end of Hall of Mists.", 0);
     make_ins(S, R_LIKE1); ditto(U); ditto(PASSAGE); ditto(CLIMB);
@@ -758,8 +761,8 @@ void build_travel_table(void)
     make_loc(q, R_LIKE14, all_alike, NULL, F_TWIST_HINT);
     make_ins(U, R_LIKE4); ditto(D);
     make_loc(q, R_BRINK,
-             "You are on the brink of a thirty-foot pit with a massive orange column\n"
-             "down one wall.  You could climb down here but you could not get back\n"
+             "You are on the brink of a thirty-foot pit with a massive orange column" SOFT_NL
+             "down one wall.  You could climb down here but you could not get back" SOFT_NL
              "up.  The maze continues at this level.",
              "You're at brink of pit.", 0);
     make_ins(D, R_BIRD); ditto(CLIMB);
@@ -768,15 +771,15 @@ void build_travel_table(void)
     make_ins(N, R_LIKE12);
     make_ins(E, R_LIKE13);
     make_loc(q, R_ELONG,
-             "You are at the east end of a very long hall apparently without side\n"
-             "chambers.  To the east a low wide crawl slants up.  To the north a\n"
+             "You are at the east end of a very long hall apparently without side" SOFT_NL
+             "chambers.  To the east a low wide crawl slants up.  To the north a" SOFT_NL
              "round two-foot hole slants down.",
              "You're at east end of long hall.", 0);
     make_ins(E, R_WMIST); ditto(U); ditto(CRAWL);
     make_ins(W, R_WLONG);
     make_ins(N, R_CROSS); ditto(D); ditto(HOLE);
     make_loc(q, R_WLONG,
-             "You are at the west end of a very long featureless hall.  The hall\n"
+             "You are at the west end of a very long featureless hall.  The hall" SOFT_NL
              "joins up with a narrow north/south passage.",
              "You're at west end of long hall.", 0);
     make_ins(E, R_ELONG);
@@ -824,7 +827,7 @@ void build_travel_table(void)
     make_ins(E, R_WEST);
     make_ins(S, R_WLONG);
     make_loc(q, R_HMK,
-        "You are in the Hall of the Mountain King, with passages off in all\n"
+        "You are in the Hall of the Mountain King, with passages off in all" SOFT_NL
         "directions.",
         "You're in Hall of Mt King.", F_SNAKE_HINT);
     make_ins(STAIRS, R_EMIST); ditto(U); ditto(E);
@@ -836,7 +839,7 @@ void build_travel_table(void)
     make_cond_ins(SW, 200+SNAKE, R_SNAKED);
     make_ins(SECRET, R_SECRET);
     make_loc(q, R_WEST,
-        "You are in the west side chamber of the Hall of the Mountain King.\n"
+        "You are in the west side chamber of the Hall of the Mountain King." SOFT_NL
         "A passage continues west and up here.",
         "You're in west side chamber.", 0);
     make_ins(HALL, R_HMK); ditto(OUT); ditto(E);
@@ -846,15 +849,15 @@ void build_travel_table(void)
         NULL, 0);
     make_ins(HALL, R_HMK); ditto(OUT); ditto(N);
     make_loc(q, R_NS,
-             "You are in a low N/S passage at a hole in the floor.  The hole goes\n"
+             "You are in a low N/S passage at a hole in the floor.  The hole goes" SOFT_NL
              "down to an E/W passage.",
              "You're in N/S passage.", 0);
     make_ins(HALL, R_HMK); ditto(OUT); ditto(S);
     make_ins(N, R_Y2); ditto(Y2);
     make_ins(D, R_DIRTY); ditto(HOLE);
     make_loc(q, R_Y2,
-             "You are in a large room, with a passage to the south, a passage to the\n"
-             "west, and a wall of broken rock to the east.  There is a large \"Y2\" on\n"
+             "You are in a large room, with a passage to the south, a passage to the" SOFT_NL
+             "west, and a wall of broken rock to the east.  There is a large \"Y2\" on" SOFT_NL
              "a rock in the room's center.",
              "You're at \"Y2\".", 0);
     make_ins(PLUGH, R_HOUSE);
@@ -869,18 +872,18 @@ void build_travel_table(void)
     make_ins(D, R_Y2); ditto(Y2);
     make_ins(U, R_EMIST);
     make_loc(q, R_WINDOE,
-             "You're at a low window overlooking a huge pit, which extends up out of\n"
-             "sight.  A floor is indistinctly visible over 50 feet below.  Traces of\n"
-             "white mist cover the floor of the pit, becoming thicker to the right.\n"
-             "Marks in the dust around the window would seem to indicate that\n"
-             "someone has been here recently.  Directly across the pit from you and\n"
-             "25 feet away there is a similar window looking into a lighted room.\n"
+             "You're at a low window overlooking a huge pit, which extends up out of" SOFT_NL
+             "sight.  A floor is indistinctly visible over 50 feet below.  Traces of" SOFT_NL
+             "white mist cover the floor of the pit, becoming thicker to the right." SOFT_NL
+             "Marks in the dust around the window would seem to indicate that" SOFT_NL
+             "someone has been here recently.  Directly across the pit from you and" SOFT_NL
+             "25 feet away there is a similar window looking into a lighted room." SOFT_NL
              "A shadowy figure can be seen there peering back at you.",
              "You're at window on pit.", 0);
     make_ins(E, R_Y2); ditto(Y2);
     make_ins(JUMP, R_NECK);
     make_loc(q, R_DIRTY,
-             "You are in a dirty broken passage.  To the east is a crawl.  To the\n"
+             "You are in a dirty broken passage.  To the east is a crawl.  To the" SOFT_NL
              "west is a large passage.  Above you is a hole to another passage.",
              "You're in dirty passage.", 0);
     make_ins(E, R_CLEAN); ditto(CRAWL);
@@ -888,27 +891,27 @@ void build_travel_table(void)
     make_ins(W, R_DUSTY);
     make_ins(BEDQUILT, R_BEDQUILT);
     make_loc(q, R_CLEAN,
-             "You are on the brink of a small clean climbable pit.  A crawl leads\n"
+             "You are on the brink of a small clean climbable pit.  A crawl leads" SOFT_NL
              "west.",
              "You're by a clean pit.", 0);
     make_ins(W, R_DIRTY); ditto(CRAWL);
     make_ins(D, R_WET); ditto(PIT); ditto(CLIMB);
     make_loc(q, R_WET,
-             "You are in the bottom of a small pit with a little stream, which\n"
+             "You are in the bottom of a small pit with a little stream, which" SOFT_NL
              "enters and exits through tiny slits.",
              "You're in pit by stream.", F_WATER);
     make_ins(CLIMB, R_CLEAN); ditto(U); ditto(OUT);
     make_ins(SLIT, FIRST_REMARK+0); ditto(STREAM); ditto(D); ditto(UPSTREAM); ditto(DOWNSTREAM);
     make_loc(q, R_DUSTY,
-             "You are in a large room full of dusty rocks.  There is a big hole in\n"
+             "You are in a large room full of dusty rocks.  There is a big hole in" SOFT_NL
              "the floor.  There are cracks everywhere, and a passage leading east.",
              "You're in dusty rock room.", 0);
     make_ins(E, R_DIRTY); ditto(PASSAGE);
     make_ins(D, R_COMPLEX); ditto(HOLE); ditto(FLOOR);
     make_ins(BEDQUILT, R_BEDQUILT);
     make_loc(q, R_COMPLEX,
-             "You are at a complex junction.  A low hands-and-knees passage from the\n"
-             "north joins a higher crawl from the east to make a walking passage\n"
+             "You are at a complex junction.  A low hands-and-knees passage from the" SOFT_NL
+             "north joins a higher crawl from the east to make a walking passage" SOFT_NL
              "going west.  There is also a large room above.  The air is damp here.",
              "You're at complex junction.", 0);
     make_ins(U, R_DUSTY); ditto(CLIMB); ditto(ROOM);
@@ -916,9 +919,9 @@ void build_travel_table(void)
     make_ins(N, R_SHELL); ditto(SHELL);
     make_ins(E, R_ANTE);
     make_loc(q, R_SHELL,
-             "You're in a large room carved out of sedimentary rock.  The floor\n"
-             "and walls are littered with bits of shells embedded in the stone.\n"
-             "A shallow passage proceeds downward, and a somewhat steeper one\n"
+             "You're in a large room carved out of sedimentary rock.  The floor" SOFT_NL
+             "and walls are littered with bits of shells embedded in the stone." SOFT_NL
+             "A shallow passage proceeds downward, and a somewhat steeper one" SOFT_NL
              "leads up.  A low hands-and-knees passage enters from the south.",
              "You're in Shell Room.", 0);
     make_ins(U, R_ARCHED); ditto(HALL);
@@ -929,7 +932,7 @@ void build_travel_table(void)
     make_cond_ins(S, 100+OYSTER, FIRST_REMARK+5);
     make_ins(S, R_COMPLEX);
     make_loc(q, R_ARCHED,
-             "You are in an arched hall.  A coral passage once continued up and east\n"
+             "You are in an arched hall.  A coral passage once continued up and east" SOFT_NL
              "from here, but is now blocked by debris.  The air smells of sea water.",
              "You're in arched hall.", 0);
     make_ins(D, R_SHELL); ditto(SHELL); ditto(OUT);
@@ -944,9 +947,9 @@ void build_travel_table(void)
     make_ins(U, R_RAGGED); ditto(OUT);
     make_ins(SHELL, R_SHELL);
     make_loc(q, R_ANTE,
-             "You are in an anteroom leading to a large passage to the east.  Small\n"
-             "passages go west and up.  The remnants of recent digging are evident.\n"
-             "A sign in midair here says \"CAVE UNDER CONSTRUCTION BEYOND THIS POINT.\n"
+             "You are in an anteroom leading to a large passage to the east.  Small" SOFT_NL
+             "passages go west and up.  The remnants of recent digging are evident." SOFT_NL
+             "A sign in midair here says \"CAVE UNDER CONSTRUCTION BEYOND THIS POINT." SOFT_NL
              "PROCEED AT OWN RISK.  [WITT CONSTRUCTION COMPANY]\"",
              "You're in anteroom.", 0);
     make_ins(U, R_COMPLEX);
@@ -955,17 +958,17 @@ void build_travel_table(void)
     make_loc(q, R_WITT,
              "You are at Witt's End.  Passages lead off in \"all\" directions.",
              "You're at Witt's End.", F_WITT_HINT);
-    remarks[6] = "You have crawled around in some little holes and wound up back in the\n"
+    remarks[6] = "You have crawled around in some little holes and wound up back in the" SOFT_NL
                  "main passage.";
     make_cond_ins(E, 95, FIRST_REMARK+6); ditto(N); ditto(S);
     ditto(NE); ditto(SE); ditto(SW); ditto(NW); ditto(U); ditto(D);
     make_ins(E, R_ANTE);
-    remarks[7] = "You have crawled around in some little holes and found your way\n"
+    remarks[7] = "You have crawled around in some little holes and found your way" SOFT_NL
                  "blocked by a recent cave-in.  You are now back in the main passage.";
     make_ins(W, FIRST_REMARK+7);
 
     make_loc(q, R_BEDQUILT,
-             "You are in Bedquilt, a long east/west passage with holes everywhere.\n"
+             "You are in Bedquilt, a long east/west passage with holes everywhere." SOFT_NL
              "To explore at random select north, south, up, or down.",
              "You're in Bedquilt.", 0);
     make_ins(E, R_COMPLEX);
@@ -982,8 +985,8 @@ void build_travel_table(void)
     make_ins(D, R_ANTE);
 
     make_loc(q, R_SWISS,
-             "You are in a room whose walls resemble Swiss cheese.  Obvious passages\n"
-             "go west, east, NE, and NW.  Part of the room is occupied by a large\n"
+             "You are in a room whose walls resemble Swiss cheese.  Obvious passages" SOFT_NL
+             "go west, east, NE, and NW.  Part of the room is occupied by a large" SOFT_NL
              "bedrock block.",
              "You're in Swiss cheese room.", 0);
     make_ins(NE, R_BEDQUILT);
@@ -994,22 +997,22 @@ void build_travel_table(void)
     make_cond_ins(NW, 50, FIRST_REMARK+6);
     make_ins(ORIENTAL, R_ORIENTAL);
     make_loc(q, R_SOFT,
-             "You are in the Soft Room.  The walls are covered with heavy curtains,\n"
+             "You are in the Soft Room.  The walls are covered with heavy curtains," SOFT_NL
              "the floor with a thick pile carpet.  Moss covers the ceiling.",
              "You're in Soft Room.", 0);
     make_ins(W, R_SWISS); ditto(OUT);
     make_loc(q, R_E2PIT,
-             "You are at the east end of the Twopit Room.  The floor here is\n"
-             "littered with thin rock slabs, which make it easy to descend the pits.\n"
-             "There is a path here bypassing the pits to connect passages from east\n"
-             "and west.  There are holes all over, but the only big one is on the\n"
+             "You are at the east end of the Twopit Room.  The floor here is" SOFT_NL
+             "littered with thin rock slabs, which make it easy to descend the pits." SOFT_NL
+             "There is a path here bypassing the pits to connect passages from east" SOFT_NL
+             "and west.  There are holes all over, but the only big one is on the" SOFT_NL
              "wall directly over the west pit where you can't get to it.",
              "You're at east end of Twopit Room.", 0);
     make_ins(E, R_SWISS);
     make_ins(W, R_W2PIT); ditto(ACROSS);
     make_ins(D, R_EPIT); ditto(PIT);
     make_loc(q, R_W2PIT,
-             "You are at the west end of the Twopit Room.  There is a large hole in\n"
+             "You are at the west end of the Twopit Room.  There is a large hole in" SOFT_NL
              "the wall above the pit at this end of the room.",
              "You're at west end of Twopit Room.", 0);
     make_ins(E, R_E2PIT); ditto(ACROSS);
@@ -1018,28 +1021,28 @@ void build_travel_table(void)
     remarks[8] = "It is too far up for you to reach.";
     make_ins(HOLE, FIRST_REMARK+8);
     make_loc(q, R_EPIT,
-             "You are at the bottom of the eastern pit in the Twopit Room.  There is\n"
+             "You are at the bottom of the eastern pit in the Twopit Room.  There is" SOFT_NL
              "a small pool of oil in one corner of the pit.",
              "You're in east pit.", 0);
     make_ins(U, R_E2PIT); ditto(OUT);
     make_loc(q, R_WPIT,
-             "You are at the bottom of the western pit in the Twopit Room.  There is\n"
+             "You are at the bottom of the western pit in the Twopit Room.  There is" SOFT_NL
              "a large hole in the wall about 25 feet above you.",
              "You're in west pit.", 0);
     make_ins(U, R_W2PIT); ditto(OUT);
     make_cond_ins(CLIMB, 300+PLANT+200, R_CHECK);
     make_ins(CLIMB, R_CLIMB);
     make_loc(q, R_NARROW,
-             "You are in a long, narrow corridor stretching out of sight to the\n"
-             "west.  At the eastern end is a hole through which you can see a\n"
+             "You are in a long, narrow corridor stretching out of sight to the" SOFT_NL
+             "west.  At the eastern end is a hole through which you can see a" SOFT_NL
              "profusion of leaves.",
              "You're in narrow corridor.", 0);
     make_ins(D, R_WPIT); ditto(CLIMB); ditto(E);
     make_ins(JUMP, R_NECK);
     make_ins(W, R_GIANT); ditto(GIANT);
     make_loc(q, R_GIANT,
-             "You are in the Giant Room.  The ceiling here is too high up for your\n"
-             "lamp to show it.  Cavernous passages lead east, north, and south.  On\n"
+             "You are in the Giant Room.  The ceiling here is too high up for your" SOFT_NL
+             "lamp to show it.  Cavernous passages lead east, north, and south.  On" SOFT_NL
              "the west wall is scrawled the inscription, \"FEE FIE FOE FOO\" [sic].",
              "You're in Giant Room.", 0);
     make_ins(S, R_NARROW);
@@ -1057,16 +1060,16 @@ void build_travel_table(void)
     remarks[9] = "The door is extremely rusty and refuses to open.";
     make_ins(N, FIRST_REMARK+9);
     make_loc(q, R_FALLS,
-             "You are in a magnificent cavern with a rushing stream, which cascades\n"
-             "over a sparkling waterfall into a roaring whirlpool that disappears\n"
+             "You are in a magnificent cavern with a rushing stream, which cascades" SOFT_NL
+             "over a sparkling waterfall into a roaring whirlpool that disappears" SOFT_NL
              "through a hole in the floor.  Passages exit to the south and west.",
              "You're in cavern with waterfall.", F_WATER);
     make_ins(S, R_IMMENSE); ditto(OUT);
     make_ins(GIANT, R_GIANT);
     make_ins(W, R_INCLINE);
     make_loc(q, R_INCLINE,
-             "You are at the top of a steep incline above a large room.  You could\n"
-             "climb down here, but you would not be able to climb up.  There is a\n"
+             "You are at the top of a steep incline above a large room.  You could" SOFT_NL
+             "climb down here, but you would not be able to climb up.  There is a" SOFT_NL
              "passage leading back to the north.",
              "You're at steep incline above large room.", 0);
     make_ins(N, R_FALLS); ditto(CAVERN); ditto(PASSAGE);
@@ -1078,16 +1081,16 @@ void build_travel_table(void)
     make_ins(D, R_BEDQUILT); ditto(PASSAGE);
     make_ins(S, R_TITE);
     make_loc(q, R_SJUNC,
-             "You are in a secret canyon at a junction of three canyons, bearing\n"
-             "north, south, and SE.  The north one is as tall as the other two\n"
+             "You are in a secret canyon at a junction of three canyons, bearing" SOFT_NL
+             "north, south, and SE.  The north one is as tall as the other two" SOFT_NL
              "combined.",
              "You're at junction of three secret canyons.", 0);
     make_ins(SE, R_BEDQUILT);
     make_ins(S, R_ABOVEP);
     make_ins(N, R_WINDOW);
     make_loc(q, R_TITE,
-             "A large stalactite extends from the roof and almost reaches the floor\n"
-             "below.  You could climb down it, and jump from it to the floor, but\n"
+             "A large stalactite extends from the roof and almost reaches the floor" SOFT_NL
+             "below.  You could climb down it, and jump from it to the floor, but" SOFT_NL
              "having done so you would be unable to reach it to climb back up.",
              "You're on top of stalactite.", 0);
     make_ins(N, R_ABOVEP);
@@ -1106,42 +1109,42 @@ void build_travel_table(void)
              NULL, 0);
     make_ins(S, R_LOW); ditto(CRAWL); ditto(OUT);
     make_loc(q, R_WINDOW,
-             "You're at a low window overlooking a huge pit, which extends up out of\n"
-             "sight.  A floor is indistinctly visible over 50 feet below.  Traces of\n"
-             "white mist cover the floor of the pit, becoming thicker to the left.\n"
-             "Marks in the dust around the window would seem to indicate that\n"
-             "someone has been here recently.  Directly across the pit from you and\n"
-             "25 feet away there is a similar window looking into a lighted room.\n"
+             "You're at a low window overlooking a huge pit, which extends up out of" SOFT_NL
+             "sight.  A floor is indistinctly visible over 50 feet below.  Traces of" SOFT_NL
+             "white mist cover the floor of the pit, becoming thicker to the left." SOFT_NL
+             "Marks in the dust around the window would seem to indicate that" SOFT_NL
+             "someone has been here recently.  Directly across the pit from you and" SOFT_NL
+             "25 feet away there is a similar window looking into a lighted room." SOFT_NL
              "A shadowy figure can be seen there peering back at you.",
              "You're at window on pit.", 0);
     make_ins(W, R_SJUNC);
     make_ins(JUMP, R_NECK);
     make_loc(q, R_ORIENTAL,
-             "This is the Oriental Room.  Ancient oriental cave drawings cover the\n"
-             "walls.  A gently sloping passage leads upward to the north, another\n"
+             "This is the Oriental Room.  Ancient oriental cave drawings cover the" SOFT_NL
+             "walls.  A gently sloping passage leads upward to the north, another" SOFT_NL
              "passage leads SE, and a hands-and-knees crawl leads west.",
              "You're in Oriental Room.", 0);
     make_ins(SE, R_SWISS);
     make_ins(W, R_LOW); ditto(CRAWL);
     make_ins(U, R_MISTY); ditto(N); ditto(CAVERN);
     make_loc(q, R_MISTY,
-             "You are following a wide path around the outer edge of a large cavern.\n"
-             "Far below, through a heavy white mist, strange splashing noises can be\n"
-             "heard.  The mist rises up through a fissure in the ceiling.  The path\n"
+             "You are following a wide path around the outer edge of a large cavern." SOFT_NL
+             "Far below, through a heavy white mist, strange splashing noises can be" SOFT_NL
+             "heard.  The mist rises up through a fissure in the ceiling.  The path" SOFT_NL
              "exits to the south and west.",
              "You're in misty cavern.", 0);
     make_ins(S, R_ORIENTAL); ditto(ORIENTAL);
     make_ins(W, R_ALCOVE);
     make_loc(q, R_ALCOVE,
-             "You are in an alcove.  A small NW path seems to widen after a short\n"
-             "distance.  An extremely tight tunnel leads east.  It looks like a very\n"
+             "You are in an alcove.  A small NW path seems to widen after a short" SOFT_NL
+             "distance.  An extremely tight tunnel leads east.  It looks like a very" SOFT_NL
              "tight squeeze.  An eerie light can be seen at the other end.",
              "You're in alcove.", F_DARK_HINT);
     make_ins(NW, R_MISTY); ditto(CAVERN);
     make_ins(E, R_PPASS); ditto(PASSAGE);
     make_ins(E, R_PLOVER);  /* never performed, but seen by "BACK" */
     make_loc(q, R_PLOVER,
-             "You're in a small chamber lit by an eerie green light.  An extremely\n"
+             "You're in a small chamber lit by an eerie green light.  An extremely" SOFT_NL
              "narrow tunnel exits to the west.  A dark corridor leads NE.",
              "You're in Plover Room.", F_LIGHTED | F_DARK_HINT);
     make_ins(W, R_PPASS); ditto(PASSAGE); ditto(OUT);
@@ -1154,10 +1157,10 @@ void build_travel_table(void)
              "You're in Dark-Room.", F_DARK_HINT);
     make_ins(S, R_PLOVER); ditto(PLOVER); ditto(OUT);
     make_loc(q, R_SLAB,
-             "You are in a large low circular chamber whose floor is an immense slab\n"
-             "fallen from the ceiling (Slab Room).  There once were large passages\n"
-             "to the east and west, but they are now filled with boulders.  Low\n"
-             "small passages go north and south, and the south one quickly bends\n"
+             "You are in a large low circular chamber whose floor is an immense slab" SOFT_NL
+             "fallen from the ceiling (Slab Room).  There once were large passages" SOFT_NL
+             "to the east and west, but they are now filled with boulders.  Low" SOFT_NL
+             "small passages go north and south, and the south one quickly bends" SOFT_NL
              "east around the boulders.",
              "You're in Slab Room.", 0);
     make_ins(S, R_W2PIT);
@@ -1172,21 +1175,21 @@ void build_travel_table(void)
     make_ins(N, R_MIRROR);
     make_ins(RESERVOIR, R_RES);
     make_loc(q, R_MIRROR,
-             "You are in a north/south canyon about 25 feet across.  The floor is\n"
-             "covered by white mist seeping in from the north.  The walls extend\n"
-             "upward for well over 100 feet.  Suspended from some unseen point far\n"
-             "above you, an enormous two-sided mirror is hanging parallel to and\n"
-             "midway between the canyon walls.  (The mirror is obviously provided\n"
-             "for the use of the dwarves, who as you know are extremely vain.)\n"
+             "You are in a north/south canyon about 25 feet across.  The floor is" SOFT_NL
+             "covered by white mist seeping in from the north.  The walls extend" SOFT_NL
+             "upward for well over 100 feet.  Suspended from some unseen point far" SOFT_NL
+             "above you, an enormous two-sided mirror is hanging parallel to and" SOFT_NL
+             "midway between the canyon walls.  (The mirror is obviously provided" SOFT_NL
+             "for the use of the dwarves, who as you know are extremely vain.)" SOFT_NL
              "A small window can be seen in either wall, some fifty feet up.",
              "You're in mirror canyon.", 0);
     make_ins(S, R_ABOVER);
     make_ins(N, R_RES); ditto(RESERVOIR);
     make_loc(q, R_RES,
-             "You are at the edge of a large underground reservoir.  An opaque cloud\n"
-             "of white mist fills the room and rises rapidly upward.  The lake is\n"
-             "fed by a stream, which tumbles out of a hole in the wall about 10 feet\n"
-             "overhead and splashes noisily into the water somewhere within the\n"
+             "You are at the edge of a large underground reservoir.  An opaque cloud" SOFT_NL
+             "of white mist fills the room and rises rapidly upward.  The lake is" SOFT_NL
+             "fed by a stream, which tumbles out of a hole in the wall about 10 feet" SOFT_NL
+             "overhead and splashes noisily into the water somewhere within the" SOFT_NL
              "mist.  The only passage goes back toward the south.",
              "You're at reservoir.", F_WATER);
     make_ins(S, R_MIRROR); ditto(OUT);
@@ -1215,8 +1218,8 @@ void build_travel_table(void)
     make_ins(N, FIRST_REMARK+10); ditto(FORWARD);
 
     make_loc(q, R_SECRET,
-             "You are in a secret canyon, which here runs E/W.  It crosses over a\n"
-             "very tight canyon 15 feet below.  If you go down you may not be able\n"
+             "You are in a secret canyon, which here runs E/W.  It crosses over a" SOFT_NL
+             "very tight canyon 15 feet below.  If you go down you may not be able" SOFT_NL
              "to get back up.",
              "You're in secret E/W canyon above tight canyon.", 0);
     make_ins(E, R_HMK);
@@ -1233,27 +1236,25 @@ void build_travel_table(void)
              NULL, 0);
     make_ins(N, R_WIDE);
     make_loc(q, R_TALL,
-             "You are in a tall E/W canyon.  A low tight crawl goes 3 feet north and\n"
+             "You are in a tall E/W canyon.  A low tight crawl goes 3 feet north and" SOFT_NL
              "seems to open up.",
              "You're in tall E/W canyon.", 0);
     make_ins(E, R_WIDE);
     make_ins(W, R_BOULDERS);
     make_ins(N, R_SWISS); ditto(CRAWL);
     make_loc(q, R_BOULDERS,
-             /* Knuth can't help using "---" for the em dash here,
-              * but Woods' version had only "--". */
              "The canyon runs into a mass of boulders -- dead end.",
              NULL, 0);
     make_ins(S, R_TALL);
     make_loc(q, R_SLOPING,
-             "You are in a long winding corridor sloping out of sight in both\n"
+             "You are in a long winding corridor sloping out of sight in both" SOFT_NL
              "directions.",
              "You're in sloping corridor.", 0);
     make_ins(D, R_LOW);
     make_ins(U, R_SWSIDE);
     make_loc(q, R_SWSIDE,
-             "You are on one side of a large, deep chasm.  A heavy white mist rising\n"
-             "up from below obscures all view of the far side.  A SW path leads away\n"
+             "You are on one side of a large, deep chasm.  A heavy white mist rising" SOFT_NL
+             "up from below obscures all view of the far side.  A SW path leads away" SOFT_NL
              "from the chasm into a winding corridor.",
              "You're on SW side of chasm.", 0);
     make_ins(SW, R_SLOPING);
@@ -1289,7 +1290,7 @@ void build_travel_table(void)
     make_loc(q, R_DEAD11, dead_end, 0, F_TWIST_HINT);
     make_ins(U, R_LIKE8); ditto(OUT);
     make_loc(q, R_NESIDE,
-             "You are on the far side of the chasm.  A NE path leads away from the\n"
+             "You are on the far side of the chasm.  A NE path leads away from the" SOFT_NL
              "chasm on this side.",
              "You're on NE side of chasm.", 0);
     make_ins(NE, R_CORR);
@@ -1300,7 +1301,7 @@ void build_travel_table(void)
     make_ins(VIEW, R_VIEW);
     make_ins(BARREN, R_FBARR);
     make_loc(q, R_CORR,
-             "You're in a long east/west corridor.  A faint rumbling noise can be\n"
+             "You're in a long east/west corridor.  A faint rumbling noise can be" SOFT_NL
              "heard in the distance.",
              "You're in corridor.", 0);
     make_ins(W, R_NESIDE);
@@ -1308,8 +1309,8 @@ void build_travel_table(void)
     make_ins(VIEW, R_VIEW);
     make_ins(BARREN, R_FBARR);
     make_loc(q, R_FORK,
-             "The path forks here.  The left fork leads northeast.  A dull rumbling\n"
-             "seems to get louder in that direction.  The right fork leads southeast\n"
+             "The path forks here.  The left fork leads northeast.  A dull rumbling" SOFT_NL
+             "seems to get louder in that direction.  The right fork leads southeast" SOFT_NL
              "down a gentle slope.  The main corridor enters from the west.",
              "You're at fork in path.", 0);
     make_ins(W, R_CORR);
@@ -1318,32 +1319,32 @@ void build_travel_table(void)
     make_ins(VIEW, R_VIEW);
     make_ins(BARREN, R_FBARR);
     make_loc(q, R_WARM,
-             "The walls are quite warm here.  From the north can be heard a steady\n"
-             "roar, so loud that the entire cave seems to be trembling.  Another\n"
+             "The walls are quite warm here.  From the north can be heard a steady" SOFT_NL
+             "roar, so loud that the entire cave seems to be trembling.  Another" SOFT_NL
              "passage leads south, and a low crawl goes east.",
              "You're at junction with warm walls.", 0);
     make_ins(S, R_FORK); ditto(FORK);
     make_ins(N, R_VIEW); ditto(VIEW);
     make_ins(E, R_CHAMBER); ditto(CRAWL);
     make_loc(q, R_VIEW,
-             "You are on the edge of a breath-taking view.  Far below you is an\n"
-             "active volcano, from which great gouts of molten lava come surging\n"
-             "out, cascading back down into the depths.  The glowing rock fills the\n"
-             "farthest reaches of the cavern with a blood-red glare, giving every-\n"
-             "thing an eerie, macabre appearance.  The air is filled with flickering\n"
-             "sparks of ash and a heavy smell of brimstone.  The walls are hot to\n"
-             "the touch, and the thundering of the volcano drowns out all other\n"
-             "sounds.  Embedded in the jagged roof far overhead are myriad twisted\n"
-             "formations, composed of pure white alabaster, which scatter the murky\n"
-             "light into sinister apparitions upon the walls.  To one side is a deep\n"
-             "gorge, filled with a bizarre chaos of tortured rock that seems to have\n"
-             "been crafted by the Devil himself.  An immense river of fire crashes\n"
-             "out from the depths of the volcano, burns its way through the gorge,\n"
-             "and plummets into a bottomless pit far off to your left.  To the\n"
-             "right, an immense geyser of blistering steam erupts continuously\n"
-             "from a barren island in the center of a sulfurous lake, which bubbles\n"
-             "ominously.  The far right wall is aflame with an incandescence of its\n"
-             "own, which lends an additional infernal splendor to the already\n"
+             "You are on the edge of a breath-taking view.  Far below you is an" SOFT_NL
+             "active volcano, from which great gouts of molten lava come surging" SOFT_NL
+             "out, cascading back down into the depths.  The glowing rock fills the" SOFT_NL
+             "farthest reaches of the cavern with a blood-red glare, giving every" SOFT_HYPHEN
+             "thing an eerie, macabre appearance.  The air is filled with flickering" SOFT_NL
+             "sparks of ash and a heavy smell of brimstone.  The walls are hot to" SOFT_NL
+             "the touch, and the thundering of the volcano drowns out all other" SOFT_NL
+             "sounds.  Embedded in the jagged roof far overhead are myriad twisted" SOFT_NL
+             "formations, composed of pure white alabaster, which scatter the murky" SOFT_NL
+             "light into sinister apparitions upon the walls.  To one side is a deep" SOFT_NL
+             "gorge, filled with a bizarre chaos of tortured rock that seems to have" SOFT_NL
+             "been crafted by the Devil himself.  An immense river of fire crashes" SOFT_NL
+             "out from the depths of the volcano, burns its way through the gorge," SOFT_NL
+             "and plummets into a bottomless pit far off to your left.  To the" SOFT_NL
+             "right, an immense geyser of blistering steam erupts continuously" SOFT_NL
+             "from a barren island in the center of a sulfurous lake, which bubbles" SOFT_NL
+             "ominously.  The far right wall is aflame with an incandescence of its" SOFT_NL
+             "own, which lends an additional infernal splendor to the already" SOFT_NL
              "hellish scene.  A dark, foreboding passage exits to the south.",
              "You're at breath-taking view.", F_LIGHTED);
     make_ins(S, R_WARM); ditto(PASSAGE); ditto(OUT);
@@ -1351,23 +1352,23 @@ void build_travel_table(void)
     remarks[13] = "Don't be ridiculous!";
     make_ins(D, FIRST_REMARK+13); ditto(JUMP);
     make_loc(q, R_CHAMBER,
-             "You are in a small chamber filled with large boulders.  The walls are\n"
-             "very warm, causing the air in the room to be almost stifling from the\n"
-             "heat.  The only exit is a crawl heading west, through which a low\n"
+             "You are in a small chamber filled with large boulders.  The walls are" SOFT_NL
+             "very warm, causing the air in the room to be almost stifling from the" SOFT_NL
+             "heat.  The only exit is a crawl heading west, through which a low" SOFT_NL
              "rumbling noise is coming.",
              "You're in chamber of boulders.", 0);
     make_ins(W, R_WARM); ditto(OUT); ditto(CRAWL);
     make_ins(FORK, R_FORK);
     make_ins(VIEW, R_VIEW);
     make_loc(q, R_LIME,
-             "You are walking along a gently sloping north/south passage lined with\n"
+             "You are walking along a gently sloping north/south passage lined with" SOFT_NL
              "oddly shaped limestone formations.",
              "You're in limestone passage.", 0);
     make_ins(N, R_FORK); ditto(U); ditto(FORK);
     make_ins(S, R_FBARR); ditto(D); ditto(BARREN);
     make_ins(VIEW, R_VIEW);
     make_loc(q, R_FBARR,
-             "You are standing at the entrance to a large, barren room.  A sign\n"
+             "You are standing at the entrance to a large, barren room.  A sign" SOFT_NL
              "posted above the entrance reads:  \"CAUTION!  BEAR IN ROOM!\"",
              "You're in front of barren room.", 0);
     make_ins(W, R_LIME); ditto(U);
@@ -1375,8 +1376,8 @@ void build_travel_table(void)
     make_ins(E, R_BARR); ditto(IN); ditto(BARREN); ditto(ENTER);
     make_ins(VIEW, R_VIEW);
     make_loc(q, R_BARR,
-             "You are inside a barren room.  The center of the room is completely\n"
-             "empty except for some dust.  Marks in the dust lead away toward the\n"
+             "You are inside a barren room.  The center of the room is completely" SOFT_NL
+             "empty except for some dust.  Marks in the dust lead away toward the" SOFT_NL
              "far end of the room.  The only exit is the way you came in.",
              "You're in barren room.", 0);
     make_ins(W, R_FBARR); ditto(OUT);
@@ -1384,27 +1385,27 @@ void build_travel_table(void)
     make_ins(VIEW, R_VIEW);
     /* The end-game repository. */
     make_loc(q, R_NEEND,
-             "You are at the northeast end of an immense room, even larger than the\n"
-             "Giant Room.  It appears to be a repository for the \"Adventure\"\n"
-             "program.  Massive torches far overhead bathe the room with smoky\n"
-             "yellow light.  Scattered about you can be seen a pile of bottles (all\n"
-             "of them empty), a nursery of young beanstalks murmuring quietly, a bed\n"
-             "of oysters, a bundle of black rods with rusty stars on their ends, and\n"
-             "a collection of brass lanterns.  Off to one side a great many dwarves\n"
-             "are sleeping on the floor, snoring loudly.  A sign nearby reads:  \"DO\n"
-             "NOT DISTURB THE DWARVES!\"  An immense mirror is hanging against one\n"
-             "wall, and stretches to the other end of the room, where various other\n"
+             "You are at the northeast end of an immense room, even larger than the" SOFT_NL
+             "Giant Room.  It appears to be a repository for the \"Adventure\"" SOFT_NL
+             "program.  Massive torches far overhead bathe the room with smoky" SOFT_NL
+             "yellow light.  Scattered about you can be seen a pile of bottles (all" SOFT_NL
+             "of them empty), a nursery of young beanstalks murmuring quietly, a bed" SOFT_NL
+             "of oysters, a bundle of black rods with rusty stars on their ends, and" SOFT_NL
+             "a collection of brass lanterns.  Off to one side a great many dwarves" SOFT_NL
+             "are sleeping on the floor, snoring loudly.  A sign nearby reads:  \"DO" SOFT_NL
+             "NOT DISTURB THE DWARVES!\"  An immense mirror is hanging against one" SOFT_NL
+             "wall, and stretches to the other end of the room, where various other" SOFT_NL
              "sundry objects can be glimpsed dimly in the distance.",
              "You're at NE end.", F_LIGHTED);
     make_ins(SW, R_SWEND);
     make_loc(q, R_SWEND,
-             "You are at the southwest end of the repository.  To one side is a pit\n"
-             "full of fierce green snakes.  On the other side is a row of small\n"
-             "wicker cages, each of which contains a little sulking bird.  In one\n"
-             "corner is a bundle of black rods with rusty marks on their ends.\n"
-             "A large number of velvet pillows are scattered about on the floor.\n"
-             "A vast mirror stretches off to the northeast.  At your feet is a\n"
-             "large steel grate, next to which is a sign that reads, \"TREASURE\n"
+             "You are at the southwest end of the repository.  To one side is a pit" SOFT_NL
+             "full of fierce green snakes.  On the other side is a row of small" SOFT_NL
+             "wicker cages, each of which contains a little sulking bird.  In one" SOFT_NL
+             "corner is a bundle of black rods with rusty marks on their ends." SOFT_NL
+             "A large number of velvet pillows are scattered about on the floor." SOFT_NL
+             "A vast mirror stretches off to the northeast.  At your feet is a" SOFT_NL
+             "large steel grate, next to which is a sign that reads, \"TREASURE" SOFT_NL
              "VAULT.  KEYS IN MAIN OFFICE.\"",
              "You're at SW end.", F_LIGHTED);
     make_ins(NE, R_NEEND);
@@ -1439,14 +1440,14 @@ void build_travel_table(void)
     make_loc(q, R_SNAKED, "You can't get by the snake.", NULL, 0);
     make_ins(0, R_HMK);
     make_loc(q, R_THRU,
-             "You have crawled through a very low wide passage parallel to and north\n"
+             "You have crawled through a very low wide passage parallel to and north" SOFT_NL
              "of the Hall of Mists.",
              NULL, 0);
     make_ins(0, R_WMIST);
     make_loc(q, R_DUCK, places[R_THRU].long_desc, NULL, 0);
     make_ins(0, R_WFISS);
     make_loc(q, R_SEWER,
-             "The stream flows out through a pair of 1-foot-diameter sewer pipes.\n"
+             "The stream flows out through a pair of 1-foot-diameter sewer pipes." SOFT_NL
              "It would be advisable to use the exit.",
              NULL, 0);
     make_ins(0, R_HOUSE);
@@ -1564,17 +1565,17 @@ void build_object_table(void)
     new_obj(TROLL_, 0, TROLL, R_NESIDE);
     new_obj(TROLL, 0, TROLL, R_SWSIDE);
     objs[TROLL].desc[0] =
-        "A burly troll stands by the bridge and insists you throw him a\n"
+        "A burly troll stands by the bridge and insists you throw him a" SOFT_NL
         "treasure before you may cross.";
     objs[TROLL].desc[1] = "The troll steps out from beneath the bridge and blocks your way.";
     objs[TROLL].desc[2] = NULL;
     new_obj(BRIDGE_, 0, BRIDGE, R_NESIDE);
     new_obj(BRIDGE, 0, BRIDGE, R_SWSIDE);
     objs[BRIDGE].desc[0] =
-        "A rickety wooden bridge extends across the chasm, vanishing into the\n"
+        "A rickety wooden bridge extends across the chasm, vanishing into the" SOFT_NL
         "mist. A sign posted on the bridge reads, \"STOP! PAY TROLL!\"";
     objs[BRIDGE].desc[1] =
-        "The wreckage of a bridge (and a dead bear) can be seen at the bottom\n"
+        "The wreckage of a bridge (and a dead bear) can be seen at the bottom" SOFT_NL
         "of the chasm.";
     new_obj(DRAGON_, 0, DRAGON, R_SCAN3);
     new_obj(DRAGON, 0, DRAGON, R_SCAN1);
@@ -1641,13 +1642,13 @@ void build_object_table(void)
     objs[BATTERIES].desc[1] = "Some worn-out batteries have been discarded nearby.";
     new_obj(PONY, 0, PONY, R_PONY);
     objs[PONY].desc[0] =
-        "There is a massive vending machine here. The instructions on it read:\n"
+        "There is a massive vending machine here. The instructions on it read:" SOFT_NL
         "\"Drop coins here to receive fresh batteries.\"";
     new_obj(GORGE, 0, GORGE, R_VIEW);
     objs[GORGE].desc[0] = NULL;
     new_obj(MESSAGE, 0, MESSAGE, R_LIMBO);
     objs[MESSAGE].desc[0] =
-        "There is a message scrawled in the dust in a flowery script, reading:\n"
+        "There is a message scrawled in the dust in a flowery script, reading:" SOFT_NL
         "\"This is not the maze where the pirate hides his treasure chest.\"";
     new_obj(BEAR, 0, BEAR, R_BARR);
     objs[BEAR].desc[0] = "There is a ferocious cave bear eying you from the far end of the room!";
@@ -1666,7 +1667,7 @@ void build_object_table(void)
     new_obj(PLANT, 0, PLANT, R_WPIT);
     objs[PLANT].desc[0] = "There is a tiny little plant in the pit, murmuring \"Water, water, ...\"";
     objs[PLANT].desc[1] =
-        "There is a 12-foot-tall beanstalk stretching up out of the pit,\n"
+        "There is a 12-foot-tall beanstalk stretching up out of the pit," SOFT_NL
         "bellowing \"Water!! Water!!\"";
     objs[PLANT].desc[2] = "There is a gigantic beanstalk stretching all the way up to the hole.";
     new_obj(MIRROR, 0, MIRROR, R_MIRROR);
@@ -1692,7 +1693,7 @@ void build_object_table(void)
     new_obj(TABLET, 0, TABLET, R_DARK);
     /* Woods has "imbedded", but Knuth fixes it. */
     objs[TABLET].desc[0] =
-        "A massive stone tablet embedded in the wall reads:\n"
+        "A massive stone tablet embedded in the wall reads:" SOFT_NL
         "\"CONGRATULATIONS ON BRINGING LIGHT INTO THE DARK-ROOM!\"";
     new_obj(SNAKE, 0, SNAKE, R_HMK);
     objs[SNAKE].desc[0] = "A huge green fierce snake bars the way!";
@@ -1810,9 +1811,9 @@ bool too_easy_to_steal(ObjectWord t, Location loc)
 
 void steal_all_your_treasure(Location loc)  /* sections 173--174 in Knuth */
 {
-    puts("Out from the shadows behind you pounces a bearded pirate!  \"Har, har,\"\n"
-         "he chortles. \"I'll just take all this booty and hide it away with me\n"
-         "chest deep in the maze!\"  He snatches your treasure and vanishes into\n"
+    puts("Out from the shadows behind you pounces a bearded pirate!  \"Har, har,\"" SOFT_NL
+         "he chortles. \"I'll just take all this booty and hide it away with me" SOFT_NL
+         "chest deep in the maze!\"  He snatches your treasure and vanishes into" SOFT_NL
          "the gloom.");
     for (int i = MIN_TREASURE; i <= MAX_OBJ; ++i) {
         if (too_easy_to_steal(i, loc)) continue;
@@ -1849,10 +1850,10 @@ void pirate_tracks_you(Location loc)
         /* As soon as we've seen all the treasures (except the ones that are
          * lost forever), we "cheat" and let the pirate be spotted. Of course
          * there have to be shadows to hide in, so check the lamp. */
-        puts("There are faint rustling noises from the darkness behind you. As you\n"
-             "turn toward them, the beam of your lamp falls across a bearded pirate.\n"
-             "He is carrying a large chest. \"Shiver me timbers!\" he cries, \"I've\n"
-             "been spotted! I'd best hie meself off to the maze to hide me chest!\"\n"
+        puts("There are faint rustling noises from the darkness behind you. As you" SOFT_NL
+             "turn toward them, the beam of your lamp falls across a bearded pirate." SOFT_NL
+             "He is carrying a large chest. \"Shiver me timbers!\" he cries, \"I've" SOFT_NL
+             "been spotted! I'd best hie meself off to the maze to hide me chest!\"" SOFT_NL
              "With that, he vanishes into the gloom.");
         return_pirate_to_lair(true);
         return;
@@ -1894,7 +1895,7 @@ bool move_dwarves_and_pirate(Location loc)
              *   little axe at you, cursed, and ran away. (The axe missed.)
              * But Woods' version matches Crowther's original source code,
              * and I don't think the deviation is justified. */
-            puts("A little dwarf just walked around a corner, saw you, threw a little\n"
+            puts("A little dwarf just walked around a corner, saw you, threw a little" SOFT_NL
                  "axe at you which missed, cursed, and ran away.");
             drop(AXE, loc);
         }
@@ -1990,8 +1991,8 @@ void close_the_cave(void)
      * refocus," but I don't see any reason to deviate from Woods'
      * wording there. Maybe Knuth was working from a slightly earlier
      * or later version than the one I'm looking at. */
-    puts("The sepulchral voice intones, \"The cave is now closed.\"  As the echoes\n"
-         "fade, there is a blinding flash of light (and a small puff of orange\n"
+    puts("The sepulchral voice intones, \"The cave is now closed.\"  As the echoes" SOFT_NL
+         "fade, there is a blinding flash of light (and a small puff of orange" SOFT_NL
          "smoke). . . .    As your eyes refocus, you look around and find...");
     move(BOTTLE, R_NEEND); objs[BOTTLE].prop = -2;  /* empty */
     move(PLANT, R_NEEND); objs[PLANT].prop = -1;
@@ -2027,7 +2028,7 @@ bool check_clocks_and_lamp(Location loc)
          * From now on until clock2 runs out, you cannot unlock the grate,
          * move to any location outside the cave, or create the bridge.
          * Nor can you be resurrected if you die. */
-        puts("A sepulchral voice, reverberating through the cave, says \"Cave\n"
+        puts("A sepulchral voice, reverberating through the cave, says \"Cave" SOFT_NL
              "closing soon.  All adventurers exit immediately through main office.\"");
         clock1 = -1;
         objs[GRATE].prop = 0;
@@ -2053,7 +2054,7 @@ bool check_clocks_and_lamp(Location loc)
              * if you are in trouble lampwise. */
             if (objs[LAMP].prop == 1) --lamp_limit;
             if (lamp_limit <= 30 && here(LAMP, loc) && here(BATTERIES, loc) && objs[BATTERIES].prop == 0) {
-                puts("Your lamp is getting dim.  I'm taking the liberty of replacing\n"
+                puts("Your lamp is getting dim.  I'm taking the liberty of replacing" SOFT_NL
                      "the batteries.");
                 objs[BATTERIES].prop = 1;
                 if (toting(BATTERIES)) drop(BATTERIES, loc);
@@ -2063,17 +2064,17 @@ bool check_clocks_and_lamp(Location loc)
                 objs[LAMP].prop = 0;
                 lamp_limit = -1;
             } else if (lamp_limit < 0 && loc < MIN_IN_CAVE) {
-                puts("There's not much point in wandering around out here, and you can't\n"
+                puts("There's not much point in wandering around out here, and you can't" SOFT_NL
                      "explore the cave without a lamp.  So let's just call it a day.");
                 give_up();
             } else if (lamp_limit < 30 && !warned && here(LAMP, loc)) {
                 printf("Your lamp is getting dim");
                 if (objs[BATTERIES].prop == 1) {
-                    puts(", and you're out of spare batteries.  You'd\n"
+                    puts(", and you're out of spare batteries.  You'd" SOFT_NL
                          "best start wrapping this up.");
                 } else if (there(BATTERIES, R_LIMBO)) {
-                    puts(".  You'd best start wrapping this up, unless\n"
-                         "you can find some fresh batteries.  I seem to recall that there's\n"
+                    puts(".  You'd best start wrapping this up, unless" SOFT_NL
+                         "you can find some fresh batteries.  I seem to recall that there's" SOFT_NL
                          "a vending machine in the maze.  Bring some coins with you.");
                 } else {
                     puts(".  You'd best go back for those batteries.");
@@ -2094,7 +2095,7 @@ void panic_at_closing_time(void)
         clock2 = 15;
         panic = true;
     }
-    puts("A mysterious recorded voice groans into life and announces:\n"
+    puts("A mysterious recorded voice groans into life and announces:" SOFT_NL
          "   \"This exit is closed.  Please leave via main office.\"");
     /* Woods does NOT set "was_dark = false" at this point.
      * This means that if you've gotten into the habit of turning
@@ -2192,40 +2193,40 @@ struct {
     const char *hint;
 } hints[] = {
     { 0, false, 0, 5, "Welcome to Adventure!!  Would you like instructions?",
-    "Somewhere nearby is Colossal Cave, where others have found fortunes in\n"
-    "treasure and gold, though it is rumored that some who enter are never\n"
-    "seen again. Magic is said to work in the cave. I will be your eyes\n"
-    "and hands. Direct me with commands of one or two words. I should\n"
-    "warn you that I look at only the first five letters of each word, so\n"
-    "you'll have to enter \"NORTHEAST\" as \"NE\" to distinguish it from\n"
-    "\"NORTH\". Should you get stuck, type \"HELP\" for some general hints.\n"
+    "Somewhere nearby is Colossal Cave, where others have found fortunes in" SOFT_NL
+    "treasure and gold, though it is rumored that some who enter are never" SOFT_NL
+    "seen again. Magic is said to work in the cave. I will be your eyes" SOFT_NL
+    "and hands. Direct me with commands of one or two words. I should" SOFT_NL
+    "warn you that I look at only the first five letters of each word, so" SOFT_NL
+    "you'll have to enter \"NORTHEAST\" as \"NE\" to distinguish it from" SOFT_NL
+    "\"NORTH\". Should you get stuck, type \"HELP\" for some general hints." SOFT_NL
     "For information on how to end your adventure, etc., type \"INFO\".\n"
     "                        -  -  -\n"
     "The first adventure program was developed by Willie Crowther.\n"
     "Most of the features of the current program were added by Don Woods.\n"
-    "This particular program was translated from FORTRAN to CWEB by Don Knuth,\n"
+    "This particular program was translated from FORTRAN to CWEB by Don Knuth," SOFT_NL
     "and then from CWEB to ANSI C by Arthur O'Dwyer." },
     { 0, false, 0, 10,
-    "Hmmm, this looks like a clue, which means it'll cost you 10 points to\n"
+    "Hmmm, this looks like a clue, which means it'll cost you 10 points to" SOFT_NL
     "read it.  Should I go ahead and read it anyway?",
-    "It says, \"There is something strange about this place, such that one\n"
+    "It says, \"There is something strange about this place, such that one" SOFT_NL
     "of the words I've always known now has a new effect.\"" },
     { 0, false, 4, 2, "Are you trying to get into the cave?",
-    "The grate is very solid and has a hardened steel lock.  You cannot\n"
-    "enter without a key, and there are no keys in sight.  I would recommend\n"
+    "The grate is very solid and has a hardened steel lock.  You cannot" SOFT_NL
+    "enter without a key, and there are no keys in sight.  I would recommend" SOFT_NL
     "looking elsewhere for the keys." },
     { 0, false, 5, 2, "Are you trying to catch the bird?",
-    "Something seems to be frightening the bird just now and you cannot\n"
+    "Something seems to be frightening the bird just now and you cannot" SOFT_NL
     "catch it no matter what you try. Perhaps you might try later." },
     { 0, false, 8, 2, "Are you trying to deal somehow with the snake?",
-    "You can't kill the snake, or drive it away, or avoid it, or anything\n"
-    "like that.  There is a way to get by, but you don't have the necessary\n"
+    "You can't kill the snake, or drive it away, or avoid it, or anything" SOFT_NL
+    "like that.  There is a way to get by, but you don't have the necessary" SOFT_NL
     "resources right now." },
     { 0, false, 75, 4, "Do you need help getting out of the maze?",
     "You can make the passages look less alike by dropping things." },
     { 0, false, 25, 5, "Are you trying to explore beyond the Plover Room?",
-    "There is a way to explore that region without having to worry about\n"
-    "falling into a pit.  None of the objects available is immediately\n"
+    "There is a way to explore that region without having to worry about" SOFT_NL
+    "falling into a pit.  None of the objects available is immediately" SOFT_NL
     "useful for discovering the secret." },
     { 0, false, 20, 3, "Do you need help getting out of here?",
     "Don't go west." }
@@ -2345,7 +2346,7 @@ int score(void)
 
 void say_score(void)
 {
-    printf("If you were to quit now, you would score %d\n"
+    printf("If you were to quit now, you would score %d" SOFT_NL
            "out of a possible %d.\n", score()-4, MAX_SCORE);
     if (yes("Do you indeed wish to quit now?", ok, ok)) give_up();
 }
@@ -2390,18 +2391,18 @@ void quit(void)
 }
 
 const char *death_wishes[2*MAX_DEATHS] = {
-    "Oh dear, you seem to have gotten yourself killed. I might be able to\n"
-      "help you out, but I've never really done this before. Do you want me\n"
+    "Oh dear, you seem to have gotten yourself killed. I might be able to" SOFT_NL
+      "help you out, but I've never really done this before. Do you want me" SOFT_NL
       "to try to reincarnate you?",
     "All right. But don't blame me if something goes wr......\n"
       "                   --- POOF!! ---\n"
-      "You are engulfed in a cloud of orange smoke. Coughing and gasping,\n"
+      "You are engulfed in a cloud of orange smoke. Coughing and gasping," SOFT_NL
       "you emerge from the smoke and find....",
-    "You clumsy oaf, you've done it again! I don't know how long I can\n"
+    "You clumsy oaf, you've done it again! I don't know how long I can" SOFT_NL
       "keep this up. Do you want me to try reincarnating you again?",
     "Okay, now where did I put my resurrection kit?.... >POOF!<\n"
       "Everything disappears in a dense cloud of orange smoke.",
-    "Now you've really done it! I'm out of orange smoke! You don't expect\n"
+    "Now you've really done it! I'm out of orange smoke! You don't expect" SOFT_NL
       "me to do a decent reincarnation without any orange smoke, do you?",
     "Okay, if you're so smart, do it yourself! I'm leaving!"
 };
@@ -2446,7 +2447,7 @@ void adjustments_before_listening(Location loc)
          * they won't be described until they've been picked up and put
          * down, separate from their respective piles. Section 182 in Knuth. */
         if (objs[OYSTER].prop < 0 && toting(OYSTER)) {
-            puts("Interesting. There seems to be something written on the underside of\n"
+            puts("Interesting. There seems to be something written on the underside of" SOFT_NL
                  "the oyster.");
         }
         for (int j=1; j <= MAX_OBJ; ++j) {
@@ -2460,7 +2461,7 @@ Location attempt_plover_passage(Location from)  /* section 149 in Knuth */
 {
     if (holding_count == !!toting(EMERALD))
         return R_ALCOVE + R_PLOVER - from;
-    puts("Something you're carrying won't fit through the tunnel with you.\n"
+    puts("Something you're carrying won't fit through the tunnel with you." SOFT_NL
          "You'd best take inventory and drop something.");
     return from;
 }
@@ -2519,7 +2520,7 @@ bool take_bird_or_cage(ObjectWord obj)
 {
     if (obj == BIRD && !objs[BIRD].prop) {
         if (toting(ROD)) {
-            puts("The bird was unafraid when you entered, but as you approach it becomes\n"
+            puts("The bird was unafraid when you entered, but as you approach it becomes" SOFT_NL
                  "disturbed and you cannot catch it.");
             return true;
         } else if (!toting(CAGE)) {
@@ -2588,7 +2589,7 @@ void attempt_drop(ObjectWord obj, Location loc)
         return;
     } else if (obj == BIRD) {
         if (here(SNAKE, loc)) {
-            puts("The little bird attacks the green snake, and in an astounding flurry\n"
+            puts("The little bird attacks the green snake, and in an astounding flurry" SOFT_NL
                  "drives the snake away.");
             suppress_ok_message = true;
             if (closed) dwarves_upset();
@@ -2600,7 +2601,7 @@ void attempt_drop(ObjectWord obj, Location loc)
             /* Now that the bird is dead, you can never get past the snake
              * into the south side chamber, so the precious jewelry is lost. */
             if (there(SNAKE, R_HMK)) ++lost_treasures;
-            puts("The little bird attacks the green dragon, and in an astounding flurry\n"
+            puts("The little bird attacks the green dragon, and in an astounding flurry" SOFT_NL
                  "gets burnt to a cinder.  The ashes blow away.");
             return;
         }
@@ -2616,7 +2617,7 @@ void attempt_drop(ObjectWord obj, Location loc)
         }
     } else if (obj == BEAR && is_at_loc(TROLL, loc)) {
         /* Chase the troll away. */
-        puts("The bear lumbers toward the troll, who lets out a startled shriek and\n"
+        puts("The bear lumbers toward the troll, who lets out a startled shriek and" SOFT_NL
              "scurries away.  The bear soon gives up the pursuit and wanders back.");
         suppress_ok_message = true;
         destroy(TROLL); destroy(TROLL_);
@@ -2671,7 +2672,7 @@ void attempt_blast(Location loc)  /* section 99 in Knuth */
 void attempt_rub(ObjectWord obj)  /* section 99 in Knuth */
 {
     if (obj == LAMP) {
-        puts("Rubbing the electric lamp is not particularly rewarding. Anyway,\n"
+        puts("Rubbing the electric lamp is not particularly rewarding. Anyway," SOFT_NL
              "nothing exciting happens.");
     } else {
         puts("Peculiar.  Nothing unexpected happens.");
@@ -2700,7 +2701,7 @@ void attempt_find(ObjectWord obj, Location loc)  /* section 100 in Knuth */
         if (its_right_here) {
             puts("I believe what you want is right here with you.");
         } else {
-            puts("I can only tell you what you see as you move about and manipulate\n"
+            puts("I can only tell you what you see as you move about and manipulate" SOFT_NL
                  "things.  I cannot tell you where remote things are.");
         }
     }
@@ -2716,7 +2717,7 @@ void attempt_break(ObjectWord obj, Location loc)  /* section 101 in Knuth */
         immobilize(VASE);
     } else if (obj == MIRROR) {
         if (closed) {
-            puts("You strike the mirror a resounding blow, whereupon it shatters into a\n"
+            puts("You strike the mirror a resounding blow, whereupon it shatters into a" SOFT_NL
                  "myriad tiny fragments.");
             dwarves_upset();
         } else {
@@ -2730,7 +2731,7 @@ void attempt_break(ObjectWord obj, Location loc)  /* section 101 in Knuth */
 void attempt_wake(ObjectWord obj)  /* section 101 in Knuth */
 {
     if (closed && obj == DWARF) {
-        puts("You prod the nearest dwarf, who wakes up grumpily, takes one look at\n"
+        puts("You prod the nearest dwarf, who wakes up grumpily, takes one look at" SOFT_NL
              "you, curses, and grabs for his axe.");
         dwarves_upset();
     }
@@ -2759,7 +2760,7 @@ void throw_axe_at_dwarf(Location loc)  /* section 163 in Knuth */
     if (ran(3) < 2) {
         static bool first_time = true;
         if (first_time) {
-            puts("You killed a little dwarf.  The body vanishes in a cloud of greasy\n"
+            puts("You killed a little dwarf.  The body vanishes in a cloud of greasy" SOFT_NL
                  "black smoke.");
             first_time = false;
         } else {
@@ -2811,7 +2812,7 @@ void attempt_feed(ObjectWord obj, Location loc)  /* section 129 in Knuth */
 {
     switch (obj) {
         case BIRD:
-            puts("It's not hungry (it's merely pinin' for the fjords).  Besides, you\n"
+            puts("It's not hungry (it's merely pinin' for the fjords).  Besides, you" SOFT_NL
                  "have no bird seed.");
             break;
         case TROLL:
@@ -2849,7 +2850,7 @@ void attempt_feed(ObjectWord obj, Location loc)  /* section 129 in Knuth */
                 objs[BEAR].prop = 1;
                 objs[AXE].prop = 0;
                 mobilize(AXE);        /* if it was immobilized by the bear */
-                puts("The bear eagerly wolfs down your food, after which he seems to calm\n"
+                puts("The bear eagerly wolfs down your food, after which he seems to calm" SOFT_NL
                      "down considerably and even becomes rather friendly.");
             }
             break;
@@ -2889,11 +2890,11 @@ void attempt_open_or_close(ActionWord verb, ObjectWord obj, Location loc)  /* se
                 destroy(CLAM);
                 drop(OYSTER, loc);
                 drop(PEARL, R_SAC);
-                puts("A glistening pearl falls out of the clam and rolls away.  Goodness,\n"
-                     "this must really be an oyster.  (I never was very good at identifying\n"
+                puts("A glistening pearl falls out of the clam and rolls away.  Goodness," SOFT_NL
+                     "this must really be an oyster.  (I never was very good at identifying" SOFT_NL
                      "bivalves.)  Whatever it is, it has now snapped shut again.");
             } else {
-                puts("The oyster creaks open, revealing nothing but oyster inside.\n"
+                puts("The oyster creaks open, revealing nothing but oyster inside." SOFT_NL
                      "It promptly snaps shut again.");
             }
             break;
@@ -2923,7 +2924,7 @@ void attempt_open_or_close(ActionWord verb, ObjectWord obj, Location loc)  /* se
                 if (objs[CHAIN].prop == 0) {
                     puts("It was already unlocked.");
                 } else if (objs[BEAR].prop == 0) {
-                    puts("There is no way to get past the bear to unlock the chain, which is\n"
+                    puts("There is no way to get past the bear to unlock the chain, which is" SOFT_NL
                          "probably just as well.");
                 } else {
                     objs[CHAIN].prop = 0;
@@ -3083,7 +3084,7 @@ Instruction *determine_motion_instruction(Location loc, MotionWord mot)
                 puts("Nothing happens.");
                 break;
             case FIND: case INVENTORY:
-                puts("I can only tell you what you see as you move about and manipulate\n"
+                puts("I can only tell you what you see as you move about and manipulate" SOFT_NL
                      "things.  I cannot tell you where remote things are.");
                 break;
             case N: case S: case E: case W: case NE: case SE: case NW: case SW:
@@ -3091,7 +3092,7 @@ Instruction *determine_motion_instruction(Location loc, MotionWord mot)
                 puts("There is no way to go in that direction.");
                 break;
             case IN: case OUT:
-                puts("I don't know in from out here.    Use compass points or name something\n"
+                puts("I don't know in from out here.    Use compass points or name something" SOFT_NL
                      "in the general direction you want to go.");
                 break;
             case FORWARD: case L: case R:
@@ -3174,9 +3175,9 @@ bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot)
                 objs[TROLL].prop = 1;
             if (!toting(BEAR))
                 return false;
-            puts("Just as you reach the other side, the bridge buckles beneath the\n"
-                 "weight of the bear, who was still following you around.  You\n"
-                 "scrabble desperately for support, but as the bridge collapses you\n"
+            puts("Just as you reach the other side, the bridge buckles beneath the" SOFT_NL
+                 "weight of the bear, who was still following you around.  You" SOFT_NL
+                 "scrabble desperately for support, but as the bridge collapses you" SOFT_NL
                  "stumble back and fall into the chasm.");
             objs[BRIDGE].prop = 1;
             objs[TROLL].prop = 2;
@@ -3385,7 +3386,7 @@ void simulate_an_adventure(void)
                 case BRIEF:
                     verbose_interval = 10000;
                     look_count = 3;
-                    puts("Okay, from now on I'll only describe a place in full the first time\n"
+                    puts("Okay, from now on I'll only describe a place in full the first time" SOFT_NL
                          "you come to it.  To get the full description, say \"LOOK\".");
                     continue;
                 case SCORE:
@@ -3519,7 +3520,7 @@ void simulate_an_adventure(void)
                         objs[WATER].place = R_LIMBO;
                         puts("The bottle of water is now empty.");
                     } else {
-                        puts("You have taken a drink from the stream.  The water tastes strongly of\n"
+                        puts("You have taken a drink from the stream.  The water tastes strongly of" SOFT_NL
                              "minerals, but is not unpleasant.  It is extremely cold.");
                     }
                     continue;
@@ -3625,7 +3626,7 @@ void simulate_an_adventure(void)
                     } else if (is_at_loc(DRAGON, loc) && !objs[DRAGON].prop) {
                         puts("The axe bounces harmlessly off the dragon's thick scales.");
                     } else if (is_at_loc(TROLL, loc)) {
-                        puts("The troll deftly catches the axe, examines it carefully, and tosses it\n"
+                        puts("The troll deftly catches the axe, examines it carefully, and tosses it" SOFT_NL
                              "back, declaring, \"Good workmanship, but it's not valuable enough.\"");
                     } else if (here(BEAR, loc) && objs[BEAR].prop == 0) {
                         /* Throw the axe at the (un-tame) bear. */
@@ -3686,7 +3687,7 @@ void simulate_an_adventure(void)
                                 verb = ABSTAIN; obj = NOTHING;
                                 listen();
                                 if (streq(word1, "yes") || streq(word1, "y")) {
-                                    puts("Congratulations!  You have just vanquished a dragon with your bare\n"
+                                    puts("Congratulations!  You have just vanquished a dragon with your bare" SOFT_NL
                                          "hands! (Unbelievable, isn't it?)");
                                     objs[DRAGON].prop = 2;  /* dead */
                                     objs[RUG].prop = 0;
@@ -3718,7 +3719,7 @@ void simulate_an_adventure(void)
                             puts("With what? Your bare hands?");
                             continue;
                         case TROLL:
-                            puts("Trolls are close relatives with the rocks and have skin as tough as\n"
+                            puts("Trolls are close relatives with the rocks and have skin as tough as" SOFT_NL
                                  "a rhinoceros hide.  The troll fends off your blows effortlessly.");
                             continue;
                         case BEAR:
@@ -3812,7 +3813,7 @@ void simulate_an_adventure(void)
         } else if (mot == LOOK) {
             /* Repeat the long description and continue. */
             if (++look_count <= 3) {
-                puts("Sorry, but I am not allowed to give more detail.  I will repeat the\n"
+                puts("Sorry, but I am not allowed to give more detail.  I will repeat the" SOFT_NL
                      "long description of your location.");
             }
             was_dark = false;  /* pretend it wasn't dark, so you won't fall into a pit */
@@ -3820,7 +3821,7 @@ void simulate_an_adventure(void)
             continue;
         } else if (mot == CAVE) {
             if (loc < MIN_IN_CAVE) {
-                puts("I can't see where the cave is, but hereabouts no stream can run on\n"
+                puts("I can't see where the cave is, but hereabouts no stream can run on" SOFT_NL
                      "the surface for long. I would try the stream.");
             } else {
                 puts("I need more detailed instructions to do that.");
@@ -3851,8 +3852,8 @@ void simulate_an_adventure(void)
 
 void dwarves_upset(void)
 {
-    puts("The resulting ruckus has awakened the dwarves.  There are now several\n"
-         "threatening little dwarves in the room with you!  Most of them throw\n"
+    puts("The resulting ruckus has awakened the dwarves.  There are now several" SOFT_NL
+         "threatening little dwarves in the room with you!  Most of them throw" SOFT_NL
          "knives at you!  All of them get you!");
     quit();
 }
