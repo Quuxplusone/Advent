@@ -1788,8 +1788,7 @@ int attempt_take(ObjectWord obj, Location loc)
         I_see_no(word2.text);
     } else if (!(objs[obj].flags & F_PORTABLE)) {
         hah();
-    } else if (holding_count == strength && obj != CAGE) {
-        /* Platt lets you pick the cage for free. This is certainly a bug. */
+    } else if (holding_count == strength) {
         puts("You can't carry anything more.  You'll have to drop something first.");
     } else {
         ok();
@@ -2743,7 +2742,7 @@ int kill_dwarf(Location loc)
     return STAY_STILL;
 }
 
-int kill_dragon(Location loc)
+int kill_dragon(void)
 {
     if (objs[DRAGON].prop) {
         it_is_dead();
@@ -2755,12 +2754,8 @@ int kill_dragon(Location loc)
         apport(TEETH, R_SECRETCYNNE1);
         objs[DRAGON].flags &= ~F_SCHIZOID;
         for (ObjectWord i=1; i < MAX_OBJ; ++i) {
-            /* This condition isn't quite correct. If you drop something at
-             * R_SECRETCYNNE2 and then circle around to R_SECRETCYNNE1 before
-             * killing the dragon, you'll find that the dropped object has
-             * become completely inaccessible: might as well be in R_YLEM.
-             * This is certainly a bug in Platt's code. */
-            if (there(i, loc))
+            /* I've fixed a bug in Platt's code here. */
+            if (there(i, R_SECRETCYNNE2))
                 apport(i, R_SECRETCYNNE1);
         }
         return R_SECRETCYNNE1;
@@ -2799,7 +2794,7 @@ int attempt_kill(Location loc)
             case DWARF:
                 return kill_dwarf(loc);
             case DRAGON:
-                return kill_dragon(loc);
+                return kill_dragon();
             case SNAKE:
                 puts("Attacking the snake both doesn't work and is very dangerous.");
                 return STAY_STILL;
