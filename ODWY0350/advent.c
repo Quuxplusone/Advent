@@ -25,6 +25,7 @@ int ran(int range) { return rand() % range; }
 
 #define SOFT_NL "\n"
 #define SOFT_HYPHEN "-\n"
+#define EMDASH(x) x
 
 bool pct(int percent) { return (ran(100) < percent); }
 bool streq(const char *a, const char *b) { return !strncmp(a, b, 5); }
@@ -1243,7 +1244,7 @@ void build_travel_table(void)
     make_ins(W, R_BOULDERS);
     make_ins(N, R_SWISS); ditto(CRAWL);
     make_loc(q, R_BOULDERS,
-             "The canyon runs into a mass of boulders -- dead end.",
+             "The canyon runs into a mass of boulders " EMDASH("--") " dead end.",
              NULL, 0);
     make_ins(S, R_TALL);
     make_loc(q, R_SLOPING,

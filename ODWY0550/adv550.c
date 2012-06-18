@@ -742,7 +742,7 @@ void describe_object(ObjectWord t)
                      "with itself.");
                 break;
             case 11:
-                puts("There is a very strange singing sword here - it is glowing and" SOFT_NL
+                puts("There is a very strange singing sword here " EMDASH("-") " it is glowing and" SOFT_NL
                      "vibrating, and the eerie electronic notes of Charles Wuorinen's" SOFT_NL
                      "\"Time's Encomium\" issue from its blade and fill the air.");
                 break;
@@ -1212,13 +1212,13 @@ struct Hint {
         "narrow tunnel entering from the alcove.", false
     }, {
     "Having problems?",
-        "Ok - what you need to do is apply a little philosophy.  To wit:  there" SOFT_NL
+        "Ok " EMDASH("-") " what you need to do is apply a little philosophy.  To wit:  there" SOFT_NL
         "is a question that you need to ask whenever you explore a new room" SOFT_NL
         "in this cave.  In most places, the answer to the question is \"yes\"." SOFT_NL
         "In some other places, it's \"no\" for an obvious reason.  Right here," SOFT_NL
         "the answer is \"no\" but the reason isn't so obvious.  If you can figure" SOFT_NL
         "out what the question is, you can get out of here easily.  I can tell" SOFT_NL
-        "you this - it's always a vital question if you wish to survive.", false
+        "you this " EMDASH("-") " it's always a vital question if you wish to survive.", false
         /* The question is something like "Should I turn on my lantern?" */
     }, {
     "Are you having problems getting out of the ice tunnels?",
@@ -1370,9 +1370,9 @@ void kill_the_player(Location loc)
                  "to try to reincarnate you?");
             break;
         case 2:
-            puts("Tsk, tsk - you did it again!  Remember - you're only human, and you" SOFT_NL
+            puts("Tsk, tsk " EMDASH("-") " you did it again!  Remember " EMDASH("-") " you're only human, and you" SOFT_NL
                  "don't have as many lives as a cat!  (at least, I don't think so...)" SOFT_NL
-                 "That's twice you've ended up dead - want to try for three?");
+                 "That's twice you've ended up dead " EMDASH("-") " want to try for three?");
             break;
         case 3:
             puts("You clumsy oaf, you've done it again!  I don't know how long I can" SOFT_NL
@@ -1410,7 +1410,7 @@ void kill_the_player(Location loc)
                  "whining, mouldy-faced heap of parrot droppings!  If you're so" SOFT_NL
                  "smart, then you can just reincarnate yourself, because quite" SOFT_NL
                  "frankly I'm as mad as hell and I'm not going to take this" SOFT_NL
-                 "anymore - I'm leaving!!!!\n");
+                 "anymore " EMDASH("-") " I'm leaving!!!!\n");
             finis();  /* does not return; you're really dead now */
             break;
     }
@@ -1657,7 +1657,7 @@ void getsceptre(void)
              "pile of fine dust which quickly vanishes.");
     } else {
         printf("You pluck the sceptre from the skeleton's bony hand.  As you do, the" SOFT_NL
-               "skeleton raises its head and whispers \"Remember - %s!\" in a" SOFT_NL
+               "skeleton raises its head and whispers \"Remember " EMDASH("-") " %s!\" in a" SOFT_NL
                /* Platt has "forboding". */
                "foreboding tone; it then sags to the ground and crumbles into dust which" SOFT_NL
                "drifts away into the still air of the cave.\n", spelling);
@@ -1671,12 +1671,12 @@ int attempt_take(ObjectWord obj, Location loc)
 {
     if (now_in_darkness(loc)) {
         if (word2.type == WordType_None) {
-            puts("It's pitch dark in here - I can't tell whether there's anything here" SOFT_NL
+            puts("It's pitch dark in here " EMDASH("-") " I can't tell whether there's anything here" SOFT_NL
                  "that I can pick up!");
             return STAY_STILL;
         } else if (word2.type == WordType_Object && !toting(obj) && portable(obj)) {
             if (pct(60 - 5*(strength - holding_count))) {
-                printf("Hmmph - you're not asking for much, are you - it's pitch dark in" SOFT_NL
+                printf("Hmmph " EMDASH("-") " you're not asking for much, are you " EMDASH("-") " it's pitch dark in" SOFT_NL
                        "here!  Well, I'll grope around and try to find the %s.....\n", word2.text);
                 puts(" {hunt}\n"
                      "         {hunt}\n"
@@ -1693,7 +1693,7 @@ int attempt_take(ObjectWord obj, Location loc)
                      "You stumbled into a pit and broke your back!");
                 return you_are_dead_at(loc);
             } else {
-                printf("Hmmph - you're not asking for much, are you - it's pitch dark" SOFT_NL
+                printf("Hmmph " EMDASH("-") " you're not asking for much, are you " EMDASH("-") " it's pitch dark" SOFT_NL
                        "in here, and I'll have to grope around to try to find the %s.\n", word2.text);
                 puts("Well, if I must, I must.....\n"
                      "                                 {hunt}\n"
@@ -1707,7 +1707,7 @@ int attempt_take(ObjectWord obj, Location loc)
                      "                                          Youch! {curse}\n"
                      "                  {hunt}\n"
                      "                              {seek}\n");
-                printf("No luck - I can't find the %s!  If you could get me some light in" SOFT_NL
+                printf("No luck " EMDASH("-") " I can't find the %s!  If you could get me some light in" SOFT_NL
                        "here, maybe I'd be able to do better.  Sorry....\n", word2.text);
                 return STAY_STILL;
             }
@@ -2067,7 +2067,7 @@ int weaponry(ObjectWord obj, Location loc)
         }
     } else if (there(DJINN, loc)) {
         printf("The %s rebounds harmlessly from the pentagram's magic force" SOFT_NL
-               "field.  It's just as well - the djinn doesn't seem dangerous." SOFT_NL,
+               "field.  It's just as well " EMDASH("-") " the djinn doesn't seem dangerous." SOFT_NL,
                word2.text);
     } else if (there(GOBLINS, loc)) {
         printf("You kill several of the gooseberry goblins with your %s, but" SOFT_NL
@@ -2404,7 +2404,7 @@ int attempt_open(Location loc)
         if (!toting(KEYS)) {
             puts("You have no keys!");
         } else if (closure >= 2 || nomagic) {
-            puts("The lock seems to be stuck - the key refuses to turn!");
+            puts("The lock seems to be stuck " EMDASH("-") " the key refuses to turn!");
             if (closure >= 2) {
                 panicked = true;
                 if (!panicked_at_grate) {
@@ -2446,12 +2446,12 @@ int attempt_open(Location loc)
         puts("You can't unlock the keys.");
     } else if (keywordo(SAFE) && there(SAFE, loc)) {
         if (objs[SAFE].prop == 0) {
-            puts("The door to the safe has no keyhole, dial, or handle - I can't figure" SOFT_NL
+            puts("The door to the safe has no keyhole, dial, or handle " EMDASH("-") " I can't figure" SOFT_NL
                  "out how to open it!");
         } else if (objs[SAFE].prop == 1) {
             already_open(word2.text);
         } else {
-            puts("The door to the safe seems to be fused shut - I can't open it.");
+            puts("The door to the safe seems to be fused shut " EMDASH("-") " I can't open it.");
         }
     } else if (keywordo(CLAM) && here(CLAM, loc)) {
         if (toting(CLAM)) {
@@ -2524,7 +2524,7 @@ int attempt_open(Location loc)
                 apport(DJINN, R_LIMBO);
                 djinn_is_grateful = true;
             } else {
-                puts("The pentagram is empty - there's nothing to let out!");
+                puts("The pentagram is empty " EMDASH("-") " there's nothing to let out!");
             }
         } else {
             I_see_no("pentagram");
@@ -2672,7 +2672,7 @@ void attempt_news(void)
 {
     puts("This version of Adventure is based on a version by David Platt.\n"
          "Here is the NEWS command as presented by that version:\n\n"
-         "9/18/84 - A set of maps which describe Colossal Cave may be ordered\n"
+         "9/18/84 " EMDASH("-") " A set of maps which describe Colossal Cave may be ordered\n"
          "from the following address:\n\n"
          "         David Platt\n"
          "         c/o Honeywell Information Systems\n"
@@ -2687,7 +2687,7 @@ void attempt_news(void)
          "detail maps of the mazes, tunnels, and other complex areas." SOFT_NL
          "The locations of various treasures and tools are given in the main" SOFT_NL
          "map... however, the maps do not reveal ways past the cave's obstacles.\n\n"
-         "1/19/82 - Based on many requests, the SAVE/RESTORE logic has been" SOFT_NL
+         "1/19/82 " EMDASH("-") " Based on many requests, the SAVE/RESTORE logic has been" SOFT_NL
          "modified in a way that makes exploration of dangerous sections of the" SOFT_NL
          "cave rather easier.  Three changes are effective:  (1) you need not" SOFT_NL
          "wait 30 minutes after SAVE'ing a game to RESTORE it;  (2) when you" SOFT_NL
@@ -2696,7 +2696,7 @@ void attempt_news(void)
          "the option to keep the saved game on disk, and can thus RESTORE it" SOFT_NL
          "an unlimited number of times.\n\n"
          "A minor bug in the pirate logic has been fixed.\n\n"
-         "10/18/79 - Several problems have been fixed in this version of" SOFT_NL
+         "10/18/79 " EMDASH("-") " Several problems have been fixed in this version of" SOFT_NL
          "Adventure.  Both the new run unit and the new database file should" SOFT_NL
          "be installed at the same time.  (1)  The interpreter trap during" SOFT_NL
          "\"RESTORE\" operations has been fixed.  (2)  The 'vanishing fog' problem" SOFT_NL
@@ -2776,7 +2776,7 @@ int kill_ogre(Location loc)
                  "very close to crushing your skull with *his* bare (but extremely" SOFT_NL
                  "strong) hands.  You are forced to retreat in disgrace.");
         } else {
-            puts("You attack the ogre - a brave but foolish action.  He quickly grabs" SOFT_NL
+            puts("You attack the ogre " EMDASH("-") " a brave but foolish action.  He quickly grabs" SOFT_NL
                  "you and with a heave of his mighty arms rips your body limb from limb.");
             return you_are_dead_at(loc);
         }
@@ -2810,7 +2810,7 @@ int attempt_kill(Location loc)
             case BEAR:
                 if (objs[BEAR].prop == 0) {
                     puts("With what?  Your bare hands??  Against *his* bear hands???  Don't be" SOFT_NL
-                         "ridiculous - he'd tear you to shreds!");
+                         "ridiculous " EMDASH("-") " he'd tear you to shreds!");
                 } else {
                     puts("The bear is confused; he only wants to be your friend.");
                 }
@@ -2830,9 +2830,9 @@ int attempt_kill(Location loc)
                 return STAY_STILL;
             case DJINN:
                 /* This seems like a rather broad hint. */
-                puts("That's not a wise thing to try - djinni are essentially immortal" SOFT_NL
+                puts("That's not a wise thing to try " EMDASH("-") " djinni are essentially immortal" SOFT_NL
                      "and thus are pretty hard to hurt.  Besides, this one seems rather" SOFT_NL
-                     "friendly - why don't you just try releasing him?");
+                     "friendly " EMDASH("-") " why don't you just try releasing him?");
                 return STAY_STILL;
             case GOBLINS:
                 puts("You attack the goblins and manage to squash a few, but the others" SOFT_NL
@@ -2856,7 +2856,7 @@ int attempt_kill(Location loc)
                          "your service!\n\n"
                          "With a swoosh and a swirl of water, a large tortoise rises to the" SOFT_NL
                          "surface of the reservoir and paddles over to the shore near you." SOFT_NL
-                         "The message, \"I'm Darwin - ride me!\" is inscribed on his back in" SOFT_NL
+                         "The message, \"I'm Darwin " EMDASH("-") " ride me!\" is inscribed on his back in" SOFT_NL
                          "ornate letters.\n");
                     apport(TURTLE, loc);
                 }
@@ -2935,7 +2935,7 @@ int attempt_feed(Location loc)
                 puts("Goblins live exclusively on human flesh, and you can't spare" SOFT_NL
                      "any of your own to placate them.  On the other hand, I suspect" SOFT_NL
                      "that they're going to eat you pretty soon whether you like it" SOFT_NL
-                     "or not - you'd better find some way of killing them or driving" SOFT_NL
+                     "or not " EMDASH("-") " you'd better find some way of killing them or driving" SOFT_NL
                      "them away!");
                 break;
         }
@@ -3117,7 +3117,7 @@ int passphrase(Location loc)
                  "Smoke trickles out from around the edges of the safe's door, and the" SOFT_NL
                  "door itself glows red with heat for a moment.\n\n"
                  "A hollow voice says,  \"This is a Class 1 security alarm.  All cave" SOFT_NL
-                 "security forces go to Orange Alert.  I repeat - Orange Alert.\"\n");
+                 "security forces go to Orange Alert.  I repeat " EMDASH("-") " Orange Alert.\"\n");
             objs[SAFE].prop = 2;  /* melted */
             objs[BLOB].prop = 1;  /* wake up the blob */
             blob_is_coming = true;
@@ -3417,7 +3417,7 @@ int process_verb(Location loc)
                 } else {
                     if (lamplife < 40 && here(BATTERIES, loc) && !objs[BATTERIES].prop) {
                         /* Notice that Platt has "the the". I'm leaving it. */
-                        puts("The old batteries in your lamp were pretty well shot - I've taken the" SOFT_NL
+                        puts("The old batteries in your lamp were pretty well shot " EMDASH("-") " I've taken the" SOFT_NL
                              "the liberty of putting in the new ones.");
                         objs[BATTERIES].prop = 1;
                         lamplife += 300;
@@ -3562,7 +3562,7 @@ int process_verb(Location loc)
                             puts("From beneath the bridge there sounds a muffled bellow of frustrated" SOFT_NL
                                  "avarice.  The troll stomps out, resumes his position by the end of" SOFT_NL
                                  "the bridge, and glowers fiercely in your direction.  \"Very funny,\"" SOFT_NL
-                                 "you hear him mutter, \"but not very smart - you'll pay for that!\"");
+                                 "you hear him mutter, \"but not very smart " EMDASH("-") " you'll pay for that!\"");
                         }
                         objs[TROLL].prop = 0;
                         apport(TROLL, R_SWOFCHASM);
@@ -3769,9 +3769,9 @@ int process_verb(Location loc)
              * no matter what the player types, he'll be docked ten points
              * for attempting to enter wizard mode by such an obvious route. */
             if (yes("Are you actually a wizard?")) {
-                puts("Prove it - say the magic word!");
+                puts("Prove it " EMDASH("-") " say the magic word!");
                 listen();
-                puts("Oh, pooh - you are nothing but a charlatan!  That little piece of" SOFT_NL
+                puts("Oh, pooh " EMDASH("-") " you are nothing but a charlatan!  That little piece of" SOFT_NL
                      "deception is going to cost you 10 points!!");
                 penalties += 10;
             } else {
@@ -4283,7 +4283,7 @@ void deal_with_syntax_errors(Location loc)
 void presay(void)
 {
     if (keywordv(SAY) && (word2.type != WordType_None)) {
-        printf("Ok - \"%s\".\n", word2.text);
+        printf("Ok " EMDASH("-") " \"%s\".\n", word2.text);
     }
 }
 

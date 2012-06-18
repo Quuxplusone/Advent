@@ -167,5 +167,6 @@ extern struct ObjectData objs[];
 #define SOFT_NL "\n"
 #define SOFT_HYPHEN "-\n"
 #define HARD_HYPHEN "-\n"
+#define EMDASH(x) x
 
 #endif /* H_ADVDAT */

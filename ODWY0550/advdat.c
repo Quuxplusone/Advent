@@ -1713,7 +1713,7 @@ int at_view(void)
         return splatter(R_YLEM);
     if (keywordp(R_VALLEY) || keywordv(CROSS) || keywordo(GORGE) || keywordv(NORTH)) {
         if (objs[GORGE].prop == 0) {
-            puts("I'm afraid I can't go that way - walking on red-hot lava is contrary" SOFT_NL
+            puts("I'm afraid I can't go that way " EMDASH("-") " walking on red-hot lava is contrary" SOFT_NL
                  "to union regulations (and is bad for your health anyhow).");
             return STAY_STILL;
         } else if (toting(RING)) {
@@ -1973,16 +1973,21 @@ int enter_safe(Location start)
     }
 }
 
+int safes_door(Location loc)
+{
+    if (objs[SAFE].prop == 1) {
+	puts("The safe's door is blocking the exit passage " EMDASH("-") " you'll have to close" SOFT_NL
+	     "the safe to get out of here.");
+	return STAY_STILL;
+    } else {
+	return loc;
+    }
+}
+
 int at_vault(void)
 {
     if (movementv3(UP,OUT,NORTH)) {
-        if (objs[SAFE].prop == 1) {
-            puts("The safe's door is blocking the exit passage - you'll have to close" SOFT_NL
-                 "the safe to get out of here.");
-            return STAY_STILL;
-        } else {
-            return R_HMK;
-        }
+	return safes_door(R_HMK);
     }
     if (keywordv(IN)) return enter_safe(R_VAULT);
     return 0;  /* command hasn't been processed yet */
@@ -2439,7 +2444,7 @@ static int quicksand(Location dest)
         } else {
             have_drowned_in_quicksand = true;
             puts("Hmmmm..  This sand is rather soft, and you're sinking in a little..." SOFT_NL
-                 "In fact you're sinking in a lot!   Oh, no - it's QUICKSAND!!  HELP!!" SOFT_NL
+                 "In fact you're sinking in a lot!   Oh, no " EMDASH("-") " it's QUICKSAND!!  HELP!!" SOFT_NL
                  "HELP!! HELP!!!\n"
                  "               >glub<\n"
                  "                        >glub<\n"
@@ -2525,7 +2530,7 @@ int at_faces(void)
     if (movementv(NORTH)) return R_BY_FIGURE;
     if (keywordv(CROSS) || keywordv(SOUTH) || keywordo(GORGE)) {
         if (!objs[GORGE].prop) {
-            puts("I'm afraid I can't go that way - walking on red-hot lava is contrary" SOFT_NL
+            puts("I'm afraid I can't go that way " EMDASH("-") " walking on red-hot lava is contrary" SOFT_NL
                  "to union regulations (and is bad for your health anyhow).");
             return STAY_STILL;
         } else if (!toting(RING)) {
@@ -2722,13 +2727,7 @@ int at_basque_fork(void)
 int at_peelgrunt(void)
 {
     if (keywordv(SOUTH) || keywordv(OUT) || keywordp(R_FORK)) {
-        if (objs[SAFE].prop == 1) {
-            puts("The safe's door is blocking the exit passage - you'll have to close" SOFT_NL
-                 "the safe to get out of here.");
-            return STAY_STILL;
-        } else {
-            return R_BASQUE_FORK;
-        }
+	return safes_door(R_BASQUE_FORK);
     }
     if (keywordv(IN)) return enter_safe(R_PEELGRUNT);
     return 0;  /* command hasn't been processed yet */
@@ -3750,7 +3749,7 @@ struct Place places[] = {
         "You're at south end of fog-filled room.",
         "You are standing at the southern end of what appears to be a" SOFT_NL
         "large room filled with multicolored fog.  The sides and far end" SOFT_NL
-        "of the room cannot be seen due to the thickness of the fog - it's" SOFT_NL
+        "of the room cannot be seen due to the thickness of the fog " EMDASH("-") " it's" SOFT_NL
         "a real pea-souper (even to the color in places!).  A passage leads" SOFT_NL
         "back to the south;  a dull rumbling sound issues from the passage.",
         F_NOBACK|F_NODWARF, &at_plain_1
@@ -3792,7 +3791,7 @@ struct Place places[] = {
     /* R_TUBE_SLIDE */ {
         "You're at steep slide in lava tube.",
         "The lava tube continues down and to the south, but it becomes very" SOFT_NL
-        "steep here - if you go down it you probably won't be able to get" SOFT_NL
+        "steep here " EMDASH("-") " if you go down it you probably won't be able to get" SOFT_NL
         "back up.",
         F_NODWARF, &at_tube_slide
     },
@@ -4025,7 +4024,7 @@ struct Place places[] = {
     /* R_TOOL */ {
         "You're in Tool room.",
         "You are in a small, low-ceilinged room with the words \"Witt Company" SOFT_NL
-        "Tool Room - Melenkurion division\" carved into one of the walls.  A" SOFT_NL
+        "Tool Room " EMDASH("-") " Melenkurion division\" carved into one of the walls.  A" SOFT_NL
         "wide corridor runs south from here.",
         F_ONE_EXIT, &at_tool
     },
@@ -4094,7 +4093,7 @@ struct Place places[] = {
         "You are in the Ice room.  The walls and ceiling here are composed of" SOFT_NL
         "clear blue glacial ice;  the floor is fortunately made of rock and" SOFT_NL
         "is easy to walk upon.  There is a passage leading to the northwest," SOFT_NL
-        "and a slide of polished ice leading downwards to the east - if you" SOFT_NL
+        "and a slide of polished ice leading downwards to the east " EMDASH("-") " if you" SOFT_NL
         "were to slide down it you probably couldn't get back up.",
         F_NOBACK, &at_ice
     },
