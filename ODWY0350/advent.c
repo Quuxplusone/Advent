@@ -122,7 +122,7 @@ typedef enum {
 } ActionWord;
 
 const char *message[13];  /* messages tied to certain vocabulary words */
-const char ok[] = "OK.";  /* Woods' Fortran version didn't include the period, by the way. */
+const char ok[] = "OK";
 const char pitch_dark_msg[] = "It is now pitch dark.  If you proceed you will most likely fall into a pit.";
 
 void build_vocabulary(void)
@@ -1694,7 +1694,7 @@ void build_object_table(void)
     new_obj(TABLET, 0, TABLET, R_DARK);
     /* Woods has "imbedded", but Knuth fixes it. */
     objs[TABLET].desc[0] =
-        "A massive stone tablet embedded in the wall reads:" SOFT_NL
+        "A massive stone tablet imbedded in the wall reads:" SOFT_NL
         "\"CONGRATULATIONS ON BRINGING LIGHT INTO THE DARK-ROOM!\"";
     new_obj(SNAKE, 0, SNAKE, R_HMK);
     objs[SNAKE].desc[0] = "A huge green fierce snake bars the way!";
@@ -1987,12 +1987,7 @@ bool cave_is_closing(void)
 
 void close_the_cave(void)
 {
-    /* Woods has "entones", but that's not a word, so I'm changing it.
-     * Knuth writes "Then your eyes refocus;" in place of "As your eyes
-     * refocus," but I don't see any reason to deviate from Woods'
-     * wording there. Maybe Knuth was working from a slightly earlier
-     * or later version than the one I'm looking at. */
-    puts("The sepulchral voice intones, \"The cave is now closed.\"  As the echoes" SOFT_NL
+    puts("The sepulchral voice entones, \"The cave is now closed.\"  As the echoes" SOFT_NL
          "fade, there is a blinding flash of light (and a small puff of orange" SOFT_NL
          "smoke). . . .    As your eyes refocus, you look around and find...");
     move(BOTTLE, R_NEEND); objs[BOTTLE].prop = -2;  /* empty */

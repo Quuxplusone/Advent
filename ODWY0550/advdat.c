@@ -272,8 +272,7 @@ int at_fake_slit(void)
          "ancient Indian turquoise beads!\n\n"
          "A flotilla of ruby-encrusted toy boats is floating in the pool of" SOFT_NL
          "water beside you!\n\n"
-         /* Platt capitalized "Iridium" here; I'm lowercasing it. */
-         "A network of golden chains supports a fantastic iridium crown!\n\n"
+         "A network of golden chains supports a fantastic Iridium crown!\n\n"
          "There is a display case on the wall filled with a fantastic selection" SOFT_NL
          "of magical swords, which are singing \"Hail to the Chief\" in perfect" SOFT_NL
          "pitch and rhythm!\n\n"
@@ -2505,8 +2504,7 @@ int at_beach(void)
     }
     if (keywordo(WATER) || keywordv(FILL) || keywordv(DRINK)) {
         puts("I'm afraid that all that's available here is salt water, which" SOFT_NL
-             /* Platt has "you'de". */
-             "isn't good for anything much... you'd better try elsewhere.");
+             "isn't good for anything much... you'de better try elsewhere.");
         return STAY_STILL;
     }
     return 0;  /* command hasn't been processed yet */
@@ -3536,8 +3534,7 @@ struct Place places[] = {
     /* R_SHELL */ {
         "You're in Shell room.",
         "You're in a large room carved out of sedimentary rock. The floor and" SOFT_NL
-        /* Platt has "imbedded". */
-        "walls are littered with bits of shells embedded in the stone.  A" SOFT_NL
+        "walls are littered with bits of shells imbedded in the stone.  A" SOFT_NL
         "shallow passage proceeds downward, and a somewhat steeper one leads" SOFT_NL
         "up.  A low hands and knees passage enters from the south.",
         F_NOBACK, &at_shell
@@ -4189,14 +4186,12 @@ struct Place places[] = {
     },
     /* R_ARCH_COR_2 */ {
         "You're at bend in arched coral corridor.",
-        /* Platt has "corral". */
-        "You are at a bend in an arched coral passage;  the passage enters" SOFT_NL
+        "You are at a bend in an arched corral passage;  the passage enters" SOFT_NL
         "from the west over a patch of damp sand, turns, and continues north.",
         F_NOBACK, &at_arch_cor_2
     },
     /* R_ARCH_FORK */ {
-        /* Platt has "corral". */
-        "You're at fork in arched coral passage.",
+        "You're at fork in arched corral passage.",
         "You are at a fork in a high, arched coral passage.  The main portion" SOFT_NL
         "of the passage enters from the south;  two smaller passages lead" SOFT_NL
         "east and north.  The smell of salt water is very strong here.",
@@ -4228,8 +4223,7 @@ struct Place places[] = {
     },
     /* R_SHELF */ {
         "You're on shelf of rock above beach.",
-        /* Platt has "sedementary"; I've fixed the spelling. */
-        "You are standing on a large shelf of sedimentary rock overlooking" SOFT_NL
+        "You are standing on a large shelf of sedementary rock overlooking" SOFT_NL
         "a lava beach.  The shelf is an extension of an incredible cliff" SOFT_NL
         "which extends north, south, and upwards for as far as the eye can" SOFT_NL
         "see.  Crudely carved steps lead down from the shelf to the beach, and" SOFT_NL

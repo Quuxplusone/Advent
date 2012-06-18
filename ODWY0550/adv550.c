@@ -501,8 +501,7 @@ void build_object_table(void)
     objs[DOOR].desc[0] = "The way north leads through a massive, rusty, iron door.";
     objs[SNAKE].desc[0] = "A huge green fierce snake bars the way!";
     objs[FISSURE].desc[1] = "A crystalline bridge now spans the fissure.";
-    /* Platt has "imbedded". */
-    objs[TABLET].desc[0] = "A massive stone tablet embedded in the wall reads:" SOFT_NL
+    objs[TABLET].desc[0] = "A massive stone tablet imbedded in the wall reads:" SOFT_NL
                            "\"Congratulations on bringing light into the Dark room!\"";
     objs[PLANT].desc[0] = "There is a tiny little plant in the pit, murmuring \"Water, water, ...\"";              
     objs[PLANT].desc[1] = "There is a 12-foot-tall beanstalk stretching up out of the pit," SOFT_NL
@@ -1307,8 +1306,7 @@ static int class_score[] = { 20, 130, 240, 350, 470, 510, 530, 550, 9999 };
 static const char *class_message[] = {
     "You are obviously a rank amateur.  Better luck next time.",
     "Your score qualifies you as a novice-class adventurer.",
-    /* Platt has an extraneous semicolon here: "rating;". */
-    "You have achieved the rating \"Experienced Adventurer\".",
+    "You have achieved the rating; \"Experienced Adventurer\".",
     "You may now consider yourself a \"Seasoned Adventurer\".",
     "You have reached \"Junior Master\" status.",
     "Your score puts you in Master Adventurer class C.",
@@ -1447,8 +1445,7 @@ void kill_the_player(Location loc)
 
 void close_the_cave(void)
 {
-    /* Platt, following Woods, has "entones". I change it to "intones". */
-    puts("\nThe sepulchral voice intones, \"The cave is now closed.\"  As the echoes" SOFT_NL
+    puts("\nThe sepulchral voice entones, \"The cave is now closed.\"  As the echoes" SOFT_NL
          "fade, there is a blinding flash of light (and a small puff of orange" SOFT_NL
          "smoke). . . .    As your eyes refocus, you look around and find...\n");
     verbosity_mode = FULL;
@@ -1658,8 +1655,7 @@ void getsceptre(void)
     } else {
         printf("You pluck the sceptre from the skeleton's bony hand.  As you do, the" SOFT_NL
                "skeleton raises its head and whispers \"Remember " EMDASH("-") " %s!\" in a" SOFT_NL
-               /* Platt has "forboding". */
-               "foreboding tone; it then sags to the ground and crumbles into dust which" SOFT_NL
+               "forboding tone; it then sags to the ground and crumbles into dust which" SOFT_NL
                "drifts away into the still air of the cave.\n", spelling);
     }
     apport(SKELETON, R_LIMBO);
@@ -2025,10 +2021,9 @@ int weaponry(ObjectWord obj, Location loc)
              "that of a rhinoceros.  The troll fends off your blows effortlessly.");
     } else if (there(OGRE, loc)) {
         if (keywordv(WAVE)) {
-            /* Platt has "contemptously".
-             * It's pretty evil that SWING SWORD is fatal, given that the
+            /* It's pretty evil that SWING SWORD is fatal, given that the
              * solution to this puzzle is the less plausible THROW SWORD. */
-            printf("The ogre contemptuously catches the %s in mid-swing, rips it out" SOFT_NL
+            printf("The ogre contemptously catches the %s in mid-swing, rips it out" SOFT_NL
                    "of your hands, and uses it to chop off your head.\n", word2.text);
             return you_are_dead_at(loc);
         } else if (obj == AXE) {
@@ -2038,8 +2033,7 @@ int weaponry(ObjectWord obj, Location loc)
             return you_are_dead_at(loc);
         } else {
             puts("The sword halts in mid-air, twirls like a dervish, and chants several" SOFT_NL
-                 /* Platt has "Dies Ire". */
-                 "bars of \"Dies Irae\" in a rough tenor voice.  It then begins to spin" SOFT_NL
+                 "bars of \"Dies Ire\" in a rough tenor voice.  It then begins to spin" SOFT_NL
                  "like a rip-saw blade and flies directly at the ogre, who attempts to" SOFT_NL
                  "catch it without success;  it strikes him full on the chest.  There is" SOFT_NL
                  "a brilliant flash of light, a deafening roar and a cloud of oily grey" SOFT_NL
@@ -2129,8 +2123,7 @@ int break_vial(Location loc)
             puts("The dwarf catches a lungful of the cloud, gags audibly and stumbles" SOFT_NL
                  "out of the room retching, sneezing, and cursing up a storm.");
         } else {
-            /* Platt has "blanche". */
-            puts("The dwarves blanch in horror and dash away as fast as their brief" SOFT_NL
+            puts("The dwarves blanche in horror and dash away as fast as their brief" SOFT_NL
                  "and misshapen legs can carry them.");
         }
         apport(DWARF, R_LIMBO);
@@ -2164,8 +2157,7 @@ int break_vial(Location loc)
              "a small puff of flame that ignites and incinerates the vapor.");
     }
     if (there(DJINN, loc)) {
-        /* Platt has "TRUELY". */
-        puts("The djinn takes a deep sniff of the vapor and comments, \"AH!  A TRULY" SOFT_NL
+        puts("The djinn takes a deep sniff of the vapor and comments, \"AH!  A TRUELY" SOFT_NL
              "FINE ARABIAN PERFUME!  I HAVEN'T SMELLED ANYTHING LIKE THAT FOR YEARS!\"");
     }
     if (there(BASILISK, loc) && objs[BASILISK].prop <= 1) {
@@ -3195,11 +3187,9 @@ void destroy_cave(void)
          "a sharp >poof< and a small puff of orange smoke, a bent and bearded" SOFT_NL
          "elf appears.  He is dressed in working clothes, and has a name-tag" SOFT_NL
          "marked \"Ralph\" on his shirt.  \"You blithering idiot!\" he storms." SOFT_NL
-         /* Platt has "work" for "word" again. */
-         "\"You were warned quite clearly not to use that word near water!!  I" SOFT_NL
+         "\"You were warned quite clearly not to use that work near water!!  I" SOFT_NL
          "hadn't gotten all of the bugs out of it yet, and now your incredible" SOFT_NL
-         /* Platt has "incompetance". */
-         "incompetence has totally destroyed Colossal Cave!!  Do you have the" SOFT_NL
+         "incompetance has totally destroyed Colossal Cave!!  Do you have the" SOFT_NL
          "faintest scintilla of an iota of an understanding of how much work" SOFT_NL
          "I'm going to have to do to get the cave rebuilt?!?  I'll have to go" SOFT_NL
          "all the way to Peking for another dragon, and I'll have to convince" SOFT_NL
@@ -3227,8 +3217,7 @@ int attempt_phuggg(Location loc)
             puts("\n>splurch!<\n\n"
                  "Oh, no!  You've turned yourself into a jellyfish, and fallen to the" SOFT_NL
                  "ground and been splattered far and wide!  Well, that certainly wasn't" SOFT_NL
-                 /* Platt has "work" instead of "word"; I'm fixing it. */
-                 "very smart!!!  You were warned not to use that word near water!");
+                 "very smart!!!  You were warned not to use that work near water!");
             return you_are_dead_at(loc);
         } else {
             destroy_cave();
@@ -3416,7 +3405,7 @@ int process_verb(Location loc)
                     puts("Your lamp was already on!");
                 } else {
                     if (lamplife < 40 && here(BATTERIES, loc) && !objs[BATTERIES].prop) {
-                        /* Notice that Platt has "the the". I'm leaving it. */
+                        /* Notice that Platt has "the the". */
                         puts("The old batteries in your lamp were pretty well shot " EMDASH("-") " I've taken the" SOFT_NL
                              "the liberty of putting in the new ones.");
                         objs[BATTERIES].prop = 1;
