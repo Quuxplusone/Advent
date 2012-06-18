@@ -41,10 +41,42 @@ Array fgets_buffer -> 253;
     return buf;
 ];
 
+Global putc_codepoint;
+
 [ _putc xp ch stdout;
-    if (ch == 10)
-        ch = 13;
-    print (char) ch;
+    ! The Z-machine cannot write arbitrary bytes to stdout; it works in
+    ! units of "characters", which may be encoded as single ZSCII bytes
+    ! or Unicode codepoints but must always represent Unicode characters.
+    ! Therefore, if the caller is trying to print a multibyte character,
+    ! we must collect the pieces here and put them back together before
+    ! calling the Z-machine's version of @print or @print_unicode.
+    !
+    ! If the last character emitted to stdout is a multibyte character,
+    ! it won't get printed. That's okay; the caller should ensure that
+    ! the last character emitted is always a newline, anyway.
+
+    ch = ch & $FF;
+    if (ch == 10) {
+        print (char) 13;
+    } else if ($80 <= ch && ch <= $BF) {
+        @log_shift putc_codepoint 6 -> putc_codepoint;
+        putc_codepoint = putc_codepoint | (ch & $3F);
+    } else {
+        ! This is the start of a new character.
+        if (putc_codepoint ~= 0) {
+            @print_unicode putc_codepoint;
+            putc_codepoint = 0;
+        }
+        if (0 <= ch && ch <= $7F) {
+            @print_unicode ch;
+        } else if ($C0 <= ch && ch <= $DF) {
+            putc_codepoint = (ch & $1F);
+        } else if ($E0 <= ch && ch <= $EF) {
+            putc_codepoint = (ch & $0F);
+        } else if ($F0 <= ch && ch <= $F7) {
+            putc_codepoint = (ch & $07);
+        }
+    }
 ];
 
 [ _exit xp zero;
