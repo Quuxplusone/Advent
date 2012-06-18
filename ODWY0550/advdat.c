@@ -334,14 +334,10 @@ int at_inside(void)
 
 int at_cobbles(void)
 {
-    if (movementv(OUT)) return R_INSIDE;
-    if (movementv(SURFACE)) return R_INSIDE;
-    if (movementv(NOWHERE)) return R_INSIDE;  /* what the heck? */
-    if (movementv(ENTRANCE)) return R_INSIDE;
+    if (movementv3(OUT, SURFACE, ENTRANCE)) return R_INSIDE;
     if (movementv(EAST)) return R_INSIDE;
-    if (movementv(IN)) return R_DEBRIS;
+    if (movementv2(IN, WEST)) return R_DEBRIS;
     if (movementp(R_DARK)) return R_DEBRIS;
-    if (movementv(WEST)) return R_DEBRIS;
     if (movementp(R_DEBRIS)) return R_DEBRIS;
     if (movementp(R_SPIT)) return R_SPIT;
     return 0;  /* command hasn't been processed yet */
@@ -350,15 +346,11 @@ int at_cobbles(void)
 int at_debris(void)
 {
     if (movementv(ENTRANCE)) return R_INSIDE;
-    if (movementv(CRAWL)) return R_COBBLES;
+    if (movementv3(CRAWL, PASSAGE, EAST)) return R_COBBLES;
     if (movementp(R_COBBLES)) return R_COBBLES;
-    if (movementv(PASSAGE)) return R_COBBLES;
     if (movementp(R_LOW)) return R_COBBLES;
-    if (movementv(EAST)) return R_COBBLES;
     if (movementp(R_AWK)) return R_AWK;
-    if (movementv(IN)) return R_AWK;
-    if (movementv(UP)) return R_AWK;
-    if (movementv(WEST)) return R_AWK;
+    if (movementv3(IN, UP, WEST)) return R_AWK;
     if (movementp(R_SPIT)) return R_SPIT;
     if (objs[GRATE].prop) {
         if (movementp(R_DEPRESSION)) return R_DEPRESSION;
@@ -387,12 +379,9 @@ int at_debris(void)
 int at_awk(void)
 {
     if (movementv(ENTRANCE)) return R_INSIDE;
-    if (movementv(DOWN)) return R_DEBRIS;
-    if (movementv(EAST)) return R_DEBRIS;
+    if (movementv2(DOWN, EAST)) return R_DEBRIS;
     if (movementp(R_DEBRIS)) return R_DEBRIS;
-    if (movementv(IN)) return R_BIRD;
-    if (movementv(UP)) return R_BIRD;
-    if (movementv(WEST)) return R_BIRD;
+    if (movementv3(IN, UP, WEST)) return R_BIRD;
     if (movementp(R_SPIT)) return R_SPIT;
     if (objs[GRATE].prop) {
         if (movementp(R_DEPRESSION))
@@ -412,9 +401,8 @@ int at_bird(void)
     if (movementp(R_DEBRIS)) return R_DEBRIS;
     if (movementp(R_AWK)) return R_AWK;
     if (movementv(EAST)) return R_AWK;
-    if (movementv(PASSAGE)) return R_SPIT;
     if (movementp(R_SPIT)) return R_SPIT;
-    if (movementv(WEST)) return R_SPIT;
+    if (movementv2(PASSAGE, WEST)) return R_SPIT;
     if (objs[GRATE].prop) {
         if (movementp(R_DEPRESSION))
             return R_DEPRESSION;
@@ -445,22 +433,15 @@ int at_spit(void)
         puts("The crack is far too small for you to enter.");
         return STAY_STILL;
     }
-    /* This is clearly a bug in Platt's code. Going DOWN (the most natural
-     * verb) will work fine, but going STEPS or PIT will kill you.
-     * TODO: perhaps fix this? */
-    if (movementv(DOWN)) return R_EMIST;
-    if (movemento(STEPS) || movementp(R_SPIT)) {
+    /* Platt takes these in a different order. */
+    if (keywordv(JUMP)) {
+        return splatter(R_EMIST);
+    } else if (movementv(DOWN) || movemento(STEPS) || movementp(R_SPIT)) {
         if (toting(GOLD)) {
             puts("You are at the bottom of the pit with a broken neck.");
             return you_are_dead_at(R_EMIST);
         }
         return R_EMIST;
-    }
-    /* Another funny sort-of-bug: JUMP kills you, as does JUMP SOUTH,
-     * but JUMP WEST is caught by the case above, and JUMP DOWN
-     * will get you safely down the stairs after all. */
-    if (keywordv(JUMP)) {
-        return splatter(R_EMIST);
     }
     return 0;  /* command hasn't been processed yet */
 }
@@ -469,16 +450,11 @@ int at_emist(void)
 {
     if (movementv2(LEFT, SOUTH)) return R_NUGGET;
     if (movementv(EAST)) return R_SANDSTONE;
-    if (movementv(FORWARD)) return R_EFISS;
-    if (movementv(HALL)) return R_EFISS;
-    if (movementv(WEST)) return R_EFISS;
-    if (movementv(STAIRS)) return R_HMK;
-    if (movementv(DOWN)) return R_HMK;
-    if (movementv(NORTH)) return R_HMK;
+    if (movementv3(FORWARD, HALL, WEST)) return R_EFISS;
+    if (movementv3(STAIRS, DOWN, NORTH)) return R_HMK;
     if (movementp(R_Y2)) return R_JUMBLE;
-    if (movementv(UP) || movemento(STEPS) ||
-        movementp(R_SPIT) || movementv(DOME) ||
-        movementv(PASSAGE) || movementv(IN)) {
+    if (movementv3(UP, PASSAGE, IN) || movemento(STEPS) ||
+        movementp(R_SPIT) || movementv(DOME)) {
         if (toting(GOLD)) {
             puts("The dome is unclimbable.");
             return STAY_STILL;
@@ -509,8 +485,7 @@ int cross_fissure(VerbWord direction, Location destination)
 
 int at_efiss(void)
 {
-    if (movementv(HALL)) return R_EMIST;
-    if (movementv(EAST)) return R_EMIST;
+    if (movementv2(HALL, EAST)) return R_EMIST;
     return cross_fissure(WEST, R_WFISS);
 }
 
@@ -758,29 +733,25 @@ int at_mazea45(void)
     if (movementv(NORTH)) return R_MAZEA43;
     if (movementv(EAST)) return R_MAZEA46;
     if (movementv(SOUTH)) return R_MAZEA47;
-    if (movementv(UP)) return R_MAZEA87;
-    if (movementv(DOWN)) return R_MAZEA87;
+    if (movementv2(UP, DOWN)) return R_MAZEA87;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea46(void)
 {
-    if (movementv(WEST)) return R_MAZEA45;
-    if (movementv(OUT)) return R_MAZEA45;
+    if (movementv2(WEST, OUT)) return R_MAZEA45;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea47(void)
 {
-    if (movementv(EAST)) return R_MAZEA45;
-    if (movementv(OUT)) return R_MAZEA45;
+    if (movementv2(EAST, OUT)) return R_MAZEA45;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea48(void)
 {
-    if (movementv(UP)) return R_MAZEA44;
-    if (movementv(OUT)) return R_MAZEA44;
+    if (movementv2(UP, OUT)) return R_MAZEA44;
     return 0;  /* command hasn't been processed yet */
 }
 
@@ -846,15 +817,13 @@ int at_mazea55(void)
 
 int at_mazea56(void)
 {
-    if (movementv(UP)) return R_MAZEA55;
-    if (movementv(OUT)) return R_MAZEA55;
+    if (movementv2(UP, OUT)) return R_MAZEA55;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_mazea57_pit(void)
 {
-    if (movementv(DOWN)) return R_BIRD;
-    if (movementv(CLIMB)) return R_BIRD;
+    if (movementv2(DOWN, CLIMB)) return R_BIRD;
     if (movementv(WEST)) return R_MAZEA55;
     if (movementv(SOUTH)) return R_MAZEA58;
     if (movementv(NORTH)) return R_MAZEA83;
@@ -864,20 +833,15 @@ int at_mazea57_pit(void)
 
 int at_mazea58(void)
 {
-    if (movementv(EAST)) return R_MAZEA57_PIT;
-    if (movementv(OUT)) return R_MAZEA57_PIT;
+    if (movementv2(EAST, OUT)) return R_MAZEA57_PIT;
     return 0;  /* command hasn't been processed yet */
 }
 
 int at_elong(void)
 {
-    if (movementv(EAST)) return R_WMIST;
-    if (movementv(UP)) return R_WMIST;
-    if (movementv(CRAWL)) return R_WMIST;
+    if (movementv3(EAST, UP, CRAWL)) return R_WMIST;
     if (movementv(WEST)) return R_WLONG;
-    if (movementv(NORTH)) return R_CROSS;
-    if (movementv(DOWN)) return R_CROSS;
-    if (movementv(HOLE)) return R_CROSS;
+    if (movementv3(NORTH, DOWN, HOLE)) return R_CROSS;
     return 0;  /* command hasn't been processed yet */
 }
 
@@ -960,8 +924,7 @@ int at_e2pit(void)
 int at_slab(void)
 {
     if (movementv(SOUTH)) return R_W2PIT;
-    if (movementv(UP)) return R_ABOVER;
-    if (movementv(CLIMB)) return R_ABOVER;
+    if (movementv2(UP, CLIMB)) return R_ABOVER;
     if (movementv(NORTH)) return R_BEDQUILT;
     if (movementp(R_BEDQUILT)) return R_BEDQUILT;
     return 0;  /* command hasn't been processed yet */
@@ -981,8 +944,7 @@ int at_abover(void)
 int at_abovep(void)
 {
     if (movementv(NORTH)) return R_SJUNC;
-    if (movementv(DOWN)) return R_BEDQUILT;
-    if (movementv(PASSAGE)) return R_BEDQUILT;
+    if (movementv2(DOWN, PASSAGE)) return R_BEDQUILT;
     if (movementv(SOUTH)) return R_STALACT;
     return 0;  /* command hasn't been processed yet */
 }
