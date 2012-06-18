@@ -504,11 +504,10 @@ void build_object_table(void)
     /* Platt has "imbedded". */
     objs[TABLET].desc[0] = "A massive stone tablet embedded in the wall reads:" SOFT_NL
                            "\"Congratulations on bringing light into the Dark room!\"";
-    objs[PLANT].desc[0] = "There is a tiny little plant in the pit, murmuring \"Water, water, ...\"";              
+    objs[PLANT].desc[0] = "There is a tiny little plant in the pit, murmuring \"Water, water, ...\"";
     objs[PLANT].desc[1] = "There is a 12-foot-tall beanstalk stretching up out of the pit," SOFT_NL
                           "bellowing \"WATER!! WATER!!\"";
-    objs[PLANT].desc[2] = "There is a gigantic beanstalk stretching all the way up to the hole.";              
-
+    objs[PLANT].desc[2] = "There is a gigantic beanstalk stretching all the way up to the hole.";
     objs[PLANT2].desc[1] = "The top of a 12-foot-tall beanstalk is poking out of the west pit.";
     objs[PLANT2].desc[2] = "There is a huge beanstalk growing out of the west pit up to the hole.";
     objs[SHADOW].desc[0] = "The shadowy figure seems to be trying to attract your attention.";
@@ -554,7 +553,7 @@ void build_object_table(void)
          "there are signs of melting around the edges of its door.";
     objs[SKELETON].desc[0] = "Resting on the throne (\"sitting\" isn't really the right word) is an" SOFT_NL
          "incredible skeleton.  It is fairly humanoid from the waist up (except" SOFT_NL
-         "for its incredible size and four extra arms);  below that, it resembles" SOFT_NL
+         "for its incredible size and four extra arms); below that, it resembles" SOFT_NL
          "the body of a giant python, and is wrapped in and around the bars and" SOFT_NL
          "rods of the throne.  Clutched in one bony hand is a long sceptre," SOFT_NL
          "ornately encrusted with sapphires!!";
@@ -1060,7 +1059,7 @@ bool tick(void)
         case 15: break;
         case 16:
             puts("\nInto view there bounces a horrible creature!!  Six feet across, it" SOFT_NL
-                 "resembles a large blob of translucent white jelly;  although it looks" SOFT_NL
+                 "resembles a large blob of translucent white jelly; although it looks" SOFT_NL
                  "massive, it is bouncing lightly up and down as though it were as light" SOFT_NL
                  "as a feather.  It is emitting a constant throbbing sound, and it" SOFT_NL
                  ">ROAR<s loudly as it sees you.\n");
@@ -1138,7 +1137,7 @@ void maybe_do_cameo(Location loc)
                  "flutters on out of sight.\n");
             break;
         case 3:
-            puts("Suddenly, the ground quivers underfoot;  a dull rumbling sound" SOFT_NL
+            puts("Suddenly, the ground quivers underfoot; a dull rumbling sound" SOFT_NL
                  "resounds from the rock around you, and in the distance you can" SOFT_NL
                  "hear the crash of falling rock.  The earth tremor subsides after" SOFT_NL
                  "a few seconds without causing any major damage.\n");
@@ -1226,7 +1225,7 @@ struct Hint {
          * is ingenious. */
         "To get out of here, you'll first have to get your bearings so that" SOFT_NL
         "you know where you are.  I suggest that you draw a careful, accurate" SOFT_NL
-        "map of the tunnel system;  for clarity's sake, keep your lines as" SOFT_NL
+        "map of the tunnel system; for clarity's sake, keep your lines as" SOFT_NL
         "straight as is feasible and draw in all of the dead ends and such." SOFT_NL
         "Once you've got a complete and accurate map, examine it carefully; if" SOFT_NL
         "your thoughts refuse to clarify, you might try using the old Yoga" SOFT_NL
@@ -2040,9 +2039,9 @@ int weaponry(ObjectWord obj, Location loc)
                  /* Platt has "Dies Ire". */
                  "bars of \"Dies Irae\" in a rough tenor voice.  It then begins to spin" SOFT_NL
                  "like a rip-saw blade and flies directly at the ogre, who attempts to" SOFT_NL
-                 "catch it without success;  it strikes him full on the chest.  There is" SOFT_NL
+                 "catch it without success; it strikes him full on the chest.  There is" SOFT_NL
                  "a brilliant flash of light, a deafening roar and a cloud of oily grey" SOFT_NL
-                 "smoke;  when the smoke clears (and your eyes begin working properly" SOFT_NL
+                 "smoke; when the smoke clears (and your eyes begin working properly" SOFT_NL
                  "again) you see that the ogre has vanished.  The sword is lying on the" SOFT_NL
                  "ground, sparking and flaming.  Before your eyes it softens and melts," SOFT_NL
                  "writhes as if in pain, and shrinks rapidly until all that is left is" SOFT_NL
@@ -2273,7 +2272,7 @@ int attempt_throw(ObjectWord obj, Location loc)
                         puts("\nAs each of the dragon's teeth strikes the ground, a fully-armed human" SOFT_NL
                              "skeleton springs up from where it struck and leaps to your defense!" SOFT_NL
                              "The skeletal warriors attack the vicious gooseberry goblins and drive" SOFT_NL
-                             "them away in screaming panic;  they then salute you with their ancient" SOFT_NL
+                             "them away in screaming panic; they then salute you with their ancient" SOFT_NL
                              "and rusty swords, and fade silently into nothingness.\n");
                         apport(TEETH, R_LIMBO);
                         apport(GOBLINS, R_LIMBO);
@@ -2597,7 +2596,7 @@ void attempt_help(Location loc)
                 there(OGRE, loc) || there(QUICKSAND, loc) || there(BASILISK, loc) ||
                 objs[BLOB].prop || objs[GOBLINS].prop) {
             puts("Well, you do seem to be having problems, don't you?  Unfortunately," SOFT_NL
-                 "I'm not allowed to help you out;  you got yourself into this, and" SOFT_NL
+                 "I'm not allowed to help you out; you got yourself into this, and" SOFT_NL
                  "you'll have to find a solution to your problems yourself.");
         } else {
             static bool been_here_before = false;
@@ -2661,7 +2660,7 @@ void attempt_info(void)
          "\"BRIEF\", which tells me never to repeat the full description of a" SOFT_NL
          "place unless you explicitly ask me to by saying \"LOOK\".  If you" SOFT_NL
          "are an experienced adventurer, you may wish to specify \"FAST\", which" SOFT_NL
-         "is like \"BRIEF\" but more so;  in \"FAST\" mode I will *never* under" SOFT_NL
+         "is like \"BRIEF\" but more so; in \"FAST\" mode I will *never* under" SOFT_NL
          "any circumstances give the full description of a place.  Finally, if" SOFT_NL
          "you are in \"BRIEF\" or \"FAST\" modes, you may return to the normal mode" SOFT_NL
          "of operation by saying \"FULL\".\n");
@@ -2677,7 +2676,7 @@ void attempt_news(void)
          "         c/o Honeywell Information Systems\n"
          "         5250 West Century Boulevard\n"
          "         Los Angeles, CA  90045\n\n"
-         "There is no charge for the maps;  however, each request MUST include" SOFT_NL
+         "There is no charge for the maps; however, each request MUST include" SOFT_NL
          "a large (legal-sized or better) self-addressed envelope with at least" SOFT_NL
          "two first-class stamps.  Requests received without envelopes, or with" SOFT_NL
          "insufficient return postage, will be tossed into a bottomless pit and" SOFT_NL
@@ -2689,9 +2688,9 @@ void attempt_news(void)
          "1/19/82 " EMDASH("-") " Based on many requests, the SAVE/RESTORE logic has been" SOFT_NL
          "modified in a way that makes exploration of dangerous sections of the" SOFT_NL
          "cave rather easier.  Three changes are effective:  (1) you need not" SOFT_NL
-         "wait 30 minutes after SAVE'ing a game to RESTORE it;  (2) when you" SOFT_NL
+         "wait 30 minutes after SAVE'ing a game to RESTORE it; (2) when you" SOFT_NL
          "have SAVE'd a game, you will have the chance to continue with your" SOFT_NL
-         "exploration immediately;  (3) when you RESTORE a game, you will have" SOFT_NL
+         "exploration immediately; (3) when you RESTORE a game, you will have" SOFT_NL
          "the option to keep the saved game on disk, and can thus RESTORE it" SOFT_NL
          "an unlimited number of times.\n\n"
          "A minor bug in the pirate logic has been fixed.\n\n"
@@ -3260,7 +3259,7 @@ int attempt_phuggg(Location loc)
                     case 3:
                         puts("There is a sharp sizzling sound.  The dwarves are engulfed in" SOFT_NL
                              "a wave of fire that appears from nowhere, and are completely" SOFT_NL
-                             "incinerated;  the flames then vanish into nothingness again.");
+                             "incinerated; the flames then vanish into nothingness again.");
                         break;
                     case 4:
                         puts("There is a sharp whistling sound from nowhere.  The dwarf shudders" SOFT_NL
@@ -3305,7 +3304,7 @@ int attempt_phuggg(Location loc)
                         puts("There is a sharp crackling sound from the air above you.  The dwarves" SOFT_NL
                              "stiffen, fall to the ground, and melt into a large puddle of soggy" SOFT_NL
                              "goo.  The goo twitches a few times and then flows at you with" SOFT_NL
-                             "incredible speed;  it attacks and strangles you with little" SOFT_NL
+                             "incredible speed; it attacks and strangles you with little" SOFT_NL
                              "difficulty.");
                         break;
                 }
@@ -4101,7 +4100,7 @@ bool clock4(Location loc)
                  "MIGHT FIND OF USE IF YOU SHOULD EVER FIND YOURSELF BEING ATTACKED BY" SOFT_NL
                  "THOSE PESTIFEROUS DWARVES.  YOU SHOULD USE IT ONLY AS A LAST RESORT," SOFT_NL
                  "THOUGH, SINCE IT IS A MOST POTENT WORD AND IS PRONE TO BACKFIRE FOR" SOFT_NL
-                 "NO OBVIOUS REASON;  ALSO, IT SHOULD NEVER BE USED NEAR WATER OR NEAR" SOFT_NL
+                 "NO OBVIOUS REASON; ALSO, IT SHOULD NEVER BE USED NEAR WATER OR NEAR" SOFT_NL
                  "ANY SHARP WEAPON OR THE RESULTS MAY BE MOST UNFORTUNATE.  THE WORD" SOFT_NL
                  "IS 'phuggg'\", whispers the djinn, \"AND IT MUST BE PRONOUNCED CAREFULLY" SOFT_NL
                  "IF IT IS TO HAVE THE PROPER EFFECT.  FAREWELL AGAIN, AND GOOD LUCK!\"" SOFT_NL
@@ -4118,7 +4117,7 @@ bool clock4(Location loc)
                     objs[MUSHROOM].prop = 3;
                     mushtime = 40;
                     puts("\nA strange malaise suddenly afflicts you.  You shiver with chill," SOFT_NL
-                         "and your muscles seem to turn to putty;  everything around you becomes" SOFT_NL
+                         "and your muscles seem to turn to putty; everything around you becomes" SOFT_NL
                          "grey and unreal.  The fit quickly passes, and you find that your body" SOFT_NL
                          "has degenerated back to what it was like before you ate the mushroom." SOFT_NL);
                     strength = 7;

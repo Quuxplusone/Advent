@@ -1173,7 +1173,7 @@ int at_falls(void)
             if (something_got_lost) {
                 puts("You plunge into the water and are sucked down by the whirlpool.  The" SOFT_NL
                      "current is incredibly strong, and you barely manage to hold onto" SOFT_NL
-                     "your lamp;  everything else is pulled from your grasp and is lost in" SOFT_NL
+                     "your lamp; everything else is pulled from your grasp and is lost in" SOFT_NL
                      "the swirling waters.");
             } else {
                 puts("You plunge into the water and are sucked down by the whirlpool.");
@@ -1475,7 +1475,7 @@ int at_swofchasm(void)
             if ((o == EGGS) && have_stolen_back_eggs) {
                 puts("The troll nimbly steps to one side and grins nastily as the nest of" SOFT_NL
                      "golden eggs flies past him and plummets into the chasm.  \"Fool me" SOFT_NL
-                     "once, shame on you;  fool me twice, shame on me!\" he sneers.  \"I want" SOFT_NL
+                     "once, shame on you; fool me twice, shame on me!\" he sneers.  \"I want" SOFT_NL
                      "something a touch more substantial this time!\"");
                 apport(EGGS, R_YLEM);
                 objs[TROLL].prop = 0;
@@ -1590,7 +1590,7 @@ int at_neofchasm(void)
             if ((o == EGGS) && have_stolen_back_eggs) {
                 puts("The troll nimbly steps to one side and grins nastily as the nest of" SOFT_NL
                      "golden eggs flies past him and plummets into the chasm.  \"Fool me" SOFT_NL
-                     "once, shame on you;  fool me twice, shame on me!\" he sneers.  \"I want" SOFT_NL
+                     "once, shame on you; fool me twice, shame on me!\" he sneers.  \"I want" SOFT_NL
                      "something a touch more substantial this time!");
                 apport(EGGS, R_YLEM);
                 objs[TROLL].prop = 0;
@@ -1636,7 +1636,7 @@ int at_neofchasm(void)
                 if (there(BEAR, R_NEOFCHASM)) {
                     puts("that, he aims a tube running from the backpack directly at the bear" SOFT_NL
                          "and pulls a trigger.  A spout of magical fire roars out and singes the" SOFT_NL
-                         "bear's fur;  the bear bellows in pain and dashes onto the bridge to" SOFT_NL
+                         "bear's fur; the bear bellows in pain and dashes onto the bridge to" SOFT_NL
                          "escape.  The bridge shudders, groans, and collapses under the weight," SOFT_NL
                          "and you and the bear plunge down into the chasm.");
                     apport(BEAR, R_YLEM);
@@ -1789,7 +1789,7 @@ int at_fbarr(void)
 int at_barr(void)
 {
     if (keywordv(GET) && keywordo(AXE) && there(AXE, R_BARR) && objs[AXE].prop) {
-        puts("As you approach the bear, it snarls threateningly;  you are forced" SOFT_NL
+        puts("As you approach the bear, it snarls threateningly; you are forced" SOFT_NL
              "to retreat without the axe.");
         return STAY_STILL;
     }
@@ -3178,7 +3178,7 @@ struct Place places[] = {
         "the west, filled with wisps of white mist that sway to and fro" SOFT_NL
         "almost as if alive.  Rough stone steps lead up to a passage at the" SOFT_NL
         "top of a dome above you.  A wide staircase runs downward into" SOFT_NL
-        "the darkness;  a chill wind blows up from below.  There are small" SOFT_NL
+        "the darkness; a chill wind blows up from below.  There are small" SOFT_NL
         "passages to the north and south, and a small crack leads east.",
         0, &at_emist
     },
@@ -3727,11 +3727,11 @@ struct Place places[] = {
         "flickering red light from the volcanic gorge behind you.  Carved" SOFT_NL
         "into the walls of the valley is an incredible series of stone faces." SOFT_NL
         "Some of them look down into the valley with expressions of" SOFT_NL
-        "benevolence that would credit a saint;  others glare with a malice" SOFT_NL
+        "benevolence that would credit a saint; others glare with a malice" SOFT_NL
         "that makes the heart grow faint.  All of them are imbued with a" SOFT_NL
         "fantastic seeming of life by the shifting and flickering light of" SOFT_NL
         "the volcano.  The entire far end of the valley is taken up by an" SOFT_NL
-        "immense carving of a seated figure;  its exact form cannot be seen" SOFT_NL
+        "immense carving of a seated figure; its exact form cannot be seen" SOFT_NL
         "from here due to the uncertainty of the light.",
         F_LIGHTED|F_NOBACK|F_NODWARF, &at_faces
     },
@@ -3751,7 +3751,7 @@ struct Place places[] = {
         "large room filled with multicolored fog.  The sides and far end" SOFT_NL
         "of the room cannot be seen due to the thickness of the fog " EMDASH("-") " it's" SOFT_NL
         "a real pea-souper (even to the color in places!).  A passage leads" SOFT_NL
-        "back to the south;  a dull rumbling sound issues from the passage.",
+        "back to the south; a dull rumbling sound issues from the passage.",
         F_NOBACK|F_NODWARF, &at_plain_1
     },
     /* R_PLAIN_2 */ {
@@ -3873,7 +3873,7 @@ struct Place places[] = {
     /* R_AUDIENCE_E */ {
         "You're at east end of Audience Hall.",
         "You are at the eastern end of the Audience Hall.  There is a large" SOFT_NL
-        "dais rising out of the floor here;  resting upon the dais is a strange" HARD_HYPHEN
+        "dais rising out of the floor here; resting upon the dais is a strange" HARD_HYPHEN
         "looking throne made out of interlocking bars and rods of metal.",
             F_LIGHTED|F_NODWARF, &at_audience_e
     },
@@ -4031,13 +4031,13 @@ struct Place places[] = {
     /* R_CORRID_3 */ {
         "You're at division in passage.",
         "You are at a division in a narrow passage.  Two spurs run east and" SOFT_NL
-        "north;  the main passage exits to the south.",
+        "north; the main passage exits to the south.",
         0, &at_corrid_3
     },
     /* R_CUBICLE */ {
         "You're in dank cubicle.",
         "You are in a small, dank cubicle of rock.  A small passage leads back" SOFT_NL
-        "out to the south;  there is no other obvious exit.",
+        "out to the south; there is no other obvious exit.",
         F_ONE_EXIT, &at_cubicle
     },
     /* R_SPHERICAL */ {
@@ -4063,7 +4063,7 @@ struct Place places[] = {
     /* R_LAIR */ {
         "You're in the Sorcerer's Lair.",
         "This is the Sorcerer's Lair.  The walls are covered with exotic runes" SOFT_NL
-        "written in strange, indecipherable scripts;  the only readable phrase" SOFT_NL
+        "written in strange, indecipherable scripts; the only readable phrase" SOFT_NL
         "reads \"noside samoht\".  Strange shadows flit about on the walls, but" SOFT_NL
         "there is nothing visible to cast them.  Iridescent blue light drips" SOFT_NL
         "from a stalactite far above, falls towards the floor, and evaporates" SOFT_NL
@@ -4091,7 +4091,7 @@ struct Place places[] = {
     /* R_ICE */ {
         "You're in Ice room.",
         "You are in the Ice room.  The walls and ceiling here are composed of" SOFT_NL
-        "clear blue glacial ice;  the floor is fortunately made of rock and" SOFT_NL
+        "clear blue glacial ice; the floor is fortunately made of rock and" SOFT_NL
         "is easy to walk upon.  There is a passage leading to the northwest," SOFT_NL
         "and a slide of polished ice leading downwards to the east " EMDASH("-") " if you" SOFT_NL
         "were to slide down it you probably couldn't get back up.",
@@ -4151,7 +4151,7 @@ struct Place places[] = {
     /* R_BRINK_3 */ {
         "You're on eastern side of bottomless pit.",
         "You are standing on the eastern side of a bottomless pit.  A narrow" SOFT_NL
-        "ledge runs north towards a dimly-visible passage;  the ledge once" SOFT_NL
+        "ledge runs north towards a dimly-visible passage; the ledge once" SOFT_NL
         "continued south of this point but has been shattered by falling rock." SOFT_NL
         "A narrow crack in the rock leads northeast.",
         0, &at_brink_3
@@ -4190,7 +4190,7 @@ struct Place places[] = {
     /* R_ARCH_COR_2 */ {
         "You're at bend in arched coral corridor.",
         /* Platt has "corral". */
-        "You are at a bend in an arched coral passage;  the passage enters" SOFT_NL
+        "You are at a bend in an arched coral passage; the passage enters" SOFT_NL
         "from the west over a patch of damp sand, turns, and continues north.",
         F_NOBACK, &at_arch_cor_2
     },
@@ -4198,7 +4198,7 @@ struct Place places[] = {
         /* Platt has "corral". */
         "You're at fork in arched coral passage.",
         "You are at a fork in a high, arched coral passage.  The main portion" SOFT_NL
-        "of the passage enters from the south;  two smaller passages lead" SOFT_NL
+        "of the passage enters from the south; two smaller passages lead" SOFT_NL
         "east and north.  The smell of salt water is very strong here.",
         0, &at_arch_fork
     },
