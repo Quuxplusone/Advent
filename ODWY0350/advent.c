@@ -25,7 +25,7 @@ int ran(int range) { return rand() % range; }
 
 #define SOFT_NL "\n"
 #define SOFT_HYPHEN "-\n"
-#define EMDASH(x) x
+#define EMDASH(x) "\xE2\x80\x94"  /* U+2014 "EM DASH" */
 
 bool pct(int percent) { return (ran(100) < percent); }
 bool streq(const char *a, const char *b) { return !strncmp(a, b, 5); }
