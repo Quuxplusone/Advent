@@ -155,8 +155,8 @@ diff -Nur vbcc/frontend/vc.c vbcc-patched/frontend/vc.c
          if(!strncmp(parm,"-isc=",5)){scname=parm+5;*parm=0;}
          if(!strncmp(parm,"-iscv=",6)){scv=parm+6;*parm=0;}
 diff -Nur vbcc/ic.c vbcc-patched/ic.c
---- vbcc/ic.c	2012-06-11 15:52:23.000000000 -0700
-+++ vbcc-patched/ic.c	2012-06-11 15:46:59.000000000 -0700
+--- vbcc/ic.c	2012-06-17 21:02:02.000000000 -0700
++++ vbcc-patched/ic.c	2012-06-17 21:10:35.000000000 -0700
 @@ -1,5 +1,6 @@
  /*  $VER: vbcc (ic.c) V0.8  */
  
@@ -164,12 +164,12 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
  #include "vbc.h"
  #include "opt.h"
  
-@@ -488,6 +489,177 @@
+@@ -488,6 +489,199 @@
    return new;
  }
  
 +/* This function serves a dual purpose: it turns the const_list into a nice
-+ * C string, but it also checks to see if it's all printable ASCII, and if
++ * C string, but it also checks to see if it's null-terminated, and if
 + * it's not, we simply return NULL. Our caller is responsible for doing the
 + * right thing in that case. */
 +static char *const_list_to_string(struct const_list *cl)
@@ -181,7 +181,6 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
 +	    case '\0': if (cx->next != NULL) return NULL; break;
 +	    case '\t': case '\n': /* okay */ break;
 +	    default:
-+		if (ch < 32 || 126 < ch) return NULL;
 +		if (cx->next == NULL) return NULL;  /* not null-terminated */
 +		break;
 +	}
@@ -296,26 +295,49 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
 +    int len = 8;
 +    strcpy(inline_asm, "\tprint \"");
 +    for (int i=0; text[i] != '\0'; ++i) {
-+	if (len+10 >= cap) {
-+	    cap += 20;
-+	    inline_asm = myrealloc(inline_asm, cap);
-+	}
-+	switch (text[i]) {
-+	    case '\n': inline_asm[len++] = '^'; break;
-+	    case '\t': strcpy(inline_asm+len, "@{9}"); len += 4; break;
-+	    case '"': inline_asm[len++] = '~'; break;
-+	    case '@': strcpy(inline_asm+len, "@{40}"); len += 5; break;
-+	    case '\\': strcpy(inline_asm+len, "@{5c}"); len += 5; break;
-+	    case '~': strcpy(inline_asm+len, "@{7e}"); len += 5; break;
-+	    case '^': strcpy(inline_asm+len, "@@94\",\""); len += 7; break;
-+	    default:
-+		/* This should have been assured by const_list_to_string(). */
-+		assert(32 <= text[i] && text[i] <= 126);
-+		inline_asm[len++] = text[i];
-+		break;
++	if (len+40 >= cap)
++	    inline_asm = myrealloc(inline_asm, cap += 50);
++	if ((text[i] & 0x80) != 0) {
++	    unsigned int w = text[i] & 0xFF;
++	    if (0xC2 <= w && w <= 0xDF) {
++		w &= 0x1F;
++		w = (w << 6) | text[++i] & 0x3F;
++	    } else if (0xE0 <= w && w <= 0xEF) {
++		w &= 0x0F;
++		w = (w << 6) | text[++i] & 0x3F;
++		w = (w << 6) | text[++i] & 0x3F;
++	    } else {
++		ierror(0);  /* unsupported or invalid UTF-8 encoding */
++	    }
++	    if (strcmp(inline_asm+len-9, "\t@print \"") == 0) {
++	        len -= 9;
++	    } else {
++		strcpy(inline_asm+len, "\";\n"); len += 3;
++	    }
++	    sprintf(inline_asm+len, "\t@print_unicode $%04X;\n\tprint \"", w);
++	    len = strlen(inline_asm);
++	} else {
++	    switch (text[i]) {
++		case '\n': inline_asm[len++] = '^'; break;
++		case '\t': strcpy(inline_asm+len, "@{9}"); len += 4; break;
++		case '"': inline_asm[len++] = '~'; break;
++		case '@': strcpy(inline_asm+len, "@{40}"); len += 5; break;
++		case '\\': strcpy(inline_asm+len, "@{5c}"); len += 5; break;
++		case '~': strcpy(inline_asm+len, "@{7e}"); len += 5; break;
++		case '^': strcpy(inline_asm+len, "@@94\",\""); len += 7; break;
++		default:
++		    /* This should have been assured by const_list_to_string(). */
++		    assert(32 <= text[i] && text[i] <= 126);
++		    inline_asm[len++] = text[i];
++		    break;
++	    }
 +	}
 +    }
-+    strcpy(inline_asm+len, "\";\n");
++    if (strcmp(inline_asm+len-9, "\t@print \"") == 0) {
++	len -= 9;
++    } else {
++	strcpy(inline_asm+len, "\";\n"); len += 3;
++    }
 +
 +    char pfname[50];
 +    static int counter = 0;
@@ -342,7 +364,7 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
  
  void gen_IC(np p,int ltrue,int lfalse)
  /*  Erzeugt eine IC-Liste aus einer expression      */
-@@ -915,6 +1087,129 @@
+@@ -915,6 +1109,129 @@
          struct IC *merk_fp,*lp;
  	unsigned int merk_opushed=opushed;
  #endif
