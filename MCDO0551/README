@@ -1,0 +1,32 @@
+This directory contains the unzipped contents of
+http://miriam-english.org/files/ai-attic/Programs/Classic/Adventure/Adventure.2/advent.shr
+
+The Makefile will invoke f77 (which you can install on Ubuntu
+by running "sudo apt-get install fort77") to compile McDonald's
+data-munger, and then run the munger to convert the plain-text
+ADVDAT into a binary file ADVTXT. Meanwhile, we compile "aamain.f"
+and "asubs.f" into an executable called "adv551". At runtime,
+the executable expects ADVTXT to appear in the current working
+directory.
+
+McDonald's original documentation (circa 1990) is in the file
+"advent.doc" in this directory. The game itself contains the
+version string <Generic Adventure 551 -- Version:6.6, August 1990>.
+
+As McDonald explains, this is a port (from VAX Fortran to portable
+Fortran 77) and allegedly very minor expansion of a 551-point
+1985 VAX "Adventure" program, which itself was an expansion of
+David Long's 500-point 1980 expansion of Crowther and Woods' game.
+Long's 500-point game is for some reason version-numbered
+"Adventure 5", and the anonymous VAX game is therefore numbered
+"Adventure 6", as mentioned above. This is not to be confused with
+David Platt's 550-point early-1980s expansion, sometimes referred
+to as "Adventure 3", which exists on a completely disjoint branch
+of the Adventure family tree. (For Platt's version, see the
+directories PLAT0550/ and ODWY0550/.)
+
+Unlike David Platt, who wrote in a domain-specific language he
+called "A-code" and sacrificed several of the game's simulationist
+aspects for the sake of ease-of-implementation, Long started with
+Woods' original code and preserved much of it, right down to the
+original copious comments.
