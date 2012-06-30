@@ -553,9 +553,9 @@ C***   GETLIN
 
 20      IF(BLKLIN)WRITE(*,*)'  '
 	WRITE(*,1266)
-1266	FORMAT(' >')
+C1266	FORMAT(' >')
 C??????????????????????????????? THE FOLLOWING WORKS ON MANY COMPUTERS:
-C1266	FORMAT(' >',$)
+1266	FORMAT(' >',$)
 30      READ (*,50)CHRX
 50      FORMAT(70A1)
         DO 1 I=1,70
@@ -2433,9 +2433,9 @@ C  PRINT MESSAGE X, WAIT FOR YES/NO ANSWER.
 
 1       IF(X.NE.0)CALL RSPEAK(X)
         WRITE(*,338)
-338    FORMAT(/,' >')
+C338    FORMAT(/,' >')
 C??????????????? THE FOLLOWING WORKS BETTER ON VAXES, ETC:
-C338    FORMAT(/,' >',$)
+338    FORMAT(/,' >',$)
        READ(*,30)REPLY
 30     FORMAT(A6)
        DO 2 I=1,6
