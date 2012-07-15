@@ -14,12 +14,11 @@ McDonald's original documentation (circa 1990) is in the file
 version string <Generic Adventure 551 -- Version:6.6, August 1990>.
 
 As McDonald explains, this is a port (from VAX Fortran to portable
-Fortran 77) and allegedly very minor expansion of a 551-point
-1985 VAX "Adventure" program, which itself was an expansion of
-David Long's 500-point 1980 expansion of Crowther and Woods' game.
-Long's 500-point game is for some reason version-numbered
-"Adventure 5", and the anonymous VAX game is therefore numbered
-"Adventure 6", as mentioned above. This is not to be confused with
+Fortran 77) and very minor expansion of a 551-point 1985 VAX
+"Adventure", which itself was an expansion of David Long's 500-point
+1979 expansion. Long's 500-point game is for some reason
+version-numbered "Adventure 5", and the anonymous VAX game is
+therefore numbered "Adventure 6". This is not to be confused with
 David Platt's 550-point early-1980s expansion, sometimes referred
 to as "Adventure 3", which exists on a completely disjoint branch
 of the Adventure family tree. (For Platt's version, see the
@@ -30,3 +29,32 @@ called "A-code" and sacrificed several of the game's simulationist
 aspects for the sake of ease-of-implementation, Long started with
 Woods' original code and preserved much of it, right down to the
 original copious comments.
+
+Compared to the original game, Long's 500-point version added
+the Wumpus, elfin sword, River Styx, Alice puzzle, Altar,
+Winery, natural bridge, Lost River Canyon, Flower Room, and
+the combination safe in the Well House.
+
+McDonald's version (dated "Version:6.6, August 1990") adds a
+Castle of the Elves; a quartz sphere in the Crystal Palace;
+and a star sapphire in the Star Chamber.  I'm not sure which
+of the differences are due to McDonald and which to the anonymous
+author of Adventure 6.0.
+
+There is another C port of MCDO0551, written by Robert R. Hall,
+available online at
+ftp://ftp.uni-duesseldorf.de/ftp/ftp/pub/unix/minix/1.7.1/src/src/commands/advent/
+
+
+A 501(?)-point Fortran version (dated "Version:5.2/2, October-79",
+posted to comp.sources.games in May 1990) is available at
+http://cd.textfiles.com/gigagames9308/NET/USENET/VOLUME9/ADVEN
+Unfortunately, this version is not F77-friendly.
+It has no Castle of the Elves; its crystal ball is "opal", not
+"quartz"; it has nothing in the Star Chamber at all (although a
+comment refers to a "sapphire" anyway); and it adds a Haunted
+Chamber to the north of the awkward canyon. The Haunted Chamber
+leads to a "bizarre room" containing a magic word apparently
+designed to bring the room's statues to life, but in Version 5.2/2
+the word is unimplemented. Russel Dalenberg's Adventure Family
+Tree refers to this version as "ANON0501".
