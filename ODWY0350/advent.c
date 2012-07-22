@@ -1873,7 +1873,7 @@ bool move_dwarves_and_pirate(Location loc)
             if (dtotal == 1) {
                 puts("There is a threatening little dwarf in the room with you!");
             } else {
-                printf("There are %d threatening little dwarves in the room with you.\n", dtotal);
+                printf("There are %d threatening little dwarves in the room with you!\n", dtotal);
             }
             if (attack) {
                 if (dflag == 2) dflag = 3;
@@ -3029,11 +3029,11 @@ Instruction *determine_motion_instruction(Location loc, MotionWord mot)
                 puts("There is no way to go in that direction.");
                 break;
             case IN: case OUT:
-                puts("I don't know in from out here.    Use compass points or name something" SOFT_NL
+                puts("I don't know in from out here.  Use compass points or name something" SOFT_NL
                      "in the general direction you want to go.");
                 break;
             case FORWARD: case L: case R:
-                puts("I am unsure how you are facing.    Use compass points or nearby objects.");
+                puts("I am unsure how you are facing.  Use compass points or nearby objects.");
                 break;
             default:
                 puts("I don't know how to apply that word here.");
