@@ -121,7 +121,10 @@ typedef enum {
 #endif /* SAVE_AND_RESTORE */
 } ActionWord;
 
-const char *message[13];  /* messages tied to certain vocabulary words */
+typedef enum {
+    ABRA, HELP, TREES, DIG, LOST, MIST, FUCK, STOP, INFO, SWIM
+} MessageWord;
+
 const char ok[] = "OK.";  /* Woods' Fortran version didn't include the period, by the way. */
 const char pitch_dark_msg[] = "It is now pitch dark.  If you proceed you will most likely fall into a pit.";
 
@@ -325,105 +328,26 @@ void build_vocabulary(void)
 
     /* Finally, our vocabulary is rounded out by words like HELP, which
      * trigger the printing of fixed messages. */
-    new_message_word("abra", 0);
-    new_message_word("abrac", 0);
-    new_message_word("opens", 0);
-    new_message_word("sesam", 0);
-    new_message_word("shaza", 0);
-    new_message_word("hocus", 0);
-    new_message_word("pocus", 0);
-    message[0] = "Good try, but that is an old worn-out magic word.";
-
-    new_message_word("help", 1);
-    new_message_word("?", 1);
-    message[1] =
-        "I know of places, actions, and things. Most of my vocabulary" SOFT_NL
-        "describes places and is used to move you there. To move, try words" SOFT_NL
-        "like forest, building, downstream, enter, east, west, north, south," SOFT_NL
-        "up, or down. I know about a few special objects, like a black rod" SOFT_NL
-        "hidden in the cave. These objects can be manipulated using some of" SOFT_NL
-        "the action words that I know. Usually you will need to give both the" SOFT_NL
-        "object and action words (in either order), but sometimes I can infer" SOFT_NL
-        "the object from the verb alone. Some objects also imply verbs; in" SOFT_NL
-        "particular, \"inventory\" implies \"take inventory\", which causes me to" SOFT_NL
-        "give you a list of what you're carrying. The objects have side" SOFT_NL
-        "effects; for instance, the rod scares the bird. Usually people having" SOFT_NL
-        "trouble moving just need to try a few more words. Usually people" SOFT_NL
-        "trying unsuccessfully to manipulate an object are attempting something" SOFT_NL
-        "beyond their (or my!) capabilities and should try a completely" SOFT_NL
-        "different tack. To speed the game you can sometimes move long" SOFT_NL
-        "distances with a single word. For example, \"building\" usually gets" SOFT_NL
-        "you to the building from anywhere above ground except when lost in the" SOFT_NL
-        "forest. Also, note that cave passages turn a lot, and that leaving a" SOFT_NL
-        "room to the north does not guarantee entering the next from the south." SOFT_NL
-        "Good luck!";
-
-    new_message_word("tree", 2);
-    new_message_word("trees", 2);
-    message[2] =
-        "The trees of the forest are large hardwood oak and maple, with an" SOFT_NL
-        "occasional grove of pine or spruce.  There is quite a bit of under" SOFT_HYPHEN
-        "growth, largely birch and ash saplings plus nondescript bushes of" SOFT_NL
-        "various sorts.  This time of year visibility is quite restricted by" SOFT_NL
-        "all the leaves, but travel is quite easy if you detour around the" SOFT_NL
-        "spruce and berry bushes.";
-
-    new_message_word("dig", 3);
-    new_message_word("excav", 3);
-    message[3] =
-        "Digging without a shovel is quite impractical.  Even with a shovel" SOFT_NL
-        "progress is unlikely.";
-
-    new_message_word("lost", 4);
-    message[4] = "I'm as confused as you are.";
-    message[5] =
-        "There is a loud explosion and you are suddenly splashed across the" SOFT_NL
-        "walls of the room.";
-    message[6] =
-        "There is a loud explosion and a twenty-foot hole appears in the far" SOFT_NL
-        "wall, burying the snakes in the rubble. A river of molten lava pours" SOFT_NL
-        "in through the hole, destroying everything in its path, including you!";
-
-    new_message_word("mist", 7);
-    message[7] =
-        "Mist is a white vapor, usually water, seen from time to time in" SOFT_NL
-        "caverns.  It can be found anywhere but is frequently a sign of a deep" SOFT_NL
-        "pit leading down to water.";
-
-    new_message_word("fuck", 8);
-    message[8] = "Watch it!";
-    message[9] =
-        "There is a loud explosion and a twenty-foot hole appears in the far" SOFT_NL
-        "wall, burying the dwarves in the rubble.  You march through the hole" SOFT_NL
-        "and find yourself in the main office, where a cheering band of" SOFT_NL
-        "friendly elves carry the conquering adventurer off into the sunset.";
-
-    new_message_word("stop", 10);
-    message[10] = "I don't know the word \"stop\".  Use \"quit\" if you want to give up.";
-    new_message_word("info", 11);
-    new_message_word("infor", 11);
-    message[11] =
-        "If you want to end your adventure early, say \"quit\". To get full" SOFT_NL
-        "credit for a treasure, you must have left it safely in the building," SOFT_NL
-        "though you get partial credit just for locating it. You lose points" SOFT_NL
-        "for getting killed, or for quitting, though the former costs you more." SOFT_NL
-        "There are also points based on how much (if any) of the cave you've" SOFT_NL
-        "managed to explore; in particular, there is a large bonus just for" SOFT_NL
-        "getting in (to distinguish the beginners from the rest of the pack)," SOFT_NL
-        "and there are other ways to determine whether you've been through some" SOFT_NL
-        "of the more harrowing sections. If you think you've found all the" SOFT_NL
-        "treasures, just keep exploring for a while. If nothing interesting" SOFT_NL
-        "happens, you haven't found them all yet. If something interesting" SOFT_NL
-        "DOES happen, it means you're getting a bonus and have an opportunity" SOFT_NL
-        "to garner many more points in the master's section." SOFT_NL
-        "I may occasionally offer hints if you seem to be having trouble." SOFT_NL
-        "If I do, I'll warn you in advance how much it will affect your score" SOFT_NL
-        "to accept the hints. Finally, to save paper, you may specify \"brief\"," SOFT_NL
-        "which tells me never to repeat the full description of a place" SOFT_NL
-        "unless you explicitly ask me to.";
-
-    new_message_word("swim", 12);
-    message[12] = "I don't know how.";
+    new_message_word("abra", ABRA);
+    new_message_word("abrac", ABRA);
+    new_message_word("opens", ABRA);
+    new_message_word("sesam", ABRA);
+    new_message_word("shaza", ABRA);
+    new_message_word("hocus", ABRA);
+    new_message_word("pocus", ABRA);
+    new_message_word("help", HELP);
+    new_message_word("?", HELP);
+    new_message_word("tree", TREES);
+    new_message_word("trees", TREES);
+    new_message_word("dig", DIG);
+    new_message_word("excav", DIG);
+    new_message_word("lost", LOST);
+    new_message_word("mist", MIST);
+    new_message_word("fuck", FUCK);
+    new_message_word("stop", STOP);
+    new_message_word("info", INFO);
+    new_message_word("infor", INFO);
+    new_message_word("swim", SWIM);
 }
 
 /*========== Locations. ===================================================
@@ -2660,10 +2584,22 @@ void attempt_wave(ObjectWord obj, Location loc)  /* section 99 in Knuth */
 void attempt_blast(Location loc)  /* section 99 in Knuth */
 {
     if (closed && objs[ROD2].prop >= 0) {
-        bonus = (here(ROD2, loc) ? 25 :  /* bonus for blowing self up */
-                 (loc == R_NEEND) ? 30 :  /* bonus for drowning in magma */
-                 45);  /* bonus for winning the game */
-        puts(message[bonus/5]);
+        if (here(ROD2, loc)) {
+            bonus = 25;
+            puts("There is a loud explosion and you are suddenly splashed across the" SOFT_NL
+                 "walls of the room.");
+        } else if (loc == R_NEEND) {
+            bonus = 30;
+            puts("There is a loud explosion and a twenty-foot hole appears in the far" SOFT_NL
+                 "wall, burying the snakes in the rubble. A river of molten lava pours" SOFT_NL
+                 "in through the hole, destroying everything in its path, including you!");
+        } else {
+            bonus = 45;
+            puts("There is a loud explosion and a twenty-foot hole appears in the far" SOFT_NL
+                 "wall, burying the dwarves in the rubble.  You march through the hole" SOFT_NL
+                 "and find yourself in the main office, where a cheering band of" SOFT_NL
+                 "friendly elves carry the conquering adventurer off into the sunset.");
+        }
         quit();
     } else {
         puts("Blasting requires dynamite.");
@@ -3194,6 +3130,86 @@ bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot)
     return false;
 }
 
+void print_message(MessageWord msg)
+{
+    switch (msg) {
+        case ABRA:
+            puts("Good try, but that is an old worn-out magic word.");
+            break;
+        case HELP:
+            puts("I know of places, actions, and things. Most of my vocabulary" SOFT_NL
+                 "describes places and is used to move you there. To move, try words" SOFT_NL
+                 "like forest, building, downstream, enter, east, west, north, south," SOFT_NL
+                 "up, or down. I know about a few special objects, like a black rod" SOFT_NL
+                 "hidden in the cave. These objects can be manipulated using some of" SOFT_NL
+                 "the action words that I know. Usually you will need to give both the" SOFT_NL
+                 "object and action words (in either order), but sometimes I can infer" SOFT_NL
+                 "the object from the verb alone. Some objects also imply verbs; in" SOFT_NL
+                 "particular, \"inventory\" implies \"take inventory\", which causes me to" SOFT_NL
+                 "give you a list of what you're carrying. The objects have side" SOFT_NL
+                 "effects; for instance, the rod scares the bird. Usually people having" SOFT_NL
+                 "trouble moving just need to try a few more words. Usually people" SOFT_NL
+                 "trying unsuccessfully to manipulate an object are attempting something" SOFT_NL
+                 "beyond their (or my!) capabilities and should try a completely" SOFT_NL
+                 "different tack. To speed the game you can sometimes move long" SOFT_NL
+                 "distances with a single word. For example, \"building\" usually gets" SOFT_NL
+                 "you to the building from anywhere above ground except when lost in the" SOFT_NL
+                 "forest. Also, note that cave passages turn a lot, and that leaving a" SOFT_NL
+                 "room to the north does not guarantee entering the next from the south." SOFT_NL
+                 "Good luck!");
+            break;
+        case TREES:
+            puts("The trees of the forest are large hardwood oak and maple, with an" SOFT_NL
+                 "occasional grove of pine or spruce.  There is quite a bit of under" SOFT_HYPHEN
+                 "growth, largely birch and ash saplings plus nondescript bushes of" SOFT_NL
+                 "various sorts.  This time of year visibility is quite restricted by" SOFT_NL
+                 "all the leaves, but travel is quite easy if you detour around the" SOFT_NL
+                 "spruce and berry bushes.");
+            break;
+        case DIG:
+            puts("Digging without a shovel is quite impractical.  Even with a shovel" SOFT_NL
+                 "progress is unlikely.");
+            break;
+        case LOST:
+            puts("I'm as confused as you are.");
+            break;
+        case MIST:
+            puts("Mist is a white vapor, usually water, seen from time to time in" SOFT_NL
+                 "caverns.  It can be found anywhere but is frequently a sign of a deep" SOFT_NL
+                 "pit leading down to water.");
+            break;
+        case FUCK:
+            puts("Watch it!");
+            break;
+        case STOP:
+            puts("I don't know the word \"stop\".  Use \"quit\" if you want to give up.");
+            break;
+        case INFO:
+            puts("If you want to end your adventure early, say \"quit\". To get full" SOFT_NL
+                 "credit for a treasure, you must have left it safely in the building," SOFT_NL
+                 "though you get partial credit just for locating it. You lose points" SOFT_NL
+                 "for getting killed, or for quitting, though the former costs you more." SOFT_NL
+                 "There are also points based on how much (if any) of the cave you've" SOFT_NL
+                 "managed to explore; in particular, there is a large bonus just for" SOFT_NL
+                 "getting in (to distinguish the beginners from the rest of the pack)," SOFT_NL
+                 "and there are other ways to determine whether you've been through some" SOFT_NL
+                 "of the more harrowing sections. If you think you've found all the" SOFT_NL
+                 "treasures, just keep exploring for a while. If nothing interesting" SOFT_NL
+                 "happens, you haven't found them all yet. If something interesting" SOFT_NL
+                 "DOES happen, it means you're getting a bonus and have an opportunity" SOFT_NL
+                 "to garner many more points in the master's section." SOFT_NL
+                 "I may occasionally offer hints if you seem to be having trouble." SOFT_NL
+                 "If I do, I'll warn you in advance how much it will affect your score" SOFT_NL
+                 "to accept the hints. Finally, to save paper, you may specify \"brief\"," SOFT_NL
+                 "which tells me never to repeat the full description of a place" SOFT_NL
+                 "unless you explicitly ask me to.");
+            break;
+        case SWIM:
+            puts("I don't know how.");
+            break;
+    }
+}
+
 void simulate_an_adventure(void)
 {
     Location oldoldloc, oldloc, loc, newloc;
@@ -3330,7 +3346,7 @@ void simulate_an_adventure(void)
                     if (obj != NOTHING) goto transitive;
                     else goto intransitive;
                 case WordType_Message:
-                    puts(message[(int)hash_table[k].meaning]);
+                    print_message(hash_table[k].meaning);
                     continue;
             }
         shift:
