@@ -43,34 +43,32 @@ void quit(void);
 typedef enum {
     WordType_None, WordType_Motion, WordType_Object,
     WordType_Action, WordType_Message
-} WordType;
+} WordClass;
 
 struct HashEntry {
     char text[6];
-    WordType word_type;
-    char meaning;
+    int meaning;
 };
 
 #define HASH_PRIME 1009
 struct HashEntry hash_table[HASH_PRIME];
 
-void new_word(WordType t, const char *w, int m)
+void new_word(const char *w, int m)
 {
     int h = 0;
     for (const char *p = w; *p != '\0'; ++p) {
         h = ((h << 1) + *p) % HASH_PRIME;
     }
-    while (hash_table[h].word_type != WordType_None)
+    while (hash_table[h].meaning != 0)
         h = (h+1) % HASH_PRIME;
     strcpy(hash_table[h].text, w);
-    hash_table[h].word_type = t;
     hash_table[h].meaning = m;
 }
 
-void new_motion_word(const char *w, int m) { new_word(WordType_Motion, w, m); }
-void new_object_word(const char *w, int m) { new_word(WordType_Object, w, m); }
-void new_action_word(const char *w, int m) { new_word(WordType_Action, w, m); }
-void new_message_word(const char *w, int m) { new_word(WordType_Message, w, m); }
+#define new_motion_word new_word
+#define new_object_word new_word
+#define new_action_word new_word
+#define new_message_word new_word
 
 int lookup(const char *w)
 {
@@ -78,16 +76,17 @@ int lookup(const char *w)
     for (const char *p = w; *p != '\0' && p != w+5; ++p) {
         h = ((h << 1) + *p) % HASH_PRIME;
     }
-    while (hash_table[h].word_type != WordType_None) {
-        if (streq(w, hash_table[h].text)) return h;
+    while (hash_table[h].meaning != 0) {
+        if (streq(w, hash_table[h].text)) return hash_table[h].meaning;
         h = (h+1) % HASH_PRIME;
     }
-    return -1;
+    return 0;
 }
 #undef HASH_PRIME
 
 typedef enum {
-    N,S,E,W,NE,SE,NW,SW,U,D,L,R,IN,OUT,FORWARD,BACK,
+    MIN_MOTION=100,
+    N=MIN_MOTION,S,E,W,NE,SE,NW,SW,U,D,L,R,IN,OUT,FORWARD,BACK,
     OVER,ACROSS,UPSTREAM,DOWNSTREAM,
     ENTER,CRAWL,JUMP,CLIMB,LOOK,CROSS,
     ROAD,HILL,FOREST,VALLEY,HOUSE,GULLY,STREAM,DEPRESSION,ENTRANCE,CAVE,
@@ -95,11 +94,12 @@ typedef enum {
     GIANT,ORIENTAL,SHELL,BARREN,BROKEN,DEBRIS,VIEW,FORK,
     PIT,SLIT,CRACK,DOME,HOLE,WALL,HALL,ROOM,FLOOR,
     STAIRS,STEPS,COBBLES,SURFACE,DARK,LOW,OUTDOORS,
-    Y2,XYZZY,PLUGH,PLOVER,OFFICE,NOWHERE
+    Y2,XYZZY,PLUGH,PLOVER,OFFICE,NOWHERE,
+    MAX_MOTION=NOWHERE
 } MotionWord;
 
 typedef enum {
-    MIN_OBJ, NOTHING=MIN_OBJ,
+    MIN_OBJ=200, NOTHING=MIN_OBJ,
     KEYS, LAMP, GRATE, GRATE_, CAGE, ROD, ROD2, TREADS, TREADS_,
     BIRD, DOOR, PILLOW, SNAKE, CRYSTAL, CRYSTAL_, TABLET, CLAM, OYSTER,
     MAG, DWARF, KNIFE, FOOD, BOTTLE, WATER, OIL, MIRROR, MIRROR_, PLANT,
@@ -115,17 +115,40 @@ typedef enum {
 #define IS_TREASURE(t) ((t) >= MIN_TREASURE)
 
 typedef enum {
-    ABSTAIN, TAKE, DROP, OPEN, CLOSE, ON, OFF, WAVE, CALM, GO, RELAX,
-    POUR, EAT, DRINK, RUB, TOSS, WAKE, FEED, FILL, BREAK, BLAST, KILL,
-    SAY, READ, FEEFIE, BRIEF, FIND, INVENTORY, SCORE, QUIT
+    MIN_ACTION=300,
+    ABSTAIN=MIN_ACTION, TAKE, DROP, OPEN, CLOSE, ON, OFF, WAVE, CALM, GO,
+    RELAX, POUR, EAT, DRINK, RUB, TOSS, WAKE, FEED, FILL, BREAK, BLAST,
+    KILL, SAY, READ, FEEFIE, BRIEF, FIND, INVENTORY, SCORE,
 #ifdef SAVE_AND_RESTORE
-    , SAVE, RESTORE
+    SAVE, RESTORE,
 #endif /* SAVE_AND_RESTORE */
+    QUIT,
+    MAX_ACTION=QUIT
 } ActionWord;
 
 typedef enum {
-    ABRA, HELP, TREES, DIG, LOST, MIST, FUCK, STOP, INFO, SWIM
+    MIN_MESSAGE=400,
+    ABRA=MIN_MESSAGE, HELP, TREES, DIG, LOST, MIST, FUCK, STOP, INFO, SWIM,
+    MAX_MESSAGE=SWIM
 } MessageWord;
+
+WordClass word_class(int word)
+{
+    if (word == 0) {
+        return WordType_None;
+    } else if (MIN_MOTION <= word && word <= MAX_MOTION) {
+        return WordType_Motion;
+    } else if (MIN_OBJ <= word && word <= MAX_OBJ) {
+        return WordType_Object;
+    } else if (MIN_ACTION <= word && word <= MAX_ACTION) {
+        return WordType_Action;
+    } else if (MIN_MESSAGE <= word && word <= MAX_MESSAGE) {
+        return WordType_Message;
+    } else {
+        assert(false);
+        return WordType_None;
+    }
+}
 
 const char ok[] = "OK.";  /* Woods' Fortran version didn't include the period, by the way. */
 const char pitch_dark_msg[] = "It is now pitch dark.  If you proceed you will most likely fall into a pit.";
@@ -3229,7 +3252,6 @@ void simulate_an_adventure(void)
     ActionWord oldverb;  /* verb before it was changed */
     ObjectWord obj = NOTHING;  /* currently specified object, if any */
     ObjectWord oldobj;  /* former value of obj */
-    WordType command_type;
     bool was_dark = false;
     int look_count = 0;
 
@@ -3316,18 +3338,17 @@ void simulate_an_adventure(void)
         parse:
             advise_about_going_west(word1);
             k = lookup(word1);
-            if (k < 0) {
+            if (k == 0) {
                 printf("Sorry, I don't know the word \"%s\".\n", word1);
                 goto cycle;
             }
         branch:
-            command_type = hash_table[k].word_type;
-            switch (command_type) {
+            switch (word_class(k)) {
                 case WordType_Motion:
-                    mot = hash_table[k].meaning;
+                    mot = k;
                     goto try_move;
                 case WordType_Object:
-                    obj = hash_table[k].meaning;
+                    obj = k;
                     /* Make sure obj is meaningful at the current location.
                      * When you specify an object, it must be here, unless
                      * the verb is already known to be FIND or INVENTORY.
@@ -3348,16 +3369,18 @@ void simulate_an_adventure(void)
                     printf("What do you want to do with the %s?\n", word1);
                     goto cycle;
                 case WordType_Action:
-                    verb = hash_table[k].meaning;
+                    verb = k;
                     if (verb == SAY) {
-                        obj = *word2;
-                    } else if (*word2 != '\0') {
-                        break;
+                        /* "FOO SAY" results in the incorrect message
+                         * "Say what?" instead of "Okay, "foo"". */
+                        if (*word2 == '\0') goto intransitive;
+                        goto transitive;
                     }
+                    if (*word2 != '\0') break;
                     if (obj != NOTHING) goto transitive;
                     else goto intransitive;
                 case WordType_Message:
-                    print_message(hash_table[k].meaning);
+                    print_message(k);
                     continue;
             }
         shift:
@@ -3485,7 +3508,7 @@ void simulate_an_adventure(void)
                 case SAY: {
                     if (*word2 != '\0') strcpy(word1, word2);
                     k = lookup(word1);
-                    switch (hash_table[k].meaning) {
+                    switch (k) {
                         case XYZZY: case PLUGH: case PLOVER: case FEEFIE:
                             *word2 = '\0';
                             obj = NOTHING;
