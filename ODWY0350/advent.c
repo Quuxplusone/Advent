@@ -3342,7 +3342,6 @@ void simulate_an_adventure(void)
                 printf("Sorry, I don't know the word \"%s\".\n", word1);
                 goto cycle;
             }
-        branch:
             switch (word_class(k)) {
                 case WordType_Motion:
                     mot = k;
@@ -3389,7 +3388,6 @@ void simulate_an_adventure(void)
             goto parse;
 
         intransitive:
-            k = 0;
             switch (verb) {
                 case GO:
                     puts("Where?");
@@ -3500,19 +3498,20 @@ void simulate_an_adventure(void)
                     goto get_object;
             }
         transitive:
-            k = 0;
             switch (verb) {
                 case ABSTAIN:
                     assert(false);  /* no input can result in verb ABSTAIN */
                     continue;
                 case SAY: {
                     if (*word2 != '\0') strcpy(word1, word2);
-                    k = lookup(word1);
+                    int k = lookup(word1);
                     switch (k) {
-                        case XYZZY: case PLUGH: case PLOVER: case FEEFIE:
-                            *word2 = '\0';
-                            obj = NOTHING;
-                            goto branch;
+                        case XYZZY: case PLUGH: case PLOVER:
+                            mot = k;
+                            goto try_move;
+                        case FEEFIE:
+                            verb = k;
+                            goto intransitive;
                         default:
                             printf("Okay, \"%s\".\n", word1);
                             continue;
