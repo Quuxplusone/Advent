@@ -2893,10 +2893,7 @@ void attempt_open_or_close(ActionWord verb, ObjectWord obj, Location loc)  /* se
                 } else {
                     objs(CHAIN).prop = 0;
                     mobilize(CHAIN);
-                    if (objs(BEAR).prop == 3) {
-                        /* [ajo] TODO isn't the dead bear already immobile? */
-                        immobilize(BEAR);
-                    } else {
+                    if (objs(BEAR).prop == 1) {
                         objs(BEAR).prop = 2;
                         mobilize(BEAR);
                     }
