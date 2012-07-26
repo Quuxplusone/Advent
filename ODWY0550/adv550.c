@@ -38,7 +38,6 @@ bool nomagic;
 bool panicked;
 bool wizard_mode;  /* Platt names this variable OLORIN */
 bool lamp_just_ran_out;
-bool helped_him;
 bool quipped;  /* set when a dwarf dies dramatically */
 
 /* The phases of cave closure are as follows:
@@ -468,16 +467,6 @@ void build_place_names(void)
 /*========== Data structures for objects. ===============================*/
 
 int holding_count;  /* how many objects are being carried? */
-
-ObjectWord bottle_contents(void)
-{
-    switch (objs[BOTTLE].prop) {
-        case 0: return WATER;
-        case 2: return OIL;
-        /* other valid values: 1, -2 (post-closing) */
-    }
-    return NOTHING;
-}
 
 bool here(ObjectWord t, Location loc)
 {

@@ -1958,7 +1958,7 @@ void close_the_cave(void)
     move(ROD2, R_SWEND); objs(ROD2).prop = -1;
     move(PILLOW, R_SWEND); objs(PILLOW).prop = -1;
     move(MIRROR_, R_SWEND);
-    for (int j = 1; j <= MAX_OBJ; ++j) {
+    for (int j = MIN_OBJ; j <= MAX_OBJ; ++j) {
         if (toting(j)) destroy(j);
     }
     closed = true;
@@ -2341,20 +2341,20 @@ void quit(void)
 }
 
 const char *death_wishes[2*MAX_DEATHS] = {
-    "Oh dear, you seem to have gotten yourself killed. I might be able to" SOFT_NL
-      "help you out, but I've never really done this before. Do you want me" SOFT_NL
+    "Oh dear, you seem to have gotten yourself killed.  I might be able to" SOFT_NL
+      "help you out, but I've never really done this before.  Do you want me" SOFT_NL
       "to try to reincarnate you?",
     "All right. But don't blame me if something goes wr......\n"
       "                   --- POOF!! ---\n"
-      "You are engulfed in a cloud of orange smoke. Coughing and gasping," SOFT_NL
+      "You are engulfed in a cloud of orange smoke.  Coughing and gasping," SOFT_NL
       "you emerge from the smoke and find....",
-    "You clumsy oaf, you've done it again! I don't know how long I can" SOFT_NL
-      "keep this up. Do you want me to try reincarnating you again?",
-    "Okay, now where did I put my resurrection kit?.... >POOF!<\n"
+    "You clumsy oaf, you've done it again!  I don't know how long I can" SOFT_NL
+      "keep this up.  Do you want me to try reincarnating you again?",
+    "Okay, now where did I put my orange smoke?....  >POOF!<\n"
       "Everything disappears in a dense cloud of orange smoke.",
-    "Now you've really done it! I'm out of orange smoke! You don't expect" SOFT_NL
+    "Now you've really done it!  I'm out of orange smoke!  You don't expect" SOFT_NL
       "me to do a decent reincarnation without any orange smoke, do you?",
-    "Okay, if you're so smart, do it yourself! I'm leaving!"
+    "Okay, if you're so smart, do it yourself!  I'm leaving!"
 };
 
 void kill_the_player(Location last_safe_place)
@@ -2368,12 +2368,13 @@ void kill_the_player(Location last_safe_place)
     if (!yes(death_wishes[2*death_count-2], death_wishes[2*death_count-1], ok) || death_count == MAX_DEATHS)
         quit();
     /* At this point you are reborn. */
-    for (int j = MAX_OBJ; j > 0; --j) {
-        if (toting(j)) drop(j, (j == LAMP) ? R_ROAD : last_safe_place);
-    }
     if (toting(LAMP)) objs(LAMP).prop = 0;
     objs(WATER).place = R_LIMBO;
     objs(OIL).place = R_LIMBO;
+    assert(NOTHING == MIN_OBJ);
+    for (int j = MAX_OBJ; j > MIN_OBJ; --j) {
+        if (toting(j)) drop(j, (j == LAMP) ? R_ROAD : last_safe_place);
+    }
 }
 
 /*========== Main loop. ===================================================
@@ -2400,7 +2401,7 @@ void adjustments_before_listening(Location loc)
             puts("Interesting. There seems to be something written on the underside of" SOFT_NL
                  "the oyster.");
         }
-        for (int j=1; j <= MAX_OBJ; ++j) {
+        for (int j = MIN_OBJ; j <= MAX_OBJ; ++j) {
             if (toting(j) && objs(j).prop < 0)
                 objs(j).prop = -1 - objs(j).prop;
         }
@@ -2801,9 +2802,7 @@ void attempt_feed(ObjectWord obj, Location loc)  /* section 129 in Knuth */
             if (!here(FOOD, loc)) {
                 if (objs(BEAR).prop == 0) break;  /* ferocious bear, no food */
                 if (objs(BEAR).prop == 3) {
-                    /* Apparently "FEED BEAR" is interpreted the same as
-                     * "EAT BEAR", when the bear is dead. [ajo] TODO check Fortran version */
-                    puts("I think I just lost my appetite.");
+                    puts("Don't be ridiculous!");
                 } else {
                     puts("There is nothing here to eat.");
                 }
@@ -2819,7 +2818,7 @@ void attempt_feed(ObjectWord obj, Location loc)  /* section 129 in Knuth */
         case DWARF:
             if (here(FOOD, loc)) {
                 ++dflag;
-                puts("You fool, dwarves eat only coal!  Now you've made him REALLY mad!");
+                puts("You fool, dwarves eat only coal!  Now you've made him *REALLY* mad!!");
             } else {
                 puts("There is nothing here to eat.");
             }
@@ -2833,8 +2832,6 @@ void attempt_open_or_close(ActionWord verb, ObjectWord obj, Location loc)  /* se
 {
     bool verb_is_open = (verb == OPEN);  /* otherwise it's CLOSE */
     switch (obj) {
-        /* [ajo] Knuth's version sets k to 0 for the clam or 1 for the oyster,
-         * but apparently never uses k after that. TODO: understand this. */
         case OYSTER:
         case CLAM: {
             const char *clam_oyster = (obj == CLAM ? "clam" : "oyster");
@@ -2891,10 +2888,7 @@ void attempt_open_or_close(ActionWord verb, ObjectWord obj, Location loc)  /* se
                 } else {
                     objs(CHAIN).prop = 0;
                     mobilize(CHAIN);
-                    if (objs(BEAR).prop == 3) {
-                        /* [ajo] TODO isn't the dead bear already immobile? */
-                        immobilize(BEAR);
-                    } else {
+                    if (objs(BEAR).prop == 1) {
                         objs(BEAR).prop = 2;
                         mobilize(BEAR);
                     }
