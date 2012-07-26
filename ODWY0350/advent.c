@@ -2837,8 +2837,6 @@ void attempt_open_or_close(ActionWord verb, ObjectWord obj, Location loc)  /* se
 {
     bool verb_is_open = (verb == OPEN);  /* otherwise it's CLOSE */
     switch (obj) {
-        /* [ajo] Knuth's version sets k to 0 for the clam or 1 for the oyster,
-         * but apparently never uses k after that. TODO: understand this. */
         case OYSTER:
         case CLAM: {
             const char *clam_oyster = (obj == CLAM ? "clam" : "oyster");
