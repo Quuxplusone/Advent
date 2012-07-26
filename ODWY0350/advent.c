@@ -2346,20 +2346,20 @@ void quit(void)
 }
 
 const char *death_wishes[2*MAX_DEATHS] = {
-    "Oh dear, you seem to have gotten yourself killed. I might be able to" SOFT_NL
-      "help you out, but I've never really done this before. Do you want me" SOFT_NL
+    "Oh dear, you seem to have gotten yourself killed.  I might be able to" SOFT_NL
+      "help you out, but I've never really done this before.  Do you want me" SOFT_NL
       "to try to reincarnate you?",
     "All right. But don't blame me if something goes wr......\n"
       "                   --- POOF!! ---\n"
-      "You are engulfed in a cloud of orange smoke. Coughing and gasping," SOFT_NL
+      "You are engulfed in a cloud of orange smoke.  Coughing and gasping," SOFT_NL
       "you emerge from the smoke and find....",
-    "You clumsy oaf, you've done it again! I don't know how long I can" SOFT_NL
-      "keep this up. Do you want me to try reincarnating you again?",
-    "Okay, now where did I put my resurrection kit?.... >POOF!<\n"
+    "You clumsy oaf, you've done it again!  I don't know how long I can" SOFT_NL
+      "keep this up.  Do you want me to try reincarnating you again?",
+    "Okay, now where did I put my orange smoke?....  >POOF!<\n"
       "Everything disappears in a dense cloud of orange smoke.",
-    "Now you've really done it! I'm out of orange smoke! You don't expect" SOFT_NL
+    "Now you've really done it!  I'm out of orange smoke!  You don't expect" SOFT_NL
       "me to do a decent reincarnation without any orange smoke, do you?",
-    "Okay, if you're so smart, do it yourself! I'm leaving!"
+    "Okay, if you're so smart, do it yourself!  I'm leaving!"
 };
 
 void kill_the_player(Location last_safe_place)
@@ -2825,7 +2825,7 @@ void attempt_feed(ObjectWord obj, Location loc)  /* section 129 in Knuth */
         case DWARF:
             if (here(FOOD, loc)) {
                 ++dflag;
-                puts("You fool, dwarves eat only coal!  Now you've made him REALLY mad!");
+                puts("You fool, dwarves eat only coal!  Now you've made him *REALLY* mad!!");
             } else {
                 puts("There is nothing here to eat.");
             }
