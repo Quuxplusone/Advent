@@ -1963,7 +1963,7 @@ void close_the_cave(void)
     move(ROD2, R_SWEND); objs(ROD2).prop = -1;
     move(PILLOW, R_SWEND); objs(PILLOW).prop = -1;
     move(MIRROR_, R_SWEND);
-    for (int j = 1; j <= MAX_OBJ; ++j) {
+    for (int j = MIN_OBJ; j <= MAX_OBJ; ++j) {
         if (toting(j)) destroy(j);
     }
     closed = true;
@@ -2373,12 +2373,13 @@ void kill_the_player(Location last_safe_place)
     if (!yes(death_wishes[2*death_count-2], death_wishes[2*death_count-1], ok) || death_count == MAX_DEATHS)
         quit();
     /* At this point you are reborn. */
-    for (int j = MAX_OBJ; j > 0; --j) {
-        if (toting(j)) drop(j, (j == LAMP) ? R_ROAD : last_safe_place);
-    }
     if (toting(LAMP)) objs(LAMP).prop = 0;
     objs(WATER).place = R_LIMBO;
     objs(OIL).place = R_LIMBO;
+    assert(NOTHING == MIN_OBJ);
+    for (int j = MAX_OBJ; j > MIN_OBJ; --j) {
+        if (toting(j)) drop(j, (j == LAMP) ? R_ROAD : last_safe_place);
+    }
 }
 
 /*========== Main loop. ===================================================
@@ -2405,7 +2406,7 @@ void adjustments_before_listening(Location loc)
             puts("Interesting. There seems to be something written on the underside of" SOFT_NL
                  "the oyster.");
         }
-        for (int j=1; j <= MAX_OBJ; ++j) {
+        for (int j = MIN_OBJ; j <= MAX_OBJ; ++j) {
             if (toting(j) && objs(j).prop < 0)
                 objs(j).prop = -1 - objs(j).prop;
         }
