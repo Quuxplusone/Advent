@@ -2807,9 +2807,7 @@ void attempt_feed(ObjectWord obj, Location loc)  /* section 129 in Knuth */
             if (!here(FOOD, loc)) {
                 if (objs(BEAR).prop == 0) break;  /* ferocious bear, no food */
                 if (objs(BEAR).prop == 3) {
-                    /* Apparently "FEED BEAR" is interpreted the same as
-                     * "EAT BEAR", when the bear is dead. [ajo] TODO check Fortran version */
-                    puts("I think I just lost my appetite.");
+                    puts("Don't be ridiculous!");
                 } else {
                     puts("There is nothing here to eat.");
                 }
