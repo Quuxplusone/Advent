@@ -1383,12 +1383,14 @@ void build_travel_table(void)
     make_ins(0, R_EMIST);
     make_loc(q, R_CLIMB, "You clamber up the plant and scurry through the hole at the top.", NULL, 0);
     make_ins(0, R_NARROW);
-    /* This extra room causes some extra blank lines before the
-     * message about climbing "up the plant and out of the pit".
-     * But this matches Knuth, and at least the room definition
-     * seems to match Woods, although maybe he got rid of the
-     * extra blank lines somehow. */
-    make_loc(q, R_CHECK, "", NULL, 0);
+    /* Typing CLIMB from the bottom of the west pit triggers a clever bit
+     * of gymnastics. We want to branch three ways on the state of the
+     * plant (too small to climb; "up the plant and out of the pit"; and
+     * all the way up the beanstalk). But the only operation available to
+     * us is "travel if objs(PLANT).prop is NOT x". So R_WPIT's instruction
+     * brings us to R_CHECK if objs(PLANT).prop != 2, and R_CHECK dispatches
+     * to one of the two non-narrow-corridor locations. */
+    make_loc(q, R_CHECK, NULL, NULL, 0);
     make_cond_ins(0, unless_prop(PLANT, 1), R_UPNOUT);
     make_ins(0, R_DIDIT);
     make_loc(q, R_SNAKED, "You can't get by the snake.", NULL, 0);
@@ -2091,7 +2093,10 @@ int look_around(Location loc, bool dark, bool was_dark)
     if (toting(BEAR)) {
         puts("You are being followed by a very large, tame bear.");
     }
-    printf("\n%s\n", room_description);
+    if (room_description != NULL) {
+        /* R_CHECK's description is NULL. */
+        printf("\n%s\n", room_description);
+    }
     if (FORCED_MOVE(loc)) return 't';  /* goto try_move; */
     give_optional_plugh_hint(loc);
     if (!dark) {
