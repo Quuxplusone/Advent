@@ -1383,12 +1383,14 @@ void build_travel_table(void)
     make_ins(0, R_EMIST);
     make_loc(q, R_CLIMB, "You clamber up the plant and scurry through the hole at the top.", NULL, 0);
     make_ins(0, R_NARROW);
-    /* This extra room causes some extra blank lines before the
-     * message about climbing "up the plant and out of the pit".
-     * But this matches Knuth, and at least the room definition
-     * seems to match Woods, although maybe he got rid of the
-     * extra blank lines somehow. */
-    make_loc(q, R_CHECK, "", NULL, 0);
+    /* Typing CLIMB from the bottom of the west pit triggers a clever bit
+     * of gymnastics. We want to branch three ways on the state of the
+     * plant (too small to climb; "up the plant and out of the pit"; and
+     * all the way up the beanstalk). But the only operation available to
+     * us is "travel if objs(PLANT).prop is NOT x". So R_WPIT's instruction
+     * brings us to R_CHECK if objs(PLANT).prop != 2, and R_CHECK dispatches
+     * to one of the two non-narrow-corridor locations. */
+    make_loc(q, R_CHECK, NULL, NULL, 0);
     make_cond_ins(0, unless_prop(PLANT, 1), R_UPNOUT);
     make_ins(0, R_DIDIT);
     make_loc(q, R_SNAKED, "You can't get by the snake.", NULL, 0);
@@ -2086,7 +2088,10 @@ int look_around(Location loc, bool dark, bool was_dark)
     if (toting(BEAR)) {
         puts("You are being followed by a very large, tame bear.");
     }
-    printf("\n%s\n", room_description);
+    if (room_description != NULL) {
+        /* R_CHECK's description is NULL. */
+        printf("\n%s\n", room_description);
+    }
     if (FORCED_MOVE(loc)) return 't';  /* goto try_move; */
     give_optional_plugh_hint(loc);
     if (!dark) {
@@ -3061,23 +3066,26 @@ Instruction *determine_motion_instruction(Location loc, MotionWord mot)
         return NULL;  /* newloc = loc at this point */
     }
     while (true) {
-        int j = q->cond;
-        if (j == 0) {
+        const int cond = q->cond;
+        if (cond == 0) {
             break;  /* the usual case */
-        } else if (j <= 100) {
-            if (pct(j)) break;  /* dwarves won't take these routes */
-        } else if (j <= 200) {
-            if (toting(MIN_OBJ + j%100)) break;
-        } else if (j <= 300) {
-            if (is_at_loc(MIN_OBJ + j%100, loc)) break;
+        } else if (cond <= 100) {
+            if (pct(cond)) break;  /* dwarves won't take these routes */
+        } else if (cond <= 200) {
+            if (toting(MIN_OBJ + cond%100)) break;
+        } else if (cond <= 300) {
+            if (is_at_loc(MIN_OBJ + cond%100, loc)) break;
         } else {
-            if (objs(MIN_OBJ + j%100).prop != (j/100)-3) break;
+            if (objs(MIN_OBJ + cond%100).prop != (cond/100)-3) break;
         }
-      {
-        /* [ajo] TODO understand this loop. */
-        const Instruction *oldq;
-        for (oldq = q++; q->dest == oldq->dest && q->cond == oldq->cond; ++q) ;
-      }
+        /* The verb in this instruction matches the "mot" typed by the user,
+         * but the condition failed, either randomly (j < 100) or because
+         * the prerequisite wasn't satisfied. So instead of taking this
+         * instruction, we'll take the next one that is not a "ditto" of
+         * this one --- regardless of its "mot" field! */
+        const Location dest = q->dest;
+        while (q->dest == dest && q->cond == cond)
+            ++q;
     }
     return q;
 }
