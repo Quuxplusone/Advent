@@ -3071,23 +3071,26 @@ Instruction *determine_motion_instruction(Location loc, MotionWord mot)
         return NULL;  /* newloc = loc at this point */
     }
     while (true) {
-        int j = q->cond;
-        if (j == 0) {
+        const int cond = q->cond;
+        if (cond == 0) {
             break;  /* the usual case */
-        } else if (j <= 100) {
-            if (pct(j)) break;  /* dwarves won't take these routes */
-        } else if (j <= 200) {
-            if (toting(MIN_OBJ + j%100)) break;
-        } else if (j <= 300) {
-            if (is_at_loc(MIN_OBJ + j%100, loc)) break;
+        } else if (cond <= 100) {
+            if (pct(cond)) break;  /* dwarves won't take these routes */
+        } else if (cond <= 200) {
+            if (toting(MIN_OBJ + cond%100)) break;
+        } else if (cond <= 300) {
+            if (is_at_loc(MIN_OBJ + cond%100, loc)) break;
         } else {
-            if (objs(MIN_OBJ + j%100).prop != (j/100)-3) break;
+            if (objs(MIN_OBJ + cond%100).prop != (cond/100)-3) break;
         }
-      {
-        /* [ajo] TODO understand this loop. */
-        const Instruction *oldq;
-        for (oldq = q++; q->dest == oldq->dest && q->cond == oldq->cond; ++q) ;
-      }
+        /* The verb in this instruction matches the "mot" typed by the user,
+         * but the condition failed, either randomly (j < 100) or because
+         * the prerequisite wasn't satisfied. So instead of taking this
+         * instruction, we'll take the next one that is not a "ditto" of
+         * this one --- regardless of its "mot" field! */
+        const Location dest = q->dest;
+        while (q->dest == dest && q->cond == cond)
+            ++q;
     }
     return q;
 }
