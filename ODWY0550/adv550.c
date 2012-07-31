@@ -3656,6 +3656,9 @@ int process_verb(Location loc)
                 keywordv(SAMOHT) || keywordv(KNERL) || keywordv(ZORTON) ||
                 keywordv(KLAETU) || keywordv(SNOEZE) || keywordv(BLERBI) ||
                 keywordv(PHUGGG)) {
+                /* TODO: I believe this code never does anything useful;
+                 * it seems redundant with movementv(), which ignores a
+                 * first word of SAY already. */
                 word1 = word2;
                 word2.type = WordType_None;
                 return process_verb(loc);
@@ -3787,14 +3790,7 @@ int process_verb(Location loc)
         case MIST:
             return examine_mist();
         case MELENKURION:
-            if (loc == R_BY_FIGURE && objs[STATUE].prop == 0) {
-                /* TODO: This codepath should really be in at_by_figure(). */
-                puts("Rock silently crumbles off of the wall in front of you, revealing" SOFT_NL
-                     "dark passages leading northwest, north, and northeast.");
-                objs[STATUE].prop = 1;
-            } else {
-                nothing_happens();
-            }
+            nothing_happens();
             return STAY_STILL;
         case NOSIDE:
             if (keywordv(SAMOHT)) {

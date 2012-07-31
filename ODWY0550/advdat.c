@@ -114,6 +114,16 @@ bool movementv3(VerbWord a, VerbWord b, VerbWord c)
     return movementv2(a, b) || movementv(c);
 }
 
+static bool correctly_used_magic_word(VerbWord v)
+{
+    return (keywordv(v) && (keywordv(SAY) || word2.type == WordType_None));
+}
+
+static bool correctly_used_magic_word_PLOVER(void)
+{
+    return (keywordp(R_PLOVER) && (keywordv(SAY) || word2.type == WordType_None));
+}
+
 int at_limbo(void)
 {
     if (movementv(OUT)) return R_HOUSE;
@@ -149,11 +159,11 @@ int at_house(void)
     if (movementp(R_ROAD)) return R_ROAD;
     if (movementv3(OUT, OUTDOORS, WEST)) return R_ROAD;
     if (closure < 2) {
-        if (movementv(XYZZY)) {
+        if (correctly_used_magic_word(XYZZY)) {
             say_foof();
             return R_DEBRIS;
         }
-        if (movementv(PLUGH)) {
+        if (correctly_used_magic_word(PLUGH)) {
             say_foof();
             return R_Y2;
         }
@@ -360,17 +370,14 @@ int at_debris(void)
             return R_INSIDE;
         }
     }
-    if (keywordv(XYZZY)) {
+    if (correctly_used_magic_word(XYZZY)) {
         if (closure >= 2 || nomagic) {
             nothing_happens();
             panicked = true;
             return STAY_STILL;
-        } else if (movementv(XYZZY)) {
+        } else {
             say_foof();
             return R_HOUSE;
-        } else {
-            /* This seems like a bug in Platt's code. */
-            return STAY_STILL;
         }
     }
     return 0;  /* command hasn't been processed yet */
@@ -612,16 +619,14 @@ int at_y2(void)
     if (movementv(EAST)) return R_JUMBLE;
     if (movementp(R_JUMBLE)) return R_JUMBLE;
     if (movementv(WEST)) return R_WINDOE;
-    if (movementv(PLUGH) || movementp(R_PLOVER)) {
-        if (word2.type != WordType_None && !keywordv(SAY))
-            return 0;  /* DROP PLUGH isn't handled here */
+    if (correctly_used_magic_word(PLUGH) || correctly_used_magic_word_PLOVER()) {
         if (closure >= 2 || nomagic) {
             nothing_happens();
             panicked = true;
             return STAY_STILL;
         } else {
             say_foof();
-            return movementv(PLUGH) ? R_HOUSE : R_PLOVER;
+            return keywordv(PLUGH) ? R_HOUSE : R_PLOVER;
         }
     }
     return 0;  /* command hasn't been processed yet */
@@ -1206,7 +1211,7 @@ int at_alcove(void)
 
 int at_plover(void)
 {
-    if (keywordp(R_PLOVER) && (word2.type==WordType_None || keywordv(SAY))) {
+    if (correctly_used_magic_word_PLOVER()) {
         if (toting(EMERALD)) apport(EMERALD, R_PLOVER);
         say_foof();
         return R_Y2;
@@ -2336,7 +2341,7 @@ int at_icecave29(void)
 int at_icecave30(void)
 {
     if (movementv(EAST)) return R_ICECAVE29;
-    if (movementv(THURB)) {
+    if (correctly_used_magic_word(THURB)) {
         say_foof();
         return R_ICE;
     }
@@ -2520,13 +2525,18 @@ int at_faces(void)
 
 int at_by_figure(void)
 {
+    if (movementv(SOUTH)) return R_FACES;
     if (objs[STATUE].prop) {
         /* The statue has moved, revealing dark passages. */
        if (movementv(NW)) return R_PLAIN_1;
        if (movementv(NORTH)) return R_BASQUE_1;
        if (movementv(NE)) return R_BANSHEE;
+    } else if (correctly_used_magic_word(MELENKURION)) {
+        puts("Rock silently crumbles off of the wall in front of you, revealing" SOFT_NL
+             "dark passages leading northwest, north, and northeast.");
+        objs[STATUE].prop = 1;
+	return STAY_STILL;
     }
-    if (movementv(SOUTH)) return R_FACES;
     return 0;  /* command hasn't been processed yet */
 }
 
@@ -2725,7 +2735,7 @@ int at_fake_y2(void)
     if (movementv(SOUTH)) return R_STEPS_EXIT;
     if (movementv(WEST)) return R_CATACOMBS1;
     if (movementv(EAST)) return R_FAKE_JUMBLE;
-    if (keywordv(PLUGH) || keywordp(R_PLOVER)) {
+    if (correctly_used_magic_word(PLUGH) || correctly_used_magic_word_PLOVER()) {
         if (nomagic) {
             nothing_happens();
             return STAY_STILL;
@@ -2970,7 +2980,7 @@ int at_translucent(void)
 
 int at_platform(void)
 {
-    if (movementv(PLUGH) || movementp(R_PLOVER)) {
+    if (correctly_used_magic_word(PLUGH) || correctly_used_magic_word_PLOVER()) {
         say_foof();
         return R_FAKE_Y2;
     }
@@ -2983,11 +2993,6 @@ int at_platform(void)
         return you_are_dead_at(R_YLEM);
     }
     return 0;  /* command hasn't been processed yet */
-}
-
-static bool correctly_used_magic_word(VerbWord v)
-{
-    return (keywordv(v) && (keywordv(SAY) || word2.type == WordType_None));
 }
 
 static bool try_escaping_with_word(VerbWord word, int i)
