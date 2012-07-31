@@ -882,6 +882,8 @@ void listen(void)
         fgets(buffer, sizeof buffer, stdin);
         for (p = buffer; isspace(*p); ++p) ;
         do {
+            if (*p == ',') ++p;
+            while (isspace(*p)) ++p;
             if (*p == '\0') {
                 word1.text[0] = '\0';
             } else {
@@ -890,10 +892,10 @@ void listen(void)
                     *q = tolower(*p);
                 }
                 *q = '\0';
-                for (++p; isspace(*p); ++p) ;
             }
         } while (is_ignoreable_word(&word1));
         do {
+            for (++p; isspace(*p); ++p) ;
             if (*p == '\0') {
                 word2.text[0] = '\0';
             } else {
@@ -902,7 +904,6 @@ void listen(void)
                     *q = tolower(*p);
                 }
                 *q = '\0';
-                for (++p; isspace(*p); ++p) ;
             }
         } while (is_ignoreable_word(&word2));
     }
