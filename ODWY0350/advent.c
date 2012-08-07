@@ -41,8 +41,8 @@ void quit(void);
  */
 
 typedef enum {
-    WordType_None, WordType_Motion, WordType_Object,
-    WordType_Action, WordType_Message
+    WordClass_None, WordClass_Motion, WordClass_Object,
+    WordClass_Action, WordClass_Message
 } WordClass;
 
 struct HashEntry {
@@ -135,18 +135,18 @@ typedef enum {
 WordClass word_class(int word)
 {
     if (word == 0) {
-        return WordType_None;
+        return WordClass_None;
     } else if (MIN_MOTION <= word && word <= MAX_MOTION) {
-        return WordType_Motion;
+        return WordClass_Motion;
     } else if (MIN_OBJ <= word && word <= MAX_OBJ) {
-        return WordType_Object;
+        return WordClass_Object;
     } else if (MIN_ACTION <= word && word <= MAX_ACTION) {
-        return WordType_Action;
+        return WordClass_Action;
     } else if (MIN_MESSAGE <= word && word <= MAX_MESSAGE) {
-        return WordType_Message;
+        return WordClass_Message;
     } else {
         assert(false);
-        return WordType_None;
+        return WordClass_None;
     }
 }
 
@@ -3345,10 +3345,10 @@ void simulate_an_adventure(void)
                 goto cycle;
             }
             switch (word_class(k)) {
-                case WordType_Motion:
+                case WordClass_Motion:
                     mot = k;
                     goto try_move;
-                case WordType_Object:
+                case WordClass_Object:
                     obj = k;
                     /* Make sure obj is meaningful at the current location.
                      * When you specify an object, it must be here, unless
@@ -3369,7 +3369,7 @@ void simulate_an_adventure(void)
                     if (verb != ABSTAIN) goto transitive;
                     printf("What do you want to do with the %s?\n", word1);
                     goto cycle;
-                case WordType_Action:
+                case WordClass_Action:
                     verb = k;
                     if (verb == SAY) {
                         /* "FOO SAY" results in the incorrect message
@@ -3380,7 +3380,7 @@ void simulate_an_adventure(void)
                     if (*word2 != '\0') break;
                     if (obj != NOTHING) goto transitive;
                     else goto intransitive;
-                case WordType_Message:
+                case WordClass_Message:
                     print_message(k);
                     continue;
             }

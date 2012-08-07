@@ -86,23 +86,23 @@ static int plunge(void)
     return you_are_dead_at(R_YLEM);
 }
 
-bool movement(WordType t, int meaning)
+bool movement(WordClass t, int meaning)
 {
     /* HOUSE FOO will take you to the house, even if FOO is unrecognized;
      * whereas FOO HOUSE will not. SAY HOUSE does basically the same thing
      * as HOUSE. */
     if (word1.type == t && word1.meaning == meaning)
 	return true;
-    if (word1.type == WordType_Verb) {
+    if (word1.type == WordClass_Verb) {
 	if (word1.meaning == WALK || word1.meaning == SAY)
 	    return (word2.type == t && word2.meaning == meaning);
     }
     return false;
 }
 
-bool movemento(ObjectWord m) { return movement(WordType_Object, m); }
-bool movementp(Location m) { return movement(WordType_Place, m); }
-bool movementv(VerbWord m) { return movement(WordType_Verb, m); }
+bool movemento(ObjectWord m) { return movement(WordClass_Object, m); }
+bool movementp(Location m) { return movement(WordClass_Place, m); }
+bool movementv(VerbWord m) { return movement(WordClass_Verb, m); }
 
 bool movementv2(VerbWord a, VerbWord b)
 {
@@ -116,12 +116,12 @@ bool movementv3(VerbWord a, VerbWord b, VerbWord c)
 
 static bool correctly_used_magic_word(VerbWord v)
 {
-    return (keywordv(v) && (keywordv(SAY) || word2.type == WordType_None));
+    return (keywordv(v) && (keywordv(SAY) || word2.type == WordClass_None));
 }
 
 static bool correctly_used_magic_word_PLOVER(void)
 {
-    return (keywordp(R_PLOVER) && (keywordv(SAY) || word2.type == WordType_None));
+    return (keywordp(R_PLOVER) && (keywordv(SAY) || word2.type == WordClass_None));
 }
 
 int at_limbo(void)
@@ -1426,7 +1426,7 @@ int at_swofchasm(void)
     if (movementp(R_CORRIDOR)) return R_SLOPING;
 
     if (keywordv(THROW)) {
-        if (word2.type == WordType_None || there(TROLL2, R_SWOFCHASM))
+        if (word2.type == WordClass_None || there(TROLL2, R_SWOFCHASM))
             return 0;  /* unhandled */
         if (keywordo(AXE) || keywordo(SWORD)) {
             if (toting(word2.meaning)) {
@@ -1436,7 +1436,7 @@ int at_swofchasm(void)
                 return STAY_STILL;
             }
             return 0;  /* unhandled */
-        } else if (word2.type == WordType_Object && is_treasure(word2.meaning)) {
+        } else if (word2.type == WordClass_Object && is_treasure(word2.meaning)) {
             const ObjectWord o = word2.meaning;
             if (!toting(o)) return 0;  /* unhandled */
             if ((o == EGGS) && have_stolen_back_eggs) {
@@ -1541,7 +1541,7 @@ int at_neofchasm(void)
         return STAY_STILL;
     }
     if (keywordv(THROW)) {
-        if (word2.type == WordType_None || there(TROLL2, R_NEOFCHASM))
+        if (word2.type == WordClass_None || there(TROLL2, R_NEOFCHASM))
             return 0;  /* unhandled */
         if (keywordo(AXE) || keywordo(SWORD)) {
             if (toting(word2.meaning)) {
@@ -1551,7 +1551,7 @@ int at_neofchasm(void)
                 return STAY_STILL;
             }
             return 0;  /* unhandled */
-        } else if (word2.type == WordType_Object && is_treasure(word2.meaning)) {
+        } else if (word2.type == WordClass_Object && is_treasure(word2.meaning)) {
             const ObjectWord o = word2.meaning;
             if (!toting(o)) return 0;  /* unhandled */
             if ((o == EGGS) && have_stolen_back_eggs) {
@@ -1964,7 +1964,7 @@ int at_insafe(void)
 {
     if (keywordv(OUT)) return safe_exit;
     if (keywordo(SAFE)) {
-        if (word2.type == WordType_None) {
+        if (word2.type == WordClass_None) {
             puts("What do you want me to do with the safe?");
         } else if (keywordv(CLOSE)) {
             puts("There is no handle on the inside of the safe door, nor any other way" SOFT_NL
