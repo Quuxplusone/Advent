@@ -447,7 +447,6 @@ struct Place {
 };
 struct Place places[MAX_LOC+1];
 
-const char *remarks[15];
 int visits[MAX_LOC+1];
 
 void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned int f)
@@ -471,6 +470,8 @@ void make_inst(Instruction *q, MotionWord m, int c, Location d)
 #define only_if_toting(t) (100 + (t-MIN_OBJ))
 #define only_if_here(t) (200 + (t-MIN_OBJ))
 #define unless_prop(t, p) (300 + (t-MIN_OBJ) + 100*p)
+
+#define remark(n) (FIRST_REMARK + n)
 
 
 void build_travel_table(void)
@@ -530,8 +531,7 @@ void build_travel_table(void)
     make_ins(UPSTREAM, R_VALLEY); ditto(N);
     make_ins(FOREST, R_FOREST); ditto(E); ditto(W);
     make_ins(DOWNSTREAM, R_OUTSIDE); ditto(ROCK); ditto(BED); ditto(S);
-    remarks[0] = "You don't fit through a two-inch slit!";
-    make_ins(SLIT, FIRST_REMARK+0); ditto(STREAM); ditto(D);
+    make_ins(SLIT, remark(0)); ditto(STREAM); ditto(D);
     make_loc(q, R_OUTSIDE,
              "You are in a 20-foot depression floored with bare dirt.  Set into the" SOFT_NL
              "dirt is a strong steel grate mounted in concrete.  A dry streambed" SOFT_NL
@@ -541,14 +541,13 @@ void build_travel_table(void)
     make_ins(HOUSE, R_ROAD);
     make_ins(UPSTREAM, R_SLIT); ditto(GULLY); ditto(N);
     make_cond_ins(ENTER, unless_prop(GRATE, 0), R_INSIDE); ditto(IN); ditto(D);
-    remarks[1] = "You can't go through a locked steel grate!";
-    make_ins(ENTER, FIRST_REMARK+1);
+    make_ins(ENTER, remark(1));
     make_loc(q, R_INSIDE,
              "You are in a small chamber beneath a 3x3 steel grate to the surface." SOFT_NL
              "A low crawl over cobbles leads inwards to the west.",
              "You're below the grate.", F_LIGHTED);
     make_cond_ins(OUT, unless_prop(GRATE, 0), R_OUTSIDE); ditto(U);
-    make_ins(OUT, FIRST_REMARK+1);
+    make_ins(OUT, remark(1));
     make_ins(CRAWL, R_COBBLES); ditto(COBBLES); ditto(IN); ditto(W);
     make_ins(PIT, R_SPIT);
     make_ins(DEBRIS, R_DEBRIS);
@@ -624,18 +623,16 @@ void build_travel_table(void)
              "The mist is quite thick here, and the fissure is too wide to jump.",
              "You're on east bank of fissure.", 0);
     make_ins(HALL, R_EMIST); ditto(E);
-    remarks[2] = "I respectfully suggest you go across the bridge instead of jumping.";
-    make_cond_ins(JUMP, unless_prop(CRYSTAL, 0), FIRST_REMARK+2);
+    make_cond_ins(JUMP, unless_prop(CRYSTAL, 0), remark(2));
     make_cond_ins(FORWARD, unless_prop(CRYSTAL, 1), R_LOSE);
-    remarks[3] = "There is no way across the fissure.";
-    make_cond_ins(OVER, unless_prop(CRYSTAL, 1), FIRST_REMARK+3); ditto(ACROSS); ditto(W); ditto(CROSS);
+    make_cond_ins(OVER, unless_prop(CRYSTAL, 1), remark(3)); ditto(ACROSS); ditto(W); ditto(CROSS);
     make_ins(OVER, R_WFISS);
     make_loc(q, R_WFISS,
              "You are on the west side of the fissure in the Hall of Mists.",
              NULL, 0);
-    make_cond_ins(JUMP, unless_prop(CRYSTAL, 0), FIRST_REMARK+2);
+    make_cond_ins(JUMP, unless_prop(CRYSTAL, 0), remark(2));
     make_cond_ins(FORWARD, unless_prop(CRYSTAL, 1), R_LOSE);
-    make_cond_ins(OVER, unless_prop(CRYSTAL, 1), FIRST_REMARK+3); ditto(ACROSS); ditto(E); ditto(CROSS);
+    make_cond_ins(OVER, unless_prop(CRYSTAL, 1), remark(3)); ditto(ACROSS); ditto(E); ditto(CROSS);
     make_ins(OVER, R_EFISS);
     make_ins(N, R_THRU);
     make_ins(W, R_WMIST);
@@ -855,7 +852,7 @@ void build_travel_table(void)
              "enters and exits through tiny slits.",
              "You're in pit by stream.", F_WATER);
     make_ins(CLIMB, R_CLEAN); ditto(U); ditto(OUT);
-    make_ins(SLIT, FIRST_REMARK+0); ditto(STREAM); ditto(D); ditto(UPSTREAM); ditto(DOWNSTREAM);
+    make_ins(SLIT, remark(0)); ditto(STREAM); ditto(D); ditto(UPSTREAM); ditto(DOWNSTREAM);
     make_loc(q, R_DUSTY,
              "You are in a large room full of dusty rocks.  There is a big hole in" SOFT_NL
              "the floor.  There are cracks everywhere, and a passage leading east.",
@@ -880,10 +877,8 @@ void build_travel_table(void)
              "You're in Shell Room.", 0);
     make_ins(U, R_ARCHED); ditto(HALL);
     make_ins(D, R_RAGGED);
-    remarks[4] = "You can't fit this five-foot clam through that little passage!";
-    remarks[5] = "You can't fit this five-foot oyster through that little passage!";
-    make_cond_ins(S, only_if_toting(CLAM), FIRST_REMARK+4);
-    make_cond_ins(S, only_if_toting(OYSTER), FIRST_REMARK+5);
+    make_cond_ins(S, only_if_toting(CLAM), remark(4));
+    make_cond_ins(S, only_if_toting(OYSTER), remark(5));
     make_ins(S, R_COMPLEX);
     make_loc(q, R_ARCHED,
              "You are in an arched hall.  A coral passage once continued up and east" SOFT_NL
@@ -912,14 +907,10 @@ void build_travel_table(void)
     make_loc(q, R_WITT,
              "You are at Witt's End.  Passages lead off in \"all\" directions.",
              "You're at Witt's End.", F_WITT_HINT);
-    remarks[6] = "You have crawled around in some little holes and wound up back in the" SOFT_NL
-                 "main passage.";
-    make_cond_ins(E, 95, FIRST_REMARK+6); ditto(N); ditto(S);
+    make_cond_ins(E, 95, remark(6)); ditto(N); ditto(S);
     ditto(NE); ditto(SE); ditto(SW); ditto(NW); ditto(U); ditto(D);
     make_ins(E, R_ANTE);
-    remarks[7] = "You have crawled around in some little holes and found your way" SOFT_NL
-                 "blocked by a recent cave-in.  You are now back in the main passage.";
-    make_ins(W, FIRST_REMARK+7);
+    make_ins(W, remark(7));
 
     make_loc(q, R_BEDQUILT,
              "You are in Bedquilt, a long east/west passage with holes everywhere." SOFT_NL
@@ -927,15 +918,15 @@ void build_travel_table(void)
              "You're in Bedquilt.", 0);
     make_ins(E, R_COMPLEX);
     make_ins(W, R_SWISS);
-    make_cond_ins(S, 80, FIRST_REMARK+6);
+    make_cond_ins(S, 80, remark(6));
     make_ins(SLAB, R_SLAB);
-    make_cond_ins(U, 80, FIRST_REMARK+6);
+    make_cond_ins(U, 80, remark(6));
     make_cond_ins(U, 50, R_ABOVEP);
     make_ins(U, R_DUSTY);
-    make_cond_ins(N, 60, FIRST_REMARK+6);
+    make_cond_ins(N, 60, remark(6));
     make_cond_ins(N, 75, R_LOW);
     make_ins(N, R_SJUNC);
-    make_cond_ins(D, 80, FIRST_REMARK+6);
+    make_cond_ins(D, 80, remark(6));
     make_ins(D, R_ANTE);
 
     make_loc(q, R_SWISS,
@@ -945,10 +936,10 @@ void build_travel_table(void)
              "You're in Swiss cheese room.", 0);
     make_ins(NE, R_BEDQUILT);
     make_ins(W, R_E2PIT);
-    make_cond_ins(S, 80, FIRST_REMARK+6);
+    make_cond_ins(S, 80, remark(6));
     make_ins(CANYON, R_TALL);
     make_ins(E, R_SOFT);
-    make_cond_ins(NW, 50, FIRST_REMARK+6);
+    make_cond_ins(NW, 50, remark(6));
     make_ins(ORIENTAL, R_ORIENTAL);
     make_loc(q, R_SOFT,
              "You are in the Soft Room.  The walls are covered with heavy curtains," SOFT_NL
@@ -972,8 +963,7 @@ void build_travel_table(void)
     make_ins(E, R_E2PIT); ditto(ACROSS);
     make_ins(W, R_SLAB); ditto(SLAB);
     make_ins(D, R_WPIT); ditto(PIT);
-    remarks[8] = "It is too far up for you to reach.";
-    make_ins(HOLE, FIRST_REMARK+8);
+    make_ins(HOLE, remark(8));
     make_loc(q, R_EPIT,
              "You are at the bottom of the eastern pit in the Twopit Room.  There is" SOFT_NL
              "a small pool of oil in one corner of the pit.",
@@ -1011,8 +1001,7 @@ void build_travel_table(void)
              NULL, 0);
     make_ins(S, R_GIANT); ditto(GIANT); ditto(PASSAGE);
     make_cond_ins(N, unless_prop(DOOR, 0), R_FALLS); ditto(ENTER); ditto(CAVERN);
-    remarks[9] = "The door is extremely rusty and refuses to open.";
-    make_ins(N, FIRST_REMARK+9);
+    make_ins(N, remark(9));
     make_loc(q, R_FALLS,
              "You are in a magnificent cavern with a rushing stream, which cascades" SOFT_NL
              "over a sparkling waterfall into a roaring whirlpool that disappears" SOFT_NL
@@ -1158,8 +1147,7 @@ void build_travel_table(void)
              "You are in a secret canyon that exits to the north and east.",
              NULL, 0);
     make_ins(N, R_ABOVER); ditto(OUT);
-    remarks[10] = "The dragon looks rather nasty.  You'd best not try to get by.";
-    make_ins(E, FIRST_REMARK+10); ditto(FORWARD);
+    make_ins(E, remark(10)); ditto(FORWARD);
     make_loc(q, R_SCAN2,
              places[R_SCAN1].long_desc,
              NULL, 0);
@@ -1169,7 +1157,7 @@ void build_travel_table(void)
              places[R_SCAN1].long_desc,
              NULL, 0);
     make_ins(E, R_SECRET); ditto(OUT);
-    make_ins(N, FIRST_REMARK+10); ditto(FORWARD);
+    make_ins(N, remark(10)); ditto(FORWARD);
 
     make_loc(q, R_SECRET,
              "You are in a secret canyon, which here runs E/W.  It crosses over a" SOFT_NL
@@ -1212,13 +1200,11 @@ void build_travel_table(void)
              "from the chasm into a winding corridor.",
              "You're on SW side of chasm.", 0);
     make_ins(SW, R_SLOPING);
-    remarks[11] = "The troll refuses to let you cross.";
-    make_cond_ins(OVER, only_if_here(TROLL), FIRST_REMARK+11); ditto(ACROSS); ditto(CROSS); ditto(NE);
-    remarks[12] = "There is no longer any way across the chasm.";
-    make_cond_ins(OVER, unless_prop(BRIDGE, 0), FIRST_REMARK+12);
+    make_cond_ins(OVER, only_if_here(TROLL), remark(11)); ditto(ACROSS); ditto(CROSS); ditto(NE);
+    make_cond_ins(OVER, unless_prop(BRIDGE, 0), remark(12));
     make_ins(OVER, R_TROLL);
     make_cond_ins(JUMP, unless_prop(BRIDGE, 0), R_LOSE);
-    make_ins(JUMP, FIRST_REMARK+2);
+    make_ins(JUMP, remark(2));
     make_loc(q, R_DEAD0, dead_end, NULL, 0);
     make_ins(S, R_CROSS); ditto(OUT);
     make_loc(q, R_DEAD1, dead_end, NULL, F_TWIST_HINT);
@@ -1248,9 +1234,9 @@ void build_travel_table(void)
              "chasm on this side.",
              "You're on NE side of chasm.", 0);
     make_ins(NE, R_CORR);
-    make_cond_ins(OVER, only_if_here(TROLL), FIRST_REMARK+11); ditto(ACROSS); ditto(CROSS); ditto(SW);
+    make_cond_ins(OVER, only_if_here(TROLL), remark(11)); ditto(ACROSS); ditto(CROSS); ditto(SW);
     make_ins(OVER, R_TROLL);
-    make_ins(JUMP, FIRST_REMARK+2);
+    make_ins(JUMP, remark(2));
     make_ins(FORK, R_FORK);
     make_ins(VIEW, R_VIEW);
     make_ins(BARREN, R_FBARR);
@@ -1303,8 +1289,7 @@ void build_travel_table(void)
              "You're at breath-taking view.", F_LIGHTED);
     make_ins(S, R_WARM); ditto(PASSAGE); ditto(OUT);
     make_ins(FORK, R_FORK);
-    remarks[13] = "Don't be ridiculous!";
-    make_ins(D, FIRST_REMARK+13); ditto(JUMP);
+    make_ins(D, remark(13)); ditto(JUMP);
     make_loc(q, R_CHAMBER,
              "You are in a small chamber filled with large boulders.  The walls are" SOFT_NL
              "very warm, causing the air in the room to be almost stifling from the" SOFT_NL
@@ -1363,7 +1348,7 @@ void build_travel_table(void)
              "VAULT.  KEYS IN MAIN OFFICE.\"",
              "You're at SW end.", F_LIGHTED);
     make_ins(NE, R_NEEND);
-    make_ins(D, FIRST_REMARK+1);  /* You can't go through a locked steel grate! */
+    make_ins(D, remark(1));  /* You can't go through a locked steel grate! */
 
     /* When the current location is R_CRACK or higher, it's a pseudo-location.
      * In such cases we don't ask you for input; we assume that you have told
@@ -3105,6 +3090,56 @@ Instruction *determine_motion_instruction(Location loc, MotionWord mot)
     return q;
 }
 
+void print_remark(int which)
+{
+    switch (which) {
+        case 0:
+            puts("You don't fit through a two-inch slit!");
+            break;
+        case 1:
+            puts("You can't go through a locked steel grate!");
+            break;
+        case 2:
+            puts("I respectfully suggest you go across the bridge instead of jumping.");
+            break;
+        case 3:
+            puts("There is no way across the fissure.");
+            break;
+        case 4:
+            puts("You can't fit this five-foot clam through that little passage!");
+            break;
+        case 5:
+            puts("You can't fit this five-foot oyster through that little passage!");
+            break;
+        case 6:
+            puts("You have crawled around in some little holes and wound up back in the" SOFT_NL
+                 "main passage.");
+            break;
+        case 7:
+            puts("You have crawled around in some little holes and found your way" SOFT_NL
+                 "blocked by a recent cave-in.  You are now back in the main passage.");
+            break;
+        case 8:
+            puts("It is too far up for you to reach.");
+            break;
+        case 9:
+            puts("The door is extremely rusty and refuses to open.");
+            break;
+        case 10:
+            puts("The dragon looks rather nasty.  You'd best not try to get by.");
+            break;
+        case 11:
+            puts("The troll refuses to let you cross.");
+            break;
+        case 12:
+            puts("There is no longer any way across the chasm.");
+            break;
+        case 13:
+            puts("Don't be ridiculous!");
+            break;
+    }
+}
+
 /* Modify newloc in place, and return true if the player died crossing the troll bridge. */
 bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot)
 {
@@ -3118,7 +3153,7 @@ bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot)
         return false;
     }
     if (*newloc >= FIRST_REMARK) {
-        puts(remarks[*newloc - FIRST_REMARK]);
+        print_remark(*newloc - FIRST_REMARK);
         *newloc = loc;
         return false;
     }
@@ -3129,9 +3164,6 @@ bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot)
         }
         case R_PDROP: {
             drop(EMERALD, loc);
-            /* [ajo] Knuth used a goto here to resume table processing;
-             * I believe this version is equivalent, given the contents
-             * of the table. */
             *newloc = R_Y2 + R_PLOVER - loc;
             return false;
         }
