@@ -634,8 +634,8 @@ void build_travel_table(void)
     make_cond_ins(FORWARD, unless_prop(CRYSTAL, 1), R_LOSE);
     make_cond_ins(OVER, unless_prop(CRYSTAL, 1), remark(3)); ditto(ACROSS); ditto(E); ditto(CROSS);
     make_ins(OVER, R_EFISS);
-    make_ins(N, R_THRU);
     make_ins(W, R_WMIST);
+    make_ins(N, R_THRU);
 
     make_loc(q, R_WMIST,
              "You are at the west end of the Hall of Mists. A low wide crawl" SOFT_NL
@@ -644,8 +644,8 @@ void build_travel_table(void)
              "You're at west end of Hall of Mists.", 0);
     make_ins(S, R_LIKE1); ditto(U); ditto(PASSAGE); ditto(CLIMB);
     make_ins(E, R_WFISS);
-    make_ins(N, R_DUCK);
     make_ins(W, R_ELONG); ditto(CRAWL);
+    make_ins(N, R_DUCK);
 
     make_loc(q, R_LIKE1, all_alike, NULL, F_TWIST_HINT);
     make_ins(U, R_WMIST);
@@ -1757,10 +1757,12 @@ void steal_all_your_treasure(Location loc)  /* sections 173--174 in Knuth */
          "he chortles. \"I'll just take all this booty and hide it away with me" SOFT_NL
          "chest deep in the maze!\"  He snatches your treasure and vanishes into" SOFT_NL
          "the gloom.");
-    for (int i = MIN_TREASURE; i <= MAX_OBJ; ++i) {
-        if (too_easy_to_steal(i, loc)) continue;
-        if (objs(i).base == NULL && there(i, loc)) carry(i);
-        if (toting(i)) drop(i, R_PIRATES_NEST);
+    for (int t = MIN_TREASURE; t <= MAX_OBJ; ++t) {
+        if (too_easy_to_steal(t, loc)) continue;
+        if (here(t, loc) && objs(t).base == NULL) {
+            /* The vase, rug, and chain can all be immobile at times. */
+            move(t, R_PIRATES_NEST);
+        }
     }
 }
 
@@ -1860,7 +1862,7 @@ bool move_dwarves_and_pirate(Location loc)
                     if (newloc == odloc[j] || newloc == dloc[j]) continue;  /* don't double back */
                     if (q->cond == 100) continue;
                     if (j == 0 && newloc > R_PIRATES_NEST) continue;
-                    if (newloc >= MIN_FORCED_LOC) continue;
+                    if (FORCED_MOVE(newloc)) continue;
                     ploc[i++] = newloc;
                 }
                 if (i==0) ploc[i++] = odloc[j];
@@ -3140,6 +3142,47 @@ void print_remark(int which)
     }
 }
 
+MotionWord try_going_back_to(Location l, Location from)
+{
+    /* Interestingly, the BACK command does not simply move the player
+     * back to oldloc. Instead, it attempts to trace a path connecting
+     * loc to oldloc; if no such passage exists, we fail to move. If
+     * such a passage does exist, then we react as if the player had
+     * typed the appropriate motion-word in the first place.
+     * Notice that Woods' code makes an effort to deal with FORCED_MOVE
+     * locations, but doesn't succeed 100 percent. ("l" is set to oldloc,
+     * or to oldoldloc if oldloc is a FORCED_MOVE location.)
+     *     R_SPIT : WEST -> R_CRACK -> R_SPIT : BACK
+     * gives "Sorry, but..." as intended, because oldoldloc is R_SPIT.
+     *     R_SWSIDE : CROSS -> R_TROLL -> R_NESIDE : BACK
+     * gives "You can't get there from here." as apparently intended,
+     * because R_TROLL is a special location.
+     *     R_WPIT : CLIMB -> R_CHECK -> R_UPNOUT -> R_WPIT : BACK
+     * unintentionally gives "There is nothing here to climb.", because
+     * oldoldloc is R_CHECK, and there *is* a passage connecting our
+     * current location (R_WPIT) to R_CHECK, so we take it again.
+     *     R_WPIT : CLIMB -> R_CHECK -> R_DIDIT -> R_W2PIT : BACK
+     * unintentionally gives "You can't get there from here.", because
+     * oldoldloc is R_CHECK, and there is no passage connecting our
+     * current location (R_W2PIT) to R_CHECK. */
+
+    if (l == from) {
+        puts("Sorry, but I no longer seem to remember how you got here.");
+        return NOWHERE;
+    }
+    for (Instruction *q = start[from]; q < start[from+1]; ++q) {
+        /* Take the first exit that goes to "l", either directly... */
+        Location ll = q->dest;
+        if (ll == l)
+            return q->mot;
+        /* ...or via a single forced move. */
+        if (MIN_FORCED_LOC <= ll && ll <= MAX_LOC && start[ll]->dest == l)
+            return q->mot;
+    }
+    puts("You can't get there from here.");
+    return NOWHERE;
+}
+
 /* Modify newloc in place, and return true if the player died crossing the troll bridge. */
 bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot)
 {
@@ -3875,35 +3918,13 @@ void simulate_an_adventure(void)
         /* A major cycle comes to an end when a motion verb mot has been
          * given and we have computed the appropriate newloc accordingly. */
         newloc = loc;  /* by default we will stay put */
-        if (mot == NOWHERE) continue;
         if (mot == BACK) {
-            /* Interestingly, the BACK command does not simply move the player back
-             * to oldloc. Instead, it attempts to trace a path connecting loc to
-             * oldloc; if no such passage exists, we fail to move. If such a passage
-             * does exist, then we react as if the player had typed the appropriate
-             * motion-word in the first place. */
             Location l = (FORCED_MOVE(oldloc) ? oldoldloc : oldloc);
-            const Instruction *q, *qq;
-            oldoldloc = oldloc;
-            oldloc = loc;
-            if (l == loc) {
-                puts("Sorry, but I no longer seem to remember how you got here.");
-                continue;
-            }
-            for (q = start[loc], qq = NULL; q < start[loc+1]; ++q) {
-                Location ll = q->dest;
-                if (ll == l) goto found;
-                if (ll <= MAX_LOC && FORCED_MOVE(ll) && start[ll]->dest == l) qq = q;
-            }
-            if (qq == NULL) {
-                puts("You can't get there from here.");
-                continue;
-            } else {
-                q = qq;
-            }
-          found:
-            mot = q->mot;
-            goto go_for_it;
+            mot = try_going_back_to(l, loc); /* may return NOWHERE */
+        }
+
+        if (mot == NOWHERE) {
+            continue;
         } else if (mot == LOOK) {
             /* Repeat the long description and continue. */
             if (++look_count <= 3) {
@@ -3922,10 +3943,10 @@ void simulate_an_adventure(void)
             }
             continue;
         }
+
+        /* Determine the next newloc. */
         oldoldloc = oldloc;
         oldloc = loc;
-    go_for_it:
-        /* Determine the next newloc. */
         if (determine_next_newloc(loc, &newloc, mot)) {
             /* Player died trying to cross the troll bridge. */
             oldoldloc = newloc;  /* if you are revived, you got across */
