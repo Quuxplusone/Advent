@@ -1434,7 +1434,7 @@ struct ObjectData {
 
 struct ObjectData *first[MAX_LOC+1];
 int holding_count;  /* how many objects have objs(t).place < 0? */
-Location knife_loc;  /* place where knife was mentioned, or -1 */
+Location last_knife_loc = R_LIMBO;
 int tally = 15;  /* treasures awaiting you */
 int lost_treasures;  /* treasures that you won't find */
 
@@ -1893,7 +1893,7 @@ bool move_dwarves_and_pirate(Location loc)
                         ++dtotal;
                         if (odloc[j] == dloc[j]) {
                             ++attack;
-                            if (knife_loc >= 0) knife_loc = loc;
+                            last_knife_loc = loc;
                             if (ran(1000) < 95*(dflag-2)) ++stick;
                         }
                     }
@@ -2401,7 +2401,10 @@ bool now_in_darkness(Location loc)
 /* Sections 158, 169, 182 in Knuth */
 void adjustments_before_listening(Location loc)
 {
-    if (knife_loc > R_LIMBO && knife_loc != loc) knife_loc = R_LIMBO;
+    if (last_knife_loc != loc) {
+        /* When we move, the dwarf's vanishing knife goes out of scope. */
+        last_knife_loc = R_LIMBO;
+    }
     if (closed) {
         /* After the cave is closed, we look for objects being toted with
          * prop < 0; their prop value is changed to -1 - prop. This means
@@ -3014,11 +3017,18 @@ int check_noun_validity(ObjectWord obj, Location loc)  /* sections 90--91 in Knu
                 return 'p';  /* obj = PLANT2 */
             }
             return 'c';  /* can't see it */
-        case KNIFE:
-            if (loc != knife_loc) return 'c';
-            knife_loc = -1;
+        case KNIFE: {
+            /* You're allowed to try to GET KNIFE, but only once. The game
+             * informs you that the knife has vanished; and from then on,
+             * it never reappears. */
+            static bool have_tried_to_get_knife = false;
+            if (have_tried_to_get_knife || (loc != last_knife_loc)) {
+                return 'c';  /* can't see it */
+            }
             puts("The dwarves' knives vanish as they strike the walls of the cave.");
+            have_tried_to_get_knife = true;
             return 'f';  /* action is finished */
+        }
         case ROD:
             if (!here(ROD2, loc)) return 'c';
             return 'r';  /* obj = ROD2 */
