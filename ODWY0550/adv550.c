@@ -114,7 +114,7 @@ int process_verb(Location loc);
 
 struct HashEntry {
     const char *text;
-    WordType word_type;
+    WordClass word_type;
     int meaning;
 };
 
@@ -122,24 +122,24 @@ struct HashEntry {
 struct HashEntry hash_table[HASH_PRIME];
 const char *default_object_spelling[MAX_OBJ+1];
 
-void new_word(WordType t, const char *w, int m)
+void new_word(WordClass t, const char *w, int m)
 {
     int h = 0;
     for (const char *p = w; *p != '\0' && p != w+5; ++p) {
         h = ((h << 1) + *p) % HASH_PRIME;
     }
-    while (hash_table[h].word_type != WordType_None)
+    while (hash_table[h].word_type != WordClass_None)
         h = (h+1) % HASH_PRIME;
     hash_table[h].text = w;
     hash_table[h].word_type = t;
     hash_table[h].meaning = m;
-    if (t == WordType_Object && default_object_spelling[m] == NULL)
+    if (t == WordClass_Object && default_object_spelling[m] == NULL)
         default_object_spelling[m] = w;
 }
 
-void new_verb(const char *w, VerbWord m) { new_word(WordType_Verb, w, m); }
-void new_noun(const char *w, ObjectWord m) { new_word(WordType_Object, w, m); }
-void new_place_word(const char *w, Location m) { new_word(WordType_Place, w, m); }
+void new_verb(const char *w, VerbWord m) { new_word(WordClass_Verb, w, m); }
+void new_noun(const char *w, ObjectWord m) { new_word(WordClass_Object, w, m); }
+void new_place_word(const char *w, Location m) { new_word(WordClass_Place, w, m); }
 
 struct HashEntry *lookup(const char *w)
 {
@@ -147,7 +147,7 @@ struct HashEntry *lookup(const char *w)
     for (const char *p = w; *p != '\0' && p != w+5; ++p) {
         h = ((h << 1) + *p) % HASH_PRIME;
     }
-    while (hash_table[h].word_type != WordType_None) {
+    while (hash_table[h].word_type != WordClass_None) {
         if (streq(w, hash_table[h].text)) return &hash_table[h];
         h = (h+1) % HASH_PRIME;
     }
@@ -821,12 +821,12 @@ bool yes(const char *q)
 void parse(struct InputWordInfo *w)
 {
     if (w->text[0] == '\0') {
-        w->type = WordType_None;
+        w->type = WordClass_None;
         w->meaning = 0;
     } else {
         struct HashEntry *h = lookup(w->text);
         if (h == NULL) {
-            w->type = WordType_BadWord;
+            w->type = WordClass_BadWord;
             w->meaning = 0;
         } else {
             w->type = h->word_type;
@@ -910,17 +910,17 @@ void listen(void)
 
     parse(&word1);
     parse(&word2);
-    if (please_clarify && word1.type != WordType_None &&
-            word1.type != WordType_BadWord && word2.type == WordType_None) {
+    if (please_clarify && word1.type != WordClass_None &&
+            word1.type != WordClass_BadWord && word2.type == WordClass_None) {
         /* If we just asked the user for a verb or noun, we should
          * see if maybe they gave us one. */
-        if ((word1.type == WordType_Verb) != (saved_word.type == WordType_Verb))
+        if ((word1.type == WordClass_Verb) != (saved_word.type == WordClass_Verb))
             word2 = saved_word;
     }
     /* BIRD GET works just as well as GET BIRD.
      * KEYS DROP, GET works just as well as DROP KEYS followed by GET KEYS. */
     reversed = false;
-    if (word1.type != WordType_Verb && word2.type == WordType_Verb) {
+    if (word1.type != WordClass_Verb && word2.type == WordClass_Verb) {
         saved_word = word1;
         word1 = word2;
         word2 = saved_word;
@@ -930,16 +930,16 @@ void listen(void)
     puts("");
 }
 
-static bool keyword(WordType type, int meaning)
+static bool keyword(WordClass type, int meaning)
 {
     if (word1.type == type && word1.meaning == meaning) return true;
     if (word2.type == type && word2.meaning == meaning) return true;
     return false;
 }
 
-bool keywordv(VerbWord meaning) { return keyword(WordType_Verb, meaning); }
-bool keywordo(ObjectWord meaning) { return keyword(WordType_Object, meaning); }
-bool keywordp(Location meaning) { return keyword(WordType_Place, meaning); }
+bool keywordv(VerbWord meaning) { return keyword(WordClass_Verb, meaning); }
+bool keywordo(ObjectWord meaning) { return keyword(WordClass_Object, meaning); }
+bool keywordp(Location meaning) { return keyword(WordClass_Place, meaning); }
 
 
 /*========== Dwarves. ===================================================*/
@@ -1577,7 +1577,7 @@ ObjectWord default_to_something(bool (*predicate)(ObjectWord), Location loc)
         candidate = i;
     }
     if (candidate != NOTHING) {
-        word2.type = WordType_Object;
+        word2.type = WordClass_Object;
         word2.meaning = candidate;
         strcpy(word2.text, default_object_spelling[candidate]);
     }
@@ -1656,11 +1656,11 @@ void getsceptre(void)
 int attempt_take(ObjectWord obj, Location loc)
 {
     if (now_in_darkness(loc)) {
-        if (word2.type == WordType_None) {
+        if (word2.type == WordClass_None) {
             puts("It's pitch dark in here " EMDASH("-") " I can't tell whether there's anything here" SOFT_NL
                  "that I can pick up!");
             return STAY_STILL;
-        } else if (word2.type == WordType_Object && !toting(obj) && portable(obj)) {
+        } else if (word2.type == WordClass_Object && !toting(obj) && portable(obj)) {
             if (pct(60 - 5*(strength - holding_count))) {
                 printf("Hmmph " EMDASH("-") " you're not asking for much, are you " EMDASH("-") " it's pitch dark in" SOFT_NL
                        "here!  Well, I'll grope around and try to find the %s.....\n", word2.text);
@@ -1699,13 +1699,13 @@ int attempt_take(ObjectWord obj, Location loc)
             }
         }
     }
-    if (word2.type == WordType_None) {
+    if (word2.type == WordClass_None) {
         obj = default_to_something(portable, loc);
     }
     if (keywordv(INVENTORY)) {
         attempt_inventory();
         return STAY_STILL;
-    } else if (word2.type == WordType_Object) {
+    } else if (word2.type == WordClass_Object) {
         switch (obj) {
             case BIRD:
                 getbird(loc);
@@ -1764,9 +1764,9 @@ int attempt_take(ObjectWord obj, Location loc)
                 break;
         }  /* end switch */
     }
-    if (word2.type == WordType_None)
+    if (word2.type == WordClass_None)
         return 0;  /* should be handled by main loop */
-    if (word2.type != WordType_Object) {
+    if (word2.type != WordClass_Object) {
         hah();
     } else if (toting(obj)) {
         you_have_it();
@@ -1898,8 +1898,8 @@ bool freedjinn(Location loc)
 
 int attempt_drop(ObjectWord obj, Location loc)
 {
-    if (word2.type == WordType_None) return 0;  /* unhandled */
-    if (word2.type == WordType_Object) {
+    if (word2.type == WordClass_None) return 0;  /* unhandled */
+    if (word2.type == WordClass_Object) {
         switch (obj) {
             case BIRD: dropbird(loc); return STAY_STILL;
             case OIL: if (dropliquid(obj, loc)) return STAY_STILL; break;
@@ -1907,7 +1907,7 @@ int attempt_drop(ObjectWord obj, Location loc)
             case DJINN: if (freedjinn(loc)) return STAY_STILL; break;
         }
     }
-    if (word2.type != WordType_Object) {
+    if (word2.type != WordClass_Object) {
         hah();
     } else if (toting(obj)) {
         apport(obj, loc);
@@ -2238,7 +2238,7 @@ bool upchuck(ObjectWord obj, Location loc)
 
 int attempt_throw(ObjectWord obj, Location loc)
 {
-    if (word2.type == WordType_Object) {
+    if (word2.type == WordClass_Object) {
         switch (obj) {
             case AXE:
             case SWORD: {
@@ -2269,10 +2269,10 @@ int attempt_throw(ObjectWord obj, Location loc)
                 break;  /* unhandled */
         }
     }
-    if (word2.type == WordType_Object && toting(obj)) {
+    if (word2.type == WordClass_Object && toting(obj)) {
         if (upchuck(obj, loc)) return STAY_STILL;
     }
-    if (word2.type != WordType_None) {
+    if (word2.type != WordClass_None) {
         word1.meaning = DROP;
         strcpy(word1.text, "drop");
         return process_verb(loc);
@@ -2379,7 +2379,7 @@ int examine_mist(void)
 
 int attempt_open(Location loc)
 {
-    if (word2.type == WordType_None) {
+    if (word2.type == WordClass_None) {
         default_to_something(openable, loc);
     }
     if (keywordo(GRATE) && there(GRATE, loc)) {
@@ -2519,7 +2519,7 @@ int attempt_open(Location loc)
 
 int attempt_close(Location loc)
 {
-    if (word2.type == WordType_None) {
+    if (word2.type == WordClass_None) {
         default_to_something(openable, loc);
     }
     if (keywordo(GRATE) && there(GRATE, loc)) {
@@ -2768,11 +2768,11 @@ int kill_ogre(Location loc)
 
 int attempt_kill(Location loc)
 {
-    if (word2.type == WordType_None) {
+    if (word2.type == WordClass_None) {
         default_to_something(mortal, loc);
     }
     ObjectWord obj = word2.meaning;
-    if (word2.type == WordType_Object && here(obj, loc)) {
+    if (word2.type == WordClass_Object && here(obj, loc)) {
         switch (obj) {
             case TROLL:
                 puts("Trolls are close relatives with the rocks and have skin as tough as" SOFT_NL
@@ -2847,7 +2847,7 @@ int attempt_kill(Location loc)
         }
         return STAY_STILL;  /* handled */
     }
-    if (word2.type == WordType_None) {
+    if (word2.type == WordClass_None) {
         puts("There is nothing here to attack.");
         return STAY_STILL;
     }
@@ -2863,7 +2863,7 @@ bool feedable(ObjectWord o)
 int attempt_feed(Location loc)
 {
     ObjectWord o = word2.meaning;
-    if (word2.type == WordType_Object && feedable(o)) {
+    if (word2.type == WordClass_Object && feedable(o)) {
         if (!here(o, loc)) {
             I_see_no(word2.text);
             return STAY_STILL;
@@ -2921,7 +2921,7 @@ int attempt_feed(Location loc)
                      "them away!");
                 break;
         }
-    } else if (word2.type == WordType_None) {
+    } else if (word2.type == WordClass_None) {
         say_what();
     } else {
         hah();
@@ -2953,7 +2953,7 @@ int attempt_find(Location loc)
         } else {
             puts("I need more detailed instructions to do that.");
         }
-    } else if (word2.type == WordType_Object) {
+    } else if (word2.type == WordClass_Object) {
         ObjectWord o = word2.meaning;
         if (toting(o)) {
             puts("I believe what you want is right here with you.");
@@ -2962,7 +2962,7 @@ int attempt_find(Location loc)
         } else {
             cant_find();
         }
-    } else if (word2.type == WordType_Place) {
+    } else if (word2.type == WordClass_Place) {
         Location dest = word2.meaning;
         if (loc == dest) {
             puts("That's where you are now!");
@@ -3023,25 +3023,25 @@ void pour_oil(Location loc)
 
 int attempt_eat(Location loc)
 {
-    if (word2.type == WordType_None) {
+    if (word2.type == WordClass_None) {
         /* Platt's logic here may or may not have been intentional.
          * If only one edible thing is here (toted or otherwise), we'll
          * eat it. Tiebreaker: we'll prefer the thing on the ground.
          * Second tiebreaker: we'll prefer the mushroom. */
         default_to_something(edible, loc);
-        if (word2.type == WordType_None && here(MUSHROOM, loc)) {
-            word2.type = WordType_Object;
+        if (word2.type == WordClass_None && here(MUSHROOM, loc)) {
+            word2.type = WordClass_Object;
             word2.meaning = MUSHROOM;
-        } else if (word2.type == WordType_None && here(FOOD, loc)) {
-            word2.type = WordType_Object;
+        } else if (word2.type == WordClass_None && here(FOOD, loc)) {
+            word2.type = WordClass_Object;
             word2.meaning = FOOD;
         }
     }
     ObjectWord obj = word2.meaning;
-    if (word2.type == WordType_None) {
+    if (word2.type == WordClass_None) {
         puts("There is nothing here to eat.");
         return STAY_STILL;
-    } else if (word2.type == WordType_Object) {
+    } else if (word2.type == WordClass_Object) {
         switch (obj) {
             case MUSHROOM:
                 if (here(MUSHROOM, loc)) {
@@ -3085,8 +3085,8 @@ int attempt_eat(Location loc)
 int passphrase(Location loc)
 {
     if (there(SAFE, loc) && objs[SAFE].prop == 0) {
-        if ((word2.type == WordType_None && keywordv(password)) ||
-            (word2.type == WordType_Verb && word2.meaning == (int)password)) {
+        if ((word2.type == WordClass_None && keywordv(password)) ||
+            (word2.type == WordClass_Verb && word2.meaning == (int)password)) {
             puts(">ker-THUNK<\n"
                  "            >screeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeech<\n\n"
                  "The (somewhat rusty) safe is now open.");
@@ -3115,7 +3115,7 @@ int passphrase(Location loc)
 void wizmode_passphrase(void)
 {
     static int magick = 0;
-    assert(word1.type == WordType_Verb);
+    assert(word1.type == WordClass_Verb);
     switch (word1.meaning) {
         case CURIOUS:
             if (magick == 0) {
@@ -3306,24 +3306,24 @@ int process_verb(Location loc)
 {
     const int verb = word1.meaning;
     const int obj = word2.meaning;
-    if (word1.type == WordType_Verb)
+    if (word1.type == WordClass_Verb)
     switch (verb) {
         case GET:
             return attempt_take(obj, loc);
         case DROP:
             return attempt_drop(obj, loc);
         case WALK:
-            if (word2.type == WordType_None) {
+            if (word2.type == WordClass_None) {
                 printf("Which way should I %s?\n", word1.text);
                 return STAY_STILL;
-            } else if (word2.type == WordType_Verb &&
+            } else if (word2.type == WordClass_Verb &&
                        is_walkable_direction(obj)) {
                 /* Redirect WALK SOUTH to just SOUTH. */
                 word1 = word2;
-                word2.type = WordType_None;
+                word2.type = WordClass_None;
                 word2.meaning = 0;
                 return process_verb(loc);
-            } else if (word2.type == WordType_Place) {
+            } else if (word2.type == WordClass_Place) {
                 if (word2.meaning == loc) {
                     puts("I need more detailed instructions to do that.");
                 } else {
@@ -3349,7 +3349,7 @@ int process_verb(Location loc)
         case THROW:
             return attempt_throw(obj, loc);
         case WAVE:
-            if (word2.type == WordType_Object) {
+            if (word2.type == WordClass_Object) {
                 if (!toting(obj)) {
                     puts("You aren't carrying it!");
                 } else if (obj == ROD) {
@@ -3359,7 +3359,7 @@ int process_verb(Location loc)
                 } else {
                     nothing_happens();
                 }
-            } else if (word2.type == WordType_None) {
+            } else if (word2.type == WordClass_None) {
                 nothing_happens();
             } else {
                 hah();
@@ -3384,7 +3384,7 @@ int process_verb(Location loc)
             }
             return STAY_STILL;
         case ON:
-            if (keywordo(LAMP) || word2.type == WordType_None) {
+            if (keywordo(LAMP) || word2.type == WordClass_None) {
                 if (!here(LAMP, loc)) {
                     if (keywordo(LAMP)) {
                         I_see_no("lamp");
@@ -3416,7 +3416,7 @@ int process_verb(Location loc)
             }
             return 0;  /* LIGHT AXE, e.g., is unhandled */
         case OFF:
-            if (keywordo(LAMP) || word2.type == WordType_None) {
+            if (keywordo(LAMP) || word2.type == WordClass_None) {
                 if (!here(LAMP, loc)) {
                     if (keywordo(LAMP)) {
                         I_see_no("lamp");
@@ -3467,7 +3467,7 @@ int process_verb(Location loc)
             ok();
             return STAY_STILL;
         case LPSD:
-            if (wizard_mode && word2.type == WordType_Place) {
+            if (wizard_mode && word2.type == WordClass_Place) {
                 say_foof();
                 return word2.meaning;
             } else {
@@ -3603,7 +3603,7 @@ int process_verb(Location loc)
                     puts("There is nothing here with which to fill the bottle.");
                 }
                 return STAY_STILL;
-            } else if (word2.type != WordType_None) {
+            } else if (word2.type != WordClass_None) {
                 puts("You can't fill that.");
                 return STAY_STILL;
             }
@@ -3640,7 +3640,7 @@ int process_verb(Location loc)
                 printf("Rubbing the electric %s is not particularly rewarding.  Anyway," SOFT_NL
                        "nothing exciting happens.\n", word2.text);
                 return STAY_STILL;
-            } else if (word2.type == WordType_Object && here(word2.meaning, loc)) {
+            } else if (word2.type == WordClass_Object && here(word2.meaning, loc)) {
                 puts("Peculiar.  Nothing unexpected happens.");
                 return STAY_STILL;
             }
@@ -3652,9 +3652,9 @@ int process_verb(Location loc)
                 keywordv(KLAETU) || keywordv(SNOEZE) || keywordv(BLERBI) ||
                 keywordv(PHUGGG)) {
                 word1 = word2;
-                word2.type = WordType_None;
+                word2.type = WordClass_None;
                 return process_verb(loc);
-            } else if (word2.type != WordType_None) {
+            } else if (word2.type != WordClass_None) {
                 /* We've already printed a message via presay(). */
                 return STAY_STILL;
             }
@@ -3684,7 +3684,7 @@ int process_verb(Location loc)
 #endif /* SAVE_AND_RESTORE */
         case DRINK:
             /* This action produces a different message at R_BEACH. */
-            if ((word2.type == WordType_None) || keywordo(WATER)) {
+            if ((word2.type == WordClass_None) || keywordo(WATER)) {
                 if (places[loc].flags & F_WATER) {
                     puts("You have taken a drink from the stream.  The water tastes strongly of" SOFT_NL
                          "minerals, but is not unpleasant.  It is extremely cold.");
@@ -3697,7 +3697,7 @@ int process_verb(Location loc)
                 } else {
                     puts("There is nothing here that I can drink!");
                 }
-            } else if (word2.type == WordType_Object) {
+            } else if (word2.type == WordClass_Object) {
                 if (here(word2.meaning, loc)) {
                     hah();
                 } else {
@@ -3711,7 +3711,7 @@ int process_verb(Location loc)
             attempt_news();
             return STAY_STILL;
         case READ:
-            if (word2.type == WordType_Object) {
+            if (word2.type == WordClass_Object) {
                 ObjectWord obj = word2.meaning;
                 if (here(obj, loc)) {
                     switch (obj) {
@@ -3733,7 +3733,7 @@ int process_verb(Location loc)
                 } else {
                     I_see_no(word2.text);
                 }
-            } else if (word2.type != WordType_None) {
+            } else if (word2.type != WordClass_None) {
                 hah();
             } else {
                 return 0;  /* unhandled */
@@ -3841,7 +3841,7 @@ int process_verb(Location loc)
         case BLERBI:
             return passphrase(loc);
         case RIDE:
-            if (word2.type == WordType_None || keywordo(TURTLE)) {
+            if (word2.type == WordClass_None || keywordo(TURTLE)) {
                 if (there(TURTLE, loc)) {
                     puts("You step gently on Darwin the Tortoise's back, and he carries you" SOFT_NL
                          "smoothly over to the southern side of the reservoir.  He then blows" SOFT_NL
@@ -3863,10 +3863,10 @@ int process_verb(Location loc)
             }
             return STAY_STILL;
     }
-    else if (word1.type == WordType_Object)
+    else if (word1.type == WordClass_Object)
     switch (verb) {
         case WATER:
-            if (word2.type == WordType_Object && word2.meaning == DOOR) {
+            if (word2.type == WordClass_Object && word2.meaning == DOOR) {
                 if (there(DOOR, loc)) {
                     if (toting(WATER)) {
                         pour_water(loc);
@@ -3876,7 +3876,7 @@ int process_verb(Location loc)
                 } else {
                     I_see_no("door");
                 }
-            } else if (word2.type == WordType_Object && word2.meaning == PLANT) {
+            } else if (word2.type == WordClass_Object && word2.meaning == PLANT) {
                 if (there(PLANT, loc)) {
                     if (toting(WATER)) {
                         pour_water(loc);
@@ -3886,7 +3886,7 @@ int process_verb(Location loc)
                 } else {
                     I_see_no("plant");
                 }
-            } else if (word2.type == WordType_None) {
+            } else if (word2.type == WordClass_None) {
                 if ((there(BOTTLE, loc) && objs[BOTTLE].prop == 0) ||
                     toting(WATER) || places[loc].flags & F_WATER) {
                     what_do("water");
@@ -3898,7 +3898,7 @@ int process_verb(Location loc)
             }
             return STAY_STILL;
         case OIL:
-            if (word2.type == WordType_Object && word2.meaning == DOOR) {
+            if (word2.type == WordClass_Object && word2.meaning == DOOR) {
                 if (there(DOOR, loc)) {
                     if (toting(OIL)) {
                         pour_oil(loc);
@@ -3908,7 +3908,7 @@ int process_verb(Location loc)
                 } else {
                     I_see_no("door");
                 }
-            } else if (word2.type == WordType_Object && word2.meaning == PLANT) {
+            } else if (word2.type == WordClass_Object && word2.meaning == PLANT) {
                 if (there(PLANT, loc)) {
                     if (toting(OIL)) {
                         pour_oil(loc);
@@ -3918,7 +3918,7 @@ int process_verb(Location loc)
                 } else {
                     I_see_no("plant");
                 }
-            } else if (word2.type == WordType_None) {
+            } else if (word2.type == WordClass_None) {
                 if ((there(BOTTLE, loc) && objs[BOTTLE].prop == 2) ||
                     toting(OIL) || loc == R_EPIT) {
                     what_do("oil");
@@ -4235,7 +4235,7 @@ bool clock4(Location loc)
 
 void deal_with_syntax_errors(Location loc)
 {
-    if (word1.type == WordType_Object) {
+    if (word1.type == WordClass_Object) {
         if (here(word1.meaning, loc)) {
             printf("What do you want me to do with the %s?\n", word1.text);
             please_clarify = true;
@@ -4243,11 +4243,11 @@ void deal_with_syntax_errors(Location loc)
             I_see_no(word1.text);
         }
     } else {
-        if (word2.type == WordType_None) {
+        if (word2.type == WordClass_None) {
             word1.text[0] = toupper(word1.text[0]);
             printf("%s what?\n", word1.text);
             please_clarify = true;
-        } else if (word2.type == WordType_Object) {
+        } else if (word2.type == WordClass_Object) {
             if (here(word2.meaning, loc)) {
                 dunno_hao(word1.text);
             } else {
@@ -4261,7 +4261,7 @@ void deal_with_syntax_errors(Location loc)
 
 void presay(void)
 {
-    if (keywordv(SAY) && (word2.type != WordType_None)) {
+    if (keywordv(SAY) && (word2.type != WordClass_None)) {
         printf("Ok " EMDASH("-") " \"%s\".\n", word2.text);
     }
 }
@@ -4426,14 +4426,14 @@ void simulate_an_adventure(void)
          * our variable "turns" is what Platt calls MOVES.
          * Notice that entering a blank command will cause time to pass.
          * Hold down enter long enough, and a dwarf will probably kill you. */
-        if (word1.type == WordType_None)
+        if (word1.type == WordClass_None)
             continue;
-        if (word1.type == WordType_BadWord) {
+        if (word1.type == WordClass_BadWord) {
             say_what();
             continue;
         }
         presay();
-        if (word2.type == WordType_BadWord && !keywordv(SAY)) {
+        if (word2.type == WordClass_BadWord && !keywordv(SAY)) {
             printf("I don't know the word \"%s\".\n", word2.text);
             continue;
         }
@@ -4453,13 +4453,13 @@ void simulate_an_adventure(void)
         assert(newloc == 0);  /* unhandled */
         newloc = loc;
 
-        if (word1.type == WordType_Place) {
+        if (word1.type == WordClass_Place) {
             if (word1.meaning == loc) {
                 puts("That's where you are now!");
             } else {
                 puts("I don't know how to get there from here.");
             }
-        } else if (word1.type == WordType_Verb && word1.meaning == BACK) {
+        } else if (word1.type == WordClass_Verb && word1.meaning == BACK) {
             if ((places[oldloc].flags | places[loc].flags) & F_NOBACK) {
                 puts("Sorry, but I no longer seem to remember how it was you got here.");
             } else {

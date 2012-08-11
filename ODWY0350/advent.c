@@ -41,8 +41,8 @@ void quit(void);
  */
 
 typedef enum {
-    WordType_None, WordType_Motion, WordType_Object,
-    WordType_Action, WordType_Message
+    WordClass_None, WordClass_Motion, WordClass_Object,
+    WordClass_Action, WordClass_Message
 } WordClass;
 
 struct HashEntry {
@@ -135,18 +135,18 @@ typedef enum {
 WordClass word_class(int word)
 {
     if (word == 0) {
-        return WordType_None;
+        return WordClass_None;
     } else if (MIN_MOTION <= word && word <= MAX_MOTION) {
-        return WordType_Motion;
+        return WordClass_Motion;
     } else if (MIN_OBJ <= word && word <= MAX_OBJ) {
-        return WordType_Object;
+        return WordClass_Object;
     } else if (MIN_ACTION <= word && word <= MAX_ACTION) {
-        return WordType_Action;
+        return WordClass_Action;
     } else if (MIN_MESSAGE <= word && word <= MAX_MESSAGE) {
-        return WordType_Message;
+        return WordClass_Message;
     } else {
         assert(false);
-        return WordType_None;
+        return WordClass_None;
     }
 }
 
@@ -447,7 +447,6 @@ struct Place {
 };
 struct Place places[MAX_LOC+1];
 
-const char *remarks[15];
 int visits[MAX_LOC+1];
 
 void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned int f)
@@ -471,6 +470,8 @@ void make_inst(Instruction *q, MotionWord m, int c, Location d)
 #define only_if_toting(t) (100 + (t-MIN_OBJ))
 #define only_if_here(t) (200 + (t-MIN_OBJ))
 #define unless_prop(t, p) (300 + (t-MIN_OBJ) + 100*p)
+
+#define remark(n) (FIRST_REMARK + n)
 
 
 void build_travel_table(void)
@@ -530,8 +531,7 @@ void build_travel_table(void)
     make_ins(UPSTREAM, R_VALLEY); ditto(N);
     make_ins(FOREST, R_FOREST); ditto(E); ditto(W);
     make_ins(DOWNSTREAM, R_OUTSIDE); ditto(ROCK); ditto(BED); ditto(S);
-    remarks[0] = "You don't fit through a two-inch slit!";
-    make_ins(SLIT, FIRST_REMARK+0); ditto(STREAM); ditto(D);
+    make_ins(SLIT, remark(0)); ditto(STREAM); ditto(D);
     make_loc(q, R_OUTSIDE,
              "You are in a 20-foot depression floored with bare dirt.  Set into the" SOFT_NL
              "dirt is a strong steel grate mounted in concrete.  A dry streambed" SOFT_NL
@@ -541,14 +541,13 @@ void build_travel_table(void)
     make_ins(HOUSE, R_ROAD);
     make_ins(UPSTREAM, R_SLIT); ditto(GULLY); ditto(N);
     make_cond_ins(ENTER, unless_prop(GRATE, 0), R_INSIDE); ditto(IN); ditto(D);
-    remarks[1] = "You can't go through a locked steel grate!";
-    make_ins(ENTER, FIRST_REMARK+1);
+    make_ins(ENTER, remark(1));
     make_loc(q, R_INSIDE,
              "You are in a small chamber beneath a 3x3 steel grate to the surface." SOFT_NL
              "A low crawl over cobbles leads inwards to the west.",
              "You're below the grate.", F_LIGHTED);
     make_cond_ins(OUT, unless_prop(GRATE, 0), R_OUTSIDE); ditto(U);
-    make_ins(OUT, FIRST_REMARK+1);
+    make_ins(OUT, remark(1));
     make_ins(CRAWL, R_COBBLES); ditto(COBBLES); ditto(IN); ditto(W);
     make_ins(PIT, R_SPIT);
     make_ins(DEBRIS, R_DEBRIS);
@@ -624,21 +623,19 @@ void build_travel_table(void)
              "The mist is quite thick here, and the fissure is too wide to jump.",
              "You're on east bank of fissure.", 0);
     make_ins(HALL, R_EMIST); ditto(E);
-    remarks[2] = "I respectfully suggest you go across the bridge instead of jumping.";
-    make_cond_ins(JUMP, unless_prop(CRYSTAL, 0), FIRST_REMARK+2);
+    make_cond_ins(JUMP, unless_prop(CRYSTAL, 0), remark(2));
     make_cond_ins(FORWARD, unless_prop(CRYSTAL, 1), R_LOSE);
-    remarks[3] = "There is no way across the fissure.";
-    make_cond_ins(OVER, unless_prop(CRYSTAL, 1), FIRST_REMARK+3); ditto(ACROSS); ditto(W); ditto(CROSS);
+    make_cond_ins(OVER, unless_prop(CRYSTAL, 1), remark(3)); ditto(ACROSS); ditto(W); ditto(CROSS);
     make_ins(OVER, R_WFISS);
     make_loc(q, R_WFISS,
              "You are on the west side of the fissure in the Hall of Mists.",
              NULL, 0);
-    make_cond_ins(JUMP, unless_prop(CRYSTAL, 0), FIRST_REMARK+2);
+    make_cond_ins(JUMP, unless_prop(CRYSTAL, 0), remark(2));
     make_cond_ins(FORWARD, unless_prop(CRYSTAL, 1), R_LOSE);
-    make_cond_ins(OVER, unless_prop(CRYSTAL, 1), FIRST_REMARK+3); ditto(ACROSS); ditto(E); ditto(CROSS);
+    make_cond_ins(OVER, unless_prop(CRYSTAL, 1), remark(3)); ditto(ACROSS); ditto(E); ditto(CROSS);
     make_ins(OVER, R_EFISS);
-    make_ins(N, R_THRU);
     make_ins(W, R_WMIST);
+    make_ins(N, R_THRU);
 
     make_loc(q, R_WMIST,
              "You are at the west end of the Hall of Mists. A low wide crawl" SOFT_NL
@@ -647,8 +644,8 @@ void build_travel_table(void)
              "You're at west end of Hall of Mists.", 0);
     make_ins(S, R_LIKE1); ditto(U); ditto(PASSAGE); ditto(CLIMB);
     make_ins(E, R_WFISS);
-    make_ins(N, R_DUCK);
     make_ins(W, R_ELONG); ditto(CRAWL);
+    make_ins(N, R_DUCK);
 
     make_loc(q, R_LIKE1, all_alike, NULL, F_TWIST_HINT);
     make_ins(U, R_WMIST);
@@ -855,7 +852,7 @@ void build_travel_table(void)
              "enters and exits through tiny slits.",
              "You're in pit by stream.", F_WATER);
     make_ins(CLIMB, R_CLEAN); ditto(U); ditto(OUT);
-    make_ins(SLIT, FIRST_REMARK+0); ditto(STREAM); ditto(D); ditto(UPSTREAM); ditto(DOWNSTREAM);
+    make_ins(SLIT, remark(0)); ditto(STREAM); ditto(D); ditto(UPSTREAM); ditto(DOWNSTREAM);
     make_loc(q, R_DUSTY,
              "You are in a large room full of dusty rocks.  There is a big hole in" SOFT_NL
              "the floor.  There are cracks everywhere, and a passage leading east.",
@@ -880,10 +877,8 @@ void build_travel_table(void)
              "You're in Shell Room.", 0);
     make_ins(U, R_ARCHED); ditto(HALL);
     make_ins(D, R_RAGGED);
-    remarks[4] = "You can't fit this five-foot clam through that little passage!";
-    remarks[5] = "You can't fit this five-foot oyster through that little passage!";
-    make_cond_ins(S, only_if_toting(CLAM), FIRST_REMARK+4);
-    make_cond_ins(S, only_if_toting(OYSTER), FIRST_REMARK+5);
+    make_cond_ins(S, only_if_toting(CLAM), remark(4));
+    make_cond_ins(S, only_if_toting(OYSTER), remark(5));
     make_ins(S, R_COMPLEX);
     make_loc(q, R_ARCHED,
              "You are in an arched hall.  A coral passage once continued up and east" SOFT_NL
@@ -912,14 +907,10 @@ void build_travel_table(void)
     make_loc(q, R_WITT,
              "You are at Witt's End.  Passages lead off in \"all\" directions.",
              "You're at Witt's End.", F_WITT_HINT);
-    remarks[6] = "You have crawled around in some little holes and wound up back in the" SOFT_NL
-                 "main passage.";
-    make_cond_ins(E, 95, FIRST_REMARK+6); ditto(N); ditto(S);
+    make_cond_ins(E, 95, remark(6)); ditto(N); ditto(S);
     ditto(NE); ditto(SE); ditto(SW); ditto(NW); ditto(U); ditto(D);
     make_ins(E, R_ANTE);
-    remarks[7] = "You have crawled around in some little holes and found your way" SOFT_NL
-                 "blocked by a recent cave-in.  You are now back in the main passage.";
-    make_ins(W, FIRST_REMARK+7);
+    make_ins(W, remark(7));
 
     make_loc(q, R_BEDQUILT,
              "You are in Bedquilt, a long east/west passage with holes everywhere." SOFT_NL
@@ -927,15 +918,15 @@ void build_travel_table(void)
              "You're in Bedquilt.", 0);
     make_ins(E, R_COMPLEX);
     make_ins(W, R_SWISS);
-    make_cond_ins(S, 80, FIRST_REMARK+6);
+    make_cond_ins(S, 80, remark(6));
     make_ins(SLAB, R_SLAB);
-    make_cond_ins(U, 80, FIRST_REMARK+6);
+    make_cond_ins(U, 80, remark(6));
     make_cond_ins(U, 50, R_ABOVEP);
     make_ins(U, R_DUSTY);
-    make_cond_ins(N, 60, FIRST_REMARK+6);
+    make_cond_ins(N, 60, remark(6));
     make_cond_ins(N, 75, R_LOW);
     make_ins(N, R_SJUNC);
-    make_cond_ins(D, 80, FIRST_REMARK+6);
+    make_cond_ins(D, 80, remark(6));
     make_ins(D, R_ANTE);
 
     make_loc(q, R_SWISS,
@@ -945,10 +936,10 @@ void build_travel_table(void)
              "You're in Swiss cheese room.", 0);
     make_ins(NE, R_BEDQUILT);
     make_ins(W, R_E2PIT);
-    make_cond_ins(S, 80, FIRST_REMARK+6);
+    make_cond_ins(S, 80, remark(6));
     make_ins(CANYON, R_TALL);
     make_ins(E, R_SOFT);
-    make_cond_ins(NW, 50, FIRST_REMARK+6);
+    make_cond_ins(NW, 50, remark(6));
     make_ins(ORIENTAL, R_ORIENTAL);
     make_loc(q, R_SOFT,
              "You are in the Soft Room.  The walls are covered with heavy curtains," SOFT_NL
@@ -972,8 +963,7 @@ void build_travel_table(void)
     make_ins(E, R_E2PIT); ditto(ACROSS);
     make_ins(W, R_SLAB); ditto(SLAB);
     make_ins(D, R_WPIT); ditto(PIT);
-    remarks[8] = "It is too far up for you to reach.";
-    make_ins(HOLE, FIRST_REMARK+8);
+    make_ins(HOLE, remark(8));
     make_loc(q, R_EPIT,
              "You are at the bottom of the eastern pit in the Twopit Room.  There is" SOFT_NL
              "a small pool of oil in one corner of the pit.",
@@ -1011,8 +1001,7 @@ void build_travel_table(void)
              NULL, 0);
     make_ins(S, R_GIANT); ditto(GIANT); ditto(PASSAGE);
     make_cond_ins(N, unless_prop(DOOR, 0), R_FALLS); ditto(ENTER); ditto(CAVERN);
-    remarks[9] = "The door is extremely rusty and refuses to open.";
-    make_ins(N, FIRST_REMARK+9);
+    make_ins(N, remark(9));
     make_loc(q, R_FALLS,
              "You are in a magnificent cavern with a rushing stream, which cascades" SOFT_NL
              "over a sparkling waterfall into a roaring whirlpool that disappears" SOFT_NL
@@ -1158,8 +1147,7 @@ void build_travel_table(void)
              "You are in a secret canyon that exits to the north and east.",
              NULL, 0);
     make_ins(N, R_ABOVER); ditto(OUT);
-    remarks[10] = "The dragon looks rather nasty.  You'd best not try to get by.";
-    make_ins(E, FIRST_REMARK+10); ditto(FORWARD);
+    make_ins(E, remark(10)); ditto(FORWARD);
     make_loc(q, R_SCAN2,
              places[R_SCAN1].long_desc,
              NULL, 0);
@@ -1169,7 +1157,7 @@ void build_travel_table(void)
              places[R_SCAN1].long_desc,
              NULL, 0);
     make_ins(E, R_SECRET); ditto(OUT);
-    make_ins(N, FIRST_REMARK+10); ditto(FORWARD);
+    make_ins(N, remark(10)); ditto(FORWARD);
 
     make_loc(q, R_SECRET,
              "You are in a secret canyon, which here runs E/W.  It crosses over a" SOFT_NL
@@ -1212,13 +1200,11 @@ void build_travel_table(void)
              "from the chasm into a winding corridor.",
              "You're on SW side of chasm.", 0);
     make_ins(SW, R_SLOPING);
-    remarks[11] = "The troll refuses to let you cross.";
-    make_cond_ins(OVER, only_if_here(TROLL), FIRST_REMARK+11); ditto(ACROSS); ditto(CROSS); ditto(NE);
-    remarks[12] = "There is no longer any way across the chasm.";
-    make_cond_ins(OVER, unless_prop(BRIDGE, 0), FIRST_REMARK+12);
+    make_cond_ins(OVER, only_if_here(TROLL), remark(11)); ditto(ACROSS); ditto(CROSS); ditto(NE);
+    make_cond_ins(OVER, unless_prop(BRIDGE, 0), remark(12));
     make_ins(OVER, R_TROLL);
     make_cond_ins(JUMP, unless_prop(BRIDGE, 0), R_LOSE);
-    make_ins(JUMP, FIRST_REMARK+2);
+    make_ins(JUMP, remark(2));
     make_loc(q, R_DEAD0, dead_end, NULL, 0);
     make_ins(S, R_CROSS); ditto(OUT);
     make_loc(q, R_DEAD1, dead_end, NULL, F_TWIST_HINT);
@@ -1248,9 +1234,9 @@ void build_travel_table(void)
              "chasm on this side.",
              "You're on NE side of chasm.", 0);
     make_ins(NE, R_CORR);
-    make_cond_ins(OVER, only_if_here(TROLL), FIRST_REMARK+11); ditto(ACROSS); ditto(CROSS); ditto(SW);
+    make_cond_ins(OVER, only_if_here(TROLL), remark(11)); ditto(ACROSS); ditto(CROSS); ditto(SW);
     make_ins(OVER, R_TROLL);
-    make_ins(JUMP, FIRST_REMARK+2);
+    make_ins(JUMP, remark(2));
     make_ins(FORK, R_FORK);
     make_ins(VIEW, R_VIEW);
     make_ins(BARREN, R_FBARR);
@@ -1303,8 +1289,7 @@ void build_travel_table(void)
              "You're at breath-taking view.", F_LIGHTED);
     make_ins(S, R_WARM); ditto(PASSAGE); ditto(OUT);
     make_ins(FORK, R_FORK);
-    remarks[13] = "Don't be ridiculous!";
-    make_ins(D, FIRST_REMARK+13); ditto(JUMP);
+    make_ins(D, remark(13)); ditto(JUMP);
     make_loc(q, R_CHAMBER,
              "You are in a small chamber filled with large boulders.  The walls are" SOFT_NL
              "very warm, causing the air in the room to be almost stifling from the" SOFT_NL
@@ -1363,7 +1348,7 @@ void build_travel_table(void)
              "VAULT.  KEYS IN MAIN OFFICE.\"",
              "You're at SW end.", F_LIGHTED);
     make_ins(NE, R_NEEND);
-    make_ins(D, FIRST_REMARK+1);  /* You can't go through a locked steel grate! */
+    make_ins(D, remark(1));  /* You can't go through a locked steel grate! */
 
     /* When the current location is R_CRACK or higher, it's a pseudo-location.
      * In such cases we don't ask you for input; we assume that you have told
@@ -1434,7 +1419,7 @@ struct ObjectData {
 
 struct ObjectData *first[MAX_LOC+1];
 int holding_count;  /* how many objects have objs(t).place < 0? */
-Location knife_loc;  /* place where knife was mentioned, or -1 */
+Location last_knife_loc = R_LIMBO;
 int tally = 15;  /* treasures awaiting you */
 int lost_treasures;  /* treasures that you won't find */
 
@@ -1733,6 +1718,12 @@ void listen(void)
     }
 }
 
+void shift_words(void)
+{
+    strcpy(word1, word2);
+    *word2 = '\0';
+}
+
 /*========== Dwarves and pirate. ==========================================
  * This section corresponds to sections 159--175 in Knuth.
  */
@@ -1772,10 +1763,12 @@ void steal_all_your_treasure(Location loc)  /* sections 173--174 in Knuth */
          "he chortles. \"I'll just take all this booty and hide it away with me" SOFT_NL
          "chest deep in the maze!\"  He snatches your treasure and vanishes into" SOFT_NL
          "the gloom.");
-    for (int i = MIN_TREASURE; i <= MAX_OBJ; ++i) {
-        if (too_easy_to_steal(i, loc)) continue;
-        if (objs(i).base == NULL && there(i, loc)) carry(i);
-        if (toting(i)) drop(i, R_PIRATES_NEST);
+    for (int t = MIN_TREASURE; t <= MAX_OBJ; ++t) {
+        if (too_easy_to_steal(t, loc)) continue;
+        if (here(t, loc) && objs(t).base == NULL) {
+            /* The vase, rug, and chain can all be immobile at times. */
+            move(t, R_PIRATES_NEST);
+        }
     }
 }
 
@@ -1875,7 +1868,7 @@ bool move_dwarves_and_pirate(Location loc)
                     if (newloc == odloc[j] || newloc == dloc[j]) continue;  /* don't double back */
                     if (q->cond == 100) continue;
                     if (j == 0 && newloc > R_PIRATES_NEST) continue;
-                    if (newloc >= MIN_FORCED_LOC) continue;
+                    if (FORCED_MOVE(newloc)) continue;
                     ploc[i++] = newloc;
                 }
                 if (i==0) ploc[i++] = odloc[j];
@@ -1893,7 +1886,7 @@ bool move_dwarves_and_pirate(Location loc)
                         ++dtotal;
                         if (odloc[j] == dloc[j]) {
                             ++attack;
-                            if (knife_loc >= 0) knife_loc = loc;
+                            last_knife_loc = loc;
                             if (ran(1000) < 95*(dflag-2)) ++stick;
                         }
                     }
@@ -2396,7 +2389,10 @@ bool now_in_darkness(Location loc)
 /* Sections 158, 169, 182 in Knuth */
 void adjustments_before_listening(Location loc)
 {
-    if (knife_loc > R_LIMBO && knife_loc != loc) knife_loc = R_LIMBO;
+    if (last_knife_loc != loc) {
+        /* When we move, the dwarf's vanishing knife goes out of scope. */
+        last_knife_loc = R_LIMBO;
+    }
     if (closed) {
         /* After the cave is closed, we look for objects being toted with
          * prop < 0; their prop value is changed to -1 - prop. This means
@@ -3009,11 +3005,18 @@ int check_noun_validity(ObjectWord obj, Location loc)  /* sections 90--91 in Knu
                 return 'p';  /* obj = PLANT2 */
             }
             return 'c';  /* can't see it */
-        case KNIFE:
-            if (loc != knife_loc) return 'c';
-            knife_loc = -1;
+        case KNIFE: {
+            /* You're allowed to try to GET KNIFE, but only once. The game
+             * informs you that the knife has vanished; and from then on,
+             * it never reappears. */
+            static bool have_tried_to_get_knife = false;
+            if (have_tried_to_get_knife || (loc != last_knife_loc)) {
+                return 'c';  /* can't see it */
+            }
             puts("The dwarves' knives vanish as they strike the walls of the cave.");
+            have_tried_to_get_knife = true;
             return 'f';  /* action is finished */
+        }
         case ROD:
             if (!here(ROD2, loc)) return 'c';
             return 'r';  /* obj = ROD2 */
@@ -3090,6 +3093,97 @@ Instruction *determine_motion_instruction(Location loc, MotionWord mot)
     return q;
 }
 
+void print_remark(int which)
+{
+    switch (which) {
+        case 0:
+            puts("You don't fit through a two-inch slit!");
+            break;
+        case 1:
+            puts("You can't go through a locked steel grate!");
+            break;
+        case 2:
+            puts("I respectfully suggest you go across the bridge instead of jumping.");
+            break;
+        case 3:
+            puts("There is no way across the fissure.");
+            break;
+        case 4:
+            puts("You can't fit this five-foot clam through that little passage!");
+            break;
+        case 5:
+            puts("You can't fit this five-foot oyster through that little passage!");
+            break;
+        case 6:
+            puts("You have crawled around in some little holes and wound up back in the" SOFT_NL
+                 "main passage.");
+            break;
+        case 7:
+            puts("You have crawled around in some little holes and found your way" SOFT_NL
+                 "blocked by a recent cave-in.  You are now back in the main passage.");
+            break;
+        case 8:
+            puts("It is too far up for you to reach.");
+            break;
+        case 9:
+            puts("The door is extremely rusty and refuses to open.");
+            break;
+        case 10:
+            puts("The dragon looks rather nasty.  You'd best not try to get by.");
+            break;
+        case 11:
+            puts("The troll refuses to let you cross.");
+            break;
+        case 12:
+            puts("There is no longer any way across the chasm.");
+            break;
+        case 13:
+            puts("Don't be ridiculous!");
+            break;
+    }
+}
+
+MotionWord try_going_back_to(Location l, Location from)
+{
+    /* Interestingly, the BACK command does not simply move the player
+     * back to oldloc. Instead, it attempts to trace a path connecting
+     * loc to oldloc; if no such passage exists, we fail to move. If
+     * such a passage does exist, then we react as if the player had
+     * typed the appropriate motion-word in the first place.
+     * Notice that Woods' code makes an effort to deal with FORCED_MOVE
+     * locations, but doesn't succeed 100 percent. ("l" is set to oldloc,
+     * or to oldoldloc if oldloc is a FORCED_MOVE location.)
+     *     R_SPIT : WEST -> R_CRACK -> R_SPIT : BACK
+     * gives "Sorry, but..." as intended, because oldoldloc is R_SPIT.
+     *     R_SWSIDE : CROSS -> R_TROLL -> R_NESIDE : BACK
+     * gives "You can't get there from here." as apparently intended,
+     * because R_TROLL is a special location.
+     *     R_WPIT : CLIMB -> R_CHECK -> R_UPNOUT -> R_WPIT : BACK
+     * unintentionally gives "There is nothing here to climb.", because
+     * oldoldloc is R_CHECK, and there *is* a passage connecting our
+     * current location (R_WPIT) to R_CHECK, so we take it again.
+     *     R_WPIT : CLIMB -> R_CHECK -> R_DIDIT -> R_W2PIT : BACK
+     * unintentionally gives "You can't get there from here.", because
+     * oldoldloc is R_CHECK, and there is no passage connecting our
+     * current location (R_W2PIT) to R_CHECK. */
+
+    if (l == from) {
+        puts("Sorry, but I no longer seem to remember how you got here.");
+        return NOWHERE;
+    }
+    for (Instruction *q = start[from]; q < start[from+1]; ++q) {
+        /* Take the first exit that goes to "l", either directly... */
+        Location ll = q->dest;
+        if (ll == l)
+            return q->mot;
+        /* ...or via a single forced move. */
+        if (MIN_FORCED_LOC <= ll && ll <= MAX_LOC && start[ll]->dest == l)
+            return q->mot;
+    }
+    puts("You can't get there from here.");
+    return NOWHERE;
+}
+
 /* Modify newloc in place, and return true if the player died crossing the troll bridge. */
 bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot)
 {
@@ -3103,7 +3197,7 @@ bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot)
         return false;
     }
     if (*newloc >= FIRST_REMARK) {
-        puts(remarks[*newloc - FIRST_REMARK]);
+        print_remark(*newloc - FIRST_REMARK);
         *newloc = loc;
         return false;
     }
@@ -3114,9 +3208,6 @@ bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot)
         }
         case R_PDROP: {
             drop(EMERALD, loc);
-            /* [ajo] Knuth used a goto here to resume table processing;
-             * I believe this version is equivalent, given the contents
-             * of the table. */
             *newloc = R_Y2 + R_PLOVER - loc;
             return false;
         }
@@ -3302,16 +3393,19 @@ void simulate_an_adventure(void)
                     goto transitive;
                 }
             }
+
             /* Just after every command you give, we make the foobar counter
              * negative if you're on track, otherwise we zero it.
              * This is section 138 in Knuth. */
             foobar = (foobar > 0) ? -foobar : 0;
+
             if (check_clocks_and_lamp(loc)) {
                 /* The cave just closed! */
                 loc = oldloc = R_NEEND;
                 mot = NOWHERE;
                 goto try_move;
             }
+
             /* Handle additional special cases of input (Knuth sections 83, 105) */
             if (streq(word1, "enter")) {
                 if (streq(word2, "water") || streq(word2, "strea")) {
@@ -3322,7 +3416,8 @@ void simulate_an_adventure(void)
                     }
                     continue;
                 } else if (*word2 != '\0') {
-                    goto shift;
+                    shift_words();
+                    goto parse;
                 }
             }
             if (streq(word1, "water") || streq(word1, "oil")) {
@@ -3332,6 +3427,7 @@ void simulate_an_adventure(void)
                 if (streq(word2, "door") && there(DOOR, loc))
                     strcpy(word2, "pour");
             }
+
         parse:
             advise_about_going_west(word1);
             k = lookup(word1);
@@ -3340,10 +3436,10 @@ void simulate_an_adventure(void)
                 goto cycle;
             }
             switch (word_class(k)) {
-                case WordType_Motion:
+                case WordClass_Motion:
                     mot = k;
                     goto try_move;
-                case WordType_Object:
+                case WordClass_Object:
                     obj = k;
                     /* Make sure obj is meaningful at the current location.
                      * When you specify an object, it must be here, unless
@@ -3364,7 +3460,7 @@ void simulate_an_adventure(void)
                     if (verb != ABSTAIN) goto transitive;
                     printf("What do you want to do with the %s?\n", word1);
                     goto cycle;
-                case WordType_Action:
+                case WordClass_Action:
                     verb = k;
                     if (verb == SAY) {
                         /* "FOO SAY" results in the incorrect message
@@ -3375,13 +3471,12 @@ void simulate_an_adventure(void)
                     if (*word2 != '\0') break;
                     if (obj != NOTHING) goto transitive;
                     else goto intransitive;
-                case WordType_Message:
+                case WordClass_Message:
                     print_message(k);
                     continue;
             }
-        shift:
-            strcpy(word1, word2);
-            *word2 = '\0';
+
+            shift_words();
             goto parse;
 
         intransitive:
@@ -3439,7 +3534,7 @@ void simulate_an_adventure(void)
                     say_score();
                     continue;
                 case QUIT:
-                    if (yes("Do you really wish to quit now?", ok, ok)) give_up();
+                    if (yes("Do you really want to quit now?", ok, ok)) give_up();
                     continue;
 #ifdef SAVE_AND_RESTORE
                 case SAVE:
@@ -3763,7 +3858,7 @@ void simulate_an_adventure(void)
                             continue;
                         case DWARF:
                             if (closed) dwarves_upset();
-                            puts("With what? Your bare hands?");
+                            puts("With what?  Your bare hands?");
                             continue;
                         case TROLL:
                             puts("Trolls are close relatives with the rocks and have skin as tough as" SOFT_NL
@@ -3771,7 +3866,7 @@ void simulate_an_adventure(void)
                             continue;
                         case BEAR:
                             switch (objs(BEAR).prop) {
-                                case 0: puts("With what?  Your bare hands?  Against HIS bare hands?"); break;
+                                case 0: puts("With what?  Your bare hands?  Against *HIS* bear hands??"); break;
                                 case 3: puts("For crying out loud, the poor thing is already dead!"); break;
                                 default: puts("The bear is confused; he only wants to be your friend."); break;
                             }
@@ -3828,35 +3923,13 @@ void simulate_an_adventure(void)
         /* A major cycle comes to an end when a motion verb mot has been
          * given and we have computed the appropriate newloc accordingly. */
         newloc = loc;  /* by default we will stay put */
-        if (mot == NOWHERE) continue;
         if (mot == BACK) {
-            /* Interestingly, the BACK command does not simply move the player back
-             * to oldloc. Instead, it attempts to trace a path connecting loc to
-             * oldloc; if no such passage exists, we fail to move. If such a passage
-             * does exist, then we react as if the player had typed the appropriate
-             * motion-word in the first place. */
             Location l = (FORCED_MOVE(oldloc) ? oldoldloc : oldloc);
-            const Instruction *q, *qq;
-            oldoldloc = oldloc;
-            oldloc = loc;
-            if (l == loc) {
-                puts("Sorry, but I no longer seem to remember how you got here.");
-                continue;
-            }
-            for (q = start[loc], qq = NULL; q < start[loc+1]; ++q) {
-                Location ll = q->dest;
-                if (ll == l) goto found;
-                if (ll <= MAX_LOC && FORCED_MOVE(ll) && start[ll]->dest == l) qq = q;
-            }
-            if (qq == NULL) {
-                puts("You can't get there from here.");
-                continue;
-            } else {
-                q = qq;
-            }
-          found:
-            mot = q->mot;
-            goto go_for_it;
+            mot = try_going_back_to(l, loc); /* may return NOWHERE */
+        }
+
+        if (mot == NOWHERE) {
+            continue;
         } else if (mot == LOOK) {
             /* Repeat the long description and continue. */
             if (++look_count <= 3) {
@@ -3875,10 +3948,10 @@ void simulate_an_adventure(void)
             }
             continue;
         }
+
+        /* Determine the next newloc. */
         oldoldloc = oldloc;
         oldloc = loc;
-    go_for_it:
-        /* Determine the next newloc. */
         if (determine_next_newloc(loc, &newloc, mot)) {
             /* Player died trying to cross the troll bridge. */
             oldoldloc = newloc;  /* if you are revived, you got across */

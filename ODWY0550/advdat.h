@@ -95,19 +95,19 @@ typedef enum {
     R_YLEM
 } Location;
 
-/* The player's words are mapped onto these three enums via WordType. */
+/* The player's words are mapped onto these three enums via WordClass. */
 
 typedef enum {
-    WordType_None,  /* .meaning is zero: no word entered */
-    WordType_Verb,  /* .meaning is a VerbWord */
-    WordType_Object,  /* .meaning is an ObjectWord */
-    WordType_Place,  /* .meaning is a Location */
-    WordType_BadWord  /* .meaning is zero: word wasn't recognized */
-} WordType;
+    WordClass_None,  /* .meaning is zero: no word entered */
+    WordClass_Verb,  /* .meaning is a VerbWord */
+    WordClass_Object,  /* .meaning is an ObjectWord */
+    WordClass_Place,  /* .meaning is a Location */
+    WordClass_BadWord  /* .meaning is zero: word wasn't recognized */
+} WordClass;
 
 struct InputWordInfo {
     char text[16];
-    WordType type;
+    WordClass type;
     int meaning;
 };
 extern struct InputWordInfo word1, word2;
