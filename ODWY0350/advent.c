@@ -3539,7 +3539,7 @@ void simulate_an_adventure(void)
                     say_score();
                     continue;
                 case QUIT:
-                    if (yes("Do you really wish to quit now?", ok, ok)) give_up();
+                    if (yes("Do you really want to quit now?", ok, ok)) give_up();
                     continue;
 #ifdef SAVE_AND_RESTORE
                 case SAVE:
