@@ -1327,6 +1327,9 @@ void finis(void)
             printf("To reach the next qualification level you need %d more points.\n\n", delta);
         }
     }
+#ifdef Z_MACHINE
+    puts("");
+#endif /* Z_MACHINE */
     exit(0);
 }
 
@@ -3196,6 +3199,9 @@ void destroy_cave(void)
          "points and throwing you out!  Out!   OUT!   GET OUT!$!%#&'@%!!%%!\"\n");
     /* You expected your score to be printed, perhaps?
      * You get NOTHING! Good DAY sir! */
+#ifdef Z_MACHINE
+    puts("");
+#endif /* Z_MACHINE */
     exit(0);
 }
 

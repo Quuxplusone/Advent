@@ -2340,6 +2340,9 @@ void quit(void)
     } else {
         puts(" would be a neat trick!\nCongratulations!!");
     }
+#ifdef Z_MACHINE
+    puts("\n");
+#endif /* Z_MACHINE */
     exit(0);
 }
 
