@@ -3778,7 +3778,7 @@ void simulate_an_adventure(void)
                             continue;
                         case DWARF:
                             if (closed) dwarves_upset();
-                            puts("With what? Your bare hands?");
+                            puts("With what?  Your bare hands?");
                             continue;
                         case TROLL:
                             puts("Trolls are close relatives with the rocks and have skin as tough as" SOFT_NL
@@ -3786,7 +3786,7 @@ void simulate_an_adventure(void)
                             continue;
                         case BEAR:
                             switch (objs(BEAR).prop) {
-                                case 0: puts("With what?  Your bare hands?  Against HIS bare hands?"); break;
+                                case 0: puts("With what?  Your bare hands?  Against *HIS* bear hands??"); break;
                                 case 3: puts("For crying out loud, the poor thing is already dead!"); break;
                                 default: puts("The bear is confused; he only wants to be your friend."); break;
                             }
