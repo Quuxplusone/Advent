@@ -1718,6 +1718,12 @@ void listen(void)
     }
 }
 
+void shift_words(void)
+{
+    strcpy(word1, word2);
+    *word2 = '\0';
+}
+
 /*========== Dwarves and pirate. ==========================================
  * This section corresponds to sections 159--175 in Knuth.
  */
@@ -3392,16 +3398,19 @@ void simulate_an_adventure(void)
                     goto transitive;
                 }
             }
+
             /* Just after every command you give, we make the foobar counter
              * negative if you're on track, otherwise we zero it.
              * This is section 138 in Knuth. */
             foobar = (foobar > 0) ? -foobar : 0;
+
             if (check_clocks_and_lamp(loc)) {
                 /* The cave just closed! */
                 loc = oldloc = R_NEEND;
                 mot = NOWHERE;
                 goto try_move;
             }
+
             /* Handle additional special cases of input (Knuth sections 83, 105) */
             if (streq(word1, "enter")) {
                 if (streq(word2, "water") || streq(word2, "strea")) {
@@ -3412,7 +3421,8 @@ void simulate_an_adventure(void)
                     }
                     continue;
                 } else if (*word2 != '\0') {
-                    goto shift;
+                    shift_words();
+                    goto parse;
                 }
             }
             if (streq(word1, "water") || streq(word1, "oil")) {
@@ -3422,6 +3432,7 @@ void simulate_an_adventure(void)
                 if (streq(word2, "door") && there(DOOR, loc))
                     strcpy(word2, "pour");
             }
+
         parse:
             advise_about_going_west(word1);
             k = lookup(word1);
@@ -3469,9 +3480,8 @@ void simulate_an_adventure(void)
                     print_message(k);
                     continue;
             }
-        shift:
-            strcpy(word1, word2);
-            *word2 = '\0';
+
+            shift_words();
             goto parse;
 
         intransitive:
