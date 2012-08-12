@@ -84,6 +84,8 @@ int lookup(const char *w)
 }
 #undef HASH_PRIME
 
+#define NOTHING 0
+
 typedef enum {
     MIN_MOTION=100,
     N=MIN_MOTION,S,E,W,NE,SE,NW,SW,U,D,L,R,IN,OUT,FORWARD,BACK,
@@ -99,8 +101,8 @@ typedef enum {
 } MotionWord;
 
 typedef enum {
-    MIN_OBJ=200, NOTHING=MIN_OBJ,
-    KEYS, LAMP, GRATE, GRATE_, CAGE, ROD, ROD2, TREADS, TREADS_,
+    MIN_OBJ=200,
+    KEYS=MIN_OBJ, LAMP, GRATE, GRATE_, CAGE, ROD, ROD2, TREADS, TREADS_,
     BIRD, DOOR, PILLOW, SNAKE, CRYSTAL, CRYSTAL_, TABLET, CLAM, OYSTER,
     MAG, DWARF, KNIFE, FOOD, BOTTLE, WATER, OIL, MIRROR, MIRROR_, PLANT,
     PLANT2, PLANT2_, STALACTITE, SHADOW, SHADOW_, AXE, DRAWINGS, PIRATE,
@@ -116,7 +118,7 @@ typedef enum {
 
 typedef enum {
     MIN_ACTION=300,
-    ABSTAIN=MIN_ACTION, TAKE, DROP, OPEN, CLOSE, ON, OFF, WAVE, CALM, GO,
+    TAKE=MIN_ACTION, DROP, OPEN, CLOSE, ON, OFF, WAVE, CALM, GO,
     RELAX, POUR, EAT, DRINK, RUB, TOSS, WAKE, FEED, FILL, BREAK, BLAST,
     KILL, SAY, READ, FEEFIE, BRIEF, FIND, INVENTORY, SCORE,
 #ifdef SAVE_AND_RESTORE
@@ -134,7 +136,7 @@ typedef enum {
 
 WordClass word_class(int word)
 {
-    if (word == 0) {
+    if (word == NOTHING) {
         return WordClass_None;
     } else if (MIN_MOTION <= word && word <= MAX_MOTION) {
         return WordClass_Motion;
@@ -2380,8 +2382,7 @@ void kill_the_player(Location last_safe_place)
     if (toting(LAMP)) objs(LAMP).prop = 0;
     objs(WATER).place = R_LIMBO;
     objs(OIL).place = R_LIMBO;
-    assert(NOTHING == MIN_OBJ);
-    for (int j = MAX_OBJ; j > MIN_OBJ; --j) {
+    for (int j = MAX_OBJ; j >= MIN_OBJ; --j) {
         if (toting(j)) drop(j, (j == LAMP) ? R_ROAD : last_safe_place);
     }
 }
@@ -3391,7 +3392,7 @@ void simulate_an_adventure(void)
         }
         while (true) {
             int k;
-            verb = oldverb = ABSTAIN;
+            verb = oldverb = NOTHING;
             oldobj = obj;
             obj = NOTHING;
         cycle:
@@ -3406,7 +3407,7 @@ void simulate_an_adventure(void)
                  * with two things to say. Then we assume you don't really want
                  * us to say anything. Section 82 in Knuth. */
                 if (*word2 != '\0') {
-                    verb = ABSTAIN;
+                    verb = NOTHING;
                 } else {
                     goto transitive;
                 }
@@ -3449,11 +3450,10 @@ void simulate_an_adventure(void)
         parse:
             advise_about_going_west(word1);
             k = lookup(word1);
-            if (k == 0) {
-                printf("Sorry, I don't know the word \"%s\".\n", word1);
-                goto cycle;
-            }
             switch (word_class(k)) {
+                case WordClass_None:
+                    printf("Sorry, I don't know the word \"%s\".\n", word1);
+                    goto cycle;
                 case WordClass_Motion:
                     mot = k;
                     goto try_move;
@@ -3475,7 +3475,7 @@ void simulate_an_adventure(void)
                         /* case 0: break; */
                     }
                     if (*word2 != '\0') break;
-                    if (verb != ABSTAIN) goto transitive;
+                    if (verb != NOTHING) goto transitive;
                     printf("What do you want to do with the %s?\n", word1);
                     goto cycle;
                 case WordClass_Action:
@@ -3614,9 +3614,6 @@ void simulate_an_adventure(void)
             }
         transitive:
             switch (verb) {
-                case ABSTAIN:
-                    assert(false);  /* no input can result in verb ABSTAIN */
-                    continue;
                 case SAY: {
                     if (*word2 != '\0') strcpy(word1, word2);
                     int k = lookup(word1);
@@ -3848,7 +3845,7 @@ void simulate_an_adventure(void)
                                  * He dies, the Persian rug becomes free, and R_SCAN2
                                  * takes the place of R_SCAN1 and R_SCAN3. */
                                 puts("With what?  Your bare hands?");
-                                verb = ABSTAIN; obj = NOTHING;
+                                verb = obj = NOTHING;
                                 listen();
                                 if (streq(word1, "yes") || streq(word1, "y")) {
                                     puts("Congratulations!  You have just vanquished a dragon with your bare" SOFT_NL
