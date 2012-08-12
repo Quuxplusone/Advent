@@ -2808,20 +2808,21 @@ void attempt_feed(ObjectWord obj, Location loc)  /* section 129 in Knuth */
             }
             break;
         case BEAR:
-            if (!here(FOOD, loc)) {
-                if (objs(BEAR).prop == 0) break;  /* ferocious bear, no food */
-                if (objs(BEAR).prop == 3) {
-                    puts("Don't be ridiculous!");
-                } else {
-                    puts("There is nothing here to eat.");
-                }
-            } else {
+            if (here(FOOD, loc)) {
+                assert(objs(BEAR).prop == 0);
                 destroy(FOOD);
                 objs(BEAR).prop = 1;
                 objs(AXE).prop = 0;
-                mobilize(AXE);        /* if it was immobilized by the bear */
+                mobilize(AXE);  /* if it was immobilized by the bear */
                 puts("The bear eagerly wolfs down your food, after which he seems to calm" SOFT_NL
                      "down considerably and even becomes rather friendly.");
+            } else if (objs(BEAR).prop == 0) {
+                puts("There's nothing here it wants to eat (except perhaps you).");
+            } else if (objs(BEAR).prop == 3) {
+                puts("Don't be ridiculous!");
+            } else {
+                /* The bear is tame; therefore the food is gone. */
+                puts("There is nothing here to eat.");
             }
             break;
         case DWARF:
@@ -2834,6 +2835,7 @@ void attempt_feed(ObjectWord obj, Location loc)  /* section 129 in Knuth */
             break;
         default:
             puts("I'm game.  Would you care to explain how?");
+            break;
     }
 }
 
