@@ -3749,8 +3749,7 @@ void simulate_an_adventure(void)
                 case TOSS:
                     if (obj == ROD && toting(ROD2) && !toting(ROD)) obj = ROD2;
                     if (!toting(obj)) {
-                        /* This response is weird, but it matches Knuth. */
-                        puts("Peculiar.  Nothing unexpected happens.");
+                        puts("You aren't carrying it!");
                         continue;
                     }
                     if (IS_TREASURE(obj) && is_at_loc(TROLL, loc)) {
