@@ -2972,7 +2972,7 @@ void attempt_read(ObjectWord obj)  /* section 135 in Knuth */
             puts("\"CONGRATULATIONS ON BRINGING LIGHT INTO THE DARK-ROOM!\"");
             break;
         case MESSAGE:
-            puts("\"This is not the maze where the pirate hides his treasure chest.\"");
+            puts("\"This is not the maze where the pirate leaves his treasure chest.\"");
             break;
         case OYSTER:
             if (closed && toting(OYSTER)) {
