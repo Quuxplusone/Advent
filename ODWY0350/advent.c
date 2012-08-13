@@ -3049,33 +3049,6 @@ Instruction *determine_motion_instruction(Location loc, MotionWord mot)
         if (FORCED_MOVE(loc) || q->mot == mot) break;
     }
     if (q == start[loc+1]) {
-        /* Report on inapplicable motion. */
-        switch (mot) {
-            case CRAWL:
-                puts("Which way?");
-                break;
-            case XYZZY: case PLUGH:
-                puts("Nothing happens.");
-                break;
-            case FIND: case INVENTORY:
-                puts("I can only tell you what you see as you move about and manipulate" SOFT_NL
-                     "things.  I cannot tell you where remote things are.");
-                break;
-            case N: case S: case E: case W: case NE: case SE: case NW: case SW:
-            case U: case D:
-                puts("There is no way to go in that direction.");
-                break;
-            case IN: case OUT:
-                puts("I don't know in from out here.  Use compass points or name something" SOFT_NL
-                     "in the general direction you want to go.");
-                break;
-            case FORWARD: case L: case R:
-                puts("I am unsure how you are facing.  Use compass points or nearby objects.");
-                break;
-            default:
-                puts("I don't know how to apply that word here.");
-                break;
-        }
         return NULL;  /* newloc = loc at this point */
     }
     while (true) {
@@ -3101,6 +3074,36 @@ Instruction *determine_motion_instruction(Location loc, MotionWord mot)
             ++q;
     }
     return q;
+}
+
+void report_inapplicable_motion(MotionWord mot, ActionWord verb)
+{
+    if (mot == CRAWL) {
+        puts("Which way?");
+    } else if (mot == XYZZY || mot == PLUGH) {
+        puts("Nothing happens.");
+    } else if (verb == FIND || verb == INVENTORY) {
+        /* This catches inputs such as "FIND BEDQUILT" or "INVENTORY WEST". */
+        puts("I can only tell you what you see as you move about and manipulate" SOFT_NL
+             "things.  I cannot tell you where remote things are.");
+    } else {
+        switch (mot) {
+            case N: case S: case E: case W: case NE: case SE: case NW: case SW:
+            case U: case D:
+                puts("There is no way to go in that direction.");
+                break;
+            case IN: case OUT:
+                puts("I don't know in from out here.  Use compass points or name something" SOFT_NL
+                     "in the general direction you want to go.");
+                break;
+            case FORWARD: case L: case R:
+                puts("I am unsure how you are facing.  Use compass points or nearby objects.");
+                break;
+            default:
+                puts("I don't know how to apply that word here.");
+                break;
+        }
+    }
 }
 
 void print_remark(int which)
@@ -3195,11 +3198,13 @@ MotionWord try_going_back_to(Location l, Location from)
 }
 
 /* Modify newloc in place, and return true if the player died crossing the troll bridge. */
-bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot)
+bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot, ActionWord verb)
 {
     Instruction *q = determine_motion_instruction(loc, mot);
-    if (q == NULL)
-        return false;  /* This happens with commands like "LEFT" */
+    if (q == NULL) {
+        report_inapplicable_motion(mot, verb);
+        return false;
+    }
     *newloc = q->dest;
     if (*newloc <= MAX_LOC) {
         /* Normal movement, possibly with some conditions which we
@@ -3346,7 +3351,7 @@ void simulate_an_adventure(void)
 {
     Location oldoldloc, oldloc, loc, newloc;
     MotionWord mot = NOWHERE;  /* currently specified motion */
-    ActionWord verb;  /* currently specified action */
+    ActionWord verb = NOTHING;  /* currently specified action */
     ActionWord oldverb;  /* verb before it was changed */
     ObjectWord obj = NOTHING;  /* currently specified object, if any */
     ObjectWord oldobj;  /* former value of obj */
@@ -3961,7 +3966,7 @@ void simulate_an_adventure(void)
         /* Determine the next newloc. */
         oldoldloc = oldloc;
         oldloc = loc;
-        if (determine_next_newloc(loc, &newloc, mot)) {
+        if (determine_next_newloc(loc, &newloc, mot, verb)) {
             /* Player died trying to cross the troll bridge. */
             oldoldloc = newloc;  /* if you are revived, you got across */
             goto death;
