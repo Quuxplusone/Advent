@@ -24,9 +24,9 @@ http://www.prismnet.com/~ged/www/advelist.html
   Knuth's program, circa 2002, as available on literateprogramming.com.
   In cases when the behavior seemed suspect, I compared it to the
   "raw" version of Knuth's current program, and/or to Woods' Fortran
-  version. I caught at least two bugs in Knuth2002, both of which had
-  been fixed in Knuth2010; so I may have unknowingly copied a few more
-  bugs anyway. I may also have introduced a few myself.
+  version. In this way I found at least two bugs in Knuth2010. However,
+  I may have unknowingly perpetuated other bugs, and of course I may
+  have introduced a few myself.
 
 Both Gillogly's and (especially) Knuth's versions suffer from the
 extreme disadvantage that their main() functions are enormous and
