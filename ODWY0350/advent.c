@@ -84,6 +84,8 @@ int lookup(const char *w)
 }
 #undef HASH_PRIME
 
+#define NOTHING 0
+
 typedef enum {
     MIN_MOTION=100,
     N=MIN_MOTION,S,E,W,NE,SE,NW,SW,U,D,L,R,IN,OUT,FORWARD,BACK,
@@ -99,8 +101,8 @@ typedef enum {
 } MotionWord;
 
 typedef enum {
-    MIN_OBJ=200, NOTHING=MIN_OBJ,
-    KEYS, LAMP, GRATE, GRATE_, CAGE, ROD, ROD2, TREADS, TREADS_,
+    MIN_OBJ=200,
+    KEYS=MIN_OBJ, LAMP, GRATE, GRATE_, CAGE, ROD, ROD2, TREADS, TREADS_,
     BIRD, DOOR, PILLOW, SNAKE, CRYSTAL, CRYSTAL_, TABLET, CLAM, OYSTER,
     MAG, DWARF, KNIFE, FOOD, BOTTLE, WATER, OIL, MIRROR, MIRROR_, PLANT,
     PLANT2, PLANT2_, STALACTITE, SHADOW, SHADOW_, AXE, DRAWINGS, PIRATE,
@@ -116,7 +118,7 @@ typedef enum {
 
 typedef enum {
     MIN_ACTION=300,
-    ABSTAIN=MIN_ACTION, TAKE, DROP, OPEN, CLOSE, ON, OFF, WAVE, CALM, GO,
+    TAKE=MIN_ACTION, DROP, OPEN, CLOSE, ON, OFF, WAVE, CALM, GO,
     RELAX, POUR, EAT, DRINK, RUB, TOSS, WAKE, FEED, FILL, BREAK, BLAST,
     KILL, SAY, READ, FEEFIE, BRIEF, FIND, INVENTORY, SCORE,
 #ifdef SAVE_AND_RESTORE
@@ -134,7 +136,7 @@ typedef enum {
 
 WordClass word_class(int word)
 {
-    if (word == 0) {
+    if (word == NOTHING) {
         return WordClass_None;
     } else if (MIN_MOTION <= word && word <= MAX_MOTION) {
         return WordClass_Motion;
@@ -443,17 +445,18 @@ struct Place {
     const char *long_desc;
     const char *short_desc;
     unsigned int flags;
+    struct ObjectData *objects;
     int visits;
 };
 struct Place places[MAX_LOC+1];
-
-int visits[MAX_LOC+1];
 
 void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned int f)
 {
     places[x].long_desc = l;
     places[x].short_desc = s;
     places[x].flags = f;
+    places[x].objects = NULL;
+    places[x].visits = 0;
     start[x] = q;
 }
 
@@ -1417,7 +1420,6 @@ struct ObjectData {
 } objs_[MAX_OBJ+1 - MIN_OBJ];
 #define objs(t) objs_[(t)-MIN_OBJ]
 
-struct ObjectData *first[MAX_LOC+1];
 int holding_count;  /* how many objects have objs(t).place < 0? */
 Location last_knife_loc = R_LIMBO;
 int tally = 15;  /* treasures awaiting you */
@@ -1449,8 +1451,8 @@ void drop(ObjectWord t, Location l)
     if (l < 0) {
         ++holding_count;
     } else if (l > 0) {
-        objs(t).link = first[l];
-        first[l] = &objs(t);
+        objs(t).link = places[l].objects;
+        places[l].objects = &objs(t);
     }
 }
 
@@ -1465,7 +1467,7 @@ void carry(ObjectWord t)
         ++holding_count;
         if (l > R_LIMBO) {
             /* Remove t from l's object-list */
-            struct ObjectData **p = &first[l];
+            struct ObjectData **p = &places[l].objects;
             while (*p != &objs(t)) p = &(*p)->link;
             *p = (*p)->link;
         }
@@ -2073,7 +2075,7 @@ int look_around(Location loc, bool dark, bool was_dark)
     if (dark && !FORCED_MOVE(loc)) {
         if (was_dark && pct(35)) return 'p';  /* goto pitch_dark; */
         room_description = pitch_dark_msg;
-    } else if (places[loc].short_desc == NULL || visits[loc] % verbose_interval == 0) {
+    } else if (places[loc].short_desc == NULL || places[loc].visits % verbose_interval == 0) {
         room_description = places[loc].long_desc;
     } else {
         room_description = places[loc].short_desc;
@@ -2088,9 +2090,9 @@ int look_around(Location loc, bool dark, bool was_dark)
     if (FORCED_MOVE(loc)) return 't';  /* goto try_move; */
     give_optional_plugh_hint(loc);
     if (!dark) {
-        visits[loc]++;
+        places[loc].visits += 1;
         /* Describe the objects at this location. */
-        for (struct ObjectData *t = first[loc]; t != NULL; t = t->link) {
+        for (struct ObjectData *t = places[loc].objects; t != NULL; t = t->link) {
             struct ObjectData *tt = t->base ? t->base : t;
             if (tt->prop < 0) {  /* you've spotted a treasure */
                 if (closed) continue;  /* no automatic prop change after hours */
@@ -2232,7 +2234,10 @@ void maybe_give_a_hint(Location loc, Location oldloc, Location oldoldloc, Object
                     hints[j].count = 0;
                     break;
                 case 5:  /* How to map the twisty passages all alike. */
-                    if (first[loc] == NULL && first[oldloc] == NULL && first[oldoldloc] == NULL && holding_count > 1) {
+                    if (places[loc].objects == NULL &&
+                            places[oldloc].objects == NULL &&
+                            places[oldoldloc].objects == NULL &&
+                            holding_count > 1) {
                         offer(j);
                     }
                     hints[j].count = 0;
@@ -2335,6 +2340,9 @@ void quit(void)
     } else {
         puts(" would be a neat trick!\nCongratulations!!");
     }
+#ifdef Z_MACHINE
+    puts("\n");
+#endif /* Z_MACHINE */
     exit(0);
 }
 
@@ -2369,8 +2377,7 @@ void kill_the_player(Location last_safe_place)
     if (toting(LAMP)) objs(LAMP).prop = 0;
     objs(WATER).place = R_LIMBO;
     objs(OIL).place = R_LIMBO;
-    assert(NOTHING == MIN_OBJ);
-    for (int j = MAX_OBJ; j > MIN_OBJ; --j) {
+    for (int j = MAX_OBJ; j >= MIN_OBJ; --j) {
         if (toting(j)) drop(j, (j == LAMP) ? R_ROAD : last_safe_place);
     }
 }
@@ -2800,20 +2807,21 @@ void attempt_feed(ObjectWord obj, Location loc)  /* section 129 in Knuth */
             }
             break;
         case BEAR:
-            if (!here(FOOD, loc)) {
-                if (objs(BEAR).prop == 0) break;  /* ferocious bear, no food */
-                if (objs(BEAR).prop == 3) {
-                    puts("Don't be ridiculous!");
-                } else {
-                    puts("There is nothing here to eat.");
-                }
-            } else {
+            if (here(FOOD, loc)) {
+                assert(objs(BEAR).prop == 0);
                 destroy(FOOD);
                 objs(BEAR).prop = 1;
                 objs(AXE).prop = 0;
-                mobilize(AXE);        /* if it was immobilized by the bear */
+                mobilize(AXE);  /* if it was immobilized by the bear */
                 puts("The bear eagerly wolfs down your food, after which he seems to calm" SOFT_NL
                      "down considerably and even becomes rather friendly.");
+            } else if (objs(BEAR).prop == 0) {
+                puts("There's nothing here it wants to eat (except perhaps you).");
+            } else if (objs(BEAR).prop == 3) {
+                puts("Don't be ridiculous!");
+            } else {
+                /* The bear is tame; therefore the food is gone. */
+                puts("There is nothing here to eat.");
             }
             break;
         case DWARF:
@@ -2826,6 +2834,7 @@ void attempt_feed(ObjectWord obj, Location loc)  /* section 129 in Knuth */
             break;
         default:
             puts("I'm game.  Would you care to explain how?");
+            break;
     }
 }
 
@@ -2962,7 +2971,7 @@ void attempt_read(ObjectWord obj)  /* section 135 in Knuth */
             puts("\"CONGRATULATIONS ON BRINGING LIGHT INTO THE DARK-ROOM!\"");
             break;
         case MESSAGE:
-            puts("\"This is not the maze where the pirate hides his treasure chest.\"");
+            puts("\"This is not the maze where the pirate leaves his treasure chest.\"");
             break;
         case OYSTER:
             if (closed && toting(OYSTER)) {
@@ -3039,33 +3048,6 @@ Instruction *determine_motion_instruction(Location loc, MotionWord mot)
         if (FORCED_MOVE(loc) || q->mot == mot) break;
     }
     if (q == start[loc+1]) {
-        /* Report on inapplicable motion. */
-        switch (mot) {
-            case CRAWL:
-                puts("Which way?");
-                break;
-            case XYZZY: case PLUGH:
-                puts("Nothing happens.");
-                break;
-            case FIND: case INVENTORY:
-                puts("I can only tell you what you see as you move about and manipulate" SOFT_NL
-                     "things.  I cannot tell you where remote things are.");
-                break;
-            case N: case S: case E: case W: case NE: case SE: case NW: case SW:
-            case U: case D:
-                puts("There is no way to go in that direction.");
-                break;
-            case IN: case OUT:
-                puts("I don't know in from out here.    Use compass points or name something" SOFT_NL
-                     "in the general direction you want to go.");
-                break;
-            case FORWARD: case L: case R:
-                puts("I am unsure how you are facing.    Use compass points or nearby objects.");
-                break;
-            default:
-                puts("I don't know how to apply that word here.");
-                break;
-        }
         return NULL;  /* newloc = loc at this point */
     }
     while (true) {
@@ -3091,6 +3073,36 @@ Instruction *determine_motion_instruction(Location loc, MotionWord mot)
             ++q;
     }
     return q;
+}
+
+void report_inapplicable_motion(MotionWord mot, ActionWord verb)
+{
+    if (mot == CRAWL) {
+        puts("Which way?");
+    } else if (mot == XYZZY || mot == PLUGH) {
+        puts("Nothing happens.");
+    } else if (verb == FIND || verb == INVENTORY) {
+        /* This catches inputs such as "FIND BEDQUILT" or "INVENTORY WEST". */
+        puts("I can only tell you what you see as you move about and manipulate" SOFT_NL
+             "things.  I cannot tell you where remote things are.");
+    } else {
+        switch (mot) {
+            case N: case S: case E: case W: case NE: case SE: case NW: case SW:
+            case U: case D:
+                puts("There is no way to go in that direction.");
+                break;
+            case IN: case OUT:
+                puts("I don't know in from out here.    Use compass points or name something" SOFT_NL
+                     "in the general direction you want to go.");
+                break;
+            case FORWARD: case L: case R:
+                puts("I am unsure how you are facing.    Use compass points or nearby objects.");
+                break;
+            default:
+                puts("I don't know how to apply that word here.");
+                break;
+        }
+    }
 }
 
 void print_remark(int which)
@@ -3185,11 +3197,13 @@ MotionWord try_going_back_to(Location l, Location from)
 }
 
 /* Modify newloc in place, and return true if the player died crossing the troll bridge. */
-bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot)
+bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot, ActionWord verb)
 {
     Instruction *q = determine_motion_instruction(loc, mot);
-    if (q == NULL)
-        return false;  /* This happens with commands like "LEFT" */
+    if (q == NULL) {
+        report_inapplicable_motion(mot, verb);
+        return false;
+    }
     *newloc = q->dest;
     if (*newloc <= MAX_LOC) {
         /* Normal movement, possibly with some conditions which we
@@ -3336,7 +3350,7 @@ void simulate_an_adventure(void)
 {
     Location oldoldloc, oldloc, loc, newloc;
     MotionWord mot = NOWHERE;  /* currently specified motion */
-    ActionWord verb;  /* currently specified action */
+    ActionWord verb = NOTHING;  /* currently specified action */
     ActionWord oldverb;  /* verb before it was changed */
     ObjectWord obj = NOTHING;  /* currently specified object, if any */
     ObjectWord oldobj;  /* former value of obj */
@@ -3373,7 +3387,7 @@ void simulate_an_adventure(void)
         }
         while (true) {
             int k;
-            verb = oldverb = ABSTAIN;
+            verb = oldverb = NOTHING;
             oldobj = obj;
             obj = NOTHING;
         cycle:
@@ -3388,7 +3402,7 @@ void simulate_an_adventure(void)
                  * with two things to say. Then we assume you don't really want
                  * us to say anything. Section 82 in Knuth. */
                 if (*word2 != '\0') {
-                    verb = ABSTAIN;
+                    verb = NOTHING;
                 } else {
                     goto transitive;
                 }
@@ -3431,11 +3445,10 @@ void simulate_an_adventure(void)
         parse:
             advise_about_going_west(word1);
             k = lookup(word1);
-            if (k == 0) {
-                printf("Sorry, I don't know the word \"%s\".\n", word1);
-                goto cycle;
-            }
             switch (word_class(k)) {
+                case WordClass_None:
+                    printf("Sorry, I don't know the word \"%s\".\n", word1);
+                    goto cycle;
                 case WordClass_Motion:
                     mot = k;
                     goto try_move;
@@ -3457,7 +3470,7 @@ void simulate_an_adventure(void)
                         /* case 0: break; */
                     }
                     if (*word2 != '\0') break;
-                    if (verb != ABSTAIN) goto transitive;
+                    if (verb != NOTHING) goto transitive;
                     printf("What do you want to do with the %s?\n", word1);
                     goto cycle;
                 case WordClass_Action:
@@ -3489,12 +3502,17 @@ void simulate_an_adventure(void)
                     continue;
                 case ON: case OFF: case POUR: case FILL: case DRINK: case BLAST: case KILL:
                     goto transitive;
-                case TAKE:
+                case TAKE: {
                     /* TAKE makes sense by itself if there's only one possible thing to take. */
-                    if (first[loc] == NULL || first[loc]->link || dwarf_in(loc))
+                    struct ObjectData *object_here = places[loc].objects;
+                    if (dwarf_in(loc))
                         goto get_object;
-                    obj = MIN_OBJ + (first[loc] - &objs(MIN_OBJ));
-                    goto transitive;
+                    if (object_here != NULL && object_here->link == NULL) {
+                        obj = MIN_OBJ + (object_here - &objs(MIN_OBJ));
+                        goto transitive;
+                    }
+                    goto get_object;
+                }
                 case EAT:
                     if (!here(FOOD, loc))
                         goto get_object;
@@ -3591,9 +3609,6 @@ void simulate_an_adventure(void)
             }
         transitive:
             switch (verb) {
-                case ABSTAIN:
-                    assert(false);  /* no input can result in verb ABSTAIN */
-                    continue;
                 case SAY: {
                     if (*word2 != '\0') strcpy(word1, word2);
                     int k = lookup(word1);
@@ -3739,8 +3754,7 @@ void simulate_an_adventure(void)
                 case TOSS:
                     if (obj == ROD && toting(ROD2) && !toting(ROD)) obj = ROD2;
                     if (!toting(obj)) {
-                        /* This response is weird, but it matches Knuth. */
-                        puts("Peculiar.  Nothing unexpected happens.");
+                        puts("You aren't carrying it!");
                         continue;
                     }
                     if (IS_TREASURE(obj) && is_at_loc(TROLL, loc)) {
@@ -3826,7 +3840,7 @@ void simulate_an_adventure(void)
                                  * He dies, the Persian rug becomes free, and R_SCAN2
                                  * takes the place of R_SCAN1 and R_SCAN3. */
                                 puts("With what?  Your bare hands?");
-                                verb = ABSTAIN; obj = NOTHING;
+                                verb = obj = NOTHING;
                                 listen();
                                 if (streq(word1, "yes") || streq(word1, "y")) {
                                     puts("Congratulations!  You have just vanquished a dragon with your bare" SOFT_NL
@@ -3937,7 +3951,7 @@ void simulate_an_adventure(void)
                      "long description of your location.");
             }
             was_dark = false;  /* pretend it wasn't dark, so you won't fall into a pit */
-            visits[loc] = 0;
+            places[loc].visits = 0;
             continue;
         } else if (mot == CAVE) {
             if (loc < MIN_IN_CAVE) {
@@ -3952,7 +3966,7 @@ void simulate_an_adventure(void)
         /* Determine the next newloc. */
         oldoldloc = oldloc;
         oldloc = loc;
-        if (determine_next_newloc(loc, &newloc, mot)) {
+        if (determine_next_newloc(loc, &newloc, mot, verb)) {
             /* Player died trying to cross the troll bridge. */
             oldoldloc = newloc;  /* if you are revived, you got across */
             goto death;
