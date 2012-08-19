@@ -443,17 +443,18 @@ struct Place {
     const char *long_desc;
     const char *short_desc;
     unsigned int flags;
+    struct ObjectData *objects;
     int visits;
 };
 struct Place places[MAX_LOC+1];
-
-int visits[MAX_LOC+1];
 
 void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned int f)
 {
     places[x].long_desc = l;
     places[x].short_desc = s;
     places[x].flags = f;
+    places[x].objects = NULL;
+    places[x].visits = 0;
     start[x] = q;
 }
 
@@ -1417,7 +1418,6 @@ struct ObjectData {
 } objs_[MAX_OBJ+1 - MIN_OBJ];
 #define objs(t) objs_[(t)-MIN_OBJ]
 
-struct ObjectData *first[MAX_LOC+1];
 int holding_count;  /* how many objects have objs(t).place < 0? */
 Location last_knife_loc = R_LIMBO;
 int tally = 15;  /* treasures awaiting you */
@@ -1449,8 +1449,8 @@ void drop(ObjectWord t, Location l)
     if (l < 0) {
         ++holding_count;
     } else if (l > 0) {
-        objs(t).link = first[l];
-        first[l] = &objs(t);
+        objs(t).link = places[l].objects;
+        places[l].objects = &objs(t);
     }
 }
 
@@ -1465,7 +1465,7 @@ void carry(ObjectWord t)
         ++holding_count;
         if (l > R_LIMBO) {
             /* Remove t from l's object-list */
-            struct ObjectData **p = &first[l];
+            struct ObjectData **p = &places[l].objects;
             while (*p != &objs(t)) p = &(*p)->link;
             *p = (*p)->link;
         }
@@ -2078,7 +2078,7 @@ int look_around(Location loc, bool dark, bool was_dark)
     if (dark && !FORCED_MOVE(loc)) {
         if (was_dark && pct(35)) return 'p';  /* goto pitch_dark; */
         room_description = pitch_dark_msg;
-    } else if (places[loc].short_desc == NULL || visits[loc] % verbose_interval == 0) {
+    } else if (places[loc].short_desc == NULL || places[loc].visits % verbose_interval == 0) {
         room_description = places[loc].long_desc;
     } else {
         room_description = places[loc].short_desc;
@@ -2093,9 +2093,9 @@ int look_around(Location loc, bool dark, bool was_dark)
     if (FORCED_MOVE(loc)) return 't';  /* goto try_move; */
     give_optional_plugh_hint(loc);
     if (!dark) {
-        visits[loc]++;
+        places[loc].visits += 1;
         /* Describe the objects at this location. */
-        for (struct ObjectData *t = first[loc]; t != NULL; t = t->link) {
+        for (struct ObjectData *t = places[loc].objects; t != NULL; t = t->link) {
             struct ObjectData *tt = t->base ? t->base : t;
             if (tt->prop < 0) {  /* you've spotted a treasure */
                 if (closed) continue;  /* no automatic prop change after hours */
@@ -2237,7 +2237,10 @@ void maybe_give_a_hint(Location loc, Location oldloc, Location oldoldloc, Object
                     hints[j].count = 0;
                     break;
                 case 5:  /* How to map the twisty passages all alike. */
-                    if (first[loc] == NULL && first[oldloc] == NULL && first[oldoldloc] == NULL && holding_count > 1) {
+                    if (places[loc].objects == NULL &&
+                            places[oldloc].objects == NULL &&
+                            places[oldoldloc].objects == NULL &&
+                            holding_count > 1) {
                         offer(j);
                     }
                     hints[j].count = 0;
@@ -3504,12 +3507,17 @@ void simulate_an_adventure(void)
                     continue;
                 case ON: case OFF: case POUR: case FILL: case DRINK: case BLAST: case KILL:
                     goto transitive;
-                case TAKE:
+                case TAKE: {
                     /* TAKE makes sense by itself if there's only one possible thing to take. */
-                    if (first[loc] == NULL || first[loc]->link || dwarf_in(loc))
+                    struct ObjectData *object_here = places[loc].objects;
+                    if (dwarf_in(loc))
                         goto get_object;
-                    obj = MIN_OBJ + (first[loc] - &objs(MIN_OBJ));
-                    goto transitive;
+                    if (object_here != NULL && object_here->link == NULL) {
+                        obj = MIN_OBJ + (object_here - &objs(MIN_OBJ));
+                        goto transitive;
+                    }
+                    goto get_object;
+                }
                 case EAT:
                     if (!here(FOOD, loc))
                         goto get_object;
@@ -3951,7 +3959,7 @@ void simulate_an_adventure(void)
                      "long description of your location.");
             }
             was_dark = false;  /* pretend it wasn't dark, so you won't fall into a pit */
-            visits[loc] = 0;
+            places[loc].visits = 0;
             continue;
         } else if (mot == CAVE) {
             if (loc < MIN_IN_CAVE) {
