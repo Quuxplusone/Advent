@@ -3262,8 +3262,16 @@ bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot, Actio
             drop(BEAR, *newloc);
             objs(BEAR).prop = 3;  /* the bear is dead */
             immobilize(BEAR);
+            /* If you collapse the troll bridge without seeing the spices, we'll
+             * increment lost_treasures so you can still get to the endgame.
+             * However, if you threw the trident to the troll before opening the
+             * oyster, you're strictly out of luck. And in fact if you pick up
+             * a treasure in the dark, you'll never "see" it until you drop it
+             * in a lighted area; so there can be arbitrarily many unseen
+             * treasures on the far side of the bridge, if the player is doing
+             * it deliberately. But we don't care about that case.
+             */
             if (objs(SPICES).prop < 0 && objs(SPICES).place >= R_NESIDE) ++lost_treasures;
-            if (objs(CHAIN).prop < 0 && objs(CHAIN).place >= R_NESIDE) ++lost_treasures;
             return true;  /* goto death */
         }
     }
