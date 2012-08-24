@@ -2919,7 +2919,7 @@ void attempt_open_or_close(ActionWord verb, ObjectWord obj, Location loc)  /* se
             }
             break;
         case KEYS:
-            puts("You can't lock or unlock the keys.");
+            puts("You can't unlock the keys.");
             break;
         case CAGE:
             puts("It has no lock.");
