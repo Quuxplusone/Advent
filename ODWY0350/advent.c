@@ -1815,11 +1815,16 @@ void pirate_tracks_you(Location loc)
     }
 }
 
+bool forbidden_to_pirate(Location loc)
+{
+    return (loc > R_PIRATES_NEST);
+}
+
 /* Return true if the player got killed by a dwarf this turn.
  * This function represents sections 161--168, 170--175 in Knuth. */
 bool move_dwarves_and_pirate(Location loc)
 {
-    if (loc > R_PIRATES_NEST || loc == R_LIMBO) {
+    if (forbidden_to_pirate(loc) || loc == R_LIMBO) {
         /* Bypass all dwarf motion if you are in a place forbidden to the
          * pirate, or if your next motion is forced. Besides the cases that
          * Knuth mentions (dwarves can't meet the bear, dwarves can't enter
@@ -1869,7 +1874,7 @@ bool move_dwarves_and_pirate(Location loc)
                     if (newloc < MIN_LOWER_LOC) continue;  /* don't follow above level 2 */
                     if (newloc == odloc[j] || newloc == dloc[j]) continue;  /* don't double back */
                     if (q->cond == 100) continue;
-                    if (j == 0 && newloc > R_PIRATES_NEST) continue;
+                    if (j == 0 && forbidden_to_pirate(newloc)) continue;
                     if (FORCED_MOVE(newloc)) continue;
                     ploc[i++] = newloc;
                 }
@@ -3377,7 +3382,7 @@ void simulate_an_adventure(void)
         if (cave_is_closing() && newloc < MIN_IN_CAVE && newloc != R_LIMBO) {
             panic_at_closing_time();
             newloc = loc;
-        } else if (newloc != loc && loc <= R_PIRATES_NEST) {
+        } else if (newloc != loc && !forbidden_to_pirate(loc)) {
             /* Stay in loc if a dwarf is blocking the way to newloc */
             for (int j=1; j <= 5; ++j) {
                 if (odloc[j] == newloc && dseen[j]) {
