@@ -2542,41 +2542,26 @@ bool attempt_take(ObjectWord obj, Location loc)
 
 void attempt_drop(ObjectWord obj, Location loc)
 {
-    bool suppress_ok_message = false;
-    if (obj == ROD && toting(ROD2) && !toting(ROD))
+    if (obj == ROD && toting(ROD2) && !toting(ROD)) {
         obj = ROD2;
+    }
+
     if (!toting(obj)) {
         puts("You aren't carrying it!");
-        return;
-    }
-    if (obj == COINS && here(PONY, loc)) {
+    } else if (obj == COINS && here(PONY, loc)) {
         /* Put coins in the vending machine. */
         destroy(COINS);
         drop(BATTERIES, loc);
         objs(BATTERIES).prop = 0;
         puts("There are fresh batteries here.");
-        return;
-    } else if (obj == BIRD) {
-        if (here(SNAKE, loc)) {
-            puts("The little bird attacks the green snake, and in an astounding flurry" SOFT_NL
-                 "drives the snake away.");
-            suppress_ok_message = true;
-            if (closed) dwarves_upset();
-            destroy(SNAKE);
-            objs(SNAKE).prop = 1;  /* used in conditional Instructions */
-        } else if (is_at_loc(DRAGON, loc) && objs(DRAGON).prop == 0) {
-            destroy(BIRD);
-            objs(BIRD).prop = 0;
-            /* Now that the bird is dead, you can never get past the snake
-             * into the south side chamber, so the precious jewelry is lost. */
-            if (there(SNAKE, R_HMK)) ++lost_treasures;
-            puts("The little bird attacks the green dragon, and in an astounding flurry" SOFT_NL
-                 "gets burnt to a cinder.  The ashes blow away.");
-            return;
-        }
     } else if (obj == VASE && loc != R_SOFT) {
-        suppress_ok_message = true;
+        drop(VASE, loc);
         if (there(PILLOW, loc)) {
+            /* In the version of Crowther and Woods' original that I have,
+             * there is no special message here; the response is simply "OK".
+             * In Long's "Adventure 6", the response is this message
+             * plus the default "Dropped." Knuth's port uses just this
+             * message, which seems like the friendliest alternative. */
             puts("The vase is now resting, delicately, on a velvet pillow.");
             objs(VASE).prop = 0;  /* resting gently on the pillow */
         } else {
@@ -2588,23 +2573,41 @@ void attempt_drop(ObjectWord obj, Location loc)
         /* Chase the troll away. */
         puts("The bear lumbers toward the troll, who lets out a startled shriek and" SOFT_NL
              "scurries away.  The bear soon gives up the pursuit and wanders back.");
-        suppress_ok_message = true;
         destroy(TROLL); destroy(TROLL_);
         drop(TROLL2, R_SWSIDE); drop(TROLL2_, R_NESIDE);
         objs(TROLL).prop = 2;
         move(BRIDGE, R_SWSIDE); move(BRIDGE_, R_NESIDE);  /* put first in their lists */
+        drop(BEAR, loc);
+    } else if (obj == BIRD && here(SNAKE, loc)) {
+        puts("The little bird attacks the green snake, and in an astounding flurry" SOFT_NL
+             "drives the snake away.");
+        if (closed) dwarves_upset();
+        drop(BIRD, loc);
+        objs(BIRD).prop = 0;  /* no longer caged */
+        destroy(SNAKE);
+        objs(SNAKE).prop = 1;  /* used in conditional Instructions */
+    } else if (obj == BIRD && is_at_loc(DRAGON, loc) && objs(DRAGON).prop == 0) {
+        puts("The little bird attacks the green dragon, and in an astounding flurry" SOFT_NL
+             "gets burnt to a cinder.  The ashes blow away.");
+        destroy(BIRD);
+        /* Now that the bird is dead, you can never get past the snake
+         * into the south side chamber, so the precious jewelry is lost. */
+        if (there(SNAKE, R_HMK)) ++lost_treasures;
     } else {
+        /* The usual case for dropping any old object. */
+
+        if (obj == BIRD) objs(BIRD).prop = 0;  /* no longer caged */
+        if (obj == CAGE && objs(BIRD).prop) drop(BIRD, loc);
+
         /* Special cases for dropping a liquid. */
         if (obj == WATER && objs(BOTTLE).prop == 0) obj = BOTTLE;
         if (obj == OIL && objs(BOTTLE).prop == 2) obj = BOTTLE;
         if (obj == BOTTLE && bottle_contents() != NOTHING)
-            objs(bottle_contents()).place = R_LIMBO;
-    }
-    if (obj == BIRD) objs(BIRD).prop = 0;  /* no longer caged */
-    if (obj == CAGE && objs(BIRD).prop) drop(BIRD, loc);
-    drop(obj, loc);
-    if (!suppress_ok_message)
+            move(bottle_contents(), R_LIMBO);
+
+        drop(obj, loc);
         puts(ok);
+    }
 }
 
 void attempt_wave(ObjectWord obj, Location loc)  /* section 99 in Knuth */
@@ -2763,8 +2766,17 @@ bool attempt_fill(ObjectWord obj, Location loc)  /* sections 110--111 in Knuth *
         } else if (!toting(VASE)) {
             puts("You aren't carrying it!");
         } else {
+            /* In Crowther and Woods' original, after shattering the vase this
+             * way, we GOTO the generic "drop" code. This produces a silly
+             * combination of messages --- and repairs the vase! --- if the
+             * pillow is on the ground next to you as you fill the vase.
+             * In Long's "Adventure 6", we skip the pillow-checking code, but
+             * still end up in the default handler, which would normally
+             * print "Dropped." but in this instance prints "There is nothing
+             * here with which to fill the vase." */
             puts("The sudden change in temperature has delicately shattered the vase.");
             objs(VASE).prop = 2;  /* worthless shards */
+            drop(VASE, loc);
             immobilize(VASE);
         }
     } else if (!here(BOTTLE, loc)) {
