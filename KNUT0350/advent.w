@@ -522,7 +522,7 @@ is not particularly rewarding.  Anyway,\n\
 nothing exciting happens.";
 new_word("throw",TOSS);@+
 new_word("toss",TOSS);
-default_msg[TOSS]="Peculiar.  Nothing unexpected happens.";
+default_msg[TOSS]=default_msg[DROP];
 new_word("wake",WAKE);@+
 new_word("distu",WAKE);
 default_msg[WAKE]=default_msg[EAT];
@@ -2071,7 +2071,7 @@ make_loc(climb,@/  @q26@>
 "You clamber up the plant and scurry through the hole at the top.",0,0);
 make_inst(FORCE,0,narrow);
 @#
-make_loc(check,"",0,0);  @q31@>
+make_loc(check,0,0,0);  @q31@>
 make_inst(FORCE,not(PLANT,2),upnout);
 make_inst(FORCE,0,didit);
 @#
@@ -2346,7 +2346,7 @@ new_obj(GEYSER,0,GEYSER,view);
 new_note(0);
 new_obj(MESSAGE,0,MESSAGE,limbo);
 new_note("There is a message scrawled in the dust in a flowery script, reading:\n\
-\"This is not the maze where the pirate hides his treasure chest.\"");
+\"This is not the maze where the pirate leaves his treasure chest.\"");
 new_obj(BEAR,0,BEAR,barr);
 new_note("There is a ferocious cave bear eying you from the far end of the room!");
 new_note("There is a gentle cave bear sitting placidly in one corner.");
@@ -2534,7 +2534,7 @@ of the program will exit in one of four ways:
 \item{$\bullet$} |goto try_move| with |mot| set to a desired motion.
 
 \item{$\bullet$} |goto transitive| with |verb| set to a desired action
-and |obj| set to the object of that motion.
+and |obj| set to the object of that action.
 
 \item{$\bullet$} |goto intransitive| with |verb| set to a desired action
 and |obj=NOTHING|; no object has been specified.
@@ -2700,7 +2700,7 @@ if (dark && !forced_move(loc)) {
     p=long_desc[loc];
 else p=short_desc[loc];
 if (toting(BEAR)) printf("You are being followed by a very large, tame bear.\n");
-printf("\n%s\n",p);
+if (p) printf("\n%s\n",p);
 if (forced_move(loc)) goto try_move;
 @<Give optional \.{plugh} hint@>;
 if (!dark) @<Describe the objects at this location@>;
@@ -2844,7 +2844,7 @@ out of a possible %d.\n",score()-4,max_score);
  if (!yes("Do you indeed wish to quit now?",ok,ok)) continue;
  goto give_up;
 @#
-case QUIT:@+ if (!yes("Do you really wish to quit now?",ok,ok))
+case QUIT:@+ if (!yes("Do you really want to quit now?",ok,ok))
    continue;
 give_up: gave_up=true;@+goto quit;
 
@@ -2895,7 +2895,7 @@ case BLAST:@+ if (closed && prop[ROD2]>=0) {
  } else goto report_default;
 @#
 case RUB:@+ if (obj==LAMP) goto report_default;
- default_to(TOSS);
+ report("Peculiar. Nothing unexpected happens.");
 
 @ If asked to find an object that isn't visible, we give a caveat.
 
@@ -3300,7 +3300,7 @@ have no bird seed.");
    report("The snake has now devoured your bird.");
   case BEAR:@+ if (!here(FOOD)) {
      if (prop[BEAR]==0) break;
-     if (prop[BEAR]==3) change_to(EAT);
+     if (prop[BEAR]==3) verb=EAT;
      goto report_default;
    }
    destroy(FOOD);@+prop[BEAR]=1;
@@ -3320,7 +3320,7 @@ down considerably and even becomes rather friendly.");
 @<Handle cases of trans...@>=
 case OPEN: case CLOSE:@+
  switch(obj) {
-   case OYSTER: k=1;
+   case OYSTER:
    case CLAM: @<Open/close clam/oyster@>;
    case GRATE: case CHAIN:@+ if (!here(KEYS)) report("You have no keys!");
      @<Open/close grate/chain@>;
