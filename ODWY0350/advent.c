@@ -1576,8 +1576,7 @@ void build_object_table(void)
     objs(EMERALD).desc[0] = "There is an emerald here the size of a plover's egg!";
     new_obj(VASE, "Ming vase", 0, R_ORIENTAL);
     objs(VASE).desc[0] = "There is a delicate, precious, Ming vase here!";
-    objs(VASE).desc[1] = "The vase is now resting, delicately, on a velvet pillow.";
-    objs(VASE).desc[2] = "The floor is littered with worthless shards of pottery.";
+    objs(VASE).desc[1] = "The floor is littered with worthless shards of pottery.";
     new_obj(TRIDENT, "Jeweled trident", 0, R_FALLS);
     objs(TRIDENT).desc[0] = "There is a jewel-encrusted trident here!";
     new_obj(EGGS, "Golden eggs", 0, R_GIANT);
@@ -2300,9 +2299,7 @@ int score(void)
         if (objs(i).prop >= 0) {
             s += 2;  /* two points just for seeing a treasure */
             if (there(i, R_HOUSE) && objs(i).prop == 0) {
-                if (objs(i).prop != 0) {
-                    /* no points for the broken vase */
-                } else if (i < CHEST) {
+                if (i < CHEST) {
                     s += 10;
                 } else if (i == CHEST) {
                     s += 12;
@@ -2573,16 +2570,12 @@ void attempt_drop(ObjectWord obj, Location loc)
     } else if (obj == VASE && loc != R_SOFT) {
         drop(VASE, loc);
         if (there(PILLOW, loc)) {
-            /* In the version of Crowther and Woods' original that I have,
-             * there is no special message here; the response is simply "OK".
-             * In Long's "Adventure 6", the response is this message
-             * plus the default "Dropped." Knuth's port uses just this
-             * message, which seems like the friendliest alternative. */
+            /* In Long's "Adventure 6", the response is this message
+             * plus the default "Dropped." */
             puts("The vase is now resting, delicately, on a velvet pillow.");
-            objs(VASE).prop = 0;  /* resting gently on the pillow */
         } else {
             puts("The Ming vase drops with a delicate crash.");
-            objs(VASE).prop = 2;  /* the vase is now broken */
+            objs(VASE).prop = 1;  /* the vase is now broken */
             immobilize(VASE);
         }
     } else if (obj == BEAR && is_at_loc(TROLL, loc)) {
@@ -2714,7 +2707,7 @@ void attempt_break(ObjectWord obj, Location loc)  /* section 101 in Knuth */
         if (toting(VASE))
             drop(VASE, loc);
         puts("You have taken the vase and hurled it delicately to the ground.");
-        objs(VASE).prop = 2;  /* worthless shards */
+        objs(VASE).prop = 1;  /* worthless shards */
         immobilize(VASE);
     } else if (obj == MIRROR) {
         if (closed) {
@@ -2792,7 +2785,7 @@ bool attempt_fill(ObjectWord obj, Location loc)  /* sections 110--111 in Knuth *
              * print "Dropped." but in this instance prints "There is nothing
              * here with which to fill the vase." */
             puts("The sudden change in temperature has delicately shattered the vase.");
-            objs(VASE).prop = 2;  /* worthless shards */
+            objs(VASE).prop = 1;  /* worthless shards */
             drop(VASE, loc);
             immobilize(VASE);
         }
