@@ -411,9 +411,9 @@ typedef enum {
     R_NESIDE, R_CORR, R_FORK, R_WARM, R_VIEW, R_CHAMBER,
     R_LIME, R_FBARR, R_BARR,
     R_NEEND, R_SWEND,
-    R_CRACK, MIN_FORCED_LOC = R_CRACK,
-    R_NECK, R_LOSE, R_CANT, R_CLIMB, R_CHECK, R_SNAKED,
-    R_THRU, R_DUCK, R_SEWER, R_UPNOUT,
+
+    R_NECK, R_LOSE, R_CLIMB, R_CHECK,
+    R_THRU, R_DUCK, R_UPNOUT,
     R_DIDIT, MAX_LOC = R_DIDIT,
     R_PPASS, R_PDROP,
     R_TROLL,
@@ -450,6 +450,10 @@ struct Place places[MAX_LOC+1];
 
 void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned int f)
 {
+    static int last_x = 0;
+    assert(x == last_x + 1);
+    last_x = x;
+
     places[x].long_desc = l;
     places[x].short_desc = s;
     places[x].flags = f;
@@ -502,7 +506,7 @@ void build_travel_table(void)
     make_ins(ENTER, R_ROAD); ditto(OUT); ditto(OUTDOORS); ditto(W);
     make_ins(XYZZY, R_DEBRIS);
     make_ins(PLUGH, R_Y2);
-    make_ins(DOWNSTREAM, R_SEWER); ditto(STREAM);
+    make_ins(DOWNSTREAM, remark(17)); ditto(STREAM);
     make_loc(q, R_VALLEY,
              "You are in a valley in the forest beside a stream tumbling along a" SOFT_NL
              "rocky bed.",
@@ -600,7 +604,7 @@ void build_travel_table(void)
     make_cond_ins(D, only_if_toting(GOLD), R_NECK); ditto(PIT); ditto(STEPS);
     /* good thing you weren't loaded down with GOLD */
     make_ins(D, R_EMIST);
-    make_ins(CRACK, R_CRACK); ditto(W);
+    make_ins(CRACK, remark(14)); ditto(W);
     make_loc(q, R_EMIST,
              "You are at one end of a vast hall stretching forward out of sight to" SOFT_NL
              "the west.  There are openings to either side.  Nearby, a wide stone" SOFT_NL
@@ -611,7 +615,7 @@ void build_travel_table(void)
     make_ins(L, R_NUGGET); ditto(S);
     make_ins(FORWARD, R_EFISS); ditto(HALL); ditto(W);
     make_ins(STAIRS, R_HMK); ditto(D); ditto(N);
-    make_cond_ins(U, only_if_toting(GOLD), R_CANT); ditto(PIT); ditto(STEPS); ditto(DOME); ditto(PASSAGE); ditto(E);
+    make_cond_ins(U, only_if_toting(GOLD), remark(15)); ditto(PIT); ditto(STEPS); ditto(DOME); ditto(PASSAGE); ditto(E);
     make_ins(U, R_SPIT);
     make_ins(Y2, R_JUMBLE);
     make_loc(q, R_NUGGET,
@@ -786,9 +790,9 @@ void build_travel_table(void)
     make_cond_ins(N, unless_prop(SNAKE, 0), R_NS); ditto(L);
     make_cond_ins(S, unless_prop(SNAKE, 0), R_SOUTH); ditto(R);
     make_cond_ins(W, unless_prop(SNAKE, 0), R_WEST); ditto(FORWARD);
-    make_ins(N, R_SNAKED);
+    make_ins(N, remark(16));
     make_cond_ins(SW, 35, R_SECRET);
-    make_cond_ins(SW, only_if_here(SNAKE), R_SNAKED);
+    make_cond_ins(SW, only_if_here(SNAKE), remark(16));
     make_ins(SECRET, R_SECRET);
     make_loc(q, R_WEST,
         "You are in the west side chamber of the Hall of the Mountain King." SOFT_NL
@@ -1351,22 +1355,21 @@ void build_travel_table(void)
     make_ins(NE, R_NEEND);
     make_ins(D, remark(1));  /* You can't go through a locked steel grate! */
 
-    /* When the current location is R_CRACK or higher, it's a pseudo-location.
+    /* The following pseudo-locations have "forced" movement.
      * In such cases we don't ask you for input; we assume that you have told
-     * us to force another instruction through. For example, if you try to go
-     * through the crack by the small pit in the upper cave (R_SPIT), the
-     * instruction there sends you to R_CRACK, which immediately sends you
-     * back to R_SPIT.
-     * [ajo] Couldn't these mostly be replaced with remarks? TODO
+     * us to force another instruction through. For example, if you try to
+     * JUMP across the fissure (R_EFISS), the instruction there sends you to
+     * R_LOSE, which prints the room description ("You didn't make it.") and
+     * immediately sends you to R_LIMBO, i.e., death.
+     * Crowther (and therefore Woods and therefore Knuth) implemented several
+     * responses as pseudo-locations; for example, "The dome is unclimbable"
+     * and "The crack is far too small for you to follow". For the ones that
+     * behave indistinguishably from remarks, I've converted them to remarks.
      */
-    make_loc(q, R_CRACK, "The crack is far too small for you to follow.", NULL, 0);
-    make_ins(0, R_SPIT);
     make_loc(q, R_NECK, "You are at the bottom of the pit with a broken neck.", NULL, 0);
     make_ins(0, R_LIMBO);
     make_loc(q, R_LOSE, "You didn't make it.", NULL, 0);
     make_ins(0, R_LIMBO);
-    make_loc(q, R_CANT, "The dome is unclimbable.", NULL, 0);
-    make_ins(0, R_EMIST);
     make_loc(q, R_CLIMB, "You clamber up the plant and scurry through the hole at the top.", NULL, 0);
     make_ins(0, R_NARROW);
     /* Typing CLIMB from the bottom of the west pit triggers a clever bit
@@ -1379,8 +1382,6 @@ void build_travel_table(void)
     make_loc(q, R_CHECK, NULL, NULL, 0);
     make_cond_ins(0, unless_prop(PLANT, 1), R_UPNOUT);
     make_ins(0, R_DIDIT);
-    make_loc(q, R_SNAKED, "You can't get by the snake.", NULL, 0);
-    make_ins(0, R_HMK);
     make_loc(q, R_THRU,
              "You have crawled through a very low wide passage parallel to and north" SOFT_NL
              "of the Hall of Mists.",
@@ -1388,11 +1389,6 @@ void build_travel_table(void)
     make_ins(0, R_WMIST);
     make_loc(q, R_DUCK, places[R_THRU].long_desc, NULL, 0);
     make_ins(0, R_WFISS);
-    make_loc(q, R_SEWER,
-             "The stream flows out through a pair of 1-foot-diameter sewer pipes." SOFT_NL
-             "It would be advisable to use the exit.",
-             NULL, 0);
-    make_ins(0, R_HOUSE);
     make_loc(q, R_UPNOUT,
              "There is nothing here to climb.  Use \"up\" or \"out\" to leave the pit.",
              NULL, 0);
@@ -1407,16 +1403,12 @@ void build_travel_table(void)
 bool is_forced(Location loc)
 {
     switch (loc) {
-        case R_CRACK:
         case R_NECK:
         case R_LOSE:
-        case R_CANT:
         case R_CLIMB:
         case R_CHECK:
-        case R_SNAKED:
         case R_THRU:
         case R_DUCK:
-        case R_SEWER:
         case R_UPNOUT:
         case R_DIDIT:
             return true;
@@ -3199,6 +3191,19 @@ void print_remark(int which)
         case 13:
             puts("Don't be ridiculous!");
             break;
+        case 14:
+            puts("The crack is far too small for you to follow.");
+            break;
+        case 15:
+            puts("The dome is unclimbable.");
+            break;
+        case 16:
+            puts("You can't get by the snake.");
+            break;
+        case 17:
+            puts("The stream flows out through a pair of 1-foot-diameter sewer pipes." SOFT_NL
+                 "It would be advisable to use the exit.");
+            break;
     }
 }
 
@@ -3212,8 +3217,6 @@ MotionWord try_going_back_to(Location l, Location from)
      * Notice that Woods' code makes an effort to deal with FORCED_MOVE
      * locations, but doesn't succeed 100 percent. ("l" is set to oldloc,
      * or to oldoldloc if oldloc is a FORCED_MOVE location.)
-     *     R_SPIT : WEST -> R_CRACK -> R_SPIT : BACK
-     * gives "Sorry, but..." as intended, because oldoldloc is R_SPIT.
      *     R_SWSIDE : CROSS -> R_TROLL -> R_NESIDE : BACK
      * gives "You can't get there from here." as apparently intended,
      * because R_TROLL is a special location.
