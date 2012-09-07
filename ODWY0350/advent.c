@@ -2774,15 +2774,9 @@ bool attempt_fill(ObjectWord obj, Location loc)  /* sections 110--111 in Knuth *
             /* In Crowther and Woods' original, after shattering the vase this
              * way, we GOTO the generic "drop" code. This produces a silly
              * combination of messages --- and repairs the vase! --- if the
-             * pillow is on the ground next to you as you fill the vase.
-             * In Long's "Adventure 6", we skip the pillow-checking code, but
-             * still end up in the default handler, which would normally
-             * print "Dropped." but in this instance prints "There is nothing
-             * here with which to fill the vase." */
+             * pillow is on the ground next to you as you fill the vase. */
             puts("The sudden change in temperature has delicately shattered the vase.");
-            objs(VASE).prop = 1;  /* worthless shards */
-            drop(VASE, loc);
-            immobilize(VASE);
+            attempt_drop(VASE, loc);
         }
     } else if (!here(BOTTLE, loc)) {
         if (obj == NOTHING)
