@@ -106,7 +106,7 @@ typedef enum {
     BIRD, DOOR, PILLOW, SNAKE, CRYSTAL, CRYSTAL_, TABLET, CLAM, OYSTER,
     MAG, DWARF, KNIFE, FOOD, BOTTLE, WATER, OIL, MIRROR, MIRROR_, PLANT,
     PLANT2, PLANT2_, STALACTITE, SHADOW, SHADOW_, AXE, DRAWINGS, PIRATE,
-    DRAGON, DRAGON_, BRIDGE, BRIDGE_, TROLL, TROLL_, TROLL2, TROLL2_,
+    DRAGON, DRAGON_, BRIDGE, BRIDGE_, TROLL, TROLL_, NO_TROLL, NO_TROLL_,
     BEAR, MESSAGE, GORGE, PONY, BATTERIES, MOSS,
     MIN_TREASURE,
     GOLD=MIN_TREASURE, DIAMONDS, SILVER, JEWELS, COINS, CHEST, EGGS,
@@ -381,8 +381,6 @@ void build_vocabulary(void)
  * This section corresponds to sections 18--62 in Knuth.
  */
 
-#define FORCED_MOVE(loc) ((loc) >= R_CRACK)
-
 typedef enum {
     R_INHAND = -1, R_LIMBO = 0,
     R_ROAD, R_HILL, R_HOUSE, R_VALLEY, R_FOREST, R_FOREST2, R_SLIT, R_OUTSIDE,
@@ -413,9 +411,9 @@ typedef enum {
     R_NESIDE, R_CORR, R_FORK, R_WARM, R_VIEW, R_CHAMBER,
     R_LIME, R_FBARR, R_BARR,
     R_NEEND, R_SWEND,
-    R_CRACK, MIN_FORCED_LOC = R_CRACK,
-    R_NECK, R_LOSE, R_CANT, R_CLIMB, R_CHECK, R_SNAKED,
-    R_THRU, R_DUCK, R_SEWER, R_UPNOUT,
+
+    R_NECK, R_LOSE, R_CLIMB, R_CHECK,
+    R_THRU, R_DUCK, R_UPNOUT,
     R_DIDIT, MAX_LOC = R_DIDIT,
     R_PPASS, R_PDROP,
     R_TROLL,
@@ -452,6 +450,10 @@ struct Place places[MAX_LOC+1];
 
 void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned int f)
 {
+    static int last_x = 0;
+    assert(x == last_x + 1);
+    last_x = x;
+
     places[x].long_desc = l;
     places[x].short_desc = s;
     places[x].flags = f;
@@ -504,7 +506,7 @@ void build_travel_table(void)
     make_ins(ENTER, R_ROAD); ditto(OUT); ditto(OUTDOORS); ditto(W);
     make_ins(XYZZY, R_DEBRIS);
     make_ins(PLUGH, R_Y2);
-    make_ins(DOWNSTREAM, R_SEWER); ditto(STREAM);
+    make_ins(DOWNSTREAM, remark(17)); ditto(STREAM);
     make_loc(q, R_VALLEY,
              "You are in a valley in the forest beside a stream tumbling along a" SOFT_NL
              "rocky bed.",
@@ -558,7 +560,7 @@ void build_travel_table(void)
              "You are crawling over cobbles in a low passage.  There is a dim light" SOFT_NL
              "at the east end of the passage.",
              "You're in cobble crawl.", F_LIGHTED);
-    make_ins(OUT, R_INSIDE); ditto(SURFACE); ditto(NOWHERE); ditto(E);
+    make_ins(OUT, R_INSIDE); ditto(SURFACE); ditto(E);
     make_ins(IN, R_DEBRIS); ditto(DARK); ditto(W); ditto(DEBRIS);
     make_ins(PIT, R_SPIT);
     make_loc(q, R_DEBRIS,
@@ -602,7 +604,7 @@ void build_travel_table(void)
     make_cond_ins(D, only_if_toting(GOLD), R_NECK); ditto(PIT); ditto(STEPS);
     /* good thing you weren't loaded down with GOLD */
     make_ins(D, R_EMIST);
-    make_ins(CRACK, R_CRACK); ditto(W);
+    make_ins(CRACK, remark(14)); ditto(W);
     make_loc(q, R_EMIST,
              "You are at one end of a vast hall stretching forward out of sight to" SOFT_NL
              "the west.  There are openings to either side.  Nearby, a wide stone" SOFT_NL
@@ -613,7 +615,7 @@ void build_travel_table(void)
     make_ins(L, R_NUGGET); ditto(S);
     make_ins(FORWARD, R_EFISS); ditto(HALL); ditto(W);
     make_ins(STAIRS, R_HMK); ditto(D); ditto(N);
-    make_cond_ins(U, only_if_toting(GOLD), R_CANT); ditto(PIT); ditto(STEPS); ditto(DOME); ditto(PASSAGE); ditto(E);
+    make_cond_ins(U, only_if_toting(GOLD), remark(15)); ditto(PIT); ditto(STEPS); ditto(DOME); ditto(PASSAGE); ditto(E);
     make_ins(U, R_SPIT);
     make_ins(Y2, R_JUMBLE);
     make_loc(q, R_NUGGET,
@@ -788,9 +790,9 @@ void build_travel_table(void)
     make_cond_ins(N, unless_prop(SNAKE, 0), R_NS); ditto(L);
     make_cond_ins(S, unless_prop(SNAKE, 0), R_SOUTH); ditto(R);
     make_cond_ins(W, unless_prop(SNAKE, 0), R_WEST); ditto(FORWARD);
-    make_ins(N, R_SNAKED);
+    make_ins(N, remark(16));
     make_cond_ins(SW, 35, R_SECRET);
-    make_cond_ins(SW, only_if_here(SNAKE), R_SNAKED);
+    make_cond_ins(SW, only_if_here(SNAKE), remark(16));
     make_ins(SECRET, R_SECRET);
     make_loc(q, R_WEST,
         "You are in the west side chamber of the Hall of the Mountain King." SOFT_NL
@@ -1353,22 +1355,21 @@ void build_travel_table(void)
     make_ins(NE, R_NEEND);
     make_ins(D, remark(1));  /* You can't go through a locked steel grate! */
 
-    /* When the current location is R_CRACK or higher, it's a pseudo-location.
+    /* The following pseudo-locations have "forced" movement.
      * In such cases we don't ask you for input; we assume that you have told
-     * us to force another instruction through. For example, if you try to go
-     * through the crack by the small pit in the upper cave (R_SPIT), the
-     * instruction there sends you to R_CRACK, which immediately sends you
-     * back to R_SPIT.
-     * [ajo] Couldn't these mostly be replaced with remarks? TODO
+     * us to force another instruction through. For example, if you try to
+     * JUMP across the fissure (R_EFISS), the instruction there sends you to
+     * R_LOSE, which prints the room description ("You didn't make it.") and
+     * immediately sends you to R_LIMBO, i.e., death.
+     * Crowther (and therefore Woods and therefore Knuth) implemented several
+     * responses as pseudo-locations; for example, "The dome is unclimbable"
+     * and "The crack is far too small for you to follow". For the ones that
+     * behave indistinguishably from remarks, I've converted them to remarks.
      */
-    make_loc(q, R_CRACK, "The crack is far too small for you to follow.", NULL, 0);
-    make_ins(0, R_SPIT);
     make_loc(q, R_NECK, "You are at the bottom of the pit with a broken neck.", NULL, 0);
     make_ins(0, R_LIMBO);
     make_loc(q, R_LOSE, "You didn't make it.", NULL, 0);
     make_ins(0, R_LIMBO);
-    make_loc(q, R_CANT, "The dome is unclimbable.", NULL, 0);
-    make_ins(0, R_EMIST);
     make_loc(q, R_CLIMB, "You clamber up the plant and scurry through the hole at the top.", NULL, 0);
     make_ins(0, R_NARROW);
     /* Typing CLIMB from the bottom of the west pit triggers a clever bit
@@ -1381,8 +1382,6 @@ void build_travel_table(void)
     make_loc(q, R_CHECK, NULL, NULL, 0);
     make_cond_ins(0, unless_prop(PLANT, 1), R_UPNOUT);
     make_ins(0, R_DIDIT);
-    make_loc(q, R_SNAKED, "You can't get by the snake.", NULL, 0);
-    make_ins(0, R_HMK);
     make_loc(q, R_THRU,
              "You have crawled through a very low wide passage parallel to and north" SOFT_NL
              "of the Hall of Mists.",
@@ -1390,11 +1389,6 @@ void build_travel_table(void)
     make_ins(0, R_WMIST);
     make_loc(q, R_DUCK, places[R_THRU].long_desc, NULL, 0);
     make_ins(0, R_WFISS);
-    make_loc(q, R_SEWER,
-             "The stream flows out through a pair of 1-foot-diameter sewer pipes." SOFT_NL
-             "It would be advisable to use the exit.",
-             NULL, 0);
-    make_ins(0, R_HOUSE);
     make_loc(q, R_UPNOUT,
              "There is nothing here to climb.  Use \"up\" or \"out\" to leave the pit.",
              NULL, 0);
@@ -1404,6 +1398,23 @@ void build_travel_table(void)
 
     /* The remaining "locations" R_PPASS, R_PDROP, and R_TROLL are special. */
     start[R_PPASS] = q;
+}
+
+bool is_forced(Location loc)
+{
+    switch (loc) {
+        case R_NECK:
+        case R_LOSE:
+        case R_CLIMB:
+        case R_CHECK:
+        case R_THRU:
+        case R_DUCK:
+        case R_UPNOUT:
+        case R_DIDIT:
+            return true;
+        default:
+            return false;
+    }
 }
 
 /*========== Data structures for objects. =================================
@@ -1446,31 +1457,35 @@ bool here(ObjectWord t, Location loc)
 
 void drop(ObjectWord t, Location l)
 {
+    assert(objs(t).place == R_INHAND || objs(t).place == R_LIMBO);
+    assert(objs(t).link == NULL);
     if (toting(t)) --holding_count;
     objs(t).place = l;
-    if (l < 0) {
+    if (l == R_INHAND) {
         ++holding_count;
-    } else if (l > 0) {
+    } else if (l != R_LIMBO) {
         objs(t).link = places[l].objects;
         places[l].objects = &objs(t);
     }
 }
 
 #define move(t,l) do { carry(t); drop((t),l); } while (0)
+#define juggle(t) do { Location l = objs(t).place; move(t, l); } while (0)
 #define destroy(t) move((t), R_LIMBO)
 
 void carry(ObjectWord t)
 {
     Location l = objs(t).place;
-    if (l >= R_LIMBO) {
-        objs(t).place = R_INHAND;
-        ++holding_count;
+    if (l != R_INHAND) {
         if (l > R_LIMBO) {
             /* Remove t from l's object-list */
             struct ObjectData **p = &places[l].objects;
             while (*p != &objs(t)) p = &(*p)->link;
             *p = (*p)->link;
         }
+        objs(t).place = R_INHAND;
+        objs(t).link = NULL;
+        ++holding_count;
     }
 }
 
@@ -1503,9 +1518,9 @@ void build_object_table(void)
     new_obj(RUG, "Persian rug", RUG, R_SCAN1);
     objs(RUG).desc[0] = "There is a Persian rug spread out on the floor!";
     objs(RUG).desc[1] = "The dragon is sprawled out on a Persian rug!!";
-    new_obj(TROLL2_, 0, TROLL2, R_LIMBO);
-    new_obj(TROLL2, 0, TROLL2, R_LIMBO);
-    objs(TROLL2).desc[0] = "The troll is nowhere to be seen.";
+    new_obj(NO_TROLL_, 0, NO_TROLL, R_LIMBO);
+    new_obj(NO_TROLL, 0, NO_TROLL, R_LIMBO);
+    objs(NO_TROLL).desc[0] = "The troll is nowhere to be seen.";
     new_obj(TROLL_, 0, TROLL, R_NESIDE);
     new_obj(TROLL, 0, TROLL, R_SWSIDE);
     objs(TROLL).desc[0] =
@@ -1561,8 +1576,7 @@ void build_object_table(void)
     objs(EMERALD).desc[0] = "There is an emerald here the size of a plover's egg!";
     new_obj(VASE, "Ming vase", 0, R_ORIENTAL);
     objs(VASE).desc[0] = "There is a delicate, precious, Ming vase here!";
-    objs(VASE).desc[1] = "The vase is now resting, delicately, on a velvet pillow.";
-    objs(VASE).desc[2] = "The floor is littered with worthless shards of pottery.";
+    objs(VASE).desc[1] = "The floor is littered with worthless shards of pottery.";
     new_obj(TRIDENT, "Jeweled trident", 0, R_FALLS);
     objs(TRIDENT).desc[0] = "There is a jewel-encrusted trident here!";
     new_obj(EGGS, "Golden eggs", 0, R_GIANT);
@@ -1747,8 +1761,8 @@ bool dwarf_in(int loc)  /* is a dwarf present? Section 160 in Knuth. */
 void return_pirate_to_lair(bool with_chest)
 {
     if (with_chest) {
-        move(CHEST, R_PIRATES_NEST);
-        move(MESSAGE, R_PONY);
+        drop(CHEST, R_PIRATES_NEST);
+        drop(MESSAGE, R_PONY);
     }
     dloc[0] = odloc[0] = R_PIRATES_NEST;
     dseen[0] = false;
@@ -1815,11 +1829,17 @@ void pirate_tracks_you(Location loc)
     }
 }
 
+bool forbidden_to_pirate(Location loc)
+{
+    return (loc > R_PIRATES_NEST);
+}
+
 /* Return true if the player got killed by a dwarf this turn.
  * This function represents sections 161--168, 170--175 in Knuth. */
 bool move_dwarves_and_pirate(Location loc)
 {
-    if (loc > R_PIRATES_NEST || loc == R_LIMBO) {
+    assert(R_LIMBO <= loc && loc <= MAX_LOC);
+    if (forbidden_to_pirate(loc) || loc == R_LIMBO) {
         /* Bypass all dwarf motion if you are in a place forbidden to the
          * pirate, or if your next motion is forced. Besides the cases that
          * Knuth mentions (dwarves can't meet the bear, dwarves can't enter
@@ -1869,8 +1889,8 @@ bool move_dwarves_and_pirate(Location loc)
                     if (newloc < MIN_LOWER_LOC) continue;  /* don't follow above level 2 */
                     if (newloc == odloc[j] || newloc == dloc[j]) continue;  /* don't double back */
                     if (q->cond == 100) continue;
-                    if (j == 0 && newloc > R_PIRATES_NEST) continue;
-                    if (FORCED_MOVE(newloc)) continue;
+                    if (j == 0 && forbidden_to_pirate(newloc)) continue;
+                    if (is_forced(newloc) || newloc > MAX_LOC) continue;
                     ploc[i++] = newloc;
                 }
                 if (i==0) ploc[i++] = odloc[j];
@@ -1985,8 +2005,8 @@ bool check_clocks_and_lamp(Location loc)
             dloc[j] = R_LIMBO;
         }
         destroy(TROLL); destroy(TROLL_);
-        move(TROLL2, R_SWSIDE); move(TROLL2_, R_NESIDE);
-        move(BRIDGE, R_SWSIDE); move(BRIDGE_, R_NESIDE);
+        move(NO_TROLL, R_SWSIDE); move(NO_TROLL_, R_NESIDE);
+        juggle(BRIDGE); juggle(BRIDGE_);
         if (objs(BEAR).prop != 3) destroy(BEAR);
         objs(CHAIN).prop = 0; mobilize(CHAIN);
         objs(AXE).prop = 0; mobilize(AXE);
@@ -2072,7 +2092,7 @@ void give_optional_plugh_hint(Location loc)
 int look_around(Location loc, bool dark, bool was_dark)
 {
     const char *room_description;
-    if (dark && !FORCED_MOVE(loc)) {
+    if (dark && !is_forced(loc)) {
         if (was_dark && pct(35)) return 'p';  /* goto pitch_dark; */
         room_description = pitch_dark_msg;
     } else if (places[loc].short_desc == NULL || places[loc].visits % verbose_interval == 0) {
@@ -2087,7 +2107,7 @@ int look_around(Location loc, bool dark, bool was_dark)
         /* R_CHECK's description is NULL. */
         printf("\n%s\n", room_description);
     }
-    if (FORCED_MOVE(loc)) return 't';  /* goto try_move; */
+    if (is_forced(loc)) return 't';  /* goto try_move; */
     give_optional_plugh_hint(loc);
     if (!dark) {
         places[loc].visits += 1;
@@ -2274,9 +2294,7 @@ int score(void)
         if (objs(i).prop >= 0) {
             s += 2;  /* two points just for seeing a treasure */
             if (there(i, R_HOUSE) && objs(i).prop == 0) {
-                if (objs(i).prop != 0) {
-                    /* no points for the broken vase */
-                } else if (i < CHEST) {
+                if (i < CHEST) {
                     s += 10;
                 } else if (i == CHEST) {
                     s += 12;
@@ -2532,69 +2550,69 @@ bool attempt_take(ObjectWord obj, Location loc)
 
 void attempt_drop(ObjectWord obj, Location loc)
 {
-    bool suppress_ok_message = false;
-    if (obj == ROD && toting(ROD2) && !toting(ROD))
+    if (obj == ROD && toting(ROD2) && !toting(ROD)) {
         obj = ROD2;
+    }
+
     if (!toting(obj)) {
         puts("You aren't carrying it!");
-        return;
-    }
-    if (obj == COINS && here(PONY, loc)) {
+    } else if (obj == COINS && here(PONY, loc)) {
         /* Put coins in the vending machine. */
         destroy(COINS);
         drop(BATTERIES, loc);
         objs(BATTERIES).prop = 0;
         puts("There are fresh batteries here.");
-        return;
-    } else if (obj == BIRD) {
-        if (here(SNAKE, loc)) {
-            puts("The little bird attacks the green snake, and in an astounding flurry" SOFT_NL
-                 "drives the snake away.");
-            suppress_ok_message = true;
-            if (closed) dwarves_upset();
-            destroy(SNAKE);
-            objs(SNAKE).prop = 1;  /* used in conditional Instructions */
-        } else if (is_at_loc(DRAGON, loc) && objs(DRAGON).prop == 0) {
-            destroy(BIRD);
-            objs(BIRD).prop = 0;
-            /* Now that the bird is dead, you can never get past the snake
-             * into the south side chamber, so the precious jewelry is lost. */
-            if (there(SNAKE, R_HMK)) ++lost_treasures;
-            puts("The little bird attacks the green dragon, and in an astounding flurry" SOFT_NL
-                 "gets burnt to a cinder.  The ashes blow away.");
-            return;
-        }
     } else if (obj == VASE && loc != R_SOFT) {
-        suppress_ok_message = true;
+        drop(VASE, loc);
         if (there(PILLOW, loc)) {
+            /* In Long's "Adventure 6", the response is this message
+             * plus the default "Dropped." */
             puts("The vase is now resting, delicately, on a velvet pillow.");
-            objs(VASE).prop = 0;  /* resting gently on the pillow */
         } else {
             puts("The Ming vase drops with a delicate crash.");
-            objs(VASE).prop = 2;  /* the vase is now broken */
+            objs(VASE).prop = 1;  /* the vase is now broken */
             immobilize(VASE);
         }
     } else if (obj == BEAR && is_at_loc(TROLL, loc)) {
         /* Chase the troll away. */
         puts("The bear lumbers toward the troll, who lets out a startled shriek and" SOFT_NL
              "scurries away.  The bear soon gives up the pursuit and wanders back.");
-        suppress_ok_message = true;
         destroy(TROLL); destroy(TROLL_);
-        drop(TROLL2, R_SWSIDE); drop(TROLL2_, R_NESIDE);
+        drop(NO_TROLL, R_SWSIDE); drop(NO_TROLL_, R_NESIDE);
         objs(TROLL).prop = 2;
-        move(BRIDGE, R_SWSIDE); move(BRIDGE_, R_NESIDE);  /* put first in their lists */
+        juggle(BRIDGE); juggle(BRIDGE_);  /* put first in their lists */
+        drop(BEAR, loc);
+    } else if (obj == BIRD && here(SNAKE, loc)) {
+        puts("The little bird attacks the green snake, and in an astounding flurry" SOFT_NL
+             "drives the snake away.");
+        if (closed) dwarves_upset();
+        drop(BIRD, loc);
+        objs(BIRD).prop = 0;  /* no longer in the cage */
+        destroy(SNAKE);
+        objs(SNAKE).prop = 1;  /* used in conditional Instructions */
+    } else if (obj == BIRD && is_at_loc(DRAGON, loc) && objs(DRAGON).prop == 0) {
+        puts("The little bird attacks the green dragon, and in an astounding flurry" SOFT_NL
+             "gets burnt to a cinder.  The ashes blow away.");
+        destroy(BIRD);
+        objs(BIRD).prop = 0;  /* no longer in the cage */
+        /* Now that the bird is dead, you can never get past the snake
+         * into the south side chamber, so the precious jewelry is lost. */
+        if (there(SNAKE, R_HMK)) ++lost_treasures;
     } else {
+        /* The usual case for dropping any old object. */
+
+        if (obj == BIRD) objs(BIRD).prop = 0;  /* no longer caged */
+        if (obj == CAGE && objs(BIRD).prop) drop(BIRD, loc);
+
         /* Special cases for dropping a liquid. */
         if (obj == WATER && objs(BOTTLE).prop == 0) obj = BOTTLE;
         if (obj == OIL && objs(BOTTLE).prop == 2) obj = BOTTLE;
         if (obj == BOTTLE && bottle_contents() != NOTHING)
-            objs(bottle_contents()).place = R_LIMBO;
-    }
-    if (obj == BIRD) objs(BIRD).prop = 0;  /* no longer caged */
-    if (obj == CAGE && objs(BIRD).prop) drop(BIRD, loc);
-    drop(obj, loc);
-    if (!suppress_ok_message)
+            move(bottle_contents(), R_LIMBO);
+
+        drop(obj, loc);
         puts(ok);
+    }
 }
 
 void attempt_wave(ObjectWord obj, Location loc)  /* section 99 in Knuth */
@@ -2684,7 +2702,7 @@ void attempt_break(ObjectWord obj, Location loc)  /* section 101 in Knuth */
         if (toting(VASE))
             drop(VASE, loc);
         puts("You have taken the vase and hurled it delicately to the ground.");
-        objs(VASE).prop = 2;  /* worthless shards */
+        objs(VASE).prop = 1;  /* worthless shards */
         immobilize(VASE);
     } else if (obj == MIRROR) {
         if (closed) {
@@ -2753,8 +2771,17 @@ bool attempt_fill(ObjectWord obj, Location loc)  /* sections 110--111 in Knuth *
         } else if (!toting(VASE)) {
             puts("You aren't carrying it!");
         } else {
+            /* In Crowther and Woods' original, after shattering the vase this
+             * way, we GOTO the generic "drop" code. This produces a silly
+             * combination of messages --- and repairs the vase! --- if the
+             * pillow is on the ground next to you as you fill the vase.
+             * In Long's "Adventure 6", we skip the pillow-checking code, but
+             * still end up in the default handler, which would normally
+             * print "Dropped." but in this instance prints "There is nothing
+             * here with which to fill the vase." */
             puts("The sudden change in temperature has delicately shattered the vase.");
-            objs(VASE).prop = 2;  /* worthless shards */
+            objs(VASE).prop = 1;  /* worthless shards */
+            drop(VASE, loc);
             immobilize(VASE);
         }
     } else if (!here(BOTTLE, loc)) {
@@ -3045,7 +3072,7 @@ Instruction *determine_motion_instruction(Location loc, MotionWord mot)
 {
     Instruction *q;
     for (q = start[loc]; q < start[loc+1]; ++q) {
-        if (FORCED_MOVE(loc) || q->mot == mot) break;
+        if (is_forced(loc) || q->mot == mot) break;
     }
     if (q == start[loc+1]) {
         return NULL;  /* newloc = loc at this point */
@@ -3152,6 +3179,19 @@ void print_remark(int which)
         case 13:
             puts("Don't be ridiculous!");
             break;
+        case 14:
+            puts("The crack is far too small for you to follow.");
+            break;
+        case 15:
+            puts("The dome is unclimbable.");
+            break;
+        case 16:
+            puts("You can't get by the snake.");
+            break;
+        case 17:
+            puts("The stream flows out through a pair of 1-foot-diameter sewer pipes." SOFT_NL
+                 "It would be advisable to use the exit.");
+            break;
     }
 }
 
@@ -3165,8 +3205,6 @@ MotionWord try_going_back_to(Location l, Location from)
      * Notice that Woods' code makes an effort to deal with FORCED_MOVE
      * locations, but doesn't succeed 100 percent. ("l" is set to oldloc,
      * or to oldoldloc if oldloc is a FORCED_MOVE location.)
-     *     R_SPIT : WEST -> R_CRACK -> R_SPIT : BACK
-     * gives "Sorry, but..." as intended, because oldoldloc is R_SPIT.
      *     R_SWSIDE : CROSS -> R_TROLL -> R_NESIDE : BACK
      * gives "You can't get there from here." as apparently intended,
      * because R_TROLL is a special location.
@@ -3189,11 +3227,35 @@ MotionWord try_going_back_to(Location l, Location from)
         if (ll == l)
             return q->mot;
         /* ...or via a single forced move. */
-        if (MIN_FORCED_LOC <= ll && ll <= MAX_LOC && start[ll]->dest == l)
+        if (is_forced(ll) && start[ll]->dest == l)
             return q->mot;
     }
     puts("You can't get there from here.");
     return NOWHERE;
+}
+
+void collapse_the_troll_bridge(void)
+{
+    puts("Just as you reach the other side, the bridge buckles beneath the" SOFT_NL
+         "weight of the bear, who was still following you around.  You" SOFT_NL
+         "scrabble desperately for support, but as the bridge collapses you" SOFT_NL
+         "stumble back and fall into the chasm.");
+    objs(BRIDGE).prop = 1;
+    objs(TROLL).prop = 2;
+    objs(BEAR).prop = 3;  /* the bear is dead */
+    drop(BEAR, R_SWSIDE);
+    immobilize(BEAR);
+    /* If you collapse the troll bridge without seeing the spices, we'll
+     * increment lost_treasures so you can still get to the endgame.
+     * However, if you threw the trident to the troll before opening the
+     * oyster, you're strictly out of luck. And in fact if you pick up
+     * a treasure in the dark, you'll never "see" it until you drop it
+     * in a lighted area; so there can be arbitrarily many unseen
+     * treasures on the far side of the bridge, if the player is doing
+     * it deliberately. But we don't care about that case.
+     */
+    if (objs(SPICES).prop < 0 && objs(SPICES).place >= R_NESIDE)
+        ++lost_treasures;
 }
 
 /* Modify newloc in place, and return true if the player died crossing the troll bridge. */
@@ -3205,64 +3267,43 @@ bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot, Actio
         return false;
     }
     *newloc = q->dest;
-    if (*newloc <= MAX_LOC) {
-        /* Normal movement, possibly with some conditions which we
-         * verified in determine_motion_instruction() already. */
-        return false;
-    }
+    
     if (*newloc >= FIRST_REMARK) {
         print_remark(*newloc - FIRST_REMARK);
         *newloc = loc;
-        return false;
-    }
-    switch (*newloc) {
-        case R_PPASS: {
-            *newloc = attempt_plover_passage(loc);
-            return false;
-        }
-        case R_PDROP: {
-            drop(EMERALD, loc);
-            *newloc = R_Y2 + R_PLOVER - loc;
-            return false;
-        }
-        case R_TROLL: {
-            /* Troll bridge crossing is treated as a special motion so
-             * that dwarves won't wander across and encounter the bear.
-             * You can get here only if TROLL is in limbo but TROLL2 has
-             * taken its place. Moreover, if you're on the southwest side,
-             * objs(TROLL).prop will be nonzero. If objs(TROLL).prop is 1,
-             * you've crossed since paying, or you've stolen away the payment.
-             */
-            if (objs(TROLL).prop == 1) {
-                /* Block the troll bridge and stay put. */
-                move(TROLL, R_SWSIDE); move(TROLL_, R_NESIDE);
-                objs(TROLL).prop = 0;
-                destroy(TROLL2); destroy(TROLL2_);
-                move(BRIDGE, R_SWSIDE); move(BRIDGE_, R_NESIDE);
-                puts("The troll steps out from beneath the bridge and blocks your way.");
-                *newloc = loc;  /* stay put */
-                return false;
-            }
+    } else if (*newloc == R_PPASS) {
+        *newloc = attempt_plover_passage(loc);
+    } else if (*newloc == R_PDROP) {
+        drop(EMERALD, loc);
+        *newloc = R_Y2 + R_PLOVER - loc;
+    } else if (*newloc == R_TROLL) {
+        /* Troll bridge crossing is treated as a special motion so
+         * that dwarves won't wander across and encounter the bear.
+         * You can get here only if TROLL is in limbo but NO_TROLL has
+         * taken its place. Moreover, if you're on the southwest side,
+         * objs(TROLL).prop will be nonzero. If objs(TROLL).prop is 1,
+         * you've crossed since paying, or you've stolen away the payment.
+         */
+        if (objs(TROLL).prop == 1) {
+            /* Block the troll bridge and stay put. */
+            objs(TROLL).prop = 0;
+            destroy(NO_TROLL); destroy(NO_TROLL_);
+            drop(TROLL, R_SWSIDE); drop(TROLL_, R_NESIDE);
+            juggle(BRIDGE); juggle(BRIDGE_);
+            puts("The troll steps out from beneath the bridge and blocks your way.");
+            *newloc = loc;  /* stay put */
+        } else {
             *newloc = R_NESIDE + R_SWSIDE - loc;  /* cross it */
             if (objs(TROLL).prop == 0)
                 objs(TROLL).prop = 1;
-            if (!toting(BEAR))
-                return false;
-            puts("Just as you reach the other side, the bridge buckles beneath the" SOFT_NL
-                 "weight of the bear, who was still following you around.  You" SOFT_NL
-                 "scrabble desperately for support, but as the bridge collapses you" SOFT_NL
-                 "stumble back and fall into the chasm.");
-            objs(BRIDGE).prop = 1;
-            objs(TROLL).prop = 2;
-            drop(BEAR, *newloc);
-            objs(BEAR).prop = 3;  /* the bear is dead */
-            immobilize(BEAR);
-            if (objs(SPICES).prop < 0 && objs(SPICES).place >= R_NESIDE) ++lost_treasures;
-            if (objs(CHAIN).prop < 0 && objs(CHAIN).place >= R_NESIDE) ++lost_treasures;
-            return true;  /* goto death */
+            if (toting(BEAR)) {
+                assert(*newloc == R_SWSIDE);
+                collapse_the_troll_bridge();
+                return true;  /* goto death */
+            }
         }
     }
-    assert(false);
+
     return false;
 }
 
@@ -3364,7 +3405,7 @@ void simulate_an_adventure(void)
         if (cave_is_closing() && newloc < MIN_IN_CAVE && newloc != R_LIMBO) {
             panic_at_closing_time();
             newloc = loc;
-        } else if (newloc != loc && loc <= R_PIRATES_NEST) {
+        } else if (newloc != loc && !forbidden_to_pirate(loc)) {
             /* Stay in loc if a dwarf is blocking the way to newloc */
             for (int j=1; j <= 5; ++j) {
                 if (odloc[j] == newloc && dseen[j]) {
@@ -3761,8 +3802,8 @@ void simulate_an_adventure(void)
                         /* Snarf a treasure for the troll. */
                         drop(obj, R_LIMBO);
                         destroy(TROLL); destroy(TROLL_);
-                        drop(TROLL2, R_SWSIDE); drop(TROLL2_, R_NESIDE);
-                        move(BRIDGE, R_SWSIDE); move(BRIDGE_, R_NESIDE);
+                        drop(NO_TROLL, R_SWSIDE); drop(NO_TROLL_, R_NESIDE);
+                        juggle(BRIDGE); juggle(BRIDGE_);
                         puts("The troll catches your treasure and scurries away out of sight.");
                         continue;
                     }
@@ -3789,7 +3830,7 @@ void simulate_an_adventure(void)
                         drop(AXE, loc);
                         objs(AXE).prop = 1;
                         immobilize(AXE);
-                        move(BEAR, loc);  /* keep bear first in the list */
+                        juggle(BEAR);  /* keep bear first in the list */
                         puts("The axe misses and lands near the bear where you can't get at it.");
                         continue;
                     } else {
@@ -3936,9 +3977,11 @@ void simulate_an_adventure(void)
     try_move:
         /* A major cycle comes to an end when a motion verb mot has been
          * given and we have computed the appropriate newloc accordingly. */
+        assert(R_LIMBO <= oldloc && oldloc <= MAX_LOC);
+        assert(R_LIMBO < loc && loc <= MAX_LOC);
         newloc = loc;  /* by default we will stay put */
         if (mot == BACK) {
-            Location l = (FORCED_MOVE(oldloc) ? oldoldloc : oldloc);
+            Location l = (is_forced(oldloc) ? oldoldloc : oldloc);
             mot = try_going_back_to(l, loc); /* may return NOWHERE */
         }
 
