@@ -560,7 +560,7 @@ void build_travel_table(void)
              "You are crawling over cobbles in a low passage.  There is a dim light" SOFT_NL
              "at the east end of the passage.",
              "You're in cobble crawl.", F_LIGHTED);
-    make_ins(OUT, R_INSIDE); ditto(SURFACE); ditto(NOWHERE); ditto(E);
+    make_ins(OUT, R_INSIDE); ditto(SURFACE); ditto(E);
     make_ins(IN, R_DEBRIS); ditto(DARK); ditto(W); ditto(DEBRIS);
     make_ins(PIT, R_SPIT);
     make_loc(q, R_DEBRIS,
