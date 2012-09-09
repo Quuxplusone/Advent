@@ -91,7 +91,7 @@ typedef enum {
     N=MIN_MOTION,S,E,W,NE,SE,NW,SW,U,D,L,R,IN,OUT,FORWARD,BACK,
     OVER,ACROSS,UPSTREAM,DOWNSTREAM,
     ENTER,CRAWL,JUMP,CLIMB,LOOK,CROSS,
-    ROAD,HILL,FOREST,VALLEY,HOUSE,GULLY,STREAM,DEPRESSION,ENTRANCE,CAVE,
+    ROAD,FOREST,VALLEY,HOUSE,GULLY,STREAM,DEPRESSION,ENTRANCE,CAVE,
     ROCK,SLAB,BED,PASSAGE,CAVERN,CANYON,AWKWARD,SECRET,BEDQUILT,RESERVOIR,
     GIANT,ORIENTAL,SHELL,BARREN,BROKEN,DEBRIS,VIEW,FORK,
     PIT,SLIT,CRACK,DOME,HOLE,WALL,HALL,ROOM,FLOOR,
@@ -190,8 +190,7 @@ void build_vocabulary(void)
     new_motion_word("look", LOOK); new_motion_word("exami", LOOK);
     new_motion_word("touch", LOOK); new_motion_word("descr", LOOK);
     new_motion_word("cross", CROSS);
-    new_motion_word("road", ROAD);
-    new_motion_word("hill", HILL);
+    new_motion_word("road", ROAD); new_motion_word("hill", ROAD);
     new_motion_word("fores", FOREST);
     new_motion_word("valle", VALLEY);
     new_motion_word("build", HOUSE); new_motion_word("house", HOUSE);
