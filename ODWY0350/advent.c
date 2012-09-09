@@ -1040,7 +1040,7 @@ void build_travel_table(void)
              "A large stalactite extends from the roof and almost reaches the floor" SOFT_NL
              "below.  You could climb down it, and jump from it to the floor, but" SOFT_NL
              "having done so you would be unable to reach it to climb back up.",
-             "You're on top of stalactite.", 0);
+             "You're at top of stalactite.", 0);
     make_ins(N, R_ABOVEP);
     make_cond_ins(D, 40, R_LIKE6); ditto(JUMP); ditto(CLIMB);
     make_cond_ins(D, 50, R_LIKE9);
@@ -1165,7 +1165,7 @@ void build_travel_table(void)
     make_ins(N, remark(10)); ditto(FORWARD);
 
     make_loc(q, R_SECRET,
-             "You are in a secret canyon, which here runs E/W.  It crosses over a" SOFT_NL
+             "You are in a secret canyon which here runs E/W.  It crosses over a" SOFT_NL
              "very tight canyon 15 feet below.  If you go down you may not be able" SOFT_NL
              "to get back up.",
              "You're in secret E/W canyon above tight canyon.", 0);
