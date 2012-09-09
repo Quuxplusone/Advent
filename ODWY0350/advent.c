@@ -3183,7 +3183,7 @@ void print_remark(int which)
             puts("You can't get by the snake.");
             break;
         case 17:
-            puts("The stream flows out through a pair of 1-foot-diameter sewer pipes." SOFT_NL
+            puts("The stream flows out through a pair of 1 foot diameter sewer pipes." SOFT_NL
                  "It would be advisable to use the exit.");
             break;
     }
