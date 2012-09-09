@@ -91,7 +91,7 @@ typedef enum {
     N=MIN_MOTION,S,E,W,NE,SE,NW,SW,U,D,L,R,IN,OUT,FORWARD,BACK,
     OVER,ACROSS,UPSTREAM,DOWNSTREAM,
     ENTER,CRAWL,JUMP,CLIMB,LOOK,CROSS,
-    ROAD,HILL,FOREST,VALLEY,HOUSE,GULLY,STREAM,DEPRESSION,ENTRANCE,CAVE,
+    ROAD,FOREST,VALLEY,HOUSE,GULLY,STREAM,DEPRESSION,ENTRANCE,CAVE,
     ROCK,SLAB,BED,PASSAGE,CAVERN,CANYON,AWKWARD,SECRET,BEDQUILT,RESERVOIR,
     GIANT,ORIENTAL,SHELL,BARREN,BROKEN,DEBRIS,VIEW,FORK,
     PIT,SLIT,CRACK,DOME,HOLE,WALL,HALL,ROOM,FLOOR,
@@ -190,8 +190,7 @@ void build_vocabulary(void)
     new_motion_word("look", LOOK); new_motion_word("exami", LOOK);
     new_motion_word("touch", LOOK); new_motion_word("descr", LOOK);
     new_motion_word("cross", CROSS);
-    new_motion_word("road", ROAD);
-    new_motion_word("hill", HILL);
+    new_motion_word("road", ROAD); new_motion_word("hill", ROAD);
     new_motion_word("fores", FOREST);
     new_motion_word("valle", VALLEY);
     new_motion_word("build", HOUSE); new_motion_word("house", HOUSE);
@@ -910,7 +909,7 @@ void build_travel_table(void)
     make_ins(W, R_BEDQUILT);
     make_ins(E, R_WITT);
     make_loc(q, R_WITT,
-             "You are at Witt's End.  Passages lead off in \"all\" directions.",
+             "You are at Witt's End.  Passages lead off in *ALL* directions.",
              "You're at Witt's End.", F_WITT_HINT);
     make_cond_ins(E, 95, remark(6)); ditto(N); ditto(S);
     ditto(NE); ditto(SE); ditto(SW); ditto(NW); ditto(U); ditto(D);
@@ -1040,7 +1039,7 @@ void build_travel_table(void)
              "A large stalactite extends from the roof and almost reaches the floor" SOFT_NL
              "below.  You could climb down it, and jump from it to the floor, but" SOFT_NL
              "having done so you would be unable to reach it to climb back up.",
-             "You're on top of stalactite.", 0);
+             "You're at top of stalactite.", 0);
     make_ins(N, R_ABOVEP);
     make_cond_ins(D, 40, R_LIKE6); ditto(JUMP); ditto(CLIMB);
     make_cond_ins(D, 50, R_LIKE9);
@@ -1165,7 +1164,7 @@ void build_travel_table(void)
     make_ins(N, remark(10)); ditto(FORWARD);
 
     make_loc(q, R_SECRET,
-             "You are in a secret canyon, which here runs E/W.  It crosses over a" SOFT_NL
+             "You are in a secret canyon which here runs E/W.  It crosses over a" SOFT_NL
              "very tight canyon 15 feet below.  If you go down you may not be able" SOFT_NL
              "to get back up.",
              "You're in secret E/W canyon above tight canyon.", 0);
