@@ -88,16 +88,17 @@ int lookup(const char *w)
 
 typedef enum {
     MIN_MOTION=100,
-    N=MIN_MOTION,S,E,W,NE,SE,NW,SW,U,D,L,R,IN,OUT,FORWARD,BACK,
-    OVER,ACROSS,UPSTREAM,DOWNSTREAM,
-    ENTER,CRAWL,JUMP,CLIMB,LOOK,CROSS,
-    ROAD,FOREST,VALLEY,HOUSE,GULLY,STREAM,DEPRESSION,ENTRANCE,CAVE,
-    ROCK,SLAB,BED,PASSAGE,CAVERN,CANYON,AWKWARD,SECRET,BEDQUILT,RESERVOIR,
-    GIANT,ORIENTAL,SHELL,BARREN,BROKEN,DEBRIS,VIEW,FORK,
-    PIT,SLIT,CRACK,DOME,HOLE,WALL,HALL,ROOM,FLOOR,
-    STAIRS,STEPS,COBBLES,SURFACE,DARK,LOW,OUTDOORS,
-    Y2,XYZZY,PLUGH,PLOVER,OFFICE,NOWHERE,
-    MAX_MOTION=NOWHERE
+    ROAD=MIN_MOTION,ENTER,UPSTREAM,DOWNSTREAM,FOREST,FORWARD,
+    BACK,VALLEY,STAIRS,OUT,HOUSE,GULLY,STREAM,ROCK,
+    BED,CRAWL,COBBLES,IN,SURFACE,NOWHERE,DARK,PASSAGE,
+    LOW,CANYON,AWKWARD,GIANT,VIEW,U,D,PIT,OUTDOORS,
+    CRACK,STEPS,DOME,LEFT,RIGHT,HALL,JUMP,BARREN,
+    OVER,ACROSS,E,W,N,S,NE,SE,SW,NW,DEBRIS,HOLE,
+    WALL,BROKEN,Y2,CLIMB,LOOK,FLOOR,ROOM,SLIT,
+    SLAB,XYZZY,DEPRESSION,ENTRANCE,PLUGH,SECRET,
+    CAVE,CROSS,BEDQUILT,PLOVER,ORIENTAL,CAVERN,
+    SHELL,RESERVOIR,OFFICE,FORK,
+    MAX_MOTION=FORK
 } MotionWord;
 
 typedef enum {
@@ -157,88 +158,89 @@ const char pitch_dark_msg[] = "It is now pitch dark.  If you proceed you will mo
 
 void build_vocabulary(void)
 {
-    new_motion_word("north", N); new_motion_word("n", N);
-    new_motion_word("south", S); new_motion_word("s", S);
-    new_motion_word("east", E); new_motion_word("e", E);
-    new_motion_word("west", W); new_motion_word("w", W);
-    new_motion_word("ne", NE);
-    new_motion_word("se", SE);
-    new_motion_word("nw", NW);
-    new_motion_word("sw", SW);
-    new_motion_word("upwar", U); new_motion_word("up", U);
-    new_motion_word("u", U); new_motion_word("above", U);
-    new_motion_word("downw", D); new_motion_word("down", D);
-    new_motion_word("d", D); new_motion_word("desce", D);
-    new_motion_word("left", L);
-    new_motion_word("right", R);
-    new_motion_word("inwar", IN); new_motion_word("insid", IN);
-    new_motion_word("in", IN);
-    new_motion_word("out", OUT); new_motion_word("outsi", OUT);
-    new_motion_word("exit", OUT); new_motion_word("leave", OUT);
+    new_motion_word("road", ROAD); new_motion_word("hill", ROAD);
+    new_motion_word("enter", ENTER);
+    new_motion_word("upstr", UPSTREAM);
+    new_motion_word("downs", DOWNSTREAM);
+    new_motion_word("fores", FOREST);
     new_motion_word("forwa", FORWARD); new_motion_word("conti", FORWARD);
     new_motion_word("onwar", FORWARD);
     new_motion_word("back", BACK); new_motion_word("retur", BACK);
     new_motion_word("retre", BACK);
-    new_motion_word("over", OVER);
-    new_motion_word("acros", ACROSS);
-    new_motion_word("upstr", UPSTREAM);
-    new_motion_word("downs", DOWNSTREAM);
-    new_motion_word("enter", ENTER);
-    new_motion_word("crawl", CRAWL);
-    new_motion_word("jump", JUMP);
-    new_motion_word("climb", CLIMB);
-    new_motion_word("look", LOOK); new_motion_word("exami", LOOK);
-    new_motion_word("touch", LOOK); new_motion_word("descr", LOOK);
-    new_motion_word("cross", CROSS);
-    new_motion_word("road", ROAD); new_motion_word("hill", ROAD);
-    new_motion_word("fores", FOREST);
     new_motion_word("valle", VALLEY);
+    new_motion_word("stair", STAIRS);
+    new_motion_word("out", OUT); new_motion_word("outsi", OUT);
+    new_motion_word("exit", OUT); new_motion_word("leave", OUT);
     new_motion_word("build", HOUSE); new_motion_word("house", HOUSE);
     new_motion_word("gully", GULLY);
     new_motion_word("strea", STREAM);
-    new_motion_word("depre", DEPRESSION);
-    new_motion_word("entra", ENTRANCE);
-    new_motion_word("cave", CAVE);
     new_motion_word("rock", ROCK);
-    new_motion_word("slab", SLAB); new_motion_word("slabr", SLAB);
     new_motion_word("bed", BED);
+    new_motion_word("crawl", CRAWL);
+    new_motion_word("cobbl", COBBLES);
+    new_motion_word("inwar", IN); new_motion_word("insid", IN);
+    new_motion_word("in", IN);
+    new_motion_word("surfa", SURFACE);
+    new_motion_word("null", NOWHERE); new_motion_word("nowhe", NOWHERE);
+    new_motion_word("dark", DARK);
     new_motion_word("passa", PASSAGE); new_motion_word("tunne", PASSAGE);
-    new_motion_word("caver", CAVERN);
+    new_motion_word("low", LOW);
     new_motion_word("canyo", CANYON);
     new_motion_word("awkwa", AWKWARD);
-    new_motion_word("secre", SECRET);
-    new_motion_word("bedqu", BEDQUILT);
-    new_motion_word("reser", RESERVOIR);
     new_motion_word("giant", GIANT);
-    new_motion_word("orien", ORIENTAL);
-    new_motion_word("shell", SHELL);
-    new_motion_word("barre", BARREN);
-    new_motion_word("broke", BROKEN);
-    new_motion_word("debri", DEBRIS);
     new_motion_word("view", VIEW);
-    new_motion_word("fork", FORK);
+    new_motion_word("upwar", U); new_motion_word("up", U);
+    new_motion_word("u", U); new_motion_word("above", U);
+    new_motion_word("ascen", U);
+    new_motion_word("d", D); new_motion_word("downw", D);
+    new_motion_word("down", D); new_motion_word("desce", D);
     new_motion_word("pit", PIT);
-    new_motion_word("slit", SLIT);
+    new_motion_word("outdo", OUTDOORS);
     new_motion_word("crack", CRACK);
+    new_motion_word("steps", STEPS);
     new_motion_word("dome", DOME);
+    new_motion_word("left", LEFT);
+    new_motion_word("right", RIGHT);
+    new_motion_word("hall", HALL);
+    new_motion_word("jump", JUMP);
+    new_motion_word("barre", BARREN);
+    new_motion_word("over", OVER);
+    new_motion_word("acros", ACROSS);
+    new_motion_word("east", E); new_motion_word("e", E);
+    new_motion_word("west", W); new_motion_word("w", W);
+    new_motion_word("north", N); new_motion_word("n", N);
+    new_motion_word("south", S); new_motion_word("s", S);
+    new_motion_word("ne", NE);
+    new_motion_word("se", SE);
+    new_motion_word("sw", SW);
+    new_motion_word("nw", NW);
+    new_motion_word("debri", DEBRIS);
     new_motion_word("hole", HOLE);
     new_motion_word("wall", WALL);
-    new_motion_word("hall", HALL);
-    new_motion_word("room", ROOM);
-    new_motion_word("floor", FLOOR);
-    new_motion_word("stair", STAIRS);
-    new_motion_word("steps", STEPS);
-    new_motion_word("cobbl", COBBLES);
-    new_motion_word("surfa", SURFACE);
-    new_motion_word("dark", DARK);
-    new_motion_word("low", LOW);
-    new_motion_word("outdo", OUTDOORS);
+    new_motion_word("broke", BROKEN);
     new_motion_word("y2", Y2);
+    new_motion_word("climb", CLIMB);
+    new_motion_word("look", LOOK); new_motion_word("exami", LOOK);
+    new_motion_word("touch", LOOK); new_motion_word("descr", LOOK);
+    new_motion_word("floor", FLOOR);
+    new_motion_word("room", ROOM);
+    new_motion_word("slit", SLIT);
+    new_motion_word("slab", SLAB); new_motion_word("slabr", SLAB);
     new_motion_word("xyzzy", XYZZY);
+    new_motion_word("depre", DEPRESSION);
+    new_motion_word("entra", ENTRANCE);
     new_motion_word("plugh", PLUGH);
+    new_motion_word("secre", SECRET);
+    new_motion_word("cave", CAVE);
+    new_motion_word("cross", CROSS);
+    new_motion_word("bedqu", BEDQUILT);
     new_motion_word("plove", PLOVER);
+    new_motion_word("orien", ORIENTAL);
+    new_motion_word("caver", CAVERN);
+    new_motion_word("shell", SHELL);
+    new_motion_word("reser", RESERVOIR);
     new_motion_word("main", OFFICE); new_motion_word("offic", OFFICE);
-    new_motion_word("null", NOWHERE); new_motion_word("nowhe", NOWHERE);
+    new_motion_word("fork", FORK);
 
     new_object_word("key", KEYS); new_object_word("keys", KEYS);
     new_object_word("lamp", LAMP); new_object_word("lante", LAMP);
@@ -611,7 +613,7 @@ void build_travel_table(void)
              "swaying to and fro almost as if alive.  A cold wind blows up the" SOFT_NL
              "staircase.  There is a passage at the top of a dome behind you.",
              "You're in Hall of Mists.", 0);
-    make_ins(L, R_NUGGET); ditto(S);
+    make_ins(LEFT, R_NUGGET); ditto(S);
     make_ins(FORWARD, R_EFISS); ditto(HALL); ditto(W);
     make_ins(STAIRS, R_HMK); ditto(D); ditto(N);
     make_cond_ins(U, only_if_toting(GOLD), remark(15)); ditto(PIT); ditto(STEPS); ditto(DOME); ditto(PASSAGE); ditto(E);
@@ -786,8 +788,8 @@ void build_travel_table(void)
         "directions.",
         "You're in Hall of Mt King.", F_SNAKE_HINT);
     make_ins(STAIRS, R_EMIST); ditto(U); ditto(E);
-    make_cond_ins(N, unless_prop(SNAKE, 0), R_NS); ditto(L);
-    make_cond_ins(S, unless_prop(SNAKE, 0), R_SOUTH); ditto(R);
+    make_cond_ins(N, unless_prop(SNAKE, 0), R_NS); ditto(LEFT);
+    make_cond_ins(S, unless_prop(SNAKE, 0), R_SOUTH); ditto(RIGHT);
     make_cond_ins(W, unless_prop(SNAKE, 0), R_WEST); ditto(FORWARD);
     make_ins(N, remark(16));
     make_cond_ins(SW, 35, R_SECRET);
@@ -1258,8 +1260,8 @@ void build_travel_table(void)
              "down a gentle slope.  The main corridor enters from the west.",
              "You're at fork in path.", 0);
     make_ins(W, R_CORR);
-    make_ins(NE, R_WARM); ditto(L);
-    make_ins(SE, R_LIME); ditto(R); ditto(D);
+    make_ins(NE, R_WARM); ditto(LEFT);
+    make_ins(SE, R_LIME); ditto(RIGHT); ditto(D);
     make_ins(VIEW, R_VIEW);
     make_ins(BARREN, R_FBARR);
     make_loc(q, R_WARM,
@@ -3126,7 +3128,7 @@ void report_inapplicable_motion(MotionWord mot, ActionWord verb)
                 puts("I don't know in from out here.  Use compass points or name something" SOFT_NL
                      "in the general direction you want to go.");
                 break;
-            case FORWARD: case L: case R:
+            case FORWARD: case LEFT: case RIGHT:
                 puts("I am unsure how you are facing.  Use compass points or nearby objects.");
                 break;
             default:
