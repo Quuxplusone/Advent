@@ -910,7 +910,7 @@ void build_travel_table(void)
     make_ins(W, R_BEDQUILT);
     make_ins(E, R_WITT);
     make_loc(q, R_WITT,
-             "You are at Witt's End.  Passages lead off in \"all\" directions.",
+             "You are at Witt's End.  Passages lead off in *ALL* directions.",
              "You're at Witt's End.", F_WITT_HINT);
     make_cond_ins(E, 95, remark(6)); ditto(N); ditto(S);
     ditto(NE); ditto(SE); ditto(SW); ditto(NW); ditto(U); ditto(D);
