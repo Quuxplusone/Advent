@@ -104,7 +104,7 @@ typedef enum {
 typedef enum {
     MIN_OBJ=200,
     KEYS=MIN_OBJ, LAMP, GRATE, GRATE_, CAGE, ROD, ROD2, TREADS, TREADS_,
-    BIRD, DOOR, PILLOW, SNAKE, FISSURE, FISSURE_, TABLET, CLAM, OYSTER,
+    BIRD, RUSTY_DOOR, PILLOW, SNAKE, FISSURE, FISSURE_, TABLET, CLAM, OYSTER,
     MAG, DWARF, KNIFE, FOOD, BOTTLE, WATER, OIL, MIRROR, MIRROR_, PLANT,
     PLANT2, PLANT2_, STALACTITE, SHADOW, SHADOW_, AXE, DRAWINGS, PIRATE,
     DRAGON, DRAGON_, CHASM, CHASM_, TROLL, TROLL_, NO_TROLL, NO_TROLL_,
@@ -249,7 +249,7 @@ void build_vocabulary(void)
     new_object_word("cage", CAGE);
     new_object_word("rod", ROD);
     new_object_word("bird", BIRD);
-    new_object_word("door", DOOR);
+    new_object_word("door", RUSTY_DOOR);
     new_object_word("pillo", PILLOW);
     new_object_word("snake", SNAKE);
     new_object_word("fissu", FISSURE);
@@ -1006,7 +1006,7 @@ void build_travel_table(void)
              "You are at one end of an immense north/south passage.",
              NULL, 0);
     make_ins(S, R_GIANT); ditto(GIANT); ditto(PASSAGE);
-    make_cond_ins(N, unless_prop(DOOR, 0), R_FALLS); ditto(ENTER); ditto(CAVERN);
+    make_cond_ins(N, unless_prop(RUSTY_DOOR, 0), R_FALLS); ditto(ENTER); ditto(CAVERN);
     make_ins(N, remark(9));
     make_loc(q, R_FALLS,
              "You are in a magnificent cavern with a rushing stream, which cascades" SOFT_NL
@@ -1659,9 +1659,9 @@ void build_object_table(void)
     objs(SNAKE).desc[1] = NULL;  /* dead snake */
     new_obj(PILLOW, "Velvet pillow", 0, R_SOFT);
     objs(PILLOW).desc[0] = "A small velvet pillow lies on the floor.";
-    new_obj(DOOR, 0, DOOR, R_IMMENSE);
-    objs(DOOR).desc[0] = "The way north is barred by a massive, rusty, iron door.";
-    objs(DOOR).desc[1] = "The way north leads through a massive, rusty, iron door.";
+    new_obj(RUSTY_DOOR, 0, RUSTY_DOOR, R_IMMENSE);
+    objs(RUSTY_DOOR).desc[0] = "The way north is barred by a massive, rusty, iron door.";
+    objs(RUSTY_DOOR).desc[1] = "The way north leads through a massive, rusty, iron door.";
     new_obj(BIRD, "Little bird in cage", 0, R_BIRD);
     objs(BIRD).desc[0] = "A cheerful little bird is sitting here singing.";
     objs(BIRD).desc[1] = "There is a little bird in the cage.";
@@ -2957,8 +2957,8 @@ void attempt_open_or_close(ActionWord verb, ObjectWord obj, Location loc)  /* se
         case CAGE:
             puts("It has no lock.");
             break;
-        case DOOR:
-            if (objs(DOOR).prop) {
+        case RUSTY_DOOR:
+            if (objs(RUSTY_DOOR).prop) {
                 puts(ok);
             } else {
                 /* Notice that CLOSE DOOR also gives this response. */
@@ -3485,7 +3485,7 @@ void simulate_an_adventure(void)
                 /* Sometimes "water" and "oil" are used as verbs. */
                 if (streq(word2, "plant") && there(PLANT, loc))
                     strcpy(word2, "pour");
-                if (streq(word2, "door") && there(DOOR, loc))
+                if (streq(word2, "door") && there(RUSTY_DOOR, loc))
                     strcpy(word2, "pour");
             }
 
@@ -3568,8 +3568,8 @@ void simulate_an_adventure(void)
                 case OPEN: case CLOSE:
                     if (is_at_loc(GRATE, loc)) {
                         obj = GRATE;
-                    } else if (there(DOOR, loc)) {
-                        obj = DOOR;
+                    } else if (there(RUSTY_DOOR, loc)) {
+                        obj = RUSTY_DOOR;
                     } else if (here(CLAM, loc)) {
                         obj = CLAM;
                     } else if (here(OYSTER, loc)) {
@@ -3763,15 +3763,15 @@ void simulate_an_adventure(void)
                                 mot = NOWHERE;
                                 goto try_move;
                             }
-                        } else if (there(DOOR, loc)) {
+                        } else if (there(RUSTY_DOOR, loc)) {
                             /* Pour water or oil on the door. */
                             switch (obj) {
                                 case WATER:
-                                    objs(DOOR).prop = 0;
+                                    objs(RUSTY_DOOR).prop = 0;
                                     puts("The hinges are quite thoroughly rusted now and won't budge.");
                                     break;
                                 case OIL:
-                                    objs(DOOR).prop = 1;
+                                    objs(RUSTY_DOOR).prop = 1;
                                     puts("The oil has freed up the hinges so that the door will now open.");
                                     break;
                             }
