@@ -109,13 +109,10 @@ typedef enum {
     PLANT2, PLANT2_, STALACTITE, SHADOW, SHADOW_, AXE, DRAWINGS, PIRATE,
     DRAGON, DRAGON_, CHASM, CHASM_, TROLL, TROLL_, NO_TROLL, NO_TROLL_,
     BEAR, MESSAGE, GORGE, PONY, BATTERIES, MOSS,
-    MIN_TREASURE,
-    GOLD=MIN_TREASURE, DIAMONDS, SILVER, JEWELS, COINS, CHEST, EGGS,
+    GOLD, DIAMONDS, SILVER, JEWELS, COINS, CHEST, EGGS,
     TRIDENT, VASE, EMERALD, PYRAMID, PEARL, RUG, RUG_, SPICES, CHAIN,
     MAX_OBJ=CHAIN
 } ObjectWord;
-
-#define IS_TREASURE(t) ((t) >= MIN_TREASURE)
 
 typedef enum {
     MIN_ACTION=300,
@@ -1440,6 +1437,24 @@ int lost_treasures;  /* treasures that you won't find */
 #define toting(t) (objs(t).place < 0)
 #define there(t, loc) (objs(t).place == (loc))
 
+/* Return true if t is a treasure. Notice that RUG_ (the other half
+ * of the schizoid rug) does not need to be a treasure. You can
+ * never be carrying it; the pirate can't steal it; and its prop
+ * value is irrelevant (we use the prop value of the base object RUG).
+ */
+bool is_treasure(ObjectWord t)
+{
+    switch (t) {
+        case GOLD: case DIAMONDS: case SILVER: case JEWELS:
+        case COINS: case CHEST: case EGGS: case TRIDENT:
+        case VASE: case EMERALD: case PYRAMID: case PEARL:
+        case RUG: case SPICES: case CHAIN:
+            return true;
+        default:
+            return false;
+    }
+}
+
 ObjectWord bottle_contents(void)
 {
     switch (objs(BOTTLE).prop) {
@@ -1509,7 +1524,7 @@ void new_obj(ObjectWord t, const char *n, ObjectWord b, Location l)
 {
     objs(t).name = n;
     objs(t).base = (b != 0 ? &objs(b) : NULL);
-    objs(t).prop = (IS_TREASURE(t) ? -1 : 0);
+    objs(t).prop = (is_treasure(t) ? -1 : 0);
     drop(t, l);
 }
 
@@ -1780,7 +1795,8 @@ void steal_all_your_treasure(Location loc)  /* sections 173--174 in Knuth */
          "he chortles. \"I'll just take all this booty and hide it away with me" SOFT_NL
          "chest deep in the maze!\"  He snatches your treasure and vanishes into" SOFT_NL
          "the gloom.");
-    for (int t = MIN_TREASURE; t <= MAX_OBJ; ++t) {
+    for (int t = MIN_OBJ; t <= MAX_OBJ; ++t) {
+        if (!is_treasure(t)) continue;
         if (too_easy_to_steal(t, loc)) continue;
         if (here(t, loc) && objs(t).base == NULL) {
             /* The vase, rug, and chain can all be immobile at times. */
@@ -1795,7 +1811,8 @@ void pirate_tracks_you(Location loc)
     bool stalking = false;
     /* The pirate leaves you alone once you've found the chest. */
     if (loc == R_PIRATES_NEST || objs(CHEST).prop >= 0) return;
-    for (int i = MIN_TREASURE; i <= MAX_OBJ; ++i) {
+    for (int i = MIN_OBJ; i <= MAX_OBJ; ++i) {
+        if (!is_treasure(i)) continue;
         if (too_easy_to_steal(i, loc)) continue;
         if (toting(i)) {
             steal_all_your_treasure(loc);
@@ -2296,7 +2313,8 @@ int score(void)
 {
     int s = 2;
     if (dflag != 0) s += 25;
-    for (int i = MIN_TREASURE; i <= MAX_OBJ; ++i) {
+    for (int i = MIN_OBJ; i <= MAX_OBJ; ++i) {
+        if (!is_treasure(i)) continue;
         if (objs(i).prop >= 0) {
             s += 2;  /* two points just for seeing a treasure */
             if (there(i, R_HOUSE) && objs(i).prop == 0) {
@@ -2453,7 +2471,7 @@ void attempt_inventory(void)  /* section 94 in Knuth */
 {
     bool holding_anything = false;
     for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
-        if (toting(t) && (objs(t).base == NULL || objs(t).base == &objs(t)) && t != BEAR) {
+        if (toting(t) && t != BEAR) {
             if (!holding_anything) {
                 holding_anything = true;
                 puts("You are currently holding the following:");
@@ -3804,7 +3822,7 @@ void simulate_an_adventure(void)
                         puts("You aren't carrying it!");
                         continue;
                     }
-                    if (IS_TREASURE(obj) && is_at_loc(TROLL, loc)) {
+                    if (is_treasure(obj) && is_at_loc(TROLL, loc)) {
                         /* Snarf a treasure for the troll. */
                         drop(obj, R_LIMBO);
                         destroy(TROLL); destroy(TROLL_);
@@ -3897,7 +3915,6 @@ void simulate_an_adventure(void)
                                     mobilize(RUG);
                                     immobilize(DRAGON_);
                                     destroy(DRAGON_);
-                                    immobilize(RUG_);
                                     destroy(RUG_);
                                     for (int t = MIN_OBJ; t <= MAX_OBJ; ++t) {
                                         if (there(t, R_SCAN1) || there(t, R_SCAN3))
