@@ -104,10 +104,10 @@ typedef enum {
 typedef enum {
     MIN_OBJ=200,
     KEYS=MIN_OBJ, LAMP, GRATE, GRATE_, CAGE, ROD, ROD2, TREADS, TREADS_,
-    BIRD, DOOR, PILLOW, SNAKE, CRYSTAL, CRYSTAL_, TABLET, CLAM, OYSTER,
+    BIRD, DOOR, PILLOW, SNAKE, FISSURE, FISSURE_, TABLET, CLAM, OYSTER,
     MAG, DWARF, KNIFE, FOOD, BOTTLE, WATER, OIL, MIRROR, MIRROR_, PLANT,
     PLANT2, PLANT2_, STALACTITE, SHADOW, SHADOW_, AXE, DRAWINGS, PIRATE,
-    DRAGON, DRAGON_, BRIDGE, BRIDGE_, TROLL, TROLL_, NO_TROLL, NO_TROLL_,
+    DRAGON, DRAGON_, CHASM, CHASM_, TROLL, TROLL_, NO_TROLL, NO_TROLL_,
     BEAR, MESSAGE, GORGE, PONY, BATTERIES, MOSS,
     MIN_TREASURE,
     GOLD=MIN_TREASURE, DIAMONDS, SILVER, JEWELS, COINS, CHEST, EGGS,
@@ -252,7 +252,7 @@ void build_vocabulary(void)
     new_object_word("door", DOOR);
     new_object_word("pillo", PILLOW);
     new_object_word("snake", SNAKE);
-    new_object_word("fissu", CRYSTAL);
+    new_object_word("fissu", FISSURE);
     new_object_word("table", TABLET);
     new_object_word("clam", CLAM);
     new_object_word("oyste", OYSTER);
@@ -272,7 +272,7 @@ void build_vocabulary(void)
     new_object_word("drawi", DRAWINGS);
     new_object_word("pirat", PIRATE);
     new_object_word("drago", DRAGON);
-    new_object_word("chasm", BRIDGE);
+    new_object_word("chasm", CHASM);
     new_object_word("troll", TROLL);
     new_object_word("bear", BEAR);
     new_object_word("messa", MESSAGE);
@@ -629,16 +629,16 @@ void build_travel_table(void)
              "The mist is quite thick here, and the fissure is too wide to jump.",
              "You're on east bank of fissure.", 0);
     make_ins(HALL, R_EMIST); ditto(E);
-    make_cond_ins(JUMP, unless_prop(CRYSTAL, 0), remark(2));
-    make_cond_ins(FORWARD, unless_prop(CRYSTAL, 1), R_LOSE);
-    make_cond_ins(OVER, unless_prop(CRYSTAL, 1), remark(3)); ditto(ACROSS); ditto(W); ditto(CROSS);
+    make_cond_ins(JUMP, unless_prop(FISSURE, 0), remark(2));
+    make_cond_ins(FORWARD, unless_prop(FISSURE, 1), R_LOSE);
+    make_cond_ins(OVER, unless_prop(FISSURE, 1), remark(3)); ditto(ACROSS); ditto(W); ditto(CROSS);
     make_ins(OVER, R_WFISS);
     make_loc(q, R_WFISS,
              "You are on the west side of the fissure in the Hall of Mists.",
              NULL, 0);
-    make_cond_ins(JUMP, unless_prop(CRYSTAL, 0), remark(2));
-    make_cond_ins(FORWARD, unless_prop(CRYSTAL, 1), R_LOSE);
-    make_cond_ins(OVER, unless_prop(CRYSTAL, 1), remark(3)); ditto(ACROSS); ditto(E); ditto(CROSS);
+    make_cond_ins(JUMP, unless_prop(FISSURE, 0), remark(2));
+    make_cond_ins(FORWARD, unless_prop(FISSURE, 1), R_LOSE);
+    make_cond_ins(OVER, unless_prop(FISSURE, 1), remark(3)); ditto(ACROSS); ditto(E); ditto(CROSS);
     make_ins(OVER, R_EFISS);
     make_ins(W, R_WMIST);
     make_ins(N, R_THRU);
@@ -1207,9 +1207,9 @@ void build_travel_table(void)
              "You're on SW side of chasm.", 0);
     make_ins(SW, R_SLOPING);
     make_cond_ins(OVER, only_if_here(TROLL), remark(11)); ditto(ACROSS); ditto(CROSS); ditto(NE);
-    make_cond_ins(OVER, unless_prop(BRIDGE, 0), remark(12));
+    make_cond_ins(OVER, unless_prop(CHASM, 0), remark(12));
     make_ins(OVER, R_TROLL);
-    make_cond_ins(JUMP, unless_prop(BRIDGE, 0), R_LOSE);
+    make_cond_ins(JUMP, unless_prop(CHASM, 0), R_LOSE);
     make_ins(JUMP, remark(2));
     make_loc(q, R_DEAD0, dead_end, NULL, 0);
     make_ins(S, R_CROSS); ditto(OUT);
@@ -1529,12 +1529,12 @@ void build_object_table(void)
         "treasure before you may cross.";
     objs(TROLL).desc[1] = "The troll steps out from beneath the bridge and blocks your way.";
     objs(TROLL).desc[2] = NULL;
-    new_obj(BRIDGE_, 0, BRIDGE, R_NESIDE);
-    new_obj(BRIDGE, 0, BRIDGE, R_SWSIDE);
-    objs(BRIDGE).desc[0] =
+    new_obj(CHASM_, 0, CHASM, R_NESIDE);
+    new_obj(CHASM, 0, CHASM, R_SWSIDE);
+    objs(CHASM).desc[0] =
         "A rickety wooden bridge extends across the chasm, vanishing into the" SOFT_NL
         "mist. A sign posted on the bridge reads, \"STOP! PAY TROLL!\"";
-    objs(BRIDGE).desc[1] =
+    objs(CHASM).desc[1] =
         "The wreckage of a bridge (and a dead bear) can be seen at the bottom" SOFT_NL
         "of the chasm.";
     new_obj(DRAGON_, 0, DRAGON, R_SCAN3);
@@ -1550,10 +1550,10 @@ void build_object_table(void)
     objs(PLANT2).desc[0] = NULL;
     objs(PLANT2).desc[1] = "The top of a 12-foot-tall beanstalk is poking out of the west pit.";
     objs(PLANT2).desc[2] = "There is a huge beanstalk growing out of the west pit up to the hole.";
-    new_obj(CRYSTAL_, 0, CRYSTAL, R_WFISS);
-    new_obj(CRYSTAL, 0, CRYSTAL, R_EFISS);
-    objs(CRYSTAL).desc[0] = NULL;
-    objs(CRYSTAL).desc[1] ="A crystal bridge now spans the fissure.";
+    new_obj(FISSURE_, 0, FISSURE, R_WFISS);
+    new_obj(FISSURE, 0, FISSURE, R_EFISS);
+    objs(FISSURE).desc[0] = NULL;
+    objs(FISSURE).desc[1] ="A crystal bridge now spans the fissure.";
     new_obj(TREADS_, 0, TREADS, R_EMIST);
     new_obj(TREADS, 0, TREADS, R_SPIT);
     objs(TREADS).desc[0] = "Rough stone steps lead down the pit.";
@@ -2005,14 +2005,14 @@ bool check_clocks_and_lamp(Location loc)
              "closing soon.  All adventurers exit immediately through main office.\"");
         clock1 = -1;
         objs(GRATE).prop = 0;
-        objs(CRYSTAL).prop = 0;
+        objs(FISSURE).prop = 0;
         for (int j=0; j <= 5; ++j) {
             dseen[j] = false;
             dloc[j] = R_LIMBO;
         }
         destroy(TROLL); destroy(TROLL_);
         move(NO_TROLL, R_SWSIDE); move(NO_TROLL_, R_NESIDE);
-        juggle(BRIDGE); juggle(BRIDGE_);
+        juggle(CHASM); juggle(CHASM_);
         if (objs(BEAR).prop != 3) destroy(BEAR);
         objs(CHAIN).prop = 0; mobilize(CHAIN);
         objs(AXE).prop = 0; mobilize(AXE);
@@ -2586,7 +2586,7 @@ void attempt_drop(ObjectWord obj, Location loc)
         destroy(TROLL); destroy(TROLL_);
         drop(NO_TROLL, R_SWSIDE); drop(NO_TROLL_, R_NESIDE);
         objs(TROLL).prop = 2;
-        juggle(BRIDGE); juggle(BRIDGE_);  /* put first in their lists */
+        juggle(CHASM); juggle(CHASM_);  /* put first in their lists */
         drop(BEAR, loc);
     } else if (obj == BIRD && here(SNAKE, loc)) {
         puts("The little bird attacks the green snake, and in an astounding flurry" SOFT_NL
@@ -2625,12 +2625,12 @@ void attempt_wave(ObjectWord obj, Location loc)  /* section 99 in Knuth */
 {
     if (obj == ROD && (loc == R_EFISS || loc == R_WFISS) &&
             toting(ROD) && !cave_is_closing()) {
-        if (objs(CRYSTAL).prop) {
+        if (objs(FISSURE).prop) {
             puts("The crystal bridge has vanished!");
-            objs(CRYSTAL).prop = 0;
+            objs(FISSURE).prop = 0;
         } else {
             puts("A crystal bridge now spans the fissure.");
-            objs(CRYSTAL).prop = 1;
+            objs(FISSURE).prop = 1;
         }
     } else if (toting(obj) || (obj == ROD && toting(ROD2))) {
         puts("Nothing happens.");
@@ -3246,7 +3246,7 @@ void collapse_the_troll_bridge(void)
          "weight of the bear, who was still following you around.  You" SOFT_NL
          "scrabble desperately for support, but as the bridge collapses you" SOFT_NL
          "stumble back and fall into the chasm.");
-    objs(BRIDGE).prop = 1;
+    objs(CHASM).prop = 1;
     objs(TROLL).prop = 2;
     objs(BEAR).prop = 3;  /* the bear is dead */
     drop(BEAR, R_SWSIDE);
@@ -3295,7 +3295,7 @@ bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot, Actio
             objs(TROLL).prop = 0;
             destroy(NO_TROLL); destroy(NO_TROLL_);
             drop(TROLL, R_SWSIDE); drop(TROLL_, R_NESIDE);
-            juggle(BRIDGE); juggle(BRIDGE_);
+            juggle(CHASM); juggle(CHASM_);
             puts("The troll steps out from beneath the bridge and blocks your way.");
             *newloc = loc;  /* stay put */
         } else {
@@ -3809,7 +3809,7 @@ void simulate_an_adventure(void)
                         drop(obj, R_LIMBO);
                         destroy(TROLL); destroy(TROLL_);
                         drop(NO_TROLL, R_SWSIDE); drop(NO_TROLL_, R_NESIDE);
-                        juggle(BRIDGE); juggle(BRIDGE_);
+                        juggle(CHASM); juggle(CHASM_);
                         puts("The troll catches your treasure and scurries away out of sight.");
                         continue;
                     }
