@@ -1555,8 +1555,7 @@ void build_object_table(void)
     new_obj(DRAGON_, 0, DRAGON, R_SCAN3);
     new_obj(DRAGON, 0, DRAGON, R_SCAN1);
     objs(DRAGON).desc[0] = "A huge green fierce dragon bars the way!";
-    objs(DRAGON).desc[1] = NULL;
-    objs(DRAGON).desc[2] = "The body of a huge green dead dragon is lying off to one side.";
+    objs(DRAGON).desc[1] = "The body of a huge green dead dragon is lying off to one side.";
     new_obj(SHADOW_, 0, SHADOW, R_WINDOW);
     new_obj(SHADOW, 0, SHADOW, R_WINDOE);
     objs(SHADOW).desc[0] = "The shadowy figure seems to be trying to attract your attention.";
@@ -1661,7 +1660,6 @@ void build_object_table(void)
     objs(MAG).desc[0] = "There are a few recent issues of \"Spelunker Today\" magazine here.";
     new_obj(OYSTER, "Giant oyster >GROAN!<", 0, R_LIMBO);
     objs(OYSTER).desc[0] = "There is an enormous oyster here with its shell tightly closed.";
-    objs(OYSTER).desc[1] = NULL;
     new_obj(CLAM, "Giant clam >GRUNT!<", 0, R_SHELL);
     objs(CLAM).desc[0] = "There is an enormous clam here with its shell tightly closed.";
     new_obj(TABLET, 0, TABLET, R_DARK);
@@ -2614,7 +2612,7 @@ void attempt_drop(ObjectWord obj, Location loc)
         objs(BIRD).prop = 0;  /* no longer in the cage */
         destroy(SNAKE);
         objs(SNAKE).prop = 1;  /* used in conditional Instructions */
-    } else if (obj == BIRD && is_at_loc(DRAGON, loc) && objs(DRAGON).prop == 0) {
+    } else if (obj == BIRD && is_at_loc(DRAGON, loc) && !objs(DRAGON).prop) {
         puts("The little bird attacks the green dragon, and in an astounding flurry" SOFT_NL
              "gets burnt to a cinder.  The ashes blow away.");
         destroy(BIRD);
@@ -3910,10 +3908,9 @@ void simulate_an_adventure(void)
                                 if (streq(word1, "yes") || streq(word1, "y")) {
                                     puts("Congratulations!  You have just vanquished a dragon with your bare" SOFT_NL
                                          "hands! (Unbelievable, isn't it?)");
-                                    objs(DRAGON).prop = 2;  /* dead */
+                                    objs(DRAGON).prop = 1;  /* dead */
                                     objs(RUG).prop = 0;
                                     mobilize(RUG);
-                                    immobilize(DRAGON_);
                                     destroy(DRAGON_);
                                     destroy(RUG_);
                                     for (int t = MIN_OBJ; t <= MAX_OBJ; ++t) {
