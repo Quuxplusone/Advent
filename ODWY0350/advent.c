@@ -1530,167 +1530,165 @@ void new_obj(ObjectWord t, const char *n, ObjectWord b, Location l)
 
 void build_object_table(void)
 {
-    new_obj(RUG_, 0, RUG, R_SCAN3);
-    new_obj(RUG, "Persian rug", RUG, R_SCAN1);
-    objs(RUG).desc[0] = "There is a Persian rug spread out on the floor!";
-    objs(RUG).desc[1] = "The dragon is sprawled out on a Persian rug!!";
-    new_obj(NO_TROLL_, 0, NO_TROLL, R_LIMBO);
-    new_obj(NO_TROLL, 0, NO_TROLL, R_LIMBO);
-    objs(NO_TROLL).desc[0] = "The troll is nowhere to be seen.";
-    new_obj(TROLL_, 0, TROLL, R_NESIDE);
-    new_obj(TROLL, 0, TROLL, R_SWSIDE);
-    objs(TROLL).desc[0] =
-        "A burly troll stands by the bridge and insists you throw him a" SOFT_NL
-        "treasure before you may cross.";
-    objs(TROLL).desc[1] = "The troll steps out from beneath the bridge and blocks your way.";
-    objs(TROLL).desc[2] = NULL;
-    new_obj(CHASM_, 0, CHASM, R_NESIDE);
-    new_obj(CHASM, 0, CHASM, R_SWSIDE);
-    objs(CHASM).desc[0] =
-        "A rickety wooden bridge extends across the chasm, vanishing into the" SOFT_NL
-        "mist. A sign posted on the bridge reads, \"STOP! PAY TROLL!\"";
-    objs(CHASM).desc[1] =
-        "The wreckage of a bridge (and a dead bear) can be seen at the bottom" SOFT_NL
-        "of the chasm.";
-    new_obj(DRAGON_, 0, DRAGON, R_SCAN3);
-    new_obj(DRAGON, 0, DRAGON, R_SCAN1);
-    objs(DRAGON).desc[0] = "A huge green fierce dragon bars the way!";
-    objs(DRAGON).desc[1] = "The body of a huge green dead dragon is lying off to one side.";
-    new_obj(SHADOW_, 0, SHADOW, R_WINDOW);
-    new_obj(SHADOW, 0, SHADOW, R_WINDOE);
-    objs(SHADOW).desc[0] = "The shadowy figure seems to be trying to attract your attention.";
-    new_obj(PLANT2_, 0, PLANT2, R_E2PIT);
-    new_obj(PLANT2, 0, PLANT2, R_W2PIT);
-    objs(PLANT2).desc[0] = NULL;
-    objs(PLANT2).desc[1] = "The top of a 12-foot-tall beanstalk is poking out of the west pit.";
-    objs(PLANT2).desc[2] = "There is a huge beanstalk growing out of the west pit up to the hole.";
-    new_obj(FISSURE_, 0, FISSURE, R_WFISS);
-    new_obj(FISSURE, 0, FISSURE, R_EFISS);
-    objs(FISSURE).desc[0] = NULL;
-    objs(FISSURE).desc[1] ="A crystal bridge now spans the fissure.";
-    new_obj(TREADS_, 0, TREADS, R_EMIST);
-    new_obj(TREADS, 0, TREADS, R_SPIT);
-    objs(TREADS).desc[0] = "Rough stone steps lead down the pit.";
-    objs(TREADS).desc[1] = "Rough stone steps lead up the dome.";
-    new_obj(GRATE_, 0, GRATE, R_INSIDE);
+    new_obj(KEYS, "Set of keys", 0, R_HOUSE);
+    objs(KEYS).desc[0] = "There are some keys on the ground here.";
+    new_obj(LAMP, "Brass lantern", 0, R_HOUSE);
+    objs(LAMP).desc[0] = "There is a shiny brass lamp nearby.";
+    objs(LAMP).desc[1] = "There is a lamp shining nearby.";
     new_obj(GRATE, 0, GRATE, R_OUTSIDE);
+    new_obj(GRATE_, 0, GRATE, R_INSIDE);
     objs(GRATE).desc[0] = "The grate is locked.";
     objs(GRATE).desc[1] = "The grate is open.";
+    new_obj(CAGE, "Wicker cage", 0, R_COBBLES);
+    objs(CAGE).desc[0] = "There is a small wicker cage discarded nearby.";
+    new_obj(ROD, "Black rod", 0, R_DEBRIS);
+    objs(ROD).desc[0] = "A three-foot black rod with a rusty star on an end lies nearby.";
+    new_obj(ROD2, "Black rod", 0, R_LIMBO);
+    objs(ROD2).desc[0] = "A three-foot black rod with a rusty mark on an end lies nearby.";
+    new_obj(TREADS, 0, TREADS, R_SPIT);
+    new_obj(TREADS_, 0, TREADS, R_EMIST);
+    objs(TREADS).desc[0] = "Rough stone steps lead down the pit.";
+    objs(TREADS).desc[1] = "Rough stone steps lead up the dome.";
+    new_obj(BIRD, "Little bird in cage", 0, R_BIRD);
+    objs(BIRD).desc[0] = "A cheerful little bird is sitting here singing.";
+    objs(BIRD).desc[1] = "There is a little bird in the cage.";
+    new_obj(RUSTY_DOOR, 0, RUSTY_DOOR, R_IMMENSE);
+    objs(RUSTY_DOOR).desc[0] = "The way north is barred by a massive, rusty, iron door.";
+    objs(RUSTY_DOOR).desc[1] = "The way north leads through a massive, rusty, iron door.";
+    new_obj(PILLOW, "Velvet pillow", 0, R_SOFT);
+    objs(PILLOW).desc[0] = "A small velvet pillow lies on the floor.";
+    new_obj(SNAKE, 0, SNAKE, R_HMK);
+    objs(SNAKE).desc[0] = "A huge green fierce snake bars the way!";
+    objs(SNAKE).desc[1] = NULL;  /* chased away */
+    new_obj(FISSURE, 0, FISSURE, R_EFISS);
+    new_obj(FISSURE_, 0, FISSURE, R_WFISS);
+    objs(FISSURE).desc[0] = NULL;
+    objs(FISSURE).desc[1] ="A crystal bridge now spans the fissure.";
+    new_obj(TABLET, 0, TABLET, R_DARK);
+    objs(TABLET).desc[0] =  /* Woods has "imbedded". */
+        "A massive stone tablet embedded in the wall reads:" SOFT_NL
+        "\"CONGRATULATIONS ON BRINGING LIGHT INTO THE DARK-ROOM!\"";
+    new_obj(CLAM, "Giant clam >GRUNT!<", 0, R_SHELL);
+    objs(CLAM).desc[0] = "There is an enormous clam here with its shell tightly closed.";
+    new_obj(OYSTER, "Giant oyster >GROAN!<", 0, R_LIMBO);
+    objs(OYSTER).desc[0] = "There is an enormous oyster here with its shell tightly closed.";
+    new_obj(MAG, "\"Spelunker Today\"", 0, R_ANTE);
+    objs(MAG).desc[0] = "There are a few recent issues of \"Spelunker Today\" magazine here.";
+    new_obj(DWARF, 0, DWARF, R_LIMBO);
+    new_obj(KNIFE, 0, 0, R_LIMBO);
+    new_obj(FOOD, "Tasty food", 0, R_HOUSE);
+    objs(FOOD).desc[0] = "There is food here.";
+    new_obj(BOTTLE, "Small bottle", 0, R_HOUSE);
+    objs(BOTTLE).desc[0] = "There is a bottle of water here.";
+    objs(BOTTLE).desc[1] = "There is an empty bottle here.";
+    objs(BOTTLE).desc[2] = "There is a bottle of oil here.";
+    /* WATER and OIL never appear on the ground; they are invariably
+     * either in R_LIMBO or R_INHAND. */
+    new_obj(WATER, "Water in the bottle", 0, R_LIMBO);
+    new_obj(OIL, "Oil in the bottle", 0, R_LIMBO);
+    new_obj(MIRROR, 0, MIRROR, R_MIRROR);
     new_obj(MIRROR_, 0, MIRROR, R_LIMBO);  /* joins up with MIRROR later */
-    new_obj(CHAIN, "Golden chain", CHAIN, R_BARR);
-    objs(CHAIN).desc[0] = "There is a golden chain lying in a heap on the floor!";
-    objs(CHAIN).desc[1] = "The bear is locked to the wall with a golden chain!";
-    objs(CHAIN).desc[2] = "There is a golden chain locked to the wall!";
-    new_obj(SPICES, "Rare spices", 0, R_CHAMBER);
-    objs(SPICES).desc[0] = "There are rare spices here!";
-    new_obj(PEARL, "Glistening pearl", 0, R_LIMBO);
-    objs(PEARL).desc[0] = "Off to one side lies a glistening pearl!";
-    new_obj(PYRAMID, "Platinum pyramid", 0, R_DARK);
-    objs(PYRAMID).desc[0] = "There is a platinum pyramid here, 8 inches on a side!";
-    new_obj(EMERALD, "Egg-sized emerald", 0, R_PLOVER);
-    objs(EMERALD).desc[0] = "There is an emerald here the size of a plover's egg!";
-    new_obj(VASE, "Ming vase", 0, R_ORIENTAL);
-    objs(VASE).desc[0] = "There is a delicate, precious, Ming vase here!";
-    objs(VASE).desc[1] = "The floor is littered with worthless shards of pottery.";
-    new_obj(TRIDENT, "Jeweled trident", 0, R_FALLS);
-    objs(TRIDENT).desc[0] = "There is a jewel-encrusted trident here!";
-    new_obj(EGGS, "Golden eggs", 0, R_GIANT);
-    objs(EGGS).desc[0] = "There is a large nest here, full of golden eggs!";
-    new_obj(CHEST, "Treasure chest", 0, R_LIMBO);
-    objs(CHEST).desc[0] = "The pirate's treasure chest is here!";
-    new_obj(COINS, "Rare coins", 0, R_WEST);
-    objs(COINS).desc[0] = "There are many coins here!";
-    new_obj(JEWELS, "Precious jewelry", 0, R_SOUTH);
-    objs(JEWELS).desc[0] = "There is precious jewelry here!";
-    new_obj(SILVER, "Bars of silver", 0, R_NS);
-    objs(SILVER).desc[0] = "There are bars of silver here!";
-    new_obj(DIAMONDS, "Several diamonds", 0, R_WFISS);
-    objs(DIAMONDS).desc[0] = "There are diamonds here!";
-    new_obj(GOLD, "Large gold nugget", 0, R_NUGGET);
-    objs(GOLD).desc[0] = "There is a large sparkling nugget of gold here!";
-    new_obj(MOSS, 0, MOSS, R_SOFT);
-    objs(MOSS).desc[0] = NULL;
-    new_obj(BATTERIES, "Batteries", 0, R_LIMBO);
-    objs(BATTERIES).desc[0] = "There are fresh batteries here.";
-    objs(BATTERIES).desc[1] = "Some worn-out batteries have been discarded nearby.";
-    new_obj(PONY, 0, PONY, R_PONY);
-    objs(PONY).desc[0] =
-        "There is a massive vending machine here. The instructions on it read:" SOFT_NL
-        "\"Drop coins here to receive fresh batteries.\"";
-    new_obj(GORGE, 0, GORGE, R_VIEW);
-    objs(GORGE).desc[0] = NULL;
-    new_obj(MESSAGE, 0, MESSAGE, R_LIMBO);
-    objs(MESSAGE).desc[0] =
-        "There is a message scrawled in the dust in a flowery script, reading:" SOFT_NL
-        "\"This is not the maze where the pirate hides his treasure chest.\"";
-    new_obj(BEAR, 0, BEAR, R_BARR);
-    objs(BEAR).desc[0] = "There is a ferocious cave bear eying you from the far end of the room!";
-    objs(BEAR).desc[1] = "There is a gentle cave bear sitting placidly in one corner.";
-    objs(BEAR).desc[2] = "There is a contented-looking bear wandering about nearby.";
-    objs(BEAR).desc[3] = NULL;  /* the dead bear remains as scenery where it fell */
-    new_obj(PIRATE, 0, PIRATE, R_LIMBO);
-    /* The pirate is a dummy object; never appears on the ground. */
-    new_obj(DRAWINGS, 0, DRAWINGS, R_ORIENTAL);
-    objs(DRAWINGS).desc[0] = NULL;
-    new_obj(AXE, "Dwarf's axe", 0, R_LIMBO);
-    objs(AXE).desc[0] = "There is a little axe here.";
-    objs(AXE).desc[1] = "There is a little axe lying beside the bear.";
-    new_obj(STALACTITE, 0, STALACTITE, R_TITE);
-    objs(STALACTITE).desc[0] = NULL;
+    objs(MIRROR).desc[0] = NULL;
     new_obj(PLANT, 0, PLANT, R_WPIT);
     objs(PLANT).desc[0] = "There is a tiny little plant in the pit, murmuring \"Water, water, ...\"";
     objs(PLANT).desc[1] =
         "There is a 12-foot-tall beanstalk stretching up out of the pit," SOFT_NL
         "bellowing \"Water!! Water!!\"";
     objs(PLANT).desc[2] = "There is a gigantic beanstalk stretching all the way up to the hole.";
-    new_obj(MIRROR, 0, MIRROR, R_MIRROR);
-    objs(MIRROR).desc[0] = NULL;
-    new_obj(OIL, "Oil in the bottle", 0, R_LIMBO);
-    new_obj(WATER, "Water in the bottle", 0, R_LIMBO);
-    /* These two items never appear on the ground; they are either in R_LIMBO or R_INHAND. */
-    new_obj(BOTTLE, "Small bottle", 0, R_HOUSE);
-    objs(BOTTLE).desc[0] = "There is a bottle of water here.";
-    objs(BOTTLE).desc[1] = "There is an empty bottle here.";
-    objs(BOTTLE).desc[2] = "There is a bottle of oil here.";
-    new_obj(FOOD, "Tasty food", 0, R_HOUSE);
-    objs(FOOD).desc[0] = "There is food here.";
-    new_obj(KNIFE, 0, 0, R_LIMBO);
-    new_obj(DWARF, 0, DWARF, R_LIMBO);
-    new_obj(MAG, "\"Spelunker Today\"", 0, R_ANTE);
-    objs(MAG).desc[0] = "There are a few recent issues of \"Spelunker Today\" magazine here.";
-    new_obj(OYSTER, "Giant oyster >GROAN!<", 0, R_LIMBO);
-    objs(OYSTER).desc[0] = "There is an enormous oyster here with its shell tightly closed.";
-    new_obj(CLAM, "Giant clam >GRUNT!<", 0, R_SHELL);
-    objs(CLAM).desc[0] = "There is an enormous clam here with its shell tightly closed.";
-    new_obj(TABLET, 0, TABLET, R_DARK);
-    /* Woods has "imbedded", but Knuth fixes it. */
-    objs(TABLET).desc[0] =
-        "A massive stone tablet embedded in the wall reads:" SOFT_NL
-        "\"CONGRATULATIONS ON BRINGING LIGHT INTO THE DARK-ROOM!\"";
-    new_obj(SNAKE, 0, SNAKE, R_HMK);
-    objs(SNAKE).desc[0] = "A huge green fierce snake bars the way!";
-    objs(SNAKE).desc[1] = NULL;  /* dead snake */
-    new_obj(PILLOW, "Velvet pillow", 0, R_SOFT);
-    objs(PILLOW).desc[0] = "A small velvet pillow lies on the floor.";
-    new_obj(RUSTY_DOOR, 0, RUSTY_DOOR, R_IMMENSE);
-    objs(RUSTY_DOOR).desc[0] = "The way north is barred by a massive, rusty, iron door.";
-    objs(RUSTY_DOOR).desc[1] = "The way north leads through a massive, rusty, iron door.";
-    new_obj(BIRD, "Little bird in cage", 0, R_BIRD);
-    objs(BIRD).desc[0] = "A cheerful little bird is sitting here singing.";
-    objs(BIRD).desc[1] = "There is a little bird in the cage.";
-    new_obj(ROD2, "Black rod", 0, R_LIMBO);
-    objs(ROD2).desc[0] = "A three-foot black rod with a rusty mark on an end lies nearby.";
-    new_obj(ROD, "Black rod", 0, R_DEBRIS);
-    objs(ROD).desc[0] = "A three-foot black rod with a rusty star on an end lies nearby.";
-    new_obj(CAGE, "Wicker cage", 0, R_COBBLES);
-    objs(CAGE).desc[0] = "There is a small wicker cage discarded nearby.";
-    new_obj(LAMP, "Brass lantern", 0, R_HOUSE);
-    objs(LAMP).desc[0] = "There is a shiny brass lamp nearby.";
-    objs(LAMP).desc[1] = "There is a lamp shining nearby.";
-    new_obj(KEYS, "Set of keys", 0, R_HOUSE);
-    objs(KEYS).desc[0] = "There are some keys on the ground here.";
+    new_obj(PLANT2, 0, PLANT2, R_W2PIT);
+    new_obj(PLANT2_, 0, PLANT2, R_E2PIT);
+    objs(PLANT2).desc[0] = NULL;
+    objs(PLANT2).desc[1] = "The top of a 12-foot-tall beanstalk is poking out of the west pit.";
+    objs(PLANT2).desc[2] = "There is a huge beanstalk growing out of the west pit up to the hole.";
+    new_obj(STALACTITE, 0, STALACTITE, R_TITE);
+    objs(STALACTITE).desc[0] = NULL;
+    new_obj(SHADOW, 0, SHADOW, R_WINDOE);
+    new_obj(SHADOW_, 0, SHADOW, R_WINDOW);
+    objs(SHADOW).desc[0] = "The shadowy figure seems to be trying to attract your attention.";
+    new_obj(AXE, "Dwarf's axe", 0, R_LIMBO);
+    objs(AXE).desc[0] = "There is a little axe here.";
+    objs(AXE).desc[1] = "There is a little axe lying beside the bear.";
+    new_obj(DRAWINGS, 0, DRAWINGS, R_ORIENTAL);
+    objs(DRAWINGS).desc[0] = NULL;
+    new_obj(PIRATE, 0, PIRATE, R_LIMBO);
+    new_obj(DRAGON, 0, DRAGON, R_SCAN1);
+    new_obj(DRAGON_, 0, DRAGON, R_SCAN3);
+    objs(DRAGON).desc[0] = "A huge green fierce dragon bars the way!";
+    objs(DRAGON).desc[1] = "The body of a huge green dead dragon is lying off to one side.";
+    new_obj(CHASM, 0, CHASM, R_SWSIDE);
+    new_obj(CHASM_, 0, CHASM, R_NESIDE);
+    objs(CHASM).desc[0] =
+        "A rickety wooden bridge extends across the chasm, vanishing into the" SOFT_NL
+        "mist. A sign posted on the bridge reads, \"STOP! PAY TROLL!\"";
+    objs(CHASM).desc[1] =
+        "The wreckage of a bridge (and a dead bear) can be seen at the bottom" SOFT_NL
+        "of the chasm.";
+    new_obj(TROLL, 0, TROLL, R_SWSIDE);
+    new_obj(TROLL_, 0, TROLL, R_NESIDE);
+    objs(TROLL).desc[0] =
+        "A burly troll stands by the bridge and insists you throw him a" SOFT_NL
+        "treasure before you may cross.";
+    objs(TROLL).desc[1] = "The troll steps out from beneath the bridge and blocks your way.";
+    objs(TROLL).desc[2] = NULL;  /* chased away */
+    new_obj(NO_TROLL, 0, NO_TROLL, R_LIMBO);
+    new_obj(NO_TROLL_, 0, NO_TROLL, R_LIMBO);
+    objs(NO_TROLL).desc[0] = "The troll is nowhere to be seen.";
+    new_obj(BEAR, 0, BEAR, R_BARR);
+    objs(BEAR).desc[0] = "There is a ferocious cave bear eying you from the far end of the room!";
+    objs(BEAR).desc[1] = "There is a gentle cave bear sitting placidly in one corner.";
+    objs(BEAR).desc[2] = "There is a contented-looking bear wandering about nearby.";
+    objs(BEAR).desc[3] = NULL;  /* the dead bear remains as scenery where it fell */
+    new_obj(MESSAGE, 0, MESSAGE, R_LIMBO);
+    objs(MESSAGE).desc[0] =
+        "There is a message scrawled in the dust in a flowery script, reading:" SOFT_NL
+        "\"This is not the maze where the pirate hides his treasure chest.\"";
+    new_obj(GORGE, 0, GORGE, R_VIEW);
+    objs(GORGE).desc[0] = NULL;  /* it's just scenery */
+    new_obj(PONY, 0, PONY, R_PONY);
+    objs(PONY).desc[0] =
+        "There is a massive vending machine here. The instructions on it read:" SOFT_NL
+        "\"Drop coins here to receive fresh batteries.\"";
+    new_obj(BATTERIES, "Batteries", 0, R_LIMBO);
+    objs(BATTERIES).desc[0] = "There are fresh batteries here.";
+    objs(BATTERIES).desc[1] = "Some worn-out batteries have been discarded nearby.";
+    new_obj(MOSS, 0, MOSS, R_SOFT);
+    objs(MOSS).desc[0] = NULL;  /* it's just scenery */
+    new_obj(GOLD, "Large gold nugget", 0, R_NUGGET);
+    objs(GOLD).desc[0] = "There is a large sparkling nugget of gold here!";
+    new_obj(DIAMONDS, "Several diamonds", 0, R_WFISS);
+    objs(DIAMONDS).desc[0] = "There are diamonds here!";
+    new_obj(SILVER, "Bars of silver", 0, R_NS);
+    objs(SILVER).desc[0] = "There are bars of silver here!";
+    new_obj(JEWELS, "Precious jewelry", 0, R_SOUTH);
+    objs(JEWELS).desc[0] = "There is precious jewelry here!";
+    new_obj(COINS, "Rare coins", 0, R_WEST);
+    objs(COINS).desc[0] = "There are many coins here!";
+    new_obj(CHEST, "Treasure chest", 0, R_LIMBO);
+    objs(CHEST).desc[0] = "The pirate's treasure chest is here!";
+    new_obj(EGGS, "Golden eggs", 0, R_GIANT);
+    objs(EGGS).desc[0] = "There is a large nest here, full of golden eggs!";
+    new_obj(TRIDENT, "Jeweled trident", 0, R_FALLS);
+    objs(TRIDENT).desc[0] = "There is a jewel-encrusted trident here!";
+    new_obj(VASE, "Ming vase", 0, R_ORIENTAL);
+    objs(VASE).desc[0] = "There is a delicate, precious, Ming vase here!";
+    objs(VASE).desc[1] = "The floor is littered with worthless shards of pottery.";
+    new_obj(EMERALD, "Egg-sized emerald", 0, R_PLOVER);
+    objs(EMERALD).desc[0] = "There is an emerald here the size of a plover's egg!";
+    new_obj(PYRAMID, "Platinum pyramid", 0, R_DARK);
+    objs(PYRAMID).desc[0] = "There is a platinum pyramid here, 8 inches on a side!";
+    new_obj(PEARL, "Glistening pearl", 0, R_LIMBO);
+    objs(PEARL).desc[0] = "Off to one side lies a glistening pearl!";
+    new_obj(RUG_, 0, RUG, R_SCAN3);
+    new_obj(RUG, "Persian rug", RUG, R_SCAN1);
+    objs(RUG).desc[0] = "There is a Persian rug spread out on the floor!";
+    objs(RUG).desc[1] = "The dragon is sprawled out on a Persian rug!!";
+    new_obj(SPICES, "Rare spices", 0, R_CHAMBER);
+    objs(SPICES).desc[0] = "There are rare spices here!";
+    new_obj(CHAIN, "Golden chain", CHAIN, R_BARR);
+    objs(CHAIN).desc[0] = "There is a golden chain lying in a heap on the floor!";
+    objs(CHAIN).desc[1] = "The bear is locked to the wall with a golden chain!";
+    objs(CHAIN).desc[2] = "There is a golden chain locked to the wall!";
 }
-
 
 
 /*========== Input routines. ==============================================
