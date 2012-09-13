@@ -1303,7 +1303,6 @@ static const char *class_message[] = {
     "Your score puts you in Master Adventurer class C.",
     "Your score puts you in Master Adventurer class B.",
     "Your score puts you in Master Adventurer class A.",
-    /* Woods has "Adventure Grandmaster". Personally, I like Platt's version better. */
     "All of Adventuredom gives tribute to you, Adventurer Grandmaster!"
 };
 

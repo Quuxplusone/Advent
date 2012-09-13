@@ -2364,7 +2364,7 @@ static const char *class_message[] = {
     "Your score puts you in Master Adventurer Class C.",
     "Your score puts you in Master Adventurer Class B.",
     "Your score puts you in Master Adventurer Class A.",
-    "All of Adventuredom gives tribute to you, Adventure Grandmaster!"
+    "All of Adventuredom gives tribute to you, Adventurer Grandmaster!"
 };
 
 void give_up(void)
