@@ -108,7 +108,7 @@ typedef enum {
     MAG, DWARF, KNIFE, FOOD, BOTTLE, WATER, OIL, MIRROR, MIRROR_, PLANT,
     PLANT2, PLANT2_, STALACTITE, SHADOW, SHADOW_, AXE, DRAWINGS, PIRATE,
     DRAGON, DRAGON_, CHASM, CHASM_, TROLL, TROLL_, NO_TROLL, NO_TROLL_,
-    BEAR, MESSAGE, GORGE, PONY, BATTERIES, MOSS,
+    BEAR, MESSAGE, GORGE, MACHINE, BATTERIES, MOSS,
     GOLD, DIAMONDS, SILVER, JEWELS, COINS, CHEST, EGGS,
     TRIDENT, VASE, EMERALD, PYRAMID, PEARL, RUG, RUG_, SPICES, CHAIN,
     MAX_OBJ=CHAIN
@@ -274,7 +274,7 @@ void build_vocabulary(void)
     new_object_word("bear", BEAR);
     new_object_word("messa", MESSAGE);
     new_object_word("volca", GORGE); new_object_word("geyse", GORGE);
-    new_object_word("vendi", PONY); new_object_word("machi", PONY);
+    new_object_word("vendi", MACHINE); new_object_word("machi", MACHINE);
     new_object_word("batte", BATTERIES);
     new_object_word("moss", MOSS); new_object_word("carpe", MOSS);
     new_object_word("gold", GOLD); new_object_word("nugge", GOLD);
@@ -1655,8 +1655,8 @@ void build_object_table(void)
         "\"This is not the maze where the pirate hides his treasure chest.\"";
     new_obj(GORGE, 0, GORGE, R_VIEW);
     objs(GORGE).desc[0] = NULL;  /* it's just scenery */
-    new_obj(PONY, 0, PONY, R_PONY);
-    objs(PONY).desc[0] =
+    new_obj(MACHINE, 0, MACHINE, R_PONY);
+    objs(MACHINE).desc[0] =
         "There is a massive vending machine here. The instructions on it read:" SOFT_NL
         "\"Drop coins here to receive fresh batteries.\"";
     new_obj(BATTERIES, "Batteries", 0, R_LIMBO);
@@ -2587,7 +2587,7 @@ void attempt_drop(ObjectWord obj, Location loc)
 
     if (!toting(obj)) {
         puts("You aren't carrying it!");
-    } else if (obj == COINS && here(PONY, loc)) {
+    } else if (obj == COINS && here(MACHINE, loc)) {
         /* Put coins in the vending machine. */
         destroy(COINS);
         drop(BATTERIES, loc);

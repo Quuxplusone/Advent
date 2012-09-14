@@ -4263,7 +4263,7 @@ struct ObjectData objs[] = {
     { XX, 0, NULL /* STATUE */, F_INVISIBLE, in(R_BY_FIGURE) },
     { XX, 0, NULL /* QUICKSAND */, F_INVISIBLE|F_SCHIZOID, schiz(R_ARCH_COR_1) },
     { XX, 0, NULL /* SLIME */, 0, in(R_CRACK_2) },
-    { XX, 0, NULL /* PONY */, 0, in(R_PONY) },
+    { XX, 0, NULL /* MACHINE */, 0, in(R_PONY) },
     { XX, 0, NULL /* SAFE */, F_SCHIZOID, schiz(R_VAULT) },
     { XX, 0, NULL /* THRONE */, F_INVISIBLE, in(R_AUDIENCE_E) },
     { XX, 0, NULL /* SKELETON */, 0, in(R_AUDIENCE_E) },
