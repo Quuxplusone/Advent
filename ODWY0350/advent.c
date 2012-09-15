@@ -2195,16 +2195,16 @@ struct {
     { 0, false, 0, 5, "Welcome to Adventure!!  Would you like instructions?",
     "Somewhere nearby is Colossal Cave, where others have found fortunes in" SOFT_NL
     "treasure and gold, though it is rumored that some who enter are never" SOFT_NL
-    "seen again. Magic is said to work in the cave. I will be your eyes" SOFT_NL
-    "and hands. Direct me with commands of one or two words. I should" SOFT_NL
-    "warn you that I look at only the first five letters of each word, so" SOFT_NL
-    "you'll have to enter \"NORTHEAST\" as \"NE\" to distinguish it from" SOFT_NL
-    "\"NORTH\". Should you get stuck, type \"HELP\" for some general hints." SOFT_NL
-    "For information on how to end your adventure, etc., type \"INFO\".\n"
-    "                        -  -  -\n"
-    "The first adventure program was developed by Willie Crowther.\n"
+    "seen again.  Magic is said to work in the cave.  I will be your eyes" SOFT_NL
+    "and hands.  Direct me with commands of 1 or 2 words.  I should warn" SOFT_NL
+    "you that I look at only the first five letters of each word, so you'll" SOFT_NL
+    "have to enter \"NORTHEAST\" as \"NE\" to distinguish it from \"NORTH\"." SOFT_NL
+    "(Should you get stuck, type \"HELP\" for some general hints.  For infor" SOFT_HYPHEN
+    "mation on how to end your adventure, etc., type \"INFO\".)\n"
+    "                             -  -  -\n"
+    "The first Adventure program was developed by Willie Crowther.\n"
     "Most of the features of the current program were added by Don Woods.\n"
-    "This particular program was translated from FORTRAN to CWEB by Don Knuth," SOFT_NL
+    "This particular program was translated from Fortran to CWEB by Don Knuth," SOFT_NL
     "and then from CWEB to ANSI C by Arthur O'Dwyer." },
     { 0, false, 0, 10,
     "Hmmm, this looks like a clue, which means it'll cost you 10 points to" SOFT_NL
@@ -2227,7 +2227,7 @@ struct {
     { 0, false, 25, 5, "Are you trying to explore beyond the Plover Room?",
     "There is a way to explore that region without having to worry about" SOFT_NL
     "falling into a pit.  None of the objects available is immediately" SOFT_NL
-    "useful for discovering the secret." },
+    "useful in discovering the secret." },
     { 0, false, 20, 3, "Do you need help getting out of here?",
     "Don't go west." }
 };
