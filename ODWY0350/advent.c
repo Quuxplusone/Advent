@@ -1523,9 +1523,20 @@ void immobilize(ObjectWord t) { objs(t).base = &objs(t); }
 void new_obj(ObjectWord t, const char *n, ObjectWord b, Location l)
 {
     objs(t).name = n;
-    objs(t).base = (b != 0 ? &objs(b) : NULL);
     objs(t).prop = (is_treasure(t) ? -1 : 0);
-    drop(t, l);
+    objs(t).base = (b != 0 ? &objs(b) : NULL);
+    objs(t).place = l;
+    objs(t).link = NULL;
+    if (l > R_LIMBO) {
+       /* Drop the object at the *end* of its list. Combined with the
+         * ordering of the item numbers, this ensures that the CHASM
+         * is described before the TROLL, the DRAGON before the RUG,
+         * and so on. */
+        struct ObjectData **p = &places[l].objects;
+        while (*p != NULL)
+            p = &(*p)->link;
+        *p = &objs(t);
+    }
 }
 
 void build_object_table(void)
@@ -3998,13 +4009,16 @@ void simulate_an_adventure(void)
         assert(R_LIMBO <= oldloc && oldloc <= MAX_LOC);
         assert(R_LIMBO < loc && loc <= MAX_LOC);
         newloc = loc;  /* by default we will stay put */
-        if (mot == BACK) {
-            Location l = (is_forced(oldloc) ? oldoldloc : oldloc);
-            mot = try_going_back_to(l, loc); /* may return NOWHERE */
-        }
-
-        if (mot == NOWHERE) {
-            continue;
+        
+        if (mot == CAVE) {
+            /* No CAVE appears in the travel table; its sole purpose is to
+             * give these messages. */
+            if (loc < MIN_IN_CAVE) {
+                puts("I can't see where the cave is, but hereabouts no stream can run on" SOFT_NL
+                     "the surface for long. I would try the stream.");
+            } else {
+                puts("I need more detailed instructions to do that.");
+            }
         } else if (mot == LOOK) {
             /* Repeat the long description and continue. */
             if (++look_count <= 3) {
@@ -4013,26 +4027,23 @@ void simulate_an_adventure(void)
             }
             was_dark = false;  /* pretend it wasn't dark, so you won't fall into a pit */
             places[loc].visits = 0;
-            continue;
-        } else if (mot == CAVE) {
-            if (loc < MIN_IN_CAVE) {
-                puts("I can't see where the cave is, but hereabouts no stream can run on" SOFT_NL
-                     "the surface for long. I would try the stream.");
-            } else {
-                puts("I need more detailed instructions to do that.");
+        } else {
+            if (mot == BACK) {
+                Location l = (is_forced(oldloc) ? oldoldloc : oldloc);
+                mot = try_going_back_to(l, loc); /* may return NOWHERE */
             }
-            continue;
+    
+            if (mot != NOWHERE) {
+                /* Determine the next newloc. */
+                oldoldloc = oldloc;
+                oldloc = loc;
+                if (determine_next_newloc(loc, &newloc, mot, verb)) {
+                    /* Player died trying to cross the troll bridge. */
+                    oldoldloc = newloc;  /* if you are revived, you got across */
+                    goto death;
+                }
+            }
         }
-
-        /* Determine the next newloc. */
-        oldoldloc = oldloc;
-        oldloc = loc;
-        if (determine_next_newloc(loc, &newloc, mot, verb)) {
-            /* Player died trying to cross the troll bridge. */
-            oldoldloc = newloc;  /* if you are revived, you got across */
-            goto death;
-        }
-        continue;
     }
   pitch_dark:
     puts("You fell into a pit and broke every bone in your body!");
