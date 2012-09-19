@@ -1345,11 +1345,11 @@ void build_travel_table(void)
              "You are at the southwest end of the repository.  To one side is a pit" SOFT_NL
              "full of fierce green snakes.  On the other side is a row of small" SOFT_NL
              "wicker cages, each of which contains a little sulking bird.  In one" SOFT_NL
-             "corner is a bundle of black rods with rusty marks on their ends." SOFT_NL
-             "A large number of velvet pillows are scattered about on the floor." SOFT_NL
-             "A vast mirror stretches off to the northeast.  At your feet is a" SOFT_NL
-             "large steel grate, next to which is a sign that reads, \"TREASURE" SOFT_NL
-             "VAULT.  KEYS IN MAIN OFFICE.\"",
+             "corner is a bundle of black rods with rusty marks on their ends.  A" SOFT_NL
+             "large number of velvet pillows are scattered about on the floor.  A" SOFT_NL
+             "vast mirror stretches off to the northeast.  At your feet is a large" SOFT_NL
+             "steel grate, next to which is a sign which reads, \"TREASURE VAULT." SOFT_NL
+             "KEYS IN MAIN OFFICE.\"",
              "You're at SW end.", F_LIGHTED);
     make_ins(NE, R_NEEND);
     make_ins(D, remark(1));  /* You can't go through a locked steel grate! */
