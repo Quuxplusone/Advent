@@ -716,7 +716,7 @@ void build_travel_table(void)
     make_loc(q, R_LIKE14, all_alike, NULL, F_TWIST_HINT);
     make_ins(U, R_LIKE4); ditto(D);
     make_loc(q, R_BRINK,
-             "You are on the brink of a thirty-foot pit with a massive orange column" SOFT_NL
+             "You are on the brink of a thirty foot pit with a massive orange column" SOFT_NL
              "down one wall.  You could climb down here but you could not get back" SOFT_NL
              "up.  The maze continues at this level.",
              "You're at brink of pit.", 0);
@@ -728,7 +728,7 @@ void build_travel_table(void)
     make_loc(q, R_ELONG,
              "You are at the east end of a very long hall apparently without side" SOFT_NL
              "chambers.  To the east a low wide crawl slants up.  To the north a" SOFT_NL
-             "round two-foot hole slants down.",
+             "round two foot hole slants down.",
              "You're at east end of long hall.", 0);
     make_ins(E, R_WMIST); ditto(U); ditto(CRAWL);
     make_ins(W, R_WLONG);
@@ -865,7 +865,7 @@ void build_travel_table(void)
     make_ins(D, R_COMPLEX); ditto(HOLE); ditto(FLOOR);
     make_ins(BEDQUILT, R_BEDQUILT);
     make_loc(q, R_COMPLEX,
-             "You are at a complex junction.  A low hands-and-knees passage from the" SOFT_NL
+             "You are at a complex junction.  A low hands and knees passage from the" SOFT_NL
              "north joins a higher crawl from the east to make a walking passage" SOFT_NL
              "going west.  There is also a large room above.  The air is damp here.",
              "You're at complex junction.", 0);
@@ -877,7 +877,7 @@ void build_travel_table(void)
              "You're in a large room carved out of sedimentary rock.  The floor" SOFT_NL
              "and walls are littered with bits of shells embedded in the stone." SOFT_NL
              "A shallow passage proceeds downward, and a somewhat steeper one" SOFT_NL
-             "leads up.  A low hands-and-knees passage enters from the south.",
+             "leads up.  A low hands and knees passage enters from the south.",
              "You're in Shell Room.", 0);
     make_ins(U, R_ARCHED); ditto(HALL);
     make_ins(D, R_RAGGED);
@@ -1069,7 +1069,7 @@ void build_travel_table(void)
     make_loc(q, R_ORIENTAL,
              "This is the Oriental Room.  Ancient oriental cave drawings cover the" SOFT_NL
              "walls.  A gently sloping passage leads upward to the north, another" SOFT_NL
-             "passage leads SE, and a hands-and-knees crawl leads west.",
+             "passage leads SE, and a hands and knees crawl leads west.",
              "You're in Oriental Room.", 0);
     make_ins(SE, R_SWISS);
     make_ins(W, R_LOW); ditto(CRAWL);
