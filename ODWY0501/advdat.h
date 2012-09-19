@@ -71,7 +71,6 @@ typedef enum {
     WordClass_Conjunction, WordClass_BadWord
 } WordClass;
 
-#define ANY -1
 #define NOTHING 0
 
 typedef enum {

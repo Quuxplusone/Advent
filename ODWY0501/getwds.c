@@ -21,7 +21,7 @@ bool indent_default_responses = false;
 
 static int getobj(ObjectWord t, Location loc);
 static bool is_appropriate_adjective_for_noun(AdjectiveWord adj, ObjectWord noun);
-static bool is_valid_verb_prep_iobj(ActionWord verb, PrepositionWord prep, ObjectWord iobj);
+static bool is_valid_verb_prep_iobj(int verb, int prep, ObjectWord iobj);
 
 void clrlin()
 {
@@ -340,27 +340,38 @@ puts("lin91");
 
 lin96:
 puts("lin96");
+    /* The last word didn't make sense in context. Try again with the next
+     * meaning of the spelling; for example if LOOK(action) IN(motion)...
+     * doesn't make sense, then try LOOK(action) IN(preposition)... */
     assert(wclass != WordClass_None);
-    ++wclass;
-    word = lookup(txt[wdx], wclass);
-    if (word < 0) goto lin800;
-    words[wdx] = word;
+    while (wclass != WordClass_Conjunction) {
+        ++wclass;
+        word = lookup(txt[wdx-1], wclass);
+        assert(word >= 0);
+	if (word != NOTHING) {
+	    words[wdx-1] = word;
+	    goto lin92;
+	}
+    }
+    goto lin800;  /* nothing made sense */
 
 lin92:
 puts("lin92");
     assert(wdx > 0);
-    if (word_class(word) != WordClass_Object) goto lin99;
-    
-    k = (pflag ? iobx : objx);
-    if (k == 0 || words[wdx-1] == AND) goto lin99;
-    assert(vrbx >= 1);
-    kk = w_verbs[vrbx-1];
-    if ((kk == TOSS || kk == FEED) && is_living(w_objs[objx-1])) {
-	/* "THROW TROLL EGGS", "FEED BEAR HONEY" */
-	w_iobjs[iobx++] = w_objs[objx];
-	w_objs[--objx] = NOTHING;
-    } else {
-	goto lin800;
+    if (word_class(word) == WordClass_Object) {
+	k = (pflag ? iobx : objx);
+	if (k == 0 || words[wdx-1] == AND) goto lin99;
+	assert(vrbx >= 1);
+	kk = w_verbs[vrbx-1];
+	if ((kk == TOSS || kk == FEED) && is_living(w_objs[objx-1])) {
+	    /* "THROW TROLL EGGS", "FEED BEAR HONEY" */
+	    /* TODO: but also "THROW TROLL TO HONEY BEAR", which will
+	     * turn into "THROW BEAR TO HONEY TROLL", I think. */  
+	    w_iobjs[iobx++] = w_objs[objx-1];
+	    w_objs[--objx] = NOTHING;
+	} else {
+	    goto lin800;
+	}
     }
 
 lin99:
@@ -507,11 +518,12 @@ puts("lin500");
     if (word_class(w_verbs[vrbx-1]) != WordClass_Action) goto lin800;
     if (iobx > 0) goto lin800;  /* we already got an iobj! */
     if (pflag) goto lin503;
-    if (!is_valid_verb_prep_iobj(w_verbs[vrbx-1], ANY, ANY)) goto lin800;
+    if (!is_valid_verb_prep_iobj(w_verbs[vrbx-1], ALL, ALL)) goto lin800;
+    puts("valid verb for ALL prep");
     prep = word;
     pflag = true;
     /* Get the next word, which we expect to be an (indirect) object. */
-    word = words[++wdx];
+    word = words[wdx++];
     switch (word_class(word)) {
 	case WordClass_None: goto lin510;
 	case WordClass_Motion: goto lin800;
@@ -531,8 +543,7 @@ puts("lin503");
         word = getobj(word, loc);
         if (word == NOTHING) goto lin860;
 
-        ++iobx;
-        w_iobjs[iobx-1] = word;
+        w_iobjs[iobx++] = word;
         strcpy(iotxt[iobx-1], txt[wdx-1]);
     }
 lin510:
@@ -540,10 +551,12 @@ puts("lin510");
     /* See if "verb ... prep word" is a valid combination. */
     assert(vrbx >= 1);
     int verb = w_verbs[vrbx-1];
-    if (is_valid_verb_prep_iobj(verb, prep, ANY)) {
+    if (is_valid_verb_prep_iobj(verb, prep, ALL)) {
+	puts("valid verb for this prep, ALL object");
 	/* prep is valid with this verb. Now check object of prep. */
 	if (word == NOTHING || word == AND) goto lin530;
 	if (is_valid_verb_prep_iobj(verb, prep, word)) {
+	    puts("valid verb prep iobj!");
 	    if (word == ALL) goto lin280;
 	    goto lin90;
 	}
@@ -719,8 +732,8 @@ static int getobj(ObjectWord t, Location loc)
 	if (dwarf_at(loc)) return t;
 	return I_see_no(txt[wdx-1]);
     } else if (t == liquid_at_location(loc) ||
-	       at_hand(BOTTLE, loc) && t == bottle_contents() ||
-	       at_hand(CASK, loc) && t == cask_contents()) {
+	       (at_hand(BOTTLE, loc) && t == bottle_contents()) ||
+	       (at_hand(CASK, loc) && t == cask_contents())) {
 	return t;
     } else if (t == PLANT && here(PLANT2, loc) && objs(PLANT).prop != 0) {
 	return PLANT2;
@@ -797,7 +810,7 @@ static bool is_appropriate_adjective_for_noun(AdjectiveWord adj, ObjectWord noun
     }
 }
 
-static bool is_valid_verb_prep_iobj(ActionWord verb, PrepositionWord prep, ObjectWord iobj)
+static bool is_valid_verb_prep_iobj(int verb, int prep, ObjectWord iobj)
 {
     static int ptab[] = {
 	BREAK, WITH, AXE,SWORD,POLE,ROD,
@@ -865,7 +878,7 @@ static bool is_valid_verb_prep_iobj(ActionWord verb, PrepositionWord prep, Objec
 	    case WordClass_Action:
 		current_verb = ptab[i];
 	        assert(word_class(ptab[i+1]) == WordClass_Preposition);
-		if (verb == current_verb && prep == ANY) return true;
+		if (verb == current_verb && prep == ALL) return true;
 		break;
 	    case WordClass_Preposition:
 		assert(current_verb != NOTHING);
@@ -876,8 +889,9 @@ static bool is_valid_verb_prep_iobj(ActionWord verb, PrepositionWord prep, Objec
 		assert(current_verb != NOTHING);
 		assert(current_prep != NOTHING);
 		if (verb == current_verb && prep == current_prep) {
-		    if (ptab[i] == ALL) return true;
-		    if (ptab[i] == iobj) return true;
+		    if (ptab[i] == ALL) return true; /* works for any object */
+		    if (iobj == ALL) return true; /* caller didn't specify one yet */
+		    if (ptab[i] == (int)iobj) return true;
 		}
 		break;
 	    default:

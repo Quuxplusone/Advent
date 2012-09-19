@@ -29,15 +29,16 @@ int ran(int range) { return rand() % range; }
 #define SOFT_HYPHEN "-\n"
 #define HARD_HYPHEN "-\n"
 #define EMDASH(x) "\xE2\x80\x94"  /* U+2014 "EM DASH" */
+#define ENDASH(x) "\xE2\x80\x93"  /* U+2013 "EN DASH" */
 
 bool pct(int percent) { return (ran(100) < percent); }
 bool streq(const char *a, const char *b) { return !strncmp(a, b, 5); }
 
 /*========== Forward declarations. ========================================
  */
-void dwarves_upset(void);
 void give_up(void);
 void quit(void);
+void history_of_adventure(void);
 
 
 WordClass word_class(int word)
@@ -563,10 +564,11 @@ enum flagsBits {
     F_TWIST_HINT = 0x040,
     F_DARK_HINT  = 0x080,
     F_WITT_HINT  = 0x100,
-    F_OUTSIDE    = 0x200
+    F_OUTSIDE    = 0x200,
+    F_PORTAL     = 0x400
 };
 
-Instruction travels[1184];
+Instruction travels[1191];
 Instruction *start[MAX_LOC+2];
 struct Place {
     const char *long_desc;
@@ -619,24 +621,31 @@ void build_travel_table(void)
              "Around you is a forest.  A small stream flows out of the building and" SOFT_NL
              "down a gully.",
              "You're at end of road again.", F_LIGHTED | F_WATER | F_OUTSIDE);
-    make_ins(W, R_HILL); ditto(U); ditto(ROAD);
+    make_ins(W, R_HILL); ditto(U); ditto(ROAD); ditto(CLIMB);
     make_ins(E, R_HOUSE); ditto(IN); ditto(HOUSE); ditto(ENTER);
     make_ins(S, R_VALLEY); ditto(D); ditto(GULLY); ditto(STREAM); ditto(DOWNSTREAM);
     make_ins(N, R_FOREST); ditto(FOREST);
     make_ins(DEPRESSION, R_OUTSIDE);
+    make_ins(KNOLL, R_KNOLL);
+    make_ins(THUNDER, R_THUNDER); ditto(HOLE);
     make_loc(q, R_HILL,
              "You have walked up a hill, still in the forest.  The road slopes back" SOFT_NL
              "down the other side of the hill.  There is a building in the distance.",
              "You're at hill in road.", F_LIGHTED | F_OUTSIDE);
-    make_ins(ROAD, R_ROAD); ditto(HOUSE); ditto(FORWARD); ditto(E); ditto(D);
-    make_ins(FOREST, R_FOREST); ditto(N); ditto(S);
+    make_ins(ROAD, R_ROAD); ditto(HOUSE); ditto(FORWARD); ditto(E); ditto(N); ditto(D);
+    make_cond_ins(FOREST, 30, R_KNOLL);
+    make_ins(FOREST, R_FOREST); ditto(S);
+    make_ins(W, R_KNOLL);
     make_loc(q, R_HOUSE,
              "You are inside a building, a well house for a large spring.",
              "You're inside building.", F_LIGHTED | F_WATER | F_OUTSIDE);
-    make_ins(ENTER, R_ROAD); ditto(OUT); ditto(OUTDOORS); ditto(W);
+    make_ins(OUT, R_ROAD); ditto(OUTDOORS); ditto(W);
     make_ins(XYZZY, R_DEBRIS);
     make_ins(PLUGH, R_Y2);
+    make_cond_ins(CLICK, unless_prop(SHOES, 1), remark(29));
+    make_ins(CLICK, R_RAINBOW);
     make_ins(DOWNSTREAM, remark(17)); ditto(STREAM);
+    make_ins(PANTRY, R_PANTRY); ditto(ENTER); ditto(IN);
     make_loc(q, R_VALLEY,
              "You are in a valley in the forest beside a stream tumbling along a" SOFT_NL
              "rocky bed.",
@@ -665,6 +674,8 @@ void build_travel_table(void)
     make_ins(HOUSE, R_ROAD);
     make_ins(UPSTREAM, R_VALLEY); ditto(N);
     make_ins(FOREST, R_FOREST); ditto(E); ditto(W);
+    /* Long actually breaks the ROCK direction here by editing it to ROCKY, but
+     * since this is clearly unintentional, I'm keeping Woods' spelling. */
     make_ins(DOWNSTREAM, R_OUTSIDE); ditto(ROCK); ditto(BED); ditto(S);
     make_ins(SLIT, remark(0)); ditto(STREAM); ditto(D);
     make_loc(q, R_OUTSIDE,
@@ -680,16 +691,17 @@ void build_travel_table(void)
     make_loc(q, R_INSIDE,
              "You are in a small chamber beneath a 3x3 steel grate to the surface." SOFT_NL
              "A low crawl over cobbles leads inwards to the west.",
-             "You're below the grate.", F_LIGHTED);
+             "You're below the grate.", F_LIGHTED | F_PORTAL);
     make_cond_ins(OUT, unless_prop(GRATE, 0), R_OUTSIDE); ditto(U);
     make_ins(OUT, remark(1));
     make_ins(CRAWL, R_COBBLES); ditto(COBBLES); ditto(IN); ditto(W);
     make_ins(PIT, R_SPIT);
     make_ins(DEBRIS, R_DEBRIS);
+    /* Crowther gives the cobble crawl F_LIGHTED; Long, strangely, does not. */
     make_loc(q, R_COBBLES,
              "You are crawling over cobbles in a low passage.  There is a dim light" SOFT_NL
              "at the east end of the passage.",
-             "You're in cobble crawl.", F_LIGHTED);
+             "You're in cobble crawl.", F_PORTAL);
     make_ins(OUT, R_INSIDE); ditto(SURFACE); ditto(E);
     make_ins(IN, R_DEBRIS); ditto(DARK); ditto(W); ditto(DEBRIS);
     make_ins(PIT, R_SPIT);
@@ -698,7 +710,7 @@ void build_travel_table(void)
              "A low wide passage with cobbles becomes plugged with mud and debris" SOFT_NL
              "here, but an awkward canyon leads upward and west.  A note on the wall" SOFT_NL
              "says \"MAGIC WORD XYZZY\".",
-             "You're in Debris Room.", 0);
+             "You're in Debris Room.", F_PORTAL);
     make_cond_ins(DEPRESSION, unless_prop(GRATE, 0), R_OUTSIDE);
     make_ins(ENTRANCE, R_INSIDE);
     make_ins(CRAWL, R_COBBLES); ditto(COBBLES); ditto(PASSAGE); ditto(LOW); ditto(E);
@@ -707,7 +719,7 @@ void build_travel_table(void)
     make_ins(PIT, R_SPIT);
     make_loc(q, R_AWK,
              "You are in an awkward sloping east/west canyon.",
-             NULL, 0);
+             NULL, F_PORTAL);
     make_cond_ins(DEPRESSION, unless_prop(GRATE, 0), R_OUTSIDE);
     make_ins(ENTRANCE, R_INSIDE);
     make_ins(D, R_DEBRIS); ditto(E); ditto(DEBRIS);
@@ -717,7 +729,7 @@ void build_travel_table(void)
              "You are in a splendid chamber thirty feet high. The walls are frozen" SOFT_NL
              "rivers of orange stone. An awkward canyon and a good passage exit" SOFT_NL
              "from east and west sides of the chamber.",
-             "You're in Bird Chamber.", F_BIRD_HINT);
+             "You're in Bird Chamber.", F_BIRD_HINT | F_PORTAL);
     make_cond_ins(DEPRESSION, unless_prop(GRATE, 0), R_OUTSIDE);
     make_ins(ENTRANCE, R_INSIDE);
     make_ins(DEBRIS, R_DEBRIS);
@@ -726,7 +738,7 @@ void build_travel_table(void)
     make_loc(q, R_SPIT,
              "At your feet is a small pit breathing traces of white mist. An east" SOFT_NL
              "passage ends here except for a small crack leading on.",
-             "You're at top of small pit.", 0);
+             "You're at top of small pit.", F_PORTAL);
     make_cond_ins(DEPRESSION, unless_prop(GRATE, 0), R_OUTSIDE);
     make_ins(ENTRANCE, R_INSIDE);
     make_ins(DEBRIS, R_DEBRIS);
@@ -1180,12 +1192,12 @@ void build_travel_table(void)
     make_cond_ins(D, 50, R_LIKE9);
     make_ins(D, R_LIKE4);
     make_loc(q, R_LOW,
-             "You are in a large low room.  Crawls lead north, SE, and SW.",
+             "You are in a large low room.  Crawls lead north, NE, and SW.",
              NULL, 0);
     make_ins(BEDQUILT, R_BEDQUILT);
-    make_ins(SW, R_SLOPING);
+    make_ins(NE, R_SLOPING);  /* this was SW in Woods */
     make_ins(N, R_CRAWL);
-    make_ins(SE, R_ORIENTAL); ditto(ORIENTAL);
+    make_ins(SW, R_ORIENTAL); ditto(ORIENTAL);  /* this was SE in Woods */
     make_loc(q, R_CRAWL,
              "Dead end crawl.",
              NULL, 0);
@@ -1201,13 +1213,15 @@ void build_travel_table(void)
              "You're at window on pit.", 0);
     make_ins(W, R_SJUNC);
     make_ins(JUMP, R_NECK);
+    /* Long flips some of the geometry in this area. The crawl to R_LOW went west,
+     * not east, in the original. */
     make_loc(q, R_ORIENTAL,
              "This is the Oriental Room.  Ancient oriental cave drawings cover the" SOFT_NL
              "walls.  A gently sloping passage leads upward to the north, another" SOFT_NL
-             "passage leads SE, and a hands-and-knees crawl leads west.",
+             "passage leads SE, and a hands-and-knees crawl leads east.",
              "You're in Oriental Room.", 0);
     make_ins(SE, R_SWISS);
-    make_ins(W, R_LOW); ditto(CRAWL);
+    make_ins(E, R_LOW); ditto(CRAWL);
     make_ins(U, R_MISTY); ditto(N); ditto(CAVERN);
     make_loc(q, R_MISTY,
              "You are following a wide path around the outer edge of a large cavern." SOFT_NL
@@ -1224,11 +1238,12 @@ void build_travel_table(void)
     make_cond_ins(U, 75, remark(25)); ditto(SW); ditto(CLIMB); ditto(SLIDE);
     make_ins(U, remark(26)); ditto(SW); ditto(CLIMB); ditto(SLIDE);
     make_ins(CHIMNEY, R_SWORD);
+    /* Woods doesn't light the alcove; Long does. */
     make_loc(q, R_ALCOVE,
              "You are in an alcove.  A small NW path seems to widen after a short" SOFT_NL
              "distance.  An extremely tight tunnel leads east.  It looks like a very" SOFT_NL
              "tight squeeze.  An eerie light can be seen at the other end.",
-             "You're in Alcove.", F_DARK_HINT);
+             "You're in Alcove.", F_LIGHTED | F_DARK_HINT);
     make_ins(NW, R_MISTY); ditto(CAVERN);
     make_ins(E, R_PPASS); ditto(PASSAGE);
     make_ins(E, R_PLOVER);  /* never performed, but seen by "BACK" */
@@ -1641,7 +1656,7 @@ void build_travel_table(void)
              "You are at the top of some arched steps.  On one side is a blank wall" SOFT_NL
              "with a tiny door at the base and a shelf overhead.  On the other side" SOFT_NL
              "a westward passage leads to the sea.",
-             "You're at top of steps in back of Thunder Hole.", F_OUTSIDE);
+             "You're at top of steps in back of Thunder Hole.", F_LIGHTED | F_OUTSIDE);
     make_ins(W, R_ESTYX); ditto(STEPS); ditto(D);
     make_ins(OUT, R_THUNDER);  /* fast way out */
     make_ins(PHUCE, R_SHRINKING);
@@ -1652,13 +1667,13 @@ void build_travel_table(void)
              "You are in a low cramped chamber at the back of a small cave." SOFT_NL
              "There is a shelf in the rock wall at about the height of your" SOFT_NL
              "shoulder.",
-             "You're in cramped chamber.", F_OUTSIDE);
+             "You're in cramped chamber.", F_LIGHTED | F_OUTSIDE);
     make_ins(OUT, remark(27)); ditto(W); ditto(STEPS);
     make_loc(q, R_HUGEDOOR,
              "You are on a wide ledge, bounded on one side by a rock wall," SOFT_NL
              "and on the other by a sheer cliff.  The only way past is through" SOFT_NL
              "a large wrought-iron door.",
-             "You're at ledge by wrought-iron door.", F_OUTSIDE);
+             "You're at ledge by wrought-iron door.", F_LIGHTED | F_OUTSIDE);
     make_cond_ins(E, unless_prop(HUGE_DOOR, 0), R_SEA); ditto(IN); ditto(ENTER);
     make_ins(E, remark(34));
     make_ins(PHUCE, R_GROWING);
@@ -1694,7 +1709,7 @@ void build_travel_table(void)
              "holes high in the rock wall to the east admit a dim light.  The" SOFT_NL
              "reflection of the light from the water suffuses the cavern with" SOFT_NL
              "a hazy bluish glow.",
-             "You're at west wall of Blue Grotto.", 0);
+             "You're at west wall of Blue Grotto.", F_LIGHTED | F_PORTAL);
     make_ins(ENTER, remark(24)); ditto(OUT); ditto(IN); ditto(W);
     /* The game ensures that toting(BOAT) implies toting(POLE); you're not
      * allowed to board the boat without the pole, and you can't get rid of
@@ -1713,7 +1728,7 @@ void build_travel_table(void)
              "You are on the shore of an underground sea.  A high wooden" SOFT_NL
              "structure of vast proportions extends out into the water to the" SOFT_NL
              "east.  The way west is through a wrought-iron door.",
-             "You're at underground sea.", 0);
+             "You're at underground sea.", F_LIGHTED | F_PORTAL);
     make_ins(PHUCE, R_GROWING2);
     make_cond_ins(W, unless_prop(HUGE_DOOR, 0), R_HUGEDOOR); ditto(OUT); ditto(ENTER); ditto(IN);
     make_ins(W, remark(38));
@@ -1721,7 +1736,7 @@ void build_travel_table(void)
     make_loc(q, R_EBLUE,
              "You are on the eastern shore of the Blue Grotto.  An ascending" SOFT_NL
              "tunnel disappears into the darkness to the SE.",
-             "You're on east side of the Blue Grotto.", 0);
+             "You're on east side of the Blue Grotto.", F_LIGHTED);
     make_cond_ins(SE, unless_prop(BOAT, 1), R_WINDY); ditto(U); ditto(PASSAGE);
     make_ins(SE, remark(36)); ditto(U); ditto(PASSAGE);
     make_cond_ins(N, only_if_toting(BOAT), R_BUBBLE);
@@ -1732,7 +1747,7 @@ void build_travel_table(void)
              "You are at a high rock on the NE side of a watery chamber at the mouth" SOFT_NL
              "of a small brook.  An unknown gas bubbles up through the water from" SOFT_NL
              "the chamber floor.  A bluish light can be seen to the southwest.",
-             "You're in Bubble Chamber.", 0);
+             "You're in Bubble Chamber.", F_LIGHTED);
     make_cond_ins(S, only_if_toting(BOAT), R_EBLUE);
     make_cond_ins(SW, only_if_toting(BOAT), R_WBLUE);
     make_ins(SW, remark(20)); ditto(S);
@@ -1861,7 +1876,7 @@ void build_travel_table(void)
     make_loc(q, R_GRAVEL,
              "You're on a small gravel beach at the south wall of the Blue Grotto." SOFT_NL
              "A gravelly path leads east.",
-             "You're on gravel beach.", 0);
+             "You're on gravel beach.", F_LIGHTED);
     make_cond_ins(N, only_if_toting(BOAT), R_WBLUE);
     make_cond_ins(NE, only_if_toting(BOAT), R_EBLUE);
     make_ins(N, remark(20)); ditto(NE);
@@ -1904,7 +1919,7 @@ void build_travel_table(void)
              "fairies.  A small stream runs from the SW corner.  A bright glow" SOFT_NL
              "emanates from the south side of the grotto, and a steep passage" SOFT_NL
              "descends to the east.",
-             "You're in the Fairy Grotto.", 0);
+             "You're in the Fairy Grotto.", F_LIGHTED);
     make_ins(SW, R_DEFILE); ditto(STREAM); ditto(DOWNSTREAM); ditto(PASSAGE);
     make_ins(D, R_COLD); ditto(E);
     make_cond_ins(S, unless_prop(LAMP, 1), R_CRYSTAL); ditto(U);
@@ -1921,7 +1936,7 @@ void build_travel_table(void)
     make_loc(q, R_YELLOW,
              "You are following a yellow sandstone path.  There is a glow" SOFT_NL
              "to the west.",
-             NULL, 0);
+             NULL, F_LIGHTED);
     make_cond_ins(W, unless_prop(LAMP, 1), R_CRYSTAL); ditto(D);
     make_ins(W, remark(21));
     make_ins(E, R_RAINBOW);
@@ -2015,7 +2030,7 @@ void build_travel_table(void)
     make_ins(D, R_NESIDE); ditto(E);
     make_loc(q, R_REPO_BOOTH,
              "You are standing in a telephone booth at the side of the Repository.",
-             "You're in phone booth.", 0);
+             "You're in phone booth.", F_LIGHTED);
     make_ins(OUT, R_NEEND); ditto(S);
     make_loc(q, R_ELEVEL,
              "You're at the east end of a level passage at a hole in the floor.",
@@ -2024,7 +2039,7 @@ void build_travel_table(void)
     make_ins(W, R_TONGUE);
     make_loc(q, R_COVE,
              "You're at the north edge of a dark cove.",
-             "You're in dark cove.", 0);
+             "You're in dark cove.", F_LIGHTED);
     make_cond_ins(S, only_if_toting(BOAT), R_WBLUE);
     make_cond_ins(SE, only_if_toting(BOAT), R_BUBBLE);
     make_ins(S, remark(20));
@@ -2115,7 +2130,7 @@ void build_travel_table(void)
              "the rock wall are the ominous words:\n"
              "*       \"You are approaching the River Styx.      *\n"
              "*        Laciate Ogni Speranza Voi Ch'Entrate.\"   *",
-             "You are at approach to River Styx.", F_OUTSIDE);
+             "You are at approach to River Styx.", F_LIGHTED | F_OUTSIDE);
     make_ins(W, R_THUNDER); ditto(OUT); ditto(U);
     make_cond_ins(E, unless_prop(DOG, 0), R_WSTYX); ditto(IN); ditto(D);
     make_ins(E, remark(31));
@@ -2124,14 +2139,14 @@ void build_travel_table(void)
              "across the passageway.  The edge of the stream is littered with sticks" SOFT_NL
              "and other debris washed in by a recent rainfall.  On the far side" SOFT_NL
              "of the river, the passage continues east.",
-             "You're at the River Styx.", F_OUTSIDE);
+             "You're at the River Styx.", F_LIGHTED | F_OUTSIDE);
     make_ins(N, remark(32)); ditto(S); ditto(UPSTREAM); ditto(DOWNSTREAM); ditto(CRACK);
     make_ins(U, R_APPROACH); ditto(W); ditto(OUT);
     make_ins(JUMP, R_ESTYX);
     make_ins(E, remark(33)); ditto(IN); ditto(ACROSS); ditto(CROSS); ditto(OVER);
     make_loc(q, R_ESTYX,
              "You're on the east side of the river's sticks.",
-             NULL, F_OUTSIDE);
+             NULL, F_LIGHTED | F_OUTSIDE);
     make_ins(N, remark(32)); ditto(S); ditto(UPSTREAM); ditto(DOWNSTREAM); ditto(CRACK);
     make_ins(JUMP, R_WSTYX);
     make_ins(W, remark(33)); ditto(OUT); ditto(ACROSS); ditto(CROSS); ditto(OVER);
@@ -2166,18 +2181,18 @@ void build_travel_table(void)
     make_ins(W, R_SLOST);
     make_loc(q, R_PANTRY,
              "You're in the caretaker's pantry.",
-             NULL, F_OUTSIDE);
+             NULL, F_LIGHTED | F_OUTSIDE);
     make_ins(OUT, R_HOUSE); ditto(ENTRANCE);
     make_loc(q, R_BAY,
              "You are on a small rise overlooking a beautiful bay. In the center" SOFT_NL
              "of the bay is the castle of the elves.",
-             "You're on a small rise over the bay.", F_OUTSIDE);
+             "You're on a small rise over the bay.", F_LIGHTED | F_OUTSIDE);
     make_ins(N, R_BEACH); ditto(NE);
     make_ins(SAINT_MICHEL, R_CASTLE);
     make_loc(q, R_CASTLE,
              "You are on the highest pinnacle of the castle in the bay." SOFT_NL
              "Steps lead down into the garden.",
-             NULL, F_OUTSIDE);
+             NULL, F_LIGHTED | F_OUTSIDE);
     make_ins(SAINT_MICHEL, R_BAY); ditto(ACROSS); ditto(CROSS); ditto(NE);
     make_ins(D, R_OUTER);
     make_loc(q, R_OUTER,
@@ -2185,14 +2200,14 @@ void build_travel_table(void)
              "Steps lead up to the tower, and to the west, separating you" SOFT_NL
              "from the inner courtyard, is a maze of hedges, living things," SOFT_NL
              "but almost crystalline in their multicolored splendor.",
-             "You are in the outer courtyard of the elves.", F_OUTSIDE);
+             "You are in the outer courtyard of the elves.", F_LIGHTED | F_OUTSIDE);
     make_ins(U, R_CASTLE);
     make_ins(W, R_KAL_RED);
     make_loc(q, R_KAL_RED,
              "From the inside the maze looks like a kaleidoscope, with" SOFT_NL
              "swatches of color dancing as you move. In this part the colors" SOFT_NL
              "are produced by shining red berries on the branches.",
-             "You are in the living maze. There are red berries here.", F_OUTSIDE);
+             "You are in the living maze. There are red berries here.", F_LIGHTED | F_OUTSIDE);
     make_ins(E, R_OUTER);
     make_ins(SW, R_KAL_ORANGE);
     make_ins(W, R_KAL_YELLOW);
@@ -2200,14 +2215,14 @@ void build_travel_table(void)
     make_loc(q, R_KAL_ORANGE,
              "You are surrounded by a tall hedge with sharp iridescent leaves" SOFT_NL
              "and metallic orange flowers.",
-             NULL, F_OUTSIDE);
+             NULL, F_LIGHTED | F_OUTSIDE);
     make_ins(NE, R_KAL_RED);
     make_ins(N, R_KAL_YELLOW);
     make_ins(NW, R_KAL_PURPLE);
     make_loc(q, R_KAL_YELLOW,
              "You are in the center of the living maze. The plants here are" SOFT_NL
              "dormant this season, but still carry brilliant yellow leaves.",
-             NULL, F_OUTSIDE);
+             NULL, F_LIGHTED | F_OUTSIDE);
     make_ins(E, R_KAL_RED);
     make_ins(S, R_KAL_ORANGE);
     make_ins(W, R_KAL_GREEN);
@@ -2218,7 +2233,7 @@ void build_travel_table(void)
              "The trees and bushes are all varigated shades of green, the" SOFT_NL
              "evergreens being a rich dark shade while the seasonal bushes" SOFT_NL
              "are a lighter yellowish green, making a startling contrast.",
-             NULL, F_OUTSIDE);
+             NULL, F_LIGHTED | F_OUTSIDE);
     make_ins(S, R_KAL_ORANGE);
     make_ins(E, R_KAL_YELLOW);
     make_ins(N, R_KAL_BLUE);
@@ -2226,7 +2241,7 @@ void build_travel_table(void)
     make_loc(q, R_KAL_BLUE,
              "You are near the edge of the maze. You sample the blueberries" SOFT_NL
              "on the bushes. They are delicious.",
-             NULL, F_OUTSIDE);
+             NULL, F_LIGHTED | F_OUTSIDE);
     make_ins(SE, R_KAL_RED);
     make_ins(S, R_KAL_GREEN);
     make_ins(SW, R_KAL_PURPLE);
@@ -2235,7 +2250,7 @@ void build_travel_table(void)
              "shrubs forming the walls are tastefully planted beds of" SOFT_NL
              "violets and brilliant purple pansies." SOFT_NL
              "To the west is the inner garden.",
-             NULL, F_OUTSIDE);
+             NULL, F_LIGHTED | F_OUTSIDE);
     make_ins(SE, R_KAL_ORANGE);
     make_ins(E, R_KAL_GREEN);
     make_ins(NE, R_KAL_BLUE);
@@ -2248,7 +2263,7 @@ void build_travel_table(void)
              "a hedge of briars which cannot be crossed. Unfortunately for" SOFT_NL
              "adventurers such as you, most of the nectar falls inside the hedge." SOFT_NL
              "The exit is to the east.",
-             "You're in the inner courtyard of the elves.", F_OUTSIDE);
+             "You're in the inner courtyard of the elves.", F_LIGHTED | F_OUTSIDE);
     make_ins(E, R_KAL_PURPLE);
 
     /* The following pseudo-locations have "forced" movement.
@@ -2315,6 +2330,12 @@ bool is_forced(Location loc)
 }
 
 #define is_outside(loc) (places[loc].flags & F_OUTSIDE)
+#define is_portal(loc) (places[loc].flags & F_PORTAL)
+
+bool is_well_inside(Location loc)
+{
+    return !is_outside(loc) && !is_portal(loc);
+}
 
 /*========== Data structures for objects. =================================
  * This section corresponds to sections 63--70 in Knuth.
@@ -3682,6 +3703,176 @@ void attempt_get(ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
     }
 }
 
+void attempt_read(Location loc, ObjectWord obj)
+{
+    if (blind_at(loc)) {
+        /* I like this message a lot. Long cleverly made it work for both
+         * pitch darkness and the blindingly bright Crystal Palace. */
+        puts("I certainly can't read in this light.");
+    } else if (obj == BOOK || obj == REPO_BOOK) {
+        history_of_adventure();
+    } else if (obj == BILLBOARD) {
+        puts("The billboard reads:\n"
+             "\"Visit Beautiful Colossal Cave.  Open Year Around.  Fun for" SOFT_NL
+             "the entire family, or at least for those who survive.\"" SOFT_NL
+             "Below the headline is an impossibly complicated map showing how" SOFT_NL
+             "to find Colossal Cave.  Not that it matters, because all the" SOFT_NL
+             "directions are written in Elvish.");
+    } else if (obj == CARVING) {
+        puts("In the rock is carved the message \"7-22-34\".");
+    } else if (obj == MAG) {
+        puts("I'm afraid the magazine is written in dwarvish.");
+    } else if (obj == MESSAGE) {
+        puts("\"This is not the maze where the pirate leaves his treasure chest.\"");
+    } else if (obj == POSTER) {
+        puts("The poster has a picture of a thin man with a long white beard." SOFT_NL
+             "He is wearing a high pointed cap embroidered with strange symbols," SOFT_NL
+             "and he is pointing a finger at you.  Below the picture are the words:" SOFT_NL
+             "\"I want you!--To report all good ideas for extensions to this game" SOFT_NL
+             "to me without delay.  Remember: ask not what ADVENTURE can do to" SOFT_NL
+             "you; ask what you can do for ADVENTURE.\"\n"
+             "-                       *  *  *                              -\n"
+             "\"A public service of the John Dillinger Died for You Society.\"");
+    } else if (obj == TABLET) {
+        puts("\"Congratulations on bringing light into the dark-room!\"");
+    } else if (obj == OYSTER && holding(OYSTER)) {
+        /* Long seems to allow reading the oyster even outside the
+         * repository. TODO: verify this. */
+        if (hints[1].given) {
+            puts("It says the same thing it did before.");
+        } else {
+            offer(1);
+        }
+    } else {
+        confuz();
+    }
+}
+
+bool is_lighted_in_absentia(Location loc)
+{
+    if (loc < 0) {
+        ObjectWord container = -loc;
+        assert(MIN_OBJ <= container && container <= MAX_OBJ);
+        assert(is_vessel(container));
+    } else {
+        /* Notice that you can leave the lit lamp in the Crystal Palace
+         * and it won't blind your sapphire-vision. */
+        if (places[loc].flags & F_LIGHTED)
+            return true;
+    }
+    return (objs(LAMP).place == loc && objs(LAMP).prop);
+}
+
+void lookin(ObjectWord container)
+{
+    /* List contents if container is open or transparent.
+     * Used by INVENTORY and by LOOK IN SACK. */
+    assert(word_class(container) == WordClass_Object);
+    if (!is_vessel(container)) return;
+    if (is_opaque(container) && !is_ajar(container)) return;
+    if (objs(container).contents == NULL) return;
+    puts("It contains:");
+    for (struct ObjectData *p = objs(container).contents; p != NULL; p = p->link) {
+	printf("     %s\n", p->name);
+    }
+}
+
+int attempt_look(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
+{
+    /* Long doesn't actually verify that the preposition matches the indirect
+     * object here, but it is somewhat constrained by the parser. */
+    assert(prep == NOTHING || prep == INTO || prep == AT);
+    if (obj == NOTHING && iobj == NOTHING) {
+        /* Look around. */
+        static int detail = 0;
+        if (detail < 3) {
+            puts("Sorry, but I am not allowed to give more detail.  I will repeat the" SOFT_NL
+                 "long description of your location.");
+            ++detail;
+        }
+        places[loc].visits = 0;
+        return 'm';  /* move to current location: set newloc and was_dark */
+    } else if (obj != NOTHING) {
+        /* LOOK LAMP IN SACK */
+        confuz();
+    } else {
+        assert(iobj != NOTHING);
+        assert(word_class(iobj) == WordClass_Object);
+        if (is_vessel(iobj)) {
+            /* Look into something (a container).
+             * Notice that LOOK IN SACK AND SAFE will not print Zork-style
+             * disambiguators, because we don't go via line 2011. */
+            if (is_opaque(iobj) && !is_ajar(iobj)) {
+                puts("It's not open.");
+            } else if (objs(iobj).contents == NULL) {
+                puts("There's nothing inside.");
+            } else {
+                puts("");
+                lookin(iobj);
+            }
+        } else if (is_readable(iobj)) {
+            /* Look at something. If written, read it. */
+            attempt_read(loc, iobj);
+        } else if (iobj == BALL) {
+            /* Looking into the crystal ball. */
+            if (!is_well_inside(loc) || at_hand(SAPPHIRE, loc)) {
+                puts("Nothing happens.");
+            } else {
+                puts("You feel rather disembodied, as if you were suddenly somewhere" SOFT_NL
+                     "else entirely.\n");
+                Location sloc = objs(SAPPHIRE).place;
+                if (is_lighted_in_absentia(sloc)) {
+                    if (sloc > R_LIMBO) {
+                        assert(sloc <= MAX_LOC);
+                        assert(places[sloc].long_desc != NULL);
+                        puts(places[sloc].long_desc);
+                        static bool have_seen_elf = false;
+                        if (sloc == R_BAY && !have_seen_elf) {
+                            /* TODO: newline here? */
+                            puts("A large, stately elf walks up the rise, says the word" SOFT_NL
+                                 "\"Saint-Michel\", and is instantly transported to the castle.");
+                            have_seen_elf = true;
+                        }
+                    } else if (sloc == -SACK) {
+                        /* Here Long drops the ball (heh). If you put the
+                         * ball and the lamp both in the sack, Long's code
+                         * will print LTEXT(-SACK), which is garbage. I'm
+                         * taking the liberty of fixing the bug. */
+                        puts("You are in a sack.");
+                    } else if (sloc == -SAFE) {
+                        if (is_ajar(SAFE)) {
+                            puts(places[R_HOUSE].long_desc);
+                        } else {
+                            puts("You are in a small cubical room with no exits.");
+                        }
+                    } else if (sloc == R_LIMBO) {
+                        /* You can get here in at least two ways:
+                         * if you give the sapphire to the troll, or
+                         * if you fall into Lost River carrying it.
+                         * TODO: Easter eggs? */
+                        goto dark_place;
+                    } else {
+                        assert(false);
+                    }
+                } else {
+                  dark_place:
+                    puts("You sense that you are in a dark place. The only thing in sight" SOFT_NL
+                         "appears to be a companion to the crystal ball which holds your" SOFT_NL
+                         "gaze. It seems to be searching the gloom for something to" SOFT_NL
+                         "show you, but all it can see is itself: a brilliant blue" SOFT_NL
+                         "six-pointed star suspended in space.");
+                }
+                puts("\nYour gaze withdraws from the crystal ball, and you are now back" SOFT_NL
+                     "in your normal senses.");
+            }
+        } else {
+            /* LOOK AT anything else redirects to LOOK AROUND */
+            return attempt_look(loc, NOTHING, NOTHING, NOTHING);
+        }
+    }
+    return 0;
+}
+
 void throw_axe_at_dwarf(Location loc)  /* section 163 in Knuth */
 {
     int j;
@@ -4021,6 +4212,36 @@ bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot, Actio
     return false;
 }
 
+void history_of_adventure(void)
+{
+    /* Another descendant of Long's version available online, "Adventure 5.2/2",
+     * contains a MUCH longer History of Adventure, including contact information
+     * for David Long and teasers pertaining to LONG0751.
+     * TODO: perhaps copy that version here instead? */
+    puts("-          *** THE HISTORY OF ADVENTURE (ABRIDGED) ***          -\n"
+         "-                    ** By Ima Wimp **                          -\n"
+         "ADVENTURE was originally developed by William Crowther, and later" SOFT_NL
+         "substantially rewritten and expanded by Don Woods at Stanford Univ." SOFT_NL
+         "According to legend, Crowther's original version was modelled on an" SOFT_NL
+         "a real cavern, called Colossal Cave, which is a part of Kentucky's" SOFT_NL
+         "Mammoth Caverns.  That version of the game included the main maze" SOFT_NL
+         "and a portion of the third-level (Complex Junction" ENDASH(" - ") "Bedquilt" ENDASH(" -") SOFT_NL
+         "Swiss Cheese rooms, etc.), but not much more." SOFT_NL
+         "Don Woods and some others at Stanford later rewrote portions of" SOFT_NL
+         "the original program, and greatly expanded the cave.  That version" SOFT_NL
+         "of the game is recognizable by the maximum score of 350 points." SOFT_NL
+         "Some major additions were done by David Long while at the University" SOFT_NL
+         "of Chicago, Graduate School of Business. Long's additions include the" SOFT_NL
+         "seaside entrance and all of the cave on the \"far side\" of Lost River" SOFT_NL
+         "(Rainbow Rm" ENDASH(" - ") "Crystal Palace" ENDASH(" - ") "Blue Grotto, etc.)." SOFT_NL
+         "The castle problem was added in late 1984 by an anonymous writer." SOFT_NL
+         "Thanks are owed to Roger Matus and David Feldman, both of U. of C.," SOFT_NL
+         "for several suggestions, including the Rainbow Room, the telephone" SOFT_NL
+         "booth and the fearsome Wumpus. Most thanks (and apologies)" SOFT_NL
+         "go to Thomas Malory, Charles Dodgson, the Grimm Brothers, Dante," SOFT_NL
+         "Homer, Frank Baum and especially Anon., the real authors of ADVENTURE.");
+}
+
 void print_message(MessageWord msg)
 {
     switch (msg) {
@@ -4098,7 +4319,6 @@ void simulate_an_adventure(void)
     int iobj = NOTHING;
     int oldiobj;  /* former value of iobj */
     bool was_dark = false;
-    int look_count = 0;
 
     oldoldloc = oldloc = loc = newloc = R_ROAD;
 
@@ -4183,45 +4403,33 @@ void simulate_an_adventure(void)
             /* Analyze an intransitive verb. */
             switch (verb) {
                 case TAKE:
-                case DROP:
-                case SAY:
                 case OPEN:
+                    puts("TODO this intransitive verb is unhandled");
+                    continue;
                 case RELAX:
+                    goto transitive;
                 case CLOSE:
                 case LIGHT:
                 case EXTINGUISH:
-                case WAVE:
-                case CALM:
                 case GO:
                 case KILL:
                 case POUR:
                 case EAT:
                 case DRINK:
-                case RUB:
-                case TOSS:
-                case FIND:
                 case INVENTORY:
-                case FEED:
                 case FILL:
                 case BLAST:
                 case SCORE:
                 case FEEFIE:
                 case BRIEF:
-                case READ:
-                case BREAK:
-                case WAKE:
                 case YANK:
-                case WEAR:
-                case HIT:
                 case ANSWER:
                 case BLOW:
+                    puts("TODO this intransitive verb is unhandled");
+                    continue;
                 case LEAVE:
+                    assert(false);  /* Long's BUG(29) */
                 case CALL:
-                case DIAL:
-                case PLAY:
-                case PICK:
-                case PUT:
-                case TURN:
                 case GET:
                 case INSERT:
                 case REMOVE:
@@ -4230,7 +4438,10 @@ void simulate_an_adventure(void)
                 case LOCK:
                 case UNLOCK:
                 case DIAGNOSE:
+                    puts("TODO this intransitive verb is unhandled");
+                    continue;
                 case LOOK:
+                    goto transitive;
                 case COMBO:
                 case SWEEP:
                 case TERSE:
@@ -4260,6 +4471,27 @@ void simulate_an_adventure(void)
                     puts("Restore failed!");
                     continue;
 #endif /* SAVE_AND_RESTORE */
+                case DROP:
+                case SAY:
+                case WAVE:
+                case CALM:
+                case RUB:
+                case TOSS:
+                case FIND:
+                case FEED:
+                case READ:  /* Long removes the baroque intransitive-READ logic */
+                case BREAK:
+                case WAKE:
+                case WEAR:
+                case HIT:  /* not the same as KILL */
+                case DIAL:
+                case PLAY:
+                case PICK:
+                case PUT:
+                case TURN:
+                    vtxt[vrbx-1][0] = toupper(vtxt[vrbx-1][0]);
+                    printf("%s what?", vtxt[vrbx-1]);
+                    continue;
                 default:
                     assert(false);  /* BUG(23) in Long's code */
             }
@@ -4271,7 +4503,11 @@ void simulate_an_adventure(void)
                 case DROP:
                 case SAY:
                 case OPEN:
+                    puts("TODO this transitive verb is unhandled");
+                    continue;
                 case RELAX:
+                    puts(ok);
+                    continue;
                 case CLOSE:
                 case LIGHT:
                 case EXTINGUISH:
@@ -4304,7 +4540,12 @@ void simulate_an_adventure(void)
                     puts("I don't know how.");
                     continue;
                 case BRIEF:
+                    puts("TODO this transitive verb is unhandled");
+                    continue;
                 case READ:
+                    if (obj == NOTHING) obj = iobj;
+                    attempt_read(loc, obj);
+                    continue;
                 case BREAK:
                 case WAKE:
                 case YANK:
@@ -4330,9 +4571,17 @@ void simulate_an_adventure(void)
                 case GRIPE:
                 case LOCK:
                 case UNLOCK:
-                case LOOK:
                     puts("TODO this transitive verb is unhandled");
                     continue;
+                case LOOK:
+                    switch (attempt_look(loc, obj, prep, iobj)) {
+                        case 'm':
+                            was_dark = false; /* so you don't fall into a pit */
+                            mot = NOWHERE;
+                            goto try_move;
+                        case 0:
+                            continue;
+                    }
                 case COMBO:
                     indent_if_needed();
                     noway();
@@ -4411,14 +4660,6 @@ void simulate_an_adventure(void)
     kill_the_player(oldoldloc);
     loc = oldloc = R_HOUSE;
     goto commence;
-}
-
-void dwarves_upset(void)
-{
-    puts("The resulting ruckus has awakened the dwarves.  There are now several" SOFT_NL
-         "threatening little dwarves in the room with you!  Most of them throw" SOFT_NL
-         "knives at you!  All of them get you!");
-    quit();
 }
 
 int main()
