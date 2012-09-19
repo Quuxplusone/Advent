@@ -1296,8 +1296,8 @@ void build_travel_table(void)
     make_loc(q, R_CHAMBER,
              "You are in a small chamber filled with large boulders.  The walls are" SOFT_NL
              "very warm, causing the air in the room to be almost stifling from the" SOFT_NL
-             "heat.  The only exit is a crawl heading west, through which a low" SOFT_NL
-             "rumbling noise is coming.",
+             "heat.  The only exit is a crawl heading west, through which is coming" SOFT_NL
+             "a low rumbling.",
              "You're in chamber of boulders.", 0);
     make_ins(W, R_WARM); ditto(OUT); ditto(CRAWL);
     make_ins(FORK, R_FORK);
@@ -1334,12 +1334,16 @@ void build_travel_table(void)
              "of them empty), a nursery of young beanstalks murmuring quietly, a bed" SOFT_NL
              "of oysters, a bundle of black rods with rusty stars on their ends, and" SOFT_NL
              "a collection of brass lanterns.  Off to one side a great many dwarves" SOFT_NL
-             "are sleeping on the floor, snoring loudly.  A sign nearby reads:  \"DO" SOFT_NL
+             "are sleeping on the floor, snoring loudly.  A sign nearby reads: \"DO" SOFT_NL
              "NOT DISTURB THE DWARVES!\"  An immense mirror is hanging against one" SOFT_NL
              "wall, and stretches to the other end of the room, where various other" SOFT_NL
              "sundry objects can be glimpsed dimly in the distance.",
              "You're at NE end.", F_LIGHTED);
     make_ins(SW, R_SWEND);
+    /* The following description has several minor differences from Woods' original.
+     * Woods' line breaks come after "A" on lines 4 and 5, "large" on line 6, and
+     * "vault" on line 7. Knuth's "that reads" corresponds to Woods' "which reads";
+     * presumably Knuth changed it to avoid ugly repetition, and I agree. */
     make_loc(q, R_SWEND,
              "You are at the southwest end of the repository.  To one side is a pit" SOFT_NL
              "full of fierce green snakes.  On the other side is a row of small" SOFT_NL
