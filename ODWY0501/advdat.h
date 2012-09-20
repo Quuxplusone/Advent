@@ -174,7 +174,8 @@ extern struct ObjectData objs_[MAX_OBJ+1 - MIN_OBJ];
 #define objs(t) objs_[(t)-MIN_OBJ]
 
 enum objectFlagsBits {
-    F_OPEN = 0x001
+    F_OPEN = 0x001,
+    F_LOCKED = 0x002
 };
 
 WordClass word_class(int word);
@@ -193,7 +194,6 @@ ObjectWord liquid_at_location(Location loc);
 void noway(void);
 void confuz(void);
 
-#define toting(t) (objs(t).place < 0)
 #define is_immobile(t) (objs(t).base != NULL)
 #define there(t, loc) (objs(t).place == (loc))
 

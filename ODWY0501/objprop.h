@@ -14,6 +14,8 @@ bool is_small(ObjectWord t);
 bool is_opaque(ObjectWord t);
 
 bool here(ObjectWord t, Location loc);
+bool at_hand(ObjectWord t, Location loc);
+bool toting(ObjectWord t);
 bool holding(ObjectWord t);
 bool enclosed(ObjectWord t);
 bool is_ajar(ObjectWord t);

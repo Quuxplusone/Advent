@@ -595,7 +595,7 @@ void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned
 
 void make_inst(Instruction *q, MotionWord m, int c, Location d)
 {
-    assert(&travels[0] <= q && q <= &travels[1183]);
+    assert(&travels[0] <= q && q <= &travels[1191]);
     q->mot = m;
     q->cond = c;
     q->dest = d;
@@ -2343,7 +2343,6 @@ bool is_well_inside(Location loc)
 
 struct ObjectData objs_[MAX_OBJ+1 - MIN_OBJ];
 
-int holding_count;  /* how many objects have objs(t).place < 0? */
 Location last_knife_loc = R_LIMBO;
 int tally = 15;  /* treasures awaiting you */
 int lost_treasures;  /* treasures that you won't find */
@@ -2412,14 +2411,27 @@ void drop(ObjectWord t, Location l)
 {
     assert(objs(t).place == R_INHAND || objs(t).place == R_LIMBO);
     assert(objs(t).link == NULL);
-    if (toting(t)) --holding_count;
     objs(t).place = l;
-    if (l == R_INHAND) {
-        ++holding_count;
-    } else if (l != R_LIMBO) {
+    if (l > R_LIMBO) {
         objs(t).link = places[l].objects;
         places[l].objects = &objs(t);
     }
+}
+
+void remove_from_containers(ObjectWord t)
+{
+    if (!enclosed(t)) return;
+    ObjectWord container = -objs(t).place;
+    assert(MIN_OBJ <= container && container <= MAX_OBJ);
+    assert(is_vessel(container));
+    
+    /* Remove t from container's object-list */
+    struct ObjectData **p = &objs(container).contents;
+    while (*p != &objs(t)) p = &(*p)->link;
+    *p = (*p)->link;
+
+    objs(t).place = R_INHAND;
+    objs(t).link = NULL;
 }
 
 #define move(t,l) do { carry(t); drop((t),l); } while (0)
@@ -2438,7 +2450,70 @@ void carry(ObjectWord t)
         }
         objs(t).place = R_INHAND;
         objs(t).link = NULL;
-        ++holding_count;
+    }
+}
+
+int weight(ObjectWord t)
+{
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
+    switch (t) {
+        case LAMP: case CAGE: case PILLOW: case MAG: case BOTTLE:
+        case FLOWERS: case CLOAK: case DIAMONDS: case PEARL:
+        case SPICES: case CROWN: case SHOES: case RING:
+        case CLOVER: case DROPLET: case TINY_KEY: case KEYS:
+        case MUSHROOMS: case CAKES: case POSTER: case BROOM:
+        case RADIUM:
+            return 1;
+        case ROD: case ROD2: case POLE: case FOOD: case HORN:
+        case JEWELS: case VASE: case SWORD: case LYRE:
+        case SAPPHIRE: case GRAIL: case WATER: case WATER_IN_CASK:
+        case OIL: case OIL_IN_CASK: case WINE: case WINE_IN_CASK:
+        case HONEY: case BIRD: case BALL:
+            return 2;
+        case AXE: case BATTERIES: case COINS: case TRIDENT:
+        case EMERALD: case RUG: case CHAIN: case CASK: case TREE:
+        case SLUGS: case BOOK: case REPO_BOOK: case CANISTER:
+            return 3;
+        case EGGS: case PYRAMID:
+            return 4;
+        case CHEST:
+            return 5;
+        case GOLD:
+            return 6;
+        case CLAM: case OYSTER:
+            return 7;
+        default:
+            assert(false);
+    }
+}
+
+int burden(ObjectWord t)
+{
+    if (t == 0) {
+	/* Compute the total weight of the player's inventory. */
+	int result = 0;
+	for (ObjectWord i = MIN_OBJ; i <= MAX_OBJ; ++i) {
+            /* Notice that this does not count the weight of items that are
+             * in the bottom of the boat, but it does count items that are
+             * in the sack in the boat. TODO: fix this.
+             * Also notice that we count the weight of the BOAT as an
+             * item. */ 
+	    if (toting(i) && objs(i).place != -BOAT)
+		result += weight(i);
+	}
+	return result;
+    } else {
+	/* Compute the weight of this one object and its contents.
+	 * The boat is a special case; we don't count its contents. */
+	int result = weight(t);
+	if (t == BOAT) return result;
+	/* Notice that we don't recursively compute weight.
+	 * Long's comments indicate that this is a known deficiency,
+	 * due to Fortran's lack of recursion. */
+	for (struct ObjectData *p = objs(t).contents; p != NULL; p = p->link) {
+	    result += weight(p - &objs(MIN_OBJ) + MIN_OBJ);
+	}
+	return result;
     }
 }
 
@@ -2452,14 +2527,6 @@ bool is_at_loc(ObjectWord t, Location loc)
             return true;
     }
     return false;
-}
-
-bool at_hand(ObjectWord t, Location loc)
-{
-    if (objs(t).place == loc || holding(t)) return true;
-    if (!enclosed(t)) return false;
-    ObjectWord container = -objs(t).place;
-    return here(container, loc) && is_ajar(container);
 }
 
 void mobilize(ObjectWord t) { objs(t).base = NULL; }
@@ -3078,7 +3145,7 @@ bool move_dwarves_and_pirate(Location loc)
 
 int lamp_limit;  /* countdown till darkness */
 int clock1 = 15, clock2 = 30;  /* clocks that govern closing time */
-bool panic, closed;  /* various stages of closedness */
+bool closed;  /* set only when you're in the repository */
 int bonus;  /* extra points awarded for exceptional adventuring skills */
 
 bool cave_is_closing(void)
@@ -3193,6 +3260,7 @@ void panic_at_closing_time(void)
     /* If you try to get out while the cave is closing, we assume that
      * you panic; we give you a few additional turns to get frantic
      * before we close. */
+    static bool panic = false;
     if (!panic) {
         clock2 = 15;
         panic = true;
@@ -3388,7 +3456,7 @@ void maybe_give_a_hint(Location loc, Location oldloc, Location oldoldloc, Object
                     if (places[loc].objects == NULL &&
                             places[oldloc].objects == NULL &&
                             places[oldoldloc].objects == NULL &&
-                            holding_count > 1) {
+                            burden(0) > 1) {
                         offer(j);
                     }
                     hints[j].count = 0;
@@ -3635,9 +3703,9 @@ void adjustments_before_listening(Location loc)
     }
 }
 
-Location attempt_plover_passage(Location from)  /* section 149 in Knuth */
+Location attempt_plover_passage(Location from)
 {
-    if (holding_count == !!toting(EMERALD))
+    if (burden(0) == (burden(EMERALD) * holding(EMERALD)))
         return R_ALCOVE + R_PLOVER - from;
     puts("Something you're carrying won't fit through the tunnel with you." SOFT_NL
          "You'd best take inventory and drop something.");
@@ -3871,6 +3939,194 @@ int attempt_look(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
         }
     }
     return 0;
+}
+
+bool find_an_openable_object(Location loc, ActionWord verb, int *obj)  /* line 10400 in Long */
+{
+    int objects_found = 0;
+    assert(*obj == NOTHING);
+    for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
+        if (here(t, loc) && is_hinged(t)) {
+            *obj = t;
+            ++objects_found;
+        }
+    }
+    if (objects_found == 1) {
+        assert(*obj != NOTHING);
+        return true;  /* success */
+    } else if ((verb == LOCK || verb == UNLOCK) && *obj == NOTHING) {
+        puts("There is nothing here with a lock!");
+        return true;  /* handled */
+    } else {
+        *obj = NOTHING;
+        return false;  /* not yet handled */
+    }
+}
+
+void attempt_lock(Location loc, ObjectWord obj)
+{
+#define close_and_lock(t) objs(t).flags |= F_LOCKED; objs(t).flags &= ~F_OPEN
+    indent_if_needed();
+    if (!is_hinged(obj)) {
+        printf("I don't know how to lock or unlock the %s.\n", otxt[objx-1]);
+    } else if (!at_hand(KEYS, loc) && !at_hand(TINY_KEY, loc) && obj != SAFE) {
+        puts("You have no keys!");
+    } else if (objs(obj).flags & F_LOCKED) {
+        puts("It was already locked.");
+    } else if (!has_lock(obj)) {
+        puts("It has no lock.");
+    } else if ((obj == CHAIN) && at_hand(KEYS, loc)) {
+        if (loc != R_BARR) {
+            puts("There is nothing here to which the chain can be locked.");
+        } else {
+            if (enclosed(CHAIN)) remove_from_containers(CHAIN);
+            if (holding(CHAIN)) drop(CHAIN, loc);
+            objs(CHAIN).prop = 2;
+            close_and_lock(CHAIN);
+            mobilize(CHAIN);
+            puts("The chain is now locked.");
+        }
+    } else if ((obj == CHEST) && at_hand(KEYS, loc)) {
+        puts("The chest is now locked.");
+        close_and_lock(CHEST);
+    } else if (obj == TINY_DOOR || obj == HUGE_DOOR) {
+        if (!toting(TINY_KEY)) {
+            assert(at_hand(KEYS, loc));
+            puts("Your keys are all too large for the lock.");
+        } else {
+            printf("The %s door is now locked.\n",
+                   (obj == TINY_DOOR ? "tiny" : "wrought-iron"));
+            objs(TINY_DOOR).prop = 0;
+            close_and_lock(TINY_DOOR);
+            objs(HUGE_DOOR).prop = 0;
+            close_and_lock(HUGE_DOOR);
+        }
+    } else if ((obj == GRATE) && at_hand(KEYS, loc)) {
+        puts("The grate is now locked.");
+        objs(GRATE).prop = 0;
+        close_and_lock(GRATE);
+    } else if (obj == SAFE) {
+        puts("The safe's door clicks shut.");
+        objs(SAFE).prop = 0;
+        close_and_lock(GRATE);
+    } else {
+        puts("You don't have the right key.");
+    }
+#undef close_and_lock
+}
+
+void attempt_unlock(Location loc, ObjectWord obj, ObjectWord iobj)
+{
+#define unlock_and_open(t) objs(t).flags &= ~F_LOCKED; objs(t).flags |= F_OPEN
+    indent_if_needed();
+    if (obj == KEYS || obj == TINY_KEY) {
+        puts("You can't unlock the keys.");
+    } else if (!is_hinged(obj)) {
+        printf("I don't know how to lock or unlock the %s.\n", otxt[objx-1]);
+    } else if (!at_hand(KEYS, loc) && !at_hand(TINY_KEY, loc) && obj != SAFE) {
+        puts("You have no keys!");
+    } else if (obj == SAFE) {
+        if (iobj == KEYS || iobj == TINY_KEY) {
+            puts("This is a combination safe.  The keys won't help.");
+        } else {
+            puts("How?");
+        }
+    } else if (!has_lock(obj)) {
+        puts("It has no lock.");
+    } else if (!(objs(obj).flags & F_LOCKED)) {
+        puts("It was already unlocked.");
+    } else if ((obj == CHAIN) && at_hand(KEYS, loc)) {
+        if (objs(BEAR).prop == 0) {
+            puts("There is no way to get past the bear to unlock the chain, which is" SOFT_NL
+                 "probably just as well.");
+        } else {
+            puts("The chain is now unlocked.");
+            objs(CHAIN).prop = 0;
+            mobilize(CHAIN);
+            if (objs(BEAR).prop == 1) {
+                objs(BEAR).prop = 2;
+                mobilize(BEAR);
+            }
+            unlock_and_open(CHAIN);
+        }
+    } else if ((obj == CHEST) && at_hand(KEYS, loc)) {
+        puts("The chest is now unlocked.");
+        unlock_and_open(CHEST);
+    } else if (obj == TINY_DOOR || obj == HUGE_DOOR) {
+        /* Long comments: "The damn thing is really at four places..." */
+        if (!at_hand(TINY_KEY, loc)) {
+            assert(at_hand(KEYS, loc));
+            puts("Your keys are all too large for the lock.");
+        } else if (cave_is_closing()) {
+            panic_at_closing_time();
+        } else {
+            printf("The %s door is now unlocked.\n",
+                   (obj == TINY_DOOR ? "tiny" : "wrought-iron"));
+            objs(TINY_DOOR).prop = 1;
+            unlock_and_open(TINY_DOOR);
+            objs(HUGE_DOOR).prop = 1;
+            unlock_and_open(HUGE_DOOR);
+        }
+    } else if ((obj == GRATE) && at_hand(KEYS, loc)) {
+        if (cave_is_closing()) {
+            panic_at_closing_time();
+        } else {
+            puts("The grate is now unlocked.");
+            objs(GRATE).prop = 1;
+            unlock_and_open(GRATE);
+        }
+    } else {
+        puts("You don't have the right key.");
+    }
+#undef unlock_and_open
+}
+
+void attempt_open(Location loc, ObjectWord obj, ObjectWord iobj)
+{
+    if (!is_hinged(obj)) {
+        indent_if_needed();
+        noway();
+    } else if (obj == BOOTH_DOOR && objs(BOOTH_DOOR).prop == 1) {
+        indent_if_needed();
+        puts("The gnome firmly blocks the door of the booth.  You can't enter.");
+    } else if (is_ajar(obj)) {
+        indent_if_needed();
+        puts("It's already open.");
+    } else if (has_lock(obj) || iobj == KEYS || iobj == TINY_KEY) {
+        attempt_unlock(loc, obj, iobj);
+    } else if (obj == RUSTY_DOOR && (objs(RUSTY_DOOR).flags & F_LOCKED)) {
+        indent_if_needed();
+        puts("The door is extremely rusty and refuses to open.");
+    } else if (objs(obj).flags & F_LOCKED) {
+        indent_if_needed();
+        puts("It's locked.");
+    } else if (obj == CLAM || obj == OYSTER) {
+        bool is_clam = (obj == CLAM);
+        const char *clam_or_oyster = (is_clam ? "clam" : "oyster");
+        indent_if_needed();
+        if (iobj != NOTHING && iobj != TRIDENT) {
+            printf("That's not strong enough to open the %s.\n", clam_or_oyster);
+        } else if (!at_hand(TRIDENT, loc)) {
+            printf("You don't have anything strong enough to open the %s.\n", clam_or_oyster);
+        } else if (holding(obj)) {
+            printf("I advise you to put down the %s before opening it.  >%s!<\n",
+                   clam_or_oyster, (is_clam ? "Strain" : "Wrench"));
+        } else if (obj == OYSTER) {
+            puts("The oyster creaks open, revealing nothing but oyster inside.  It" SOFT_NL
+                 "promptly snaps shut again.");
+        } else {
+            /* Success! */
+            puts("A glistening pearl falls out of the clam and rolls away.  Goodness," SOFT_NL
+                 "this must really be an oyster.  (I never was very good at identifying" SOFT_NL
+                 "bivalves.)  Whatever it is, it has now snapped shut again.");
+            destroy(CLAM);
+            drop(OYSTER, loc);
+            drop(PEARL, R_SAC);
+        }
+    } else {
+        indent_if_needed(); puts(ok);
+        objs(obj).flags |= F_OPEN;
+    }
 }
 
 void throw_axe_at_dwarf(Location loc)  /* section 163 in Knuth */
@@ -4178,6 +4434,7 @@ bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot, Actio
     } else if (*newloc == R_PPASS) {
         *newloc = attempt_plover_passage(loc);
     } else if (*newloc == R_PDROP) {
+        remove_from_containers(EMERALD);
         drop(EMERALD, loc);
         *newloc = R_Y2 + R_PLOVER - loc;
     } else if (*newloc == R_TROLL) {
@@ -4403,12 +4660,21 @@ void simulate_an_adventure(void)
             /* Analyze an intransitive verb. */
             switch (verb) {
                 case TAKE:
-                case OPEN:
                     puts("TODO this intransitive verb is unhandled");
                     continue;
+                case OPEN:
+                case CLOSE:
+                case LOCK:
+                case UNLOCK:
+                    if (find_an_openable_object(loc, verb, &obj)) {
+                        continue;
+                    } else if (obj == NOTHING) {
+                        goto act_on_what;
+                    } else {
+                        goto transitive;
+                    }
                 case RELAX:
                     goto transitive;
-                case CLOSE:
                 case LIGHT:
                 case EXTINGUISH:
                 case GO:
@@ -4424,8 +4690,10 @@ void simulate_an_adventure(void)
                 case BRIEF:
                 case YANK:
                 case ANSWER:
-                case BLOW:
                     puts("TODO this intransitive verb is unhandled");
+                    continue;
+                case BLOW:
+                    puts("You are now out of breath.");
                     continue;
                 case LEAVE:
                     assert(false);  /* Long's BUG(29) */
@@ -4435,8 +4703,6 @@ void simulate_an_adventure(void)
                 case REMOVE:
                 case BURN:
                 case GRIPE:
-                case LOCK:
-                case UNLOCK:
                 case DIAGNOSE:
                     puts("TODO this intransitive verb is unhandled");
                     continue;
@@ -4489,6 +4755,7 @@ void simulate_an_adventure(void)
                 case PICK:
                 case PUT:
                 case TURN:
+                act_on_what:
                     vtxt[vrbx-1][0] = toupper(vtxt[vrbx-1][0]);
                     printf("%s what?", vtxt[vrbx-1]);
                     continue;
@@ -4501,9 +4768,12 @@ void simulate_an_adventure(void)
             switch (verb) {
                 case TAKE:
                 case DROP:
-                case SAY:
-                case OPEN:
                     puts("TODO this transitive verb is unhandled");
+                    continue;
+                case SAY:
+                    assert(false);  /* Long's BUG(34) */
+                case OPEN:
+                    attempt_open(loc, obj, iobj);
                     continue;
                 case RELAX:
                     puts(ok);
@@ -4569,9 +4839,13 @@ void simulate_an_adventure(void)
                 case REMOVE:
                 case BURN:
                 case GRIPE:
-                case LOCK:
-                case UNLOCK:
                     puts("TODO this transitive verb is unhandled");
+                    continue;
+                case LOCK:
+                    attempt_lock(loc, obj);
+                    continue;
+                case UNLOCK:
+                    attempt_unlock(loc, obj, iobj);
                     continue;
                 case LOOK:
                     switch (attempt_look(loc, obj, prep, iobj)) {

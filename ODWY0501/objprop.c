@@ -147,6 +147,27 @@ bool here(ObjectWord t, Location loc)
     return toting(t) || there(t, loc);
 }
 
+/* Return true if t is at loc, or being carried in an open container.
+ * Such objects are "reachable", and can be used e.g. to open doors. */
+bool at_hand(ObjectWord t, Location loc)
+{
+    if (there(t, loc) || holding(t)) return true;
+    if (!enclosed(t)) return false;
+    ObjectWord container = -objs(t).place;
+    return here(container, loc) && is_ajar(container);
+}
+
+/* Return true if t is being carried (in hand or container). The object
+ * might not be reachable, if the container is closed. This condition
+ * is useful for the travel table (think PLOVER).
+ * Long's version manually unrolls the recursion to depth 3 and then
+ * returns false. */
+bool toting(ObjectWord t)
+{
+    return holding(t) ||
+	   (enclosed(t) && toting(-objs(t).place));
+}
+
 bool holding(ObjectWord t)
 {
     /* "Holding" does not include "carrying in an open container". */
