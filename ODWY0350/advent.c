@@ -1977,7 +1977,7 @@ bool move_dwarves_and_pirate(Location loc)
 
 int lamp_limit;  /* countdown till darkness */
 int clock1 = 15, clock2 = 30;  /* clocks that govern closing time */
-bool panic, closed;  /* various stages of closedness */
+bool closed;  /* set only when you're in the repository */
 int bonus;  /* extra points awarded for exceptional adventuring skills */
 
 bool cave_is_closing(void)
@@ -2092,6 +2092,7 @@ void panic_at_closing_time(void)
     /* If you try to get out while the cave is closing, we assume that
      * you panic; we give you a few additional turns to get frantic
      * before we close. */
+    static bool panic = false;
     if (!panic) {
         clock2 = 15;
         panic = true;
