@@ -161,7 +161,7 @@ static void advise_about_going_west(const char *spelling)
     if (streq(spelling, "west")) {
         ++west_count;
         if (west_count == 10) {
-            puts(" If you prefer, simply type W rather than WEST.");
+            puts("If you prefer, simply type \"W\" rather than \"WEST\".\n");
         }
     }
 }
@@ -390,25 +390,32 @@ printf("lin99: word=%d, wclass=%d\n", (int)word, (int)wclass);
 
 lin100:
 puts("lin100");
-    if (vrbx == 0) goto lin180;
-    k = w_verbs[vrbx-1];  /* the current verb */
-    if (word_class(k) > WordClass_Action) goto lin800;
-    if (word_class(k) < WordClass_Action) {
-lin140:
-puts("lin140");
-        /* Turn "CRAWL NORTH" into "NORTH". */
-        if (k == CRAWL || k == JUMP || k == CLIMB) goto lin90;
-	goto lin180;
+    if (vrbx > 0) {
+	int k = w_verbs[vrbx-1];  /* the current verb */
+	/* Turn "CRAWL NORTH" into "NORTH".
+	 * Long messes up Woods' original three motion-words
+	 * (CRAWL, JUMP, and CLIMB), then adds two new ones
+	 * (ENTER and OUT, a.k.a. EXIT) via a different codepath.
+	 * I've taken the liberty of disentangling all this. */
+	switch (k) {
+	    case CRAWL: case JUMP: case CLIMB:
+	    case ENTER: case OUT: case GO:
+		/* Replace the old verb. */
+		goto lin180;
+	    case TAKE:
+		if (can_TAKE_direction(kk))
+		    goto lin180;
+		break;
+	}
+	/* Otherwise, this parse doesn't make sense. */
+	goto lin96;
     }
-    if (k == GO) goto lin180;
-    if (k == TAKE && can_TAKE_direction(kk)) goto lin180;
-    goto lin96;
 lin180:
 puts("lin180");
     w_verbs[0] = word;
     vrbx = 1;
-    advise_about_going_west(txt[wdx]);
-    if (word == OUT || word == ENTER) goto lin860;
+    printf("txt[%d-1]=%s\n", wdx, txt[wdx-1]);
+    advise_about_going_west(txt[wdx-1]);
     goto lin90;
     
 lin200:
@@ -502,6 +509,7 @@ puts("lin371");
     assert(vrbx >= 1);
     w_verbs[vrbx-1] = word;
     strcpy(vtxt[vrbx-1], txt[wdx-1]);
+    printf("verb is now %s\n", txt[wdx-1]);
     goto lin90;
 
 lin400:
@@ -673,9 +681,8 @@ puts("lin860");
 lin862:
 puts("lin862");
     while (true) {
-        ++wdx;
-        if (words[wdx-1] == NOTHING) goto lin20;
-        if (words[wdx-1] == AND) goto lin90;
+        if (words[wdx] == NOTHING) goto lin20;
+        if (words[wdx++] == AND) goto lin90;
     }
     
 lin900:
@@ -732,8 +739,8 @@ static int getobj(ObjectWord t, Location loc)
 	if (dwarf_at(loc)) return t;
 	return I_see_no(txt[wdx-1]);
     } else if (t == liquid_at_location(loc) ||
-	       (at_hand(BOTTLE, loc) && t == bottle_contents()) ||
-	       (at_hand(CASK, loc) && t == cask_contents())) {
+	       (at_hand(BOTTLE, loc) && t == liquid_contents(BOTTLE)) ||
+	       (at_hand(CASK, loc) && t == liquid_contents(CASK))) {
 	return t;
     } else if (t == PLANT && here(PLANT2, loc) && objs(PLANT).prop != 0) {
 	return PLANT2;

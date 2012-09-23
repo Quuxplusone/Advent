@@ -36,9 +36,11 @@ bool streq(const char *a, const char *b) { return !strncmp(a, b, 5); }
 
 /*========== Forward declarations. ========================================
  */
+void dwarves_upset(void);
 void give_up(void);
 void quit(void);
 void history_of_adventure(void);
+void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord prep, ObjectWord iobj);
 
 
 WordClass word_class(int word)
@@ -555,28 +557,8 @@ typedef struct {
     Location dest;
 } Instruction;
 
-enum flagsBits {
-    F_LIGHTED    = 0x001,
-    F_WATER      = 0x004,
-    F_CAVE_HINT  = 0x008,
-    F_BIRD_HINT  = 0x010,
-    F_SNAKE_HINT = 0x020,
-    F_TWIST_HINT = 0x040,
-    F_DARK_HINT  = 0x080,
-    F_WITT_HINT  = 0x100,
-    F_OUTSIDE    = 0x200,
-    F_PORTAL     = 0x400
-};
-
 Instruction travels[1191];
 Instruction *start[MAX_LOC+2];
-struct Place {
-    const char *long_desc;
-    const char *short_desc;
-    unsigned int flags;
-    struct ObjectData *objects;
-    int visits;
-};
 struct Place places[MAX_LOC+1];
 
 void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned int f)
@@ -596,6 +578,7 @@ void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned
 void make_inst(Instruction *q, MotionWord m, int c, Location d)
 {
     assert(&travels[0] <= q && q <= &travels[1191]);
+    assert(m==0 || (MIN_MOTION <= m && m <= MAX_MOTION));
     q->mot = m;
     q->cond = c;
     q->dest = d;
@@ -2347,24 +2330,16 @@ Location last_knife_loc = R_LIMBO;
 int tally = 15;  /* treasures awaiting you */
 int lost_treasures;  /* treasures that you won't find */
 
-ObjectWord bottle_contents(void)
+ObjectWord liquid_contents(ObjectWord t)
 {
-    switch (objs(BOTTLE).prop) {
+    assert(t == BOTTLE || t == CASK);
+    switch (objs(t).prop) {
+        case -2: /* post-closing */ assert(t == BOTTLE); break;
         case 0: return WATER;
+        case 1: /* empty */ break;
         case 2: return OIL;
+        case 3: /* broken */ assert(t == BOTTLE); break;
         case 4: return WINE;
-        /* other valid values: 1, 3 (broken), -2 (post-closing) */
-    }
-    return NOTHING;
-}
-
-ObjectWord cask_contents(void)
-{
-    switch (objs(CASK).prop) {
-        case 0: return WATER;
-        case 2: return OIL;
-        case 4: return WINE;
-        /* other valid values: 1, -2 (post-closing) */
     }
     return NOTHING;
 }
@@ -2405,128 +2380,6 @@ bool blind_at(Location loc)
     } else {
 	return !(has_lighted_lamp || (places[loc].flags & F_LIGHTED));
     }
-}
-
-void drop(ObjectWord t, Location l)
-{
-    assert(objs(t).place == R_INHAND || objs(t).place == R_LIMBO);
-    assert(objs(t).link == NULL);
-    objs(t).place = l;
-    if (l > R_LIMBO) {
-        objs(t).link = places[l].objects;
-        places[l].objects = &objs(t);
-    }
-}
-
-void remove_from_containers(ObjectWord t)
-{
-    if (!enclosed(t)) return;
-    ObjectWord container = -objs(t).place;
-    assert(MIN_OBJ <= container && container <= MAX_OBJ);
-    assert(is_vessel(container));
-    
-    /* Remove t from container's object-list */
-    struct ObjectData **p = &objs(container).contents;
-    while (*p != &objs(t)) p = &(*p)->link;
-    *p = (*p)->link;
-
-    objs(t).place = R_INHAND;
-    objs(t).link = NULL;
-}
-
-#define move(t,l) do { carry(t); drop((t),l); } while (0)
-#define juggle(t) do { Location l = objs(t).place; move(t, l); } while (0)
-#define destroy(t) move((t), R_LIMBO)
-
-void carry(ObjectWord t)
-{
-    Location l = objs(t).place;
-    if (l != R_INHAND) {
-        if (l > R_LIMBO) {
-            /* Remove t from l's object-list */
-            struct ObjectData **p = &places[l].objects;
-            while (*p != &objs(t)) p = &(*p)->link;
-            *p = (*p)->link;
-        }
-        objs(t).place = R_INHAND;
-        objs(t).link = NULL;
-    }
-}
-
-int weight(ObjectWord t)
-{
-    assert(MIN_OBJ <= t && t <= MAX_OBJ);
-    switch (t) {
-        case LAMP: case CAGE: case PILLOW: case MAG: case BOTTLE:
-        case FLOWERS: case CLOAK: case DIAMONDS: case PEARL:
-        case SPICES: case CROWN: case SHOES: case RING:
-        case CLOVER: case DROPLET: case TINY_KEY: case KEYS:
-        case MUSHROOMS: case CAKES: case POSTER: case BROOM:
-        case RADIUM:
-            return 1;
-        case ROD: case ROD2: case POLE: case FOOD: case HORN:
-        case JEWELS: case VASE: case SWORD: case LYRE:
-        case SAPPHIRE: case GRAIL: case WATER: case WATER_IN_CASK:
-        case OIL: case OIL_IN_CASK: case WINE: case WINE_IN_CASK:
-        case HONEY: case BIRD: case BALL:
-            return 2;
-        case AXE: case BATTERIES: case COINS: case TRIDENT:
-        case EMERALD: case RUG: case CHAIN: case CASK: case TREE:
-        case SLUGS: case BOOK: case REPO_BOOK: case CANISTER:
-            return 3;
-        case EGGS: case PYRAMID:
-            return 4;
-        case CHEST:
-            return 5;
-        case GOLD:
-            return 6;
-        case CLAM: case OYSTER:
-            return 7;
-        default:
-            assert(false);
-    }
-}
-
-int burden(ObjectWord t)
-{
-    if (t == 0) {
-	/* Compute the total weight of the player's inventory. */
-	int result = 0;
-	for (ObjectWord i = MIN_OBJ; i <= MAX_OBJ; ++i) {
-            /* Notice that this does not count the weight of items that are
-             * in the bottom of the boat, but it does count items that are
-             * in the sack in the boat. TODO: fix this.
-             * Also notice that we count the weight of the BOAT as an
-             * item. */ 
-	    if (toting(i) && objs(i).place != -BOAT)
-		result += weight(i);
-	}
-	return result;
-    } else {
-	/* Compute the weight of this one object and its contents.
-	 * The boat is a special case; we don't count its contents. */
-	int result = weight(t);
-	if (t == BOAT) return result;
-	/* Notice that we don't recursively compute weight.
-	 * Long's comments indicate that this is a known deficiency,
-	 * due to Fortran's lack of recursion. */
-	for (struct ObjectData *p = objs(t).contents; p != NULL; p = p->link) {
-	    result += weight(p - &objs(MIN_OBJ) + MIN_OBJ);
-	}
-	return result;
-    }
-}
-
-bool is_at_loc(ObjectWord t, Location loc)
-{
-    if (objs(t).base == NULL)
-        return there(t, loc);
-    /* Check the "alternative" objects based on this one. */
-    for (ObjectWord tt = t; objs(tt).base == &objs(t); ++tt) {
-        if (there(tt, loc))
-            return true;
-    }
-    return false;
 }
 
 void mobilize(ObjectWord t) { objs(t).base = NULL; }
@@ -2943,6 +2796,7 @@ int dflag;  /* how angry are the dwarves? */
 Location dloc[6] = { R_PIRATES_NEST, R_HMK, R_WFISS, R_Y2, R_LIKE3, R_COMPLEX };
 Location odloc[6];
 bool dseen[6];
+bool being_chased;  /* by a Wumpus */
 
 bool dwarf_at(int loc)  /* is a dwarf present? Section 160 in Knuth. */
 {
@@ -3144,6 +2998,7 @@ bool move_dwarves_and_pirate(Location loc)
  */
 
 int lamp_limit;  /* countdown till darkness */
+bool have_warned_about_lamp = false;
 int clock1 = 15, clock2 = 30;  /* clocks that govern closing time */
 bool closed;  /* set only when you're in the repository */
 int bonus;  /* extra points awarded for exceptional adventuring skills */
@@ -3664,8 +3519,21 @@ void kill_the_player(Location last_safe_place)
     if (toting(LAMP)) objs(LAMP).prop = 0;
     objs(WATER).place = R_LIMBO;
     objs(OIL).place = R_LIMBO;
+    if (being_chased) {
+        /* Reset the dreaded Wumpus. */
+        being_chased = false;
+        objs(WUMPUS).prop = 0;
+        move(WUMPUS, R_CLOAKROOM);
+    }
     for (int j = MAX_OBJ; j >= MIN_OBJ; --j) {
-        if (toting(j)) drop(j, (j == LAMP) ? R_ROAD : last_safe_place);
+        /* Note that containers retain their contents. */
+        if (holding(j)) {
+            move(j, (j == LAMP) ? R_ROAD : last_safe_place);
+            if (is_wearable(j)) {
+                objs(j).prop = 0;
+                objs(j).flags &= ~F_WORN;
+            }
+        }
     }
 }
 
@@ -3720,6 +3588,104 @@ void indent_if_needed(void)
     }
 }
 
+void attempt_wake(Location loc, ObjectWord obj)
+{
+    /* WAKE DWARF will wake the wumpus, too. */
+    if (there(WUMPUS, loc)) {
+        being_chased = true;
+        objs(WUMPUS).prop = 1;
+        indent_if_needed();
+        puts("You turkey!!!  Now you've done it!  It took some effort, but you" SOFT_NL
+             "woke up the Wumpus.  He slowly opens one red eye, and then another," SOFT_NL
+             "and then one more (!!), and looks at you sleepily.  He had been" SOFT_NL
+             "dreaming of a late snack.  If you don't act quickly, you'll" SOFT_NL
+             "be a *late* adventurer!");
+    } else if (there(DOG, loc) && objs(DOG).prop) {
+        indent_if_needed();
+        puts("That wouldn't be wise.  It is best to let sleeping dogs lie.");
+    } else if (closed && (obj == DWARF)) {
+        dwarves_upset();
+    } else {
+        indent_if_needed();
+        puts("Don't be ridiculous!");
+    }
+}
+
+void attempt_drop(Location loc, ObjectWord obj)
+{
+    puts("TODO implement attempt_drop");
+}
+
+void attempt_fill(Location loc, ObjectWord obj, ObjectWord iobj)
+{
+    /* FILL obj WITH iobj */
+    if (!is_vessel(iobj)) {
+        indent_if_needed();
+        puts("You can't fill that.");
+        return;
+    }
+    if (iobj == NOTHING) {
+        iobj = liquid_at_location(loc);
+    } else if (!is_liquid(iobj) || is_broken(obj)) {
+        /* Long misses these two cases; PUT LAMP IN BOTTLE
+         * causes serious mischief, FILL (smashed) BOTTLE
+         * repairs the bottle but leaves it immobile, and
+         * FILL (smashed) VASE breaks the vase all over again. */
+        indent_if_needed();
+        puts("Don't be ridiculous!");
+        return;
+    }
+    if (obj == BOTTLE || obj == CASK) {
+        const char *Your_bottle = (obj==CASK ? "The cask" : "Your bottle");
+        indent_if_needed();
+        if (iobj == NOTHING) {
+            printf("There is nothing here %s.\n",
+                   obj==CASK ?
+                       "which you would want to put into the cask" :
+                       "with which to fill the bottle");
+        } else if (liquid_contents(obj) != NOTHING) {
+            printf("%s is already full.\n", Your_bottle);
+        } else {
+            /* Fill the vessel. */
+            assert(objs(obj).prop == 1);
+            if (iobj == WATER) {
+                printf("%s is now full of water.\n", Your_bottle);
+                objs(obj).prop = 0;
+                insert(obj==CASK ? WATER_IN_CASK : WATER, obj);
+            } else if (iobj == OIL) {
+                printf("%s is now full of oil.\n", Your_bottle);
+                objs(obj).prop = 2;
+                insert(obj==CASK ? OIL_IN_CASK : OIL, obj);
+            } else if (iobj == WINE) {
+                /* Long has "The bottle" in this case, but I don't think
+                 * it's worth the inconsistency. I'm bugfixing a lot of this
+                 * logic, so the messages won't precisely match up anyway. */
+                printf("%s is now full of wine.\n", Your_bottle);
+                objs(obj).prop = 4;
+                insert(obj==CASK ? WINE_IN_CASK : WINE, obj);
+            }
+        }
+    } else if (obj == VASE) {
+        indent_if_needed();
+        if (iobj == NOTHING) {
+            /* Long also prints this message if !holding(VASE), but I don't
+             * see how that makes any sense. */
+            puts("There is nothing here with which to fill the vase.");
+        } else {
+            puts("The sudden change in temperature has delicately shattered the vase.");
+            objs(VASE).prop = 2;  /* broken */
+            move(VASE, loc);
+            immobilize(VASE);
+        }
+    } else if (obj == GRAIL) {
+        indent_if_needed();
+        puts("The chalice is slightly cracked. It won't hold any liquids.");
+    } else {
+        indent_if_needed();
+        puts("You can't fill that.  It would leak all over the place.");
+    }
+}
+
 void take_something_immobile(ObjectWord obj)
 {
     indent_if_needed();
@@ -3750,15 +3716,361 @@ void take_something_immobile(ObjectWord obj)
     }
 }
 
-void attempt_take(ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
+bool fits_inside(ObjectWord obj, ObjectWord iobj)
 {
-    puts("TODO implement attempt_take");
+    /* Long misses the BEAR case, and in addition checks only if you are
+     * "holding" the bear (rather than "toting") during the bridge crossing.
+     * These two facts allow you to smuggle the bear across the bridge.
+     * This is cute, but it's obviously a bug. (You can also put the bear
+     * in the chest and throw it to the troll; nothing unusual happens.) */
+    if (obj == BEAR) return false;
+    if (iobj == CAGE) return (obj == BIRD);
+    if (iobj == CANISTER) return (obj == RADIUM);
+    if (iobj == SAFE && obj == VASE) return false;
+    if (iobj == SAFE && obj == PILLOW) return false;
+    if (iobj == BOAT || iobj == CHEST) return true;
+    return is_small(obj);
 }
 
-void attempt_get(ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
+void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj)
+{
+    if (obj == SWORD && iobj == ANVIL && objs(SWORD).prop == 0) {
+        indent_if_needed();
+        puts("Only wizards can do that!");
+    } else if (obj == iobj) {
+        indent_if_needed();
+        puts("You can't put a thing into itself!");
+    } else if (!is_vessel(iobj)) {
+        indent_if_needed();
+        noway();
+    } else if (obj == BOAT && iobj == CHEST) {
+        indent_if_needed();
+        noway();
+    } else if (objs(obj).base != NULL) {
+        take_something_immobile(obj);
+    } else if ((iobj == BOTTLE || iobj == CASK || iobj == VASE || iobj == GRAIL) &&
+               (obj == WATER || obj == OIL || obj == WINE)) {
+        attempt_fill(loc, iobj, obj);
+    } else if (!is_ajar(iobj)) {
+        indent_if_needed();
+        puts("It's not open.");
+    } else if (obj == BIRD || iobj == CAGE) {
+        if (obj != BIRD) {
+            indent_if_needed();
+            puts("It won't fit!");
+        } else if (iobj == BOAT) {
+            /* Long has a bug here: PUT BIRD IN BOAT will
+             * succeed, allowing you to have a wooden boat
+             * containing "Little bird in cage" without
+             * having the cage. I've patched the bug.
+             * (Ditto PUT BIRD IN CHEST.) */
+            attempt_drop(loc, BIRD);
+        } else if (iobj != CAGE) {
+            indent_if_needed();
+            puts("Are you kidding?  Do you want to suffocate the poor thing?");
+        } else {
+            attempt_take(loc, TAKE, BIRD, NOTHING, NOTHING);
+        }
+    } else if ((obj == COINS || obj == SLUGS) && iobj == PHONE) {
+        destroy(obj);
+        indent_if_needed();
+        puts("The coin drops into the slot with a dull \"clunk\".  There is no" SOFT_NL
+             "dial tone.");
+    } else if ((obj == COINS || obj == SLUGS) && iobj == MACHINE) {
+        destroy(obj);
+        move(BATTERIES, loc);
+        if (objs(BATTERIES).prop) {
+            puts("Hmmm, I see you have already gone through an extra set of batteries." SOFT_NL
+                 "I'll get rid of the trash for you.\n");
+            objs(MACHINE).prop = 1;
+        }
+        objs(BATTERIES).prop = 0;
+        puts("There are fresh batteries here.");
+    } else if (iobj == LAMP) {
+        if (obj != BATTERIES || objs(BATTERIES).prop) {
+            indent_if_needed();
+            noway();
+        } else {
+            objs(BATTERIES).prop = 1;
+            move(BATTERIES, loc);
+            lamp_limit = 400;
+            objs(LAMP).prop = 1;  /* turn it on */
+            have_warned_about_lamp = false;
+            indent_if_needed();
+            puts("Your lamp is now shining with renewed strength.");
+        }
+    } else if (!fits_inside(obj, iobj)) {
+        indent_if_needed();
+        puts("It won't fit.");
+    } else {
+        if (is_wearable(obj)) {
+            objs(obj).flags &= ~F_WORN;
+            objs(obj).prop = 0;
+        }
+        insert(obj, iobj);
+        indent_if_needed();
+        puts(ok);
+    }
+}
+
+void attempt_remove_from(Location loc, ObjectWord obj, ObjectWord iobj)
+{
+    /* Long doesn't check iobj here, but we might as well. */
+    if (obj == RING && iobj == WUMPUS && objs(RING).prop == 2) {
+        /* TAKE RING FROM WUMPUS */
+        attempt_take(loc, TAKE, RING, NOTHING, NOTHING);
+        return;
+    }
+    /* Handle REMOVE RING (from whatever it's in). */
+    if (iobj == NOTHING) {
+        if (enclosed(obj)) {
+            iobj = -objs(obj).place;
+            assert(MIN_OBJ <= iobj && iobj <= MAX_OBJ);
+        } else {
+            indent_if_needed();
+            puts("It's not inside anything.");
+            return;
+        }
+    }
+    assert(iobj != NOTHING);
+    if (objs(obj).place != -iobj) {
+        indent_if_needed();
+        puts("It isn't there!");
+    } else if (!is_ajar(iobj)) {
+        indent_if_needed();
+        puts("You can't get at it.");
+    } else if (obj == WATER || obj == OIL || obj == WINE) {
+        /* TAKE WINE FROM CASK, for example */
+        indent_if_needed();
+        puts("How?");
+    } else if (!toting(obj) && burden(0)+burden(obj) > 15) {
+        indent_if_needed();
+        puts("It's too heavy.  You'll have to drop something first.");
+    } else {
+        remove_from_containers(obj);
+        if (obj == BIRD) {
+            /* The bird can't be held. */
+            attempt_drop(loc, BIRD);
+        } else {
+            indent_if_needed();
+            puts("Taken.");
+        }
+    }
+}
+
+void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
+{
+    if (obj == BIRD && !closed && at_hand(BIRD, loc) && enclosed(BIRD)) {
+        /* Strangely, Long prints this message only for the wording
+         * TAKE BIRD FROM CAGE (or whatever container, actually).
+         * The wording REMOVE BIRD will drop the bird regardless.
+         * Also, when the cave is closed, TAKE BIRD FROM CAGE will
+         * drop the bird --- just to increase the player's chances
+         * of messing up in the endgame, I guess! */
+        puts("Fiddling with the bird in its cage is not useful." SOFT_NL
+             "If you had it in your hand it would make a mess.");
+    } else if (verb == YANK && obj == BEAR && objs(BEAR).prop <= 1) {
+        indent_if_needed();
+        puts("Pulling an angry bear around is a good way to get your arm ripped off.");
+    } else if (verb == YANK && obj == CLOAK && objs(CLOAK).prop == 2) {
+        assert(loc == R_CLOAKROOM);
+        if (burden(0)+burden(CLOAK) > 15) {
+            indent_if_needed();
+            puts("It's too heavy.  You'll have to drop something first.");
+        } else {
+            puts("You have jerked the cloak free of the rocks.  However, in doing" SOFT_NL
+                 "so you have caused a small rockslide, blocking the entrance" SOFT_NL
+                 "and making an unholy din.");
+            objs(CLOAKROOM_ROCKS).prop = 1;
+            objs(CLOAK).prop = 0;
+            mobilize(CLOAK);
+            carry(CLOAK);
+            if (there(WUMPUS, loc) && objs(WUMPUS).prop == 0) {
+                attempt_wake(loc, WUMPUS);
+            }
+        }
+    } else if (prep == OFF) {
+        /* TAKE OFF CLOAK redirects to DROP CLOAK */
+        if (obj != NOTHING && iobj != NOTHING) {
+            indent_if_needed();
+            confuz();
+        } else {
+            attempt_drop(loc, (obj != NOTHING) ? obj : iobj);
+        }
+    } else if (holding(obj)) {
+        indent_if_needed();
+        if (obj == BOAT) {
+            puts("You're already in it!");
+        } else if (is_plural(obj)) {
+            puts("You're already carrying them!");
+        } else {
+            puts("You are already carrying it!");
+        }
+    } else if (objs(obj).base != NULL) {
+        take_something_immobile(obj);
+    } else if (prep == INTO) {
+        attempt_insert_into(loc, obj, iobj);
+    } else if (prep == FROM || enclosed(obj)) {
+        attempt_remove_from(loc, obj, iobj);
+    } else if (obj == WATER || obj == OIL || obj == WINE) {
+        /* TAKE WATER. Long's line 20110.
+         * Unfortunately Long's code is ridiculously buggy; rather than try
+         * to emulate all of the bugs, I'm simply rewriting it from scratch.
+         * Long includes message 314: "Do you want it in the bottle or the
+         * cask?" but doesn't use that message anywhere.
+         */
+        bool can_fill_bottle = at_hand(BOTTLE, loc) && objs(BOTTLE).prop == 1;
+        bool can_fill_cask = at_hand(CASK, loc) && objs(CASK).prop == 1;
+        bool good_bottle_on_ground = here(BOTTLE, loc) && !holding(BOTTLE) && liquid_contents(BOTTLE) == obj;
+        bool good_cask_on_ground = here(CASK, loc) && !holding(CASK) && liquid_contents(CASK) == obj;
+        bool full_bottle_here = here(BOTTLE, loc) && liquid_contents(BOTTLE) != NOTHING;
+        bool full_cask_here = here(CASK, loc) && liquid_contents(CASK) != NOTHING;
+        if (good_bottle_on_ground) {
+            /* Even if the cask is here too, let the bottle
+             * take precedence. */
+            attempt_take(loc, verb, BOTTLE, NOTHING, NOTHING);
+        } else if (good_cask_on_ground) {
+            attempt_take(loc, verb, CASK, NOTHING, NOTHING);
+        } else if (can_fill_bottle && can_fill_cask) {
+            indent_if_needed();
+            puts("How?");
+        } else if (can_fill_bottle) {
+            attempt_fill(loc, BOTTLE, obj);
+        } else if (can_fill_cask) {
+            attempt_fill(loc, CASK, obj);
+            /* Below this point, we fail for some reason or other. */
+        } else if (full_bottle_here && full_cask_here) {
+            indent_if_needed();
+            puts("Your containers are both full.");
+        } else if (full_bottle_here && at_hand(BOTTLE, loc)) {
+            assert(!full_cask_here);
+            indent_if_needed();
+            puts("Your bottle is already full.");
+        } else if (full_cask_here && at_hand(CASK, loc)) {
+            assert(!full_bottle_here);
+            indent_if_needed();
+            puts("The cask is already full.");
+        } else {
+            puts("You have nothing in which to carry it.");
+        }
+    } else if (obj != BEAR && burden(0)+burden(obj) > 15) {
+        indent_if_needed();
+        puts("It's too heavy.  You'll have to drop something first.");
+    } else if (obj == POSTER && there(SAFE, R_LIMBO)) {
+        indent_if_needed();
+        puts("Hidden behind the poster is a steel safe, embedded in the wall.");
+        assert(loc == R_HOUSE);
+        objs(POSTER).prop = 1;
+        drop(SAFE, R_HOUSE);
+        drop(SAFE_WALL, R_HOUSE);
+        carry(POSTER);
+    } else if (obj == BOAT) {
+        indent_if_needed();
+        if (!toting(POLE) && !there(POLE, -BOAT)) {
+            puts("The boat's oars were stolen by the dwarves to play bing-bong." SOFT_NL
+                 "(That's dwarvish ping-pong " EMDASH("--") " with rocks!).  You have no way" SOFT_NL
+                 "to propel the boat.");
+            /* So you can't get in the boat after all. */
+        } else {
+            puts("You are now sitting in a small boat.");
+            objs(BOAT).prop = 1;
+            carry(BOAT);
+        }
+    } else if (obj == BIRD && !objs(BIRD).prop) {
+        /* In Long's version, simply dropping the rod isn't good enough
+         * to charm the bird; you have to put it away somewhere the bird
+         * can't see it. */
+        indent_if_needed();
+        if (at_hand(ROD, loc)) {
+            puts("The bird was unafraid when you entered, but as you approach it becomes" SOFT_NL
+                 "disturbed and you cannot catch it.");
+        } else if (!holding(CAGE)) {
+            puts("You can catch the bird, but you cannot carry it.");
+        } else {
+            /* Long closes the cage when you catch the bird, and won't let
+             * you drop the bird until you open it again. This is mostly
+             * just annoying. */
+            insert(BIRD, CAGE);
+            objs(CAGE).flags &= ~F_OPEN;
+            goto print_taken_message;
+        }
+    } else if (obj == SWORD && objs(SWORD).prop == 0) {
+        assert(loc == R_SWORD);
+        if (verb != YANK) {
+            puts("You grasp the sword's handle and pull, but the sword won't budge.");
+            if (!yes("Do you want to try yanking it out?", NULL, ok))
+                return;
+        }
+        if (objs(CROWN).flags & F_WORN) {
+            indent_if_needed();
+            puts("Taken.");
+            carry(SWORD);
+        } else {
+            puts("You grasp the sword's handle and give a mighty heave, but with a" SOFT_NL
+                 "loud clang the sword blade shatters into several fragments.");
+            objs(SWORD).prop = 3;  /* shattered */
+            immobilize(SWORD);
+        }
+    } else {
+        carry(obj);
+        switch (obj) {
+            case POLE: case TINY_KEY: case SWORD:
+            case CLOAK: case RING:
+                if (!(objs(obj).flags & F_WORN))
+                    objs(obj).prop = 0;
+                break;
+            default:
+                break;
+        }
+    print_taken_message:
+        indent_if_needed();
+        if (verb == YANK) {
+            puts("Ok, ok.  No need to be grabby.");
+        } else {
+            puts("Taken.");
+        }
+    }
+}
+
+void attempt_wear(Location loc, ObjectWord obj)
+{
+    if (obj == SWORD && objs(SWORD).prop != 3) {
+        indent_if_needed();
+        puts("You have no scabbard!");  /* Long has "scabbord" */
+    } else if (!is_wearable(obj)) {
+        printf("Just exactly how does one wear a %s?\n", otxt[objx]);
+    } else if (obj == CLOAK && objs(CLOAK).prop == 2) {
+        indent_if_needed();
+        puts("The cloak is stuck tight under the rocks.  You'll probably have to" SOFT_NL
+             "yank it out.");
+    } else if (objs(obj).flags & F_WORN) {
+        indent_if_needed();
+        printf("You are already wearing %s!\n",
+               (obj == SHOES) ? "them" : "it");
+    } else if (!holding(obj) && burden(0)+burden(obj) > 15) {
+        /* Long's code removes the object and wears it, then
+         * redirects to line 20120 (attempt_take), which will
+         * unwear and drop the object if you're overburdened.
+         * This code is equivalent. Note that attempting to
+         * WEAR CLOAK while it's in the sack and you're
+         * overburdened will quietly remove the cloak from
+         * the sack. */
+        remove_from_containers(obj);
+        indent_if_needed();
+        puts("It's too heavy.  You'll have to drop something first.");
+    } else {
+        remove_from_containers(obj);
+        objs(obj).flags |= F_WORN;
+        if (!holding(obj)) {
+            attempt_take(loc, TAKE, obj, NOTHING, NOTHING);
+        }
+    }
+}
+
+void attempt_get(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
 {
     if (prep == NOTHING || prep == FROM) {
-        attempt_take(obj, prep, iobj);
+        attempt_take(loc, TAKE, obj, prep, iobj);
     } else if (obj != NOTHING) {
         confuz();
     } else {
@@ -3767,7 +4079,7 @@ void attempt_get(ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
          * Long comments: "NEEDS WORK". In
          * particular, GET OUT is not a synonym
          * for EXIT. */
-        attempt_get(iobj, NOTHING, NOTHING);
+        attempt_get(loc, iobj, NOTHING, NOTHING);
     }
 }
 
@@ -3946,14 +4258,14 @@ bool find_an_openable_object(Location loc, ActionWord verb, int *obj)  /* line 1
     int objects_found = 0;
     assert(*obj == NOTHING);
     for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
-        if (here(t, loc) && is_hinged(t)) {
-            *obj = t;
-            ++objects_found;
-        }
+        if (!here(t, loc)) continue;
+        if (!is_hinged(t)) continue;
+        *obj = t;
+        ++objects_found;
     }
     if (objects_found == 1) {
         assert(*obj != NOTHING);
-        return true;  /* success */
+        return false;  /* got an object, but didn't handle it */
     } else if ((verb == LOCK || verb == UNLOCK) && *obj == NOTHING) {
         puts("There is nothing here with a lock!");
         return true;  /* handled */
@@ -3968,7 +4280,7 @@ void attempt_lock(Location loc, ObjectWord obj)
 #define close_and_lock(t) objs(t).flags |= F_LOCKED; objs(t).flags &= ~F_OPEN
     indent_if_needed();
     if (!is_hinged(obj)) {
-        printf("I don't know how to lock or unlock the %s.\n", otxt[objx-1]);
+        printf("I don't know how to lock or unlock the %s.\n", otxt[objx]);
     } else if (!at_hand(KEYS, loc) && !at_hand(TINY_KEY, loc) && obj != SAFE) {
         puts("You have no keys!");
     } else if (objs(obj).flags & F_LOCKED) {
@@ -3979,7 +4291,7 @@ void attempt_lock(Location loc, ObjectWord obj)
         if (loc != R_BARR) {
             puts("There is nothing here to which the chain can be locked.");
         } else {
-            if (enclosed(CHAIN)) remove_from_containers(CHAIN);
+            remove_from_containers(CHAIN);
             if (holding(CHAIN)) drop(CHAIN, loc);
             objs(CHAIN).prop = 2;
             close_and_lock(CHAIN);
@@ -4022,7 +4334,7 @@ void attempt_unlock(Location loc, ObjectWord obj, ObjectWord iobj)
     if (obj == KEYS || obj == TINY_KEY) {
         puts("You can't unlock the keys.");
     } else if (!is_hinged(obj)) {
-        printf("I don't know how to lock or unlock the %s.\n", otxt[objx-1]);
+        printf("I don't know how to lock or unlock the %s.\n", otxt[objx]);
     } else if (!at_hand(KEYS, loc) && !at_hand(TINY_KEY, loc) && obj != SAFE) {
         puts("You have no keys!");
     } else if (obj == SAFE) {
@@ -4396,6 +4708,7 @@ MotionWord try_going_back_to(Location l, Location from)
 
 void collapse_the_troll_bridge(void)
 {
+    assert(holding(BEAR));
     puts("Just as you reach the other side, the bridge buckles beneath the" SOFT_NL
          "weight of the bear, who was still following you around.  You" SOFT_NL
          "scrabble desperately for support, but as the bridge collapses you" SOFT_NL
@@ -4434,8 +4747,8 @@ bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot, Actio
     } else if (*newloc == R_PPASS) {
         *newloc = attempt_plover_passage(loc);
     } else if (*newloc == R_PDROP) {
-        remove_from_containers(EMERALD);
-        drop(EMERALD, loc);
+        assert(toting(EMERALD));
+        move(EMERALD, loc);
         *newloc = R_Y2 + R_PLOVER - loc;
     } else if (*newloc == R_TROLL) {
         /* Troll bridge crossing is treated as a special motion so
@@ -4660,7 +4973,32 @@ void simulate_an_adventure(void)
             /* Analyze an intransitive verb. */
             switch (verb) {
                 case TAKE:
-                    puts("TODO this intransitive verb is unhandled");
+                case YANK:
+                case WEAR:
+                case GET:
+                case INSERT:
+                case REMOVE:
+                case BURN:
+                    if (blind_at(loc) ||
+                            places[loc].objects == NULL ||
+                            places[loc].objects->link != NULL ||
+                            dwarf_at(loc))
+                        goto act_on_what;
+                    obj = (places[loc].objects - &objs(MIN_OBJ) + MIN_OBJ);
+                    if (verb == YANK) {
+                        if (toting(obj)) {
+                            attempt_drop(loc, obj);
+                        } else {
+                            attempt_take(loc, YANK, obj, prep, iobj);
+                        }
+                    } else if (verb == WEAR) {
+                        attempt_wear(loc, obj);
+                    } else if (verb == BURN) {
+                        indent_if_needed();
+                        puts("You haven't any matches.");
+                    } else {
+                        attempt_take(loc, verb, obj, NOTHING, NOTHING);
+                    }
                     continue;
                 case OPEN:
                 case CLOSE:
@@ -4674,21 +5012,31 @@ void simulate_an_adventure(void)
                         goto transitive;
                     }
                 case RELAX:
-                    goto transitive;
                 case LIGHT:
                 case EXTINGUISH:
                 case GO:
                 case KILL:
+                case BLAST:
+                    goto transitive;
                 case POUR:
                 case EAT:
                 case DRINK:
                 case INVENTORY:
+                    puts("TODO this intransitive verb is unhandled");
+                    continue;
                 case FILL:
-                case BLAST:
+                    if (here(CASK, loc) && !here(BOTTLE, loc) && objs(CASK).prop == 1) {
+                        obj = CASK;
+                        goto transitive;
+                    } else if (here(BOTTLE, loc) && !here(CASK, loc) && objs(BOTTLE).prop == 1) {
+                        obj = BOTTLE;
+                        goto transitive;
+                    } else {
+                        goto act_on_what;
+                    }
                 case SCORE:
                 case FEEFIE:
                 case BRIEF:
-                case YANK:
                 case ANSWER:
                     puts("TODO this intransitive verb is unhandled");
                     continue;
@@ -4698,11 +5046,18 @@ void simulate_an_adventure(void)
                 case LEAVE:
                     assert(false);  /* Long's BUG(29) */
                 case CALL:
-                case GET:
-                case INSERT:
-                case REMOVE:
-                case BURN:
+                    puts("TODO this intransitive verb is unhandled");
+                    continue;
                 case GRIPE:
+                    /* In Adventure 5.2/2, there is some logic here, and the message reads:
+                     *     Thank you for your comments. They will be dispatched immediately
+                     *     via Gnome Express to the Wizard.
+                     * I don't know if the following message is due to Anonymous or
+                     * to Doug McDonald.
+                     */
+                    puts("Please read the supplied documentation files to find out where to" SOFT_NL
+                         "send complaints, suggestions, and bug reports.");
+                    break;
                 case DIAGNOSE:
                     puts("TODO this intransitive verb is unhandled");
                     continue;
@@ -4748,7 +5103,6 @@ void simulate_an_adventure(void)
                 case READ:  /* Long removes the baroque intransitive-READ logic */
                 case BREAK:
                 case WAKE:
-                case WEAR:
                 case HIT:  /* not the same as KILL */
                 case DIAL:
                 case PLAY:
@@ -4756,8 +5110,8 @@ void simulate_an_adventure(void)
                 case PUT:
                 case TURN:
                 act_on_what:
-                    vtxt[vrbx-1][0] = toupper(vtxt[vrbx-1][0]);
-                    printf("%s what?", vtxt[vrbx-1]);
+                    vtxt[vrbx][0] = toupper(vtxt[vrbx][0]);
+                    printf("%s what?", vtxt[vrbx]);
                     continue;
                 default:
                     assert(false);  /* BUG(23) in Long's code */
@@ -4767,6 +5121,8 @@ void simulate_an_adventure(void)
             /* Analyze a transitive verb, with obj or iobj. */
             switch (verb) {
                 case TAKE:
+                    attempt_take(loc, TAKE, obj, prep, iobj);
+                    continue;
                 case DROP:
                     puts("TODO this transitive verb is unhandled");
                     continue;
@@ -4801,7 +5157,11 @@ void simulate_an_adventure(void)
                 case FIND:
                 case INVENTORY:
                 case FEED:
+                    puts("TODO this transitive verb is unhandled");
+                    continue;
                 case FILL:
+                    attempt_fill(loc, obj, iobj);
+                    continue;
                 case BLAST:
                     puts("TODO this transitive verb is unhandled");
                     continue;
@@ -4833,12 +5193,11 @@ void simulate_an_adventure(void)
                     puts("TODO this transitive verb is unhandled");
                     continue;
                 case GET:
-                    attempt_get(obj, prep, iobj);
+                    attempt_get(loc, obj, prep, iobj);
                     continue;
                 case INSERT:
                 case REMOVE:
                 case BURN:
-                case GRIPE:
                     puts("TODO this transitive verb is unhandled");
                     continue;
                 case LOCK:
@@ -4863,6 +5222,7 @@ void simulate_an_adventure(void)
                 case SWEEP:
                     puts("TODO this transitive verb is unhandled");
                     continue;
+                case GRIPE:
                 case DIAGNOSE:
                 case TERSE:
                 case WIZ:
@@ -4934,6 +5294,14 @@ void simulate_an_adventure(void)
     kill_the_player(oldoldloc);
     loc = oldloc = R_HOUSE;
     goto commence;
+}
+
+void dwarves_upset(void)
+{
+    puts("The resulting ruckus has awakened the dwarves.  There are now several" SOFT_NL
+         "threatening little dwarves in the room with you!  Most of them throw" SOFT_NL
+         "knives at you!  All of them get you!");
+    quit();
 }
 
 int main()

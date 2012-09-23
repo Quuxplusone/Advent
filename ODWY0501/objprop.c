@@ -1,5 +1,7 @@
 
+#include <assert.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include "advdat.h"
 
 /*========== Functions independent of objs(t). ============================
@@ -7,6 +9,7 @@
 
 bool is_hinged(ObjectWord t)
 {
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
 	case GRATE: case CAGE: case CLAM: case OYSTER:
 	case BOTTLE: case RUSTY_DOOR: case TINY_DOOR: case HUGE_DOOR:
@@ -20,6 +23,7 @@ bool is_hinged(ObjectWord t)
 
 bool has_lock(ObjectWord t)
 {
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
 	case GRATE: case TINY_DOOR: case HUGE_DOOR:
 	case CHEST: case CHAIN: case SAFE:
@@ -31,6 +35,7 @@ bool has_lock(ObjectWord t)
 
 bool is_edible(ObjectWord t)
 {
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
 	case FOOD: case PLANT: case SPICES: case HONEY:
 	case BIRD: case MUSHROOMS: case CAKES:
@@ -42,6 +47,7 @@ bool is_edible(ObjectWord t)
 
 bool is_readable(ObjectWord t)
 {
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
 	case TABLET: case CLAM: case OYSTER: case MAG: case MESSAGE:
 	case BOOK: case REPO_BOOK: case POSTER: case CARVING:
@@ -53,6 +59,7 @@ bool is_readable(ObjectWord t)
 
 bool is_living(ObjectWord t)
 {
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
         case SNAKE: case CLAM: case OYSTER: case DWARF:
         case PIRATE: case DRAGON: case TROLL: case BEAR:
@@ -65,6 +72,7 @@ bool is_living(ObjectWord t)
 
 bool is_wearable(ObjectWord t)
 {
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
 	case CLOAK: case JEWELS: case CROWN: case SHOES:
 	case RING: case CLOVER:
@@ -76,6 +84,7 @@ bool is_wearable(ObjectWord t)
 
 bool is_plural(ObjectWord t)
 {
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
 	case STEPS: case DRAWINGS: case BATTERIES: case FLOWERS:
 	case JEWELS: case COINS: case EGGS: case SHOES: case BEES:
@@ -89,6 +98,7 @@ bool is_plural(ObjectWord t)
 
 bool is_treasure(ObjectWord t)
 {
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
 	case FLOWERS: case GOLD: case DIAMONDS: case HORN: case JEWELS:
 	case COINS: case CHEST: case EGGS: case TRIDENT: case VASE:
@@ -104,6 +114,7 @@ bool is_treasure(ObjectWord t)
 
 bool is_vessel(ObjectWord t)
 {
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
 	case LAMP: case CAGE: case BOTTLE: case MACHINE: case BOAT:
 	case CHEST: case VASE: case GRAIL: case CASK: case SACK:
@@ -116,6 +127,7 @@ bool is_vessel(ObjectWord t)
 
 bool is_small(ObjectWord t)
 {
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
 	case LAMP: case ROD: case ROD2: case PILLOW: case MAG:
 	case FOOD: case BOTTLE: case AXE: case BATTERIES: case CLOAK:
@@ -134,9 +146,50 @@ bool is_small(ObjectWord t)
 
 bool is_opaque(ObjectWord t)
 {
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
     return (t == CHEST || t == SACK || t == SAFE || t == CANISTER);
 }
 
+bool is_liquid(ObjectWord t)
+{
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
+    assert(t != WATER_IN_CASK && t != OIL_IN_CASK && t != WINE_IN_CASK);
+    return (t == WATER || t == OIL || t == WINE);
+}
+
+int weight(ObjectWord t)
+{
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
+    switch (t) {
+        case LAMP: case CAGE: case PILLOW: case MAG: case BOTTLE:
+        case FLOWERS: case CLOAK: case DIAMONDS: case PEARL:
+        case SPICES: case CROWN: case SHOES: case RING:
+        case CLOVER: case DROPLET: case TINY_KEY: case KEYS:
+        case MUSHROOMS: case CAKES: case POSTER: case BROOM:
+        case RADIUM:
+            return 1;
+        case ROD: case ROD2: case POLE: case FOOD: case HORN:
+        case JEWELS: case VASE: case SWORD: case LYRE:
+        case SAPPHIRE: case GRAIL: case WATER: case WATER_IN_CASK:
+        case OIL: case OIL_IN_CASK: case WINE: case WINE_IN_CASK:
+        case HONEY: case BIRD: case BALL:
+            return 2;
+        case AXE: case BATTERIES: case COINS: case TRIDENT:
+        case EMERALD: case RUG: case CHAIN: case CASK: case TREE:
+        case SLUGS: case BOOK: case REPO_BOOK: case CANISTER:
+            return 3;
+        case EGGS: case PYRAMID:
+            return 4;
+        case CHEST:
+            return 5;
+        case GOLD:
+            return 6;
+        case CLAM: case OYSTER:
+            return 7;
+        default:
+            assert(false);
+    }
+}
 
 /*========== Functions dependent on objs(t). ==============================
  */
@@ -144,13 +197,29 @@ bool is_opaque(ObjectWord t)
 /* Return true if t is at loc, or being carried. */
 bool here(ObjectWord t, Location loc)
 {
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
+    assert(R_LIMBO < loc && loc <= MAX_LOC);
     return toting(t) || there(t, loc);
+}
+
+bool is_at_loc(ObjectWord t, Location loc)
+{
+    if (objs(t).base == NULL)
+        return there(t, loc);
+    /* Check the "alternative" objects based on this one. */
+    for (ObjectWord tt = t; objs(tt).base == &objs(t); ++tt) {
+        if (there(tt, loc))
+            return true;
+    }
+    return false;
 }
 
 /* Return true if t is at loc, or being carried in an open container.
  * Such objects are "reachable", and can be used e.g. to open doors. */
 bool at_hand(ObjectWord t, Location loc)
 {
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
+    assert(R_LIMBO < loc && loc <= MAX_LOC);
     if (there(t, loc) || holding(t)) return true;
     if (!enclosed(t)) return false;
     ObjectWord container = -objs(t).place;
@@ -164,6 +233,7 @@ bool at_hand(ObjectWord t, Location loc)
  * returns false. */
 bool toting(ObjectWord t)
 {
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
     return holding(t) ||
 	   (enclosed(t) && toting(-objs(t).place));
 }
@@ -171,15 +241,117 @@ bool toting(ObjectWord t)
 bool holding(ObjectWord t)
 {
     /* "Holding" does not include "carrying in an open container". */
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
     return (objs(t).place == R_INHAND);
 }
 
 bool enclosed(ObjectWord t)
 {
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
     return (objs(t).place < -1);
 }
 
 bool is_ajar(ObjectWord t)
 {
-    return (objs(t).flags & F_OPEN) || (is_vessel(t) && !is_hinged(t));
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
+    switch (t) {
+	case LAMP: case MACHINE: case BOAT: case VASE:
+	case GRAIL:  /* These vessels are always open. */
+	    return true;
+	default:
+	    return (objs(t).flags & F_OPEN);
+    }
+}
+
+bool is_broken(ObjectWord t)
+{
+    assert(MIN_OBJ <= t && t <= MAX_OBJ);
+    if (t == VASE && objs(VASE).prop == 2) return true;
+    if (t == BOTTLE && objs(BOTTLE).prop == 3) return true;
+    return false;
+}
+
+int burden(ObjectWord t)
+{
+    if (t == 0) {
+	/* Compute the total weight of the player's inventory. */
+	int result = 0;
+	for (ObjectWord i = MIN_OBJ; i <= MAX_OBJ; ++i) {
+            /* Notice that this does not count the weight of items that are
+             * in the bottom of the boat, but it does count items that are
+             * in the sack in the boat. TODO: fix this.
+             * Also notice that we count the weight of the BOAT as an
+             * item. */ 
+	    if (toting(i) && objs(i).place != -BOAT)
+		result += weight(i);
+	}
+	return result;
+    } else {
+	/* Compute the weight of this one object and its contents.
+	 * The boat is a special case; we don't count its contents. */
+	int result = weight(t);
+	if (t == BOAT) return result;
+	/* Notice that we don't recursively compute weight.
+	 * Long's comments indicate that this is a known deficiency,
+	 * due to Fortran's lack of recursion. */
+	for (struct ObjectData *p = objs(t).contents; p != NULL; p = p->link) {
+	    result += weight(p - &objs(MIN_OBJ) + MIN_OBJ);
+	}
+	return result;
+    }
+}
+
+/*========== Functions that mutate objs(t). ===============================
+ */
+
+void drop(ObjectWord t, Location l)
+{
+    assert(objs(t).place == R_INHAND || objs(t).place == R_LIMBO);
+    assert(objs(t).link == NULL);
+    objs(t).place = l;
+    if (l > R_LIMBO) {
+        objs(t).link = places[l].objects;
+        places[l].objects = &objs(t);
+    }
+}
+
+void insert(ObjectWord t, ObjectWord container)
+{
+    assert(is_vessel(container));
+    move(t, R_LIMBO);
+    objs(t).place = -container;
+    objs(t).link = objs(container).contents;
+    objs(container).contents = &objs(t);
+}
+
+void remove_from_containers(ObjectWord t)
+{
+    if (!enclosed(t)) return;
+    ObjectWord container = -objs(t).place;
+    assert(MIN_OBJ <= container && container <= MAX_OBJ);
+    assert(is_vessel(container));
+    
+    /* Remove t from container's object-list */
+    struct ObjectData **p = &objs(container).contents;
+    while (*p != &objs(t)) p = &(*p)->link;
+    *p = (*p)->link;
+
+    objs(t).place = R_INHAND;
+    objs(t).link = NULL;
+}
+
+void carry(ObjectWord t)
+{
+    remove_from_containers(t);
+    Location l = objs(t).place;
+    if (l != R_INHAND) {
+        if (l > R_LIMBO) {
+            /* Remove t from l's object-list */
+            struct ObjectData **p = &places[l].objects;
+            while (*p != &objs(t)) p = &(*p)->link;
+            *p = (*p)->link;
+        }
+        objs(t).place = R_INHAND;
+        objs(t).link = NULL;
+    }
 }

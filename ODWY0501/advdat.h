@@ -165,7 +165,7 @@ struct ObjectData {
     struct ObjectData *contents;
     struct ObjectData *base;
     int prop;
-    Location place;
+    int place;
     const char *name;
     const char *desc[7];  /* .prop ranges from 0 to 6 (WUMPUS) TODO */
     unsigned int flags;
@@ -175,7 +175,30 @@ extern struct ObjectData objs_[MAX_OBJ+1 - MIN_OBJ];
 
 enum objectFlagsBits {
     F_OPEN = 0x001,
-    F_LOCKED = 0x002
+    F_LOCKED = 0x002,
+    F_WORN = 0x004
+};
+
+struct Place {
+    const char *long_desc;
+    const char *short_desc;
+    unsigned int flags;
+    struct ObjectData *objects;
+    int visits;
+};
+extern struct Place places[MAX_LOC+1];
+
+enum placesFlagsBits {
+    F_LIGHTED    = 0x001,
+    F_WATER      = 0x004,
+    F_CAVE_HINT  = 0x008,
+    F_BIRD_HINT  = 0x010,
+    F_SNAKE_HINT = 0x020,
+    F_TWIST_HINT = 0x040,
+    F_DARK_HINT  = 0x080,
+    F_WITT_HINT  = 0x100,
+    F_OUTSIDE    = 0x200,
+    F_PORTAL     = 0x400
 };
 
 WordClass word_class(int word);
@@ -188,8 +211,7 @@ bool dwarf_at(Location loc);
 bool here(ObjectWord t, Location loc);
 bool is_at_loc(ObjectWord t, Location loc);
 bool at_hand(ObjectWord t, Location loc);
-ObjectWord bottle_contents(void);
-ObjectWord cask_contents(void);
+ObjectWord liquid_contents(ObjectWord vessel);
 ObjectWord liquid_at_location(Location loc);
 void noway(void);
 void confuz(void);
