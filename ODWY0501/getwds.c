@@ -414,7 +414,6 @@ lin180:
 puts("lin180");
     w_verbs[0] = word;
     vrbx = 1;
-    printf("txt[%d-1]=%s\n", wdx, txt[wdx-1]);
     advise_about_going_west(txt[wdx-1]);
     goto lin90;
     

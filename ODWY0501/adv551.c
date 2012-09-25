@@ -4731,8 +4731,97 @@ void collapse_the_troll_bridge(void)
         ++lost_treasures;
 }
 
+Location attempt_phuce(Location from)
+{
+    Location newloc = (from == R_WBLUE) ? R_SEA :
+                      (from == R_SEA) ? R_WBLUE :
+		      (from == R_TINYDOOR) ? R_HUGEDOOR :
+                      R_TINYDOOR;
+    /* Move all the objects from oldloc to newloc,
+     * except for the boat. */
+    for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
+	if (t == BOAT) continue;
+	if (t == TINY_DOOR) continue;
+	if (objs(t).place == from) {
+	    /* Long checks (FIXED(OBJ).EQ.0.OR.FIXED(OBJ).EQ.-1), which
+	     * I believe means "mobile, or immobile-but-not-schizoid".
+	     * I also believe no schizoid object can be here, except
+	     * for the TINY_DOOR. TODO: verify. */
+	    move(t, newloc);
+	}
+    }
+    return newloc;
+}
+
+Location attempt_phonebooth(void)
+{
+    if (objs(BOOTH).prop == 1) {
+	puts("The gnome firmly blocks the door of the booth.  You can't enter.");
+    } else if (places[R_ROTUNDA].visits == 1 || pct(55)) {
+	puts("As you move towards the phone booth, a gnome suddenly streaks" SOFT_NL
+             "around the corner, jumps into the booth and rudely slams the door" SOFT_NL
+             "in your face.  You can't get in.");
+	objs(BOOTH).prop = 1;
+	move(GNOME, R_ROTUNDA);
+    } else {
+	return R_BOOTH;
+    }
+    return R_ROTUNDA;
+}
+
+Location attempt_clay_bridge(Location from)
+{
+    /* Collapsing clay bridge. He can cross with three (or fewer)
+     * things. If more, or if carrying obviously heavy things,
+     * he may end up in the drink. */
+    assert(from == R_DANTES || from == R_DEVILS);
+    Location newloc = (R_DANTES + R_DEVILS) - from;
+
+    int current_burden = burden(0);
+    static int bcross = 0;
+    bcross += 1;
+    int danger = (current_burden+bcross)*(current_burden+bcross) / 10;
+    if (current_burden <= 4) {
+	/* An uneventful crossing. */
+    } else if (pct(danger > 10 ? danger : 10)) {
+	/* Splash! */
+	puts("The load is too much for the bridge!  With a roar, the entire" SOFT_NL
+             "structure gives way, plunging you headlong into the raging river at" SOFT_NL
+             "the bottom of the chasm and scattering all your holdings.  As the" SOFT_NL
+             "icy waters close over your head, you flail and thrash with all your" SOFT_NL
+             "might, and with your last ounce of strength pull yourself onto the" SOFT_NL
+             "south bank of the river.");
+	/* TODO: Rewrite this logic.
+	 * Notice that if you put the lamp in the sack before crossing, you'll lose
+	 * it forever; but the same is not true of the axe. */
+	if (holding(LAMP)) move(LAMP, R_ELOST);
+	if (toting(AXE)) move(AXE, R_SLOST);
+	for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
+	    if (toting(t)) move(t, R_LIMBO);
+	}
+	objs(CLAY).prop = 1;  /* no more bridge */
+	return R_ELOST;
+    } else {
+	puts("The bridge shakes as you cross.  Large hunks of clay and rock near" SOFT_NL
+             "the edge break off and hurtle far down into the chasm.  Several of" SOFT_NL
+             "the cracks on the bridge surface widen perceptibly.");
+    }
+    return newloc;
+}
+
+Location attempt_kaleidoscope(void)
+{
+    if (kaleidoscope_count == 6) {
+	return R_INNER;
+    } else {
+	puts("You get a tingling feeling as you walk through the gate, and ...");
+	return R_KAL_RED + ran(R_KAL_BLUE - R_KAL_RED + 1);
+    }
+}
+
 /* Modify newloc in place, and return true if the player died crossing the troll bridge. */
-bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot, ActionWord verb)
+bool determine_next_newloc(Location loc, Location *oldloc, Location *newloc,
+                           MotionWord mot, ActionWord verb)
 {
     Instruction *q = determine_motion_instruction(loc, mot);
     if (q == NULL) {
@@ -4776,9 +4865,23 @@ bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot, Actio
                 return true;  /* goto death */
             }
         }
+    } else if (*newloc == R_PHUCE) {
+        *newloc = attempt_phuce(loc);
+    } else if (*newloc == R_GNOME) {
+        *newloc = attempt_phonebooth();
+    } else if (*newloc == R_CLAY) {
+        *newloc = attempt_clay_bridge(loc);
+    } else if (*newloc == R_KALEIDOSCOPE) {
+        *newloc = attempt_kaleidoscope();
+        if (*newloc != R_INNER) {
+            assert(R_KAL_RED <= *newloc && *newloc <= R_KAL_PURPLE);
+            *oldloc = *newloc - 1;
+        }
+        
+    } else {
+        assert(*newloc >= R_LIMBO);
+        assert(*newloc <= MAX_LOC);
     }
-    /* TODO: R_PHUCE, R_CLAY, R_KALEIDOSCOPE */
-
     return false;
 }
 
@@ -5271,7 +5374,7 @@ void simulate_an_adventure(void)
                 /* Determine the next newloc. */
                 oldoldloc = oldloc;
                 oldloc = loc;
-                if (determine_next_newloc(loc, &newloc, mot, verb)) {
+                if (determine_next_newloc(loc, &oldloc, &newloc, mot, verb)) {
                     /* Player died trying to cross the troll bridge. */
                     oldoldloc = newloc;  /* if you are revived, you got across */
                     goto death;
