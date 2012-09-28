@@ -1031,6 +1031,9 @@ void build_travel_table(void)
              "north, south, and SE.  The north one is as tall as the other two" SOFT_NL
              "combined.",
              "You're at junction of three secret canyons.", 0);
+    /* In Crowther's original, this was pretty much the edge of the cave. Going UP here
+     * would take you on a one-way trip back to the dusty rock room. Woods replaced
+     * that connection with a northerly passage to R_WINDOW. */
     make_ins(SE, R_BEDQUILT);
     make_ins(S, R_ABOVEP);
     make_ins(N, R_WINDOW);
