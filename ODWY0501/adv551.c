@@ -620,7 +620,8 @@ void build_travel_table(void)
     make_ins(FOREST, R_FOREST); ditto(S);
     make_ins(W, R_KNOLL);
     make_loc(q, R_HOUSE,
-             "You are inside a building, a well house for a large spring.",
+             "You are inside a building, a well house for a large spring.  Off" SOFT_NL
+             "to one side is a small pantry.",
              "You're inside building.", F_LIGHTED | F_WATER | F_OUTSIDE);
     make_ins(OUT, R_ROAD); ditto(OUTDOORS); ditto(W);
     make_ins(XYZZY, R_DEBRIS);
@@ -638,7 +639,8 @@ void build_travel_table(void)
     make_ins(DOWNSTREAM, R_SLIT); ditto(S); ditto(D);
     make_ins(DEPRESSION, R_OUTSIDE);
     make_loc(q, R_FOREST,
-             "You are in open forest, with a deep valley to one side.",
+             "You are in open forest, with a deep valley to one side.  Not far" SOFT_NL
+             "is a large billboard.",
              "You're in forest.", F_LIGHTED | F_OUTSIDE);
     make_ins(VALLEY, R_VALLEY); ditto(E); ditto(D);
     make_cond_ins(FOREST, 50, R_FOREST); ditto(FORWARD); ditto(N);
@@ -3588,6 +3590,44 @@ void indent_if_needed(void)
     }
 }
 
+void attempt_break(Location loc, ObjectWord obj)
+{
+    if (obj == MIRROR && closed) {
+        puts("You strike the mirror a resounding blow, whereupon it shatters into a" SOFT_NL
+             "myriad tiny fragments.");
+        dwarves_upset();
+        assert(false);  /* dwarves_upset() should not return */
+    }
+
+    indent_if_needed();
+    if (obj == VASE && objs(VASE).prop == 0) {
+        puts("You have taken the vase and hurled it delicately to the ground.");
+        if (toting(VASE)) move(VASE, loc);
+        objs(VASE).prop = 2;  /* broken */
+        immobilize(VASE);
+    } else if (obj == BOTTLE && objs(BOTTLE).prop != 3) {
+        puts("You have smashed your bottle all over the ground.");
+        ObjectWord liq = liquid_contents(BOTTLE);
+        if (liq != NOTHING) move(liq, R_LIMBO);
+        if (toting(BOTTLE)) move(BOTTLE, loc);
+        objs(BOTTLE).prop = 3;  /* broken */
+        immobilize(BOTTLE);
+    } else if (obj == SWORD) {
+        if (!holding(SWORD)) {
+            puts("You aren't carrying it!");
+        } else {
+            puts("You have smashed your sword to smithereens against a rock.");
+            move(SWORD, loc);
+            objs(SWORD).prop = 4;  /* broken */
+            immobilize(SWORD);
+        }
+    } else if (obj == MIRROR) {
+        puts("It is too far up for you to reach.");
+    } else {
+        puts("It is beyond your power to do that.");
+    }
+}
+
 void attempt_wake(Location loc, ObjectWord obj)
 {
     /* WAKE DWARF will wake the wumpus, too. */
@@ -5088,21 +5128,7 @@ void simulate_an_adventure(void)
                             dwarf_at(loc))
                         goto act_on_what;
                     obj = (places[loc].objects - &objs(MIN_OBJ) + MIN_OBJ);
-                    if (verb == YANK) {
-                        if (toting(obj)) {
-                            attempt_drop(loc, obj);
-                        } else {
-                            attempt_take(loc, YANK, obj, prep, iobj);
-                        }
-                    } else if (verb == WEAR) {
-                        attempt_wear(loc, obj);
-                    } else if (verb == BURN) {
-                        indent_if_needed();
-                        puts("You haven't any matches.");
-                    } else {
-                        attempt_take(loc, verb, obj, NOTHING, NOTHING);
-                    }
-                    continue;
+                    goto transitive;
                 case OPEN:
                 case CLOSE:
                 case LOCK:
@@ -5280,9 +5306,24 @@ void simulate_an_adventure(void)
                     attempt_read(loc, obj);
                     continue;
                 case BREAK:
+                    /* Notice that we don't look at iobj in this case, so
+                     * we'll give inappropriate responses to SMASH VASE
+                     * WITH AXE or BREAK SWORD WITH SWORD. */
+                    attempt_break(loc, obj);
+                    continue;
                 case WAKE:
+                    attempt_wake(loc, obj);
+                    continue;
                 case YANK:
+                    if (toting(obj)) {
+                        attempt_drop(loc, obj);
+                    } else {
+                        attempt_take(loc, YANK, obj, prep, iobj);
+                    }
+                    continue;
                 case WEAR:
+                    attempt_wear(loc, obj);
+                    continue;
                 case HIT:
                 case ANSWER:
                 case BLOW:
@@ -5299,9 +5340,16 @@ void simulate_an_adventure(void)
                     attempt_get(loc, obj, prep, iobj);
                     continue;
                 case INSERT:
+                    assert(prep == INTO || prep == NOTHING);
+                    attempt_insert_into(loc, obj, iobj);
+                    continue;
                 case REMOVE:
+                    assert(prep == FROM || prep == NOTHING);
+                    attempt_remove_from(loc, obj, iobj);
+                    continue;
                 case BURN:
-                    puts("TODO this transitive verb is unhandled");
+                    indent_if_needed();
+                    puts("You haven't any matches.");
                     continue;
                 case LOCK:
                     attempt_lock(loc, obj);
