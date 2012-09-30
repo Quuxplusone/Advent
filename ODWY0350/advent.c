@@ -1646,7 +1646,7 @@ void build_object_table(void)
     objs(TROLL).desc[0] =
         "A burly troll stands by the bridge and insists you throw him a" SOFT_NL
         "treasure before you may cross.";
-    objs(TROLL).desc[1] = "The troll steps out from beneath the bridge and blocks your way.";
+    objs(TROLL).desc[1] = NULL;  /* not present, but not paid off either */
     objs(TROLL).desc[2] = NULL;  /* chased away */
     new_obj(NO_TROLL, 0, NO_TROLL, R_LIMBO);
     new_obj(NO_TROLL_, 0, NO_TROLL, R_LIMBO);
