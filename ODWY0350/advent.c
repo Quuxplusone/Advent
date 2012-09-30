@@ -88,33 +88,31 @@ int lookup(const char *w)
 
 typedef enum {
     MIN_MOTION=100,
-    N=MIN_MOTION,S,E,W,NE,SE,NW,SW,U,D,L,R,IN,OUT,FORWARD,BACK,
-    OVER,ACROSS,UPSTREAM,DOWNSTREAM,
-    ENTER,CRAWL,JUMP,CLIMB,LOOK,CROSS,
-    ROAD,FOREST,VALLEY,HOUSE,GULLY,STREAM,DEPRESSION,ENTRANCE,CAVE,
-    ROCK,SLAB,BED,PASSAGE,CAVERN,CANYON,AWKWARD,SECRET,BEDQUILT,RESERVOIR,
-    GIANT,ORIENTAL,SHELL,BARREN,BROKEN,DEBRIS,VIEW,FORK,
-    PIT,SLIT,CRACK,DOME,HOLE,WALL,HALL,ROOM,FLOOR,
-    STAIRS,STEPS,COBBLES,SURFACE,DARK,LOW,OUTDOORS,
-    Y2,XYZZY,PLUGH,PLOVER,OFFICE,NOWHERE,
-    MAX_MOTION=NOWHERE
+    ROAD=MIN_MOTION,ENTER,UPSTREAM,DOWNSTREAM,FOREST,FORWARD,
+    BACK,VALLEY,STAIRS,OUT,HOUSE,GULLY,STREAM,ROCK,
+    BED,CRAWL,COBBLES,IN,SURFACE,NOWHERE,DARK,PASSAGE,
+    LOW,CANYON,AWKWARD,GIANT,VIEW,U,D,PIT,OUTDOORS,
+    CRACK,STEPS,DOME,LEFT,RIGHT,HALL,JUMP,BARREN,
+    OVER,ACROSS,E,W,N,S,NE,SE,SW,NW,DEBRIS,HOLE,
+    WALL,BROKEN,Y2,CLIMB,LOOK,FLOOR,ROOM,SLIT,
+    SLAB,XYZZY,DEPRESSION,ENTRANCE,PLUGH,SECRET,
+    CAVE,CROSS,BEDQUILT,PLOVER,ORIENTAL,CAVERN,
+    SHELL,RESERVOIR,OFFICE,FORK,
+    MAX_MOTION=FORK
 } MotionWord;
 
 typedef enum {
     MIN_OBJ=200,
     KEYS=MIN_OBJ, LAMP, GRATE, GRATE_, CAGE, ROD, ROD2, TREADS, TREADS_,
-    BIRD, DOOR, PILLOW, SNAKE, CRYSTAL, CRYSTAL_, TABLET, CLAM, OYSTER,
+    BIRD, RUSTY_DOOR, PILLOW, SNAKE, FISSURE, FISSURE_, TABLET, CLAM, OYSTER,
     MAG, DWARF, KNIFE, FOOD, BOTTLE, WATER, OIL, MIRROR, MIRROR_, PLANT,
     PLANT2, PLANT2_, STALACTITE, SHADOW, SHADOW_, AXE, DRAWINGS, PIRATE,
-    DRAGON, DRAGON_, BRIDGE, BRIDGE_, TROLL, TROLL_, NO_TROLL, NO_TROLL_,
-    BEAR, MESSAGE, GORGE, PONY, BATTERIES, MOSS,
-    MIN_TREASURE,
-    GOLD=MIN_TREASURE, DIAMONDS, SILVER, JEWELS, COINS, CHEST, EGGS,
+    DRAGON, DRAGON_, CHASM, CHASM_, TROLL, TROLL_, NO_TROLL, NO_TROLL_,
+    BEAR, MESSAGE, GORGE, MACHINE, BATTERIES, MOSS,
+    GOLD, DIAMONDS, SILVER, JEWELS, COINS, CHEST, EGGS,
     TRIDENT, VASE, EMERALD, PYRAMID, PEARL, RUG, RUG_, SPICES, CHAIN,
     MAX_OBJ=CHAIN
 } ObjectWord;
-
-#define IS_TREASURE(t) ((t) >= MIN_TREASURE)
 
 typedef enum {
     MIN_ACTION=300,
@@ -157,88 +155,89 @@ const char pitch_dark_msg[] = "It is now pitch dark.  If you proceed you will mo
 
 void build_vocabulary(void)
 {
-    new_motion_word("north", N); new_motion_word("n", N);
-    new_motion_word("south", S); new_motion_word("s", S);
-    new_motion_word("east", E); new_motion_word("e", E);
-    new_motion_word("west", W); new_motion_word("w", W);
-    new_motion_word("ne", NE);
-    new_motion_word("se", SE);
-    new_motion_word("nw", NW);
-    new_motion_word("sw", SW);
-    new_motion_word("upwar", U); new_motion_word("up", U);
-    new_motion_word("u", U); new_motion_word("above", U);
-    new_motion_word("downw", D); new_motion_word("down", D);
-    new_motion_word("d", D); new_motion_word("desce", D);
-    new_motion_word("left", L);
-    new_motion_word("right", R);
-    new_motion_word("inwar", IN); new_motion_word("insid", IN);
-    new_motion_word("in", IN);
-    new_motion_word("out", OUT); new_motion_word("outsi", OUT);
-    new_motion_word("exit", OUT); new_motion_word("leave", OUT);
+    new_motion_word("road", ROAD); new_motion_word("hill", ROAD);
+    new_motion_word("enter", ENTER);
+    new_motion_word("upstr", UPSTREAM);
+    new_motion_word("downs", DOWNSTREAM);
+    new_motion_word("fores", FOREST);
     new_motion_word("forwa", FORWARD); new_motion_word("conti", FORWARD);
     new_motion_word("onwar", FORWARD);
     new_motion_word("back", BACK); new_motion_word("retur", BACK);
     new_motion_word("retre", BACK);
-    new_motion_word("over", OVER);
-    new_motion_word("acros", ACROSS);
-    new_motion_word("upstr", UPSTREAM);
-    new_motion_word("downs", DOWNSTREAM);
-    new_motion_word("enter", ENTER);
-    new_motion_word("crawl", CRAWL);
-    new_motion_word("jump", JUMP);
-    new_motion_word("climb", CLIMB);
-    new_motion_word("look", LOOK); new_motion_word("exami", LOOK);
-    new_motion_word("touch", LOOK); new_motion_word("descr", LOOK);
-    new_motion_word("cross", CROSS);
-    new_motion_word("road", ROAD); new_motion_word("hill", ROAD);
-    new_motion_word("fores", FOREST);
     new_motion_word("valle", VALLEY);
+    new_motion_word("stair", STAIRS);
+    new_motion_word("out", OUT); new_motion_word("outsi", OUT);
+    new_motion_word("exit", OUT); new_motion_word("leave", OUT);
     new_motion_word("build", HOUSE); new_motion_word("house", HOUSE);
     new_motion_word("gully", GULLY);
     new_motion_word("strea", STREAM);
-    new_motion_word("depre", DEPRESSION);
-    new_motion_word("entra", ENTRANCE);
-    new_motion_word("cave", CAVE);
     new_motion_word("rock", ROCK);
-    new_motion_word("slab", SLAB); new_motion_word("slabr", SLAB);
     new_motion_word("bed", BED);
+    new_motion_word("crawl", CRAWL);
+    new_motion_word("cobbl", COBBLES);
+    new_motion_word("inwar", IN); new_motion_word("insid", IN);
+    new_motion_word("in", IN);
+    new_motion_word("surfa", SURFACE);
+    new_motion_word("null", NOWHERE); new_motion_word("nowhe", NOWHERE);
+    new_motion_word("dark", DARK);
     new_motion_word("passa", PASSAGE); new_motion_word("tunne", PASSAGE);
-    new_motion_word("caver", CAVERN);
+    new_motion_word("low", LOW);
     new_motion_word("canyo", CANYON);
     new_motion_word("awkwa", AWKWARD);
-    new_motion_word("secre", SECRET);
-    new_motion_word("bedqu", BEDQUILT);
-    new_motion_word("reser", RESERVOIR);
     new_motion_word("giant", GIANT);
-    new_motion_word("orien", ORIENTAL);
-    new_motion_word("shell", SHELL);
-    new_motion_word("barre", BARREN);
-    new_motion_word("broke", BROKEN);
-    new_motion_word("debri", DEBRIS);
     new_motion_word("view", VIEW);
-    new_motion_word("fork", FORK);
+    new_motion_word("upwar", U); new_motion_word("up", U);
+    new_motion_word("u", U); new_motion_word("above", U);
+    new_motion_word("ascen", U);
+    new_motion_word("d", D); new_motion_word("downw", D);
+    new_motion_word("down", D); new_motion_word("desce", D);
     new_motion_word("pit", PIT);
-    new_motion_word("slit", SLIT);
+    new_motion_word("outdo", OUTDOORS);
     new_motion_word("crack", CRACK);
+    new_motion_word("steps", STEPS);
     new_motion_word("dome", DOME);
+    new_motion_word("left", LEFT);
+    new_motion_word("right", RIGHT);
+    new_motion_word("hall", HALL);
+    new_motion_word("jump", JUMP);
+    new_motion_word("barre", BARREN);
+    new_motion_word("over", OVER);
+    new_motion_word("acros", ACROSS);
+    new_motion_word("east", E); new_motion_word("e", E);
+    new_motion_word("west", W); new_motion_word("w", W);
+    new_motion_word("north", N); new_motion_word("n", N);
+    new_motion_word("south", S); new_motion_word("s", S);
+    new_motion_word("ne", NE);
+    new_motion_word("se", SE);
+    new_motion_word("sw", SW);
+    new_motion_word("nw", NW);
+    new_motion_word("debri", DEBRIS);
     new_motion_word("hole", HOLE);
     new_motion_word("wall", WALL);
-    new_motion_word("hall", HALL);
-    new_motion_word("room", ROOM);
-    new_motion_word("floor", FLOOR);
-    new_motion_word("stair", STAIRS);
-    new_motion_word("steps", STEPS);
-    new_motion_word("cobbl", COBBLES);
-    new_motion_word("surfa", SURFACE);
-    new_motion_word("dark", DARK);
-    new_motion_word("low", LOW);
-    new_motion_word("outdo", OUTDOORS);
+    new_motion_word("broke", BROKEN);
     new_motion_word("y2", Y2);
+    new_motion_word("climb", CLIMB);
+    new_motion_word("look", LOOK); new_motion_word("exami", LOOK);
+    new_motion_word("touch", LOOK); new_motion_word("descr", LOOK);
+    new_motion_word("floor", FLOOR);
+    new_motion_word("room", ROOM);
+    new_motion_word("slit", SLIT);
+    new_motion_word("slab", SLAB); new_motion_word("slabr", SLAB);
     new_motion_word("xyzzy", XYZZY);
+    new_motion_word("depre", DEPRESSION);
+    new_motion_word("entra", ENTRANCE);
     new_motion_word("plugh", PLUGH);
+    new_motion_word("secre", SECRET);
+    new_motion_word("cave", CAVE);
+    new_motion_word("cross", CROSS);
+    new_motion_word("bedqu", BEDQUILT);
     new_motion_word("plove", PLOVER);
+    new_motion_word("orien", ORIENTAL);
+    new_motion_word("caver", CAVERN);
+    new_motion_word("shell", SHELL);
+    new_motion_word("reser", RESERVOIR);
     new_motion_word("main", OFFICE); new_motion_word("offic", OFFICE);
-    new_motion_word("null", NOWHERE); new_motion_word("nowhe", NOWHERE);
+    new_motion_word("fork", FORK);
 
     new_object_word("key", KEYS); new_object_word("keys", KEYS);
     new_object_word("lamp", LAMP); new_object_word("lante", LAMP);
@@ -247,10 +246,10 @@ void build_vocabulary(void)
     new_object_word("cage", CAGE);
     new_object_word("rod", ROD);
     new_object_word("bird", BIRD);
-    new_object_word("door", DOOR);
+    new_object_word("door", RUSTY_DOOR);
     new_object_word("pillo", PILLOW);
     new_object_word("snake", SNAKE);
-    new_object_word("fissu", CRYSTAL);
+    new_object_word("fissu", FISSURE);
     new_object_word("table", TABLET);
     new_object_word("clam", CLAM);
     new_object_word("oyste", OYSTER);
@@ -270,12 +269,12 @@ void build_vocabulary(void)
     new_object_word("drawi", DRAWINGS);
     new_object_word("pirat", PIRATE);
     new_object_word("drago", DRAGON);
-    new_object_word("chasm", BRIDGE);
+    new_object_word("chasm", CHASM);
     new_object_word("troll", TROLL);
     new_object_word("bear", BEAR);
     new_object_word("messa", MESSAGE);
     new_object_word("volca", GORGE); new_object_word("geyse", GORGE);
-    new_object_word("vendi", PONY); new_object_word("machi", PONY);
+    new_object_word("vendi", MACHINE); new_object_word("machi", MACHINE);
     new_object_word("batte", BATTERIES);
     new_object_word("moss", MOSS); new_object_word("carpe", MOSS);
     new_object_word("gold", GOLD); new_object_word("nugge", GOLD);
@@ -611,7 +610,7 @@ void build_travel_table(void)
              "swaying to and fro almost as if alive.  A cold wind blows up the" SOFT_NL
              "staircase.  There is a passage at the top of a dome behind you.",
              "You're in Hall of Mists.", 0);
-    make_ins(L, R_NUGGET); ditto(S);
+    make_ins(LEFT, R_NUGGET); ditto(S);
     make_ins(FORWARD, R_EFISS); ditto(HALL); ditto(W);
     make_ins(STAIRS, R_HMK); ditto(D); ditto(N);
     make_cond_ins(U, only_if_toting(GOLD), remark(15)); ditto(PIT); ditto(STEPS); ditto(DOME); ditto(PASSAGE); ditto(E);
@@ -627,16 +626,16 @@ void build_travel_table(void)
              "The mist is quite thick here, and the fissure is too wide to jump.",
              "You're on east bank of fissure.", 0);
     make_ins(HALL, R_EMIST); ditto(E);
-    make_cond_ins(JUMP, unless_prop(CRYSTAL, 0), remark(2));
-    make_cond_ins(FORWARD, unless_prop(CRYSTAL, 1), R_LOSE);
-    make_cond_ins(OVER, unless_prop(CRYSTAL, 1), remark(3)); ditto(ACROSS); ditto(W); ditto(CROSS);
+    make_cond_ins(JUMP, unless_prop(FISSURE, 0), remark(2));
+    make_cond_ins(FORWARD, unless_prop(FISSURE, 1), R_LOSE);
+    make_cond_ins(OVER, unless_prop(FISSURE, 1), remark(3)); ditto(ACROSS); ditto(W); ditto(CROSS);
     make_ins(OVER, R_WFISS);
     make_loc(q, R_WFISS,
              "You are on the west side of the fissure in the Hall of Mists.",
              NULL, 0);
-    make_cond_ins(JUMP, unless_prop(CRYSTAL, 0), remark(2));
-    make_cond_ins(FORWARD, unless_prop(CRYSTAL, 1), R_LOSE);
-    make_cond_ins(OVER, unless_prop(CRYSTAL, 1), remark(3)); ditto(ACROSS); ditto(E); ditto(CROSS);
+    make_cond_ins(JUMP, unless_prop(FISSURE, 0), remark(2));
+    make_cond_ins(FORWARD, unless_prop(FISSURE, 1), R_LOSE);
+    make_cond_ins(OVER, unless_prop(FISSURE, 1), remark(3)); ditto(ACROSS); ditto(E); ditto(CROSS);
     make_ins(OVER, R_EFISS);
     make_ins(W, R_WMIST);
     make_ins(N, R_THRU);
@@ -786,8 +785,8 @@ void build_travel_table(void)
         "directions.",
         "You're in Hall of Mt King.", F_SNAKE_HINT);
     make_ins(STAIRS, R_EMIST); ditto(U); ditto(E);
-    make_cond_ins(N, unless_prop(SNAKE, 0), R_NS); ditto(L);
-    make_cond_ins(S, unless_prop(SNAKE, 0), R_SOUTH); ditto(R);
+    make_cond_ins(N, unless_prop(SNAKE, 0), R_NS); ditto(LEFT);
+    make_cond_ins(S, unless_prop(SNAKE, 0), R_SOUTH); ditto(RIGHT);
     make_cond_ins(W, unless_prop(SNAKE, 0), R_WEST); ditto(FORWARD);
     make_ins(N, remark(16));
     make_cond_ins(SW, 35, R_SECRET);
@@ -875,7 +874,7 @@ void build_travel_table(void)
     make_ins(E, R_ANTE);
     make_loc(q, R_SHELL,
              "You're in a large room carved out of sedimentary rock.  The floor" SOFT_NL
-             "and walls are littered with bits of shells embedded in the stone." SOFT_NL
+             "and walls are littered with bits of shells imbedded in the stone." SOFT_NL
              "A shallow passage proceeds downward, and a somewhat steeper one" SOFT_NL
              "leads up.  A low hands and knees passage enters from the south.",
              "You're in Shell Room.", 0);
@@ -1004,7 +1003,7 @@ void build_travel_table(void)
              "You are at one end of an immense north/south passage.",
              NULL, 0);
     make_ins(S, R_GIANT); ditto(GIANT); ditto(PASSAGE);
-    make_cond_ins(N, unless_prop(DOOR, 0), R_FALLS); ditto(ENTER); ditto(CAVERN);
+    make_cond_ins(N, unless_prop(RUSTY_DOOR, 0), R_FALLS); ditto(ENTER); ditto(CAVERN);
     make_ins(N, remark(9));
     make_loc(q, R_FALLS,
              "You are in a magnificent cavern with a rushing stream, which cascades" SOFT_NL
@@ -1032,6 +1031,9 @@ void build_travel_table(void)
              "north, south, and SE.  The north one is as tall as the other two" SOFT_NL
              "combined.",
              "You're at junction of three secret canyons.", 0);
+    /* In Crowther's original, this was pretty much the edge of the cave. Going UP here
+     * would take you on a one-way trip back to the dusty rock room. Woods replaced
+     * that connection with a northerly passage to R_WINDOW. */
     make_ins(SE, R_BEDQUILT);
     make_ins(S, R_ABOVEP);
     make_ins(N, R_WINDOW);
@@ -1205,9 +1207,9 @@ void build_travel_table(void)
              "You're on SW side of chasm.", 0);
     make_ins(SW, R_SLOPING);
     make_cond_ins(OVER, only_if_here(TROLL), remark(11)); ditto(ACROSS); ditto(CROSS); ditto(NE);
-    make_cond_ins(OVER, unless_prop(BRIDGE, 0), remark(12));
+    make_cond_ins(OVER, unless_prop(CHASM, 0), remark(12));
     make_ins(OVER, R_TROLL);
-    make_cond_ins(JUMP, unless_prop(BRIDGE, 0), R_LOSE);
+    make_cond_ins(JUMP, unless_prop(CHASM, 0), R_LOSE);
     make_ins(JUMP, remark(2));
     make_loc(q, R_DEAD0, dead_end, NULL, 0);
     make_ins(S, R_CROSS); ditto(OUT);
@@ -1258,8 +1260,8 @@ void build_travel_table(void)
              "down a gentle slope.  The main corridor enters from the west.",
              "You're at fork in path.", 0);
     make_ins(W, R_CORR);
-    make_ins(NE, R_WARM); ditto(L);
-    make_ins(SE, R_LIME); ditto(R); ditto(D);
+    make_ins(NE, R_WARM); ditto(LEFT);
+    make_ins(SE, R_LIME); ditto(RIGHT); ditto(D);
     make_ins(VIEW, R_VIEW);
     make_ins(BARREN, R_FBARR);
     make_loc(q, R_WARM,
@@ -1297,8 +1299,8 @@ void build_travel_table(void)
     make_loc(q, R_CHAMBER,
              "You are in a small chamber filled with large boulders.  The walls are" SOFT_NL
              "very warm, causing the air in the room to be almost stifling from the" SOFT_NL
-             "heat.  The only exit is a crawl heading west, through which a low" SOFT_NL
-             "rumbling noise is coming.",
+             "heat.  The only exit is a crawl heading west, through which is coming" SOFT_NL
+             "a low rumbling.",
              "You're in chamber of boulders.", 0);
     make_ins(W, R_WARM); ditto(OUT); ditto(CRAWL);
     make_ins(FORK, R_FORK);
@@ -1335,7 +1337,7 @@ void build_travel_table(void)
              "of them empty), a nursery of young beanstalks murmuring quietly, a bed" SOFT_NL
              "of oysters, a bundle of black rods with rusty stars on their ends, and" SOFT_NL
              "a collection of brass lanterns.  Off to one side a great many dwarves" SOFT_NL
-             "are sleeping on the floor, snoring loudly.  A sign nearby reads:  \"DO" SOFT_NL
+             "are sleeping on the floor, snoring loudly.  A sign nearby reads: \"DO" SOFT_NL
              "NOT DISTURB THE DWARVES!\"  An immense mirror is hanging against one" SOFT_NL
              "wall, and stretches to the other end of the room, where various other" SOFT_NL
              "sundry objects can be glimpsed dimly in the distance.",
@@ -1438,6 +1440,24 @@ int lost_treasures;  /* treasures that you won't find */
 #define toting(t) (objs(t).place < 0)
 #define there(t, loc) (objs(t).place == (loc))
 
+/* Return true if t is a treasure. Notice that RUG_ (the other half
+ * of the schizoid rug) does not need to be a treasure. You can
+ * never be carrying it; the pirate can't steal it; and its prop
+ * value is irrelevant (we use the prop value of the base object RUG).
+ */
+bool is_treasure(ObjectWord t)
+{
+    switch (t) {
+        case GOLD: case DIAMONDS: case SILVER: case JEWELS:
+        case COINS: case CHEST: case EGGS: case TRIDENT:
+        case VASE: case EMERALD: case PYRAMID: case PEARL:
+        case RUG: case SPICES: case CHAIN:
+            return true;
+        default:
+            return false;
+    }
+}
+
 ObjectWord bottle_contents(void)
 {
     switch (objs(BOTTLE).prop) {
@@ -1506,176 +1526,183 @@ void immobilize(ObjectWord t) { objs(t).base = &objs(t); }
 void new_obj(ObjectWord t, const char *n, ObjectWord b, Location l)
 {
     objs(t).name = n;
+    objs(t).prop = (is_treasure(t) ? -1 : 0);
     objs(t).base = (b != 0 ? &objs(b) : NULL);
-    objs(t).prop = (IS_TREASURE(t) ? -1 : 0);
-    drop(t, l);
+    objs(t).place = l;
+    objs(t).link = NULL;
+    if (l > R_LIMBO) {
+       /* Drop the object at the *end* of its list. Combined with the
+         * ordering of the item numbers, this ensures that the CHASM
+         * is described before the TROLL, the DRAGON before the RUG,
+         * and so on. */
+        struct ObjectData **p = &places[l].objects;
+        while (*p != NULL)
+            p = &(*p)->link;
+        *p = &objs(t);
+    }
 }
 
 void build_object_table(void)
 {
-    new_obj(RUG_, 0, RUG, R_SCAN3);
-    new_obj(RUG, "Persian rug", RUG, R_SCAN1);
-    objs(RUG).desc[0] = "There is a Persian rug spread out on the floor!";
-    objs(RUG).desc[1] = "The dragon is sprawled out on a Persian rug!!";
-    new_obj(NO_TROLL_, 0, NO_TROLL, R_LIMBO);
-    new_obj(NO_TROLL, 0, NO_TROLL, R_LIMBO);
-    objs(NO_TROLL).desc[0] = "The troll is nowhere to be seen.";
-    new_obj(TROLL_, 0, TROLL, R_NESIDE);
-    new_obj(TROLL, 0, TROLL, R_SWSIDE);
-    objs(TROLL).desc[0] =
-        "A burly troll stands by the bridge and insists you throw him a" SOFT_NL
-        "treasure before you may cross.";
-    objs(TROLL).desc[1] = "The troll steps out from beneath the bridge and blocks your way.";
-    objs(TROLL).desc[2] = NULL;
-    new_obj(BRIDGE_, 0, BRIDGE, R_NESIDE);
-    new_obj(BRIDGE, 0, BRIDGE, R_SWSIDE);
-    objs(BRIDGE).desc[0] =
-        "A rickety wooden bridge extends across the chasm, vanishing into the" SOFT_NL
-        "mist. A sign posted on the bridge reads, \"STOP! PAY TROLL!\"";
-    objs(BRIDGE).desc[1] =
-        "The wreckage of a bridge (and a dead bear) can be seen at the bottom" SOFT_NL
-        "of the chasm.";
-    new_obj(DRAGON_, 0, DRAGON, R_SCAN3);
-    new_obj(DRAGON, 0, DRAGON, R_SCAN1);
-    objs(DRAGON).desc[0] = "A huge green fierce dragon bars the way!";
-    objs(DRAGON).desc[1] = NULL;
-    objs(DRAGON).desc[2] = "The body of a huge green dead dragon is lying off to one side.";
-    new_obj(SHADOW_, 0, SHADOW, R_WINDOW);
-    new_obj(SHADOW, 0, SHADOW, R_WINDOE);
-    objs(SHADOW).desc[0] = "The shadowy figure seems to be trying to attract your attention.";
-    new_obj(PLANT2_, 0, PLANT2, R_E2PIT);
-    new_obj(PLANT2, 0, PLANT2, R_W2PIT);
-    objs(PLANT2).desc[0] = NULL;
-    objs(PLANT2).desc[1] = "The top of a 12-foot-tall beanstalk is poking out of the west pit.";
-    objs(PLANT2).desc[2] = "There is a huge beanstalk growing out of the west pit up to the hole.";
-    new_obj(CRYSTAL_, 0, CRYSTAL, R_WFISS);
-    new_obj(CRYSTAL, 0, CRYSTAL, R_EFISS);
-    objs(CRYSTAL).desc[0] = NULL;
-    objs(CRYSTAL).desc[1] ="A crystal bridge now spans the fissure.";
-    new_obj(TREADS_, 0, TREADS, R_EMIST);
-    new_obj(TREADS, 0, TREADS, R_SPIT);
-    objs(TREADS).desc[0] = "Rough stone steps lead down the pit.";
-    objs(TREADS).desc[1] = "Rough stone steps lead up the dome.";
-    new_obj(GRATE_, 0, GRATE, R_INSIDE);
+    new_obj(KEYS, "Set of keys", 0, R_HOUSE);
+    objs(KEYS).desc[0] = "There are some keys on the ground here.";
+    new_obj(LAMP, "Brass lantern", 0, R_HOUSE);
+    objs(LAMP).desc[0] = "There is a shiny brass lamp nearby.";
+    objs(LAMP).desc[1] = "There is a lamp shining nearby.";
     new_obj(GRATE, 0, GRATE, R_OUTSIDE);
+    new_obj(GRATE_, 0, GRATE, R_INSIDE);
     objs(GRATE).desc[0] = "The grate is locked.";
     objs(GRATE).desc[1] = "The grate is open.";
+    new_obj(CAGE, "Wicker cage", 0, R_COBBLES);
+    objs(CAGE).desc[0] = "There is a small wicker cage discarded nearby.";
+    new_obj(ROD, "Black rod", 0, R_DEBRIS);
+    objs(ROD).desc[0] = "A three-foot black rod with a rusty star on an end lies nearby.";
+    new_obj(ROD2, "Black rod", 0, R_LIMBO);
+    objs(ROD2).desc[0] = "A three-foot black rod with a rusty mark on an end lies nearby.";
+    new_obj(TREADS, 0, TREADS, R_SPIT);
+    new_obj(TREADS_, 0, TREADS, R_EMIST);
+    objs(TREADS).desc[0] = "Rough stone steps lead down the pit.";
+    objs(TREADS).desc[1] = "Rough stone steps lead up the dome.";
+    new_obj(BIRD, "Little bird in cage", 0, R_BIRD);
+    objs(BIRD).desc[0] = "A cheerful little bird is sitting here singing.";
+    objs(BIRD).desc[1] = "There is a little bird in the cage.";
+    new_obj(RUSTY_DOOR, 0, RUSTY_DOOR, R_IMMENSE);
+    objs(RUSTY_DOOR).desc[0] = "The way north is barred by a massive, rusty, iron door.";
+    objs(RUSTY_DOOR).desc[1] = "The way north leads through a massive, rusty, iron door.";
+    new_obj(PILLOW, "Velvet pillow", 0, R_SOFT);
+    objs(PILLOW).desc[0] = "A small velvet pillow lies on the floor.";
+    new_obj(SNAKE, 0, SNAKE, R_HMK);
+    objs(SNAKE).desc[0] = "A huge green fierce snake bars the way!";
+    objs(SNAKE).desc[1] = NULL;  /* chased away */
+    new_obj(FISSURE, 0, FISSURE, R_EFISS);
+    new_obj(FISSURE_, 0, FISSURE, R_WFISS);
+    objs(FISSURE).desc[0] = NULL;
+    objs(FISSURE).desc[1] ="A crystal bridge now spans the fissure.";
+    new_obj(TABLET, 0, TABLET, R_DARK);
+    objs(TABLET).desc[0] =
+        "A massive stone tablet imbedded in the wall reads:" SOFT_NL
+        "\"CONGRATULATIONS ON BRINGING LIGHT INTO THE DARK-ROOM!\"";
+    new_obj(CLAM, "Giant clam >GRUNT!<", 0, R_SHELL);
+    objs(CLAM).desc[0] = "There is an enormous clam here with its shell tightly closed.";
+    new_obj(OYSTER, "Giant oyster >GROAN!<", 0, R_LIMBO);
+    objs(OYSTER).desc[0] = "There is an enormous oyster here with its shell tightly closed.";
+    new_obj(MAG, "\"Spelunker Today\"", 0, R_ANTE);
+    objs(MAG).desc[0] = "There are a few recent issues of \"Spelunker Today\" magazine here.";
+    new_obj(DWARF, 0, DWARF, R_LIMBO);
+    new_obj(KNIFE, 0, 0, R_LIMBO);
+    new_obj(FOOD, "Tasty food", 0, R_HOUSE);
+    objs(FOOD).desc[0] = "There is food here.";
+    new_obj(BOTTLE, "Small bottle", 0, R_HOUSE);
+    objs(BOTTLE).desc[0] = "There is a bottle of water here.";
+    objs(BOTTLE).desc[1] = "There is an empty bottle here.";
+    objs(BOTTLE).desc[2] = "There is a bottle of oil here.";
+    /* WATER and OIL never appear on the ground; they are invariably
+     * either in R_LIMBO or R_INHAND. */
+    new_obj(WATER, "Water in the bottle", 0, R_LIMBO);
+    new_obj(OIL, "Oil in the bottle", 0, R_LIMBO);
+    new_obj(MIRROR, 0, MIRROR, R_MIRROR);
     new_obj(MIRROR_, 0, MIRROR, R_LIMBO);  /* joins up with MIRROR later */
-    new_obj(CHAIN, "Golden chain", CHAIN, R_BARR);
-    objs(CHAIN).desc[0] = "There is a golden chain lying in a heap on the floor!";
-    objs(CHAIN).desc[1] = "The bear is locked to the wall with a golden chain!";
-    objs(CHAIN).desc[2] = "There is a golden chain locked to the wall!";
-    new_obj(SPICES, "Rare spices", 0, R_CHAMBER);
-    objs(SPICES).desc[0] = "There are rare spices here!";
-    new_obj(PEARL, "Glistening pearl", 0, R_LIMBO);
-    objs(PEARL).desc[0] = "Off to one side lies a glistening pearl!";
-    new_obj(PYRAMID, "Platinum pyramid", 0, R_DARK);
-    objs(PYRAMID).desc[0] = "There is a platinum pyramid here, 8 inches on a side!";
-    new_obj(EMERALD, "Egg-sized emerald", 0, R_PLOVER);
-    objs(EMERALD).desc[0] = "There is an emerald here the size of a plover's egg!";
-    new_obj(VASE, "Ming vase", 0, R_ORIENTAL);
-    objs(VASE).desc[0] = "There is a delicate, precious, Ming vase here!";
-    objs(VASE).desc[1] = "The floor is littered with worthless shards of pottery.";
-    new_obj(TRIDENT, "Jeweled trident", 0, R_FALLS);
-    objs(TRIDENT).desc[0] = "There is a jewel-encrusted trident here!";
-    new_obj(EGGS, "Golden eggs", 0, R_GIANT);
-    objs(EGGS).desc[0] = "There is a large nest here, full of golden eggs!";
-    new_obj(CHEST, "Treasure chest", 0, R_LIMBO);
-    objs(CHEST).desc[0] = "The pirate's treasure chest is here!";
-    new_obj(COINS, "Rare coins", 0, R_WEST);
-    objs(COINS).desc[0] = "There are many coins here!";
-    new_obj(JEWELS, "Precious jewelry", 0, R_SOUTH);
-    objs(JEWELS).desc[0] = "There is precious jewelry here!";
-    new_obj(SILVER, "Bars of silver", 0, R_NS);
-    objs(SILVER).desc[0] = "There are bars of silver here!";
-    new_obj(DIAMONDS, "Several diamonds", 0, R_WFISS);
-    objs(DIAMONDS).desc[0] = "There are diamonds here!";
-    new_obj(GOLD, "Large gold nugget", 0, R_NUGGET);
-    objs(GOLD).desc[0] = "There is a large sparkling nugget of gold here!";
-    new_obj(MOSS, 0, MOSS, R_SOFT);
-    objs(MOSS).desc[0] = NULL;
-    new_obj(BATTERIES, "Batteries", 0, R_LIMBO);
-    objs(BATTERIES).desc[0] = "There are fresh batteries here.";
-    objs(BATTERIES).desc[1] = "Some worn-out batteries have been discarded nearby.";
-    new_obj(PONY, 0, PONY, R_PONY);
-    objs(PONY).desc[0] =
-        "There is a massive vending machine here. The instructions on it read:" SOFT_NL
-        "\"Drop coins here to receive fresh batteries.\"";
-    new_obj(GORGE, 0, GORGE, R_VIEW);
-    objs(GORGE).desc[0] = NULL;
-    new_obj(MESSAGE, 0, MESSAGE, R_LIMBO);
-    objs(MESSAGE).desc[0] =
-        "There is a message scrawled in the dust in a flowery script, reading:" SOFT_NL
-        "\"This is not the maze where the pirate hides his treasure chest.\"";
-    new_obj(BEAR, 0, BEAR, R_BARR);
-    objs(BEAR).desc[0] = "There is a ferocious cave bear eying you from the far end of the room!";
-    objs(BEAR).desc[1] = "There is a gentle cave bear sitting placidly in one corner.";
-    objs(BEAR).desc[2] = "There is a contented-looking bear wandering about nearby.";
-    objs(BEAR).desc[3] = NULL;  /* the dead bear remains as scenery where it fell */
-    new_obj(PIRATE, 0, PIRATE, R_LIMBO);
-    /* The pirate is a dummy object; never appears on the ground. */
-    new_obj(DRAWINGS, 0, DRAWINGS, R_ORIENTAL);
-    objs(DRAWINGS).desc[0] = NULL;
-    new_obj(AXE, "Dwarf's axe", 0, R_LIMBO);
-    objs(AXE).desc[0] = "There is a little axe here.";
-    objs(AXE).desc[1] = "There is a little axe lying beside the bear.";
-    new_obj(STALACTITE, 0, STALACTITE, R_TITE);
-    objs(STALACTITE).desc[0] = NULL;
+    objs(MIRROR).desc[0] = NULL;
     new_obj(PLANT, 0, PLANT, R_WPIT);
     objs(PLANT).desc[0] = "There is a tiny little plant in the pit, murmuring \"Water, water, ...\"";
     objs(PLANT).desc[1] =
         "There is a 12-foot-tall beanstalk stretching up out of the pit," SOFT_NL
         "bellowing \"Water!! Water!!\"";
     objs(PLANT).desc[2] = "There is a gigantic beanstalk stretching all the way up to the hole.";
-    new_obj(MIRROR, 0, MIRROR, R_MIRROR);
-    objs(MIRROR).desc[0] = NULL;
-    new_obj(OIL, "Oil in the bottle", 0, R_LIMBO);
-    new_obj(WATER, "Water in the bottle", 0, R_LIMBO);
-    /* These two items never appear on the ground; they are either in R_LIMBO or R_INHAND. */
-    new_obj(BOTTLE, "Small bottle", 0, R_HOUSE);
-    objs(BOTTLE).desc[0] = "There is a bottle of water here.";
-    objs(BOTTLE).desc[1] = "There is an empty bottle here.";
-    objs(BOTTLE).desc[2] = "There is a bottle of oil here.";
-    new_obj(FOOD, "Tasty food", 0, R_HOUSE);
-    objs(FOOD).desc[0] = "There is food here.";
-    new_obj(KNIFE, 0, 0, R_LIMBO);
-    new_obj(DWARF, 0, DWARF, R_LIMBO);
-    new_obj(MAG, "\"Spelunker Today\"", 0, R_ANTE);
-    objs(MAG).desc[0] = "There are a few recent issues of \"Spelunker Today\" magazine here.";
-    new_obj(OYSTER, "Giant oyster >GROAN!<", 0, R_LIMBO);
-    objs(OYSTER).desc[0] = "There is an enormous oyster here with its shell tightly closed.";
-    objs(OYSTER).desc[1] = NULL;
-    new_obj(CLAM, "Giant clam >GRUNT!<", 0, R_SHELL);
-    objs(CLAM).desc[0] = "There is an enormous clam here with its shell tightly closed.";
-    new_obj(TABLET, 0, TABLET, R_DARK);
-    /* Woods has "imbedded", but Knuth fixes it. */
-    objs(TABLET).desc[0] =
-        "A massive stone tablet imbedded in the wall reads:" SOFT_NL
-        "\"CONGRATULATIONS ON BRINGING LIGHT INTO THE DARK-ROOM!\"";
-    new_obj(SNAKE, 0, SNAKE, R_HMK);
-    objs(SNAKE).desc[0] = "A huge green fierce snake bars the way!";
-    objs(SNAKE).desc[1] = NULL;  /* dead snake */
-    new_obj(PILLOW, "Velvet pillow", 0, R_SOFT);
-    objs(PILLOW).desc[0] = "A small velvet pillow lies on the floor.";
-    new_obj(DOOR, 0, DOOR, R_IMMENSE);
-    objs(DOOR).desc[0] = "The way north is barred by a massive, rusty, iron door.";
-    objs(DOOR).desc[1] = "The way north leads through a massive, rusty, iron door.";
-    new_obj(BIRD, "Little bird in cage", 0, R_BIRD);
-    objs(BIRD).desc[0] = "A cheerful little bird is sitting here singing.";
-    objs(BIRD).desc[1] = "There is a little bird in the cage.";
-    new_obj(ROD2, "Black rod", 0, R_LIMBO);
-    objs(ROD2).desc[0] = "A three-foot black rod with a rusty mark on an end lies nearby.";
-    new_obj(ROD, "Black rod", 0, R_DEBRIS);
-    objs(ROD).desc[0] = "A three-foot black rod with a rusty star on an end lies nearby.";
-    new_obj(CAGE, "Wicker cage", 0, R_COBBLES);
-    objs(CAGE).desc[0] = "There is a small wicker cage discarded nearby.";
-    new_obj(LAMP, "Brass lantern", 0, R_HOUSE);
-    objs(LAMP).desc[0] = "There is a shiny brass lamp nearby.";
-    objs(LAMP).desc[1] = "There is a lamp shining nearby.";
-    new_obj(KEYS, "Set of keys", 0, R_HOUSE);
-    objs(KEYS).desc[0] = "There are some keys on the ground here.";
+    new_obj(PLANT2, 0, PLANT2, R_W2PIT);
+    new_obj(PLANT2_, 0, PLANT2, R_E2PIT);
+    objs(PLANT2).desc[0] = NULL;
+    objs(PLANT2).desc[1] = "The top of a 12-foot-tall beanstalk is poking out of the west pit.";
+    objs(PLANT2).desc[2] = "There is a huge beanstalk growing out of the west pit up to the hole.";
+    new_obj(STALACTITE, 0, STALACTITE, R_TITE);
+    objs(STALACTITE).desc[0] = NULL;
+    new_obj(SHADOW, 0, SHADOW, R_WINDOE);
+    new_obj(SHADOW_, 0, SHADOW, R_WINDOW);
+    objs(SHADOW).desc[0] = "The shadowy figure seems to be trying to attract your attention.";
+    new_obj(AXE, "Dwarf's axe", 0, R_LIMBO);
+    objs(AXE).desc[0] = "There is a little axe here.";
+    objs(AXE).desc[1] = "There is a little axe lying beside the bear.";
+    new_obj(DRAWINGS, 0, DRAWINGS, R_ORIENTAL);
+    objs(DRAWINGS).desc[0] = NULL;
+    new_obj(PIRATE, 0, PIRATE, R_LIMBO);
+    new_obj(DRAGON, 0, DRAGON, R_SCAN1);
+    new_obj(DRAGON_, 0, DRAGON, R_SCAN3);
+    objs(DRAGON).desc[0] = "A huge green fierce dragon bars the way!";
+    objs(DRAGON).desc[1] = "The body of a huge green dead dragon is lying off to one side.";
+    new_obj(CHASM, 0, CHASM, R_SWSIDE);
+    new_obj(CHASM_, 0, CHASM, R_NESIDE);
+    objs(CHASM).desc[0] =
+        "A rickety wooden bridge extends across the chasm, vanishing into the" SOFT_NL
+        "mist. A sign posted on the bridge reads, \"STOP! PAY TROLL!\"";
+    objs(CHASM).desc[1] =
+        "The wreckage of a bridge (and a dead bear) can be seen at the bottom" SOFT_NL
+        "of the chasm.";
+    new_obj(TROLL, 0, TROLL, R_SWSIDE);
+    new_obj(TROLL_, 0, TROLL, R_NESIDE);
+    objs(TROLL).desc[0] =
+        "A burly troll stands by the bridge and insists you throw him a" SOFT_NL
+        "treasure before you may cross.";
+    objs(TROLL).desc[1] = NULL;  /* not present, but not paid off either */
+    objs(TROLL).desc[2] = NULL;  /* chased away */
+    new_obj(NO_TROLL, 0, NO_TROLL, R_LIMBO);
+    new_obj(NO_TROLL_, 0, NO_TROLL, R_LIMBO);
+    objs(NO_TROLL).desc[0] = "The troll is nowhere to be seen.";
+    new_obj(BEAR, 0, BEAR, R_BARR);
+    objs(BEAR).desc[0] = "There is a ferocious cave bear eying you from the far end of the room!";
+    objs(BEAR).desc[1] = "There is a gentle cave bear sitting placidly in one corner.";
+    objs(BEAR).desc[2] = "There is a contented-looking bear wandering about nearby.";
+    objs(BEAR).desc[3] = NULL;  /* the dead bear remains as scenery where it fell */
+    new_obj(MESSAGE, 0, MESSAGE, R_LIMBO);
+    objs(MESSAGE).desc[0] =
+        "There is a message scrawled in the dust in a flowery script, reading:" SOFT_NL
+        "\"This is not the maze where the pirate hides his treasure chest.\"";
+    new_obj(GORGE, 0, GORGE, R_VIEW);
+    objs(GORGE).desc[0] = NULL;  /* it's just scenery */
+    new_obj(MACHINE, 0, MACHINE, R_PONY);
+    objs(MACHINE).desc[0] =
+        "There is a massive vending machine here. The instructions on it read:" SOFT_NL
+        "\"Drop coins here to receive fresh batteries.\"";
+    new_obj(BATTERIES, "Batteries", 0, R_LIMBO);
+    objs(BATTERIES).desc[0] = "There are fresh batteries here.";
+    objs(BATTERIES).desc[1] = "Some worn-out batteries have been discarded nearby.";
+    new_obj(MOSS, 0, MOSS, R_SOFT);
+    objs(MOSS).desc[0] = NULL;  /* it's just scenery */
+    new_obj(GOLD, "Large gold nugget", 0, R_NUGGET);
+    objs(GOLD).desc[0] = "There is a large sparkling nugget of gold here!";
+    new_obj(DIAMONDS, "Several diamonds", 0, R_WFISS);
+    objs(DIAMONDS).desc[0] = "There are diamonds here!";
+    new_obj(SILVER, "Bars of silver", 0, R_NS);
+    objs(SILVER).desc[0] = "There are bars of silver here!";
+    new_obj(JEWELS, "Precious jewelry", 0, R_SOUTH);
+    objs(JEWELS).desc[0] = "There is precious jewelry here!";
+    new_obj(COINS, "Rare coins", 0, R_WEST);
+    objs(COINS).desc[0] = "There are many coins here!";
+    new_obj(CHEST, "Treasure chest", 0, R_LIMBO);
+    objs(CHEST).desc[0] = "The pirate's treasure chest is here!";
+    new_obj(EGGS, "Golden eggs", 0, R_GIANT);
+    objs(EGGS).desc[0] = "There is a large nest here, full of golden eggs!";
+    new_obj(TRIDENT, "Jeweled trident", 0, R_FALLS);
+    objs(TRIDENT).desc[0] = "There is a jewel-encrusted trident here!";
+    new_obj(VASE, "Ming vase", 0, R_ORIENTAL);
+    objs(VASE).desc[0] = "There is a delicate, precious, Ming vase here!";
+    objs(VASE).desc[1] = "The floor is littered with worthless shards of pottery.";
+    new_obj(EMERALD, "Egg-sized emerald", 0, R_PLOVER);
+    objs(EMERALD).desc[0] = "There is an emerald here the size of a plover's egg!";
+    new_obj(PYRAMID, "Platinum pyramid", 0, R_DARK);
+    objs(PYRAMID).desc[0] = "There is a platinum pyramid here, 8 inches on a side!";
+    new_obj(PEARL, "Glistening pearl", 0, R_LIMBO);
+    objs(PEARL).desc[0] = "Off to one side lies a glistening pearl!";
+    new_obj(RUG_, 0, RUG, R_SCAN3);
+    new_obj(RUG, "Persian rug", RUG, R_SCAN1);
+    objs(RUG).desc[0] = "There is a Persian rug spread out on the floor!";
+    objs(RUG).desc[1] = "The dragon is sprawled out on a Persian rug!!";
+    new_obj(SPICES, "Rare spices", 0, R_CHAMBER);
+    objs(SPICES).desc[0] = "There are rare spices here!";
+    new_obj(CHAIN, "Golden chain", CHAIN, R_BARR);
+    objs(CHAIN).desc[0] = "There is a golden chain lying in a heap on the floor!";
+    objs(CHAIN).desc[1] = "The bear is locked to the wall with a golden chain!";
+    objs(CHAIN).desc[2] = "There is a golden chain locked to the wall!";
 }
-
 
 
 /*========== Input routines. ==============================================
@@ -1778,7 +1805,8 @@ void steal_all_your_treasure(Location loc)  /* sections 173--174 in Knuth */
          "he chortles. \"I'll just take all this booty and hide it away with me" SOFT_NL
          "chest deep in the maze!\"  He snatches your treasure and vanishes into" SOFT_NL
          "the gloom.");
-    for (int t = MIN_TREASURE; t <= MAX_OBJ; ++t) {
+    for (int t = MIN_OBJ; t <= MAX_OBJ; ++t) {
+        if (!is_treasure(t)) continue;
         if (too_easy_to_steal(t, loc)) continue;
         if (here(t, loc) && objs(t).base == NULL) {
             /* The vase, rug, and chain can all be immobile at times. */
@@ -1793,7 +1821,8 @@ void pirate_tracks_you(Location loc)
     bool stalking = false;
     /* The pirate leaves you alone once you've found the chest. */
     if (loc == R_PIRATES_NEST || objs(CHEST).prop >= 0) return;
-    for (int i = MIN_TREASURE; i <= MAX_OBJ; ++i) {
+    for (int i = MIN_OBJ; i <= MAX_OBJ; ++i) {
+        if (!is_treasure(i)) continue;
         if (too_easy_to_steal(i, loc)) continue;
         if (toting(i)) {
             steal_all_your_treasure(loc);
@@ -1947,7 +1976,7 @@ bool move_dwarves_and_pirate(Location loc)
 
 int lamp_limit;  /* countdown till darkness */
 int clock1 = 15, clock2 = 30;  /* clocks that govern closing time */
-bool panic, closed;  /* various stages of closedness */
+bool closed;  /* set only when you're in the repository */
 int bonus;  /* extra points awarded for exceptional adventuring skills */
 
 bool cave_is_closing(void)
@@ -1998,14 +2027,14 @@ bool check_clocks_and_lamp(Location loc)
              "closing soon.  All adventurers exit immediately through main office.\"");
         clock1 = -1;
         objs(GRATE).prop = 0;
-        objs(CRYSTAL).prop = 0;
+        objs(FISSURE).prop = 0;
         for (int j=0; j <= 5; ++j) {
             dseen[j] = false;
             dloc[j] = R_LIMBO;
         }
         destroy(TROLL); destroy(TROLL_);
         move(NO_TROLL, R_SWSIDE); move(NO_TROLL_, R_NESIDE);
-        juggle(BRIDGE); juggle(BRIDGE_);
+        juggle(CHASM); juggle(CHASM_);
         if (objs(BEAR).prop != 3) destroy(BEAR);
         objs(CHAIN).prop = 0; mobilize(CHAIN);
         objs(AXE).prop = 0; mobilize(AXE);
@@ -2057,6 +2086,7 @@ void panic_at_closing_time(void)
     /* If you try to get out while the cave is closing, we assume that
      * you panic; we give you a few additional turns to get frantic
      * before we close. */
+    static bool panic = false;
     if (!panic) {
         clock2 = 15;
         panic = true;
@@ -2164,16 +2194,16 @@ struct {
     { 0, false, 0, 5, "Welcome to Adventure!!  Would you like instructions?",
     "Somewhere nearby is Colossal Cave, where others have found fortunes in" SOFT_NL
     "treasure and gold, though it is rumored that some who enter are never" SOFT_NL
-    "seen again. Magic is said to work in the cave. I will be your eyes" SOFT_NL
-    "and hands. Direct me with commands of one or two words. I should" SOFT_NL
-    "warn you that I look at only the first five letters of each word, so" SOFT_NL
-    "you'll have to enter \"NORTHEAST\" as \"NE\" to distinguish it from" SOFT_NL
-    "\"NORTH\". Should you get stuck, type \"HELP\" for some general hints." SOFT_NL
-    "For information on how to end your adventure, etc., type \"INFO\".\n"
-    "                        -  -  -\n"
-    "The first adventure program was developed by Willie Crowther.\n"
+    "seen again.  Magic is said to work in the cave.  I will be your eyes" SOFT_NL
+    "and hands.  Direct me with commands of 1 or 2 words.  I should warn" SOFT_NL
+    "you that I look at only the first five letters of each word, so you'll" SOFT_NL
+    "have to enter \"NORTHEAST\" as \"NE\" to distinguish it from \"NORTH\"." SOFT_NL
+    "(Should you get stuck, type \"HELP\" for some general hints.  For infor" SOFT_HYPHEN
+    "mation on how to end your adventure, etc., type \"INFO\".)\n"
+    "                             -  -  -\n"
+    "The first Adventure program was developed by Willie Crowther.\n"
     "Most of the features of the current program were added by Don Woods.\n"
-    "This particular program was translated from FORTRAN to CWEB by Don Knuth," SOFT_NL
+    "This particular program was translated from Fortran to CWEB by Don Knuth," SOFT_NL
     "and then from CWEB to ANSI C by Arthur O'Dwyer." },
     { 0, false, 0, 10,
     "Hmmm, this looks like a clue, which means it'll cost you 10 points to" SOFT_NL
@@ -2196,7 +2226,7 @@ struct {
     { 0, false, 25, 5, "Are you trying to explore beyond the Plover Room?",
     "There is a way to explore that region without having to worry about" SOFT_NL
     "falling into a pit.  None of the objects available is immediately" SOFT_NL
-    "useful for discovering the secret." },
+    "useful in discovering the secret." },
     { 0, false, 20, 3, "Do you need help getting out of here?",
     "Don't go west." }
 };
@@ -2289,7 +2319,8 @@ int score(void)
 {
     int s = 2;
     if (dflag != 0) s += 25;
-    for (int i = MIN_TREASURE; i <= MAX_OBJ; ++i) {
+    for (int i = MIN_OBJ; i <= MAX_OBJ; ++i) {
+        if (!is_treasure(i)) continue;
         if (objs(i).prop >= 0) {
             s += 2;  /* two points just for seeing a treasure */
             if (there(i, R_HOUSE) && objs(i).prop == 0) {
@@ -2332,7 +2363,7 @@ static const char *class_message[] = {
     "Your score puts you in Master Adventurer Class C.",
     "Your score puts you in Master Adventurer Class B.",
     "Your score puts you in Master Adventurer Class A.",
-    "All of Adventuredom gives tribute to you, Adventure Grandmaster!"
+    "All of Adventuredom gives tribute to you, Adventurer Grandmaster!"
 };
 
 void give_up(void)
@@ -2446,7 +2477,7 @@ void attempt_inventory(void)  /* section 94 in Knuth */
 {
     bool holding_anything = false;
     for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
-        if (toting(t) && (objs(t).base == NULL || objs(t).base == &objs(t)) && t != BEAR) {
+        if (toting(t) && t != BEAR) {
             if (!holding_anything) {
                 holding_anything = true;
                 puts("You are currently holding the following:");
@@ -2555,7 +2586,7 @@ void attempt_drop(ObjectWord obj, Location loc)
 
     if (!toting(obj)) {
         puts("You aren't carrying it!");
-    } else if (obj == COINS && here(PONY, loc)) {
+    } else if (obj == COINS && here(MACHINE, loc)) {
         /* Put coins in the vending machine. */
         destroy(COINS);
         drop(BATTERIES, loc);
@@ -2579,7 +2610,7 @@ void attempt_drop(ObjectWord obj, Location loc)
         destroy(TROLL); destroy(TROLL_);
         drop(NO_TROLL, R_SWSIDE); drop(NO_TROLL_, R_NESIDE);
         objs(TROLL).prop = 2;
-        juggle(BRIDGE); juggle(BRIDGE_);  /* put first in their lists */
+        juggle(CHASM); juggle(CHASM_);  /* put first in their lists */
         drop(BEAR, loc);
     } else if (obj == BIRD && here(SNAKE, loc)) {
         puts("The little bird attacks the green snake, and in an astounding flurry" SOFT_NL
@@ -2589,7 +2620,7 @@ void attempt_drop(ObjectWord obj, Location loc)
         objs(BIRD).prop = 0;  /* no longer in the cage */
         destroy(SNAKE);
         objs(SNAKE).prop = 1;  /* used in conditional Instructions */
-    } else if (obj == BIRD && is_at_loc(DRAGON, loc) && objs(DRAGON).prop == 0) {
+    } else if (obj == BIRD && is_at_loc(DRAGON, loc) && !objs(DRAGON).prop) {
         puts("The little bird attacks the green dragon, and in an astounding flurry" SOFT_NL
              "gets burnt to a cinder.  The ashes blow away.");
         destroy(BIRD);
@@ -2618,12 +2649,12 @@ void attempt_wave(ObjectWord obj, Location loc)  /* section 99 in Knuth */
 {
     if (obj == ROD && (loc == R_EFISS || loc == R_WFISS) &&
             toting(ROD) && !cave_is_closing()) {
-        if (objs(CRYSTAL).prop) {
+        if (objs(FISSURE).prop) {
             puts("The crystal bridge has vanished!");
-            objs(CRYSTAL).prop = 0;
+            objs(FISSURE).prop = 0;
         } else {
             puts("A crystal bridge now spans the fissure.");
-            objs(CRYSTAL).prop = 1;
+            objs(FISSURE).prop = 1;
         }
     } else if (toting(obj) || (obj == ROD && toting(ROD2))) {
         puts("Nothing happens.");
@@ -2944,8 +2975,8 @@ void attempt_open_or_close(ActionWord verb, ObjectWord obj, Location loc)  /* se
         case CAGE:
             puts("It has no lock.");
             break;
-        case DOOR:
-            if (objs(DOOR).prop) {
+        case RUSTY_DOOR:
+            if (objs(RUSTY_DOOR).prop) {
                 puts(ok);
             } else {
                 /* Notice that CLOSE DOOR also gives this response. */
@@ -3115,7 +3146,7 @@ void report_inapplicable_motion(MotionWord mot, ActionWord verb)
                 puts("I don't know in from out here.    Use compass points or name something" SOFT_NL
                      "in the general direction you want to go.");
                 break;
-            case FORWARD: case L: case R:
+            case FORWARD: case LEFT: case RIGHT:
                 puts("I am unsure how you are facing.    Use compass points or nearby objects.");
                 break;
             default:
@@ -3233,7 +3264,7 @@ void collapse_the_troll_bridge(void)
          "weight of the bear, who was still following you around.  You" SOFT_NL
          "scrabble desperately for support, but as the bridge collapses you" SOFT_NL
          "stumble back and fall into the chasm.");
-    objs(BRIDGE).prop = 1;
+    objs(CHASM).prop = 1;
     objs(TROLL).prop = 2;
     objs(BEAR).prop = 3;  /* the bear is dead */
     drop(BEAR, R_SWSIDE);
@@ -3282,7 +3313,7 @@ bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot, Actio
             objs(TROLL).prop = 0;
             destroy(NO_TROLL); destroy(NO_TROLL_);
             drop(TROLL, R_SWSIDE); drop(TROLL_, R_NESIDE);
-            juggle(BRIDGE); juggle(BRIDGE_);
+            juggle(CHASM); juggle(CHASM_);
             puts("The troll steps out from beneath the bridge and blocks your way.");
             *newloc = loc;  /* stay put */
         } else {
@@ -3472,7 +3503,7 @@ void simulate_an_adventure(void)
                 /* Sometimes "water" and "oil" are used as verbs. */
                 if (streq(word2, "plant") && there(PLANT, loc))
                     strcpy(word2, "pour");
-                if (streq(word2, "door") && there(DOOR, loc))
+                if (streq(word2, "door") && there(RUSTY_DOOR, loc))
                     strcpy(word2, "pour");
             }
 
@@ -3555,8 +3586,8 @@ void simulate_an_adventure(void)
                 case OPEN: case CLOSE:
                     if (is_at_loc(GRATE, loc)) {
                         obj = GRATE;
-                    } else if (there(DOOR, loc)) {
-                        obj = DOOR;
+                    } else if (there(RUSTY_DOOR, loc)) {
+                        obj = RUSTY_DOOR;
                     } else if (here(CLAM, loc)) {
                         obj = CLAM;
                     } else if (here(OYSTER, loc)) {
@@ -3750,15 +3781,15 @@ void simulate_an_adventure(void)
                                 mot = NOWHERE;
                                 goto try_move;
                             }
-                        } else if (there(DOOR, loc)) {
+                        } else if (there(RUSTY_DOOR, loc)) {
                             /* Pour water or oil on the door. */
                             switch (obj) {
                                 case WATER:
-                                    objs(DOOR).prop = 0;
+                                    objs(RUSTY_DOOR).prop = 0;
                                     puts("The hinges are quite thoroughly rusted now and won't budge.");
                                     break;
                                 case OIL:
-                                    objs(DOOR).prop = 1;
+                                    objs(RUSTY_DOOR).prop = 1;
                                     puts("The oil has freed up the hinges so that the door will now open.");
                                     break;
                             }
@@ -3791,12 +3822,12 @@ void simulate_an_adventure(void)
                         puts("You aren't carrying it!");
                         continue;
                     }
-                    if (IS_TREASURE(obj) && is_at_loc(TROLL, loc)) {
+                    if (is_treasure(obj) && is_at_loc(TROLL, loc)) {
                         /* Snarf a treasure for the troll. */
                         drop(obj, R_LIMBO);
                         destroy(TROLL); destroy(TROLL_);
                         drop(NO_TROLL, R_SWSIDE); drop(NO_TROLL_, R_NESIDE);
-                        juggle(BRIDGE); juggle(BRIDGE_);
+                        juggle(CHASM); juggle(CHASM_);
                         puts("The troll catches your treasure and scurries away out of sight.");
                         continue;
                     }
@@ -3879,12 +3910,10 @@ void simulate_an_adventure(void)
                                 if (streq(word1, "yes") || streq(word1, "y")) {
                                     puts("Congratulations!  You have just vanquished a dragon with your bare" SOFT_NL
                                          "hands! (Unbelievable, isn't it?)");
-                                    objs(DRAGON).prop = 2;  /* dead */
+                                    objs(DRAGON).prop = 1;  /* dead */
                                     objs(RUG).prop = 0;
                                     mobilize(RUG);
-                                    immobilize(DRAGON_);
                                     destroy(DRAGON_);
-                                    immobilize(RUG_);
                                     destroy(RUG_);
                                     for (int t = MIN_OBJ; t <= MAX_OBJ; ++t) {
                                         if (there(t, R_SCAN1) || there(t, R_SCAN3))
@@ -3973,13 +4002,16 @@ void simulate_an_adventure(void)
         assert(R_LIMBO <= oldloc && oldloc <= MAX_LOC);
         assert(R_LIMBO < loc && loc <= MAX_LOC);
         newloc = loc;  /* by default we will stay put */
-        if (mot == BACK) {
-            Location l = (is_forced(oldloc) ? oldoldloc : oldloc);
-            mot = try_going_back_to(l, loc); /* may return NOWHERE */
-        }
-
-        if (mot == NOWHERE) {
-            continue;
+        
+        if (mot == CAVE) {
+            /* No CAVE appears in the travel table; its sole purpose is to
+             * give these messages. */
+            if (loc < MIN_IN_CAVE) {
+                puts("I can't see where the cave is, but hereabouts no stream can run on" SOFT_NL
+                     "the surface for long. I would try the stream.");
+            } else {
+                puts("I need more detailed instructions to do that.");
+            }
         } else if (mot == LOOK) {
             /* Repeat the long description and continue. */
             if (++look_count <= 3) {
@@ -3988,26 +4020,23 @@ void simulate_an_adventure(void)
             }
             was_dark = false;  /* pretend it wasn't dark, so you won't fall into a pit */
             places[loc].visits = 0;
-            continue;
-        } else if (mot == CAVE) {
-            if (loc < MIN_IN_CAVE) {
-                puts("I can't see where the cave is, but hereabouts no stream can run on" SOFT_NL
-                     "the surface for long. I would try the stream.");
-            } else {
-                puts("I need more detailed instructions to do that.");
+        } else {
+            if (mot == BACK) {
+                Location l = (is_forced(oldloc) ? oldoldloc : oldloc);
+                mot = try_going_back_to(l, loc); /* may return NOWHERE */
             }
-            continue;
+    
+            if (mot != NOWHERE) {
+                /* Determine the next newloc. */
+                oldoldloc = oldloc;
+                oldloc = loc;
+                if (determine_next_newloc(loc, &newloc, mot, verb)) {
+                    /* Player died trying to cross the troll bridge. */
+                    oldoldloc = newloc;  /* if you are revived, you got across */
+                    goto death;
+                }
+            }
         }
-
-        /* Determine the next newloc. */
-        oldoldloc = oldloc;
-        oldloc = loc;
-        if (determine_next_newloc(loc, &newloc, mot, verb)) {
-            /* Player died trying to cross the troll bridge. */
-            oldoldloc = newloc;  /* if you are revived, you got across */
-            goto death;
-        }
-        continue;
     }
   pitch_dark:
     puts("You fell into a pit and broke every bone in your body!");

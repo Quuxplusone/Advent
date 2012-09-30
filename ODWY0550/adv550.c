@@ -314,7 +314,7 @@ void build_vocabulary(void)
     new_noun("statue", STATUE); new_noun("minotaur", STATUE);
     new_noun("quicksand", QUICKSAND);
     new_noun("slime", SLIME);
-    new_noun("vending", PONY); new_noun("machine", PONY);
+    new_noun("vending", MACHINE); new_noun("machine", MACHINE);
     new_noun("safe", SAFE);
     new_noun("throne", THRONE);
     new_noun("skeleton", SKELETON);
@@ -532,8 +532,8 @@ void build_object_table(void)
     objs[STATUE].desc[1] = "Dark tunnels lead northeast, north, and northwest.";
     objs[SLIME].desc[0] = "The passage to the south is swathed with sheets of evil-looking" SOFT_NL
                           "green slime, which twitches and flows as if aware of your presence.";
-    objs[PONY].desc[0] = "There is a massive vending machine here. The instructions on it read:" SOFT_NL
-                         "\"Drop coins here to receive fresh batteries.\"";
+    objs[MACHINE].desc[0] = "There is a massive vending machine here. The instructions on it read:" SOFT_NL
+                            "\"Drop coins here to receive fresh batteries.\"";
     objs[SAFE].desc[0] = "A massive walk-in safe takes up one entire wall.  It is tightly" SOFT_NL
          "closed, and has no handle, lock, nor keyhole.";
     objs[SAFE].desc[1] = "A massive walk-in safe takes up one entire wall.  Its door has been" SOFT_NL
@@ -1302,7 +1302,6 @@ static const char *class_message[] = {
     "Your score puts you in Master Adventurer class C.",
     "Your score puts you in Master Adventurer class B.",
     "Your score puts you in Master Adventurer class A.",
-    /* Woods has "Adventure Grandmaster". Personally, I like Platt's version better. */
     "All of Adventuredom gives tribute to you, Adventurer Grandmaster!"
 };
 
