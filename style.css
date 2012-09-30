@@ -163,14 +163,14 @@ side of the page.
 	float: left;
 	clear: left;
 	text-align: right; 
-	margin-top: 2.8em;
+	margin-top: 1.5em;
 }
 
 .links li
 {
 	list-style-type: none;
 	list-style-position: default;
-	padding: .4 em;
+	padding: .4em;
 }
 
 /* 
@@ -428,7 +428,7 @@ Styles for play.html
 Styles for mobile browsers: change to a one-column layout.
 */
 
-@media screen and (max-device-width: 480px)
+@media screen and (max-width: 50em)
 {
 	.coverimage, .introduction, .links, .about, .playinfo, .source, .sourceintroduction, .sourcecoverimage, .notes
 	{
