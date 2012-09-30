@@ -2331,6 +2331,8 @@ struct ObjectData objs_[MAX_OBJ+1 - MIN_OBJ];
 Location last_knife_loc = R_LIMBO;
 int tally = 15;  /* treasures awaiting you */
 int lost_treasures;  /* treasures that you won't find */
+bool troll_has_sapphire = false;
+bool river_has_sapphire = false;
 
 ObjectWord liquid_contents(ObjectWord t)
 {
@@ -2602,9 +2604,10 @@ void build_object_table(void)
     objs(CHAIN).desc[2] = "There is a golden chain locked to the wall!";
     new_obj(SWORD, "Gleaming sword", 0, R_SWORD);
     objs(SWORD).desc[0] = "There is a gleaming sword here!";
-    objs(SWORD).desc[1] = "Rusty shards of a elven sword lie scattered about.";
-    objs(SWORD).desc[2] = "A very clean sword is stuck into the anvil!";
-    objs(SWORD).desc[3] = "An oily sword is stuck into the anvil.";
+    objs(SWORD).desc[1] = "A gleaming sword is stuck into the anvil!";
+    objs(SWORD).desc[2] = "Rusty shards of a elven sword lie scattered about.";
+    objs(SWORD).desc[3] = "A very clean sword is stuck into the anvil!";
+    objs(SWORD).desc[4] = "An oily sword is stuck into the anvil.";
     new_obj(CROWN, "Elfin crown", 0, R_THRONE);
     objs(CROWN).desc[0] = "An ancient crown of elfin kings lies here!";
     new_obj(SHOES, "Ruby slippers", 0, R_OVER);
@@ -3616,9 +3619,12 @@ void attempt_break(Location loc, ObjectWord obj)
         if (!holding(SWORD)) {
             puts("You aren't carrying it!");
         } else {
+            /* Long incorrectly sets PROP(SWORD)=4 instead of =3, making
+             * it impossible to interact with a broken sword except at
+             * Sword Point (post-YANK). */
             puts("You have smashed your sword to smithereens against a rock.");
             move(SWORD, loc);
-            objs(SWORD).prop = 4;  /* broken */
+            objs(SWORD).prop = 2;  /* broken */
             immobilize(SWORD);
         }
     } else if (obj == MIRROR) {
@@ -3735,7 +3741,7 @@ void take_something_immobile(ObjectWord obj)
         puts("The bear is still chained to the wall.");
     } else if (obj == PLANT && objs(PLANT).prop <= 0) {
         puts("The plant has exceptionally deep roots and cannot be pulled free.");
-    } else if (obj == SWORD && objs(SWORD).prop == 5) {
+    } else if (obj == SWORD && objs(SWORD).prop == 4) {
         puts("The handle is now too slippery to grasp.");
     } else if (obj == CLOAK && objs(CLOAK).prop == 2) {
         puts("The cloak is stuck tight under the rocks.  You'll probably have to" SOFT_NL
@@ -3756,22 +3762,6 @@ void take_something_immobile(ObjectWord obj)
     }
 }
 
-bool fits_inside(ObjectWord obj, ObjectWord iobj)
-{
-    /* Long misses the BEAR case, and in addition checks only if you are
-     * "holding" the bear (rather than "toting") during the bridge crossing.
-     * These two facts allow you to smuggle the bear across the bridge.
-     * This is cute, but it's obviously a bug. (You can also put the bear
-     * in the chest and throw it to the troll; nothing unusual happens.) */
-    if (obj == BEAR) return false;
-    if (iobj == CAGE) return (obj == BIRD);
-    if (iobj == CANISTER) return (obj == RADIUM);
-    if (iobj == SAFE && obj == VASE) return false;
-    if (iobj == SAFE && obj == PILLOW) return false;
-    if (iobj == BOAT || iobj == CHEST) return true;
-    return is_small(obj);
-}
-
 void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj)
 {
     if (obj == SWORD && iobj == ANVIL && objs(SWORD).prop == 0) {
@@ -3788,8 +3778,17 @@ void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj)
         noway();
     } else if (objs(obj).base != NULL) {
         take_something_immobile(obj);
-    } else if ((iobj == BOTTLE || iobj == CASK || iobj == VASE || iobj == GRAIL) &&
-               (obj == WATER || obj == OIL || obj == WINE)) {
+    } else if (is_liquid(obj)) {
+        /* PUT WATER IN LAMP redirects to FILL LAMP WITH WATER.
+         * Long has a bug here: he also redirects PUT X IN VESSEL
+         * to FILL VESSEL WITH X, for values of VESSEL equal to
+         * BOTTLE, CASK, VASE, or GRAIL. This drops us into the
+         * middle of the FILL codepath with a bad iobj; major
+         * mischief ensues.
+         *   I've fixed that bug here, by not redirecting anything
+         * to FILL unless the obj is a liquid, and also in
+         * fits_inside(), by ensuring that nothing fits inside
+         * those four vessels. */
         attempt_fill(loc, iobj, obj);
     } else if (!is_ajar(iobj)) {
         indent_if_needed();
@@ -3853,7 +3852,7 @@ void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj)
     }
 }
 
-void attempt_remove_from(Location loc, ObjectWord obj, ObjectWord iobj)
+void attempt_remove_from(Location loc, ObjectWord obj, int iobj)
 {
     /* Long doesn't check iobj here, but we might as well. */
     if (obj == RING && iobj == WUMPUS && objs(RING).prop == 2) {
@@ -4034,7 +4033,10 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
             objs(CAGE).flags &= ~F_OPEN;
             goto print_taken_message;
         }
-    } else if (obj == SWORD && objs(SWORD).prop == 0) {
+    } else if (obj == SWORD && (objs(SWORD).prop == 1 || objs(SWORD).prop == 3)) {
+        /* Long doesn't let you yank the "very clean" sword, but it doesn't
+         * make much sense for POUR WATER ON SWORD to make the game unwinnable.
+         * I've taken the liberty of fixing this possible oversight. */
         assert(loc == R_SWORD);
         if (verb != YANK) {
             puts("You grasp the sword's handle and pull, but the sword won't budge.");
@@ -4048,7 +4050,7 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
         } else {
             puts("You grasp the sword's handle and give a mighty heave, but with a" SOFT_NL
                  "loud clang the sword blade shatters into several fragments.");
-            objs(SWORD).prop = 3;  /* shattered */
+            objs(SWORD).prop = 2;  /* broken */
             immobilize(SWORD);
         }
     } else {
@@ -4211,7 +4213,7 @@ int attempt_look(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
             ++detail;
         }
         places[loc].visits = 0;
-        return 'm';  /* move to current location: set newloc and was_dark */
+        return 'l';  /* goto commence */
     } else if (obj != NOTHING) {
         /* LOOK LAMP IN SACK */
         confuz();
@@ -4260,17 +4262,42 @@ int attempt_look(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
                          * taking the liberty of fixing the bug. */
                         puts("You are in a sack.");
                     } else if (sloc == -SAFE) {
+                        /* Ditto for the safe. */
                         if (is_ajar(SAFE)) {
                             puts(places[R_HOUSE].long_desc);
                         } else {
                             puts("You are in a small cubical room with no exits.");
                         }
+                    } else if (sloc == -CHEST) {
+                        /* Ditto for the chest. */
+                        puts("You are in a small wooden room with no exits.");
                     } else if (sloc == R_LIMBO) {
                         /* You can get here in at least two ways:
                          * if you give the sapphire to the troll, or
                          * if you fall into Lost River carrying it.
-                         * TODO: Easter eggs? */
-                        goto dark_place;
+                         * I've decided to add a couple of Easter eggs
+                         * here, just for fun. */
+                        if (troll_has_sapphire) {
+                            puts("You are in a wide niche burrowed into the sheer rock face of a" SOFT_NL
+                                 "canyon and open to the sky.  From here you can see a beautiful" SOFT_NL
+                                 "panoramic view of Lost River Falls.  At the back of the niche," SOFT_NL
+                                 "a narrow chimney leads upward out of sight.  Marks in the dust" SOFT_NL
+                                 "indicate that someone has been here recently.");
+                            if (there(TROLL, R_LIMBO)) {
+                                puts("A burly troll putters about in one corner of the room.");
+                            } else if (objs(TROLL).prop == 2) {
+                                puts("The troll is hunched shivering in the corner of the room," SOFT_NL
+                                     "staring out over the falls with tear-stained empty eyes.");
+                            }
+                        } else if (river_has_sapphire) {
+                            puts("You sense that you are in a dark place, murky greenish shadows" SOFT_NL
+                                 "swirling around you in the gloom. The only thing in sight appears" SOFT_NL
+                                 "to be a companion to the crystal ball which holds your gaze.  It" SOFT_NL
+                                 "seems to be searching the murk for something to show you, but all" SOFT_NL
+                                 "it can see is itself: a dim bluish star half-buried in the silt.");
+                        } else {
+                            goto dark_place;
+                        }
                     } else {
                         assert(false);
                     }
@@ -4435,7 +4462,8 @@ void attempt_unlock(Location loc, ObjectWord obj, ObjectWord iobj)
 
 void attempt_open(Location loc, ObjectWord obj, ObjectWord iobj)
 {
-    if (!is_hinged(obj)) {
+    /* Long forgets about the smashed bottle. I've fixed it. */
+    if (!is_hinged(obj) || (obj == BOTTLE && objs(BOTTLE).prop == 3)) {
         indent_if_needed();
         noway();
     } else if (obj == BOOTH_DOOR && objs(BOOTH_DOOR).prop == 1) {
@@ -4479,6 +4507,171 @@ void attempt_open(Location loc, ObjectWord obj, ObjectWord iobj)
         indent_if_needed(); puts(ok);
         objs(obj).flags |= F_OPEN;
     }
+}
+
+void attempt_close(Location loc, ObjectWord obj, ObjectWord iobj)
+{
+    /* Long forgets about the smashed bottle. I've fixed it. */
+    if (!is_hinged(obj) || (obj == BOTTLE && objs(BOTTLE).prop == 3)) {
+        indent_if_needed();
+        noway();
+    } else if (!is_ajar(obj)) {
+        indent_if_needed();
+        puts("It's already closed.");
+    } else if (has_lock(obj)) {
+        /* CLOSE TINY DOOR WITH POLE, for example */
+        attempt_lock(loc, obj);
+    } else {
+        /* Long comments "The following can be closed without keys:"
+         * and lists RUSTY_DOOR, BOOTH_DOOR, BOTTLE, CASK, and CAGE.
+         * He forgets SACK, BOOK, and CANISTER, implying perhaps that
+         * these were relatively late additions to the game. */
+        indent_if_needed(); puts(ok);
+        objs(obj).flags &= ~F_OPEN;
+    }
+}
+
+int attempt_pour(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
+{
+    assert(obj != NOTHING);
+
+    const bool original_obj_was_liquid = is_liquid(obj);
+    if (obj == BOTTLE || obj == CASK) {
+        prep = FROM;
+        iobj = obj;
+        obj = liquid_contents(obj);
+        if (obj == NOTHING) {
+            indent_if_needed(); puts("It's empty.");
+            return 0;
+        }
+    } else if (!original_obj_was_liquid) {
+        indent_if_needed(); puts("You can't pour that.");
+        return 0;
+    }
+
+    if (prep == FROM) {
+        /* Long forgets this case, and will prefer to empty the cask even
+         * if the player has explicitly told us to POUR WATER FROM BOTTLE.
+         * That has the advantage of not needing to handle the case of
+         * POUR WATER FROM VASE; I have to handle it specially here. */
+        if (iobj == VASE || iobj == GRAIL) {
+            indent_if_needed();
+            puts("It's empty.");
+            return 0;
+        }
+        assert(iobj == BOTTLE || iobj == CASK);
+    } else {
+        assert(prep == NOTHING || prep == ONTO);
+        /* Here we deliberately forget about the player's original iobj.
+         * If you POUR WATER ON CLOVER while at R_WPIT, the game will
+         * act as if you typed POUR WATER; i.e., the plant will grow. */
+        prep = FROM;
+        if (holding(BOTTLE) && liquid_contents(BOTTLE) == obj) {
+            iobj = BOTTLE;
+        } else if (holding(CASK) && liquid_contents(CASK) == obj) {
+            iobj = CASK;
+        } else {
+            indent_if_needed();
+            puts("You aren't carrying it!");
+            return 0;
+        }
+    }
+    
+    assert(is_liquid(obj));
+    assert(prep == FROM);
+    assert(iobj == BOTTLE || iobj == CASK);
+    
+    if (!is_ajar(iobj)) {
+        /* More annoying than Witt's End...
+         * Long gives "You can't get at it" even when the player's original
+         * command was POUR BOTTLE or WATER PLANT. I'm taking the liberty
+         * of fixing this bug. */
+        indent_if_needed();
+        if (original_obj_was_liquid) {
+            puts("You can't get at it.");
+        } else {
+            printf("The %s is closed.\n", iobj==BOTTLE ? "bottle" : "cask");
+        }
+        return 0;
+    }
+    
+    if (iobj == CASK) {
+        /* WATER_IN_CASK is WATER+1, and so on. */
+        assert(objs(obj+1).place == -CASK);
+        move(obj+1, R_LIMBO);
+    } else {
+        assert(objs(obj).place == -BOTTLE);
+        move(obj, R_LIMBO);
+    }
+    objs(iobj).prop = 1;  /* empty */
+
+    if (there(RUSTY_DOOR, loc)) {
+        indent_if_needed();
+        if (obj == OIL) {
+            objs(RUSTY_DOOR).prop = 1;
+            objs(RUSTY_DOOR).flags &= ~F_LOCKED;
+            objs(RUSTY_DOOR).flags |= F_OPEN;
+            puts("The oil has freed up the hinges so that the door will now move," SOFT_NL
+                 "although it requires some effort.");
+        } else {
+            objs(RUSTY_DOOR).prop = 0;
+            /* Long doesn't close the door here, so it will look "open" even
+             * though the player's movement is blocked by the travel table. */
+            puts("The hinges are quite thoroughly rusted now and won't budge.");
+        }
+    } else if (there(SWORD, loc) && objs(SWORD).prop != 0) {
+        /* The sword has the following prop values, from 0 to 4:
+         * "normal", "stuck in anvil", "broken", "clean in anvil",
+         * "oily in anvil". */
+        if (objs(SWORD).prop == 4) {
+            /* Once oiled, the sword cannot be cleaned by any means.
+             * Long has "now"; I changed it to "still" for clarity. */
+            puts("The sword is still covered with oil.");
+        } else if (objs(SWORD).prop == 2) {
+            /* Long forgets this case. OIL SWORD or WATER SWORD will
+             * resurrect it from the shards, but not re-mobilize it,
+             * so you won't be able to yank it out anymore. I've
+             * fixed this bug with a new message. */
+            printf("The shards are now %s.\n",
+                   (obj == OIL) ? "covered with oil" : "very clean");
+        } else {
+            if (obj == OIL) {
+                puts("The sword is now covered with oil.");
+                objs(SWORD).prop = 4;
+            } else {
+                puts("The sword is now very clean.");
+                objs(SWORD).prop = 3;
+            }
+        }
+    } else if (there(PLANT, loc)) {
+        if (obj != WATER) {
+            indent_if_needed();
+            /* Long has "shakes dry its leaves", but we might as well be specific. */
+            printf("The plant indignantly shakes the %s off its leaves and asks, \"Water?\"\n",
+                   (obj == WINE) ? "wine" : "oil");
+        } else {
+            if (objs(PLANT).prop == 0) {
+                puts("The plant spurts into furious growth for a few seconds.");
+                objs(PLANT).prop = 1;
+            } else if (objs(PLANT).prop == 1) {
+                puts("The plant grows explosively, almost filling the bottom of the pit.");
+                objs(PLANT).prop = 2;
+            } else if (objs(PLANT).prop == 2) {
+                puts("You've over-watered the plant! It's shriveling up! It's, it's...");
+                objs(PLANT).prop = 0;
+            }
+            objs(PLANT2).prop = objs(PLANT).prop;
+            return 'l';  /* look around */
+        }
+    } else if (iobj == BOTTLE) {
+        indent_if_needed();
+        puts("Your bottle is empty and the ground is wet.");
+    } else {
+        assert(iobj == CASK);
+        indent_if_needed();
+        puts("Your cask is empty and the ground is soaked.");
+    }
+    return 0;
 }
 
 void throw_axe_at_dwarf(Location loc)  /* section 163 in Knuth */
@@ -4836,6 +5029,7 @@ Location attempt_clay_bridge(Location from)
 	 * it forever; but the same is not true of the axe. */
 	if (holding(LAMP)) move(LAMP, R_ELOST);
 	if (toting(AXE)) move(AXE, R_SLOST);
+        if (toting(SAPPHIRE)) river_has_sapphire = true;
 	for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
 	    if (toting(t)) move(t, R_LIMBO);
 	}
@@ -5147,22 +5341,33 @@ void simulate_an_adventure(void)
                 case KILL:
                 case BLAST:
                     goto transitive;
-                case POUR:
+                case POUR: {
+                    const bool could_use_bottle = holding(BOTTLE) && (liquid_contents(BOTTLE) != NOTHING);
+                    const bool could_use_cask = holding(CASK) && (liquid_contents(CASK) != NOTHING);
+                    if (could_use_bottle == could_use_cask)
+                        goto act_on_what;
+                    obj = (could_use_cask ? CASK : BOTTLE);
+                    goto transitive;
+                }
                 case EAT:
                 case DRINK:
                 case INVENTORY:
                     puts("TODO this intransitive verb is unhandled");
                     continue;
-                case FILL:
-                    if (here(CASK, loc) && !here(BOTTLE, loc) && objs(CASK).prop == 1) {
-                        obj = CASK;
-                        goto transitive;
-                    } else if (here(BOTTLE, loc) && !here(CASK, loc) && objs(BOTTLE).prop == 1) {
+                case FILL: {
+                    const bool could_use_bottle = here(BOTTLE, loc) && (objs(BOTTLE).prop == 1);
+                    const bool could_use_cask = here(CASK, loc) && (objs(CASK).prop == 1);
+                    if (could_use_bottle && !here(CASK, loc)) {
+                        assert(!could_use_cask);
                         obj = BOTTLE;
-                        goto transitive;
+                    } else if (could_use_cask && !here(BOTTLE, loc)) {
+                        assert(!could_use_bottle);
+                        obj = CASK;
                     } else {
                         goto act_on_what;
                     }
+                    goto transitive;
+                }
                 case SCORE:
                 case FEEFIE:
                 case BRIEF:
@@ -5264,6 +5469,8 @@ void simulate_an_adventure(void)
                     puts(ok);
                     continue;
                 case CLOSE:
+                    attempt_close(loc, obj, iobj);
+                    continue;
                 case LIGHT:
                 case EXTINGUISH:
                 case WAVE:
@@ -5278,7 +5485,16 @@ void simulate_an_adventure(void)
                     puts("Where?");
                     continue;
                 case KILL:
+                    puts("TODO this transitive verb is unhandled");
+                    continue;
                 case POUR:
+                    switch (attempt_pour(loc, obj, prep, iobj)) {
+                        case 'l':
+                            goto commence; 
+                        case 0:
+                            continue;
+                        default: assert(false);
+                    }
                 case EAT:
                 case DRINK:
                 case RUB:
@@ -5359,10 +5575,9 @@ void simulate_an_adventure(void)
                     continue;
                 case LOOK:
                     switch (attempt_look(loc, obj, prep, iobj)) {
-                        case 'm':
+                        case 'l':
                             was_dark = false; /* so you don't fall into a pit */
-                            mot = NOWHERE;
-                            goto try_move;
+                            goto commence;
                         case 0:
                             continue;
                     }

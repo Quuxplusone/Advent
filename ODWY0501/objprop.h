@@ -10,6 +10,7 @@ bool is_wearable(ObjectWord t);
 bool is_plural(ObjectWord t);
 bool is_treasure(ObjectWord t);
 bool is_vessel(ObjectWord t);
+bool fits_inside(ObjectWord obj, ObjectWord iobj);
 bool is_small(ObjectWord t);
 bool is_opaque(ObjectWord t);
 bool is_liquid(ObjectWord t);

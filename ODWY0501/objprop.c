@@ -125,6 +125,43 @@ bool is_vessel(ObjectWord t)
     }
 }
 
+bool fits_inside(ObjectWord obj, ObjectWord iobj)
+{
+    /* Long misses the BEAR case, and in addition checks only if you are
+     * "holding" the bear (rather than "toting") during the bridge crossing.
+     * These two facts allow you to smuggle the bear across the bridge.
+     * This is cute, but it's obviously a bug. (You can also put the bear
+     * in the chest and throw it to the troll; nothing unusual happens.) */
+    if (obj == BEAR) return false;
+
+    /* Long mishandles PUT X IN BOTTLE for non-liquid X, leading to
+     * major mischief; see my comment in attempt_insert_into().
+     * For example:
+     *   "PUT SACK IN BOTTLE; PUT BOTTLE IN SACK" naturally causes both
+     * objects to pop out of existence. This codepath is otherwise safe.
+     *   "PUT NUGGET IN CASK" causes the FILL logic to fill the cask with
+     * the pseudo-object "NUGGET_IN_CASK", a.k.a. NUGGET+1, a.k.a. DIAMONDS.
+     * However, since that logic expects its object to be in limbo, it
+     * doesn't bother to update ATLOC/LINK. So DIAMONDS ends up in a weird
+     * state where it's in the ATLOC/LINK linked list for its old location
+     * while simultaneously being in the HOLDER/HLINK list for CASK. Meanwhile,
+     * since diamonds aren't oil or wine, PROP(CASK) was set to 1 (water).
+     *   Now GET DIAMONDS. That works, but the cask is still in a bad state;
+     * it's full of water (so we can't fill it again) but WATER_IN_CASK is
+     * actually in limbo. Every codepath that empties the cask (limited to
+     * POUR and DRINK, I think) tries to REMOVE(WATER_IN_CASK) and ends up
+     * hanging the game in an infinite loop. Therefore this exploit isn't
+     * the treasure factory it appears at first. */
+    if (iobj == BOTTLE || iobj == CASK || iobj == VASE || iobj == GRAIL) return false;
+
+    if (iobj == CAGE) return (obj == BIRD);
+    if (iobj == CANISTER) return (obj == RADIUM);
+    if (iobj == SAFE && obj == VASE) return false;
+    if (iobj == SAFE && obj == PILLOW) return false;
+    if (iobj == BOAT || iobj == CHEST) return true;
+    return is_small(obj);
+}
+
 bool is_small(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
