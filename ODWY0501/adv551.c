@@ -777,85 +777,85 @@ void build_travel_table(void)
              "continues west and another goes north. To the south is a little" SOFT_NL
              "passage 6 feet off the floor.",
              "You're at west end of Hall of Mists.", 0);
-    make_ins(S, R_LIKE1); ditto(U); ditto(PASSAGE); ditto(CLIMB);
+    make_ins(S, R_MAZEA42); ditto(U); ditto(PASSAGE); ditto(CLIMB);
     make_ins(E, R_WFISS);
     make_ins(W, R_ELONG); ditto(CRAWL);
     make_ins(N, R_DUCK);
 
-    make_loc(q, R_LIKE1, all_alike, NULL, F_TWIST_HINT);
+    make_loc(q, R_MAZEA42, all_alike, NULL, F_TWIST_HINT);
     make_ins(U, R_WMIST);
-    make_ins(N, R_LIKE1);
-    make_ins(E, R_LIKE2);
-    make_ins(S, R_LIKE4);
-    make_ins(W, R_LIKE11);
-    make_loc(q, R_LIKE2, all_alike, NULL, F_TWIST_HINT);
-    make_ins(W, R_LIKE1);
-    make_ins(S, R_LIKE3);
-    make_ins(E, R_LIKE4);
-    make_loc(q, R_LIKE3, all_alike, NULL, F_TWIST_HINT);
-    make_ins(E, R_LIKE2);
-    make_ins(D, R_DEAD5);
-    make_ins(S, R_LIKE6);
-    make_ins(N, R_DEAD9);
-    make_loc(q, R_LIKE4, all_alike, NULL, F_TWIST_HINT);
-    make_ins(W, R_LIKE1);
-    make_ins(N, R_LIKE2);
-    make_ins(E, R_DEAD3);
-    make_ins(S, R_DEAD4);
-    make_ins(U, R_LIKE14); ditto(D);
-    make_loc(q, R_LIKE5, all_alike, NULL, F_TWIST_HINT);
-    make_ins(E, R_LIKE6);
-    make_ins(W, R_LIKE7);
-    make_loc(q, R_LIKE6, all_alike, NULL, F_TWIST_HINT);
-    make_ins(E, R_LIKE3);
-    make_ins(W, R_LIKE5);
-    make_ins(D, R_LIKE7);
-    make_ins(S, R_LIKE8);
-    make_loc(q, R_LIKE7, all_alike, NULL, F_TWIST_HINT);
-    make_ins(W, R_LIKE5);
-    make_ins(U, R_LIKE6);
-    make_ins(E, R_LIKE8);
-    make_ins(S, R_LIKE9);
-    make_loc(q, R_LIKE8, all_alike, NULL, F_TWIST_HINT);
-    make_ins(W, R_LIKE6);
-    make_ins(E, R_LIKE7);
-    make_ins(S, R_LIKE8);
-    make_ins(U, R_LIKE9);
-    make_ins(N, R_LIKE10);
-    make_ins(D, R_DEAD11);
-    make_loc(q, R_LIKE9, all_alike, NULL, F_TWIST_HINT);
-    make_ins(W, R_LIKE7);
-    make_ins(N, R_LIKE8);
-    make_ins(S, R_DEAD6);
-    make_loc(q, R_LIKE10, all_alike, NULL, F_TWIST_HINT);
-    make_ins(W, R_LIKE8);
-    make_ins(N, R_LIKE10);
-    make_ins(D, R_DEAD7);
+    make_ins(N, R_MAZEA42);
+    make_ins(E, R_MAZEA43);
+    make_ins(S, R_MAZEA45);
+    make_ins(W, R_MAZEA80);
+    make_loc(q, R_MAZEA43, all_alike, NULL, F_TWIST_HINT);
+    make_ins(W, R_MAZEA42);
+    make_ins(S, R_MAZEA44);
+    make_ins(E, R_MAZEA45);
+    make_loc(q, R_MAZEA44, all_alike, NULL, F_TWIST_HINT);
+    make_ins(E, R_MAZEA43);
+    make_ins(D, R_MAZEA48);
+    make_ins(S, R_MAZEA50);
+    make_ins(N, R_MAZEA82);
+    make_loc(q, R_MAZEA45, all_alike, NULL, F_TWIST_HINT);
+    make_ins(W, R_MAZEA42);
+    make_ins(N, R_MAZEA43);
+    make_ins(E, R_MAZEA46);
+    make_ins(S, R_MAZEA47);
+    make_ins(U, R_MAZEA87); ditto(D);
+    make_loc(q, R_MAZEA49, all_alike, NULL, F_TWIST_HINT);
+    make_ins(E, R_MAZEA50);
+    make_ins(W, R_MAZEA51);
+    make_loc(q, R_MAZEA50, all_alike, NULL, F_TWIST_HINT);
+    make_ins(E, R_MAZEA44);
+    make_ins(W, R_MAZEA49);
+    make_ins(D, R_MAZEA51);
+    make_ins(S, R_MAZEA52);
+    make_loc(q, R_MAZEA51, all_alike, NULL, F_TWIST_HINT);
+    make_ins(W, R_MAZEA49);
+    make_ins(U, R_MAZEA50);
+    make_ins(E, R_MAZEA52);
+    make_ins(S, R_MAZEA53);
+    make_loc(q, R_MAZEA52, all_alike, NULL, F_TWIST_HINT);
+    make_ins(W, R_MAZEA50);
+    make_ins(E, R_MAZEA51);
+    make_ins(S, R_MAZEA52);
+    make_ins(U, R_MAZEA53);
+    make_ins(N, R_MAZEA55);
+    make_ins(D, R_MAZEA86);
+    make_loc(q, R_MAZEA53, all_alike, NULL, F_TWIST_HINT);
+    make_ins(W, R_MAZEA51);
+    make_ins(N, R_MAZEA52);
+    make_ins(S, R_MAZEA54);
+    make_loc(q, R_MAZEA55, all_alike, NULL, F_TWIST_HINT);
+    make_ins(W, R_MAZEA52);
+    make_ins(N, R_MAZEA55);
+    make_ins(D, R_MAZEA56);
     make_ins(E, R_BRINK);
-    make_loc(q, R_LIKE11, all_alike, NULL, F_TWIST_HINT);
-    make_ins(N, R_LIKE1);
-    make_ins(W, R_LIKE11); ditto(S);
-    make_ins(E, R_DEAD1);
-    make_loc(q, R_LIKE12, all_alike, NULL, F_TWIST_HINT);
+    make_loc(q, R_MAZEA80, all_alike, NULL, F_TWIST_HINT);
+    make_ins(N, R_MAZEA42);
+    make_ins(W, R_MAZEA80); ditto(S);
+    make_ins(E, R_MAZEA81);
+    make_loc(q, R_MAZEA83, all_alike, NULL, F_TWIST_HINT);
     make_ins(S, R_BRINK);
-    make_ins(E, R_LIKE13);
-    make_ins(W, R_DEAD10);
-    make_loc(q, R_LIKE13 , all_alike, NULL, F_TWIST_HINT);
+    make_ins(E, R_MAZEA84);
+    make_ins(W, R_MAZEA85);
+    make_loc(q, R_MAZEA84 , all_alike, NULL, F_TWIST_HINT);
     make_ins(N, R_BRINK);
-    make_ins(W, R_LIKE12);
+    make_ins(W, R_MAZEA83);
     make_ins(NW, R_PIRATES_NEST);  /* NW: a dirty trick! */
-    make_loc(q, R_LIKE14, all_alike, NULL, F_TWIST_HINT);
-    make_ins(U, R_LIKE4); ditto(D);
+    make_loc(q, R_MAZEA87, all_alike, NULL, F_TWIST_HINT);
+    make_ins(U, R_MAZEA45); ditto(D);
     make_loc(q, R_BRINK,
              "You are on the brink of a thirty-foot pit with a massive orange column" SOFT_NL
              "down one wall.  You could climb down here but you could not get back" SOFT_NL
              "up.  The maze continues at this level.",
              "You're at brink of pit.", 0);
     make_ins(D, R_BIRD); ditto(CLIMB);
-    make_ins(W, R_LIKE10);
-    make_ins(S, R_DEAD8);
-    make_ins(N, R_LIKE12);
-    make_ins(E, R_LIKE13);
+    make_ins(W, R_MAZEA55);
+    make_ins(S, R_MAZEA58);
+    make_ins(N, R_MAZEA83);
+    make_ins(E, R_MAZEA84);
     make_loc(q, R_ELONG,
              "You are at the east end of a very long hall apparently without side" SOFT_NL
              "chambers.  In the south wall are several wide cracks and a high" SOFT_NL
@@ -1173,9 +1173,9 @@ void build_travel_table(void)
              "having done so you would be unable to reach it to climb back up.",
              "You're at top of stalactite.", 0);
     make_ins(N, R_ABOVEP);
-    make_cond_ins(D, 40, R_LIKE6); ditto(JUMP); ditto(CLIMB);
-    make_cond_ins(D, 50, R_LIKE9);
-    make_ins(D, R_LIKE4);
+    make_cond_ins(D, 40, R_MAZEA50); ditto(JUMP); ditto(CLIMB);
+    make_cond_ins(D, 50, R_MAZEA53);
+    make_ins(D, R_MAZEA45);
     make_loc(q, R_LOW,
              "You are in a large low room.  Crawls lead north, NE, and SW.",
              NULL, 0);
@@ -1354,28 +1354,28 @@ void build_travel_table(void)
     make_ins(JUMP, remark(2));
     make_loc(q, R_DEAD0, dead_end, NULL, 0);
     make_ins(S, R_CROSS); ditto(OUT);
-    make_loc(q, R_DEAD1, dead_end, NULL, F_TWIST_HINT);
-    make_ins(W, R_LIKE11); ditto(OUT);
+    make_loc(q, R_MAZEA81, dead_end, NULL, F_TWIST_HINT);
+    make_ins(W, R_MAZEA80); ditto(OUT);
     make_loc(q, R_PIRATES_NEST, dead_end, NULL, 0);
-    make_ins(SE, R_LIKE13);
-    make_loc(q, R_DEAD3, dead_end, NULL, F_TWIST_HINT);
-    make_ins(W, R_LIKE4); ditto(OUT);
-    make_loc(q, R_DEAD4, dead_end, 0, F_TWIST_HINT);
-    make_ins(E, R_LIKE4); ditto(OUT);
-    make_loc(q, R_DEAD5, dead_end, 0, F_TWIST_HINT);
-    make_ins(U, R_LIKE3); ditto(OUT);
-    make_loc(q, R_DEAD6, dead_end, 0, F_TWIST_HINT);
-    make_ins(W, R_LIKE9); ditto(OUT);
-    make_loc(q, R_DEAD7, dead_end, 0, F_TWIST_HINT);
-    make_ins(U, R_LIKE10); ditto(OUT);
-    make_loc(q, R_DEAD8, dead_end, 0, 0);
+    make_ins(SE, R_MAZEA84);
+    make_loc(q, R_MAZEA46, dead_end, NULL, F_TWIST_HINT);
+    make_ins(W, R_MAZEA45); ditto(OUT);
+    make_loc(q, R_MAZEA47, dead_end, 0, F_TWIST_HINT);
+    make_ins(E, R_MAZEA45); ditto(OUT);
+    make_loc(q, R_MAZEA48, dead_end, 0, F_TWIST_HINT);
+    make_ins(U, R_MAZEA44); ditto(OUT);
+    make_loc(q, R_MAZEA54, dead_end, 0, F_TWIST_HINT);
+    make_ins(W, R_MAZEA53); ditto(OUT);
+    make_loc(q, R_MAZEA56, dead_end, 0, F_TWIST_HINT);
+    make_ins(U, R_MAZEA55); ditto(OUT);
+    make_loc(q, R_MAZEA58, dead_end, 0, 0);
     make_ins(E, R_BRINK); ditto(OUT);
-    make_loc(q, R_DEAD9, dead_end, 0, F_TWIST_HINT);
-    make_ins(S, R_LIKE3); ditto(OUT);
-    make_loc(q, R_DEAD10, dead_end, 0, F_TWIST_HINT);
-    make_ins(E, R_LIKE12); ditto(OUT);
-    make_loc(q, R_DEAD11, dead_end, 0, F_TWIST_HINT);
-    make_ins(U, R_LIKE8); ditto(OUT);
+    make_loc(q, R_MAZEA82, dead_end, 0, F_TWIST_HINT);
+    make_ins(S, R_MAZEA44); ditto(OUT);
+    make_loc(q, R_MAZEA85, dead_end, 0, F_TWIST_HINT);
+    make_ins(E, R_MAZEA83); ditto(OUT);
+    make_loc(q, R_MAZEA86, dead_end, 0, F_TWIST_HINT);
+    make_ins(U, R_MAZEA52); ditto(OUT);
     make_loc(q, R_NESIDE,
              "You are on the far side of the chasm.  A NE path leads away from the" SOFT_NL
              "chasm on this side.",
@@ -2798,7 +2798,7 @@ bool yes(const char *q, const char *y, const char *n)
  */
 
 int dflag;  /* how angry are the dwarves? */
-Location dloc[6] = { R_PIRATES_NEST, R_HMK, R_WFISS, R_Y2, R_LIKE3, R_COMPLEX };
+Location dloc[6] = { R_PIRATES_NEST, R_HMK, R_WFISS, R_Y2, R_MAZEA44, R_COMPLEX };
 Location odloc[6];
 bool dseen[6];
 bool being_chased;  /* by a Wumpus */
@@ -2887,7 +2887,19 @@ void pirate_tracks_you(Location loc)
 
 bool forbidden_to_pirate(Location loc)
 {
-    return (loc > R_PIRATES_NEST);
+    switch (loc) {
+        case R_MAZEA46: case R_MAZEA47: case R_MAZEA48:
+        case R_MAZEA54: case R_MAZEA56: case R_MAZEA58:
+        case R_MAZEA82: case R_MAZEA85: case R_MAZEA86:
+        case R_NESIDE: case R_CORR: case R_FORK: case R_WARM:
+        case R_VIEW: case R_CHAMBER: case R_LIME: case R_FBARR:
+        case R_BARR:  /* dwarves won't meet the bear */
+        case R_SWORD: case R_CHIMTOP: /* pirate won't steal the sword */
+        case R_BOOTH: /* not enough shadows */
+            return true;
+        default:
+            return false;
+    }
 }
 
 /* Return true if the player got killed by a dwarf this turn.
@@ -3908,6 +3920,7 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
          * of messing up in the endgame, I guess! */
         puts("Fiddling with the bird in its cage is not useful." SOFT_NL
              "If you had it in your hand it would make a mess.");
+        /* Here Long does a GOTO 2, but I see no reason to reproduce that. */
     } else if (verb == YANK && obj == BEAR && objs(BEAR).prop <= 1) {
         indent_if_needed();
         puts("Pulling an angry bear around is a good way to get your arm ripped off.");
@@ -4342,6 +4355,20 @@ bool find_an_openable_object(Location loc, ActionWord verb, int *obj)  /* line 1
     }
 }
 
+ObjectWord find_an_edible_object(Location loc)  /* line 11400 in Long */
+{
+    int objects_found = 0;
+    ObjectWord obj = NOTHING;
+    for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
+        if (!here(t, loc)) continue;
+        if (!is_edible(t)) continue;
+        obj = t;
+        ++objects_found;
+    }
+    if (objects_found == 1) return obj;
+    return NOTHING;
+}
+
 void attempt_lock(Location loc, ObjectWord obj)
 {
 #define close_and_lock(t) objs(t).flags |= F_LOCKED; objs(t).flags &= ~F_OPEN
@@ -4661,7 +4688,7 @@ int attempt_pour(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
                 objs(PLANT).prop = 0;
             }
             objs(PLANT2).prop = objs(PLANT).prop;
-            return 'l';  /* look around */
+            return 'm';  /* look around */
         }
     } else if (iobj == BOTTLE) {
         indent_if_needed();
@@ -4672,6 +4699,92 @@ int attempt_pour(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
         puts("Your cask is empty and the ground is soaked.");
     }
     return 0;
+}
+
+Location attempt_eat(Location loc, ObjectWord obj)
+{
+    switch (obj) {
+        case HONEY:
+            /* Long increments lost_treasures (his TALLY2) here if you eat
+             * the honey. The effect of this is to zap your lamp a bit early,
+             * since it's still possible to *see* the golden chain, even if
+             * you can no longer *get* it. */
+            ++lost_treasures;
+            /*FALLTHRU*/
+        case FOOD:
+            move(obj, R_LIMBO);
+            indent_if_needed();
+            puts("Thank you, it was delicious!");
+            break;
+        case BIRD: case SNAKE:
+        case CLAM: case OYSTER:
+        case FLOWERS:
+            indent_if_needed();
+            puts("Yeeeecchhh!!");
+            break;
+        case DWARF: case DRAGON: case TROLL: case DOG:
+        case WUMPUS: case BEAR: case GNOME:
+            indent_if_needed();
+            puts("You've got to be kidding!");
+            break;
+        case MUSHROOMS:
+            /* I think Long's logic here is: If you waste the mushrooms,
+             * you'll never get through the elfin door, and therefore never
+             * get the boat (unless you use the magic word "GROTTO", which
+             * is where his logic falls down); therefore you'll never get
+             * the honey, therefore never get the chain (although you might
+             * still see it, which is a second logical hole). */
+            if (loc != R_TINYDOOR) ++lost_treasures;
+            move(MUSHROOMS, R_LIMBO);
+            if (!is_at_loc(TINY_DOOR, loc)) {
+                indent_if_needed();
+                puts("You thought maybe these were peyote??  You feel a little dizzy," SOFT_NL
+                     "but nothing happens.");
+            } else {
+                /* "GET PEYOTE; N; GROTTO; EAT PEYOTE" will accidentally
+                 * teleport you through the wall. TODO: fix this whole
+                 * passage. */
+                puts("You are growing taller, expanding like a telescope!  Just before" SOFT_NL
+                     "your head strikes the top of the chamber, the mysterious process" SOFT_NL
+                     "stops as suddenly as it began.");
+                /* Move all the objects at R_TINYDOOR to R_CRAMPED. */
+                for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
+                    if ((objs(t).base == NULL) && there(t, R_TINYDOOR))
+                        move(t, R_CRAMPED);
+                }
+                return R_CRAMPED;
+            }
+            break;
+        case CAKES:
+            move(CAKES, R_LIMBO);
+            /* In Long's version, if you vanish the tiny key (e.g. by container
+             * mischief) before eating the cakes, you can get the message
+             * "You thought maybe these were peyote??" here. However, this
+             * is clearly a bug, so I haven't preserved it. */
+            /* Long has "accordian". */
+            puts("You are closing up like an accordion....shrinking..shrinking.  You" SOFT_NL
+                 "are now your normal size.");
+            /* Move all the objects at R_CRAMPED to R_TINYKEY,
+             * except for the key on the shelf. If you missed the key,
+             * Long adds another "lost" treasure, presumably the chain.
+             * Which means it's possible to "lose" the chain four times
+             * in a single game! */
+            for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
+                if (t == TINY_KEY && objs(TINY_KEY).prop) {
+                    assert(there(t, R_TINYDOOR));
+                    ++lost_treasures;
+                } else if ((objs(t).base == NULL) && there(t, R_TINYDOOR)) {
+                    move(t, R_TINYDOOR);
+                }
+            }
+            return R_TINYDOOR;
+        default:
+            indent_if_needed();
+            puts("Don't be ridiculous!");
+            break;
+    }
+
+    return loc;
 }
 
 void throw_axe_at_dwarf(Location loc)  /* section 163 in Knuth */
@@ -5230,6 +5343,7 @@ void simulate_an_adventure(void)
     oldoldloc = oldloc = loc = newloc = R_ROAD;
 
     while (true) {
+    movement:  /* Long's line 2 */
 #if 0
         /* Check for interference with the proposed move to newloc. */
         if (cave_is_closing() && newloc < MIN_IN_CAVE && newloc != R_LIMBO) {
@@ -5350,6 +5464,12 @@ void simulate_an_adventure(void)
                     goto transitive;
                 }
                 case EAT:
+                    obj = find_an_edible_object(loc);
+                    if (obj == NOTHING) {
+                        goto act_on_what;
+                    } else {
+                        goto transitive;
+                    }
                 case DRINK:
                 case INVENTORY:
                     puts("TODO this intransitive verb is unhandled");
@@ -5489,13 +5609,22 @@ void simulate_an_adventure(void)
                     continue;
                 case POUR:
                     switch (attempt_pour(loc, obj, prep, iobj)) {
-                        case 'l':
-                            goto commence; 
+                        case 'm':
+                            /* This is the same as "goto commence", except
+                             * that it gives the dwarves a chance to move. */
+                            newloc = loc;
+                            goto movement; 
                         case 0:
                             continue;
                         default: assert(false);
                     }
-                case EAT:
+                case EAT: {
+                    newloc = attempt_eat(loc, obj);
+                    if (newloc != loc) {
+                        goto movement;
+                    }
+                    continue;
+                }
                 case DRINK:
                 case RUB:
                 case TOSS:
@@ -5577,7 +5706,8 @@ void simulate_an_adventure(void)
                     switch (attempt_look(loc, obj, prep, iobj)) {
                         case 'l':
                             was_dark = false; /* so you don't fall into a pit */
-                            goto commence;
+                            newloc = loc;
+                            goto movement;
                         case 0:
                             continue;
                     }

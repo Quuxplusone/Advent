@@ -281,10 +281,13 @@ puts("lin32");
 	    } else {
 		puts("Where?");
 	    }
+	    /* "ENTER WATER APPLES ORANGES" is quietly accepted,
+	     * thanks to this call to clrlin(). */ 
 	    clrlin();
 	    goto lin20;
-	} else if (streq(txt[wdx], "boat") || streq(txt[wdx], "rowboa")) {
-	    /* But not "ship". TODO: fix this. */
+	} else if (words[wdx] == BOAT) {
+	    /* Long accepts only the spellings "BOAT" and "ROWBOA" here,
+	     * not "SHIP"; but it's simpler to accept "SHIP" as well. */
 	    word = TAKE;
 	    goto lin99;
 	}
@@ -297,8 +300,23 @@ puts("lin32");
     }
     
     /* The spelling "light" usually refers to the LAMP in this version;
-     * for example, "GET LIGHT". */
-    if (streq(txt[wdx-1], "light") && words[wdx] == LAMP) {
+     * for example, "GET LIGHT". The exception is Long's line 55, which
+     * handles the command "LIGHT LAMP". I don't understand how, but
+     * empirically "LIGHT" is interpreted in the following ways:
+     *     LIGHT -- verb
+     *     LIGHT LAMP -- verb
+     *     LIGHT POSTER -- verb
+     *     LAMP LIGHT -- noun
+     *     LIGHT LIGHT -- verb noun
+     *     GET LIGHT -- noun
+     *     LIGHT GET -- verb
+     *     GET AND LIGHT LAMP -- noun
+     * This suggests that somehow the rule is much simpler than Long's
+     * line 55 implies on first reading: iff LIGHT is the first word on
+     * the line, it's treated as a verb.
+     * TODO: investigate this codepath.
+     */
+    if (wdx == 1 && streq(txt[wdx-1], "light")) {
 	word = LIGHT;
 	goto lin99;
     }
