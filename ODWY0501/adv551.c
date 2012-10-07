@@ -250,8 +250,9 @@ void build_vocabulary(void)
     /* Long mistakenly extends the spelling of this noun from
      * Woods' "STALA" to "STALAGMITE". However, it really represents
      * the "large stalactite" which is scenery in R_TITE.
-     * TODO: perhaps accept both. */
+     * I've decided to accept both words. */
     new_object_word("stalag", STALACTITE);
+    new_object_word("stalac", STALACTITE);
     new_object_word("figure", SHADOW);
     new_object_word("axe", AXE);
     new_object_word("drawin", DRAWINGS);
@@ -2415,7 +2416,7 @@ void build_object_table(void)
     objs(LAMP).desc[0] = "There is a shiny brass lamp nearby.";
     objs(LAMP).desc[1] = "There is a lamp shining nearby.";
     new_obj(GRATE, "Grate", GRATE, R_OUTSIDE);
-    new_obj(GRATE_, "Grate", GRATE, R_INSIDE);
+    new_obj(GRATE_, NULL, GRATE, R_INSIDE);
     objs(GRATE).desc[0] = "The grate is locked.";
     objs(GRATE).desc[1] = "The grate is open.";
     new_obj(CAGE, "Wicker cage", 0, R_COBBLES);
@@ -2425,7 +2426,7 @@ void build_object_table(void)
     new_obj(ROD2, "Black rod", 0, R_LIMBO);
     objs(ROD2).desc[0] = "A three-foot black rod with a rusty mark on an end lies nearby.";
     new_obj(TREADS, "Steps", TREADS, R_SPIT);
-    new_obj(TREADS_, "Steps", TREADS, R_EMIST);
+    new_obj(TREADS_, NULL, TREADS, R_EMIST);
     objs(TREADS).desc[0] = "Rough stone steps lead down the pit.";
     objs(TREADS).desc[1] = "Rough stone steps lead up the dome.";
     new_obj(POLE, "Wooden pole", 0, R_MARSH_EDGE);
@@ -2437,7 +2438,7 @@ void build_object_table(void)
     objs(SNAKE).desc[0] = "A huge green fierce snake bars the way!";
     objs(SNAKE).desc[1] = NULL;  /* chased away */
     new_obj(FISSURE, "Fissure", FISSURE, R_EFISS);
-    new_obj(FISSURE_, "Fissure", FISSURE, R_WFISS);
+    new_obj(FISSURE_, NULL, FISSURE, R_WFISS);
     objs(FISSURE).desc[0] = NULL;
     objs(FISSURE).desc[1] ="A crystal bridge now spans the fissure.";
     new_obj(TABLET, "Stone tablet", TABLET, R_DARK);
@@ -2461,7 +2462,7 @@ void build_object_table(void)
     objs(BOTTLE).desc[3] = "There is a broken bottle here.";
     objs(BOTTLE).desc[4] = "There is a bottle of wine here.";
     new_obj(CHASM, "Troll bridge", CHASM, R_SWSIDE);
-    new_obj(CHASM_, "Troll bridge", CHASM, R_NESIDE);
+    new_obj(CHASM_, NULL, CHASM, R_NESIDE);
     objs(CHASM).desc[0] =
         "A rickety wooden bridge extends across the chasm, vanishing into the" SOFT_NL
         "mist. A sign posted on the bridge reads, \"STOP! PAY TROLL!\"";
@@ -2469,14 +2470,14 @@ void build_object_table(void)
         "The wreckage of a bridge (and a dead bear) can be seen at the bottom" SOFT_NL
         "of the chasm.";
     new_obj(CLAY, "Decrepit bridge", CLAY, R_DANTES);
-    new_obj(CLAY_, "Decrepit bridge", CLAY, R_DEVILS);
+    new_obj(CLAY_, NULL, CLAY, R_DEVILS);
     objs(CLAY).desc[0] =
         "A decrepit natural bridge spans the chasm.  A message scrawled into" SOFT_NL
         "the rock wall reads: \"Bridge out of repair.  Maximum load: 35 Foonts.\"";
     objs(CLAY).desc[1] =
         "The remnants of a natural bridge partially overhang the chasm.";
     new_obj(MIRROR, "Mirror", MIRROR, R_MIRROR);
-    new_obj(MIRROR_, "Mirror", MIRROR, R_LIMBO);  /* joins up with MIRROR later */
+    new_obj(MIRROR_, NULL, MIRROR, R_LIMBO);  /* joins up with MIRROR later */
     objs(MIRROR).desc[0] = NULL;
     new_obj(PLANT, "Plant", PLANT, R_WPIT);
     objs(PLANT).desc[0] = "There is a tiny little plant in the pit, murmuring \"Water, water, ...\"";
@@ -2485,14 +2486,14 @@ void build_object_table(void)
         "bellowing \"Water!! Water!!\"";
     objs(PLANT).desc[2] = "There is a gigantic beanstalk stretching all the way up to the hole.";
     new_obj(PLANT2, "Beanstalk", PLANT2, R_W2PIT);
-    new_obj(PLANT2_, "Beanstalk", PLANT2, R_E2PIT);
+    new_obj(PLANT2_, NULL, PLANT2, R_E2PIT);
     objs(PLANT2).desc[0] = NULL;
     objs(PLANT2).desc[1] = "The top of a 12-foot-tall beanstalk is poking out of the west pit.";
     objs(PLANT2).desc[2] = "There is a huge beanstalk growing out of the west pit up to the hole.";
     new_obj(STALACTITE, "Stalactite", STALACTITE, R_TITE);
     objs(STALACTITE).desc[0] = NULL;
     new_obj(SHADOW, "Shadowy figure", SHADOW, R_WINDOE);
-    new_obj(SHADOW_, "Shadowy figure", SHADOW, R_WINDOW);
+    new_obj(SHADOW_, NULL, SHADOW, R_WINDOW);
     objs(SHADOW).desc[0] = "The shadowy figure seems to be trying to attract your attention.";
     new_obj(AXE, "Dwarf's axe", 0, R_LIMBO);
     objs(AXE).desc[0] = "There is a little axe here.";
@@ -2501,18 +2502,18 @@ void build_object_table(void)
     objs(DRAWINGS).desc[0] = NULL;
     new_obj(PIRATE, "Pirate", PIRATE, R_LIMBO);
     new_obj(DRAGON, "Dragon", DRAGON, R_SCAN1);
-    new_obj(DRAGON_, "Dragon", DRAGON, R_SCAN3);
+    new_obj(DRAGON_, NULL, DRAGON, R_SCAN3);
     objs(DRAGON).desc[0] = "A huge green fierce dragon bars the way!";
     objs(DRAGON).desc[1] = "The body of a huge green dead dragon is lying off to one side.";
     new_obj(TROLL, "Troll", TROLL, R_SWSIDE);
-    new_obj(TROLL_, "Troll", TROLL, R_NESIDE);
+    new_obj(TROLL_, NULL, TROLL, R_NESIDE);
     objs(TROLL).desc[0] =
         "A burly troll stands by the bridge and insists you throw him a" SOFT_NL
         "treasure before you may cross.";
     objs(TROLL).desc[1] = "The troll steps out from beneath the bridge and blocks your way.";
     objs(TROLL).desc[2] = NULL;  /* chased away */
     new_obj(NO_TROLL, "Troll", NO_TROLL, R_LIMBO);
-    new_obj(NO_TROLL_, "Troll", NO_TROLL, R_LIMBO);
+    new_obj(NO_TROLL_, NULL, NO_TROLL, R_LIMBO);
     objs(NO_TROLL).desc[0] = "The troll is nowhere to be seen.";
     new_obj(BEAR, "Bear", BEAR, R_BARR);
     objs(BEAR).desc[0] = "There is a ferocious cave bear eying you from the far end of the room!";
@@ -2537,11 +2538,12 @@ void build_object_table(void)
     new_obj(RUSTY_DOOR, "Rusty door", RUSTY_DOOR, R_IMMENSE);
     objs(RUSTY_DOOR).desc[0] = "The way north is barred by a massive, rusty, iron door.";
     objs(RUSTY_DOOR).desc[1] = "The way north leads through a massive, rusty, iron door.";
-    /* TODO: I believe TINY_DOOR and HUGE_DOOR must be schizoid. */
     new_obj(TINY_DOOR, "Tiny door", TINY_DOOR, R_TINYDOOR);
+    new_obj(TINY_DOOR_, NULL, TINY_DOOR, R_WBLUE);
     objs(TINY_DOOR).desc[0] = "The only way past the wall is through a tiny locked door.";
     objs(TINY_DOOR).desc[1] = "The only way past the wall is through a tiny open door.";
     new_obj(HUGE_DOOR, "Huge door", HUGE_DOOR, R_HUGEDOOR);
+    new_obj(HUGE_DOOR_, NULL, HUGE_DOOR, R_SEA);
     objs(HUGE_DOOR).desc[0] = "The door is locked.";
     objs(HUGE_DOOR).desc[1] = "The door is open.";
     new_obj(BOOTH_DOOR, "Phone booth door", BOOTH_DOOR, R_ROTUNDA);
@@ -2659,7 +2661,7 @@ void build_object_table(void)
     objs(BEES).desc[0] = NULL;
     objs(BEES).desc[1] = "Some bumblebees are swarming around a bunch of fresh flowers.";
     new_obj(ECHO, "Hollow wall", ECHO, R_ARCHED);
-    new_obj(ECHO_, "Hollow wall", ECHO, R_ESHORT);
+    new_obj(ECHO_, NULL, ECHO, R_ESHORT);
     objs(ECHO).desc[0] = "Your footsteps echo hollowly throughout the chamber.";
     objs(ECHO).desc[1] = NULL;  /* the wall is just rubble now */
     /* TODO: I'm fairly sure that SAFE_WALL could productively be combined
@@ -3546,10 +3548,6 @@ void kill_the_player(Location last_safe_place)
         /* Note that containers retain their contents. */
         if (holding(j)) {
             move(j, (j == LAMP) ? R_ROAD : last_safe_place);
-            if (is_wearable(j)) {
-                objs(j).prop = 0;
-                objs(j).flags &= ~F_WORN;
-            }
         }
     }
 }
@@ -3854,10 +3852,6 @@ void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj)
         indent_if_needed();
         puts("It won't fit.");
     } else {
-        if (is_wearable(obj)) {
-            objs(obj).flags &= ~F_WORN;
-            objs(obj).prop = 0;
-        }
         insert(obj, iobj);
         indent_if_needed();
         puts(ok);
@@ -4787,6 +4781,152 @@ Location attempt_eat(Location loc, ObjectWord obj)
     return loc;
 }
 
+Location attempt_drink(Location loc, ObjectWord obj, ObjectWord iobj)
+{
+    /* In Long's version, you can DRINK FROM [closed] BOTTLE, but you
+     * can't DRINK WATER FROM [closed] BOTTLE; "you can't get at it."
+     * Long handles DRINK OIL FROM LAMP first by checking if the OIL
+     * is accessible, and only *then* whether it's actually in the lamp.
+     * Long also has some bugs that cause DRINK OIL and/or DRINK in
+     * the east pit to be accidentally handled as DRINK WINE.
+     * I've refactored to fix all these bugs. */
+    if (obj == NOTHING) {
+        assert(iobj != NOTHING);
+        if (iobj == BOTTLE || iobj == CASK)
+            obj = liquid_contents(iobj);
+    }
+    if (!is_liquid(obj)) {
+        /* DRINK FOOD, or DRINK FROM [empty] CASK */
+        puts("Don't be ridiculous!");
+        return loc;
+    }
+    switch (iobj) {
+        case BOTTLE:
+        case CASK:
+            if (obj != liquid_contents(iobj)) {
+                /* Long didn't handle this case. */
+                puts("It isn't there!");
+            }
+            break;
+        case NOTHING:
+            break;
+        default:
+            puts("Don't be ridiculous!");
+            return loc;
+    }
+    
+    if (iobj == NOTHING) {
+        /* DRINK WATER. */
+        assert(is_liquid(obj));
+        const bool could_use_bottle = at_hand(BOTTLE, loc) && (liquid_contents(BOTTLE) == obj);
+        const bool could_use_cask = at_hand(CASK, loc) && (liquid_contents(CASK) == obj);
+        const bool could_use_ground = (liquid_at_location(loc) == obj);
+
+        if (could_use_bottle) {
+            iobj = BOTTLE;
+        } else if (could_use_cask) {
+            iobj = CASK;
+        } else if (could_use_ground) {
+            assert(iobj == NOTHING);
+        } else {
+            /* DRINK WATER AND WATER AND WATER */
+            indent_if_needed();
+            puts("It isn't here!");
+            return loc;
+        }
+    }
+    
+    if (iobj == 0) {
+        assert(liquid_at_location(loc) == obj);
+    } else {
+        assert(liquid_contents(iobj) == obj);
+    }
+    
+    if (obj == OIL) {
+        indent_if_needed();
+        puts("Yeeeecchhh!!");
+    } else if (obj == WATER) {
+        indent_if_needed();
+        if (iobj == BOTTLE) {
+            move(WATER, R_LIMBO);
+            objs(BOTTLE).prop = 1;
+            puts("The bottle is now empty.");
+        } else if (iobj == CASK) {
+            move(WATER_IN_CASK, R_LIMBO);
+            objs(CASK).prop = 1;
+            puts("The cask is now empty.");
+        } else {
+            assert(iobj == NOTHING);
+            puts("You have taken a drink from the stream.  The water tastes strongly of" SOFT_NL
+                 "minerals, but is not unpleasant.  It is extremely cold.");
+        }
+    } else {
+        assert(obj == WINE);
+        if (iobj == BOTTLE) {
+            assert(there(WINE, -BOTTLE));
+            move(WINE, R_LIMBO);
+            objs(BOTTLE).prop = 1;
+        } else if (iobj == CASK) {
+            assert(there(WINE_IN_CASK, -CASK));
+            move(WINE_IN_CASK, R_LIMBO);
+            objs(CASK).prop = 1;
+        } else {
+            assert(iobj == NOTHING);
+        }
+        /* Uh-oh. He's a wino. Let him reap the rewards of incontinence.
+         * He'll wander around for awhile, then wake up somewhere or other,
+         * having dropped most of his stuff. */
+        puts("The wine goes right to your head.  You reel around in a drunken" SOFT_NL
+             "stupor and finally pass out.  You awaken with a splitting headache," SOFT_NL
+             "and try to focus your eyes....");
+        if (objs(LAMP).prop) {
+            /* In Long's version, Fortran's lack of multi-line IF bodies
+             * led to an amusing case here: you could perpetually stave off
+             * lamp burnout by getting drunk every 24 turns. */
+            lamp_limit -= ran(lamp_limit)/2;
+            if (lamp_limit < 10) lamp_limit = 25;
+        }
+        /* Determine the location he wakes up. */
+        Location newloc;
+        if (is_outside(loc)) {
+            newloc = R_FOREST;
+        } else if (pct(15)) {
+            newloc = R_MAZEA49;
+        } else if (pct(15)) {
+            newloc = R_MAZEA53;
+        } else if (pct(25)) {
+            newloc = R_DIFF2;  /* Nasty! */
+        } else {
+            newloc = R_PITS;
+        }
+        /* Long does this next logic only if loc != newloc, which is a
+         * little strange. */
+        if (loc == newloc) return loc;
+        /* As with the collapsing clay bridge: if you're toting the axe
+         * or lamp inside a container, you're out of luck at this point. */
+        if (holding(AXE)) drop(AXE, newloc);
+        if (holding(LAMP)) drop(LAMP, newloc);
+        for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
+            if (holding(t)) drop(t, loc);
+        }
+        return newloc;
+    }
+
+    return loc;
+}
+
+void attempt_rub(ObjectWord obj)
+{
+    indent_if_needed();
+    if (obj == LAMP) {
+        puts("Rubbing the electric lamp is not particularly rewarding.  Anyway," SOFT_NL
+             "nothing exciting happens.");
+    } else {
+        puts("Peculiar.  Nothing unexpected happens.");
+    }
+}
+
+
 void throw_axe_at_dwarf(Location loc)  /* section 163 in Knuth */
 {
     int j;
@@ -5470,7 +5610,40 @@ void simulate_an_adventure(void)
                     } else {
                         goto transitive;
                     }
-                case DRINK:
+                case DRINK: {
+                    const bool could_use_bottle = at_hand(BOTTLE, loc) && (liquid_contents(BOTTLE) != NOTHING);
+                    const bool could_use_cask = at_hand(CASK, loc) && (liquid_contents(CASK) != NOTHING);
+                    const ObjectWord liquid_here = liquid_at_location(loc);
+                    const bool could_use_ground = (liquid_here == WATER || liquid_here == WINE);
+                    /* We could drink from three places, in order of
+                     * preference: the bottle, the cask, the ground.
+                     * If we're carrying two different liquids, prompt
+                     * the user for which one he wants to drink.
+                     * If we're not carrying anything and there's oil
+                     * on the ground, that's not appetizing.
+                     * Long has a bug such that DRINK when there's oil
+                     * present is treated as DRINK WINE. I've heavily
+                     * refactored this code to remove the bug. */
+                    if (could_use_bottle && could_use_cask &&
+                            liquid_contents(BOTTLE) != liquid_contents(CASK)) {
+                        goto act_on_what;
+                    } else if (could_use_bottle) {
+                        assert(obj == NOTHING);
+                        prep = FROM;
+                        iobj = BOTTLE;
+                    } else if (could_use_cask) {
+                        assert(obj == NOTHING);
+                        prep = FROM;
+                        iobj = CASK;
+                    } else if (could_use_ground) {
+                        obj = liquid_here;
+                        assert(prep == NOTHING);
+                        assert(iobj == NOTHING);
+                    } else {
+                        goto act_on_what;
+                    }
+                    goto transitive;
+                }
                 case INVENTORY:
                     puts("TODO this intransitive verb is unhandled");
                     continue;
@@ -5625,8 +5798,16 @@ void simulate_an_adventure(void)
                     }
                     continue;
                 }
-                case DRINK:
+                case DRINK: {
+                    newloc = attempt_drink(loc, obj, iobj);
+                    if (newloc != loc) {
+                        goto movement;
+                    }
+                    continue;
+                }
                 case RUB:
+                    attempt_rub(obj);
+                    continue;
                 case TOSS:
                 case FIND:
                 case INVENTORY:

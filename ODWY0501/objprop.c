@@ -343,9 +343,18 @@ int burden(ObjectWord t)
 
 void drop(ObjectWord t, Location l)
 {
+    assert(l >= R_LIMBO);
     assert(objs(t).place == R_INHAND || objs(t).place == R_LIMBO);
     assert(objs(t).link == NULL);
     objs(t).place = l;
+    if (is_wearable(t)) {
+	/* Long's code forgets to do this in several places; for example,
+	 * if you DRINK WINE and drop all your items. (This generally
+	 * causes the wearable object (clover, shoes, etc.) to become
+	 * invisible.) So I'm just moving all that code right here. */
+        objs(t).flags &= ~F_WORN;
+	objs(t).prop = 0;
+    }
     if (l > R_LIMBO) {
         objs(t).link = places[l].objects;
         places[l].objects = &objs(t);
@@ -359,6 +368,10 @@ void insert(ObjectWord t, ObjectWord container)
     objs(t).place = -container;
     objs(t).link = objs(container).contents;
     objs(container).contents = &objs(t);
+    if (is_wearable(t)) {
+        objs(t).flags &= ~F_WORN;
+	objs(t).prop = 0;
+    }
 }
 
 void remove_from_containers(ObjectWord t)
