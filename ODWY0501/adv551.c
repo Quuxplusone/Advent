@@ -41,6 +41,7 @@ void give_up(void);
 void quit(void);
 void history_of_adventure(void);
 void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord prep, ObjectWord iobj);
+void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj);
 
 
 WordClass word_class(int word)
@@ -2744,7 +2745,7 @@ void build_object_table(void)
      * impossible to take them out of R_CRAMPED. */
     new_obj(CAKES, "Tiny cakes", 0, R_CRAMPED);
     objs(CAKES).desc[0] = "There are some tiny cakes on the shelf.";
-    new_obj(SACK, "Leather sack", 0, R_HOUSE);  /* TODO: sack */
+    new_obj(SACK, "Leather sack", 0, R_HOUSE);
     objs(SACK).desc[0] = "There is a leather sack here.";
     new_obj(BOOK, "Rare book", 0, R_LIMBO);
     objs(BOOK).desc[0] = "There is a dusty, leather-bound volume here.";
@@ -3457,10 +3458,12 @@ int score(void)
     return score;
 }
 
-void say_score(void)
+void attempt_score(void)
 {
-    printf("If you were to quit now, you would score %d" SOFT_NL
-           "out of %d using %d turns.\n", score(), MAX_SCORE, turns);
+    gave_up = true;
+    printf("If you were to quit now, you would score %d out of %d using %d turns.\n",
+           score(), MAX_SCORE, turns);
+    gave_up = false;
     /* Here Woods asks if you indeed wish to quit now.
      * Long's version removes the prompt. */
 }
@@ -3599,6 +3602,8 @@ void indent_if_needed(void)
 {
     assert(w_iobjs[1] == NOTHING);  /* TODO is this possible? verify */
     if (w_objs[1] != NOTHING) {
+        /* TODO: low-level function to turn indentation on and off
+         * across multiple lines */
         printf("%s\n    ", objs(w_objs[objx]).name);
     }
 }
@@ -3667,9 +3672,94 @@ void attempt_wake(Location loc, ObjectWord obj)
     }
 }
 
-void attempt_drop(Location loc, ObjectWord obj)
+void attempt_drop(Location loc, ActionWord verb, ObjectWord obj, int prep, int iobj)
 {
-    puts("TODO implement attempt_drop");
+    switch (verb) {
+        case DROP:
+        case YANK:
+        case LEAVE:
+        case TOSS:
+        case TAKE:  /* TAKE OFF */
+            break;
+        default:
+            assert(false);
+    }
+
+    if (obj == ROD && !holding(ROD) && holding(ROD2)) {
+        obj = ROD2;
+    } else if (obj == liquid_contents(BOTTLE)) {
+        /* This is Long's logic. Note that DROP WATER will give a bad response
+         * if you're carrying the cask of water but the bottle (in a different
+         * room) happens to be full of water. TODO: fix this bug. */
+        obj = BOTTLE;
+    } else if (obj == liquid_contents(CASK)) {
+        obj = CASK;
+    }
+
+    if (!toting(obj)) {
+        indent_if_needed();
+        printf("You aren't carrying %s!\n", is_plural(obj) ? "them" : "it");
+        return;
+    }
+
+    if (prep == INTO) {
+        /* DROP COINS INTO PHONE */
+        attempt_insert_into(loc, obj, iobj);
+        return;
+    }
+    
+    if (obj == BIRD && here(SNAKE, loc)) {
+        puts("The little bird attacks the green snake, and in an astounding flurry" SOFT_NL
+             "drives the snake away.");
+        if (closed) dwarves_upset();
+        move(BIRD, loc);
+        move(SNAKE, R_LIMBO);
+        objs(SNAKE).prop = 1;  /* gone */
+        return;
+    }
+    
+    if (obj == POLE && holding(BOAT)) {
+        indent_if_needed();
+        puts("Setting yourself adrift in the boat with no way to propel it would" SOFT_NL
+             "not be very smart.  Best to keep the pole.");
+        return;
+    } else if (obj == BIRD && is_at_loc(DRAGON, loc) && !objs(DRAGON).prop) {
+        puts("The little bird attacks the green dragon, and in an astounding flurry" SOFT_NL
+             "gets burnt to a cinder.  The ashes blow away.");
+        if (there(SNAKE, R_HMK)) ++lost_treasures;  /* the jewelry */
+        move(BIRD, R_LIMBO);
+        return;
+    } else if (obj == BEAR && is_at_loc(TROLL, loc)) {
+        puts("The bear lumbers toward the troll, who lets out a startled shriek and" SOFT_NL
+             "scurries away.  The bear soon gives up the pursuit and wanders back.");
+        move(TROLL, R_LIMBO); move(TROLL_, R_LIMBO);
+        move(NO_TROLL, R_SWSIDE); move(NO_TROLL_, R_NESIDE);
+        juggle(CHASM);
+        objs(TROLL).prop = 2;  /* permanently scared away */
+    } else if (obj == VASE && loc != R_SOFT) {
+        if (there(PILLOW, loc)) {
+            puts("The vase is now resting, delicately, on a velvet pillow.");
+            objs(VASE).prop = 0;
+        } else {
+            /* Long has "ming". */
+            puts("The Ming vase drops with a delicate crash.");
+            objs(VASE).prop = 1;
+            immobilize(VASE);
+        }
+    }
+
+    if (obj==POLE || obj==BOAT) {
+        objs(obj).prop = 0;
+        if (obj==POLE) objs(BOAT).prop = 0;  /* TODO: why? */
+    }
+    
+    drop(obj, loc);
+    switch (verb) {
+        case TAKE: puts(ok); break;
+        case LEAVE: puts("Left."); break;
+        case TOSS: puts("Thrown."); break;
+        default: puts("Dropped."); break;
+    }
 }
 
 void attempt_fill(Location loc, ObjectWord obj, ObjectWord iobj)
@@ -3813,7 +3903,7 @@ void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj)
              * containing "Little bird in cage" without
              * having the cage. I've patched the bug.
              * (Ditto PUT BIRD IN CHEST.) */
-            attempt_drop(loc, BIRD);
+            attempt_drop(loc, DROP, BIRD, NOTHING, NOTHING);
         } else if (iobj != CAGE) {
             indent_if_needed();
             puts("Are you kidding?  Do you want to suffocate the poor thing?");
@@ -3895,7 +3985,7 @@ void attempt_remove_from(Location loc, ObjectWord obj, int iobj)
         remove_from_containers(obj);
         if (obj == BIRD) {
             /* The bird can't be held. */
-            attempt_drop(loc, BIRD);
+            attempt_drop(loc, DROP, BIRD, NOTHING, NOTHING);
         } else {
             indent_if_needed();
             puts("Taken.");
@@ -3941,7 +4031,7 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
             indent_if_needed();
             confuz();
         } else {
-            attempt_drop(loc, (obj != NOTHING) ? obj : iobj);
+            attempt_drop(loc, TAKE, (obj != NOTHING) ? obj : iobj, OFF, NOTHING);
         }
     } else if (holding(obj)) {
         indent_if_needed();
@@ -4926,6 +5016,42 @@ void attempt_rub(ObjectWord obj)
     }
 }
 
+void attempt_inventory(void)
+{
+    bool holding_anything = false;
+    bool wearing_anything = false;
+    for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
+        if (t == BOAT || t == BEAR) continue;
+        if (!holding(t)) continue;
+        if (objs(t).flags & F_WORN) continue;
+        if (!holding_anything) {
+            holding_anything = true;
+            puts("You are currently holding the following:");
+        }
+        printf("%s\n", objs(t).name);
+        lookin(t);
+    }
+    for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
+        if (!(objs(t).flags & F_WORN)) continue;
+        if (!wearing_anything) {
+            wearing_anything = true;
+            puts("You are wearing:");
+        }
+        printf("    %s\n", objs(t).name);
+    }
+    if (holding(BOAT)) {
+        /* Long has "You are _now_ sitting...", because he
+         * reuses the getting-in-the-boat message. */
+        puts("You are sitting in a small boat.");
+        lookin(BOAT);
+    }
+    if (holding(BEAR)) {
+        puts("You are being followed by a very large, tame bear.");
+    } else if (!holding_anything) {
+        /* This message applies even if you're wearing something. */
+        puts("You're not carrying anything.");
+    }
+}
 
 void throw_axe_at_dwarf(Location loc)  /* section 163 in Knuth */
 {
@@ -5645,7 +5771,7 @@ void simulate_an_adventure(void)
                     goto transitive;
                 }
                 case INVENTORY:
-                    puts("TODO this intransitive verb is unhandled");
+                    attempt_inventory();
                     continue;
                 case FILL: {
                     const bool could_use_bottle = here(BOTTLE, loc) && (objs(BOTTLE).prop == 1);
@@ -5662,6 +5788,8 @@ void simulate_an_adventure(void)
                     goto transitive;
                 }
                 case SCORE:
+                    attempt_score();
+                    continue;
                 case FEEFIE:
                 case BRIEF:
                 case ANSWER:
@@ -5748,10 +5876,11 @@ void simulate_an_adventure(void)
             /* Analyze a transitive verb, with obj or iobj. */
             switch (verb) {
                 case TAKE:
+                    /* TAKE INVENTORY is redirected in the parser. */
                     attempt_take(loc, TAKE, obj, prep, iobj);
                     continue;
                 case DROP:
-                    puts("TODO this transitive verb is unhandled");
+                    attempt_drop(loc, DROP, obj, prep, iobj);
                     continue;
                 case SAY:
                     assert(false);  /* Long's BUG(34) */
@@ -5842,7 +5971,7 @@ void simulate_an_adventure(void)
                     continue;
                 case YANK:
                     if (toting(obj)) {
-                        attempt_drop(loc, obj);
+                        attempt_drop(loc, YANK, obj, prep, iobj);
                     } else {
                         attempt_take(loc, YANK, obj, prep, iobj);
                     }
