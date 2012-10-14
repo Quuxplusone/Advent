@@ -42,6 +42,10 @@ void quit(void);
 void history_of_adventure(void);
 void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord prep, ObjectWord iobj);
 void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj);
+void attempt_feed(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj);
+int attempt_kill(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj);
+int attempt_toss(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj);
+void kill_a_dwarf(Location loc);
 
 
 WordClass word_class(int word)
@@ -3539,8 +3543,8 @@ void kill_the_player(Location last_safe_place)
         quit();
     /* At this point you are reborn. */
     if (toting(LAMP)) objs(LAMP).prop = 0;
-    objs(WATER).place = R_LIMBO;
-    objs(OIL).place = R_LIMBO;
+    destroy(WATER);
+    destroy(OIL);
     if (being_chased) {
         /* Reset the dreaded Wumpus. */
         being_chased = false;
@@ -3626,7 +3630,7 @@ void attempt_break(Location loc, ObjectWord obj)
     } else if (obj == BOTTLE && objs(BOTTLE).prop != 3) {
         puts("You have smashed your bottle all over the ground.");
         ObjectWord liq = liquid_contents(BOTTLE);
-        if (liq != NOTHING) move(liq, R_LIMBO);
+        if (liq != NOTHING) destroy(liq);
         if (toting(BOTTLE)) move(BOTTLE, loc);
         objs(BOTTLE).prop = 3;  /* broken */
         immobilize(BOTTLE);
@@ -3713,7 +3717,7 @@ void attempt_drop(Location loc, ActionWord verb, ObjectWord obj, int prep, int i
              "drives the snake away.");
         if (closed) dwarves_upset();
         move(BIRD, loc);
-        move(SNAKE, R_LIMBO);
+        destroy(SNAKE);
         objs(SNAKE).prop = 1;  /* gone */
         return;
     }
@@ -3726,13 +3730,13 @@ void attempt_drop(Location loc, ActionWord verb, ObjectWord obj, int prep, int i
     } else if (obj == BIRD && is_at_loc(DRAGON, loc) && !objs(DRAGON).prop) {
         puts("The little bird attacks the green dragon, and in an astounding flurry" SOFT_NL
              "gets burnt to a cinder.  The ashes blow away.");
+        destroy(BIRD);
         if (there(SNAKE, R_HMK)) ++lost_treasures;  /* the jewelry */
-        move(BIRD, R_LIMBO);
         return;
     } else if (obj == BEAR && is_at_loc(TROLL, loc)) {
         puts("The bear lumbers toward the troll, who lets out a startled shriek and" SOFT_NL
              "scurries away.  The bear soon gives up the pursuit and wanders back.");
-        move(TROLL, R_LIMBO); move(TROLL_, R_LIMBO);
+        destroy(TROLL); destroy(TROLL_);
         move(NO_TROLL, R_SWSIDE); move(NO_TROLL_, R_NESIDE);
         juggle(CHASM);
         objs(TROLL).prop = 2;  /* permanently scared away */
@@ -4206,6 +4210,84 @@ void attempt_wear(Location loc, ObjectWord obj)
     }
 }
 
+void attempt_hit(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
+{
+    if (there(WUMPUS, loc) && objs(WUMPUS).prop == 0) {
+        /* TODO: Refactor attempt_wake() so that
+         * wake_wumpus() is separate from the actual
+         * handler for WAKE FOO. */
+        attempt_wake(loc, WUMPUS);
+    } else if (obj != PHONE) {
+        attempt_kill(loc, obj, prep, iobj);
+    } else if (closed) {
+        puts("You've hit the jackpot!!  Hundreds of coins and slugs cascade from" SOFT_NL
+             "the telephone's coin return slot and spill all over the floor of" SOFT_NL
+             "the booth.");
+        dwarves_upset();
+    } else if (objs(PHONE).prop == 2) {
+        indent_if_needed();
+        puts("The telephone is out of order and your hand is sore.");
+    } else {
+        indent_if_needed();
+        puts("A couple of lead slugs drop from the coinbox.  (Gnomes are" SOFT_NL
+             "notoriously cheap....)  But you've broken the phone beyond" SOFT_NL
+             "all hope.");
+        assert(there(SLUGS, R_LIMBO));
+        drop(SLUGS, loc);
+        objs(PHONE).prop = 2;
+        objs(BOOTH).prop = 2;  /* TODO: probably unneeded */
+    }
+}
+
+void attempt_use_phone(void)
+{
+    if (closed) {
+        /* Another example of the author's just being mean. */
+        puts("Whoops!  The floor has opened out from under you!  It seems you" SOFT_NL
+             "have fallen into a bottomless pit.  As a matter of fact, you're" SOFT_NL
+             "still falling!  Well, I have better things to do than wait around" SOFT_NL
+             "for you to strike bottom, so let's just assume you're dead." SOFT_NL
+             "Sorry about that, Chief.");
+        quit();
+    } else {
+        /* This message is misleading: PUT COINS IN PHONE is allowed. */
+        indent_if_needed();
+        puts("You don't have the correct change.");
+    }
+}
+
+void attempt_answer(Location loc, ObjectWord obj)
+{
+    switch (obj) {
+        case PHONE:
+            if (objs(PHONE).prop) {
+                indent_if_needed();
+                puts("It isn't ringing!");
+            } else if (closed) {
+                attempt_use_phone();
+            } else {
+                indent_if_needed();
+                puts("No one replies.  The line goes dead with a faint \"Click\".");
+                objs(PHONE).prop = 1;
+                objs(BOOTH).prop = 2;
+            }
+            break;
+        case DWARF: case WUMPUS: case SNAKE: case BEAR:
+        case DRAGON:
+            indent_if_needed();
+            puts("He didn't say anything!"); break;
+        case TROLL:
+            indent_if_needed();
+            puts("He wants treasure, not gab."); break;
+        case BIRD:
+            indent_if_needed();
+            puts("It isn't a parrot.  He didn't say anything."); break;
+        default:
+            indent_if_needed();
+            puts("I think you are a little confused!"); break;
+    }
+}
+
 void attempt_get(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
 {
     if (prep == NOTHING || prep == FROM) {
@@ -4642,6 +4724,132 @@ void attempt_close(Location loc, ObjectWord obj, ObjectWord iobj)
     }
 }
 
+int attempt_kill(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
+{
+    if (obj == NOTHING) {
+        /* TODO: factor out similar code from here and attempt_toss */
+        if (dwarf_at(loc)) {
+            obj = DWARF;
+        } else {
+            int k = 0;
+            if (there(SNAKE, loc)) { ++k; obj = SNAKE; }
+            if (is_at_loc(DRAGON, loc) && !objs(DRAGON).prop) { ++k; obj = DRAGON; }
+            if (is_at_loc(TROLL, loc)) { ++k; obj = TROLL; }
+            if (there(GNOME, loc)) { ++k; obj = GNOME; }
+            if (there(BEAR, loc) && objs(BEAR).prop == 0) { ++k; obj = BEAR; }
+            if (there(WUMPUS, loc) && objs(WUMPUS).prop == 0) { ++k; obj = WUMPUS; }
+            /* but *not* BEES or DOG; oversight on Long's part */
+            if (k == 0) {
+                /* TODO: THROW AXE shouldn't kill the bird. Verify that it doesn't. */
+                if (here(BIRD, loc)) { ++k; obj = BIRD; }
+                if (here(CLAM, loc) || here(OYSTER, loc)) { ++k; obj = CLAM; }
+            }
+            if (k > 1) return 'a';  /* goto act_on_what */
+        }
+    }
+    indent_if_needed();
+    if (obj == BIRD) {
+        if (closed) {
+            puts("Oh, leave the poor unhappy bird alone.");
+        } else {
+            puts("The little bird is now dead.  Its body disappears.");
+            destroy(BIRD);
+            if (there(SNAKE, R_HMK)) ++lost_treasures; /* the jewelry */
+        }
+    } else if (obj == DWARF) {
+        /* He is attacking a dwarf. If using something other than axe or
+         * sword, goodbye Charlie. If using nothing, don't let him. If using
+         * axe or sword, the following odds prevail:
+         *     .25 -- hero kills dwarf
+         *     .75 -- hero misses
+         *         .25 -- hero gets knife in ribs. dies.
+         *         .75 -- hero can't make a clean thrust
+         *             .36 -- standoff
+         *             .64 -- dwarf slashes
+         *                 .61 -- dwarf misses!
+         *                 .39 -- dwarf kills hero
+         * Adventurer has 1/3 chance of getting nailed, 1/4 chance of
+         * nailing dwarf. All by way of encouraging him to throw the axe. */
+        if (closed) {
+            dwarves_upset();
+        } else if (!dwarf_at(loc)) {
+            /* KILL DWARF, DWARF, DWARF WITH AXE */
+            puts("Don't be ridiculous!");
+        } else if (iobj == NOTHING) {
+            puts("With what?  Your bare hands?");
+        } else if ((iobj != AXE && iobj != SWORD) || (ran(16) < 3)) {
+            puts("As you move in for the kill, the dwarf neatly slips a knife"
+                 "between your ribs.");
+            return 'x';  /* dead */
+        } else if (pct(25)) {
+            kill_a_dwarf(loc);
+        } else {
+            puts("You can't get close enough for a clean thrust.");
+            if (pct(64)) {
+                puts("As you approach, the dwarf slashes out with his knife!");
+                if (pct(61)) {
+                    puts("It misses!");
+                } else {
+                    puts("It gets you!");
+                    return 'x';  /* dead */
+                }
+            }
+            /* Here Long clears the input buffer; not sure why. TODO. */
+        }
+    } else if (obj == NOTHING) {
+        puts("There is nothing here to attack.");
+    } else if (obj == CLAM || obj == OYSTER) {
+        puts("The shell is very strong and is impervious to attack.");
+    } else if (obj == DOG && objs(DOG).prop) {
+        puts("That wouldn't be wise.  It is best to let sleeping dogs lie.");
+    } else if (obj == SNAKE) {
+        puts("Attacking the snake both doesn't work and is very dangerous.");
+    } else if ((obj == DRAGON && objs(DRAGON).prop) ||
+               (obj == WUMPUS && objs(WUMPUS).prop == 6) ||
+               (obj == BEAR && objs(BEAR).prop == 3)) {
+        puts("For crying out loud, the poor thing is already dead!");
+    } else if (obj == TROLL) {
+        puts("Trolls are close relatives with the rocks and have skin as tough as" SOFT_NL
+             "that of a rhinoceros.  The troll fends off your blows effortlessly.");
+    } else if (obj == BEAR) {
+        assert(objs(BEAR).prop != 3);  /* handled above */
+        if (objs(BEAR).prop == 0) {
+            if (iobj == NOTHING) {
+                puts("With what?  Your bare hands?  Against *HIS* bear hands??");
+            } else {
+                puts("Don't be ridiculous!");
+            }
+        } else {
+            puts("The bear is confused; he only wants to be your friend.");
+        }
+    } else if (obj == GNOME) {
+        puts("You can't get at him.  He is inside the phone booth.");
+    } else if (iobj == AXE &&
+               !(obj == DOG || obj == WUMPUS || obj == DRAGON || obj == TROLL)) {
+        /* KILL BEES WITH AXE becomes THROW AXE AT BEES */
+        return attempt_toss(loc, AXE, AT, obj);
+    } else if (obj == DRAGON) {
+        puts("With what?  Your bare hands?");
+        if (with_your_bare_hands()) {
+            puts("Congratulations!  You have just vanquished a dragon with your bare" SOFT_NL
+                 "hands! (Unbelievable, isn't it?)");
+            objs(DRAGON).prop = 1;  /* dead */
+            objs(RUG).prop = 0;
+            mobilize(RUG);
+            destroy(DRAGON_);
+            destroy(RUG_);
+            for (int t = MIN_OBJ; t <= MAX_OBJ; ++t) {
+                if (there(t, R_SCAN1) || there(t, R_SCAN3))
+                    move(t, R_SCAN2);
+            }
+            return 'd';  /* move to R_SCAN2 */
+        }
+    } else {
+        puts("Don't be ridiculous!");
+    }
+    return 0;
+}
+
 int attempt_pour(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
 {
     assert(obj != NOTHING);
@@ -4709,10 +4917,10 @@ int attempt_pour(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
     if (iobj == CASK) {
         /* WATER_IN_CASK is WATER+1, and so on. */
         assert(objs(obj+1).place == -CASK);
-        move(obj+1, R_LIMBO);
+        destroy(obj+1);
     } else {
         assert(objs(obj).place == -BOTTLE);
-        move(obj, R_LIMBO);
+        destroy(obj);
     }
     objs(iobj).prop = 1;  /* empty */
 
@@ -4796,7 +5004,7 @@ Location attempt_eat(Location loc, ObjectWord obj)
             ++lost_treasures;
             /*FALLTHRU*/
         case FOOD:
-            move(obj, R_LIMBO);
+            destroy(FOOD);
             indent_if_needed();
             puts("Thank you, it was delicious!");
             break;
@@ -4819,7 +5027,7 @@ Location attempt_eat(Location loc, ObjectWord obj)
              * the honey, therefore never get the chain (although you might
              * still see it, which is a second logical hole). */
             if (loc != R_TINYDOOR) ++lost_treasures;
-            move(MUSHROOMS, R_LIMBO);
+            destroy(MUSHROOMS);
             if (!is_at_loc(TINY_DOOR, loc)) {
                 indent_if_needed();
                 puts("You thought maybe these were peyote??  You feel a little dizzy," SOFT_NL
@@ -4840,7 +5048,7 @@ Location attempt_eat(Location loc, ObjectWord obj)
             }
             break;
         case CAKES:
-            move(CAKES, R_LIMBO);
+            destroy(CAKES);
             /* In Long's version, if you vanish the tiny key (e.g. by container
              * mischief) before eating the cakes, you can get the message
              * "You thought maybe these were peyote??" here. However, this
@@ -4938,11 +5146,11 @@ Location attempt_drink(Location loc, ObjectWord obj, ObjectWord iobj)
     } else if (obj == WATER) {
         indent_if_needed();
         if (iobj == BOTTLE) {
-            move(WATER, R_LIMBO);
+            destroy(WATER);
             objs(BOTTLE).prop = 1;
             puts("The bottle is now empty.");
         } else if (iobj == CASK) {
-            move(WATER_IN_CASK, R_LIMBO);
+            destroy(WATER_IN_CASK);
             objs(CASK).prop = 1;
             puts("The cask is now empty.");
         } else {
@@ -4954,11 +5162,11 @@ Location attempt_drink(Location loc, ObjectWord obj, ObjectWord iobj)
         assert(obj == WINE);
         if (iobj == BOTTLE) {
             assert(there(WINE, -BOTTLE));
-            move(WINE, R_LIMBO);
+            destroy(WINE);
             objs(BOTTLE).prop = 1;
         } else if (iobj == CASK) {
             assert(there(WINE_IN_CASK, -CASK));
-            move(WINE_IN_CASK, R_LIMBO);
+            destroy(WINE_IN_CASK);
             objs(CASK).prop = 1;
         } else {
             assert(iobj == NOTHING);
@@ -5016,6 +5224,185 @@ void attempt_rub(ObjectWord obj)
     }
 }
 
+void kill_a_dwarf(Location loc)
+{
+    static bool first_time = true;
+    if (first_time) {
+        puts("You killed a little dwarf.  The body vanishes in a cloud of greasy" SOFT_NL
+             "black smoke.");
+        first_time = false;
+    } else {
+        puts("You killed a little dwarf.");
+    }
+
+    int j;
+    for (j=1; j <= 5; ++j) {
+        if (dloc[j] == loc) break;
+    }
+    assert(j <= 5);
+    dloc[j] = R_LIMBO;  /* Once killed, a dwarf never comes back. */
+    dseen[j] = false;
+}
+
+int throw_axe_at_dwarf(Location loc)
+{
+    if (pct(75)) {
+        kill_a_dwarf(loc);
+    } else {
+        puts("You attack a little dwarf, but he dodges out of the way.");
+    }
+    drop(AXE, loc);
+    return 'l';
+}
+
+void immobilize_axe_via(ObjectWord animal, Location loc)
+{
+    move(AXE, loc);
+    immobilize(AXE);
+    juggle(animal);
+    indent_if_needed();
+    switch (animal) {
+        case BEAR:
+            puts("The axe misses and lands near the bear where you can't get at it.");
+            objs(AXE).prop = 1;
+            break;
+        case WUMPUS:
+            puts("You can't even hit a sleeping Wumpus!  The axe is now lying too near" SOFT_NL
+                 "the Wumpus for you to retrieve it.");
+            objs(AXE).prop = 2;
+            break;
+        case DOG:
+            puts("The dog easily dodges the axe, which lands beyond him where you can't" SOFT_NL
+                 "get at it.");
+            objs(AXE).prop = 3;
+            break;
+        default: assert(false);
+    }
+}
+
+int attempt_toss(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
+{
+    if (prep == PREP_DOWN) {
+        /* THROW DOWN AXE: "Thrown." */
+        attempt_drop(loc, TOSS, (obj != NOTHING) ? obj : iobj, NOTHING, NOTHING);
+    }
+    /* TODO: factor this out from here and DROP */
+    if (obj==ROD && !holding(ROD) && holding(ROD2)) obj = ROD2;
+    if (!holding(obj)) {
+        /* TODO: plurals */
+        puts("You aren't carrying it!");
+    }
+    if (obj == BOAT || obj == BEAR) {
+        /* THROW BEAR? It's much too heavy! */
+        indent_if_needed();
+        noway();
+        return 0;
+    }
+    if (obj == FLOWERS && iobj == HIVE) {
+        iobj = BEES;
+    } else if (iobj == NOTHING) {
+        /* No indirect object was specified. If a dwarf is present,
+         * assume it is the iobj. If not, look for any other living thing.
+         * Otherwise treat THROW as DROP. */
+        if (dwarf_at(loc)) {
+            obj = DWARF;
+        } else {
+            int k = 0;
+            if (there(SNAKE, loc)) { ++k; iobj = SNAKE; }
+            if (there(CLAM, loc)) { ++k; iobj = CLAM; }
+            if (there(OYSTER, loc)) { ++k; iobj = OYSTER; }
+            if (is_at_loc(DRAGON, loc)) { ++k; iobj = DRAGON; }
+            if (is_at_loc(TROLL, loc)) { ++k; iobj = TROLL; }
+            if (there(BEAR, loc)) { ++k; iobj = BEAR; }
+            if (there(BEES, loc)) { ++k; iobj = BEES; }
+            /* but *not* GNOME or DOG; oversight on Long's part */
+            if (k > 1) {
+                indent_if_needed();
+                puts("Where?");
+                return 0;
+            } else if (k == 0 || iobj == BIRD) {
+                attempt_drop(loc, TOSS, obj, NOTHING, NOTHING);
+                return 0;
+            }
+            /* Long has a line that intends THROW COINS to select the troll
+             * even in the presence of another mortal, e.g. the oyster.
+             * But it's in the wrong place, so it never triggers. */
+        }
+    }
+    
+    assert(iobj != NOTHING);
+    if (iobj == TROLL &&
+        (is_treasure(obj) || (obj == CASK && liquid_contents(CASK) == WINE))) {
+        /* Snarf a treasure for the troll. */
+        destroy(obj);
+        destroy(TROLL); destroy(TROLL_);
+        drop(NO_TROLL, R_SWSIDE); drop(NO_TROLL_, R_NESIDE);
+        juggle(CHASM); juggle(CHASM_);
+        puts("The troll catches your treasure and scurries away out of sight.");
+    } else if (obj == SWORD || obj == BOTTLE) {
+        /* Throwing a fragile object will break it */
+        attempt_break(loc, obj);
+        return 0;
+    } else if (is_edible(obj) && is_living(iobj)) {
+        attempt_feed(loc, obj, TO, iobj);
+        return 0;
+    } else if (obj == AXE) {
+        /* THROW AXE AT something */
+        if (iobj == DRAGON && !objs(DRAGON).prop) {
+            puts("The axe bounces harmlessly off the dragon's thick scales.");
+            move(AXE, loc);
+            return 'l';
+        } else if (iobj == TROLL) {
+            puts("The troll deftly catches the axe, examines it carefully, and tosses it" SOFT_NL
+                 "back, declaring, \"Good workmanship, but it's not valuable enough.\"");
+            move(AXE, loc);
+            return 'l';
+        } else if (iobj == DWARF) {
+            return throw_axe_at_dwarf(loc);
+        } else if (iobj == BEAR && objs(BEAR).prop == 0) {
+            immobilize_axe_via(BEAR, loc);
+        } else if (iobj == WUMPUS && objs(WUMPUS).prop == 0) {
+            immobilize_axe_via(WUMPUS, loc);
+        } else if (iobj == DOG && !objs(DOG).prop) {
+            immobilize_axe_via(DOG, loc);
+        } else if (iobj == WUMPUS && objs(WUMPUS).prop != 6) {
+            puts("The Wumpus grabs the axe, stops and picks his teeth with it for a few" SOFT_NL
+                 "moments while looking thoughtfully at you.  When he finishes picking" SOFT_NL
+                 "his teeth, he eats the axe, belches, farts... and starts after" SOFT_NL
+                 "you again!");
+            destroy(AXE);
+        } else {
+            return attempt_kill(loc, iobj, WITH, obj);
+        }
+    } else {
+        /* THROW LAMP AT BEAR redirects to DROP LAMP */
+        attempt_drop(loc, TOSS, obj, NOTHING, NOTHING);
+    }
+    return 0;
+}
+
+void attempt_find(Location loc, ObjectWord obj)
+{
+    /* Long doesn't check your inventory, nor the contents of the cask. */
+    bool its_visibly_here =
+            is_at_loc(obj, loc) ||
+            (obj == liquid_contents(BOTTLE) && there(BOTTLE, loc)) ||
+            (obj == liquid_at_location(loc)) ||
+            (obj == DWARF && dwarf_at(loc));
+    if (at_hand(obj, loc) || (is_liquid(obj) && at_hand(obj+1, loc))) {
+        /* This message is given erroneously for FIND CHASM, etc. TODO: fix. */
+        /* TODO: plurals */
+        puts("You are already carrying it!");
+    } else if (closed) {
+        puts("I daresay whatever you want is around here somewhere.");
+    } else if (its_visibly_here) {
+        puts("I believe what you want is right here with you.");
+    } else {
+        puts("I can only tell you what you see as you move about and manipulate" SOFT_NL
+             "things.  I cannot tell you where remote things are.");
+    }
+}
+
 void attempt_inventory(void)
 {
     bool holding_anything = false;
@@ -5053,29 +5440,109 @@ void attempt_inventory(void)
     }
 }
 
-void throw_axe_at_dwarf(Location loc)  /* section 163 in Knuth */
+void attempt_feed(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
 {
-    int j;
-    for (j=1; j <= 5; ++j) {
-        if (dloc[j] == loc) break;
-    }
-    assert(j <= 5);
-    if (ran(3) < 2) {
-        static bool first_time = true;
-        if (first_time) {
-            puts("You killed a little dwarf.  The body vanishes in a cloud of greasy" SOFT_NL
-                 "black smoke.");
-            first_time = false;
+    /* FEED BEAR HONEY is transformed by the parser into FEED HONEY TO BEAR. */
+    if (iobj == NOTHING || !is_living(iobj)) {
+        if (obj == BIRD) {
+            /* TODO: erroneously printed for FEED BIRD TO CHASM
+             * (and FEED BIRD TO DOG, for that matter) */
+            indent_if_needed();
+            puts("It's not hungry (it's merely pinin' for the fjords).  Besides, you" SOFT_NL
+                 "have no bird seed.");
+        } else if (is_living(obj)) {
+            /* FEED BEAR. See if there is anything edible around here. */
+            ObjectWord food = find_an_edible_object(loc);
+            if (food == NOTHING) {
+                printf("What do you want to feed the %s?\n", otxt[objx]);
+                /* Here Long sets OBJS(1)=0 OBJX=0 to end this clause,
+                 * in the case of FEED BIRD AND BEAR. Line 22112 in Long.
+                 * TODO: emulate this. */
+            } else {
+                attempt_feed(loc, food, TO, obj);
+            }
         } else {
-            puts("You killed a little dwarf.");
+            noway();
         }
-        dloc[j] = R_LIMBO;  /* Once killed, a dwarf never comes back. */
-        dseen[j] = false;
+        return;
+    }
+
+    indent_if_needed();
+    if (iobj == DRAGON && objs(DRAGON).prop) {
+        noway();  /* feeding a dead dragon */
+    } else if (iobj == DRAGON) {
+        puts("There's nothing here it wants to eat (except perhaps you).");
+    } else if (iobj == TROLL) {
+        puts("Gluttony is not one of the troll's vices.  Avarice, however, is.");
+    } else if (iobj == SNAKE) {
+        if (obj == BIRD && !closed) {
+            puts("The snake has now devoured your bird.");
+            destroy(BIRD);
+            ++lost_treasures;  /* the jewelry */
+        } else {
+            puts("There's nothing here it wants to eat (except perhaps you).");
+        }
+    } else if (iobj == DWARF) {
+        puts("You fool, dwarves eat only coal!  Now you've made him *REALLY* mad!!");
+        dflag += 1;
+    } else if (iobj == BEAR) {
+        if (objs(BEAR).prop == 3) {
+            noway();  /* feeding a dead bear */
+        } else if (obj == HONEY) {
+            puts("The bear eagerly licks up the honeycomb, after which he seems to calm" SOFT_NL
+                 "down considerably and even becomes rather friendly.");
+            destroy(HONEY);
+            objs(BEAR).prop = 1;
+            if (objs(AXE).prop == 1) {
+                /* Long unconditionally mobilizes the axe, even if it's been
+                 * immobilized by the wumpus or dog instead. */
+                objs(AXE).prop = 0;
+                mobilize(AXE);
+            }
+        } else if (obj == FOOD) {
+            puts("All you have are watercress sandwiches.  The bear is less than" SOFT_NL
+                 "interested.");
+        } else if (objs(BEAR).prop == 0) {
+            puts("There's nothing here it wants to eat (except perhaps you).");
+        } else {
+            puts("He isn't hungry.");
+        }
+    } else if (iobj == DOG) {
+        if (objs(DOG).prop) {
+            puts("That wouldn't be wise.  It is best to let sleeping dogs lie.");
+        } else if (obj == FOOD) {
+            destroy(FOOD);
+            puts("The dog wolfs (natch) down the food and looks around hungrily for" SOFT_NL
+                 "more.  However, he does not appear to be any better disposed towards" SOFT_NL
+                 "your presence.");
+        } else {
+            puts("There's nothing here it wants to eat (except perhaps you).");
+        }
+    } else if (iobj == WUMPUS) {
+        if (objs(WUMPUS).prop == 6) {
+            puts("Dead wumpi, as a rule, are light eaters.  Nothing happens.");
+        } else if (objs(WUMPUS).prop == 0) {
+            /* Long has "How do expect". */
+            puts("How do you expect to feed a sleeping Wumpus?");
+        } else if (obj == FOOD) {
+            /* Long gives this message even if the Wumpus is dead or asleep. */
+            puts("The Wumpus looks at the food with distaste.  He looks at *YOU* with" SOFT_NL
+                 "relish!");
+        } else {
+            puts("There's nothing here it wants to eat (except perhaps you).");
+        }
+    } else if (iobj == BEES && obj == FLOWERS && !objs(FLOWERS).prop) {
+        puts("The bees swarm over the fresh flowers, leaving the hive unguarded" SOFT_NL
+             "and revealing a sweet honeycomb.");
+        move(FLOWERS, loc);
+        immobilize(FLOWERS);
+        objs(FLOWERS).prop = 1;  /* swarmed by bees */
+        objs(HIVE).prop = 1;
+        drop(HONEY, loc);
     } else {
-        puts("You attack a little dwarf, but he dodges out of the way.");
+        noway();
     }
 }
-
 
 Instruction *determine_motion_instruction(Location loc, MotionWord mot)
 {
@@ -5410,7 +5877,7 @@ Location attempt_clay_bridge(Location from)
 	if (toting(AXE)) move(AXE, R_SLOST);
         if (toting(SAPPHIRE)) river_has_sapphire = true;
 	for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
-	    if (toting(t)) move(t, R_LIMBO);
+	    if (toting(t)) destroy(t);
 	}
 	objs(CLAY).prop = 1;  /* no more bridge */
 	return R_ELOST;
@@ -5792,16 +6259,22 @@ void simulate_an_adventure(void)
                     continue;
                 case FEEFIE:
                 case BRIEF:
-                case ANSWER:
                     puts("TODO this intransitive verb is unhandled");
                     continue;
+                case ANSWER:
+                    if (loc == R_BOOTH && !objs(PHONE).prop) {
+                        attempt_answer(loc, PHONE);
+                    } else {
+                        goto act_on_what;
+                    }
                 case BLOW:
                     puts("You are now out of breath.");
                     continue;
                 case LEAVE:
                     assert(false);  /* Long's BUG(29) */
                 case CALL:
-                    puts("TODO this intransitive verb is unhandled");
+                    if (!here(PHONE, loc)) goto act_on_what;
+                    attempt_use_phone();
                     continue;
                 case GRIPE:
                     /* In Adventure 5.2/2, there is some logic here, and the message reads:
@@ -5907,7 +6380,22 @@ void simulate_an_adventure(void)
                     puts("Where?");
                     continue;
                 case KILL:
-                    puts("TODO this transitive verb is unhandled");
+                    switch (attempt_kill(loc, obj, prep, iobj)) {
+                        case 'a':
+                            assert(obj == NOTHING);
+                            goto act_on_what;
+                        case 'd':  /* just killed the dragon */
+                            newloc = R_SCAN2;
+                            goto movement;
+                        case 'l':
+                            newloc = loc;
+                            goto movement;
+                        case 'x':
+                            oldloc = oldoldloc = loc;
+                            goto death;
+                        case 0: break;
+                        default: assert(false);
+                    }
                     continue;
                 case POUR:
                     switch (attempt_pour(loc, obj, prep, iobj)) {
@@ -5916,10 +6404,10 @@ void simulate_an_adventure(void)
                              * that it gives the dwarves a chance to move. */
                             newloc = loc;
                             goto movement; 
-                        case 0:
-                            continue;
+                        case 0: break;
                         default: assert(false);
                     }
+                    continue;
                 case EAT: {
                     newloc = attempt_eat(loc, obj);
                     if (newloc != loc) {
@@ -5938,10 +6426,20 @@ void simulate_an_adventure(void)
                     attempt_rub(obj);
                     continue;
                 case TOSS:
+                    switch (attempt_toss(loc, obj, prep, iobj)) {
+                        case 'l':
+                            newloc = loc;
+                            goto movement;
+                        case 0: break;
+                        default: assert(false);
+                    }
+                    continue;
                 case FIND:
                 case INVENTORY:
+                    attempt_find(loc, obj);
+                    continue;
                 case FEED:
-                    puts("TODO this transitive verb is unhandled");
+                    attempt_feed(loc, obj, prep, iobj);
                     continue;
                 case FILL:
                     attempt_fill(loc, obj, iobj);
@@ -5980,7 +6478,11 @@ void simulate_an_adventure(void)
                     attempt_wear(loc, obj);
                     continue;
                 case HIT:
+                    attempt_hit(loc, obj, prep, iobj);
+                    continue;
                 case ANSWER:
+                    attempt_answer(loc, obj);
+                    continue;
                 case BLOW:
                 case LEAVE:
                 case CALL:

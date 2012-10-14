@@ -28,9 +28,9 @@ int burden(ObjectWord t);
 
 #define move(t,l) do { carry(t); drop((t),l); } while (0)
 #define juggle(t) do { Location l = objs(t).place; move(t, l); } while (0)
-#define destroy(t) move((t), R_LIMBO)
 
 void drop(ObjectWord t, Location l);
 void insert(ObjectWord t, ObjectWord container);
 void remove_from_containers(ObjectWord t);
 void carry(ObjectWord t);
+void destroy(ObjectWord t);

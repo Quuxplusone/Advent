@@ -236,7 +236,7 @@ bool here(ObjectWord t, Location loc)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     assert(R_LIMBO < loc && loc <= MAX_LOC);
-    return toting(t) || there(t, loc);
+    return toting(t) || is_at_loc(t, loc);
 }
 
 bool is_at_loc(ObjectWord t, Location loc)
@@ -403,5 +403,17 @@ void carry(ObjectWord t)
         }
         objs(t).place = R_INHAND;
         objs(t).link = NULL;
+    }
+}
+
+void destroy(ObjectWord t)
+{
+    /* Long doesn't bother to preserve the invariant that destroyed objects
+     * are always in R_LIMBO, but I think it's definitely worth it. */
+    move(t, R_LIMBO);
+    if (t == BIRD) objs(BIRD).prop = 0;  /* uncaged */
+    for (int u = MIN_OBJ; u <= MAX_OBJ; ++u) {
+	if (objs(u).place == -(int)t)
+	    destroy(u);
     }
 }
