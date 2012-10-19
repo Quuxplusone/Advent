@@ -2353,7 +2353,7 @@ int no_move_possible(Location loc)
     } else {
         const char *dirs[8] = {
             "east", "west", "north", "south", "northeast", "southeast",
-            "northwest", "southwest"
+            "southwest", "northwest"
         };
         VerbWord dir_verb = (keywordv(WALK) ? word2.meaning : word1.meaning);
         const char *dir = (dir_verb == UP) ? "up" :
