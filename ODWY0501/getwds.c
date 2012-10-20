@@ -48,9 +48,9 @@ void getlin()
     memset(words, '\0', sizeof words);
     wdx = 0;
 
-    printf("> "); fflush(stdout);    
+    printf("> "); fflush(stdout);
     fgets(buffer, sizeof buffer, stdin);
-    
+
     /* Trim leading and trailing whitespace.
      * Lowercase the entire string.
      * Replace punctuation with the word "and".
@@ -79,15 +79,15 @@ void getlin()
                 *q++ = tolower(*p);
         }
     }
-    
+
     /* Finish off the last word, if needed. */
     if (q != &txt[wdx][0]) {
         wdx += 1;
     }
-    
+
     if (wdx == 0) {
 	/* If nothing was entered, get another command. In Long's code,
-	 * there's no message here; we just go back to the prompt. */ 
+	 * there's no message here; we just go back to the prompt. */
 	puts("Tell me to do something.");
 	getlin();
     }
@@ -223,12 +223,12 @@ puts("lin20");
 	words[wdx] = NOTHING;
 
 	/* getlin() sets wdx to the number of words read.
-	 * getwds() sets wdx to the index of the next unprocessed word. */ 
+	 * getwds() sets wdx to the index of the next unprocessed word. */
 	wdx = 0;
     }
-    
+
     assert(words[wdx] != NOTHING);
-    
+
 lin30:
 puts("lin30");
     pflag = false;
@@ -272,7 +272,7 @@ puts("lin32");
 	}
 	goto lin860;
     }
-    
+
     if (word == ENTER) {
 	if (words[wdx] == NOTHING) goto lin99;
 	if (is_water_spelling(txt[wdx])) {
@@ -282,7 +282,7 @@ puts("lin32");
 		puts("Where?");
 	    }
 	    /* "ENTER WATER APPLES ORANGES" is quietly accepted,
-	     * thanks to this call to clrlin(). */ 
+	     * thanks to this call to clrlin(). */
 	    clrlin();
 	    goto lin20;
 	} else if (words[wdx] == BOAT) {
@@ -292,13 +292,13 @@ puts("lin32");
 	    goto lin99;
 	}
     }
-    
+
     if (streq(txt[wdx-1], "leave") && word_class(words[wdx]) == WordClass_Object) {
         if (!is_hinged(words[wdx]) && !is_immobile(words[wdx]))
 	    word = LEAVE;
 	goto lin99;
     }
-    
+
     /* The spelling "light" usually refers to the LAMP in this version;
      * for example, "GET LIGHT". The exception is Long's line 55, which
      * handles the command "LIGHT LAMP". I don't understand how, but
@@ -378,13 +378,13 @@ puts("lin92");
     assert(wdx > 0);
     if (word_class(word) == WordClass_Object) {
 	k = (pflag ? iobx : objx);
-	if (k == 0 || words[wdx-1] == AND) goto lin99;
+	if (k == 0 || (wdx >= 2 && words[wdx-2] == AND)) goto lin99;
 	assert(vrbx >= 1);
 	kk = w_verbs[vrbx-1];
 	if ((kk == TOSS || kk == FEED) && is_living(w_objs[objx-1])) {
 	    /* "THROW TROLL EGGS", "FEED BEAR HONEY" */
 	    /* TODO: but also "THROW TROLL TO HONEY BEAR", which will
-	     * turn into "THROW BEAR TO HONEY TROLL", I think. */  
+	     * turn into "THROW BEAR TO HONEY TROLL", I think. */
 	    w_iobjs[iobx++] = w_objs[objx-1];
 	    w_objs[--objx] = NOTHING;
 	} else {
@@ -434,7 +434,7 @@ puts("lin180");
     vrbx = 1;
     advise_about_going_west(txt[wdx-1]);
     goto lin90;
-    
+
 lin200:
 puts("lin200");
     /* Analyze an object. */
@@ -489,7 +489,7 @@ puts("lin280");
 	word = -word;
 	goto lin99;
     }
-    
+
     /* It was really an object, and it is here. */
 lin240:
 printf("lin240: objx=%d\n", objx);
@@ -611,17 +611,17 @@ puts("lin570");
     noway();
     clrlin();
     goto lin20;
-    
+
 lin600:
 puts("lin600");
     /* Handle an adjective. */
     {
     int adj = word;
-    word = words[wdx++];
+    word = words[wdx++];  /* get the noun */
     if (word == BAD_WORD) goto lin841;
     if (word == NOTHING || word == AND) {
-        txt[wdx-1][0] = toupper(txt[wdx-1][0]);
-        printf("%s what?\n", txt[wdx-1]);
+        txt[wdx-2][0] = toupper(txt[wdx-2][0]);
+        printf("%s what?\n", txt[wdx-2]);  /* Brass what? */
         goto lin20;
     }
     if (word_class(word) != WordClass_Object) {
@@ -644,17 +644,13 @@ puts("lin700");
     if (word == BAD_WORD) goto lin841;
     if (word == NOTHING) goto lin800;
     switch (word_class(word)) {
-	/* This might all be off by one in Long's original.
-	 * Notice that GET SACK AND BRASS LAMP will not parse,
-	 * because this code sends the adjective BRASS off to lin800.
-	 * TODO: figure this out. */
-	case WordClass_None: goto lin790;
-	case WordClass_Motion: goto lin92;
-	case WordClass_Object: goto lin720;
-	case WordClass_Action: goto lin790;
-	case WordClass_Message: goto lin800;
-	case WordClass_Preposition: goto lin92;
-	case WordClass_Adjective: goto lin800;
+	case WordClass_None: goto lin800;
+	case WordClass_Motion: goto lin790;
+	case WordClass_Object: goto lin92;
+	case WordClass_Action: goto lin720;
+	case WordClass_Message: goto lin790;
+	case WordClass_Preposition: goto lin800;
+	case WordClass_Adjective: goto lin92;
 	default: assert(false);
     }
 lin720:
@@ -670,7 +666,7 @@ lin790:
 puts("lin790");
     --wdx;
     goto lin900;
-    
+
 lin800:
 puts("lin800");
     /* Gee, I don't understand. */
@@ -701,7 +697,7 @@ puts("lin862");
         if (words[wdx] == NOTHING) goto lin20;
         if (words[wdx++] == AND) goto lin90;
     }
-    
+
 lin900:
 puts("lin900");
     /* We appear to have reached the end of a sentence.
@@ -724,7 +720,7 @@ puts("lin930");
 	/* GIVE LAMP AND KEYS TO TROLL AND DWARF */
 	goto lin800;
     }
-    
+
     /* Otherwise we successfully navigated the whole clause! */
     return;
 }
@@ -773,7 +769,7 @@ static int getobj(ObjectWord t, Location loc)
     } else if (t == BOOK && at_hand(REPO_BOOK, loc)) {
 	return REPO_BOOK;
     }
-    
+
     /* FIND and INVENTORY are also special; e.g. FIND GOLD. */
     if (w_verbs[vrbx] == FIND || w_verbs[vrbx] == INVENTORY) {
 	return t;
@@ -896,7 +892,7 @@ static bool is_valid_verb_prep_iobj(int verb, int prep, ObjectWord iobj)
     };
     int current_verb = NOTHING;
     int current_prep = NOTHING;
-    
+
     for (int i=0; ptab[i] != NOTHING; ++i) {
 	switch (word_class(ptab[i])) {
 	    case WordClass_Action:
@@ -969,7 +965,7 @@ void shift_words(int *verb, int *obj, int *iobj, Location loc)
      * Long prints item-names preceding only *default* responses
      * (so for example DROP LAMP AND BIRD near the snake will
      * give inconsistent results).
-     * 
+     *
      * This feature is unique to Long's expansion, and presumably
      * indicates that Long was influenced by the Infocom games.
      */

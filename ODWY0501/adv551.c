@@ -2570,9 +2570,8 @@ void build_object_table(void)
         "loose rocks.";
     new_obj(BOAT, "Wooden boat", 0, R_WBLUE);
     objs(BOAT).desc[0] = "There is a small wooden boat here.";
-    /* TODO objs(BOAT).desc[1] = "You are in a wooden boat."; */
     new_obj(STICKS, "Sticks at Styx", STICKS, R_WSTYX);
-    /* TODO: must the sticks be schizoid too? */
+    new_obj(STICKS_, NULL, STICKS, R_ESTYX);
     new_obj(GOLD, "Large gold nugget", 0, R_NUGGET);
     objs(GOLD).desc[0] = "There is a large sparkling nugget of gold here!";
     new_obj(DIAMONDS, "Several diamonds", 0, R_ICE);
@@ -3199,7 +3198,21 @@ int look_around(Location loc, bool dark, bool was_dark)
             struct ObjectData *tt = t->base ? t->base : t;
             if (tt->prop < 0) {  /* you've spotted a treasure */
                 if (closed) continue;  /* no automatic prop change after hours */
-                tt->prop = (tt == &objs(RUG) || tt == &objs(CHAIN));
+                switch (tt - &objs(0)) {
+                    case CLOAK:  /* trapped */
+                    case RING:  /* worn */
+                        tt->prop = 2;
+                        break;
+                    case RUG:  /* trapped */
+                    case CHAIN:  /* locked */
+                    case SWORD:  /* embedded */
+                    case CASK:  /* empty */
+                        tt->prop = 1;
+                        break;
+                    default:
+                        tt->prop = 0;
+                        break;
+                }
                 tally--;
                 if (tally == lost_treasures && tally > 0 && lamp_limit > 35) {
                     /* Zap the lamp if the remaining treasures are too elusive */
@@ -3602,16 +3615,6 @@ Location attempt_plover_passage(Location from)
     return from;
 }
 
-void indent_if_needed(void)
-{
-    assert(w_iobjs[1] == NOTHING);  /* TODO is this possible? verify */
-    if (w_objs[1] != NOTHING) {
-        /* TODO: low-level function to turn indentation on and off
-         * across multiple lines */
-        printf("%s\n    ", objs(w_objs[objx]).name);
-    }
-}
-
 void attempt_break(Location loc, ObjectWord obj)
 {
     if (obj == MIRROR && closed) {
@@ -3621,7 +3624,6 @@ void attempt_break(Location loc, ObjectWord obj)
         assert(false);  /* dwarves_upset() should not return */
     }
 
-    indent_if_needed();
     if (obj == VASE && objs(VASE).prop == 0) {
         puts("You have taken the vase and hurled it delicately to the ground.");
         if (toting(VASE)) move(VASE, loc);
@@ -3659,19 +3661,16 @@ void attempt_wake(Location loc, ObjectWord obj)
     if (there(WUMPUS, loc)) {
         being_chased = true;
         objs(WUMPUS).prop = 1;
-        indent_if_needed();
         puts("You turkey!!!  Now you've done it!  It took some effort, but you" SOFT_NL
              "woke up the Wumpus.  He slowly opens one red eye, and then another," SOFT_NL
              "and then one more (!!), and looks at you sleepily.  He had been" SOFT_NL
              "dreaming of a late snack.  If you don't act quickly, you'll" SOFT_NL
              "be a *late* adventurer!");
     } else if (there(DOG, loc) && objs(DOG).prop) {
-        indent_if_needed();
         puts("That wouldn't be wise.  It is best to let sleeping dogs lie.");
     } else if (closed && (obj == DWARF)) {
         dwarves_upset();
     } else {
-        indent_if_needed();
         puts("Don't be ridiculous!");
     }
 }
@@ -3701,7 +3700,7 @@ void attempt_drop(Location loc, ActionWord verb, ObjectWord obj, int prep, int i
     }
 
     if (!toting(obj)) {
-        indent_if_needed();
+        puts("");  /* get proper indentation */
         printf("You aren't carrying %s!\n", is_plural(obj) ? "them" : "it");
         return;
     }
@@ -3723,7 +3722,6 @@ void attempt_drop(Location loc, ActionWord verb, ObjectWord obj, int prep, int i
     }
     
     if (obj == POLE && holding(BOAT)) {
-        indent_if_needed();
         puts("Setting yourself adrift in the boat with no way to propel it would" SOFT_NL
              "not be very smart.  Best to keep the pole.");
         return;
@@ -3770,7 +3768,6 @@ void attempt_fill(Location loc, ObjectWord obj, ObjectWord iobj)
 {
     /* FILL obj WITH iobj */
     if (!is_vessel(iobj)) {
-        indent_if_needed();
         puts("You can't fill that.");
         return;
     }
@@ -3781,28 +3778,30 @@ void attempt_fill(Location loc, ObjectWord obj, ObjectWord iobj)
          * causes serious mischief, FILL (smashed) BOTTLE
          * repairs the bottle but leaves it immobile, and
          * FILL (smashed) VASE breaks the vase all over again. */
-        indent_if_needed();
         puts("Don't be ridiculous!");
         return;
     }
     if (obj == BOTTLE || obj == CASK) {
         const char *Your_bottle = (obj==CASK ? "The cask" : "Your bottle");
-        indent_if_needed();
         if (iobj == NOTHING) {
+            puts("");  /* get proper indentation */
             printf("There is nothing here %s.\n",
                    obj==CASK ?
                        "which you would want to put into the cask" :
                        "with which to fill the bottle");
         } else if (liquid_contents(obj) != NOTHING) {
+            puts("");  /* get proper indentation */
             printf("%s is already full.\n", Your_bottle);
         } else {
             /* Fill the vessel. */
             assert(objs(obj).prop == 1);
             if (iobj == WATER) {
+                puts("");  /* get proper indentation */
                 printf("%s is now full of water.\n", Your_bottle);
                 objs(obj).prop = 0;
                 insert(obj==CASK ? WATER_IN_CASK : WATER, obj);
             } else if (iobj == OIL) {
+                puts("");  /* get proper indentation */
                 printf("%s is now full of oil.\n", Your_bottle);
                 objs(obj).prop = 2;
                 insert(obj==CASK ? OIL_IN_CASK : OIL, obj);
@@ -3810,13 +3809,13 @@ void attempt_fill(Location loc, ObjectWord obj, ObjectWord iobj)
                 /* Long has "The bottle" in this case, but I don't think
                  * it's worth the inconsistency. I'm bugfixing a lot of this
                  * logic, so the messages won't precisely match up anyway. */
+                puts("");  /* get proper indentation */
                 printf("%s is now full of wine.\n", Your_bottle);
                 objs(obj).prop = 4;
                 insert(obj==CASK ? WINE_IN_CASK : WINE, obj);
             }
         }
     } else if (obj == VASE) {
-        indent_if_needed();
         if (iobj == NOTHING) {
             /* Long also prints this message if !holding(VASE), but I don't
              * see how that makes any sense. */
@@ -3828,17 +3827,14 @@ void attempt_fill(Location loc, ObjectWord obj, ObjectWord iobj)
             immobilize(VASE);
         }
     } else if (obj == GRAIL) {
-        indent_if_needed();
         puts("The chalice is slightly cracked. It won't hold any liquids.");
     } else {
-        indent_if_needed();
         puts("You can't fill that.  It would leak all over the place.");
     }
 }
 
 void take_something_immobile(ObjectWord obj)
 {
-    indent_if_needed();
     if (obj == CHAIN && objs(BEAR).prop != 0) {
         puts("The chain is still locked.");
     } else if (obj == BEAR && objs(BEAR).prop == 1) {
@@ -3869,16 +3865,12 @@ void take_something_immobile(ObjectWord obj)
 void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj)
 {
     if (obj == SWORD && iobj == ANVIL && objs(SWORD).prop == 0) {
-        indent_if_needed();
         puts("Only wizards can do that!");
     } else if (obj == iobj) {
-        indent_if_needed();
         puts("You can't put a thing into itself!");
     } else if (!is_vessel(iobj)) {
-        indent_if_needed();
         noway();
     } else if (obj == BOAT && iobj == CHEST) {
-        indent_if_needed();
         noway();
     } else if (objs(obj).base != NULL) {
         take_something_immobile(obj);
@@ -3895,11 +3887,9 @@ void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj)
          * those four vessels. */
         attempt_fill(loc, iobj, obj);
     } else if (!is_ajar(iobj)) {
-        indent_if_needed();
         puts("It's not open.");
     } else if (obj == BIRD || iobj == CAGE) {
         if (obj != BIRD) {
-            indent_if_needed();
             puts("It won't fit!");
         } else if (iobj == BOAT) {
             /* Long has a bug here: PUT BIRD IN BOAT will
@@ -3909,14 +3899,12 @@ void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj)
              * (Ditto PUT BIRD IN CHEST.) */
             attempt_drop(loc, DROP, BIRD, NOTHING, NOTHING);
         } else if (iobj != CAGE) {
-            indent_if_needed();
             puts("Are you kidding?  Do you want to suffocate the poor thing?");
         } else {
             attempt_take(loc, TAKE, BIRD, NOTHING, NOTHING);
         }
     } else if ((obj == COINS || obj == SLUGS) && iobj == PHONE) {
         destroy(obj);
-        indent_if_needed();
         puts("The coin drops into the slot with a dull \"clunk\".  There is no" SOFT_NL
              "dial tone.");
     } else if ((obj == COINS || obj == SLUGS) && iobj == MACHINE) {
@@ -3931,7 +3919,6 @@ void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj)
         puts("There are fresh batteries here.");
     } else if (iobj == LAMP) {
         if (obj != BATTERIES || objs(BATTERIES).prop) {
-            indent_if_needed();
             noway();
         } else {
             objs(BATTERIES).prop = 1;
@@ -3939,15 +3926,12 @@ void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj)
             lamp_limit = 400;
             objs(LAMP).prop = 1;  /* turn it on */
             have_warned_about_lamp = false;
-            indent_if_needed();
             puts("Your lamp is now shining with renewed strength.");
         }
     } else if (!fits_inside(obj, iobj)) {
-        indent_if_needed();
         puts("It won't fit.");
     } else {
         insert(obj, iobj);
-        indent_if_needed();
         puts(ok);
     }
 }
@@ -3966,24 +3950,19 @@ void attempt_remove_from(Location loc, ObjectWord obj, int iobj)
             iobj = -objs(obj).place;
             assert(MIN_OBJ <= iobj && iobj <= MAX_OBJ);
         } else {
-            indent_if_needed();
             puts("It's not inside anything.");
             return;
         }
     }
     assert(iobj != NOTHING);
     if (objs(obj).place != -iobj) {
-        indent_if_needed();
         puts("It isn't there!");
     } else if (!is_ajar(iobj)) {
-        indent_if_needed();
         puts("You can't get at it.");
     } else if (obj == WATER || obj == OIL || obj == WINE) {
         /* TAKE WINE FROM CASK, for example */
-        indent_if_needed();
         puts("How?");
     } else if (!toting(obj) && burden(0)+burden(obj) > 15) {
-        indent_if_needed();
         puts("It's too heavy.  You'll have to drop something first.");
     } else {
         remove_from_containers(obj);
@@ -3991,7 +3970,6 @@ void attempt_remove_from(Location loc, ObjectWord obj, int iobj)
             /* The bird can't be held. */
             attempt_drop(loc, DROP, BIRD, NOTHING, NOTHING);
         } else {
-            indent_if_needed();
             puts("Taken.");
         }
     }
@@ -4010,12 +3988,10 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
              "If you had it in your hand it would make a mess.");
         /* Here Long does a GOTO 2, but I see no reason to reproduce that. */
     } else if (verb == YANK && obj == BEAR && objs(BEAR).prop <= 1) {
-        indent_if_needed();
         puts("Pulling an angry bear around is a good way to get your arm ripped off.");
     } else if (verb == YANK && obj == CLOAK && objs(CLOAK).prop == 2) {
         assert(loc == R_CLOAKROOM);
         if (burden(0)+burden(CLOAK) > 15) {
-            indent_if_needed();
             puts("It's too heavy.  You'll have to drop something first.");
         } else {
             puts("You have jerked the cloak free of the rocks.  However, in doing" SOFT_NL
@@ -4032,13 +4008,11 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
     } else if (prep == OFF) {
         /* TAKE OFF CLOAK redirects to DROP CLOAK */
         if (obj != NOTHING && iobj != NOTHING) {
-            indent_if_needed();
             confuz();
         } else {
             attempt_drop(loc, TAKE, (obj != NOTHING) ? obj : iobj, OFF, NOTHING);
         }
     } else if (holding(obj)) {
-        indent_if_needed();
         if (obj == BOAT) {
             puts("You're already in it!");
         } else if (is_plural(obj)) {
@@ -4072,7 +4046,6 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
         } else if (good_cask_on_ground) {
             attempt_take(loc, verb, CASK, NOTHING, NOTHING);
         } else if (can_fill_bottle && can_fill_cask) {
-            indent_if_needed();
             puts("How?");
         } else if (can_fill_bottle) {
             attempt_fill(loc, BOTTLE, obj);
@@ -4080,24 +4053,19 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
             attempt_fill(loc, CASK, obj);
             /* Below this point, we fail for some reason or other. */
         } else if (full_bottle_here && full_cask_here) {
-            indent_if_needed();
             puts("Your containers are both full.");
         } else if (full_bottle_here && at_hand(BOTTLE, loc)) {
             assert(!full_cask_here);
-            indent_if_needed();
             puts("Your bottle is already full.");
         } else if (full_cask_here && at_hand(CASK, loc)) {
             assert(!full_bottle_here);
-            indent_if_needed();
             puts("The cask is already full.");
         } else {
             puts("You have nothing in which to carry it.");
         }
     } else if (obj != BEAR && burden(0)+burden(obj) > 15) {
-        indent_if_needed();
         puts("It's too heavy.  You'll have to drop something first.");
     } else if (obj == POSTER && there(SAFE, R_LIMBO)) {
-        indent_if_needed();
         puts("Hidden behind the poster is a steel safe, embedded in the wall.");
         assert(loc == R_HOUSE);
         objs(POSTER).prop = 1;
@@ -4105,7 +4073,6 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
         drop(SAFE_WALL, R_HOUSE);
         carry(POSTER);
     } else if (obj == BOAT) {
-        indent_if_needed();
         if (!toting(POLE) && !there(POLE, -BOAT)) {
             puts("The boat's oars were stolen by the dwarves to play bing-bong." SOFT_NL
                  "(That's dwarvish ping-pong " EMDASH("--") " with rocks!).  You have no way" SOFT_NL
@@ -4120,7 +4087,6 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
         /* In Long's version, simply dropping the rod isn't good enough
          * to charm the bird; you have to put it away somewhere the bird
          * can't see it. */
-        indent_if_needed();
         if (at_hand(ROD, loc)) {
             puts("The bird was unafraid when you entered, but as you approach it becomes" SOFT_NL
                  "disturbed and you cannot catch it.");
@@ -4145,7 +4111,6 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
                 return;
         }
         if (objs(CROWN).flags & F_WORN) {
-            indent_if_needed();
             puts("Taken.");
             carry(SWORD);
         } else {
@@ -4166,7 +4131,6 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
                 break;
         }
     print_taken_message:
-        indent_if_needed();
         if (verb == YANK) {
             puts("Ok, ok.  No need to be grabby.");
         } else {
@@ -4178,16 +4142,15 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
 void attempt_wear(Location loc, ObjectWord obj)
 {
     if (obj == SWORD && objs(SWORD).prop != 3) {
-        indent_if_needed();
         puts("You have no scabbard!");  /* Long has "scabbord" */
     } else if (!is_wearable(obj)) {
+        puts("");  /* get proper indentation */
         printf("Just exactly how does one wear a %s?\n", otxt[objx]);
     } else if (obj == CLOAK && objs(CLOAK).prop == 2) {
-        indent_if_needed();
         puts("The cloak is stuck tight under the rocks.  You'll probably have to" SOFT_NL
              "yank it out.");
     } else if (objs(obj).flags & F_WORN) {
-        indent_if_needed();
+        puts("");  /* get proper indentation */
         printf("You are already wearing %s!\n",
                (obj == SHOES) ? "them" : "it");
     } else if (!holding(obj) && burden(0)+burden(obj) > 15) {
@@ -4199,7 +4162,6 @@ void attempt_wear(Location loc, ObjectWord obj)
          * overburdened will quietly remove the cloak from
          * the sack. */
         remove_from_containers(obj);
-        indent_if_needed();
         puts("It's too heavy.  You'll have to drop something first.");
     } else {
         remove_from_containers(obj);
@@ -4225,10 +4187,8 @@ void attempt_hit(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
              "the booth.");
         dwarves_upset();
     } else if (objs(PHONE).prop == 2) {
-        indent_if_needed();
         puts("The telephone is out of order and your hand is sore.");
     } else {
-        indent_if_needed();
         puts("A couple of lead slugs drop from the coinbox.  (Gnomes are" SOFT_NL
              "notoriously cheap....)  But you've broken the phone beyond" SOFT_NL
              "all hope.");
@@ -4251,22 +4211,19 @@ void attempt_use_phone(void)
         quit();
     } else {
         /* This message is misleading: PUT COINS IN PHONE is allowed. */
-        indent_if_needed();
         puts("You don't have the correct change.");
     }
 }
 
-void attempt_answer(Location loc, ObjectWord obj)
+void attempt_answer(ObjectWord obj)
 {
     switch (obj) {
         case PHONE:
             if (objs(PHONE).prop) {
-                indent_if_needed();
                 puts("It isn't ringing!");
             } else if (closed) {
                 attempt_use_phone();
             } else {
-                indent_if_needed();
                 puts("No one replies.  The line goes dead with a faint \"Click\".");
                 objs(PHONE).prop = 1;
                 objs(BOOTH).prop = 2;
@@ -4274,16 +4231,13 @@ void attempt_answer(Location loc, ObjectWord obj)
             break;
         case DWARF: case WUMPUS: case SNAKE: case BEAR:
         case DRAGON:
-            indent_if_needed();
             puts("He didn't say anything!"); break;
         case TROLL:
-            indent_if_needed();
             puts("He wants treasure, not gab."); break;
         case BIRD:
-            indent_if_needed();
+            /* TODO: "KILL AND ANSWER BIRD" */
             puts("It isn't a parrot.  He didn't say anything."); break;
         default:
-            indent_if_needed();
             puts("I think you are a little confused!"); break;
     }
 }
@@ -4374,6 +4328,7 @@ void lookin(ObjectWord container)
     if (objs(container).contents == NULL) return;
     puts("It contains:");
     for (struct ObjectData *p = objs(container).contents; p != NULL; p = p->link) {
+        puts("");  /* get proper indentation */
 	printf("     %s\n", p->name);
     }
 }
@@ -4400,9 +4355,7 @@ int attempt_look(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
         assert(iobj != NOTHING);
         assert(word_class(iobj) == WordClass_Object);
         if (is_vessel(iobj)) {
-            /* Look into something (a container).
-             * Notice that LOOK IN SACK AND SAFE will not print Zork-style
-             * disambiguators, because we don't go via line 2011. */
+            /* Look into something (a container). */
             if (is_opaque(iobj) && !is_ajar(iobj)) {
                 puts("It's not open.");
             } else if (objs(iobj).contents == NULL) {
@@ -4538,8 +4491,8 @@ ObjectWord find_an_edible_object(Location loc)  /* line 11400 in Long */
 void attempt_lock(Location loc, ObjectWord obj)
 {
 #define close_and_lock(t) objs(t).flags |= F_LOCKED; objs(t).flags &= ~F_OPEN
-    indent_if_needed();
     if (!is_hinged(obj)) {
+        puts("");  /* get proper indentation */
         printf("I don't know how to lock or unlock the %s.\n", otxt[objx]);
     } else if (!at_hand(KEYS, loc) && !at_hand(TINY_KEY, loc) && obj != SAFE) {
         puts("You have no keys!");
@@ -4566,6 +4519,7 @@ void attempt_lock(Location loc, ObjectWord obj)
             assert(at_hand(KEYS, loc));
             puts("Your keys are all too large for the lock.");
         } else {
+            puts("");  /* get proper indentation */
             printf("The %s door is now locked.\n",
                    (obj == TINY_DOOR ? "tiny" : "wrought-iron"));
             objs(TINY_DOOR).prop = 0;
@@ -4590,10 +4544,10 @@ void attempt_lock(Location loc, ObjectWord obj)
 void attempt_unlock(Location loc, ObjectWord obj, ObjectWord iobj)
 {
 #define unlock_and_open(t) objs(t).flags &= ~F_LOCKED; objs(t).flags |= F_OPEN
-    indent_if_needed();
     if (obj == KEYS || obj == TINY_KEY) {
         puts("You can't unlock the keys.");
     } else if (!is_hinged(obj)) {
+        puts("");  /* get proper indentation */
         printf("I don't know how to lock or unlock the %s.\n", otxt[objx]);
     } else if (!at_hand(KEYS, loc) && !at_hand(TINY_KEY, loc) && obj != SAFE) {
         puts("You have no keys!");
@@ -4632,6 +4586,7 @@ void attempt_unlock(Location loc, ObjectWord obj, ObjectWord iobj)
         } else if (cave_is_closing()) {
             panic_at_closing_time();
         } else {
+            puts("");  /* get proper indentation */
             printf("The %s door is now unlocked.\n",
                    (obj == TINY_DOOR ? "tiny" : "wrought-iron"));
             objs(TINY_DOOR).prop = 1;
@@ -4657,31 +4612,28 @@ void attempt_open(Location loc, ObjectWord obj, ObjectWord iobj)
 {
     /* Long forgets about the smashed bottle. I've fixed it. */
     if (!is_hinged(obj) || (obj == BOTTLE && objs(BOTTLE).prop == 3)) {
-        indent_if_needed();
         noway();
     } else if (obj == BOOTH_DOOR && objs(BOOTH_DOOR).prop == 1) {
-        indent_if_needed();
         puts("The gnome firmly blocks the door of the booth.  You can't enter.");
     } else if (is_ajar(obj)) {
-        indent_if_needed();
         puts("It's already open.");
     } else if (has_lock(obj) || iobj == KEYS || iobj == TINY_KEY) {
         attempt_unlock(loc, obj, iobj);
     } else if (obj == RUSTY_DOOR && (objs(RUSTY_DOOR).flags & F_LOCKED)) {
-        indent_if_needed();
         puts("The door is extremely rusty and refuses to open.");
     } else if (objs(obj).flags & F_LOCKED) {
-        indent_if_needed();
         puts("It's locked.");
     } else if (obj == CLAM || obj == OYSTER) {
         bool is_clam = (obj == CLAM);
         const char *clam_or_oyster = (is_clam ? "clam" : "oyster");
-        indent_if_needed();
         if (iobj != NOTHING && iobj != TRIDENT) {
+            puts("");  /* get proper indentation */
             printf("That's not strong enough to open the %s.\n", clam_or_oyster);
         } else if (!at_hand(TRIDENT, loc)) {
+            puts("");  /* get proper indentation */
             printf("You don't have anything strong enough to open the %s.\n", clam_or_oyster);
         } else if (holding(obj)) {
+            puts("");  /* get proper indentation */
             printf("I advise you to put down the %s before opening it.  >%s!<\n",
                    clam_or_oyster, (is_clam ? "Strain" : "Wrench"));
         } else if (obj == OYSTER) {
@@ -4697,7 +4649,7 @@ void attempt_open(Location loc, ObjectWord obj, ObjectWord iobj)
             drop(PEARL, R_SAC);
         }
     } else {
-        indent_if_needed(); puts(ok);
+        puts(ok);
         objs(obj).flags |= F_OPEN;
     }
 }
@@ -4706,10 +4658,8 @@ void attempt_close(Location loc, ObjectWord obj, ObjectWord iobj)
 {
     /* Long forgets about the smashed bottle. I've fixed it. */
     if (!is_hinged(obj) || (obj == BOTTLE && objs(BOTTLE).prop == 3)) {
-        indent_if_needed();
         noway();
     } else if (!is_ajar(obj)) {
-        indent_if_needed();
         puts("It's already closed.");
     } else if (has_lock(obj)) {
         /* CLOSE TINY DOOR WITH POLE, for example */
@@ -4719,9 +4669,30 @@ void attempt_close(Location loc, ObjectWord obj, ObjectWord iobj)
          * and lists RUSTY_DOOR, BOOTH_DOOR, BOTTLE, CASK, and CAGE.
          * He forgets SACK, BOOK, and CANISTER, implying perhaps that
          * these were relatively late additions to the game. */
-        indent_if_needed(); puts(ok);
+        puts(ok);
         objs(obj).flags &= ~F_OPEN;
     }
+}
+
+bool attempt_light(Location loc)
+{
+    if (!at_hand(LAMP, loc)) {
+        puts("You have no source of light.");
+    } else if (lamp_limit <= 0) {
+        puts("Your lamp has run out of power.");
+    } else if (objs(LAMP).prop) {
+        puts("Your lamp is already on.");
+    } else {
+        objs(LAMP).prop = 1;  /* lighted */
+        if (loc == R_CRYSTAL) {
+            puts("Your lamp is now on, but the glare from the walls is absolutely" SOFT_NL
+                 "blinding.  If you proceed you are likely to fall into a pit.");
+        } else {
+            puts("Your lamp is now on.");
+            return true;
+        }
+    }
+    return false;
 }
 
 int attempt_kill(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
@@ -4747,7 +4718,6 @@ int attempt_kill(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
             if (k > 1) return 'a';  /* goto act_on_what */
         }
     }
-    indent_if_needed();
     if (obj == BIRD) {
         if (closed) {
             puts("Oh, leave the poor unhappy bird alone.");
@@ -4860,11 +4830,11 @@ int attempt_pour(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
         iobj = obj;
         obj = liquid_contents(obj);
         if (obj == NOTHING) {
-            indent_if_needed(); puts("It's empty.");
+            puts("It's empty.");
             return 0;
         }
     } else if (!original_obj_was_liquid) {
-        indent_if_needed(); puts("You can't pour that.");
+        puts("You can't pour that.");
         return 0;
     }
 
@@ -4874,7 +4844,6 @@ int attempt_pour(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
          * That has the advantage of not needing to handle the case of
          * POUR WATER FROM VASE; I have to handle it specially here. */
         if (iobj == VASE || iobj == GRAIL) {
-            indent_if_needed();
             puts("It's empty.");
             return 0;
         }
@@ -4890,7 +4859,6 @@ int attempt_pour(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
         } else if (holding(CASK) && liquid_contents(CASK) == obj) {
             iobj = CASK;
         } else {
-            indent_if_needed();
             puts("You aren't carrying it!");
             return 0;
         }
@@ -4905,10 +4873,10 @@ int attempt_pour(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
          * Long gives "You can't get at it" even when the player's original
          * command was POUR BOTTLE or WATER PLANT. I'm taking the liberty
          * of fixing this bug. */
-        indent_if_needed();
         if (original_obj_was_liquid) {
             puts("You can't get at it.");
         } else {
+            puts("");  /* get proper indentation */
             printf("The %s is closed.\n", iobj==BOTTLE ? "bottle" : "cask");
         }
         return 0;
@@ -4925,7 +4893,6 @@ int attempt_pour(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
     objs(iobj).prop = 1;  /* empty */
 
     if (there(RUSTY_DOOR, loc)) {
-        indent_if_needed();
         if (obj == OIL) {
             objs(RUSTY_DOOR).prop = 1;
             objs(RUSTY_DOOR).flags &= ~F_LOCKED;
@@ -4951,6 +4918,7 @@ int attempt_pour(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
              * resurrect it from the shards, but not re-mobilize it,
              * so you won't be able to yank it out anymore. I've
              * fixed this bug with a new message. */
+            puts("");  /* get proper indentation */
             printf("The shards are now %s.\n",
                    (obj == OIL) ? "covered with oil" : "very clean");
         } else {
@@ -4964,8 +4932,8 @@ int attempt_pour(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
         }
     } else if (there(PLANT, loc)) {
         if (obj != WATER) {
-            indent_if_needed();
             /* Long has "shakes dry its leaves", but we might as well be specific. */
+            puts("");  /* get proper indentation */
             printf("The plant indignantly shakes the %s off its leaves and asks, \"Water?\"\n",
                    (obj == WINE) ? "wine" : "oil");
         } else {
@@ -4983,11 +4951,9 @@ int attempt_pour(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
             return 'm';  /* look around */
         }
     } else if (iobj == BOTTLE) {
-        indent_if_needed();
         puts("Your bottle is empty and the ground is wet.");
     } else {
         assert(iobj == CASK);
-        indent_if_needed();
         puts("Your cask is empty and the ground is soaked.");
     }
     return 0;
@@ -5005,18 +4971,15 @@ Location attempt_eat(Location loc, ObjectWord obj)
             /*FALLTHRU*/
         case FOOD:
             destroy(FOOD);
-            indent_if_needed();
             puts("Thank you, it was delicious!");
             break;
         case BIRD: case SNAKE:
         case CLAM: case OYSTER:
         case FLOWERS:
-            indent_if_needed();
             puts("Yeeeecchhh!!");
             break;
         case DWARF: case DRAGON: case TROLL: case DOG:
         case WUMPUS: case BEAR: case GNOME:
-            indent_if_needed();
             puts("You've got to be kidding!");
             break;
         case MUSHROOMS:
@@ -5029,7 +4992,6 @@ Location attempt_eat(Location loc, ObjectWord obj)
             if (loc != R_TINYDOOR) ++lost_treasures;
             destroy(MUSHROOMS);
             if (!is_at_loc(TINY_DOOR, loc)) {
-                indent_if_needed();
                 puts("You thought maybe these were peyote??  You feel a little dizzy," SOFT_NL
                      "but nothing happens.");
             } else {
@@ -5071,7 +5033,6 @@ Location attempt_eat(Location loc, ObjectWord obj)
             }
             return R_TINYDOOR;
         default:
-            indent_if_needed();
             puts("Don't be ridiculous!");
             break;
     }
@@ -5128,7 +5089,6 @@ Location attempt_drink(Location loc, ObjectWord obj, ObjectWord iobj)
             assert(iobj == NOTHING);
         } else {
             /* DRINK WATER AND WATER AND WATER */
-            indent_if_needed();
             puts("It isn't here!");
             return loc;
         }
@@ -5141,10 +5101,8 @@ Location attempt_drink(Location loc, ObjectWord obj, ObjectWord iobj)
     }
     
     if (obj == OIL) {
-        indent_if_needed();
         puts("Yeeeecchhh!!");
     } else if (obj == WATER) {
-        indent_if_needed();
         if (iobj == BOTTLE) {
             destroy(WATER);
             objs(BOTTLE).prop = 1;
@@ -5215,7 +5173,6 @@ Location attempt_drink(Location loc, ObjectWord obj, ObjectWord iobj)
 
 void attempt_rub(ObjectWord obj)
 {
-    indent_if_needed();
     if (obj == LAMP) {
         puts("Rubbing the electric lamp is not particularly rewarding.  Anyway," SOFT_NL
              "nothing exciting happens.");
@@ -5260,7 +5217,6 @@ void immobilize_axe_via(ObjectWord animal, Location loc)
     move(AXE, loc);
     immobilize(AXE);
     juggle(animal);
-    indent_if_needed();
     switch (animal) {
         case BEAR:
             puts("The axe misses and lands near the bear where you can't get at it.");
@@ -5294,7 +5250,6 @@ int attempt_toss(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
     }
     if (obj == BOAT || obj == BEAR) {
         /* THROW BEAR? It's much too heavy! */
-        indent_if_needed();
         noway();
         return 0;
     }
@@ -5317,7 +5272,6 @@ int attempt_toss(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
             if (there(BEES, loc)) { ++k; iobj = BEES; }
             /* but *not* GNOME or DOG; oversight on Long's part */
             if (k > 1) {
-                indent_if_needed();
                 puts("Where?");
                 return 0;
             } else if (k == 0 || iobj == BIRD) {
@@ -5447,13 +5401,13 @@ void attempt_feed(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord
         if (obj == BIRD) {
             /* TODO: erroneously printed for FEED BIRD TO CHASM
              * (and FEED BIRD TO DOG, for that matter) */
-            indent_if_needed();
             puts("It's not hungry (it's merely pinin' for the fjords).  Besides, you" SOFT_NL
                  "have no bird seed.");
         } else if (is_living(obj)) {
             /* FEED BEAR. See if there is anything edible around here. */
             ObjectWord food = find_an_edible_object(loc);
             if (food == NOTHING) {
+                puts("");  /* get proper indentation */
                 printf("What do you want to feed the %s?\n", otxt[objx]);
                 /* Here Long sets OBJS(1)=0 OBJX=0 to end this clause,
                  * in the case of FEED BIRD AND BEAR. Line 22112 in Long.
@@ -5467,7 +5421,6 @@ void attempt_feed(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord
         return;
     }
 
-    indent_if_needed();
     if (iobj == DRAGON && objs(DRAGON).prop) {
         noway();  /* feeding a dead dragon */
     } else if (iobj == DRAGON) {
@@ -6077,6 +6030,7 @@ void simulate_an_adventure(void)
 
     while (true) {
     movement:  /* Long's line 2 */
+        set_indentation(0);
 #if 0
         /* Check for interference with the proposed move to newloc. */
         if (cave_is_closing() && newloc < MIN_IN_CAVE && newloc != R_LIMBO) {
@@ -6100,6 +6054,7 @@ void simulate_an_adventure(void)
         }
 #endif
     commence:
+        set_indentation(0);
         if (loc == R_LIMBO) goto death;
         switch (look_around(loc, now_in_darkness(loc), was_dark)) {
             case 'p': goto pitch_dark;
@@ -6110,11 +6065,18 @@ void simulate_an_adventure(void)
             verb = oldverb = NOTHING;
             oldobj = obj;
             oldiobj = iobj;
+            set_indentation(0);
 
             maybe_give_a_hint(loc, oldloc, oldoldloc, oldobj);
             was_dark = now_in_darkness(loc);
             adjustments_before_listening(loc);
             shift_words(&verb, &obj, &iobj, loc);
+
+            assert(w_iobjs[1] == NOTHING);  /* TODO is this possible? verify */
+            if (w_objs[1] != NOTHING) {
+                puts(objs(w_objs[objx]).name);
+                set_indentation(4);
+            }
 
             ++turns;
 
@@ -6133,7 +6095,6 @@ void simulate_an_adventure(void)
             printf("parse: verb=%d obj=%d prep=%d iobj=%d\n", verb, obj, prep, iobj);
 
             if ((obj == KNIFE || iobj == KNIFE) && last_knife_loc == loc) {
-                indent_if_needed();
                 puts("The dwarves' knives vanish as they strike the walls of the cave.");
                 last_knife_loc = R_LIMBO;
                 continue;
@@ -6263,7 +6224,7 @@ void simulate_an_adventure(void)
                     continue;
                 case ANSWER:
                     if (loc == R_BOOTH && !objs(PHONE).prop) {
-                        attempt_answer(loc, PHONE);
+                        attempt_answer(PHONE);
                     } else {
                         goto act_on_what;
                     }
@@ -6339,7 +6300,7 @@ void simulate_an_adventure(void)
                 case TURN:
                 act_on_what:
                     vtxt[vrbx][0] = toupper(vtxt[vrbx][0]);
-                    printf("%s what?", vtxt[vrbx]);
+                    printf("%s what?\n", vtxt[vrbx]);
                     continue;
                 default:
                     assert(false);  /* BUG(23) in Long's code */
@@ -6367,16 +6328,19 @@ void simulate_an_adventure(void)
                     attempt_close(loc, obj, iobj);
                     continue;
                 case LIGHT:
+                    /* Long lazily allows "LIGHT KEYS". TODO: maybe fix this. */
+                    if (attempt_light(loc) && was_dark) {
+                        goto commence;
+                    }
+                    continue;
                 case EXTINGUISH:
                 case WAVE:
                     puts("TODO this transitive verb is unhandled");
                     continue;
                 case CALM:
-                    indent_if_needed();
                     puts("I'm game.  Would you care to explain how?");
                     continue;
                 case GO:
-                    indent_if_needed();
                     puts("Where?");
                     continue;
                 case KILL:
@@ -6448,7 +6412,6 @@ void simulate_an_adventure(void)
                     puts("TODO this transitive verb is unhandled");
                     continue;
                 case FEEFIE:
-                    indent_if_needed();
                     puts("I don't know how.");
                     continue;
                 case BRIEF:
@@ -6481,7 +6444,7 @@ void simulate_an_adventure(void)
                     attempt_hit(loc, obj, prep, iobj);
                     continue;
                 case ANSWER:
-                    attempt_answer(loc, obj);
+                    attempt_answer(obj);
                     continue;
                 case BLOW:
                 case LEAVE:
@@ -6505,7 +6468,6 @@ void simulate_an_adventure(void)
                     attempt_remove_from(loc, obj, iobj);
                     continue;
                 case BURN:
-                    indent_if_needed();
                     puts("You haven't any matches.");
                     continue;
                 case LOCK:
@@ -6524,7 +6486,6 @@ void simulate_an_adventure(void)
                             continue;
                     }
                 case COMBO:
-                    indent_if_needed();
                     noway();
                     continue;
                 case SWEEP:
@@ -6537,7 +6498,6 @@ void simulate_an_adventure(void)
                 case MAP:
                 case GATE:
                 case PIRLOC:
-                    indent_if_needed();
                     confuz();
                     continue;
                 case SCORE:
@@ -6546,7 +6506,6 @@ void simulate_an_adventure(void)
                 case SAVE:
                 case RESTORE:
 #endif /* SAVE_AND_RESTORE */
-                    indent_if_needed();
                     puts("I don't understand that!");
                 default:
                     assert(false);  /* BUG(24) in Long's code */
@@ -6559,6 +6518,7 @@ void simulate_an_adventure(void)
         assert(R_LIMBO <= oldloc && oldloc <= MAX_LOC);
         assert(R_LIMBO < loc && loc <= MAX_LOC);
         newloc = loc;  /* by default we will stay put */
+        set_indentation(0);
         
         if (mot == CAVE) {
             /* No CAVE appears in the travel table; its sole purpose is to

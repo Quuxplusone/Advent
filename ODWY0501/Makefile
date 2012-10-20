@@ -8,7 +8,7 @@ MAXES = \$$MAX_ARRAYS=1700 \
 
 all: adv551
 
-adv551: adv551.o getwds.o objprop.o
+adv551: adv551.o getwds.o objprop.o indent.o
 	gcc -std=c99 -O3 -pedantic -W -Wall -Wextra \
 		-Wno-switch -Wno-unused-result \
 		$^ -o $@

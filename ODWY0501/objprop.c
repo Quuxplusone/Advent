@@ -209,7 +209,7 @@ int weight(ObjectWord t)
         case JEWELS: case VASE: case SWORD: case LYRE:
         case SAPPHIRE: case GRAIL: case WATER: case WATER_IN_CASK:
         case OIL: case OIL_IN_CASK: case WINE: case WINE_IN_CASK:
-        case HONEY: case BIRD: case BALL:
+        case HONEY: case BIRD: case SACK: case BALL:
             return 2;
         case AXE: case BATTERIES: case COINS: case TRIDENT:
         case EMERALD: case RUG: case CHAIN: case CASK: case TREE:
