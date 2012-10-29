@@ -3688,14 +3688,11 @@ void attempt_drop(Location loc, ActionWord verb, ObjectWord obj, int prep, int i
             assert(false);
     }
 
-    if (obj == ROD && !holding(ROD) && holding(ROD2)) {
+    if (obj == ROD && !toting(ROD) && toting(ROD2)) {
         obj = ROD2;
-    } else if (obj == liquid_contents(BOTTLE)) {
-        /* This is Long's logic. Note that DROP WATER will give a bad response
-         * if you're carrying the cask of water but the bottle (in a different
-         * room) happens to be full of water. TODO: fix this bug. */
+    } else if ((obj == liquid_contents(BOTTLE)) && toting(BOTTLE)) {
         obj = BOTTLE;
-    } else if (obj == liquid_contents(CASK)) {
+    } else if ((obj == liquid_contents(CASK)) && toting(CASK)) {
         obj = CASK;
     }
 
@@ -3755,7 +3752,7 @@ void attempt_drop(Location loc, ActionWord verb, ObjectWord obj, int prep, int i
         if (obj==POLE) objs(BOAT).prop = 0;  /* TODO: why? */
     }
     
-    drop(obj, loc);
+    move(obj, loc);
     switch (verb) {
         case TAKE: puts(ok); break;
         case LEAVE: puts("Left."); break;
