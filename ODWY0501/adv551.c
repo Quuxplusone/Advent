@@ -2669,7 +2669,7 @@ void build_object_table(void)
     objs(ECHO).desc[0] = "Your footsteps echo hollowly throughout the chamber.";
     objs(ECHO).desc[1] = NULL;  /* the wall is just rubble now */
     /* TODO: I'm fairly sure that SAFE_WALL could productively be combined
-     * with SAFE. */ 
+     * with SAFE. */
     new_obj(SAFE_WALL, "Wall with safe", SAFE_WALL, R_LIMBO);
     objs(SAFE_WALL).desc[0] = "A steel safe is embedded in the wall.";
     new_obj(TINY_KEY, "Tiny brass key", 0, R_CRAMPED);
@@ -3427,13 +3427,13 @@ int score(void)
 	for (int i=0; qk[i].obj != NOTHING; ++i) {
 	    if (qk[i].obj != t) continue;
 	    /* Found the data entry for this treasure. */
-	    
+
 	    /* If you've picked up this treasure, score some points. */
 	    if (objs(t).prop >= 0) score += 2*qk[i].value;
 
 	    /* The treasure must be in a particular place... */
 	    if (objs(t).place != qk[i].place) continue;
-	    
+
 	    /* ...and (if it's the vase, for example) not be broken. */
 	    if (objs(t).prop != qk[i].prop) continue;
 
@@ -3442,7 +3442,7 @@ int score(void)
 
 	    /* The radium needs to be in the canister in the safe. */
 	    if (qk[i].place == -CANISTER && objs(CANISTER).place != -SAFE) continue;
-	    
+
 	    /* Okay, score full points for this treasure! */
 	    score += 5*qk[i].value;
 	}
@@ -3469,7 +3469,7 @@ int score(void)
     else if (turns < 200) score += ascore/3;
     else if (turns < 300) score += 2*ascore/3;
     else score += ascore;
-    
+
     if (score < 0) score = 0;
 
     return score;
@@ -3707,7 +3707,7 @@ void attempt_drop(Location loc, ActionWord verb, ObjectWord obj, int prep, int i
         attempt_insert_into(loc, obj, iobj);
         return;
     }
-    
+
     if (obj == BIRD && here(SNAKE, loc)) {
         puts("The little bird attacks the green snake, and in an astounding flurry" SOFT_NL
              "drives the snake away.");
@@ -3717,7 +3717,7 @@ void attempt_drop(Location loc, ActionWord verb, ObjectWord obj, int prep, int i
         objs(SNAKE).prop = 1;  /* gone */
         return;
     }
-    
+
     if (obj == POLE && holding(BOAT)) {
         puts("Setting yourself adrift in the boat with no way to propel it would" SOFT_NL
              "not be very smart.  Best to keep the pole.");
@@ -3751,7 +3751,7 @@ void attempt_drop(Location loc, ActionWord verb, ObjectWord obj, int prep, int i
         objs(obj).prop = 0;
         if (obj==POLE) objs(BOAT).prop = 0;  /* TODO: why? */
     }
-    
+
     move(obj, loc);
     switch (verb) {
         case TAKE: puts(ok); break;
@@ -4860,11 +4860,11 @@ int attempt_pour(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
             return 0;
         }
     }
-    
+
     assert(is_liquid(obj));
     assert(prep == FROM);
     assert(iobj == BOTTLE || iobj == CASK);
-    
+
     if (!is_ajar(iobj)) {
         /* More annoying than Witt's End...
          * Long gives "You can't get at it" even when the player's original
@@ -4878,7 +4878,7 @@ int attempt_pour(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
         }
         return 0;
     }
-    
+
     if (iobj == CASK) {
         /* WATER_IN_CASK is WATER+1, and so on. */
         assert(objs(obj+1).place == -CASK);
@@ -5070,7 +5070,7 @@ Location attempt_drink(Location loc, ObjectWord obj, ObjectWord iobj)
             puts("Don't be ridiculous!");
             return loc;
     }
-    
+
     if (iobj == NOTHING) {
         /* DRINK WATER. */
         assert(is_liquid(obj));
@@ -5090,13 +5090,13 @@ Location attempt_drink(Location loc, ObjectWord obj, ObjectWord iobj)
             return loc;
         }
     }
-    
+
     if (iobj == 0) {
         assert(liquid_at_location(loc) == obj);
     } else {
         assert(liquid_contents(iobj) == obj);
     }
-    
+
     if (obj == OIL) {
         puts("Yeeeecchhh!!");
     } else if (obj == WATER) {
@@ -5280,7 +5280,7 @@ int attempt_toss(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
              * But it's in the wrong place, so it never triggers. */
         }
     }
-    
+
     assert(iobj != NOTHING);
     if (iobj == TROLL &&
         (is_treasure(obj) || (obj == CASK && liquid_contents(CASK) == WINE))) {
@@ -5859,7 +5859,7 @@ bool determine_next_newloc(Location loc, Location *oldloc, Location *newloc,
         return false;
     }
     *newloc = q->dest;
-    
+
     if (*newloc >= FIRST_REMARK) {
         print_remark(*newloc - FIRST_REMARK);
         *newloc = loc;
@@ -5907,7 +5907,7 @@ bool determine_next_newloc(Location loc, Location *oldloc, Location *newloc,
             assert(R_KAL_RED <= *newloc && *newloc <= R_KAL_PURPLE);
             *oldloc = *newloc - 1;
         }
-        
+
     } else {
         assert(*newloc >= R_LIMBO);
         assert(*newloc <= MAX_LOC);
@@ -6096,7 +6096,7 @@ void simulate_an_adventure(void)
                 last_knife_loc = R_LIMBO;
                 continue;
             }
-            
+
             switch (word_class(verb)) {
                 case WordClass_Motion:
                     mot = verb;
@@ -6364,7 +6364,7 @@ void simulate_an_adventure(void)
                             /* This is the same as "goto commence", except
                              * that it gives the dwarves a chance to move. */
                             newloc = loc;
-                            goto movement; 
+                            goto movement;
                         case 0: break;
                         default: assert(false);
                     }
@@ -6516,7 +6516,7 @@ void simulate_an_adventure(void)
         assert(R_LIMBO < loc && loc <= MAX_LOC);
         newloc = loc;  /* by default we will stay put */
         set_indentation(0);
-        
+
         if (mot == CAVE) {
             /* No CAVE appears in the travel table; its sole purpose is to
              * give these messages. */
@@ -6531,7 +6531,7 @@ void simulate_an_adventure(void)
                 Location l = (is_forced(oldloc) ? oldoldloc : oldloc);
                 mot = try_going_back_to(l, loc); /* may return NOWHERE */
             }
-    
+
             if (mot != NOWHERE) {
                 /* Determine the next newloc. */
                 oldoldloc = oldloc;

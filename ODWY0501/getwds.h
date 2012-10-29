@@ -1,4 +1,4 @@
- 
+
 extern int w_verbs[45];
 extern int w_objs[45];
 extern int w_iobjs[15];

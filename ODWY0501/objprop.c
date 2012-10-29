@@ -318,7 +318,7 @@ int burden(ObjectWord t)
              * in the bottom of the boat, but it does count items that are
              * in the sack in the boat. TODO: fix this.
              * Also notice that we count the weight of the BOAT as an
-             * item. */ 
+             * item. */
 	    if (toting(i) && objs(i).place != -BOAT)
 		result += weight(i);
 	}
@@ -380,7 +380,7 @@ void remove_from_containers(ObjectWord t)
     ObjectWord container = -objs(t).place;
     assert(MIN_OBJ <= container && container <= MAX_OBJ);
     assert(is_vessel(container));
-    
+
     /* Remove t from container's object-list */
     struct ObjectData **p = &objs(container).contents;
     while (*p != &objs(t)) p = &(*p)->link;

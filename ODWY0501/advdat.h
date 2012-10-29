@@ -1,7 +1,7 @@
 
 #ifndef H_ADVDAT
  #define H_ADVDAT
- 
+
 #include <stdbool.h>
 
 typedef enum {
@@ -58,7 +58,7 @@ typedef enum {
     R_NECK, R_LOSE, R_CLIMB, R_CHECK,
     R_THRU, R_DUCK, R_UPNOUT,
     R_DIDIT, MAX_LOC = R_DIDIT,
-    
+
     R_PPASS, R_PDROP, R_TROLL, R_PHUCE, R_GNOME, R_CLAY, R_KALEIDOSCOPE,
     FIRST_REMARK
 } Location;
