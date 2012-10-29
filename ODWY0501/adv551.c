@@ -46,6 +46,7 @@ void attempt_feed(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord
 int attempt_kill(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj);
 int attempt_toss(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj);
 void kill_a_dwarf(Location loc);
+bool now_in_darkness(Location loc);
 
 
 WordClass word_class(int word)
@@ -2807,7 +2808,7 @@ int dflag;  /* how angry are the dwarves? */
 Location dloc[6] = { R_PIRATES_NEST, R_HMK, R_WFISS, R_Y2, R_MAZEA44, R_COMPLEX };
 Location odloc[6];
 bool dseen[6];
-bool being_chased;  /* by a Wumpus */
+int being_chased;  /* by a Wumpus */
 
 bool dwarf_at(int loc)  /* is a dwarf present? Section 160 in Knuth. */
 {
@@ -3160,29 +3161,115 @@ void panic_at_closing_time(void)
  */
 
 int turns;  /* how many times we've read your commands */
+int health = 100;  /* from 0 to 100; used only by the radium puzzle */
 int verbose_interval = 5;  /* command BRIEF sets this to 10000 */
+int look_count = 0;  /* the first three times you LOOK, you get a message */
+bool terse = false;  /* command TERSE sets this */
 int foobar;  /* progress in the FEE FIE FOE FOO incantation */
 int kaleidoscope_count;  /* progress in the kaleidoscope maze */
 
-void give_optional_plugh_hint(Location loc)
+void give_optional_magic_hints(Location loc)
 {
     if (loc == R_Y2 && pct(25) && !cave_is_closing()) {
         puts("A hollow voice says \"PLUGH\".");
+    } else if (loc == R_KNOLL && places[R_KNOLL].visits == 1) {
+        puts("A tiny elf runs straight at you, shouts \"Phuce!\", and" SOFT_NL
+             "disappears into the forest.");
     }
+}
+
+void give_optional_lamp_hint(Location loc)
+{
+    static int waste = 0;
+    if (is_outside(loc) && objs(LAMP).prop) {
+        /* Long gives this warning even if the lamp isn't being toted. */
+        waste += 1;
+        if (waste <= 12) return;
+        puts("You know, you are wasting your batteries by wandering around out" SOFT_NL
+             "here with your light on.");
+    }
+    waste = 0;
+}
+
+bool update_wumpus(Location loc)
+{
+    if (being_chased != 0) {
+        being_chased += 1;
+        objs(WUMPUS).prop = being_chased/2;
+        move(WUMPUS, loc);
+        if (being_chased == 10) {
+            if (now_in_darkness(loc)) {
+                puts("A hairy paw reaches out of the darkness and....");
+            }
+            puts("\"Chomp, chomp.\"  Crunch!  Chew!  Slurp!  Smack!  Yum!!!");
+            return true;
+        }
+    }
+    return false;
+}
+
+bool update_health(Location loc)
+{
+    health += (is_outside(loc) ? 3 : 1);  /* recover faster outdoors */
+    if (health > 100) health = 100;
+    bool radium_in_canister = (objs(RADIUM).place == -CANISTER) && !is_ajar(CANISTER);
+    if (here(RADIUM, loc) && !radium_in_canister) {
+        health -= 7;
+        if (health < 60) {
+            switch ((60-health) / 10) {
+                case 0:
+                    puts("Is it hot in here?  You are flushed and sweating.");
+                    break;
+                case 1:
+                    puts("You are feeling definitely peculiar, weak....");
+                    break;
+                case 2:
+                    puts("You're dizzy, nauseous.  You can barely stand.");
+                    break;
+                case 3:
+                    puts("You are really ill.  If you don't find an antidote soon, it's" SOFT_NL
+                         "curtains.");
+                    break;
+                case 4:
+                    puts("You are a walking wound.  You are very weak.  You'd better find out" SOFT_NL
+                         "what's wrong before it's too late.");
+                    break;
+                case 5:
+                    /* Long has "asprin". */
+                    puts("Sheeesh!  What a mess!  Your hair has fallen out and your skin is" SOFT_NL
+                         "covered with blisters.  And not an aspirin in sight!");
+                    break;
+                case 6:
+                    puts("Well, you tried, but your strength is gone.  The agony is finally" SOFT_NL
+                         "over.");
+                    return true;
+            }
+        }
+    }
+    return false;
 }
 
 int look_around(Location loc, bool dark, bool was_dark)
 {
     const char *room_description;
-    if (dark && !is_forced(loc)) {
-        if (was_dark && pct(35)) return 'p';  /* goto pitch_dark; */
-        room_description = pitch_dark_msg;
-    } else if (places[loc].short_desc == NULL || places[loc].visits % verbose_interval == 0) {
+    const bool blinded = (dark && was_dark) || (loc == R_CRYSTAL && objs(LAMP).prop && at_hand(LAMP, loc));
+    if (blinded && !is_forced(loc)) {
+        if (pct(35)) return 'p';  /* fall in a pit */
+        if (loc == R_CRYSTAL) {
+            room_description =
+                "The glare is absolutely blinding.  If you proceed you are likely" SOFT_NL
+                "to fall into a pit.";
+        } else {
+            room_description =
+                "It is now pitch dark.  If you proceed you will likely fall into a pit.";
+        }
+    } else if (places[loc].short_desc == NULL ||
+               (!terse && places[loc].visits % verbose_interval == 0)) {
         room_description = places[loc].long_desc;
     } else {
         room_description = places[loc].short_desc;
     }
-    if (toting(BEAR)) {
+    if (holding(BEAR) && !dark) {
         puts("You are being followed by a very large, tame bear.");
     }
     if (room_description != NULL) {
@@ -3190,8 +3277,11 @@ int look_around(Location loc, bool dark, bool was_dark)
         printf("\n%s\n", room_description);
     }
     if (is_forced(loc)) return 't';  /* goto try_move; */
-    give_optional_plugh_hint(loc);
-    if (!dark) {
+    give_optional_magic_hints(loc);
+    give_optional_lamp_hint(loc);
+    if (update_wumpus(loc)) return 'd';  /* eaten by the Wumpus */
+    if (update_health(loc)) return 'd';  /* poisoned to death */
+    if (!blinded) {
         places[loc].visits += 1;
         /* Describe the objects at this location. */
         for (struct ObjectData *t = places[loc].objects; t != NULL; t = t->link) {
@@ -3555,12 +3645,13 @@ void kill_the_player(Location last_safe_place)
     if (!yes(death_wishes[2*death_count-2], death_wishes[2*death_count-1], ok) || death_count == MAX_DEATHS)
         quit();
     /* At this point you are reborn. */
+    health = 100;
     if (toting(LAMP)) objs(LAMP).prop = 0;
     destroy(WATER);
     destroy(OIL);
-    if (being_chased) {
+    if (being_chased != 0) {
         /* Reset the dreaded Wumpus. */
-        being_chased = false;
+        being_chased = 0;
         objs(WUMPUS).prop = 0;
         move(WUMPUS, R_CLOAKROOM);
     }
@@ -3659,7 +3750,7 @@ void attempt_wake(Location loc, ObjectWord obj)
 {
     /* WAKE DWARF will wake the wumpus, too. */
     if (there(WUMPUS, loc)) {
-        being_chased = true;
+        being_chased = 1;
         objs(WUMPUS).prop = 1;
         puts("You turkey!!!  Now you've done it!  It took some effort, but you" SOFT_NL
              "woke up the Wumpus.  He slowly opens one red eye, and then another," SOFT_NL
@@ -4239,6 +4330,34 @@ void attempt_answer(ObjectWord obj)
     }
 }
 
+void attempt_diagnose(void)
+{
+    if (health < 100) {
+        /* Long has "You're". */
+        printf("Your health rating is %d out of a possible 100.\n", health);
+    }
+
+    if (health >= 95) {
+        if (pct(50)) {
+            puts("You are fit as a fiddle.");
+        } else {
+            puts("You are in perfect health.");
+        }
+    } else if (health > 80) {
+        puts("You are a bit off top form, but nothing to worry about.");
+    } else if (health > 60) {
+        puts("You are weaker than usual.  Better avoid fights.");
+    } else if (health > 40) {
+        puts("You really ought to take a break.  You're in tough shape.");
+    } else if (health > 20) {
+        puts("You are on the edge of collapse.  Lots of sun and fresh air will" SOFT_NL
+             "speed your recovery.");
+    } else {
+        assert(health > 0);
+        puts("Your strength is nearly gone.  Only a miracle can save you now.");
+    }
+}
+
 void attempt_get(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
 {
     if (prep == NOTHING || prep == FROM) {
@@ -4287,9 +4406,7 @@ void attempt_read(Location loc, ObjectWord obj)
              "\"A public service of the John Dillinger Died for You Society.\"");
     } else if (obj == TABLET) {
         puts("\"Congratulations on bringing light into the dark-room!\"");
-    } else if (obj == OYSTER && holding(OYSTER)) {
-        /* Long seems to allow reading the oyster even outside the
-         * repository. TODO: verify this. */
+    } else if (obj == OYSTER && holding(OYSTER) && closed) {
         if (hints[1].given) {
             puts("It says the same thing it did before.");
         } else {
@@ -4337,11 +4454,10 @@ int attempt_look(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
     assert(prep == NOTHING || prep == INTO || prep == AT);
     if (obj == NOTHING && iobj == NOTHING) {
         /* Look around. */
-        static int detail = 0;
-        if (detail < 3) {
+        if (look_count < 3) {
             puts("Sorry, but I am not allowed to give more detail.  I will repeat the" SOFT_NL
                  "long description of your location.");
-            ++detail;
+            ++look_count;
         }
         places[loc].visits = 0;
         return 'l';  /* goto commence */
@@ -4379,7 +4495,6 @@ int attempt_look(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
                         puts(places[sloc].long_desc);
                         static bool have_seen_elf = false;
                         if (sloc == R_BAY && !have_seen_elf) {
-                            /* TODO: newline here? */
                             puts("A large, stately elf walks up the rise, says the word" SOFT_NL
                                  "\"Saint-Michel\", and is instantly transported to the castle.");
                             have_seen_elf = true;
@@ -5772,10 +5887,6 @@ Location attempt_phuce(Location from)
 	if (t == BOAT) continue;
 	if (t == TINY_DOOR) continue;
 	if (objs(t).place == from) {
-	    /* Long checks (FIXED(OBJ).EQ.0.OR.FIXED(OBJ).EQ.-1), which
-	     * I believe means "mobile, or immobile-but-not-schizoid".
-	     * I also believe no schizoid object can be here, except
-	     * for the TINY_DOOR. TODO: verify. */
 	    move(t, newloc);
 	}
     }
@@ -6054,9 +6165,17 @@ void simulate_an_adventure(void)
         set_indentation(0);
         if (loc == R_LIMBO) goto death;
         switch (look_around(loc, now_in_darkness(loc), was_dark)) {
+            case 'd': goto death;
             case 'p': goto pitch_dark;
             case 't': goto try_move;
             default: break;
+        }
+        /* Upon leaving the rotunda, cause the gnome to vanish. Line 2045 in Long. */
+        if (oldloc == R_ROTUNDA && loc != R_ROTUNDA && objs(BOOTH).prop) {
+            assert(there(GNOME, R_ROTUNDA));
+            assert(loc != R_BOOTH);  /* can't enter booth while gnome's there */
+            destroy(GNOME);
+            objs(BOOTH).prop = 0;
         }
         while (true) {
             verb = oldverb = NOTHING;
@@ -6216,8 +6335,20 @@ void simulate_an_adventure(void)
                     attempt_score();
                     continue;
                 case FEEFIE:
-                case BRIEF:
                     puts("TODO this intransitive verb is unhandled");
+                    continue;
+                case BRIEF:
+                    look_count = 3;
+                    terse = false;
+                    if (verbose_interval == 10000) {
+                        verbose_interval = 5;
+                        puts("Ok, I'll give you the full description whenever you enter a room" SOFT_NL
+                             "for the first time.");
+                    } else {
+                        verbose_interval = 10000;
+                        puts("Okay, from now on I'll only describe a place in full the first time" SOFT_NL
+                             "you come to it.  To get the full description, say \"LOOK\".");
+                    }
                     continue;
                 case ANSWER:
                     if (loc == R_BOOTH && !objs(PHONE).prop) {
@@ -6245,13 +6376,19 @@ void simulate_an_adventure(void)
                          "send complaints, suggestions, and bug reports.");
                     break;
                 case DIAGNOSE:
-                    puts("TODO this intransitive verb is unhandled");
+                    attempt_diagnose();
                     continue;
                 case LOOK:
                     goto transitive;
                 case COMBO:
                 case SWEEP:
+                    puts("TODO this intransitive verb is unhandled");
+                    continue;
                 case TERSE:
+                    look_count = 3;
+                    terse = !terse;
+                    puts(ok);
+                    continue;
                 case WIZ:
                 case MAP:
                 case GATE:
@@ -6412,7 +6549,11 @@ void simulate_an_adventure(void)
                     puts("I don't know how.");
                     continue;
                 case BRIEF:
-                    puts("TODO this transitive verb is unhandled");
+                    /* Long has some logic to print Woods' punny "On what?" when
+                     * is_living(obj), but the logic is both backwards (it's
+                     * trying to print the message when iobj *has* been provided)
+                     * and unreachable (the parser won't let you BRIEF X ON Y). */
+                    confuz();
                     continue;
                 case READ:
                     if (obj == NOTHING) obj = iobj;
