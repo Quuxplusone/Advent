@@ -10,15 +10,20 @@ void set_indentation(int level)
     Indentation = ThisLine = level;
 }
 
+void indent_appropriately()
+{
+    for (int i=0; i < ThisLine; ++i)
+        putchar(' ');
+    ThisLine = 0;
+}
+
 static void putchar_indented(char ch)
 {
     if (ch == '\n') {
         putchar('\n');
         ThisLine = Indentation;
     } else {
-        for (int i=0; i < ThisLine; ++i)
-            putchar(' ');
-        ThisLine = 0;
+        indent_appropriately();
         putchar(ch);
     }
 }
@@ -30,3 +35,4 @@ void puts_indented(const char *text)
     }
     putchar_indented('\n');
 }
+
