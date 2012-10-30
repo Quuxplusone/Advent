@@ -4401,6 +4401,50 @@ void attempt_combo(Location loc)
     }
 }
 
+void attempt_feefie(Location loc)
+{
+    int number;
+    if (streq(vtxt[vrbx], "fee")) {
+        number = 0;
+    } else if (streq(vtxt[vrbx], "fie")) {
+        number = 1;
+    } else if (streq(vtxt[vrbx], "foe")) {
+        number = 2;
+    } else if (streq(vtxt[vrbx], "foo")) {
+        number = 3;
+    } else {
+        assert(streq(vtxt[vrbx], "fum"));
+        number = 4;
+    }
+
+    if (foobar == -number) {
+        foobar = number+1;
+        if (foobar == 4) {
+            foobar = 0;
+            if (there(EGGS, R_GIANT) || (toting(EGGS) && loc == R_GIANT)) {
+                puts("Nothing happens.");
+                return;
+            }
+            if (there(EGGS, R_LIMBO) && there(TROLL, R_LIMBO) && objs(TROLL).prop == 0)
+                objs(TROLL).prop = 1;  /* the troll returns */
+            if (loc == R_GIANT) {
+                puts("There is a large nest here, full of golden eggs!");
+            } else if (here(EGGS, loc)) {
+                puts("The nest of golden eggs has vanished!");
+            } else {
+                puts("Done!");
+            }
+            move(EGGS, R_GIANT);
+        } else {
+            puts(ok);
+        }
+    } else if (foobar != 0) {
+        puts("What's the matter, can't you read?  Now you'd best start over.");
+    } else {
+        puts("Nothing happens.");
+    }
+}
+
 void attempt_get(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
 {
     if (prep == NOTHING || prep == FROM) {
@@ -6378,7 +6422,7 @@ void simulate_an_adventure(void)
                     attempt_score();
                     continue;
                 case FEEFIE:
-                    puts("TODO this intransitive verb is unhandled");
+                    attempt_feefie(loc);
                     continue;
                 case BRIEF:
                     look_count = 3;
