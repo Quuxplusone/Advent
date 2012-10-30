@@ -457,10 +457,6 @@ void build_vocabulary(void)
     new_action_word("dust", SWEEP);
     new_action_word("terse", TERSE);
     new_action_word("unters", TERSE);
-    new_action_word("wiz", WIZ);
-    new_action_word("map", MAP);
-    new_action_word("gate", GATE);
-    new_action_word("pirloc", PIRLOC);
 #ifdef SAVE_AND_RESTORE
     new_action_word("save", SAVE); new_action_word("pause", SAVE);
     new_action_word("suspen", SAVE);
@@ -2766,7 +2762,6 @@ void build_object_table(void)
     objs(BROOM).desc[0] = "There is a small whiskbroom here.";
     new_obj(CARVING, "Carving on dusty rocks", CARVING, R_LIMBO);
     objs(CARVING).desc[0] = NULL;  /* it's just scenery */
-    objs(CARVING).desc[1] = NULL;  /* TODO: why? */
     new_obj(BILLBOARD, "Billboard", BILLBOARD, R_FOREST);
     objs(BILLBOARD).desc[0] = NULL;  /* it's just scenery */
     new_obj(CANISTER, "Small metal canister", 0, R_WINDOW);
@@ -3027,7 +3022,8 @@ bool move_dwarves_and_pirate(Location loc)
 
 int lamp_limit;  /* countdown till darkness */
 bool have_warned_about_lamp = false;
-int clock1 = 15, clock2 = 30;  /* clocks that govern closing time */
+int clock1 = 30, clock2 = 50;  /* clocks that govern closing time */
+int clock3;  /* limits the endgame */
 bool closed;  /* set only when you're in the repository */
 int bonus;  /* extra points awarded for exceptional adventuring skills */
 
@@ -3065,77 +3061,95 @@ void close_the_cave(void)
     }
     closed = true;
     bonus = 10;
+    clock3 = 20+ran(20);
 }
 
 /* Return true if the cave just closed. */
-bool check_clocks_and_lamp(Location loc)
+bool check_clocks(Location loc)
 {
-    if (tally == 0 && loc >= MIN_LOWER_LOC && loc != R_Y2)
-        --clock1;
-    if (clock1 == 0) {
-        /* At the time of first warning, we lock the grate, destroy the
-         * crystal bridge, kill all the dwarves (and the pirate), and
-         * remove the troll and bear (unless dead).
-         * It's too much trouble to move the dragon, so we leave it.
-         * From now on until clock2 runs out, you cannot unlock the grate,
-         * move to any location outside the cave, or create the bridge.
-         * Nor can you be resurrected if you die. */
-        puts("A sepulchral voice, reverberating through the cave, says \"Cave" SOFT_NL
-             "closing soon.  All adventurers exit immediately through main office.\"");
-        clock1 = -1;
-        objs(GRATE).prop = 0;
-        objs(FISSURE).prop = 0;
-        for (int j=0; j <= 5; ++j) {
-            dseen[j] = false;
-            dloc[j] = R_LIMBO;
+    if (clock1 > 0) {
+        clock1 -= (tally == 0 && is_well_inside(loc) && loc != R_Y2);
+        if (clock1 == 0) {
+            /* At the time of first warning, we lock the grate, destroy the
+             * crystal bridge, kill all the dwarves (and the pirate), and
+             * remove the troll and bear (unless dead).
+             * It's too much trouble to move the dragon, so we leave it.
+             * From now on until clock2 runs out, you cannot unlock the grate,
+             * move to any location outside the cave, or create the bridge.
+             * Nor can you be resurrected if you die. */
+            puts("A sepulchral voice, reverberating through the cave, says \"Cave" SOFT_NL
+                 "closing soon.  All adventurers exit immediately through main office.\"");
+            clock1 = -1;
+            objs(GRATE).prop = 0;
+            objs(FISSURE).prop = 0;
+            for (int j=0; j <= 5; ++j) {
+                dseen[j] = false;
+                dloc[j] = R_LIMBO;
+            }
+            destroy(TROLL); destroy(TROLL_);
+            move(NO_TROLL, R_SWSIDE); move(NO_TROLL_, R_NESIDE);
+            juggle(CHASM); juggle(CHASM_);
+            if (objs(BEAR).prop != 3) destroy(BEAR);
+            objs(CHAIN).prop = 0; mobilize(CHAIN);
+            objs(AXE).prop = 0; mobilize(AXE);
         }
-        destroy(TROLL); destroy(TROLL_);
-        move(NO_TROLL, R_SWSIDE); move(NO_TROLL_, R_NESIDE);
-        juggle(CHASM); juggle(CHASM_);
-        if (objs(BEAR).prop != 3) destroy(BEAR);
-        objs(CHAIN).prop = 0; mobilize(CHAIN);
-        objs(AXE).prop = 0; mobilize(AXE);
-    } else {
-        if (cave_is_closing()) --clock2;
+    } else if (clock2 > 0) {
+        --clock2;
         if (clock2 == 0) {
             close_the_cave();
             return true;
-        } else {
-            static bool warned = false;
-            /* On every turn (if the cave is not closed), we check to see
-             * if you are in trouble lampwise. */
-            if (objs(LAMP).prop == 1) --lamp_limit;
-            if (lamp_limit <= 30 && here(LAMP, loc) && here(BATTERIES, loc) && objs(BATTERIES).prop == 0) {
-                puts("Your lamp is getting dim.  I'm taking the liberty of replacing" SOFT_NL
-                     "the batteries.");
-                objs(BATTERIES).prop = 1;
-                if (toting(BATTERIES)) drop(BATTERIES, loc);
-                lamp_limit = 2500;
-            } else if (lamp_limit == 0) {
-                if (here(LAMP, loc)) puts("Your lamp has run out of power.");
-                objs(LAMP).prop = 0;
-                lamp_limit = -1;
-            } else if (lamp_limit < 0 && loc < MIN_IN_CAVE) {
-                puts("There's not much point in wandering around out here, and you can't" SOFT_NL
-                     "explore the cave without a lamp.  So let's just call it a day.");
-                give_up();
-            } else if (lamp_limit < 30 && !warned && here(LAMP, loc)) {
-                printf("Your lamp is getting dim");
-                if (objs(BATTERIES).prop == 1) {
-                    puts(", and you're out of spare batteries.  You'd" SOFT_NL
-                         "best start wrapping this up.");
-                } else if (there(BATTERIES, R_LIMBO)) {
-                    puts(".  You'd best start wrapping this up, unless" SOFT_NL
-                         "you can find some fresh batteries.  I seem to recall that there's" SOFT_NL
-                         "a vending machine in the maze.  Bring some coins with you.");
-                } else {
-                    puts(".  You'd best go back for those batteries.");
-                }
-                warned = true;
-            }
+        }
+    } else {
+        assert(clock3 > 0);
+        --clock3;
+        if (clock3 == 7) {
+            puts("The telephone in the booth has begun to ring.");
+            objs(BOOTH).prop = 0;
+            objs(PHONE).prop = 0;
+        } else if (clock3 == 0) {
+            puts("The constant ringing has awakened the dwarves!\n"
+                 "There are now several threatening little dwarves in the room with" SOFT_NL
+                 "you!  Most of them throw knives at you!  All of them get you!");
+            quit();
         }
     }
     return false;
+}
+
+void check_lamp(Location loc)
+{
+    static bool warned = false;
+    /* On every turn (if the cave is not closed), we check to see
+     * if you are in trouble lampwise. */
+    if (objs(LAMP).prop == 1) --lamp_limit;
+    if (lamp_limit <= 30 && here(LAMP, loc) && here(BATTERIES, loc) && objs(BATTERIES).prop == 0) {
+        puts("Your lamp is getting dim.  I'm taking the liberty of replacing" SOFT_NL
+             "the batteries.");
+        objs(BATTERIES).prop = 1;
+        if (toting(BATTERIES)) drop(BATTERIES, loc);
+        lamp_limit = 2500;
+    } else if (lamp_limit == 0) {
+        if (here(LAMP, loc)) puts("Your lamp has run out of power.");
+        objs(LAMP).prop = 0;
+        lamp_limit = -1;
+    } else if (lamp_limit < 0 && loc < MIN_IN_CAVE) {
+        puts("There's not much point in wandering around out here, and you can't" SOFT_NL
+             "explore the cave without a lamp.  So let's just call it a day.");
+        give_up();
+    } else if (lamp_limit < 30 && !warned && here(LAMP, loc)) {
+        printf("Your lamp is getting dim");
+        if (objs(BATTERIES).prop == 1) {
+            puts(", and you're out of spare batteries.  You'd" SOFT_NL
+                 "best start wrapping this up.");
+        } else if (there(BATTERIES, R_LIMBO)) {
+            puts(".  You'd best start wrapping this up, unless" SOFT_NL
+                 "you can find some fresh batteries.  I seem to recall that there's" SOFT_NL
+                 "a vending machine in the maze.  Bring some coins with you.");
+        } else {
+            puts(".  You'd best go back for those batteries.");
+        }
+        warned = true;
+    }
 }
 
 void panic_at_closing_time(void)
@@ -3931,6 +3945,35 @@ void attempt_fill(Location loc, ObjectWord obj, ObjectWord iobj)
     }
 }
 
+void attempt_blast(Location loc)
+{
+    if (closed) {
+        /* Unlike the original, you don't have to pick up the rod in order
+         * for it to kill you. */
+        if (there(ROD2, R_REPO_BOOTH)) {
+            if (loc == R_SWEND) {
+                bonus = 30;
+                puts("There is a loud explosion, and a twenty-foot hole appears in the far" SOFT_NL
+                     "wall, burying the dwarves in the rubble.  You march through the hole" SOFT_NL
+                     "and find yourself in the Main Office, where a cheering band of" SOFT_NL
+                     "friendly elves carry the conquering adventurer off into the sunset.");
+            } else {
+                bonus = 25;
+                puts("There is a loud explosion, and a twenty-foot hole appears in the far" SOFT_NL
+                     "wall, burying the snakes in the rubble.  A river of molten lava pours" SOFT_NL
+                     "in through the hole, destroying everything in its path, including you!");
+            }
+        } else {
+            bonus = 20;
+            puts("There is a loud explosion, and you are suddenly splashed across the" SOFT_NL
+                 "walls of the room.");
+        }
+        quit();
+    } else {
+        puts("Blasting requires dynamite.");
+    }
+}
+
 void take_something_immobile(ObjectWord obj)
 {
     if (obj == CHAIN && objs(BEAR).prop != 0) {
@@ -4442,6 +4485,22 @@ void attempt_feefie(Location loc)
         puts("What's the matter, can't you read?  Now you'd best start over.");
     } else {
         puts("Nothing happens.");
+    }
+}
+
+void attempt_sweep(Location loc)
+{
+    /* Long uses PROP(CARVNG) for this purpose. */
+    static bool found_carving = false;
+    if (!at_hand(BROOM, loc)) {
+        puts("How?");
+    } else if (loc != R_DUSTY || found_carving) {
+        puts("Enough dusting, already!  You're making me sneeze.");
+    } else {
+        puts("Brushing the dust from one of the larger rocks reveals some carved" SOFT_NL
+             "characters.");
+        puts("In the rock is carved the message \"7-22-34\".");
+        found_carving = true;
     }
 }
 
@@ -6288,12 +6347,13 @@ void simulate_an_adventure(void)
             foobar = (foobar > 0) ? -foobar : 0;
             combo = (combo > 0) ? -combo : 0;
 
-            if (check_clocks_and_lamp(loc)) {
+            if (check_clocks(loc)) {
                 /* The cave just closed! */
                 loc = oldloc = R_NEEND;
                 mot = NOWHERE;
                 goto try_move;
             }
+            check_lamp(loc);
 
             printf("parse: verb=%d obj=%d prep=%d iobj=%d\n", verb, obj, prep, iobj);
 
@@ -6351,6 +6411,7 @@ void simulate_an_adventure(void)
                 case GO:
                 case KILL:
                 case BLAST:
+                case SWEEP:
                     goto transitive;
                 case POUR: {
                     const bool could_use_bottle = holding(BOTTLE) && (liquid_contents(BOTTLE) != NOTHING);
@@ -6470,19 +6531,10 @@ void simulate_an_adventure(void)
                 case COMBO:
                     attempt_combo(loc);
                     continue;
-                case SWEEP:
-                    puts("TODO this intransitive verb is unhandled");
-                    continue;
                 case TERSE:
                     look_count = 3;
                     terse = !terse;
                     puts(ok);
-                    continue;
-                case WIZ:
-                case MAP:
-                case GATE:
-                case PIRLOC:
-                    puts("TODO this intransitive verb is unhandled");
                     continue;
                 case QUIT:
                     if (yes("Do you really want to quit now?", ok, ok)) give_up();
@@ -6632,7 +6684,7 @@ void simulate_an_adventure(void)
                     attempt_fill(loc, obj, iobj);
                     continue;
                 case BLAST:
-                    puts("TODO this transitive verb is unhandled");
+                    attempt_blast(loc);
                     continue;
                 case FEEFIE:
                     puts("I don't know how.");
@@ -6716,15 +6768,11 @@ void simulate_an_adventure(void)
                     noway();
                     continue;
                 case SWEEP:
-                    puts("TODO this transitive verb is unhandled");
+                    attempt_sweep(loc);
                     continue;
                 case GRIPE:
                 case DIAGNOSE:
                 case TERSE:
-                case WIZ:
-                case MAP:
-                case GATE:
-                case PIRLOC:
                     confuz();
                     continue;
                 case SCORE:
