@@ -63,7 +63,7 @@ bool is_living(ObjectWord t)
     switch (t) {
         case SNAKE: case CLAM: case OYSTER: case DWARF:
         case PIRATE: case DRAGON: case TROLL: case BEAR:
-        case BEES: /* but *not* GNOME or DOG */
+        case BEES: /* but *not* GNOME or DOG or WUMPUS */
 	    return true;
 	default:
 	    return false;

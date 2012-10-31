@@ -2481,7 +2481,7 @@ void build_object_table(void)
         "The remnants of a natural bridge partially overhang the chasm.";
     new_obj(MIRROR, "Mirror", MIRROR, R_MIRROR);
     new_obj(MIRROR_, NULL, MIRROR, R_LIMBO);  /* joins up with MIRROR later */
-    objs(MIRROR).desc[0] = NULL;
+    objs(MIRROR).desc[0] = NULL;  /* it's just scenery */
     new_obj(PLANT, "Plant", PLANT, R_WPIT);
     objs(PLANT).desc[0] = "There is a tiny little plant in the pit, murmuring \"Water, water, ...\"";
     objs(PLANT).desc[1] =
@@ -2679,6 +2679,7 @@ void build_object_table(void)
     objs(CLOAKROOM_ROCKS).desc[0] = NULL;  /* on cloak */
     objs(CLOAKROOM_ROCKS).desc[1] = NULL;  /* after rockslide */
     new_obj(BOOTH, "Telephone booth", BOOTH, R_ROTUNDA);
+    new_obj(BOOTH_, NULL, BOOTH, R_LIMBO);  /* joins up with BOOTH later */
     objs(BOOTH).desc[0] =
         "The telephone booth is empty.  The phone is ringing.";
     objs(BOOTH).desc[1] =
@@ -2686,11 +2687,12 @@ void build_object_table(void)
         "to someone at the other end.";
     objs(BOOTH).desc[2] =
         "The telephone booth is empty.";
-    objs(BOOTH).desc[3] = NULL;  /* TODO why */
+    objs(BOOTH).desc[3] = NULL;  /* it's just scenery in the repository */
     new_obj(PHONE, "Telephone", PHONE, R_BOOTH);
     objs(PHONE).desc[0] = "The phone is ringing.";
     objs(PHONE).desc[1] = "The telephone is out of order.";
     objs(PHONE).desc[2] = "The telephone is out of order.  It is badly dented.";
+    objs(PHONE).desc[3] = NULL;  /* it's just scenery in the repository */
     new_obj(SLUGS, "Lead slugs", 0, R_LIMBO);
     /* Long has "!"; I've normalized it. */
     objs(SLUGS).desc[0] = "There are some lead slugs here.";
@@ -3049,6 +3051,8 @@ void close_the_cave(void)
     move(ROD, R_NEEND); objs(ROD).prop = -1;
     move(DWARF, R_NEEND); objs(DWARF).prop = -1;
     move(MIRROR, R_NEEND); objs(MIRROR).prop = -1;
+    move(REPO_BOOK, R_NEEND); objs(REPO_BOOK).prop = -1;
+    move(BOOTH, R_NEEND); objs(BOOTH).prop = 3;
     move(GRATE, R_SWEND); objs(GRATE).prop = 0;
     move(SNAKE, R_SWEND); objs(SNAKE).prop = -2;  /* not blocking the way */
     move(BIRD, R_SWEND); objs(BIRD).prop = -2;  /* caged */
@@ -3056,6 +3060,9 @@ void close_the_cave(void)
     move(ROD2, R_SWEND); objs(ROD2).prop = -1;
     move(PILLOW, R_SWEND); objs(PILLOW).prop = -1;
     move(MIRROR_, R_SWEND);
+    move(BOOTH_, R_SWEND);
+    move(PHONE, R_REPO_BOOTH); objs(PHONE).prop = 3;
+    
     for (int j = MIN_OBJ; j <= MAX_OBJ; ++j) {
         if (toting(j)) destroy(j);
     }
@@ -3092,6 +3099,9 @@ bool check_clocks(Location loc)
             if (objs(BEAR).prop != 3) destroy(BEAR);
             objs(CHAIN).prop = 0; mobilize(CHAIN);
             objs(AXE).prop = 0; mobilize(AXE);
+            /* The Wumpus must be dead, or we wouldn't have seen the ring. */
+            assert(objs(WUMPUS).prop == 6);
+            /* The dragon, dog, and gnome are still around post-closing. */
         }
     } else if (clock2 > 0) {
         --clock2;
@@ -4953,6 +4963,68 @@ bool attempt_light(Location loc)
     return false;
 }
 
+void attempt_extinguish(Location loc)
+{
+    if (!at_hand(LAMP, loc)) {
+        puts("You have no source of light.");
+    } else if (!objs(LAMP).prop) {
+        puts("Your lamp is already off.");
+    } else {
+        objs(LAMP).prop = 0;  /* extinguished */
+        puts("Your lamp is now off.");
+        if (now_in_darkness(loc)) {
+            puts("It is now pitch dark.  If you proceed you will likely fall into a pit.");
+        }
+    }
+}
+
+void attempt_wave(Location oldloc, Location loc, ObjectWord obj, ObjectWord iobj)
+{
+    if (obj == ROD && !holding(ROD) && holding(ROD2)) {
+        obj = ROD2;  /* TODO: combine with other places this happens */
+    }
+    const bool at_fissure = (iobj == NOTHING || iobj == FISSURE);
+    if (!holding(obj)) {
+        puts("You aren't carrying it!");
+    } else if (obj == ROD && is_at_loc(FISSURE, loc) && at_fissure && !cave_is_closing()) {
+        if (!objs(FISSURE).prop) {
+            puts("A crystal bridge now spans the fissure.");
+            objs(FISSURE).prop = 1;
+        } else {
+            puts("The crystal bridge has vanished!");
+            objs(FISSURE).prop = 0;
+            if (being_chased != 0) {
+                /* The demise of the Wumpus.
+                 * Long assumes that the Wumpus is always one step behind the
+                 * player. This ain't necessarily so, if we modeled the world
+                 * better; he has enough time to navigate to Y2 and use PLUGH
+                 * to teleport aboveground. TODO: maybe reimplement this?
+                 * That would be a huge gameplay change, though. */
+                if ((loc + oldloc) == (R_EFISS + R_WFISS)) {
+                    puts("As the bridge disappears, the Wumpus scrambles frantically to reach" SOFT_NL
+                         "your side of the fissure.  He misses by inches, and with a horrible" SOFT_NL
+                         "shriek plunges to his death in the depths of the fissure!");
+                    being_chased = 0;
+                    assert(there(RING, R_LIMBO));
+                    drop(RING, R_WLOST);
+                    move(WUMPUS, R_WLOST);
+                    objs(WUMPUS).prop = 6;
+                    /* The Wumpus is "between you and the axe" even during
+                     * the chase --- and if you die, the axe remains trapped
+                     * when the Wumpus is reset. When the Wumpus dies, we
+                     * release the axe. */
+                    if (objs(AXE).prop == 2) {
+                        objs(AXE).prop = 0;
+                        mobilize(AXE);
+                    }
+                }
+            }
+        }
+    } else {
+        puts("Nothing happens.");
+    }
+}
+
 int attempt_kill(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
 {
     if (obj == NOTHING) {
@@ -5706,7 +5778,7 @@ void attempt_feed(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord
             objs(BEAR).prop = 1;
             if (objs(AXE).prop == 1) {
                 /* Long unconditionally mobilizes the axe, even if it's been
-                 * immobilized by the wumpus or dog instead. */
+                 * immobilized by the Wumpus or dog instead. */
                 objs(AXE).prop = 0;
                 mobilize(AXE);
             }
@@ -6044,6 +6116,7 @@ Location attempt_phonebooth(void)
     if (objs(BOOTH).prop == 1) {
 	puts("The gnome firmly blocks the door of the booth.  You can't enter.");
     } else if (places[R_ROTUNDA].visits == 1 || pct(55)) {
+        /* TODO: Long allows this to happen during closing time, which seems wrong. */
 	puts("As you move towards the phone booth, a gnome suddenly streaks" SOFT_NL
              "around the corner, jumps into the booth and rudely slams the door" SOFT_NL
              "in your face.  You can't get in.");
@@ -6603,14 +6676,17 @@ void simulate_an_adventure(void)
                     attempt_close(loc, obj, iobj);
                     continue;
                 case LIGHT:
-                    /* Long lazily allows "LIGHT KEYS". TODO: maybe fix this. */
+                    /* Long lazily allows "LIGHT KEYS". */
                     if (attempt_light(loc) && was_dark) {
                         goto commence;
                     }
                     continue;
                 case EXTINGUISH:
+                    /* Long lazily allows "EXTINGUISH KEYS". */
+                    attempt_extinguish(loc);
+                    continue;
                 case WAVE:
-                    puts("TODO this transitive verb is unhandled");
+                    attempt_wave(oldloc, loc, obj, iobj);
                     continue;
                 case CALM:
                     puts("I'm game.  Would you care to explain how?");
