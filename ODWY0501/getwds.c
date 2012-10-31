@@ -25,7 +25,6 @@ static bool is_valid_verb_prep_iobj(int verb, int prep, ObjectWord iobj);
 
 void clrlin()
 {
-    puts("clrlin");
     memset(w_objs, 0, sizeof w_objs);
     memset(w_verbs, 0, sizeof w_verbs);
     memset(w_iobjs, 0, sizeof w_iobjs);
@@ -211,7 +210,6 @@ void getwds(Location loc)
 	} else {
 	    /* We need to grab a new line. */
 lin20:
-puts("lin20");
 	    getlin();
 	}
         assert(wdx > 0);
@@ -229,13 +227,9 @@ puts("lin20");
 
     assert(words[wdx] != NOTHING);
 
-lin30:
-puts("lin30");
     pflag = false;
     word = words[wdx++];
     if (word == NOTHING) goto lin800;
-lin32:
-puts("lin32");
     if (word == BAD_WORD) goto lin841;  /* We didn't recognize this word. */
     switch (word_class(word)) {
 	case WordClass_None:
@@ -348,16 +342,13 @@ puts("lin32");
     /* Now for the inner loop! */
     goto lin91;
 lin90:
-puts("lin90");
     word = words[wdx++];
 lin91:
-puts("lin91");
     if (word == BAD_WORD) goto lin841;  /* unrecognized word */
     if (word == NOTHING) goto lin900;
     goto lin92;
 
 lin96:
-puts("lin96");
     /* The last word didn't make sense in context. Try again with the next
      * meaning of the spelling; for example if LOOK(action) IN(motion)...
      * doesn't make sense, then try LOOK(action) IN(preposition)... */
@@ -374,7 +365,6 @@ puts("lin96");
     goto lin800;  /* nothing made sense */
 
 lin92:
-puts("lin92");
     assert(wdx > 0);
     if (word_class(word) == WordClass_Object) {
 	k = (pflag ? iobx : objx);
@@ -394,7 +384,6 @@ puts("lin92");
 
 lin99:
     wclass = word_class(word);
-printf("lin99: word=%d, wclass=%d\n", (int)word, (int)wclass);
     switch (wclass) {
 	case WordClass_Motion: goto lin100;
 	case WordClass_Object: goto lin200;
@@ -407,7 +396,6 @@ printf("lin99: word=%d, wclass=%d\n", (int)word, (int)wclass);
     }
 
 lin100:
-puts("lin100");
     if (vrbx > 0) {
 	int k = w_verbs[vrbx-1];  /* the current verb */
 	/* Turn "CRAWL NORTH" into "NORTH".
@@ -429,14 +417,12 @@ puts("lin100");
 	goto lin96;
     }
 lin180:
-puts("lin180");
     w_verbs[0] = word;
     vrbx = 1;
     advise_about_going_west(txt[wdx-1]);
     goto lin90;
 
 lin200:
-puts("lin200");
     /* Analyze an object. */
     if (pflag) goto lin503;
     if (vrbx == 0) {
@@ -447,12 +433,11 @@ puts("lin200");
 	    word = k;
 	    goto lin300;
 	}
+	if (word == ALL) goto lin800;  /* "Huh?" */
     }
     if (word == ALL) {
-	if (vrbx == 0) goto lin800;  /* "Huh?" */
-lin280:
-puts("lin280");
 	bool get_all;
+	assert(vrbx >= 1);
 	switch (w_verbs[vrbx-1]) {
 	    case DROP: case PUT: case LEAVE:
 		get_all = false;
@@ -472,8 +457,7 @@ puts("lin280");
 	}
 	for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
 	    if (!at_hand(t, loc) || is_immobile(t)) continue;
-	    /* TODO check this. Long has two numbers for each liquid. */
-	    if (t == WATER || t == OIL || t == WINE) continue;
+	    if (is_liquid(t)) continue;
 	    if (toting(t) == get_all) continue;
 	    w_objs[objx] = t;
 	    ++objx;
@@ -491,15 +475,12 @@ puts("lin280");
     }
 
     /* It was really an object, and it is here. */
-lin240:
-printf("lin240: objx=%d\n", objx);
     w_objs[objx] = word;
     strcpy(otxt[objx], txt[wdx-1]);
     ++objx;
     goto lin90;
 
 lin300:
-puts("lin300");
     if (vrbx > 0) {
 	/* We already have a verb! */
 	if (w_verbs[vrbx-1] == TAKE) {
@@ -512,25 +493,18 @@ puts("lin300");
             }
 	    goto lin800;
 	} else {
-	    /* TODO understand this */
-lin320:
-puts("lin320");
+	    /* TODO understand this. Long's line 320. */
 	    if (objx != 0 || words[wdx-1] != AND) goto lin800;
 	}
     }
-lin370:
-puts("lin370");
     ++vrbx;
 lin371:
-puts("lin371");
     assert(vrbx >= 1);
     w_verbs[vrbx-1] = word;
     strcpy(vtxt[vrbx-1], txt[wdx-1]);
-    printf("verb is now %s\n", txt[wdx-1]);
     goto lin90;
 
 lin400:
-puts("lin400");
     /* Miscellaneous words/verbs. */
     if (vrbx != 0) goto lin800;
     w_verbs[0] = word;
@@ -538,13 +512,11 @@ puts("lin400");
     goto lin90;
 
 lin500:
-puts("lin500");
     /* Analyze a preposition and its object. */
     if (word_class(w_verbs[vrbx-1]) != WordClass_Action) goto lin800;
     if (iobx > 0) goto lin800;  /* we already got an iobj! */
     if (pflag) goto lin503;
     if (!is_valid_verb_prep_iobj(w_verbs[vrbx-1], ALL, ALL)) goto lin800;
-    puts("valid verb for ALL prep");
     prep = word;
     pflag = true;
     /* Get the next word, which we expect to be an (indirect) object. */
@@ -562,7 +534,6 @@ puts("lin500");
 	default: assert(false);
     }
 lin503:
-puts("lin503");
     if (word != ALL) {
         if (word == BAD_WORD) goto lin570;
         word = getobj(word, loc);
@@ -572,23 +543,18 @@ puts("lin503");
         strcpy(iotxt[iobx-1], txt[wdx-1]);
     }
 lin510:
-puts("lin510");
     /* See if "verb ... prep word" is a valid combination. */
     assert(vrbx >= 1);
     int verb = w_verbs[vrbx-1];
     if (is_valid_verb_prep_iobj(verb, prep, ALL)) {
-	puts("valid verb for this prep, ALL object");
 	/* prep is valid with this verb. Now check object of prep. */
 	if (word == NOTHING || word == AND) goto lin530;
 	if (is_valid_verb_prep_iobj(verb, prep, word)) {
-	    puts("valid verb prep iobj!");
-	    if (word == ALL) goto lin280;
 	    goto lin90;
 	}
     }
     goto lin570;
 lin530:
-puts("lin530");
     /* No object follows prep. Check special cases. */
     pflag = false;
     --wdx;
@@ -607,13 +573,11 @@ puts("lin530");
     goto lin800;
     }
 lin570:
-puts("lin570");
     noway();
     clrlin();
     goto lin20;
 
 lin600:
-puts("lin600");
     /* Handle an adjective. */
     {
     int adj = word;
@@ -637,7 +601,6 @@ puts("lin600");
     }
 
 lin700:
-puts("lin700");
     /* Analyze a conjunction (AND). */
     assert(word == AND);
     word = words[wdx++];
@@ -654,7 +617,6 @@ puts("lin700");
 	default: assert(false);
     }
 lin720:
-puts("lin720");
     /* A new action verb follows. If no previous verb has been
      * typed, or if the previous verb wasn't an action verb, fail.
      * If an obj/iobj was specified for previous verb, fail.
@@ -663,19 +625,16 @@ puts("lin720");
             objx==0 && iobx==0)
 	goto lin92;  /* Success! */
 lin790:
-puts("lin790");
     --wdx;
     goto lin900;
 
 lin800:
-puts("lin800");
     /* Gee, I don't understand. */
     confuz();
     clrlin();
     goto lin20;
 
 lin841:
-puts("lin841");
     /* Upper-case the input word. */
     for (int i=0; txt[wdx-1][i] != '\0'; ++i)
         txt[wdx-1][i] = toupper(txt[wdx-1][i]);
@@ -688,18 +647,14 @@ puts("lin841");
     goto lin20;
 
 lin860:
-puts("lin860");
     clrlin();
     pflag = false;
-lin862:
-puts("lin862");
     while (true) {
         if (words[wdx] == NOTHING) goto lin20;
         if (words[wdx++] == AND) goto lin90;
     }
 
 lin900:
-puts("lin900");
     /* We appear to have reached the end of a sentence.
      * Either it was terminated by end-of-line, or else the conjunction
      * analyzer claims that the next words are not part of this clause.
@@ -714,8 +669,6 @@ puts("lin900");
 	}
 	goto lin20;
     }
-lin930:
-puts("lin930");
     if (objx >= 2 && iobx >= 2) {
 	/* GIVE LAMP AND KEYS TO TROLL AND DWARF */
 	goto lin800;
@@ -781,15 +734,19 @@ static int getobj(ObjectWord t, Location loc)
 
 static bool is_appropriate_adjective_for_noun(AdjectiveWord adj, ObjectWord noun)
 {
-    /* TODO: Does this really work for TINY_DOOR, ROD2, etc.? */
+    /* Adjectives are basically ignored, for purposes of disambiguation.
+     * For example, you can type "OPEN TINY DOOR" and the game will assume
+     * that you mean RUSTY_DOOR, if that's the only door here.
+     * But DOOR is the only noun that could theoretically be disambiguated
+     * by the choice of adjective, and no two doors can be present at once. */
     assert(word_class(adj) == WordClass_Adjective);
     assert(word_class(noun) == WordClass_Object);
     switch (adj) {
 	case BLACK: return (noun == ROD || noun == DOG || noun == OIL);
 	case BRASS: return (noun == LAMP || noun == TINY_KEY);
-	case ELFIN: return (noun == CROWN || noun == TINY_DOOR || noun == TINY_KEY);
+	case ELFIN: return (noun == CROWN || noun == RUSTY_DOOR || noun == TINY_KEY);
 	case FRESH: return (noun == BATTERIES);
-	case ADJ_GIANT: return (noun == HUGE_DOOR || noun == CLAM || noun == OYSTER ||
+	case ADJ_GIANT: return (noun == RUSTY_DOOR || noun == CLAM || noun == OYSTER ||
 				noun == GOLD || noun == SNAKE);
 	case GOLDEN: return (noun == GOLD || noun == CHAIN || noun == EGGS ||
 			     noun == RING || noun == TREE);
@@ -798,18 +755,18 @@ static bool is_appropriate_adjective_for_noun(AdjectiveWord adj, ObjectWord noun
 	case GREY: return (noun == CANISTER);
 	case GLOWING: return (noun == RADIUM);
 	case HOLY: return (noun == GRAIL);
-	case IRON: return (noun == TINY_DOOR || noun == HUGE_DOOR);
+	case IRON: return (noun == RUSTY_DOOR);
 	case LEADEN: return (noun == SLUGS || noun == CANISTER);
 	case METAL: return (noun == CANISTER);
 	case MING: return (noun == VASE);
 	case OAKEN: return (noun == CASK);
 	case QUARTZ: return (noun == BALL);
-	case LEATHER: return (noun == BOOK || noun == REPO_BOOK || noun == SACK);
+	case LEATHER: return (noun == BOOK || noun == SACK);
 	case CRYSTAL: return (noun == BALL);
 	case FOURLEAF: return (noun == CLOVER);
 	case PERSIAN: return (noun == RUG);
 	case PLATINUM: return (noun == PYRAMID);
-	case RARE: return (noun == BOOK || noun == REPO_BOOK || noun == COINS || noun == SPICES);
+	case RARE: return (noun == BOOK || noun == COINS || noun == SPICES);
 	case RUBY: return (noun == SHOES);
 	case RUSTY: return (noun == RUSTY_DOOR);
 	case SHADOWY: return (noun == SHADOW);
@@ -817,7 +774,7 @@ static bool is_appropriate_adjective_for_noun(AdjectiveWord adj, ObjectWord noun
 	case SILVER: return (noun == HORN || noun == DROPLET);
 	case STAR: return (noun == SAPPHIRE);
 	case STEEL: return (noun == SWORD || noun == SAFE || noun == GRATE);
-	case TINY: return (noun == TINY_DOOR || noun == RING || noun == TINY_KEY ||
+	case TINY: return (noun == RUSTY_DOOR || noun == RING || noun == TINY_KEY ||
 			   noun == BOTTLE || noun == BIRD || noun == CAKES ||
 			   noun == CANISTER);
 	case TREASURE: return (noun == CHEST);
@@ -860,7 +817,7 @@ static bool is_valid_verb_prep_iobj(int verb, int prep, ObjectWord iobj)
 	OPEN, WITH, TINY_KEY,KEYS,AXE,TRIDENT,SWORD,POLE,ROD,
 	PICK, PREP_UP, ALL,
 	PLAY, ONTO, HORN,LYRE,
-	POUR, ONTO, PLANT,SWORD,ANVIL,RUSTY_DOOR,CLOVER, /* TODO: other DOORs? */
+	POUR, ONTO, PLANT,SWORD,ANVIL,RUSTY_DOOR,CLOVER,
 	POUR, FROM, CASK,GRAIL,VASE,BOTTLE,
 	PUT, PREP_DOWN, ALL,
 	PUT, ONTO, RUG,CROWN,CLOAK,SHOES,JEWELS,SWORD,PILLOW,CLOVER,
@@ -873,8 +830,8 @@ static bool is_valid_verb_prep_iobj(int verb, int prep, ObjectWord iobj)
 	CLOSE, WITH, KEYS,TINY_KEY,
 	TAKE, OFF, CROWN,CLOAK,SHOES,JEWELS,RING,CLOVER,
 	TAKE, FROM, CHEST,SACK,BOTTLE,CASK,GRAIL,CAGE,BOAT,
-	            /* McDonald omits "VASE" here but has "CAGE" twice. TODO fix. */
-	            ANVIL,SAFE,WUMPUS,CANISTER,
+	            /* McDonald omits "VASE" here but has "CAGE" twice. */
+	            ANVIL,SAFE,WUMPUS,CANISTER,VASE,
 	TAKE, INTO, CHEST,SACK,BOTTLE,CASK,GRAIL,VASE,CAGE,BOAT,
 	            ANVIL,CANISTER,
 	TOSS, TO, TROLL,SNAKE,BIRD,BEAR,WUMPUS,DOG,DWARF,BATS,

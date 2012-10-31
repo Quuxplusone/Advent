@@ -190,8 +190,8 @@ bool is_opaque(ObjectWord t)
 bool is_liquid(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
-    assert(t != WATER_IN_CASK && t != OIL_IN_CASK && t != WINE_IN_CASK);
-    return (t == WATER || t == OIL || t == WINE);
+    return (t == WATER || t == OIL || t == WINE) ||
+           (t == WATER+1 || t == OIL+1 || t == WINE+1);
 }
 
 int weight(ObjectWord t)

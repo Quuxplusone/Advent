@@ -2550,7 +2550,7 @@ void build_object_table(void)
     objs(HUGE_DOOR).desc[0] = "The door is locked.";
     objs(HUGE_DOOR).desc[1] = "The door is open.";
     new_obj(BOOTH_DOOR, "Phone booth door", BOOTH_DOOR, R_ROTUNDA);
-    new_obj(BOOTH_DOOR_, 0, BOOTH_DOOR, R_BOOTH);
+    new_obj(BOOTH_DOOR_, NULL, BOOTH_DOOR, R_BOOTH);
     objs(BOOTH_DOOR).desc[0] = NULL;  /* it's just scenery */
     new_obj(FLOWERS, "Beautiful flowers", 0, R_CLIFF);
     /* Long has an exclamation mark "here!", but that's misleading.
@@ -2597,7 +2597,7 @@ void build_object_table(void)
     new_obj(PEARL, "Glistening pearl", 0, R_LIMBO);
     objs(PEARL).desc[0] = "Off to one side lies a glistening pearl!";
     new_obj(RUG, "Persian rug", RUG, R_SCAN1);
-    new_obj(RUG_, 0, RUG, R_SCAN3);
+    new_obj(RUG_, NULL, RUG, R_SCAN3);
     objs(RUG).desc[0] = "There is a Persian rug spread out on the floor!";
     objs(RUG).desc[1] = "The dragon is sprawled out on a Persian rug!!";
     new_obj(SPICES, "Rare spices", 0, R_CHAMBER);
@@ -2754,7 +2754,7 @@ void build_object_table(void)
     objs(BOOK).desc[0] = "There is a dusty, leather-bound volume here.";
     new_obj(REPO_BOOK, "Rare book", 0, R_LIMBO);
     objs(REPO_BOOK).desc[0] = objs(BOOK).desc[0];
-    new_obj(SAFE, 0, SAFE, R_LIMBO);
+    new_obj(SAFE, "Steel wall-safe", SAFE, R_LIMBO);
     objs(SAFE).desc[0] = "The safe door is locked.";
     objs(SAFE).desc[1] = "The safe door is open.";
     new_obj(POSTER, "Faded poster", 0, R_HOUSE);
@@ -2773,9 +2773,9 @@ void build_object_table(void)
     objs(RADIUM).desc[0] = "Nearby, a strange, greenish stone is glowing brightly!";
     new_obj(BALL, "Quartz sphere", 0, R_CRYSTAL);
     objs(BALL).desc[0] = "There is a polished sphere of pure quartz here!";
-    new_obj(ALL, 0, 0, R_LIMBO);  /* this is a fake object */
+    new_obj(ALL, NULL, 0, R_LIMBO);  /* this is a fake object */
 
-    /* The rare book starts out in the safe. */
+    insert(WATER, BOTTLE);
     insert(BOOK, SAFE);
 }
 
@@ -6427,8 +6427,6 @@ void simulate_an_adventure(void)
                 goto try_move;
             }
             check_lamp(loc);
-
-            printf("parse: verb=%d obj=%d prep=%d iobj=%d\n", verb, obj, prep, iobj);
 
             if ((obj == KNIFE || iobj == KNIFE) && last_knife_loc == loc) {
                 puts("The dwarves' knives vanish as they strike the walls of the cave.");
