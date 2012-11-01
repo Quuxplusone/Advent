@@ -47,7 +47,7 @@ void getlin()
     memset(words, '\0', sizeof words);
     wdx = 0;
 
-    printf("> "); fflush(stdout);
+    printf("\n> "); fflush(stdout);
     fgets(buffer, sizeof buffer, stdin);
 
     /* Trim leading and trailing whitespace.
@@ -681,16 +681,16 @@ lin900:
 static int getobj(ObjectWord t, Location loc)
 {
     assert(word_class(t) == WordClass_Object);
-    if (toting(t)) return t;
+    if (holding(t)) return t;
     if (blind_at(loc)) return I_see_no(txt[wdx-1]);
     if (is_at_loc(t, loc) || at_hand(t, loc)) return t;
     if (here(t, loc)) {
 	/* It's here, but not at_hand; therefore it must be inside
 	 * a closed transparent container. */
 	if (is_plural(t)) {
-	    puts("You can't get at it.");
-	} else {
 	    puts("You can't get at them.");
+	} else {
+	    puts("You can't get at it.");
 	}
 	return 0;
     }

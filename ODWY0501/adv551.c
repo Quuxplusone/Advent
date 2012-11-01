@@ -2787,7 +2787,7 @@ bool yes(const char *q, const char *y, const char *n)
 {
     static char buffer[72];
     while (true) {
-        printf("%s\n** ", q); fflush(stdout);
+        printf("%s\n\n> ", q); fflush(stdout);
         fgets(buffer, sizeof(buffer), stdin);
         if (tolower(*buffer) == 'y') {
             if (y) puts(y);
@@ -2796,7 +2796,7 @@ bool yes(const char *q, const char *y, const char *n)
             if (n) puts(n);
             return false;
         } else {
-            puts(" Please answer Yes or No.");
+            puts("Please answer the question.");
         }
     }
 }
@@ -2830,9 +2830,11 @@ void return_pirate_to_lair(bool with_chest)
     dseen[0] = false;
 }
 
-bool too_easy_to_steal(ObjectWord t, Location loc)
+bool pirate_covets(ObjectWord t, Location loc)
 {
-    return (t == PYRAMID && (loc == R_PLOVER || loc == R_DARK));
+    if (t == PYRAMID && (loc == R_PLOVER || loc == R_DARK)) return false;
+    if (t == CASK && liquid_contents(CASK) != WINE) return false;
+    return is_treasure(t);
 }
 
 void steal_all_your_treasure(Location loc)  /* sections 173--174 in Knuth */
@@ -2842,8 +2844,7 @@ void steal_all_your_treasure(Location loc)  /* sections 173--174 in Knuth */
          "chest deep in the maze!\"  He snatches your treasure and vanishes into" SOFT_NL
          "the gloom.");
     for (int t = MIN_OBJ; t <= MAX_OBJ; ++t) {
-        if (!is_treasure(t)) continue;
-        if (too_easy_to_steal(t, loc)) continue;
+        if (!pirate_covets(t, loc)) continue;
         if (here(t, loc) && objs(t).base == NULL) {
             /* The vase, rug, and chain can all be immobile at times. */
             move(t, R_PIRATES_NEST);
@@ -2858,17 +2859,16 @@ void pirate_tracks_you(Location loc)
     /* The pirate leaves you alone once you've found the chest. */
     if (loc == R_PIRATES_NEST || objs(CHEST).prop >= 0) return;
     for (int i = MIN_OBJ; i <= MAX_OBJ; ++i) {
-        if (!is_treasure(i)) continue;
-        if (too_easy_to_steal(i, loc)) continue;
-        if (toting(i)) {
+        if (!pirate_covets(i, loc)) continue;
+        if (toting(i) && at_hand(i, loc)) {
             steal_all_your_treasure(loc);
             return_pirate_to_lair(chest_needs_placing);
             return;
         }
-        if (there(i, loc)) {
+        if (here(i, loc)) {
             /* There is a treasure in this room, but we're not carrying
-             * it. The pirate won't pounce unless we're carrying the
-             * treasure; so he'll try to remain quiet. */
+             * it openly. The pirate won't pounce unless he can steal
+             * the treasure; so he'll try to remain quiet. */
             stalking = true;
         }
     }
@@ -2876,7 +2876,7 @@ void pirate_tracks_you(Location loc)
      * the number we never will see (due to killing the bird or destroying
      * the troll bridge). */
     if (tally == lost_treasures+1 && !stalking && chest_needs_placing &&
-        objs(LAMP).prop && here(LAMP, loc)) {
+        objs(LAMP).prop && at_hand(LAMP, loc)) {
         /* As soon as we've seen all the treasures (except the ones that are
          * lost forever), we "cheat" and let the pirate be spotted. Of course
          * there have to be shadows to hide in, so check the lamp. */
@@ -2888,7 +2888,7 @@ void pirate_tracks_you(Location loc)
         return_pirate_to_lair(true);
         return;
     }
-    if (odloc[0] != dloc[0] && pct(20)) {
+    if (odloc[0] != dloc[0] && pct(30)) {
         puts("There are faint rustling noises from the darkness behind you.");
     }
 }
@@ -2923,9 +2923,9 @@ bool move_dwarves_and_pirate(Location loc)
          * showing up in the middle of a forced move and dropping the axe
          * in an inaccessible pseudo-location. */
     } else if (dflag == 0) {
-        if (loc >= MIN_LOWER_LOC) dflag = 1;
+        if (is_well_inside(loc)) dflag = 1;
     } else if (dflag == 1) {
-        if (loc >= MIN_LOWER_LOC && pct(5)) {
+        if (is_well_inside(loc) && pct(5)) {
             /* When level 2 of the cave is reached, we silently kill 0, 1,
              * or 2 of the dwarves. Then if any of the survivors is in
              * the current location, we move him to R_NUGGET; thus no
@@ -2938,11 +2938,6 @@ bool move_dwarves_and_pirate(Location loc)
                 if (dloc[j] == loc) dloc[j] = R_NUGGET;
                 odloc[j] = dloc[j];
             }
-            /* Knuth quietly fixes the garden-path grammar here:
-             *   A little dwarf just walked around a corner, saw you, threw a
-             *   little axe at you, cursed, and ran away. (The axe missed.)
-             * But Woods' version matches Crowther's original source code,
-             * and I don't think the deviation is justified. */
             puts("A little dwarf just walked around a corner, saw you, threw a little" SOFT_NL
                  "axe at you which missed, cursed, and ran away.");
             drop(AXE, loc);
@@ -2962,7 +2957,7 @@ bool move_dwarves_and_pirate(Location loc)
                 for (Instruction *q = start[dloc[j]]; q < start[dloc[j]+1]; ++q) {
                     Location newloc = q->dest;
                     if (i != 0 && newloc == ploc[i-1]) continue;
-                    if (newloc < MIN_LOWER_LOC) continue;  /* don't follow above level 2 */
+                    if (!is_well_inside(newloc)) continue;  /* don't follow above level 2 */
                     if (newloc == odloc[j] || newloc == dloc[j]) continue;  /* don't double back */
                     if (q->cond == 100) continue;
                     if (j == 0 && forbidden_to_pirate(newloc)) continue;
@@ -2974,7 +2969,7 @@ bool move_dwarves_and_pirate(Location loc)
                 dloc[j] = ploc[ran(i)];  /* this is the random walk */
                 dseen[j] = (dloc[j] == loc ||
                             odloc[j] == loc ||
-                            (dseen[j] && loc >= MIN_LOWER_LOC));
+                            (dseen[j] && is_well_inside(loc)));
                 if (dseen[j]) {
                     /* Make dwarf j follow */
                     dloc[j] = loc;
@@ -2985,7 +2980,7 @@ bool move_dwarves_and_pirate(Location loc)
                         if (odloc[j] == dloc[j]) {
                             ++attack;
                             last_knife_loc = loc;
-                            if (ran(1000) < 95*(dflag-2)) ++stick;
+                            if (ran(1000) < 250*(dflag-2)) ++stick;
                         }
                     }
                 }
@@ -3308,17 +3303,16 @@ void spot_treasure(ObjectWord t)
 int look_around(Location loc, bool dark, bool was_dark)
 {
     const char *room_description;
-    const bool blinded = (dark && was_dark) || (loc == R_CRYSTAL && objs(LAMP).prop && at_hand(LAMP, loc));
-    if (blinded && !is_forced(loc)) {
+    bool too_bright = (loc == R_CRYSTAL && objs(LAMP).prop && at_hand(LAMP, loc));
+    if (too_bright) {
         if (pct(35)) return 'p';  /* fall in a pit */
-        if (loc == R_CRYSTAL) {
-            room_description =
-                "The glare is absolutely blinding.  If you proceed you are likely" SOFT_NL
-                "to fall into a pit.";
-        } else {
-            room_description =
-                "It is now pitch dark.  If you proceed you will likely fall into a pit.";
-        }
+        room_description =
+            "The glare is absolutely blinding.  If you proceed you are likely" SOFT_NL
+            "to fall into a pit.";
+    } else if (!is_forced(loc) && dark) {
+        if (was_dark && pct(35)) return 'p';  /* fall in a pit */
+        room_description =
+            "It is now pitch dark.  If you proceed you will likely fall into a pit.";
     } else if (places[loc].short_desc == NULL ||
                (!terse && places[loc].visits % verbose_interval == 0)) {
         room_description = places[loc].long_desc;
@@ -3330,14 +3324,14 @@ int look_around(Location loc, bool dark, bool was_dark)
     }
     if (room_description != NULL) {
         /* R_CHECK's description is NULL. */
-        printf("\n%s\n", room_description);
+        printf("%s\n", room_description);
     }
     if (is_forced(loc)) return 't';  /* goto try_move; */
     give_optional_magic_hints(loc);
     give_optional_lamp_hint(loc);
     if (update_wumpus(loc)) return 'd';  /* eaten by the Wumpus */
     if (update_health(loc)) return 'd';  /* poisoned to death */
-    if (!blinded) {
+    if (!dark && !too_bright) {
         places[loc].visits += 1;
         /* Describe the objects at this location. */
         for (struct ObjectData *t = places[loc].objects; t != NULL; t = t->link) {
@@ -3370,7 +3364,7 @@ struct {
     const char *prompt;
     const char *hint;
 } hints[] = {
-    { 0, false, 0, 5, "Welcome to Adventure!!  Would you like instructions?",
+    { 0, false, 0, 5, "Welcome to ADVENTURE!!  Would you like instructions?",
     "Somewhere nearby is Colossal Cave, where others have found fortunes in" SOFT_NL
     "treasure and gold, though it is rumored that some who enter are never" SOFT_NL
     "seen again.  Magic is said to work in the cave.  I will be your eyes" SOFT_NL
@@ -3384,7 +3378,7 @@ struct {
     "                        - - - -\n"
     "This version of Adventure was written by Willie Crowther, Don Woods," SOFT_NL
     "David Long, and Anonymous. It was translated into modern Fortran by" SOFT_NL
-    "Doug McDonald, and then to ANSI C by Arthur O'Dwyer." },
+    "Doug McDonald, and then to ANSI C by Arthur O'Dwyer.\n\n" },
     { 0, false, 0, 10,
     "Hmmm, this looks like a clue, which means it'll cost you 10 points to" SOFT_NL
     "read it.  Should I go ahead and read it anyway?",
@@ -3419,12 +3413,14 @@ struct {
 
 void offer(int j)
 {
-    if (j > 1) {
-        if (!yes(hints[j].prompt, " I am prepared to give you a hint,", ok)) return;
-        printf(" but it will cost you %d points.  ", hints[j].cost);
-        hints[j].given = yes("Do you want the hint?", hints[j].hint, ok);
-    } else {
+    if (j == 0) {
+        hints[j].given = yes(hints[j].prompt, hints[j].hint, NULL);
+    } else if (j == 1) {
         hints[j].given = yes(hints[j].prompt, hints[j].hint, ok);
+    } else {
+        if (!yes(hints[j].prompt, NULL, ok)) return;
+        printf("I am prepared to give you a hint, but it will cost you %d points.\n", hints[j].cost);
+        hints[j].given = yes("Do you want the hint?", hints[j].hint, ok);
     }
     if (hints[j].given && lamp_limit > 30) {
         /* Give the lamp some more power. */
@@ -3637,13 +3633,14 @@ void quit(void)
     printf("You scored %d out of a possible %d, using %d turn%s.\n",
            s, MAX_SCORE, turns, (turns==1 ? "" : "s"));
     for (rank = 0; class_score[rank] <= s; ++rank) ;
-    printf("%s\nTo achieve the next higher rating", class_message[rank]);
+    printf("%s\n\nTo achieve the next higher rating", class_message[rank]);
     if (rank < HIGHEST_CLASS) {
         int delta = class_score[rank] - s;
         printf(", you need %d more point%s.\n",
                delta, (delta==1 ? "" : "s"));
     } else {
-        puts(" would be a neat trick!\nCongratulations!!");
+        puts(" would be a neat trick!\n"
+             "CONGRATULATIONS!!");
     }
 #ifdef Z_MACHINE
     puts("\n");
@@ -6358,9 +6355,9 @@ void simulate_an_adventure(void)
     while (true) {
     movement:  /* Long's line 2 */
         set_indentation(0);
-#if 0
+
         /* Check for interference with the proposed move to newloc. */
-        if (cave_is_closing() && newloc < MIN_IN_CAVE && newloc != R_LIMBO) {
+        if (cave_is_closing() && is_outside(newloc) && newloc != R_LIMBO) {
             panic_at_closing_time();
             newloc = loc;
         } else if (newloc != loc && !forbidden_to_pirate(loc)) {
@@ -6372,14 +6369,11 @@ void simulate_an_adventure(void)
                 }
             }
         }
-#endif
         loc = newloc;  /* hey, we actually moved you */
-#if 0
         if (move_dwarves_and_pirate(loc)) {
             oldoldloc = loc;
             goto death;
         }
-#endif
     commence:
         set_indentation(0);
         if (loc == R_LIMBO) goto death;
@@ -6419,6 +6413,11 @@ void simulate_an_adventure(void)
              * negative if you're on track, otherwise we zero it. */
             foobar = (foobar > 0) ? -foobar : 0;
             combo = (combo > 0) ? -combo : 0;
+
+            if (turns == 310 && !terse && (verbose_interval != 10000)) {
+                puts("You know, if you type \"BRIEF\", I won't have to keep repeating these" SOFT_NL
+                     "long descriptions of each room.");
+            }
 
             if (check_clocks(loc)) {
                 /* The cave just closed! */
@@ -6930,7 +6929,7 @@ int main()
     offer(0);
     /* Reading the instructions marks you as a newbie who will need the
      * extra lamp power. However, it will also cost you 5 points. */
-    lamp_limit = (hints[0].given ? 1000 : 330);
+    lamp_limit = (hints[0].given ? 650 : 400);
     build_vocabulary();
     build_travel_table();
     build_object_table();
