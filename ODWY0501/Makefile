@@ -2,9 +2,9 @@
 export VBCC:=../vbcc
 
 VBCCZ = ../vbcc/bin/vc +z -c99 -O=3 -DZ_MACHINE -DSAVE_AND_RESTORE -Iz-machine/include
-MAXES = \$$MAX_ARRAYS=1700 \
-        \$$MAX_ZCODE_SIZE=59000 \
-        \$$MAX_STATIC_DATA=88000
+MAXES = \$$MAX_ARRAYS=10000 \
+        \$$MAX_ZCODE_SIZE=100000 \
+        \$$MAX_STATIC_DATA=1000000
 
 all: adv551
 

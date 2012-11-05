@@ -42,8 +42,8 @@ void quit(void);
 void history_of_adventure(void);
 void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord prep, ObjectWord iobj);
 void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj);
-void attempt_feed(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj);
-int attempt_kill(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj);
+void attempt_feed(Location loc, ObjectWord obj, ObjectWord iobj);
+int attempt_kill(Location loc, ObjectWord obj, ObjectWord iobj);
 int attempt_toss(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj);
 void kill_a_dwarf(Location loc);
 bool now_in_darkness(Location loc);
@@ -232,8 +232,7 @@ void build_vocabulary(void)
     new_object_word("headla", LAMP); new_object_word("light", LAMP);
     new_object_word("grate", GRATE);
     new_object_word("cage", CAGE);
-    /* The word ROD is disambiguated in check_noun_validity(). */
-    new_object_word("rod", ROD); new_object_word("wand", ROD);
+    new_object_word("rod", ROD); new_object_word("wand", ROD);  /* or ROD2 */
     new_object_word("steps", TREADS);
     new_object_word("pole", POLE);
     new_object_word("pillow", PILLOW);
@@ -271,8 +270,7 @@ void build_vocabulary(void)
     new_object_word("machin", MACHINE);
     new_object_word("batter", BATTERIES);
     new_object_word("moss", MOSS); new_object_word("carpet", MOSS);
-    /* The word DOOR is disambiguated in check_noun_validity(). */
-    new_object_word("door", RUSTY_DOOR);
+    new_object_word("door", RUSTY_DOOR);  /* or TINY_DOOR or BOOTH_DOOR */
     new_object_word("flower", FLOWERS);
     new_object_word("cloak", CLOAK); new_object_word("cape", CLOAK);
     new_object_word("boat", BOAT); new_object_word("ship", BOAT);
@@ -318,11 +316,10 @@ void build_vocabulary(void)
     new_object_word("wine", WINE);
     new_object_word("bee", BEES); new_object_word("bees", BEES);
     new_object_word("bumble", BEES);
-    /* The word WALL is disambiguated in check_noun_validity(). */
-    new_object_word("wall", ECHO);
+    new_object_word("wall", ECHO);  /* or SAFE_WALL */
     new_object_word("key", TINY_KEY);
     new_object_word("anvil", ANVIL);
-    new_object_word("rocks", CLOAKROOM_ROCKS);
+    new_object_word("rocks", CLOAKROOM_ROCKS);  /* or CARVING */
     /* Notice that PHONEBOOTH is a synonym for PHONE, not BOOTH. */
     new_object_word("booth", BOOTH);
     new_object_word("teleph", PHONE);
@@ -347,24 +344,19 @@ void build_vocabulary(void)
     new_object_word("sack", SACK);
     new_object_word("knapsa", SACK);
     new_object_word("all", ALL); new_object_word("everyt", ALL);
-    /* The word BOOK is disambiguated in check_noun_validity(). */
     new_object_word("book", BOOK); new_object_word("tome", BOOK);
-    new_object_word("volume", BOOK);
-    new_object_word("book", BOOK);
-    new_object_word("book", BOOK);
+    new_object_word("volume", BOOK);  /* or REPO_BOOK */
     new_object_word("safe", SAFE);
     new_object_word("poster", POSTER);
     /* Notice that WHISKBROOM is not a synonym of BROOM. */
     new_object_word("broom", BROOM); new_object_word("whisk", BROOM);
     new_object_word("brush", BROOM);
     new_object_word("carvin", CARVING);
-    new_object_word("rocks", DUSTY_ROCKS);  /* TODO fixme */
     new_object_word("billbo", BILLBOARD);
     /* Long had "cannister" throughout; I've fixed the spelling
      * in this version. */
     new_object_word("canist", CANISTER); new_object_word("tube", CANISTER);
     new_object_word("shield", CANISTER);
-    /* TODO: do we need to disambiguate ROCK and/or ROCKS? */
     new_object_word("radium", RADIUM); new_object_word("rock", RADIUM);
     new_object_word("stone", RADIUM);
     new_object_word("sphere", BALL); new_object_word("ball", BALL);
@@ -424,8 +416,7 @@ void build_vocabulary(void)
     new_action_word("waken", WAKE); new_action_word("awaken", WAKE);
     new_action_word("yank", YANK); new_action_word("jerk", YANK);
     new_action_word("pull", YANK); new_action_word("grab", YANK);
-    new_action_word("wear", WEAR);
-    new_action_word("don", WEAR);
+    new_action_word("wear", WEAR); new_action_word("don", WEAR);
     new_action_word("hit", HIT); new_action_word("strike", HIT);
     new_action_word("kick", HIT); new_action_word("punch", HIT);
     new_action_word("pound", HIT); new_action_word("whack", HIT);
@@ -450,13 +441,11 @@ void build_vocabulary(void)
     new_action_word("health", DIAGNOSE); new_action_word("diagno", DIAGNOSE);
     new_action_word("look", LOOK); new_action_word("l", LOOK);
     new_action_word("examin", LOOK); new_action_word("descri", LOOK);
-    new_action_word("7", COMBO);
-    new_action_word("22", COMBO);
+    new_action_word("7", COMBO); new_action_word("22", COMBO);
     new_action_word("34", COMBO);
     new_action_word("sweep", SWEEP); new_action_word("brush", SWEEP);
     new_action_word("dust", SWEEP);
-    new_action_word("terse", TERSE);
-    new_action_word("unters", TERSE);
+    new_action_word("terse", TERSE); new_action_word("unters", TERSE);
 #ifdef SAVE_AND_RESTORE
     new_action_word("save", SAVE); new_action_word("pause", SAVE);
     new_action_word("suspen", SAVE);
@@ -467,31 +456,21 @@ void build_vocabulary(void)
      * trigger the printing of fixed messages. */
     new_message_word("abra", ABRA);
     new_message_word("abracd", ABRA);  /* Long's typo */
-    new_message_word("alacaz", ABRA);
-    new_message_word("opense", ABRA);
-    new_message_word("sesame", ABRA);
-    new_message_word("shazam", ABRA);
-    new_message_word("hocus", ABRA);
-    new_message_word("pocus", ABRA);
-    new_message_word("help", HELP);
-    new_message_word("?", HELP);
+    new_message_word("alacaz", ABRA); new_message_word("opense", ABRA);
+    new_message_word("hocus", ABRA); new_message_word("sesame", ABRA);
+    new_message_word("pocus", ABRA); new_message_word("shazam", ABRA);
+    new_message_word("help", HELP); new_message_word("?", HELP);
     /* TODO: disambiguate TREE */
-    new_message_word("tree", TREES);
-    new_message_word("trees", TREES);
-    new_message_word("dig", DIG);
-    new_message_word("excava", DIG);
+    new_message_word("tree", TREES); new_message_word("trees", TREES);
+    new_message_word("dig", DIG); new_message_word("excava", DIG);
     new_message_word("lost", LOST);
     new_message_word("mist", MIST);
-    new_message_word("fuck", FUCK);
-    new_message_word("fuck!", FUCK);
+    new_message_word("fuck", FUCK); new_message_word("fuck!", FUCK);
     new_message_word("stop", STOP);
     new_message_word("swim", SWIM);
-    new_message_word("shit", SHIT);
-    new_message_word("shit!", SHIT);
-    new_message_word("crap", SHIT);
-    new_message_word("crap!", SHIT);
-    new_message_word("piss", PISS);
-    new_message_word("piss!", PISS);
+    new_message_word("shit", SHIT); new_message_word("shit!", SHIT);
+    new_message_word("crap", SHIT); new_message_word("crap!", SHIT);
+    new_message_word("piss", PISS); new_message_word("piss!", PISS);
 
     /* Long's "Adventure" adds prepositions, adjectives, and
      * conjunctions. */
@@ -1014,6 +993,7 @@ void build_travel_table(void)
              "A shallow passage proceeds downward, and a somewhat steeper one" SOFT_NL
              "leads up.  A low hands-and-knees passage enters from the south.",
              "You're in Shell Room.", 0);
+    make_cond_ins(U, unless_prop(ECHO, 0), R_ARCHED_RUBBLE); ditto(HALL);
     make_ins(U, R_ARCHED); ditto(HALL);
     make_ins(D, R_RAGGED);
     make_cond_ins(S, only_if_toting(CLAM), remark(4));
@@ -1050,7 +1030,6 @@ void build_travel_table(void)
     ditto(NE); ditto(SE); ditto(SW); ditto(NW); ditto(U); ditto(D);
     make_ins(E, R_ANTE);
     make_ins(W, remark(7));
-
     make_loc(q, R_BEDQUILT,
              "You are in Bedquilt, a long east/west passage with holes everywhere." SOFT_NL
              "To explore at random select north, south, up, or down.",
@@ -1067,7 +1046,6 @@ void build_travel_table(void)
     make_ins(N, R_SJUNC);
     make_cond_ins(D, 50, remark(6));  /* lowered from 80 */
     make_ins(D, R_ANTE);
-
     make_loc(q, R_SWISS,
              "You are in a room whose walls resemble Swiss cheese.  Obvious passages" SOFT_NL
              "go west, east, NE, and NW.  Part of the room is occupied by a large" SOFT_NL
@@ -1876,10 +1854,6 @@ void build_travel_table(void)
              "to the west.",
              "You're in Flower Room.", 0);
     make_ins(W, R_VESTIBULE);
-    make_loc(q, R_ESHORT,
-             "You are at the end of a short E/W corridor.",
-             "You are at east end of short E/W corridor.", 0);
-    make_ins(W, R_CRYPT);
     make_loc(q, R_ESHORT_RUBBLE,
              "You are looking west from the end of a short E/W corridor.  At your" SOFT_NL
              "feet is a pile of loose rubble.  On your left is a hole into another" SOFT_NL
@@ -1925,12 +1899,16 @@ void build_travel_table(void)
              "You are following a yellow sandstone path.  There is a glow" SOFT_NL
              "to the west.",
              NULL, F_LIGHTED);
+    /* The vagaries of the travel table force Long to fudge this puzzle a little bit.
+     * It is not sufficient to DROP LAMP outside the Crystal Palace; you must actually
+     * have turned it off, no matter whether it's present in the current room. */
     make_cond_ins(W, unless_prop(LAMP, 1), R_CRYSTAL); ditto(D);
     make_ins(W, remark(21));
     make_ins(E, R_RAINBOW);
     make_ins(N, R_SPIRES);
     make_loc(q, R_RAINBOW,
-             "You are in a very tall chamber whose walls are comprised of many" SOFT_NL
+             /* Long has "comprised". */
+             "You are in a very tall chamber whose walls are composed of many" SOFT_NL
              "different rock strata.  Layers of red and yellow sandstone" SOFT_NL
              "intertwine with bright bands of calcareous limestone in a rainbow-" SOFT_NL
              "like profusion of color.  The rainbow effect is so real, you" SOFT_NL
@@ -2101,8 +2079,7 @@ void build_travel_table(void)
              "cut exits east.  There is a hole in the floor.",
              "You're in the Crypt.", 0);
     make_ins(D, R_BROAD); ditto(HOLE);
-    make_cond_ins(E, unless_prop(ECHO, 0), R_ESHORT_RUBBLE);
-    make_ins(E, R_ESHORT);
+    make_ins(E, R_ESHORT_RUBBLE);
     make_loc(q, R_CHAPEL,
              "You are in the Gothic Chapel, a small chamber adjoining the Gothic" SOFT_NL
              "Cathedral. A path leads west.",
@@ -2663,7 +2640,6 @@ void build_object_table(void)
     objs(BEES).desc[0] = NULL;
     objs(BEES).desc[1] = "Some bumblebees are swarming around a bunch of fresh flowers.";
     new_obj(ECHO, "Hollow wall", ECHO, R_ARCHED);
-    new_obj(ECHO_, NULL, ECHO, R_ESHORT);
     objs(ECHO).desc[0] = "Your footsteps echo hollowly throughout the chamber.";
     objs(ECHO).desc[1] = NULL;  /* the wall is just rubble now */
     /* TODO: I'm fairly sure that SAFE_WALL could productively be combined
@@ -2762,7 +2738,7 @@ void build_object_table(void)
     objs(POSTER).desc[1] = "There is a faded poster here.";
     new_obj(BROOM, "Whiskbroom", 0, R_TONGUE);
     objs(BROOM).desc[0] = "There is a small whiskbroom here.";
-    new_obj(CARVING, "Carving on dusty rocks", CARVING, R_LIMBO);
+    new_obj(CARVING, "Carving on dusty rocks", CARVING, R_DUSTY);
     objs(CARVING).desc[0] = NULL;  /* it's just scenery */
     new_obj(BILLBOARD, "Billboard", BILLBOARD, R_FOREST);
     objs(BILLBOARD).desc[0] = NULL;  /* it's just scenery */
@@ -3012,6 +2988,39 @@ bool move_dwarves_and_pirate(Location loc)
     return false;  /* the player survived this function */
 }
 
+void immobilize_axe_via(ObjectWord animal, Location loc)
+{
+    move(AXE, loc);
+    immobilize(AXE);
+    juggle(animal);
+    switch (animal) {
+        case BEAR:
+            puts("The axe misses and lands near the bear where you can't get at it.");
+            objs(AXE).prop = 1;
+            break;
+        case WUMPUS:
+            puts("You can't even hit a sleeping Wumpus!  The axe is now lying too near" SOFT_NL
+                 "the Wumpus for you to retrieve it.");
+            objs(AXE).prop = 2;
+            break;
+        case DOG:
+            puts("The dog easily dodges the axe, which lands beyond him where you can't" SOFT_NL
+                 "get at it.");
+            objs(AXE).prop = 3;
+            break;
+        default: assert(false);
+    }
+}
+
+void remobilize_axe(int expected_prop)
+{
+    assert(1 <= expected_prop && expected_prop <= 3);
+    if (objs(AXE).prop == expected_prop) {
+        objs(AXE).prop = 0;
+        mobilize(AXE);
+    }
+}
+
 
 /*========== Closing the cave. ============================================
  * This section corresponds to sections 103, 178--181 in Knuth.
@@ -3091,12 +3100,18 @@ bool check_clocks(Location loc)
             destroy(TROLL); destroy(TROLL_);
             move(NO_TROLL, R_SWSIDE); move(NO_TROLL_, R_NESIDE);
             juggle(CHASM); juggle(CHASM_);
-            if (objs(BEAR).prop != 3) destroy(BEAR);
+            if (objs(BEAR).prop != 3) {
+                destroy(BEAR);
+                remobilize_axe(1);
+            }
             objs(CHAIN).prop = 0; mobilize(CHAIN);
-            objs(AXE).prop = 0; mobilize(AXE);
             /* The Wumpus must be dead, or we wouldn't have seen the ring. */
             assert(objs(WUMPUS).prop == 6);
-            /* The dragon, dog, and gnome are still around post-closing. */
+            assert(objs(AXE).prop != 2);
+            /* The dragon, dog, and gnome are still around post-closing.
+             * Long unconditionally remobilizes the axe; I've decided that
+             * the proper behavior is to leave it immobilized if it was
+             * immobilized by the dog. */
         }
     } else if (clock2 > 0) {
         --clock2;
@@ -3777,10 +3792,9 @@ void attempt_break(Location loc, ObjectWord obj)
     }
 }
 
-void attempt_wake(Location loc, ObjectWord obj)
+bool maybe_wake_the_wumpus(Location loc)
 {
-    /* WAKE DWARF will wake the wumpus, too. */
-    if (there(WUMPUS, loc)) {
+    if (there(WUMPUS, loc) && objs(WUMPUS).prop == 0) {
         being_chased = 1;
         objs(WUMPUS).prop = 1;
         puts("You turkey!!!  Now you've done it!  It took some effort, but you" SOFT_NL
@@ -3788,6 +3802,17 @@ void attempt_wake(Location loc, ObjectWord obj)
              "and then one more (!!), and looks at you sleepily.  He had been" SOFT_NL
              "dreaming of a late snack.  If you don't act quickly, you'll" SOFT_NL
              "be a *late* adventurer!");
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void attempt_wake(Location loc, ObjectWord obj)
+{
+    /* WAKE DWARF will wake the wumpus, too. */
+    if (maybe_wake_the_wumpus(loc)) {
+        /* Nothing else to do. */
     } else if (there(DOG, loc) && objs(DOG).prop) {
         puts("That wouldn't be wise.  It is best to let sleeping dogs lie.");
     } else if (closed && (obj == DWARF)) {
@@ -3869,9 +3894,8 @@ void attempt_drop(Location loc, ActionWord verb, ObjectWord obj, int prep, int i
         }
     }
 
-    if (obj==POLE || obj==BOAT) {
-        objs(obj).prop = 0;
-        if (obj==POLE) objs(BOAT).prop = 0;  /* TODO: why? */
+    if (obj == BOAT) {
+        objs(BOAT).prop = 0;  /* unnavigable */
     }
 
     move(obj, loc);
@@ -4149,9 +4173,7 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
             objs(CLOAK).prop = 0;
             mobilize(CLOAK);
             carry(CLOAK);
-            if (there(WUMPUS, loc) && objs(WUMPUS).prop == 0) {
-                attempt_wake(loc, WUMPUS);
-            }
+            maybe_wake_the_wumpus(loc);
         }
     } else if (prep == OFF) {
         /* TAKE OFF CLOAK redirects to DROP CLOAK */
@@ -4270,7 +4292,7 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
     } else {
         carry(obj);
         switch (obj) {
-            case POLE: case TINY_KEY: case SWORD:
+            case TINY_KEY: case SWORD:
             case CLOAK: case RING:
                 if (!(objs(obj).flags & F_WORN))
                     objs(obj).prop = 0;
@@ -4322,13 +4344,10 @@ void attempt_wear(Location loc, ObjectWord obj)
 
 void attempt_hit(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
 {
-    if (there(WUMPUS, loc) && objs(WUMPUS).prop == 0) {
-        /* TODO: Refactor attempt_wake() so that
-         * wake_wumpus() is separate from the actual
-         * handler for WAKE FOO. */
-        attempt_wake(loc, WUMPUS);
+    if (maybe_wake_the_wumpus(loc)) {
+        /* Nothing else to do. */
     } else if (obj != PHONE) {
-        attempt_kill(loc, obj, prep, iobj);
+        attempt_kill(loc, obj, iobj);
     } else if (closed) {
         puts("You've hit the jackpot!!  Hundreds of coins and slugs cascade from" SOFT_NL
              "the telephone's coin return slot and spill all over the floor of" SOFT_NL
@@ -4363,6 +4382,15 @@ void attempt_use_phone(void)
     }
 }
 
+void attempt_dial(ObjectWord obj)
+{
+    if (obj != PHONE) {
+        puts("I'm game.  Would you care to explain how?");
+    } else {
+        attempt_use_phone();
+    }
+}
+
 void attempt_answer(ObjectWord obj)
 {
     switch (obj) {
@@ -4388,6 +4416,54 @@ void attempt_answer(ObjectWord obj)
         default:
             puts("I think you are a little confused!"); break;
     }
+}
+
+bool attempt_play(Location loc, ActionWord verb, ObjectWord obj, ObjectWord iobj)
+{
+    assert(verb == PLAY || verb == BLOW);
+    if (obj == NOTHING) {
+        assert(iobj != NOTHING);
+        obj = iobj;
+    }
+    if (obj == HORN) {
+        if (loc == R_ARCHED && !objs(ECHO).prop) {
+            /* Joshua fit de battle of Jericho, and de walls...
+             * Notice that the player cannot possibly be on the other side of the
+             * wall yet. There are only two ways to get into the Cathedral-Altar-
+             * Crypt part of the cave: via BLOW HORN or via CLICK (which requires
+             * the slippers you can't get until you've been to the Cathedral). */
+            puts("As the blast of the horn reverberates through the chamber, the" SOFT_NL
+                 "seemingly solid rock wall crumbles away, revealing another room just" SOFT_NL
+                 "beyond.  The wall was most likely worn thin by an ancient watercourse" SOFT_NL
+                 "which dried up just before completely wearing away the rock.");
+            objs(ECHO).prop = 1;  /* vanished */
+            for (int t = MIN_OBJ; t <= MAX_OBJ; ++t) {
+                if (there(t, R_ARCHED)) {
+                    move(t, R_ARCHED_RUBBLE);
+                }
+            }
+            return true;
+        } else if (is_outside(loc)) {
+            puts("The blast of your horn echos throughout hill and dale.");
+        } else {
+            puts("The chamber reverberates to the blast of the horn." SOFT_NL
+                 "(Satchmo you ain't!)");
+            maybe_wake_the_wumpus(loc);
+        }
+    } else if (verb == PLAY && obj == LYRE) {
+        if (there(DOG, loc) && !objs(DOG).prop) {
+            puts("The air fills with beautiful music.  The dog gradually becomes" SOFT_NL
+                 "less fierce, and after a short while he lies down by the side of" SOFT_NL
+                 "the cavern and falls into a deep sleep.");
+            objs(DOG).prop = 1;  /* sleeping */
+            remobilize_axe(3);
+        } else {
+            puts("The air is filled with beautiful music.");
+        }
+    } else {
+        puts("I'm game.  Would you care to explain how?");
+    }
+    return false;
 }
 
 void attempt_diagnose(void)
@@ -4543,6 +4619,8 @@ void attempt_read(Location loc, ObjectWord obj)
              "to find Colossal Cave.  Not that it matters, because all the" SOFT_NL
              "directions are written in Elvish.");
     } else if (obj == CARVING) {
+        /* Notice that you don't need to DUST first in order to read the
+         * carving, if you already know it's there. */
         puts("In the rock is carved the message \"7-22-34\".");
     } else if (obj == MAG) {
         puts("I'm afraid the magazine is written in dwarvish.");
@@ -5010,10 +5088,7 @@ void attempt_wave(Location oldloc, Location loc, ObjectWord obj, ObjectWord iobj
                      * the chase --- and if you die, the axe remains trapped
                      * when the Wumpus is reset. When the Wumpus dies, we
                      * release the axe. */
-                    if (objs(AXE).prop == 2) {
-                        objs(AXE).prop = 0;
-                        mobilize(AXE);
-                    }
+                    remobilize_axe(2);
                 }
             }
         }
@@ -5022,7 +5097,7 @@ void attempt_wave(Location oldloc, Location loc, ObjectWord obj, ObjectWord iobj
     }
 }
 
-int attempt_kill(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
+int attempt_kill(Location loc, ObjectWord obj, ObjectWord iobj)
 {
     if (obj == NOTHING) {
         /* TODO: factor out similar code from here and attempt_toss */
@@ -5539,30 +5614,6 @@ int throw_axe_at_dwarf(Location loc)
     return 'l';
 }
 
-void immobilize_axe_via(ObjectWord animal, Location loc)
-{
-    move(AXE, loc);
-    immobilize(AXE);
-    juggle(animal);
-    switch (animal) {
-        case BEAR:
-            puts("The axe misses and lands near the bear where you can't get at it.");
-            objs(AXE).prop = 1;
-            break;
-        case WUMPUS:
-            puts("You can't even hit a sleeping Wumpus!  The axe is now lying too near" SOFT_NL
-                 "the Wumpus for you to retrieve it.");
-            objs(AXE).prop = 2;
-            break;
-        case DOG:
-            puts("The dog easily dodges the axe, which lands beyond him where you can't" SOFT_NL
-                 "get at it.");
-            objs(AXE).prop = 3;
-            break;
-        default: assert(false);
-    }
-}
-
 int attempt_toss(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
 {
     if (prep == PREP_DOWN) {
@@ -5625,7 +5676,7 @@ int attempt_toss(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
         attempt_break(loc, obj);
         return 0;
     } else if (is_edible(obj) && is_living(iobj)) {
-        attempt_feed(loc, obj, TO, iobj);
+        attempt_feed(loc, obj, iobj);
         return 0;
     } else if (obj == AXE) {
         /* THROW AXE AT something */
@@ -5653,7 +5704,7 @@ int attempt_toss(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
                  "you again!");
             destroy(AXE);
         } else {
-            return attempt_kill(loc, iobj, WITH, obj);
+            return attempt_kill(loc, iobj, obj);
         }
     } else {
         /* THROW LAMP AT BEAR redirects to DROP LAMP */
@@ -5721,7 +5772,7 @@ void attempt_inventory(void)
     }
 }
 
-void attempt_feed(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
+void attempt_feed(Location loc, ObjectWord obj, ObjectWord iobj)
 {
     /* FEED BEAR HONEY is transformed by the parser into FEED HONEY TO BEAR. */
     if (iobj == NOTHING || !is_living(iobj)) {
@@ -5740,7 +5791,7 @@ void attempt_feed(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord
                  * in the case of FEED BIRD AND BEAR. Line 22112 in Long.
                  * TODO: emulate this. */
             } else {
-                attempt_feed(loc, food, TO, obj);
+                attempt_feed(loc, food, obj);
             }
         } else {
             noway();
@@ -5773,12 +5824,7 @@ void attempt_feed(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord
                  "down considerably and even becomes rather friendly.");
             destroy(HONEY);
             objs(BEAR).prop = 1;
-            if (objs(AXE).prop == 1) {
-                /* Long unconditionally mobilizes the axe, even if it's been
-                 * immobilized by the Wumpus or dog instead. */
-                objs(AXE).prop = 0;
-                mobilize(AXE);
-            }
+            remobilize_axe(1);
         } else if (obj == FOOD) {
             puts("All you have are watercress sandwiches.  The bear is less than" SOFT_NL
                  "interested.");
@@ -6659,9 +6705,11 @@ void simulate_an_adventure(void)
                     attempt_take(loc, TAKE, obj, prep, iobj);
                     continue;
                 case DROP:
-                    attempt_drop(loc, DROP, obj, prep, iobj);
+                case LEAVE:
+                    attempt_drop(loc, verb, obj, prep, iobj);
                     continue;
                 case SAY:
+                case CALL:
                     assert(false);  /* Long's BUG(34) */
                 case OPEN:
                     attempt_open(loc, obj, iobj);
@@ -6692,7 +6740,7 @@ void simulate_an_adventure(void)
                     puts("Where?");
                     continue;
                 case KILL:
-                    switch (attempt_kill(loc, obj, prep, iobj)) {
+                    switch (attempt_kill(loc, obj, iobj)) {
                         case 'a':
                             assert(obj == NOTHING);
                             goto act_on_what;
@@ -6751,7 +6799,7 @@ void simulate_an_adventure(void)
                     attempt_find(loc, obj);
                     continue;
                 case FEED:
-                    attempt_feed(loc, obj, prep, iobj);
+                    attempt_feed(loc, obj, iobj);
                     continue;
                 case FILL:
                     attempt_fill(loc, obj, iobj);
@@ -6799,10 +6847,17 @@ void simulate_an_adventure(void)
                     attempt_answer(obj);
                     continue;
                 case BLOW:
-                case LEAVE:
-                case CALL:
-                case DIAL:
                 case PLAY:
+                    if (attempt_play(loc, verb, obj, iobj)) {
+                        assert(loc == R_ARCHED);
+                        assert(obj == HORN);
+                        newloc = R_ARCHED_RUBBLE;
+                        goto movement;
+                    }
+                    continue;
+                case DIAL:
+                    attempt_dial(obj);
+                    continue;
                 case PICK:
                 case PUT:
                 case TURN:

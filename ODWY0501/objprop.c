@@ -134,6 +134,12 @@ bool fits_inside(ObjectWord obj, ObjectWord iobj)
      * in the chest and throw it to the troll; nothing unusual happens.) */
     if (obj == BEAR) return false;
 
+    /* Long allows the sequence
+     * GET POLE. GET BOAT. PUT POLE IN CHEST. THROW CHEST. NORTH.
+     * so that you can move around in the boat without the pole.
+     * This is clearly a bug, but it's easy to fix. */
+    if (obj == POLE) return false;
+
     /* Long mishandles PUT X IN BOTTLE for non-liquid X, leading to
      * major mischief; see my comment in attempt_insert_into().
      * For example:
