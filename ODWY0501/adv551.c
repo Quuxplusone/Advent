@@ -4342,7 +4342,7 @@ void attempt_wear(Location loc, ObjectWord obj)
     }
 }
 
-void attempt_hit(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
+void attempt_hit(Location loc, ObjectWord obj, ObjectWord iobj)
 {
     if (maybe_wake_the_wumpus(loc)) {
         /* Nothing else to do. */
@@ -4362,7 +4362,7 @@ void attempt_hit(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
         assert(there(SLUGS, R_LIMBO));
         drop(SLUGS, loc);
         objs(PHONE).prop = 2;
-        objs(BOOTH).prop = 2;  /* TODO: probably unneeded */
+        objs(BOOTH).prop = 2;  /* the phone has stopped ringing */
     }
 }
 
@@ -4464,6 +4464,61 @@ bool attempt_play(Location loc, ActionWord verb, ObjectWord obj, ObjectWord iobj
         puts("I'm game.  Would you care to explain how?");
     }
     return false;
+}
+
+void attempt_pick(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
+{
+    assert(prep == PREP_UP || prep == NOTHING);
+    if (obj == NOTHING) {
+        obj = iobj;
+        iobj = NOTHING;
+    }
+    if (prep == PREP_UP || obj == FLOWERS || obj == MUSHROOMS) {
+        /* PICK FLOWERS works, but PICK LAMP doesn't.
+         * Notice that PICK LAMP UP KEYS will also be
+         * quietly redirected to TAKE LAMP. */
+        attempt_take(loc, TAKE, obj, NOTHING, NOTHING);
+    } else {
+        confuz();
+    }
+}
+
+void attempt_put(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj)
+{
+    /* PUT DOWN LAMP ==> DROP LAMP
+     * PUT WATER IN BOTTLE ==> FILL BOTTLE
+     * PUT ON CLOAK ==> WEAR CLOAK
+     * PUT CLOAK ON LAMP ==> DROP CLOAK (no matter where the lamp is)
+     * PUT LAMP IN SACK ==> insert()
+     */
+    if (obj == NOTHING) {
+        obj = iobj;
+        iobj = NOTHING;
+        strcpy(otxt[objx], iotxt[iobx]);
+    }
+
+    if (prep == NOTHING) {
+        assert(iobj == NOTHING);
+        indent_appropriately();
+        printf("Where do you want to put the %s?\n", otxt[objx]);
+    } else if (prep == INTO) {
+        attempt_insert_into(loc, obj, iobj);
+    } else if (prep == ONTO) {
+        /* Long's logic here is buggy; I've rewritten it. */
+        if (iobj == NOTHING) {
+            attempt_wear(loc, obj);
+        } else {
+            /* PUT CLOAK ON LAMP ==> DROP CLOAK */
+            attempt_drop(loc, DROP, obj, NOTHING, NOTHING);
+        }
+    } else {
+        assert(prep == PREP_DOWN);
+        if (iobj == NOTHING) {
+            attempt_drop(loc, DROP, obj, NOTHING, NOTHING);
+        } else {
+            noway();
+        }
+    }
 }
 
 void attempt_diagnose(void)
@@ -4997,7 +5052,7 @@ void attempt_open(Location loc, ObjectWord obj, ObjectWord iobj)
     }
 }
 
-void attempt_close(Location loc, ObjectWord obj, ObjectWord iobj)
+void attempt_close(Location loc, ObjectWord obj)
 {
     /* Long forgets about the smashed bottle. I've fixed it. */
     if (!is_hinged(obj) || (obj == BOTTLE && objs(BOTTLE).prop == 3)) {
@@ -5623,8 +5678,8 @@ int attempt_toss(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
     /* TODO: factor this out from here and DROP */
     if (obj==ROD && !holding(ROD) && holding(ROD2)) obj = ROD2;
     if (!holding(obj)) {
-        /* TODO: plurals */
-        puts("You aren't carrying it!");
+        indent_appropriately();
+        printf("You aren't carrying %s!\n", is_plural(obj) ? "them" : "it");
     }
     if (obj == BOAT || obj == BEAR) {
         /* THROW BEAR? It's much too heavy! */
@@ -5719,12 +5774,12 @@ void attempt_find(Location loc, ObjectWord obj)
     bool its_visibly_here =
             is_at_loc(obj, loc) ||
             (obj == liquid_contents(BOTTLE) && there(BOTTLE, loc)) ||
+            (obj == liquid_contents(CASK) && there(CASK, loc) && is_ajar(CASK)) ||
             (obj == liquid_at_location(loc)) ||
             (obj == DWARF && dwarf_at(loc));
-    if (at_hand(obj, loc) || (is_liquid(obj) && at_hand(obj+1, loc))) {
-        /* This message is given erroneously for FIND CHASM, etc. TODO: fix. */
-        /* TODO: plurals */
-        puts("You are already carrying it!");
+    if (its_visibly_here && toting(obj)) {
+        indent_appropriately();
+        printf("You are already carrying %s!\n", is_plural(obj) ? "them" : "it");
     } else if (closed) {
         puts("I daresay whatever you want is around here somewhere.");
     } else if (its_visibly_here) {
@@ -6393,7 +6448,6 @@ void simulate_an_adventure(void)
     int obj = NOTHING;  /* currently specified object, if any */
     int oldobj;  /* former value of obj */
     int iobj = NOTHING;
-    int oldiobj;  /* former value of iobj */
     bool was_dark = false;
 
     oldoldloc = oldloc = loc = newloc = R_ROAD;
@@ -6430,7 +6484,7 @@ void simulate_an_adventure(void)
             default: break;
         }
         /* Upon leaving the rotunda, cause the gnome to vanish. Line 2045 in Long. */
-        if (oldloc == R_ROTUNDA && loc != R_ROTUNDA && objs(BOOTH).prop) {
+        if (oldloc == R_ROTUNDA && loc != R_ROTUNDA && objs(BOOTH).prop == 1) {
             assert(there(GNOME, R_ROTUNDA));
             assert(loc != R_BOOTH);  /* can't enter booth while gnome's there */
             destroy(GNOME);
@@ -6439,7 +6493,6 @@ void simulate_an_adventure(void)
         while (true) {
             verb = oldverb = NOTHING;
             oldobj = obj;
-            oldiobj = iobj;
             set_indentation(0);
 
             maybe_give_a_hint(loc, oldloc, oldoldloc, oldobj);
@@ -6718,15 +6771,17 @@ void simulate_an_adventure(void)
                     puts(ok);
                     continue;
                 case CLOSE:
-                    attempt_close(loc, obj, iobj);
+                    attempt_close(loc, obj);
                     continue;
                 case LIGHT:
+                light_lamp:
                     /* Long lazily allows "LIGHT KEYS". */
                     if (attempt_light(loc) && was_dark) {
                         goto commence;
                     }
                     continue;
                 case EXTINGUISH:
+                extinguish_lamp:
                     /* Long lazily allows "EXTINGUISH KEYS". */
                     attempt_extinguish(loc);
                     continue;
@@ -6841,7 +6896,7 @@ void simulate_an_adventure(void)
                     attempt_wear(loc, obj);
                     continue;
                 case HIT:
-                    attempt_hit(loc, obj, prep, iobj);
+                    attempt_hit(loc, obj, iobj);
                     continue;
                 case ANSWER:
                     attempt_answer(obj);
@@ -6859,9 +6914,24 @@ void simulate_an_adventure(void)
                     attempt_dial(obj);
                     continue;
                 case PICK:
+                    attempt_pick(loc, obj, prep, iobj);
+                    continue;
                 case PUT:
+                    attempt_put(loc, obj, prep, iobj);
+                    continue;
                 case TURN:
-                    puts("TODO this transitive verb is unhandled");
+                    if (prep == NOTHING) {
+                        confuz();
+                    } else if ((obj == LAMP) != (iobj == LAMP) &&
+                               (obj == NOTHING) != (iobj == NOTHING)) {
+                        if (prep == ONTO) {
+                            goto light_lamp;
+                        } else {
+                            goto extinguish_lamp;
+                        }
+                    } else {
+                        noway();
+                    }
                     continue;
                 case GET:
                     attempt_get(loc, obj, prep, iobj);

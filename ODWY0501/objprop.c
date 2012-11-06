@@ -320,12 +320,13 @@ int burden(ObjectWord t)
 	/* Compute the total weight of the player's inventory. */
 	int result = 0;
 	for (ObjectWord i = MIN_OBJ; i <= MAX_OBJ; ++i) {
-            /* Notice that this does not count the weight of items that are
-             * in the bottom of the boat, but it does count items that are
-             * in the sack in the boat. TODO: fix this.
-             * Also notice that we count the weight of the BOAT as an
-             * item. */
-	    if (toting(i) && objs(i).place != -BOAT)
+            /* Long erroneously uses TOTING instead of HOLDNG, and skips the
+	     * contents of the boat. This double-counts objects contained
+	     * within the sack; counts objects contained within the sack
+	     * even when the sack is the boat; and counts the weight of the
+	     * empty boat itself. My fix counts everything once, and doesn't
+	     * count the boat or its contents. */
+	    if (holding(i) && i != BOAT)
 		result += weight(i);
 	}
 	return result;
@@ -334,9 +335,7 @@ int burden(ObjectWord t)
 	 * The boat is a special case; we don't count its contents. */
 	int result = weight(t);
 	if (t == BOAT) return result;
-	/* Notice that we don't recursively compute weight.
-	 * Long's comments indicate that this is a known deficiency,
-	 * due to Fortran's lack of recursion. */
+	/* Long doesn't recurse here, due to Fortran's lack of recursion. */
 	for (struct ObjectData *p = objs(t).contents; p != NULL; p = p->link) {
 	    result += weight(p - &objs(MIN_OBJ) + MIN_OBJ);
 	}
@@ -356,7 +355,7 @@ void drop(ObjectWord t, Location l)
     if (is_wearable(t)) {
 	/* Long's code forgets to do this in several places; for example,
 	 * if you DRINK WINE and drop all your items. (This generally
-	 * causes the wearable object (clover, shoes, etc.) to become
+	 * causes the worn object (clover, shoes, etc.) to become
 	 * invisible.) So I'm just moving all that code right here. */
         objs(t).flags &= ~F_WORN;
 	objs(t).prop = 0;
