@@ -307,11 +307,20 @@ lin20:
      *     GET AND LIGHT LAMP -- noun
      * This suggests that somehow the rule is much simpler than Long's
      * line 55 implies on first reading: iff LIGHT is the first word on
-     * the line, it's treated as a verb.
+     * the line, it's treated as a verb. The same rule applies to TREE
+     * (MessageWord preferred over ObjectWord) and WALL (MotionWord
+     * over ObjectWord).
+     *
      * TODO: investigate this codepath.
      */
     if (wdx == 1 && streq(txt[wdx-1], "light")) {
 	word = LIGHT;
+	goto lin99;
+    } else if (wdx == 1 && streq(txt[wdx-1], "tree")) {
+	word = TREES;
+	goto lin99;
+    } else if (wdx == 1 && streq(txt[wdx-1], "wall")) {
+	word = WALL;
 	goto lin99;
     }
 
@@ -413,7 +422,12 @@ lin100:
 		    goto lin180;
 		break;
 	}
-	/* Otherwise, this parse doesn't make sense. */
+	/* Otherwise, this parse doesn't make sense.
+	 * Backtrack and try parsing the motion-word differently.
+	 * For example, if the user typed "CONTINUE WEST",
+	 * we should parse it as GO W, not FORWARD W. */
+	--wdx;
+	--vrbx;
 	goto lin96;
     }
 lin180:

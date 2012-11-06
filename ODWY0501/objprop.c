@@ -11,13 +11,13 @@ bool is_hinged(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
-	case GRATE: case CAGE: case CLAM: case OYSTER:
-	case BOTTLE: case RUSTY_DOOR: case TINY_DOOR: case HUGE_DOOR:
-	case BOOTH_DOOR: case CHAIN: case CASK: case SACK: case BOOK:
-	case REPO_BOOK: case SAFE: case CANISTER:
-	    return true;
-	default:
-	    return false;
+        case GRATE: case CAGE: case CLAM: case OYSTER:
+        case BOTTLE: case RUSTY_DOOR: case TINY_DOOR: case HUGE_DOOR:
+        case BOOTH_DOOR: case CHAIN: case CASK: case SACK: case BOOK:
+        case REPO_BOOK: case SAFE: case CANISTER:
+            return true;
+        default:
+            return false;
     }
 }
 
@@ -25,11 +25,11 @@ bool has_lock(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
-	case GRATE: case TINY_DOOR: case HUGE_DOOR:
-	case CHEST: case CHAIN: case SAFE:
-	    return true;
-	default:
-	    return false;
+        case GRATE: case TINY_DOOR: case HUGE_DOOR:
+        case CHEST: case CHAIN: case SAFE:
+            return true;
+        default:
+            return false;
     }
 }
 
@@ -37,11 +37,11 @@ bool is_edible(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
-	case FOOD: case PLANT: case SPICES: case HONEY:
-	case BIRD: case MUSHROOMS: case CAKES:
-	    return true;
-	default:
-	    return false;
+        case FOOD: case PLANT: case SPICES: case HONEY:
+        case BIRD: case MUSHROOMS: case CAKES:
+            return true;
+        default:
+            return false;
     }
 }
 
@@ -49,11 +49,11 @@ bool is_readable(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
-	case TABLET: case CLAM: case OYSTER: case MAG: case MESSAGE:
-	case BOOK: case REPO_BOOK: case POSTER: case CARVING:
-	    return true;
-	default:
-	    return false;
+        case TABLET: case CLAM: case OYSTER: case MAG: case MESSAGE:
+        case BOOK: case REPO_BOOK: case POSTER: case CARVING:
+            return true;
+        default:
+            return false;
     }
 }
 
@@ -64,9 +64,9 @@ bool is_living(ObjectWord t)
         case SNAKE: case CLAM: case OYSTER: case DWARF:
         case PIRATE: case DRAGON: case TROLL: case BEAR:
         case BEES: /* but *not* GNOME or DOG or WUMPUS */
-	    return true;
-	default:
-	    return false;
+            return true;
+        default:
+            return false;
     }
 }
 
@@ -74,11 +74,11 @@ bool is_wearable(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
-	case CLOAK: case JEWELS: case CROWN: case SHOES:
-	case RING: case CLOVER:
-	    return true;
-	default:
-	    return false;
+        case CLOAK: case JEWELS: case CROWN: case SHOES:
+        case RING: case CLOVER:
+            return true;
+        default:
+            return false;
     }
 }
 
@@ -86,13 +86,13 @@ bool is_plural(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
-	case STEPS: case DRAWINGS: case BATTERIES: case FLOWERS:
-	case JEWELS: case COINS: case EGGS: case SHOES: case BEES:
-	case KEYS: case MUSHROOMS: case CAKES:
-	    /* but not DIAMONDS or MAGAZINES or SPICES */
-	    return true;
-	default:
-	    return false;
+        case STEPS: case DRAWINGS: case BATTERIES: case FLOWERS:
+        case JEWELS: case COINS: case EGGS: case SHOES: case BEES:
+        case KEYS: case MUSHROOMS: case CAKES:
+            /* but not DIAMONDS or MAGAZINES or SPICES */
+            return true;
+        default:
+            return false;
     }
 }
 
@@ -100,15 +100,15 @@ bool is_treasure(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
-	case FLOWERS: case GOLD: case DIAMONDS: case HORN: case JEWELS:
-	case COINS: case CHEST: case EGGS: case TRIDENT: case VASE:
-	case EMERALD: case PYRAMID: case PEARL: case RUG: case SPICES:
-	case CHAIN: case SWORD: case CROWN: case SHOES: case LYRE:
-	case SAPPHIRE: case GRAIL: case CASK: case RING: case CLOVER:
-	case TREE: case DROPLET: case BOOK: case RADIUM: case BALL:
-	    return true;
-	default:
-	    return false;
+        case FLOWERS: case GOLD: case DIAMONDS: case HORN: case JEWELS:
+        case COINS: case CHEST: case EGGS: case TRIDENT: case VASE:
+        case EMERALD: case PYRAMID: case PEARL: case RUG: case SPICES:
+        case CHAIN: case SWORD: case CROWN: case SHOES: case LYRE:
+        case SAPPHIRE: case GRAIL: case CASK: case RING: case CLOVER:
+        case TREE: case DROPLET: case BOOK: case RADIUM: case BALL:
+            return true;
+        default:
+            return false;
     }
 }
 
@@ -116,12 +116,12 @@ bool is_vessel(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
-	case LAMP: case CAGE: case BOTTLE: case MACHINE: case BOAT:
-	case CHEST: case VASE: case GRAIL: case CASK: case SACK:
-	case SAFE: case CANISTER:
-	    return true;
-	default:
-	    return false;
+        case LAMP: case CAGE: case BOTTLE: case MACHINE: case BOAT:
+        case CHEST: case VASE: case GRAIL: case CASK: case SACK:
+        case SAFE: case CANISTER:
+            return true;
+        default:
+            return false;
     }
 }
 
@@ -172,18 +172,18 @@ bool is_small(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
-	case LAMP: case ROD: case ROD2: case PILLOW: case MAG:
-	case FOOD: case BOTTLE: case AXE: case BATTERIES: case CLOAK:
-	case DIAMONDS: case HORN: case JEWELS: case COINS: case EGGS:
-	case VASE: case EMERALD: case PYRAMID: case PEARL: case SPICES:
+        case LAMP: case ROD: case ROD2: case PILLOW: case MAG:
+        case FOOD: case BOTTLE: case AXE: case BATTERIES: case CLOAK:
+        case DIAMONDS: case HORN: case JEWELS: case COINS: case EGGS:
+        case VASE: case EMERALD: case PYRAMID: case PEARL: case SPICES:
         case CHAIN: case SWORD:/*!*/ case CROWN: case SHOES: case LYRE:
         case SAPPHIRE: case GRAIL: case RING: case CLOVER: case TREE:
-	case DROPLET: case BIRD: case KEYS: case MUSHROOMS: case CAKES:
-	case SACK: case BOOK: case POSTER:/*!*/ case BROOM: case CANISTER:
-	case RADIUM: case BALL:  /* but not REPO_BOOK */
-	    return true;
-	default:
-	    return false;
+        case DROPLET: case BIRD: case KEYS: case MUSHROOMS: case CAKES:
+        case SACK: case BOOK: case POSTER:/*!*/ case BROOM: case CANISTER:
+        case RADIUM: case BALL:  /* but not REPO_BOOK */
+            return true;
+        default:
+            return false;
     }
 }
 
@@ -278,7 +278,7 @@ bool toting(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     return holding(t) ||
-	   (enclosed(t) && toting(-objs(t).place));
+           (enclosed(t) && toting(-objs(t).place));
 }
 
 bool holding(ObjectWord t)
@@ -298,11 +298,11 @@ bool is_ajar(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
-	case LAMP: case MACHINE: case BOAT: case VASE:
-	case GRAIL:  /* These vessels are always open. */
-	    return true;
-	default:
-	    return (objs(t).flags & F_OPEN);
+        case LAMP: case MACHINE: case BOAT: case VASE:
+        case GRAIL:  /* These vessels are always open. */
+            return true;
+        default:
+            return (objs(t).flags & F_OPEN);
     }
 }
 
@@ -317,34 +317,46 @@ bool is_broken(ObjectWord t)
 int burden(ObjectWord t)
 {
     if (t == 0) {
-	/* Compute the total weight of the player's inventory. */
-	int result = 0;
-	for (ObjectWord i = MIN_OBJ; i <= MAX_OBJ; ++i) {
+        /* Compute the total weight of the player's inventory. */
+        int result = 0;
+        for (ObjectWord i = MIN_OBJ; i <= MAX_OBJ; ++i) {
             /* Long erroneously uses TOTING instead of HOLDNG, and skips the
-	     * contents of the boat. This double-counts objects contained
-	     * within the sack; counts objects contained within the sack
-	     * even when the sack is the boat; and counts the weight of the
-	     * empty boat itself. My fix counts everything once, and doesn't
-	     * count the boat or its contents. */
-	    if (holding(i) && i != BOAT)
-		result += weight(i);
-	}
-	return result;
+             * contents of the boat. This double-counts objects contained
+             * within the sack; counts objects contained within the sack
+             * even when the sack is the boat; and counts the weight of the
+             * empty boat itself. My fix counts everything once, and doesn't
+             * count the boat or its contents. */
+            if (holding(i) && i != BOAT)
+                result += weight(i);
+        }
+        return result;
     } else {
-	/* Compute the weight of this one object and its contents.
-	 * The boat is a special case; we don't count its contents. */
-	int result = weight(t);
-	if (t == BOAT) return result;
-	/* Long doesn't recurse here, due to Fortran's lack of recursion. */
-	for (struct ObjectData *p = objs(t).contents; p != NULL; p = p->link) {
-	    result += weight(p - &objs(MIN_OBJ) + MIN_OBJ);
-	}
-	return result;
+        /* Compute the weight of this one object and its contents.
+         * The boat is a special case; we don't count its contents. */
+        int result = weight(t);
+        if (t == BOAT) return result;
+        /* Long doesn't recurse here, due to Fortran's lack of recursion. */
+        for (struct ObjectData *p = objs(t).contents; p != NULL; p = p->link) {
+            result += weight(p - &objs(MIN_OBJ) + MIN_OBJ);
+        }
+        return result;
     }
 }
 
 /*========== Functions that mutate objs(t). ===============================
  */
+
+static void jostle_object(ObjectWord t)
+{
+    /* Long's code forgets to do this in several places; for example,
+     * if you DRINK WINE and drop all your items. (This generally
+     * causes the worn object (clover, shoes, etc.) to become
+     * invisible.) So I'm just moving all that code right here. */
+    if (is_wearable(t) || t == POLE || t == TINY_KEY) {
+        objs(t).flags &= ~F_WORN;
+        objs(t).prop = 0;
+    }
+}
 
 void drop(ObjectWord t, Location l)
 {
@@ -352,14 +364,7 @@ void drop(ObjectWord t, Location l)
     assert(objs(t).place == R_INHAND || objs(t).place == R_LIMBO);
     assert(objs(t).link == NULL);
     objs(t).place = l;
-    if (is_wearable(t)) {
-	/* Long's code forgets to do this in several places; for example,
-	 * if you DRINK WINE and drop all your items. (This generally
-	 * causes the worn object (clover, shoes, etc.) to become
-	 * invisible.) So I'm just moving all that code right here. */
-        objs(t).flags &= ~F_WORN;
-	objs(t).prop = 0;
-    }
+    jostle_object(t);
     if (l > R_LIMBO) {
         objs(t).link = places[l].objects;
         places[l].objects = &objs(t);
@@ -373,10 +378,6 @@ void insert(ObjectWord t, ObjectWord container)
     objs(t).place = -container;
     objs(t).link = objs(container).contents;
     objs(container).contents = &objs(t);
-    if (is_wearable(t)) {
-        objs(t).flags &= ~F_WORN;
-	objs(t).prop = 0;
-    }
 }
 
 void remove_from_containers(ObjectWord t)
@@ -409,16 +410,18 @@ void carry(ObjectWord t)
         objs(t).place = R_INHAND;
         objs(t).link = NULL;
     }
+    jostle_object(t);
 }
 
 void destroy(ObjectWord t)
 {
     /* Long doesn't bother to preserve the invariant that destroyed objects
-     * are always in R_LIMBO, but I think it's definitely worth it. */
+     * are always in R_LIMBO (for example, if they're contained in another
+     * destroyed object), but I think it's definitely worth it. */
     move(t, R_LIMBO);
     if (t == BIRD) objs(BIRD).prop = 0;  /* uncaged */
     for (int u = MIN_OBJ; u <= MAX_OBJ; ++u) {
-	if (objs(u).place == -(int)t)
-	    destroy(u);
+        if (objs(u).place == -(int)t)
+            destroy(u);
     }
 }

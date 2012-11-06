@@ -316,7 +316,7 @@ void build_vocabulary(void)
     new_object_word("wine", WINE);
     new_object_word("bee", BEES); new_object_word("bees", BEES);
     new_object_word("bumble", BEES);
-    new_object_word("wall", ECHO);  /* or SAFE_WALL */
+    new_object_word("wall", ECHO);  /* or WALL or SAFE_WALL */
     new_object_word("key", TINY_KEY);
     new_object_word("anvil", ANVIL);
     new_object_word("rocks", CLOAKROOM_ROCKS);  /* or CARVING */
@@ -385,8 +385,9 @@ void build_vocabulary(void)
     new_action_word("travel", GO); new_action_word("go", GO);
     new_action_word("procee", GO); new_action_word("explor", GO);
     new_action_word("goto", GO); new_action_word("follow", GO);
-    /* TODO: Note that CONTINUE is both a synonym for motion-FORWARD and
-     * a synonym for action-GO. What observable effect does this have? */
+    /* Note that CONTINUE is both a synonym for motion-FORWARD and
+     * a synonym for action-GO. CONTINUE WEST means GO WEST, but
+     * CONTINUE alone means FORWARD. */
     new_action_word("contin", GO); new_action_word("hike", GO);
     new_action_word("attack", KILL); new_action_word("kill", KILL);
     new_action_word("fight", KILL); new_action_word("slay", KILL);
@@ -2375,6 +2376,7 @@ void new_obj(ObjectWord t, const char *n, ObjectWord b, Location l)
     objs(t).prop = (is_treasure(t) ? -1 : 0);
     objs(t).base = (b != 0 ? &objs(b) : NULL);
     objs(t).place = l;
+    objs(t).flags = 0;
     objs(t).contents = NULL;
     objs(t).link = NULL;
     assert(l >= R_LIMBO);
@@ -2753,6 +2755,16 @@ void build_object_table(void)
 
     insert(WATER, BOTTLE);
     insert(BOOK, SAFE);
+    objs(POLE).prop = 1;  /* stuck in the mud */
+    objs(TINY_KEY).prop = 1;  /* on the shelf */
+    objs(SACK).flags |= F_OPEN;
+    objs(GRATE).flags |= F_LOCKED;
+    objs(TINY_DOOR).flags |= F_LOCKED;
+    objs(HUGE_DOOR).flags |= F_LOCKED;
+    objs(CHEST).flags |= F_LOCKED;
+    objs(CHAIN).flags |= F_LOCKED;
+    objs(SAFE).flags |= F_LOCKED;
+    objs(RUSTY_DOOR).flags |= F_LOCKED;
 }
 
 
@@ -2782,7 +2794,7 @@ bool yes(const char *q, const char *y, const char *n)
  */
 
 int dflag;  /* how angry are the dwarves? */
-Location dloc[6] = { R_PIRATES_NEST, R_HMK, R_WFISS, R_Y2, R_MAZEA44, R_COMPLEX };
+Location dloc[6] = { R_PIRATES_NEST, R_HMK, R_ROTUNDA, R_Y2, R_MAZEA44, R_SHELL };
 Location odloc[6];
 bool dseen[6];
 int being_chased;  /* by a Wumpus */
