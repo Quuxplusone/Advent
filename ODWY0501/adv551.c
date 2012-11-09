@@ -2098,7 +2098,7 @@ void build_travel_table(void)
              "*        Laciate Ogni Speranza Voi Ch'Entrate.\"   *",
              "You are at approach to River Styx.", F_LIGHTED | F_OUTSIDE);
     make_ins(W, R_THUNDER); ditto(OUT); ditto(U);
-    make_cond_ins(E, unless_prop(DOG, 0), R_WSTYX); ditto(IN); ditto(D);
+    make_cond_ins(E, unless_prop(DOG, 1), R_WSTYX); ditto(IN); ditto(D);
     make_ins(E, remark(31));
     make_loc(q, R_WSTYX,
              "You are at the River Styx, a narrow little stream cutting directly" SOFT_NL
@@ -3922,7 +3922,8 @@ void attempt_drop(Location loc, ActionWord verb, ObjectWord obj, int prep, int i
 void attempt_fill(Location loc, ObjectWord obj, ObjectWord iobj)
 {
     /* FILL obj WITH iobj */
-    if (!is_vessel(iobj)) {
+    assert(obj != NOTHING);
+    if (!is_vessel(obj)) {
         puts("You can't fill that.");
         return;
     }
@@ -4046,6 +4047,20 @@ void take_something_immobile(ObjectWord obj)
     }
 }
 
+bool maybe_reveal_safe(Location loc)
+{
+    /* Long's original game fails to reveal the safe via PUT POSTER IN SACK. */
+    if (there(SAFE, R_LIMBO)) {
+        assert(loc == R_HOUSE);
+        puts("Hidden behind the poster is a steel safe, embedded in the wall.");
+        objs(POSTER).prop = 1;
+        drop(SAFE, R_HOUSE);
+        drop(SAFE_WALL, R_HOUSE);
+        return true;
+    }
+    return false;
+}
+
 void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj)
 {
     if (obj == SWORD && iobj == ANVIL && objs(SWORD).prop == 0) {
@@ -4116,7 +4131,11 @@ void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj)
         puts("It won't fit.");
     } else {
         insert(obj, iobj);
-        puts(ok);
+        if (obj == POSTER && maybe_reveal_safe(loc)) {
+            /* No additional message. */
+        } else {
+            puts(ok);
+        }
     }
 }
 
@@ -4156,6 +4175,15 @@ void attempt_remove_from(Location loc, ObjectWord obj, int iobj)
         } else {
             puts("Taken.");
         }
+    }
+}
+
+void print_taken_message(ActionWord verb)
+{
+    if (verb == YANK) {
+        puts("Ok, ok.  No need to be grabby.");
+    } else {
+        puts("Taken.");
     }
 }
 
@@ -4247,13 +4275,6 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
         }
     } else if (obj != BEAR && burden(0)+burden(obj) > 15) {
         puts("It's too heavy.  You'll have to drop something first.");
-    } else if (obj == POSTER && there(SAFE, R_LIMBO)) {
-        puts("Hidden behind the poster is a steel safe, embedded in the wall.");
-        assert(loc == R_HOUSE);
-        objs(POSTER).prop = 1;
-        drop(SAFE, R_HOUSE);
-        drop(SAFE_WALL, R_HOUSE);
-        carry(POSTER);
     } else if (obj == BOAT) {
         if (!toting(POLE) && !there(POLE, -BOAT)) {
             puts("The boat's oars were stolen by the dwarves to play bing-bong." SOFT_NL
@@ -4280,7 +4301,7 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
              * just annoying. */
             insert(BIRD, CAGE);
             objs(CAGE).flags &= ~F_OPEN;
-            goto print_taken_message;
+            print_taken_message(verb);
         }
     } else if (obj == SWORD && (objs(SWORD).prop == 1 || objs(SWORD).prop == 3)) {
         /* Long doesn't let you yank the "very clean" sword, but it doesn't
@@ -4301,23 +4322,12 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
             objs(SWORD).prop = 2;  /* broken */
             immobilize(SWORD);
         }
-    } else {
+    } else if (obj == POSTER && maybe_reveal_safe(loc)) {
+        /* No additional message. */
         carry(obj);
-        switch (obj) {
-            case TINY_KEY: case SWORD:
-            case CLOAK: case RING:
-                if (!(objs(obj).flags & F_WORN))
-                    objs(obj).prop = 0;
-                break;
-            default:
-                break;
-        }
-    print_taken_message:
-        if (verb == YANK) {
-            puts("Ok, ok.  No need to be grabby.");
-        } else {
-            puts("Taken.");
-        }
+    } else {
+        print_taken_message(verb);
+        carry(obj);
     }
 }
 
@@ -6461,6 +6471,7 @@ void simulate_an_adventure(void)
     int oldobj;  /* former value of obj */
     int iobj = NOTHING;
     bool was_dark = false;
+    bool please_clarify = false;
 
     oldoldloc = oldloc = loc = newloc = R_ROAD;
 
@@ -6510,7 +6521,19 @@ void simulate_an_adventure(void)
             maybe_give_a_hint(loc, oldloc, oldoldloc, oldobj);
             was_dark = now_in_darkness(loc);
             adjustments_before_listening(loc);
-            shift_words(&verb, &obj, &iobj, loc);
+
+            /* Get a new input line, or finish getting current one.
+             * Long's line 2605. */
+            if (please_clarify) {
+                assert(w_verbs[0] != NOTHING);
+                getwds(loc);
+                verb = w_verbs[vrbx = 0];
+                obj = w_objs[objx = 0];
+                iobj = w_iobjs[iobx = 0];
+                please_clarify = false;
+            } else {
+                shift_words(&verb, &obj, &iobj, loc);
+            }
 
             assert(w_iobjs[1] == NOTHING);  /* TODO is this possible? verify */
             if (w_objs[1] != NOTHING) {
@@ -6757,6 +6780,7 @@ void simulate_an_adventure(void)
                 act_on_what:
                     vtxt[vrbx][0] = toupper(vtxt[vrbx][0]);
                     printf("%s what?\n", vtxt[vrbx]);
+                    please_clarify = true;
                     continue;
                 default:
                     assert(false);  /* BUG(23) in Long's code */

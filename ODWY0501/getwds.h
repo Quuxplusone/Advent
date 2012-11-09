@@ -10,8 +10,6 @@ extern char iotxt[15][16];
 
 extern int vrbx, objx, iobx;  /* which word we're processing right now */
 
-extern bool indent_default_responses;
-
 /* This function is called from the main loop.
  * Its job is to parse out the next clause of the player's input
  * into the globals "w_verbs", "w_objs", "w_iobjs", and "prep";
