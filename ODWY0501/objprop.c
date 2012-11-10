@@ -100,12 +100,13 @@ bool is_treasure(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
-        case FLOWERS: case GOLD: case DIAMONDS: case HORN: case JEWELS:
-        case COINS: case CHEST: case EGGS: case TRIDENT: case VASE:
-        case EMERALD: case PYRAMID: case PEARL: case RUG: case SPICES:
-        case CHAIN: case SWORD: case CROWN: case SHOES: case LYRE:
-        case SAPPHIRE: case GRAIL: case CASK: case RING: case CLOVER:
-        case TREE: case DROPLET: case BOOK: case RADIUM: case BALL:
+        case FLOWERS: case CLOAK: case GOLD: case DIAMONDS: case HORN:
+        case JEWELS: case COINS: case CHEST: case EGGS: case TRIDENT:
+        case VASE: case EMERALD: case PYRAMID: case PEARL: case RUG:
+        case SPICES: case CHAIN: case SWORD: case CROWN: case SHOES:
+        case LYRE: case SAPPHIRE: case GRAIL: case CASK: case RING:
+        case CLOVER: case TREE: case DROPLET: case BOOK: case RADIUM:
+        case BALL:
             return true;
         default:
             return false;

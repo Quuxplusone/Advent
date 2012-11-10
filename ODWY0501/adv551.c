@@ -31,6 +31,8 @@ int ran(int range) { return rand() % range; }
 #define EMDASH(x) "\xE2\x80\x94"  /* U+2014 "EM DASH" */
 #define ENDASH(x) "\xE2\x80\x93"  /* U+2013 "EN DASH" */
 
+#define ok "OK."  /* Woods' Fortran version didn't include the period, by the way. */
+
 bool pct(int percent) { return (ran(100) < percent); }
 bool streq(const char *a, const char *b) { return !strncmp(a, b, 5); }
 
@@ -74,10 +76,6 @@ WordClass word_class(int word)
         return WordClass_None;
     }
 }
-
-const char ok[] = "OK.";  /* Woods' Fortran version didn't include the period, by the way. */
-const char pitch_dark_msg[] = "It is now pitch dark.  If you proceed you will most likely fall into a pit.";
-
 
 struct HashEntry {
     char text[7];
@@ -540,7 +538,7 @@ typedef struct {
     Location dest;
 } Instruction;
 
-Instruction travels[1191];
+Instruction travels[1195];
 Instruction *start[MAX_LOC+2];
 struct Place places[MAX_LOC+1];
 
@@ -560,7 +558,7 @@ void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned
 
 void make_inst(Instruction *q, MotionWord m, int c, Location d)
 {
-    assert(&travels[0] <= q && q <= &travels[1191]);
+    assert(&travels[0] <= q && q <= &travels[1195]);
     assert(m==0 || (MIN_MOTION <= m && m <= MAX_MOTION));
     q->mot = m;
     q->cond = c;
@@ -848,6 +846,10 @@ void build_travel_table(void)
     make_ins(E, R_WMIST); ditto(U); ditto(CRAWL);
     make_ins(W, R_WLONG);
     make_ins(N, R_CROSS); ditto(D); ditto(HOLE);
+    make_cond_ins(S, 50, R_DEAD191);
+    make_cond_ins(S, unless_prop(CLOAKROOM_ROCKS, 0), R_TIGHT_NS_BLOCKED);
+    make_ins(S, R_TIGHT_NS);
+    make_ins(CLIMB, remark(8));
     make_loc(q, R_WLONG,
              "You are at the west end of a very long featureless hall.  The hall" SOFT_NL
              "joins up with a narrow north/south passage.",
@@ -2332,7 +2334,7 @@ ObjectWord liquid_contents(ObjectWord t)
 bool water_at(Location loc)
 {
     switch (loc) {
-	case R_EPIT: case R_Y2: case R_WINERY: case R_ROAD: case R_HOUSE:
+	case R_Y2: case R_WINERY: case R_ROAD: case R_HOUSE:
 	case R_VALLEY: case R_SLIT: case R_CLEAN: case R_MISTY:
         case R_WBLUE: case R_SEA: case R_EBLUE:
 	case R_BUBBLE: case R_GRAVEL: case R_FAIRY: case R_GREEN:
@@ -3894,6 +3896,7 @@ void attempt_drop(Location loc, ActionWord verb, ObjectWord obj, int prep, int i
         move(NO_TROLL, R_SWSIDE); move(NO_TROLL_, R_NESIDE);
         juggle(CHASM);
         objs(TROLL).prop = 2;  /* permanently scared away */
+        verb = NOTHING;  /* suppress the usual message */
     } else if (obj == VASE && loc != R_SOFT) {
         if (there(PILLOW, loc)) {
             puts("The vase is now resting, delicately, on a velvet pillow.");
@@ -3904,6 +3907,7 @@ void attempt_drop(Location loc, ActionWord verb, ObjectWord obj, int prep, int i
             objs(VASE).prop = 1;
             immobilize(VASE);
         }
+        verb = NOTHING;  /* suppress the usual message */
     }
 
     if (obj == BOAT) {
@@ -3912,6 +3916,7 @@ void attempt_drop(Location loc, ActionWord verb, ObjectWord obj, int prep, int i
 
     move(obj, loc);
     switch (verb) {
+        case NOTHING: break;
         case TAKE: puts(ok); break;
         case LEAVE: puts("Left."); break;
         case TOSS: puts("Thrown."); break;
@@ -4201,9 +4206,12 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
         /* Here Long does a GOTO 2, but I see no reason to reproduce that. */
     } else if (verb == YANK && obj == BEAR && objs(BEAR).prop <= 1) {
         puts("Pulling an angry bear around is a good way to get your arm ripped off.");
-    } else if (verb == YANK && obj == CLOAK && objs(CLOAK).prop == 2) {
+    } else if (obj == CLOAK && objs(CLOAK).prop == 2) {
         assert(loc == R_CLOAKROOM);
-        if (burden(0)+burden(CLOAK) > 15) {
+        if (verb != YANK) {
+            puts("The cloak is stuck tight under the rocks.  You'll probably have to" SOFT_NL
+                 "yank it out.");
+        } else if (burden(0)+burden(CLOAK) > 15) {
             puts("It's too heavy.  You'll have to drop something first.");
         } else {
             puts("You have jerked the cloak free of the rocks.  However, in doing" SOFT_NL
@@ -4357,10 +4365,12 @@ void attempt_wear(Location loc, ObjectWord obj)
         puts("It's too heavy.  You'll have to drop something first.");
     } else {
         remove_from_containers(obj);
-        objs(obj).flags |= F_WORN;
         if (!holding(obj)) {
             attempt_take(loc, TAKE, obj, NOTHING, NOTHING);
+        } else {
+            puts(ok);
         }
+        objs(obj).flags |= F_WORN;
     }
 }
 
@@ -5715,7 +5725,7 @@ int attempt_toss(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
          * assume it is the iobj. If not, look for any other living thing.
          * Otherwise treat THROW as DROP. */
         if (dwarf_at(loc)) {
-            obj = DWARF;
+            iobj = DWARF;
         } else {
             int k = 0;
             if (there(SNAKE, loc)) { ++k; iobj = SNAKE; }
