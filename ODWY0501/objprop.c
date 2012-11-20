@@ -37,8 +37,11 @@ bool is_edible(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
-        case FOOD: case PLANT: case SPICES: case HONEY:
-        case BIRD: case MUSHROOMS: case CAKES:
+        case FOOD: case PLANT: case FLOWERS: case SPICES:
+        case HONEY: case BIRD: case MUSHROOMS: case CAKES:
+            /* Long makes the flowers "edible" so that the player can FEED
+             * FLOWERS TO BEES, and so that THROW FLOWERS [TO BEES] will
+             * redirect to FEED FLOWERS TO BEES. */
             return true;
         default:
             return false;
@@ -205,6 +208,8 @@ int weight(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
+	case BOAT: case BEAR:
+	    return 0;
         case LAMP: case CAGE: case PILLOW: case MAG: case BOTTLE:
         case FLOWERS: case CLOAK: case DIAMONDS: case PEARL:
         case SPICES: case CROWN: case SHOES: case RING:

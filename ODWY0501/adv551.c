@@ -568,9 +568,9 @@ void make_inst(Instruction *q, MotionWord m, int c, Location d)
 #define make_ins(m, d) make_inst(q++, m, 0, d)
 #define make_cond_ins(m, c, d) make_inst(q++, m, c, d)
 #define ditto(m) make_inst(q, m, q[-1].cond, q[-1].dest); ++q;
-#define only_if_toting(t) (100 + (t-MIN_OBJ))
-#define only_if_here(t) (200 + (t-MIN_OBJ))
-#define unless_prop(t, p) (300 + (t-MIN_OBJ) + 100*p)
+#define only_if_toting(t) (1000 + (t-MIN_OBJ))
+#define only_if_here(t) (2000 + (t-MIN_OBJ))
+#define unless_prop(t, p) (3000 + (t-MIN_OBJ) + 1000*p)
 
 #define remark(n) (FIRST_REMARK + n)
 
@@ -1581,7 +1581,8 @@ void build_travel_table(void)
     make_loc(q, R_BEACH,
              "You're on a sandy beach at the edge of the open sea.  The beach" SOFT_NL
              "ends a short distance south and the land rises to a point. To" SOFT_NL
-             "the north, the beach ends cliffs and broken rocks.",
+             /* Long has "ends cliffs" */
+             "the north, the beach ends in cliffs and broken rocks.",
              "You're on sandy beach.", F_LIGHTED | F_OUTSIDE);
     make_ins(N, R_BROKEN);
     make_ins(S, R_BAY);
@@ -1650,23 +1651,23 @@ void build_travel_table(void)
     make_ins(JUMP, R_NECK2);
     make_loc(q, R_SHRINKING,
              "You feel dizzy...Everything around you is spinning, expanding," SOFT_NL
-             "growing larger....  Dear me!  Is the cave bigger or are you smaller?",
+             "growing larger....  Dear me!  Is the cave bigger or are you smaller?\n",
              NULL, 0);
     make_ins(0, R_PHUCE);
     make_loc(q, R_GROWING,
              "You are again overcome by a sickening vertigo, but this time" SOFT_NL
-             "everything around you is shrinking...Shrinking...",
+             "everything around you is shrinking...Shrinking...\n",
              NULL, 0);
     make_ins(0, R_PHUCE);
     make_loc(q, R_GROWING2,
              "You are again overcome by a sickening vertigo, but this time" SOFT_NL
              "everything is shrinking... I mean, you are growing.  This is" SOFT_NL
-             "terribly confusing!",
+             "terribly confusing!\n",
              NULL, 0);
     make_ins(0, R_PHUCE);
     make_loc(q, R_SHRINKING2,
              "You feel dizzy...Everything around you is spinning, expanding," SOFT_NL
-             "growing larger....",
+             "growing larger....\n",
              NULL, 0);
     make_ins(0, R_PHUCE);
     make_loc(q, R_NECK2,
@@ -1962,6 +1963,7 @@ void build_travel_table(void)
              "You're in red rock crawl.", 0);
     make_ins(N, R_SLOST);
     make_ins(S, R_GREEN);
+    /* Notice that none of Lost River Canyon has F_LIGHTED. */
     make_loc(q, R_SLOST,
              "You are in a tall canyon on the south side of a swift, wide river." SOFT_NL
              "Written in the mud in crude letters are the words: \"You Have Found" SOFT_NL
@@ -2022,7 +2024,7 @@ void build_travel_table(void)
     make_ins(U, R_SPILLWAY);
     make_loc(q, R_SPILLWAY,
              "You're in a dry spillway east of and above a smooth rock basin.",
-             "You're in old spillway", 0);
+             "You're in old spillway.", 0);
     make_ins(D, R_BASIN);
     make_ins(E, R_WINERY); ditto(U);
     make_loc(q, R_WINERY,
@@ -2100,7 +2102,7 @@ void build_travel_table(void)
              "*        Laciate Ogni Speranza Voi Ch'Entrate.\"   *",
              "You are at approach to River Styx.", F_LIGHTED | F_OUTSIDE);
     make_ins(W, R_THUNDER); ditto(OUT); ditto(U);
-    make_cond_ins(E, unless_prop(DOG, 1), R_WSTYX); ditto(IN); ditto(D);
+    make_cond_ins(E, unless_prop(DOG, 0), R_WSTYX); ditto(IN); ditto(D);
     make_ins(E, remark(31));
     make_loc(q, R_WSTYX,
              "You are at the River Styx, a narrow little stream cutting directly" SOFT_NL
@@ -2283,6 +2285,18 @@ void build_travel_table(void)
 bool is_forced(Location loc)
 {
     switch (loc) {
+        case R_WHIRLPOOL:
+        case R_CLIFFJUMP:
+        case R_SHRINKING:
+        case R_GROWING:
+        case R_GROWING2:
+        case R_SHRINKING2:
+        case R_NECK2:
+        case R_ALLOVER:
+        case R_SKEWERED:
+        case R_POLE_E:
+        case R_POLE_S:
+        case R_POLE_N:
         case R_NECK:
         case R_LOSE:
         case R_CLIMB:
@@ -2334,18 +2348,18 @@ ObjectWord liquid_contents(ObjectWord t)
 bool water_at(Location loc)
 {
     switch (loc) {
-	case R_Y2: case R_WINERY: case R_ROAD: case R_HOUSE:
-	case R_VALLEY: case R_SLIT: case R_CLEAN: case R_MISTY:
-        case R_WBLUE: case R_SEA: case R_EBLUE:
-	case R_BUBBLE: case R_GRAVEL: case R_FAIRY: case R_GREEN:
-        case R_RED: case R_SLOST: case R_COVE: case R_WSTYX:
-	case R_ESTYX: case R_RES:
+        case R_Y2: case R_ROAD: case R_HOUSE: case R_VALLEY: case R_SLIT:
+        case R_CLEAN: case R_MISTY: case R_WBLUE: case R_SEA: case R_EBLUE:
+        case R_BUBBLE: case R_GRAVEL: case R_FAIRY: case R_GREEN:
+        case R_SLOST: case R_COVE: case R_WSTYX: case R_ESTYX: case R_RES:
         /* Long includes R_RED here, despite there being no water in that
-         * room's description; and doesn't include R_WLOST, R_ELOST, or
-         * R_BEACH. */
-	    return true;
-	default:
-	    return false;
+         * room's description; and Long doesn't include R_WLOST, R_ELOST,
+         * or R_BEACH. I've added those. */
+        case R_RED:
+        case R_WLOST: case R_ELOST: case R_BEACH:
+            return true;
+        default:
+            return false;
     }
 }
 
@@ -2363,9 +2377,9 @@ bool blind_at(Location loc)
      * darkness or (in the Crystal Palace) glare. */
     bool has_lighted_lamp = here(LAMP, loc) && objs(LAMP).prop;
     if (loc == R_CRYSTAL) {
-	return has_lighted_lamp;
+        return has_lighted_lamp;
     } else {
-	return !(has_lighted_lamp || (places[loc].flags & F_LIGHTED));
+        return !(has_lighted_lamp || (places[loc].flags & F_LIGHTED));
     }
 }
 
@@ -3080,7 +3094,7 @@ void close_the_cave(void)
     move(MIRROR_, R_SWEND);
     move(BOOTH_, R_SWEND);
     move(PHONE, R_REPO_BOOTH); objs(PHONE).prop = 3;
-    
+
     for (int j = MIN_OBJ; j <= MAX_OBJ; ++j) {
         if (toting(j)) destroy(j);
     }
@@ -3534,67 +3548,67 @@ int score(void)
     int score = 0;
 
     static const struct {
-	ObjectWord obj;
-	int place;
-	int prop;
-	int value;
+        ObjectWord obj;
+        int place;
+        int prop;
+        int value;
     } qk[] = {
-	{ CLOAK,    -SAFE,  0, 3 },
-	{ GOLD,    -CHEST,  0, 2 },
-	{ DIAMONDS, -SAFE,  0, 2 },
-	{ HORN,     -SAFE,  0, 2 },
-	{ JEWELS,   -SAFE,  0, 1 },
-	{ COINS,    -SAFE,  0, 5 },
-	{ CHEST,  R_HOUSE,  0, 5 },
-	{ EGGS,     -SAFE,  0, 3 },
-	{ TRIDENT, -CHEST,  0, 2 },
+        { CLOAK,    -SAFE,  0, 3 },
+        { GOLD,    -CHEST,  0, 2 },
+        { DIAMONDS, -SAFE,  0, 2 },
+        { HORN,     -SAFE,  0, 2 },
+        { JEWELS,   -SAFE,  0, 1 },
+        { COINS,    -SAFE,  0, 5 },
+        { CHEST,  R_HOUSE,  0, 5 },
+        { EGGS,     -SAFE,  0, 3 },
+        { TRIDENT, -CHEST,  0, 2 },
         { VASE,   R_HOUSE,  0, 2 },
-	{ EMERALD,  -SAFE,  0, 3 },
-	{ PYRAMID,  -SAFE,  0, 4 },
-	{ PEARL,    -SAFE,  0, 4 },
-	{ RUG,    R_HOUSE,  0, 3 },
-	{ SPICES,   -SAFE,  0, 1 },
-	{ CHAIN,    -SAFE,  0, 4 },
-	{ SWORD,    -SAFE,  0, 4 },
-	{ CROWN,    -SAFE,  0, 2 },
-	{ SHOES,    -SAFE,  0, 3 },
-	{ LYRE,     -SAFE,  0, 1 },
-	{ SAPPHIRE, -SAFE,  0, 1 },
-	{ GRAIL,    -SAFE,  0, 2 },
-	{ CASK,    -CHEST,  0, 3 },
-	{ RING,     -SAFE,  0, 4 },
-	{ CLOVER,   -SAFE,  0, 1 },
-	{ TREE,     -SAFE,  0, 5 },
-	{ DROPLET,  -SAFE,  0, 5 },
+        { EMERALD,  -SAFE,  0, 3 },
+        { PYRAMID,  -SAFE,  0, 4 },
+        { PEARL,    -SAFE,  0, 4 },
+        { RUG,    R_HOUSE,  0, 3 },
+        { SPICES,   -SAFE,  0, 1 },
+        { CHAIN,    -SAFE,  0, 4 },
+        { SWORD,    -SAFE,  0, 4 },
+        { CROWN,    -SAFE,  0, 2 },
+        { SHOES,    -SAFE,  0, 3 },
+        { LYRE,     -SAFE,  0, 1 },
+        { SAPPHIRE, -SAFE,  0, 1 },
+        { GRAIL,    -SAFE,  0, 2 },
+        { CASK,    -CHEST,  0, 3 },
+        { RING,     -SAFE,  0, 4 },
+        { CLOVER,   -SAFE,  0, 1 },
+        { TREE,     -SAFE,  0, 5 },
+        { DROPLET,  -SAFE,  0, 5 },
         { BOOK,     -SAFE,  0, 2 },
         { RADIUM, -CANISTER,0, 4 },
         { BALL,     -SAFE,  0, 2 }
     };
     /* First tally up the treasures. */
     for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
-	if (!is_treasure(t)) continue;
-	for (int i=0; qk[i].obj != NOTHING; ++i) {
-	    if (qk[i].obj != t) continue;
-	    /* Found the data entry for this treasure. */
+        if (!is_treasure(t)) continue;
+        for (int i=0; qk[i].obj != NOTHING; ++i) {
+            if (qk[i].obj != t) continue;
+            /* Found the data entry for this treasure. */
 
-	    /* If you've picked up this treasure, score some points. */
-	    if (objs(t).prop >= 0) score += 2*qk[i].value;
+            /* If you've picked up this treasure, score some points. */
+            if (objs(t).prop >= 0) score += 2*qk[i].value;
 
-	    /* The treasure must be in a particular place... */
-	    if (objs(t).place != qk[i].place) continue;
+            /* The treasure must be in a particular place... */
+            if (objs(t).place != qk[i].place) continue;
 
-	    /* ...and (if it's the vase, for example) not be broken. */
-	    if (objs(t).prop != qk[i].prop) continue;
+            /* ...and (if it's the vase, for example) not be broken. */
+            if (objs(t).prop != qk[i].prop) continue;
 
-	    /* Some objects need to be in the chest in the well house. */
-	    if (qk[i].place == -CHEST && objs(CHEST).place != R_HOUSE) continue;
+            /* Some objects need to be in the chest in the well house. */
+            if (qk[i].place == -CHEST && objs(CHEST).place != R_HOUSE) continue;
 
-	    /* The radium needs to be in the canister in the safe. */
-	    if (qk[i].place == -CANISTER && objs(CANISTER).place != -SAFE) continue;
+            /* The radium needs to be in the canister in the safe. */
+            if (qk[i].place == -CANISTER && objs(CANISTER).place != -SAFE) continue;
 
-	    /* Okay, score full points for this treasure! */
-	    score += 5*qk[i].value;
-	}
+            /* Okay, score full points for this treasure! */
+            score += 5*qk[i].value;
+        }
     }
 
     if (objs(MAG).place == R_WITT) score += 1;  /* last lousy point */
@@ -4761,7 +4775,7 @@ void lookin(ObjectWord container)
     puts("It contains:");
     for (struct ObjectData *p = objs(container).contents; p != NULL; p = p->link) {
         indent_appropriately();
-	printf("     %s\n", p->name);
+        printf("     %s\n", p->name);
     }
 }
 
@@ -5489,11 +5503,15 @@ Location attempt_eat(Location loc, ObjectWord obj)
                  * passage. */
                 puts("You are growing taller, expanding like a telescope!  Just before" SOFT_NL
                      "your head strikes the top of the chamber, the mysterious process" SOFT_NL
-                     "stops as suddenly as it began.");
+                     "stops as suddenly as it began.\n");
                 /* Move all the objects at R_TINYDOOR to R_CRAMPED. */
                 for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
-                    if ((objs(t).base == NULL) && there(t, R_TINYDOOR))
-                        move(t, R_CRAMPED);
+                    if (!there(t, R_TINYDOOR)) continue;
+                    if (t == TINY_DOOR) continue;
+                    /* Long doesn't move immobile objects, but I do. The only
+                     * immobile objects that can be here, besides TINY_DOOR,
+                     * are the broken VASE and BOTTLE. */
+                    move(t, R_CRAMPED);
                 }
                 return R_CRAMPED;
             }
@@ -5506,17 +5524,18 @@ Location attempt_eat(Location loc, ObjectWord obj)
              * is clearly a bug, so I haven't preserved it. */
             /* Long has "accordian". */
             puts("You are closing up like an accordion....shrinking..shrinking.  You" SOFT_NL
-                 "are now your normal size.");
+                 "are now your normal size.\n");
             /* Move all the objects at R_CRAMPED to R_TINYKEY,
              * except for the key on the shelf. If you missed the key,
              * Long adds another "lost" treasure, presumably the chain.
              * Which means it's possible to "lose" the chain four times
              * in a single game! */
             for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
+                if (!there(t, R_CRAMPED)) continue;
+                /* Again, Long doesn't move immobile objects (VASE and BOTTLE). */
                 if (t == TINY_KEY && objs(TINY_KEY).prop) {
-                    assert(there(t, R_TINYDOOR));
                     ++lost_treasures;
-                } else if ((objs(t).base == NULL) && there(t, R_TINYDOOR)) {
+                } else {
                     move(t, R_TINYDOOR);
                 }
             }
@@ -5970,14 +5989,15 @@ Instruction *determine_motion_instruction(Location loc, MotionWord mot)
         const int cond = q->cond;
         if (cond == 0) {
             break;  /* the usual case */
-        } else if (cond <= 100) {
+        } else if (cond <= 1000) {
+            assert(cond <= 100);
             if (pct(cond)) break;  /* dwarves won't take these routes */
-        } else if (cond <= 200) {
-            if (toting(MIN_OBJ + cond%100)) break;
-        } else if (cond <= 300) {
-            if (is_at_loc(MIN_OBJ + cond%100, loc)) break;
+        } else if (cond <= 2000) {
+            if (toting(MIN_OBJ + cond%1000)) break;
+        } else if (cond <= 3000) {
+            if (is_at_loc(MIN_OBJ + cond%1000, loc)) break;
         } else {
-            if (objs(MIN_OBJ + cond%100).prop != (cond/100)-3) break;
+            if (objs(MIN_OBJ + cond%1000).prop != (cond/1000)-3) break;
         }
         /* The verb in this instruction matches the "mot" typed by the user,
          * but the condition failed, either randomly (j < 100) or because
@@ -6223,20 +6243,25 @@ void collapse_the_troll_bridge(void)
         ++lost_treasures;
 }
 
-Location attempt_phuce(Location from)
+Location attempt_phuce(Location transition)
 {
+    Location from = (transition == R_SHRINKING2) ? R_WBLUE :
+                    (transition == R_GROWING2) ? R_SEA :
+                    (transition == R_SHRINKING) ? R_TINYDOOR :
+                    R_HUGEDOOR;
     Location newloc = (from == R_WBLUE) ? R_SEA :
                       (from == R_SEA) ? R_WBLUE :
-		      (from == R_TINYDOOR) ? R_HUGEDOOR :
+                      (from == R_TINYDOOR) ? R_HUGEDOOR :
                       R_TINYDOOR;
     /* Move all the objects from oldloc to newloc,
      * except for the boat. */
     for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
-	if (t == BOAT) continue;
-	if (t == TINY_DOOR) continue;
-	if (objs(t).place == from) {
-	    move(t, newloc);
-	}
+        if (t == BOAT) continue;
+        if (t == TINY_DOOR || t == TINY_DOOR_) continue;
+        if (t == HUGE_DOOR || t == HUGE_DOOR_) continue;
+        if (there(t, from)) {
+            move(t, newloc);
+        }
     }
     return newloc;
 }
@@ -6244,16 +6269,16 @@ Location attempt_phuce(Location from)
 Location attempt_phonebooth(void)
 {
     if (objs(BOOTH).prop == 1) {
-	puts("The gnome firmly blocks the door of the booth.  You can't enter.");
+        puts("The gnome firmly blocks the door of the booth.  You can't enter.");
     } else if (places[R_ROTUNDA].visits == 1 || pct(55)) {
         /* TODO: Long allows this to happen during closing time, which seems wrong. */
-	puts("As you move towards the phone booth, a gnome suddenly streaks" SOFT_NL
+        puts("As you move towards the phone booth, a gnome suddenly streaks" SOFT_NL
              "around the corner, jumps into the booth and rudely slams the door" SOFT_NL
              "in your face.  You can't get in.");
-	objs(BOOTH).prop = 1;
-	move(GNOME, R_ROTUNDA);
+        objs(BOOTH).prop = 1;
+        move(GNOME, R_ROTUNDA);
     } else {
-	return R_BOOTH;
+        return R_BOOTH;
     }
     return R_ROTUNDA;
 }
@@ -6271,28 +6296,28 @@ Location attempt_clay_bridge(Location from)
     bcross += 1;
     int danger = (current_burden+bcross)*(current_burden+bcross) / 10;
     if (current_burden <= 4) {
-	/* An uneventful crossing. */
+        /* An uneventful crossing. */
     } else if (pct(danger > 10 ? danger : 10)) {
-	/* Splash! */
-	puts("The load is too much for the bridge!  With a roar, the entire" SOFT_NL
+        /* Splash! */
+        puts("The load is too much for the bridge!  With a roar, the entire" SOFT_NL
              "structure gives way, plunging you headlong into the raging river at" SOFT_NL
              "the bottom of the chasm and scattering all your holdings.  As the" SOFT_NL
              "icy waters close over your head, you flail and thrash with all your" SOFT_NL
              "might, and with your last ounce of strength pull yourself onto the" SOFT_NL
              "south bank of the river.");
-	/* TODO: Rewrite this logic.
-	 * Notice that if you put the lamp in the sack before crossing, you'll lose
-	 * it forever; but the same is not true of the axe. */
-	if (holding(LAMP)) move(LAMP, R_ELOST);
-	if (toting(AXE)) move(AXE, R_SLOST);
+        /* TODO: Rewrite this logic.
+         * Notice that if you put the lamp in the sack before crossing, you'll lose
+         * it forever; but the same is not true of the axe. */
+        if (holding(LAMP)) move(LAMP, R_ELOST);
+        if (toting(AXE)) move(AXE, R_SLOST);
         if (toting(SAPPHIRE)) river_has_sapphire = true;
-	for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
-	    if (toting(t)) destroy(t);
-	}
-	objs(CLAY).prop = 1;  /* no more bridge */
-	return R_ELOST;
+        for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
+            if (toting(t)) destroy(t);
+        }
+        objs(CLAY).prop = 1;  /* no more bridge */
+        return R_ELOST;
     } else {
-	puts("The bridge shakes as you cross.  Large hunks of clay and rock near" SOFT_NL
+        puts("The bridge shakes as you cross.  Large hunks of clay and rock near" SOFT_NL
              "the edge break off and hurtle far down into the chasm.  Several of" SOFT_NL
              "the cracks on the bridge surface widen perceptibly.");
     }
@@ -6302,10 +6327,10 @@ Location attempt_clay_bridge(Location from)
 Location attempt_kaleidoscope(void)
 {
     if (kaleidoscope_count == 6) {
-	return R_INNER;
+        return R_INNER;
     } else {
-	puts("You get a tingling feeling as you walk through the gate, and ...");
-	return R_KAL_RED + ran(R_KAL_BLUE - R_KAL_RED + 1);
+        puts("You get a tingling feeling as you walk through the gate, and ...");
+        return R_KAL_RED + ran(R_KAL_BLUE - R_KAL_RED + 1);
     }
 }
 

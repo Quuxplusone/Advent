@@ -391,6 +391,7 @@ lin(96)
 lin(92)
     assert(wdx > 0);
     if (word_class(word) == WordClass_Object) {
+	/* TODO: this doesn't actually work at the moment */
         /* "THROW BEAR EGGS" => THROW EGGS [TO] BEAR
          * "THROW BEAR EGGS AND HONEY" => THROW {EGGS,HONEY} [TO] BEAR
          * "THROW EGGS TO BEAR AND HONEY" => THROW EGGS [TO] {BEAR,HONEY} */
@@ -752,9 +753,9 @@ static int getobj(ObjectWord t, Location loc)
     } else if (t == ROD && at_hand(ROD2, loc)) {
         return ROD2;
     } else if (t == RUSTY_DOOR) {
-        if (there(TINY_DOOR, loc)) return TINY_DOOR;
-        if (there(HUGE_DOOR, loc)) return HUGE_DOOR;
-        if (there(BOOTH_DOOR, loc)) return BOOTH_DOOR;
+        if (is_at_loc(TINY_DOOR, loc)) return TINY_DOOR;
+        if (is_at_loc(HUGE_DOOR, loc)) return HUGE_DOOR;
+        if (is_at_loc(BOOTH_DOOR, loc)) return BOOTH_DOOR;
         if (there(SAFE, loc)) return SAFE;
     } else if (t == BOOK && at_hand(REPO_BOOK, loc)) {
         return REPO_BOOK;
