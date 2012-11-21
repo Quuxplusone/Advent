@@ -785,6 +785,7 @@ void build_travel_table(void)
         "directions.",
         "You're in Hall of Mt King.", F_SNAKE_HINT);
     make_ins(STAIRS, R_EMIST); ditto(U); ditto(E);
+    /* I suppose our adventurer must be walking on the ceiling! */
     make_cond_ins(N, unless_prop(SNAKE, 0), R_NS); ditto(LEFT);
     make_cond_ins(S, unless_prop(SNAKE, 0), R_SOUTH); ditto(RIGHT);
     make_cond_ins(W, unless_prop(SNAKE, 0), R_WEST); ditto(FORWARD);
