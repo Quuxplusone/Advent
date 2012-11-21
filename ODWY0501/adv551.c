@@ -44,9 +44,10 @@ void quit(void);
 void history_of_adventure(void);
 void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord prep, ObjectWord iobj);
 void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj);
+void lookin(ObjectWord container);
+int attempt_toss(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj);
 void attempt_feed(Location loc, ObjectWord obj, ObjectWord iobj);
 int attempt_kill(Location loc, ObjectWord obj, ObjectWord iobj);
-int attempt_toss(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord iobj);
 void kill_a_dwarf(Location loc);
 bool now_in_darkness(Location loc);
 
@@ -2869,7 +2870,7 @@ void steal_all_your_treasure(Location loc)  /* sections 173--174 in Knuth */
         if (!pirate_covets(t, loc)) continue;
         if (here(t, loc) && objs(t).base == NULL) {
             /* The vase, rug, and chain can all be immobile at times. */
-            move(t, R_PIRATES_NEST);
+            insert(t, CHEST);
         }
     }
 }
@@ -3399,7 +3400,7 @@ int look_around(Location loc, bool dark, bool was_dark)
         /* Describe the objects at this location. */
         for (struct ObjectData *t = places[loc].objects; t != NULL; t = t->link) {
             struct ObjectData *tt = t->base ? t->base : t;
-            spot_treasure(tt - &objs(0));
+            spot_treasure(tt - &objs(MIN_OBJ) + MIN_OBJ);
             if (tt == &objs(TREADS) && toting(GOLD)) {
                 /* The rough stone steps disappear if we are carrying the nugget. */
             } else {
@@ -3407,6 +3408,7 @@ int look_around(Location loc, bool dark, bool was_dark)
                 const char *obj_description = tt->desc[tt->prop + going_up];
                 if (obj_description != NULL) {
                     puts(obj_description);
+                    lookin(tt - &objs(MIN_OBJ) + MIN_OBJ);
                 }
             }
         }
@@ -3570,39 +3572,38 @@ int score(void)
     static const struct {
         ObjectWord obj;
         int place;
-        int prop;
         int value;
     } qk[] = {
-        { CLOAK,    -SAFE,  0, 3 },
-        { GOLD,    -CHEST,  0, 2 },
-        { DIAMONDS, -SAFE,  0, 2 },
-        { HORN,     -SAFE,  0, 2 },
-        { JEWELS,   -SAFE,  0, 1 },
-        { COINS,    -SAFE,  0, 5 },
-        { CHEST,  R_HOUSE,  0, 5 },
-        { EGGS,     -SAFE,  0, 3 },
-        { TRIDENT, -CHEST,  0, 2 },
-        { VASE,   R_HOUSE,  0, 2 },
-        { EMERALD,  -SAFE,  0, 3 },
-        { PYRAMID,  -SAFE,  0, 4 },
-        { PEARL,    -SAFE,  0, 4 },
-        { RUG,    R_HOUSE,  0, 3 },
-        { SPICES,   -SAFE,  0, 1 },
-        { CHAIN,    -SAFE,  0, 4 },
-        { SWORD,    -SAFE,  0, 4 },
-        { CROWN,    -SAFE,  0, 2 },
-        { SHOES,    -SAFE,  0, 3 },
-        { LYRE,     -SAFE,  0, 1 },
-        { SAPPHIRE, -SAFE,  0, 1 },
-        { GRAIL,    -SAFE,  0, 2 },
-        { CASK,    -CHEST,  0, 3 },
-        { RING,     -SAFE,  0, 4 },
-        { CLOVER,   -SAFE,  0, 1 },
-        { TREE,     -SAFE,  0, 5 },
-        { DROPLET,  -SAFE,  0, 5 },
-        { BOOK,     -SAFE,  0, 2 },
-        { RADIUM, -CANISTER,0, 4 },
-        { BALL,     -SAFE,  0, 2 }
+        { CLOAK,    -SAFE,  3 },
+        { GOLD,    -CHEST,  2 },
+        { DIAMONDS, -SAFE,  2 },
+        { HORN,     -SAFE,  2 },
+        { JEWELS,   -SAFE,  1 },
+        { COINS,    -SAFE,  5 },
+        { CHEST,  R_HOUSE,  5 },
+        { EGGS,     -SAFE,  3 },
+        { TRIDENT, -CHEST,  2 },
+        { VASE,   R_HOUSE,  2 },
+        { EMERALD,  -SAFE,  3 },
+        { PYRAMID,  -SAFE,  4 },
+        { PEARL,    -SAFE,  4 },
+        { RUG,    R_HOUSE,  3 },
+        { SPICES,   -SAFE,  1 },
+        { CHAIN,    -SAFE,  4 },
+        { SWORD,    -SAFE,  4 },
+        { CROWN,    -SAFE,  2 },
+        { SHOES,    -SAFE,  3 },
+        { LYRE,     -SAFE,  1 },
+        { SAPPHIRE, -SAFE,  1 },
+        { GRAIL,    -SAFE,  2 },
+        { CASK,    -CHEST,  3 },
+        { RING,     -SAFE,  4 },
+        { CLOVER,   -SAFE,  1 },
+        { TREE,     -SAFE,  5 },
+        { DROPLET,  -SAFE,  5 },
+        { BOOK,     -SAFE,  2 },
+        { RADIUM, -CANISTER,4 },
+        { BALL,     -SAFE,  2 }
     };
     /* First tally up the treasures. */
     for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {
@@ -3618,7 +3619,7 @@ int score(void)
             if (objs(t).place != qk[i].place) continue;
 
             /* ...and (if it's the vase, for example) not be broken. */
-            if (objs(t).prop != qk[i].prop) continue;
+            if (objs(t).prop != (t == CASK ? 4 : 0)) continue;
 
             /* Some objects need to be in the chest in the well house. */
             if (qk[i].place == -CHEST && objs(CHEST).place != R_HOUSE) continue;
@@ -3627,7 +3628,7 @@ int score(void)
             if (qk[i].place == -CANISTER && objs(CANISTER).place != -SAFE) continue;
 
             /* Okay, score full points for this treasure! */
-            score += 5*qk[i].value;
+            score += 3*qk[i].value;
         }
     }
 

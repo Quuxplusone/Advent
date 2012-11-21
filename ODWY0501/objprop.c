@@ -306,8 +306,9 @@ bool is_ajar(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
-        case LAMP: case MACHINE: case BOAT: case VASE:
-        case GRAIL:  /* These vessels are always open. */
+	case LAMP: case MACHINE: case BOAT:
+        case CHEST: case VASE: case GRAIL:
+            /* These hingeless vessels are always open. */
             return true;
         default:
             return (objs(t).flags & F_OPEN);

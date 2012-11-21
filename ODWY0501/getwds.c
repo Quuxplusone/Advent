@@ -958,18 +958,14 @@ void shift_words(int *verb, int *obj, int *iobj, Location loc)
      * DROP LAMP AND KEYS is (except for the printing of the object names)
      * equivalent to GET LAMP; GET KEYS; DROP LAMP; DROP KEYS.
      */
-    extern int turns;
-    if (turns != 0) {
-        /* After the first turn, we should always be coming in here
-         * from a valid previous state. */
-        assert(words[0] == REPARSE_ME || w_verbs[0] != NOTHING);
-    }
     const bool multiple_objs = (w_objs[1] != NOTHING);
     const bool multiple_iobjs = (w_iobjs[1] != NOTHING);
     assert(!(multiple_objs && multiple_iobjs));
     const bool goto_next_verb = (!multiple_iobjs && w_objs[objx+1] == NOTHING)
                              || (!multiple_objs && w_iobjs[objx+1] == NOTHING);
     if (goto_next_verb) {
+	/* It might be that w_verbs[vrbx] is already NOTHING, if we just
+	 * answered "YES" to the dragon question. This is okay. */
         ++vrbx;
         objx = 0;
         iobx = 0;
