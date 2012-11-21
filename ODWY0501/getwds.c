@@ -199,6 +199,16 @@ bool with_your_bare_hands(void)
     }
 }
 
+/* Returns TRUE if we currently have something like "THROW TROLL..."
+ * in which case the next word might legitimately be a noun. */
+static bool is_reversed_construction()
+{
+    if (vrbx == 0 || objx == 0) return false;
+    ActionWord verb = w_verbs[vrbx-1];
+    ObjectWord animal = w_objs[objx-1];
+    return ((verb == TOSS || verb == FEED) && is_living(animal));
+}
+
 #if 0  /* TODO: Debugging code. */
 #define lin(x) lin##x: puts("lin" #x);
 #else
@@ -319,7 +329,8 @@ lin(20)
      *     LIGHT LIGHT -- verb noun
      *     GET LIGHT -- noun
      *     LIGHT GET -- verb
-     *     GET AND LIGHT LAMP -- noun
+     *     GET AND LIGHT LAMP -- noun(!)
+     *     EAST AND LIGHT LAMP -- noun(!)
      * This suggests that somehow the rule is much simpler than Long's
      * line 55 implies on first reading: iff LIGHT is the first word on
      * the line, it's treated as a verb. The same rule applies to TREE
@@ -390,21 +401,31 @@ lin(96)
 
 lin(92)
     assert(wdx > 0);
-    if (word_class(word) == WordClass_Object) {
-	/* TODO: this doesn't actually work at the moment */
-        /* "THROW BEAR EGGS" => THROW EGGS [TO] BEAR
-         * "THROW BEAR EGGS AND HONEY" => THROW {EGGS,HONEY} [TO] BEAR
-         * "THROW EGGS TO BEAR AND HONEY" => THROW EGGS [TO] {BEAR,HONEY} */
-        int toss_verb = ((vrbx >= 1) ? w_verbs[vrbx-1] : NOTHING);
-        if ((toss_verb == TOSS || toss_verb == FEED) &&
-            (objx == 1 && is_living(w_objs[0])) &&
-            (iobx == 0) &&
-            !pflag) {
-            /* We're parsing "THROW BEAR EGGS"; the cursor is on EGGS.
-             * Shift "BEAR" from w_objs to w_iobjs. */
-            w_iobjs[iobx++] = w_objs[objx-1];
-            w_objs[--objx] = NOTHING;
-        }
+    if (word_class(word) == WordClass_Object || word_class(word) == WordClass_Adjective) {
+	/* Long doesn't do this for adjectives, but it makes sense to;
+	 * consider "GET AXE AND BRASS LAMP" versus "GET AXE BRASS LAMP".
+	 * See also my comment on the codepath following line 600.
+	 * I believe adjectives were a late addition to Long's parser. */
+	if ((pflag ? iobx : objx) != 0) {
+	    /* We have one object already, which means each subsequent
+	     * object must be preceded by the word "AND". For example:
+	     * "GET LAMP AND AXE" is okay, but "GET LAMP AXE" is not. */
+	    assert(wdx >= 2);  /* we must be processing at least word #2 */
+	    if (words[wdx-2] == AND) {
+		/* we're fine */
+		goto lin99;
+	    } else {
+		/* There's one special case:
+		 * "THROW BEAR FOOD" => THROW FOOD TO BEAR */
+		if (is_reversed_construction()) {
+		    w_iobjs[iobx++] = w_objs[objx-1];
+		    w_objs[--objx] = NOTHING;
+		    /* now go on and parse the object as usual */
+		} else {
+		    goto lin800;  /* "Huh?" */
+		}
+	    }
+	}
     }
 
 lin(99)
@@ -545,6 +566,9 @@ lin(400)
 
 lin(500)
     /* Analyze a preposition and its object. */
+    /* Long's parser fails to handle "GET AND TURN ON LAMP"
+     * or "TURN ON AND GET LAMP" or "GET AND TURN LAMP ON".
+     * This code handles them all fine, but I don't understand how. */
     if (word_class(w_verbs[vrbx-1]) != WordClass_Action) goto lin800;
     if (iobx > 0) goto lin800;  /* we already got an iobj! */
     if (pflag) goto lin503;
@@ -612,24 +636,27 @@ lin(570)
 lin(600)
     /* Handle an adjective. */
     {
-    int adj = word;
-    word = words[wdx++];  /* get the noun */
-    if (word == BAD_WORD) goto lin841;
-    if (word == NOTHING || word == AND) {
-        txt[wdx-2][0] = toupper(txt[wdx-2][0]);
-        printf("%s what?\n", txt[wdx-2]);  /* Brass what? */
-        goto lin20;
-    }
-    if (word_class(word) != WordClass_Object) {
-        /* Look up the word again as a noun. */
-        words[wdx-1] = word = lookup(txt[wdx-1], WordClass_Object);
-        if (word == NOTHING) goto lin800;
-    }
-    if (is_appropriate_adjective_for_noun(adj, word)) {
-        goto lin92;
-    } else {
-        goto lin800;
-    }
+        int adj = word;
+        word = words[wdx++];  /* get the noun */
+        if (word == BAD_WORD) goto lin841;
+        if (word == NOTHING || word == AND) {
+            txt[wdx-2][0] = toupper(txt[wdx-2][0]);
+            printf("%s what?\n", txt[wdx-2]);  /* Brass what? */
+            goto lin20;
+        }
+        if (word_class(word) != WordClass_Object) {
+            /* Look up the word again as a noun. */
+            words[wdx-1] = word = lookup(txt[wdx-1], WordClass_Object);
+            if (word == NOTHING) goto lin800;
+        }
+        if (is_appropriate_adjective_for_noun(adj, word)) {
+            /* Long has "GOTO 92" here, which means his parser cannot handle
+             * "GET AXE AND BRASS LAMP" (because the second noun LAMP is not
+             * preceded by a conjunction). I'm taking the liberty of fixing it. */
+            goto lin99;
+        } else {
+            goto lin800;
+        }
     }
 
 lin(700)
@@ -724,7 +751,12 @@ static int getobj(ObjectWord t, Location loc)
     if (is_at_loc(t, loc) || at_hand(t, loc)) return t;
     if (here(t, loc)) {
         /* It's here, but not at_hand; therefore it must be inside
-         * a closed transparent container. */
+         * a closed transparent container.
+         * This is Long's logic. It's not very good, because
+         * "GET LAMP AND WATER" will simply print "You can't get at it"
+         * (if the bottle is closed) and ignore the rest of the line.
+         * In particular, it won't try to get the lamp.
+         * TODO: maybe fix this. */
         if (is_plural(t)) {
             puts("You can't get at them.");
         } else {
@@ -930,7 +962,7 @@ void shift_words(int *verb, int *obj, int *iobj, Location loc)
     if (turns != 0) {
         /* After the first turn, we should always be coming in here
          * from a valid previous state. */
-        assert(w_verbs[0] != NOTHING);
+        assert(words[0] == REPARSE_ME || w_verbs[0] != NOTHING);
     }
     const bool multiple_objs = (w_objs[1] != NOTHING);
     const bool multiple_iobjs = (w_iobjs[1] != NOTHING);

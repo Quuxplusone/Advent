@@ -62,11 +62,13 @@ bool is_readable(ObjectWord t)
 
 bool is_living(ObjectWord t)
 {
+    /* This predicate could be better named "is_feedable". */
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
-        case SNAKE: case CLAM: case OYSTER: case DWARF:
-        case PIRATE: case DRAGON: case TROLL: case BEAR:
-        case BEES: /* but *not* GNOME or DOG or WUMPUS */
+        case SNAKE: case CLAM: case OYSTER: case DWARF: case PIRATE:
+        case DRAGON: case TROLL: case BEAR: case BEES:
+	/* Long doesn't include DOG, GNOME, or WUMPUS in this list */
+	case DOG: case WUMPUS:
             return true;
         default:
             return false;
@@ -103,7 +105,7 @@ bool is_treasure(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
-        case FLOWERS: case CLOAK: case GOLD: case DIAMONDS: case HORN:
+        case CLOAK: case GOLD: case DIAMONDS: case HORN:
         case JEWELS: case COINS: case CHEST: case EGGS: case TRIDENT:
         case VASE: case EMERALD: case PYRAMID: case PEARL: case RUG:
         case SPICES: case CHAIN: case SWORD: case CROWN: case SHOES:

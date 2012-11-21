@@ -238,7 +238,8 @@ void build_vocabulary(void)
     new_object_word("fissur", FISSURE);
     new_object_word("tablet", TABLET);
     new_object_word("clam", CLAM);
-    new_object_word("oyste", OYSTER);
+    new_object_word("oyster", OYSTER);
+    /* Long preserves Woods' "ISSUE" rather than extending it to "ISSUES". */
     new_object_word("magazi", MAG); new_object_word("issue", MAG);
     new_object_word("spelun", MAG); new_object_word("\"spelu", MAG);
     new_object_word("dwarf", DWARF); new_object_word("dwarve", DWARF);
@@ -538,7 +539,7 @@ typedef struct {
     Location dest;
 } Instruction;
 
-Instruction travels[1195];
+Instruction travels[1206];
 Instruction *start[MAX_LOC+2];
 struct Place places[MAX_LOC+1];
 
@@ -558,7 +559,7 @@ void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned
 
 void make_inst(Instruction *q, MotionWord m, int c, Location d)
 {
-    assert(&travels[0] <= q && q <= &travels[1195]);
+    assert(&travels[0] <= q && q <= &travels[1206]);
     assert(m==0 || (MIN_MOTION <= m && m <= MAX_MOTION));
     q->mot = m;
     q->cond = c;
@@ -902,12 +903,20 @@ void build_travel_table(void)
         "You are in the Hall of the Mountain King, with passages off in all" SOFT_NL
         "directions.",
         "You're in Hall of Mt King.", F_SNAKE_HINT);
-    make_ins(STAIRS, R_EMIST); ditto(U); ditto(E);
+    /* Long makes these stairs unclimbable with the nugget, too;
+     * not just the steps up the dome. */
+    make_cond_ins(U, only_if_toting(GOLD), remark(39)); ditto(PIT); ditto(STEPS); ditto(DOME); ditto(E);
+                          ditto(PASSAGE); ditto(CLIMB); ditto(STAIRS);
+    make_ins(U, R_EMIST);
+    /* There's no royal road to the Mountain King's chamber; just luck. */
+    make_cond_ins(NE, 75, remark(6));
+    make_cond_ins(NE, unless_prop(SNAKE, 0), R_PRIVATE);
+    /* I suppose our adventurer must be walking on the ceiling! */
     make_cond_ins(N, unless_prop(SNAKE, 0), R_NS); ditto(LEFT);
     make_cond_ins(S, unless_prop(SNAKE, 0), R_SOUTH); ditto(RIGHT);
     make_cond_ins(W, unless_prop(SNAKE, 0), R_WEST); ditto(FORWARD);
     make_ins(N, remark(16));
-    make_cond_ins(SW, 35, R_SECRET);
+    make_cond_ins(SW, 15, R_SECRET);
     make_cond_ins(SW, only_if_here(SNAKE), remark(16));
     make_ins(SECRET, R_SECRET);
     make_loc(q, R_WEST,
@@ -1330,11 +1339,18 @@ void build_travel_table(void)
              "up from below obscures all view of the far side.  A SW path leads away" SOFT_NL
              "from the chasm into a winding corridor.",
              "You're on SW side of chasm.", 0);
+    /* Long lets you cross the chasm even after the bridge has been wrecked, thanks
+     * to a buggy shuffling of the object numbers. (In Woods' version, CHASM was
+     * object #32; in Long's version, it's object #21, but the condition here still
+     * keyed off of the old numeric value.)
+     * Once that's fixed, Long still forgets that it's possible to reach R_NESIDE
+     * via Lost River Canyon after the bridge is wrecked, so we need to handle that
+     * case in the travel table as well. I've fixed that bug. */
     make_ins(SW, R_SLOPING);
     make_cond_ins(OVER, only_if_here(TROLL), remark(11)); ditto(ACROSS); ditto(CROSS); ditto(NE);
-    make_cond_ins(OVER, unless_prop(BRIDGE, 0), remark(12));
+    make_cond_ins(OVER, unless_prop(CHASM, 0), remark(12));
     make_ins(OVER, R_TROLL);
-    make_cond_ins(JUMP, unless_prop(BRIDGE, 0), R_LOSE);
+    make_cond_ins(JUMP, unless_prop(CHASM, 0), R_LOSE);
     make_ins(JUMP, remark(2));
     make_loc(q, R_DEAD0, dead_end, NULL, 0);
     make_ins(S, R_CROSS); ditto(OUT);
@@ -1365,8 +1381,10 @@ void build_travel_table(void)
              "chasm on this side.",
              "You're on NE side of chasm.", 0);
     make_ins(NE, R_CORR);
-    make_cond_ins(OVER, only_if_here(TROLL), remark(11)); ditto(ACROSS); ditto(CROSS); ditto(SW);
+    make_cond_ins(OVER, only_if_here(TROLL), remark(11)); ditto(ACROSS); ditto(CROSS); ditto(SW); ditto(BRIDGE);
+    make_cond_ins(OVER, unless_prop(CHASM, 0), remark(12));
     make_ins(OVER, R_TROLL);
+    make_cond_ins(JUMP, unless_prop(CHASM, 0), R_LOSE);
     make_ins(JUMP, remark(2));
     make_ins(FORK, R_FORK);
     make_ins(VIEW, R_VIEW);
@@ -2580,7 +2598,7 @@ void build_object_table(void)
     objs(CHEST).desc[0] = "The pirate's treasure chest is here!";
     new_obj(EGGS, "Golden eggs", 0, R_GIANT);
     objs(EGGS).desc[0] = "There is a large nest here, full of golden eggs!";
-    new_obj(TRIDENT, "Jeweled trident", 0, R_FALLS);
+    new_obj(TRIDENT, "Jeweled trident", 0, R_EBLUE);
     objs(TRIDENT).desc[0] = "There is a jewel-encrusted trident here!";
     new_obj(VASE, "Ming vase", 0, R_ORIENTAL);
     objs(VASE).desc[0] = "There is a delicate, precious, Ming vase here!";
@@ -3348,6 +3366,8 @@ int look_around(Location loc, bool dark, bool was_dark)
     const char *room_description;
     bool too_bright = (loc == R_CRYSTAL && objs(LAMP).prop && at_hand(LAMP, loc));
     if (too_bright) {
+        /* Long allows you to fall into a pit in the Crystal Palace just by
+         * LOOKing too long. TODO: fix this? */
         if (pct(35)) return 'p';  /* fall in a pit */
         room_description =
             "The glare is absolutely blinding.  If you proceed you are likely" SOFT_NL
@@ -4337,6 +4357,7 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
         }
         if (objs(CROWN).flags & F_WORN) {
             puts("Taken.");
+            objs(SWORD).prop = 0;  /* no longer stuck */
             carry(SWORD);
         } else {
             puts("You grasp the sword's handle and give a mighty heave, but with a" SOFT_NL
@@ -4384,6 +4405,7 @@ void attempt_wear(Location loc, ObjectWord obj)
         } else {
             puts(ok);
         }
+        objs(obj).prop = 1;
         objs(obj).flags |= F_WORN;
     }
 }
@@ -4481,7 +4503,7 @@ bool attempt_play(Location loc, ActionWord verb, ObjectWord obj, ObjectWord iobj
             puts("As the blast of the horn reverberates through the chamber, the" SOFT_NL
                  "seemingly solid rock wall crumbles away, revealing another room just" SOFT_NL
                  "beyond.  The wall was most likely worn thin by an ancient watercourse" SOFT_NL
-                 "which dried up just before completely wearing away the rock.");
+                 "which dried up just before completely wearing away the rock.\n");
             objs(ECHO).prop = 1;  /* vanished */
             for (int t = MIN_OBJ; t <= MAX_OBJ; ++t) {
                 if (there(t, R_ARCHED)) {
@@ -5183,8 +5205,9 @@ void attempt_wave(Location oldloc, Location loc, ObjectWord obj, ObjectWord iobj
                     being_chased = 0;
                     assert(there(RING, R_LIMBO));
                     drop(RING, R_WLOST);
+                    objs(RING).prop = -1;  /* not yet spotted */
                     move(WUMPUS, R_WLOST);
-                    objs(WUMPUS).prop = 6;
+                    objs(WUMPUS).prop = 6;  /* dead */
                     /* The Wumpus is "between you and the axe" even during
                      * the chase --- and if you die, the axe remains trapped
                      * when the Wumpus is reset. When the Wumpus dies, we
@@ -5733,7 +5756,8 @@ int attempt_toss(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
         printf("You aren't carrying %s!\n", is_plural(obj) ? "them" : "it");
     }
     if (obj == BOAT || obj == BEAR) {
-        /* THROW BEAR? It's much too heavy! */
+        /* THROW BEAR? It's much too heavy!
+         * This is a difference from Woods' code. */
         noway();
         return 0;
     }
@@ -5822,10 +5846,9 @@ int attempt_toss(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
 void attempt_find(Location loc, ObjectWord obj)
 {
     /* Long doesn't check your inventory, nor the contents of the cask. */
-    bool its_visibly_here =
+    bool its_visibly_here = at_hand(obj, loc) ||
             is_at_loc(obj, loc) ||
-            (obj == liquid_contents(BOTTLE) && there(BOTTLE, loc)) ||
-            (obj == liquid_contents(CASK) && there(CASK, loc) && is_ajar(CASK)) ||
+            (obj == liquid_contents(BOTTLE) && here(BOTTLE, loc)) ||
             (obj == liquid_at_location(loc)) ||
             (obj == DWARF && dwarf_at(loc));
     if (its_visibly_here && toting(obj)) {
@@ -5940,6 +5963,7 @@ void attempt_feed(Location loc, ObjectWord obj, ObjectWord iobj)
             puts("He isn't hungry.");
         }
     } else if (iobj == DOG) {
+        /* In Long's version, LIVING(DOG) is false, so this code is unreachable. */
         if (objs(DOG).prop) {
             puts("That wouldn't be wise.  It is best to let sleeping dogs lie.");
         } else if (obj == FOOD) {
@@ -5951,6 +5975,7 @@ void attempt_feed(Location loc, ObjectWord obj, ObjectWord iobj)
             puts("There's nothing here it wants to eat (except perhaps you).");
         }
     } else if (iobj == WUMPUS) {
+        /* In Long's version, LIVING(WUMPUS) is false, so this code is unreachable. */
         if (objs(WUMPUS).prop == 6) {
             puts("Dead wumpi, as a rule, are light eaters.  Nothing happens.");
         } else if (objs(WUMPUS).prop == 0) {
@@ -6137,7 +6162,7 @@ void print_remark(int which)
         case 28:
             puts("You have approached the lower end of a steep passage, but it is" SOFT_NL
                  "just too cold here to hang around, and you aren't properly equipped" SOFT_NL
-                 "to continue.  With teeth chattering, you climb back up....");
+                 "to continue.  With teeth chattering, you climb back up....\n");
             break;
         case 29:
             puts("I don't understand what you are trying to do!");
@@ -6175,6 +6200,10 @@ void print_remark(int which)
              * This is certainly a mistake. I've taken the liberty of
              * making up an appropriate remark. */
             puts("The door is locked.");
+            break;
+        case 39:
+            /* Long has "unclimable". */
+            puts("The staircase is now unclimbable.");
             break;
     }
 }
@@ -6224,7 +6253,7 @@ void collapse_the_troll_bridge(void)
     puts("Just as you reach the other side, the bridge buckles beneath the" SOFT_NL
          "weight of the bear, who was still following you around.  You" SOFT_NL
          "scrabble desperately for support, but as the bridge collapses you" SOFT_NL
-         "stumble back and fall into the chasm.");
+         "stumble back and fall into the chasm.\n");
     objs(CHASM).prop = 1;
     objs(TROLL).prop = 2;
     objs(BEAR).prop = 3;  /* the bear is dead */
@@ -6326,9 +6355,10 @@ Location attempt_clay_bridge(Location from)
 
 Location attempt_kaleidoscope(void)
 {
-    if (kaleidoscope_count == 6) {
+    if (kaleidoscope_count == 5) {
         return R_INNER;
     } else {
+        /* The adventurer is kicked back to a different part of the maze. */
         puts("You get a tingling feeling as you walk through the gate, and ...");
         return R_KAL_RED + ran(R_KAL_BLUE - R_KAL_RED + 1);
     }
@@ -6362,6 +6392,7 @@ bool determine_next_newloc(Location loc, Location *oldloc, Location *newloc,
          * objs(TROLL).prop will be nonzero. If objs(TROLL).prop is 1,
          * you've crossed since paying, or you've stolen away the payment.
          */
+        assert(loc == R_NESIDE || loc == R_SWSIDE);
         if (objs(TROLL).prop == 1) {
             /* Block the troll bridge and stay put. */
             objs(TROLL).prop = 0;
@@ -6392,7 +6423,6 @@ bool determine_next_newloc(Location loc, Location *oldloc, Location *newloc,
             assert(R_KAL_RED <= *newloc && *newloc <= R_KAL_PURPLE);
             *oldloc = *newloc - 1;
         }
-
     } else {
         assert(*newloc >= R_LIMBO);
         assert(*newloc <= MAX_LOC);
