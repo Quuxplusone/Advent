@@ -2528,6 +2528,8 @@ void build_object_table(void)
     new_obj(AXE, "Dwarf's axe", 0, R_LIMBO);
     objs(AXE).desc[0] = "There is a little axe here.";
     objs(AXE).desc[1] = "There is a little axe lying beside the bear.";
+    objs(AXE).desc[2] = "There is a little axe lying beside the Wumpus.";
+    objs(AXE).desc[3] = "There is a little axe lying beside the dog.";
     new_obj(DRAWINGS, "Cave drawings", DRAWINGS, R_ORIENTAL);
     objs(DRAWINGS).desc[0] = NULL;
     new_obj(PIRATE, "Pirate", PIRATE, R_LIMBO);
