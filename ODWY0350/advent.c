@@ -549,7 +549,7 @@ void build_travel_table(void)
     make_ins(ENTER, remark(1));
     make_loc(q, R_INSIDE,
              "You are in a small chamber beneath a 3x3 steel grate to the surface." SOFT_NL
-             "A low crawl over cobbles leads inwards to the west.",
+             "A low crawl over cobbles leads inward to the west.",
              "You're below the grate.", F_LIGHTED);
     make_cond_ins(OUT, unless_prop(GRATE, 0), R_OUTSIDE); ditto(U);
     make_ins(OUT, remark(1));
