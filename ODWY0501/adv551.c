@@ -843,7 +843,7 @@ void build_travel_table(void)
              "You are at the east end of a very long hall apparently without side" SOFT_NL
              "chambers.  In the south wall are several wide cracks and a high" SOFT_NL
              "hole, but the hole is far above your head.  To the east a wide" SOFT_NL
-             "crawl slants up.  To the north a round two foot hole slants down.",
+             "crawl slants up.  To the north a round two-foot hole slants down.",
              "You're at east end of Long Hall.", 0);
     make_ins(E, R_WMIST); ditto(U); ditto(CRAWL);
     make_ins(W, R_WLONG);
@@ -2589,7 +2589,7 @@ void build_object_table(void)
     objs(FLOWERS).desc[1] =
         "On the other side of the room a swarm of bees eagerly buzzes over" SOFT_NL
         "a bunch of fresh flowers.";
-    new_obj(CLOAK, "Silken cloak", 0, R_CLOAKROOM);
+    new_obj(CLOAK, "Silken cloak", CLOAK, R_CLOAKROOM);
     objs(CLOAK).desc[0] = "There is a silken cloak here!";
     objs(CLOAK).desc[1] = NULL;  /* it's being worn */
     objs(CLOAK).desc[2] =
@@ -2703,6 +2703,10 @@ void build_object_table(void)
     objs(TINY_KEY).desc[1] = "There is a tiny brass key on the shelf.";
     new_obj(ANVIL, "Anvil", ANVIL, R_SWORD);
     objs(ANVIL).desc[0] = NULL;
+    /* Long makes the rocks schizoid between R_TIGHT_NS and R_CLOAKROOM.
+     * I think this was a typo for R_TIGHT_NS_BLOCKED and R_CLOAKROOM,
+     * but anyway I see no reason to preserve the bad behavior and no
+     * reason to implement the fixed behavior. */
     new_obj(CLOAKROOM_ROCKS, "Rocks", CLOAKROOM_ROCKS, R_CLOAKROOM);
     objs(CLOAKROOM_ROCKS).desc[0] = NULL;  /* on cloak */
     objs(CLOAKROOM_ROCKS).desc[1] = NULL;  /* after rockslide */
@@ -4179,6 +4183,10 @@ void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj)
         }
     } else if (!fits_inside(obj, iobj)) {
         puts("It won't fit.");
+    } else if (obj == SWORD && objs(SWORD).prop != 0) {
+        /* Long allows you to cheat with "PUT SWORD IN SACK". */
+        attempt_take(loc, TAKE, SWORD, NOTHING, NOTHING);
+        if (holding(SWORD)) insert(SWORD, iobj);
     } else {
         insert(obj, iobj);
         if (obj == POSTER && maybe_reveal_safe(loc)) {
@@ -5462,6 +5470,7 @@ int attempt_pour(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
             if (obj == OIL) {
                 puts("The sword is now covered with oil.");
                 objs(SWORD).prop = 4;
+                immobilize(SWORD);
             } else {
                 puts("The sword is now very clean.");
                 objs(SWORD).prop = 3;
