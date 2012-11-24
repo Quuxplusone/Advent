@@ -540,7 +540,7 @@ typedef struct {
     Location dest;
 } Instruction;
 
-Instruction travels[1206];
+Instruction travels[1214];
 Instruction *start[MAX_LOC+2];
 struct Place places[MAX_LOC+1];
 
@@ -560,7 +560,7 @@ void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned
 
 void make_inst(Instruction *q, MotionWord m, int c, Location d)
 {
-    assert(&travels[0] <= q && q <= &travels[1206]);
+    assert(&travels[0] <= q && q < &travels[1214]);
     assert(m==0 || (MIN_MOTION <= m && m <= MAX_MOTION));
     q->mot = m;
     q->cond = c;
@@ -1031,7 +1031,7 @@ void build_travel_table(void)
              "You are in an anteroom leading to a large passage to the east.  Small" SOFT_NL
              "passages go west and up.  The remnants of recent digging are evident." SOFT_NL
              "A sign in midair here says \"Cave under construction beyond this point." SOFT_NL
-             "Proceed at own risk.  [Witt Construction Company]\"",
+             "Proceed at own risk.  [Witt Construction Company]\".",
              "You're in Anteroom.", 0);
     make_ins(U, R_COMPLEX);
     make_ins(W, R_BEDQUILT);
@@ -1476,6 +1476,7 @@ void build_travel_table(void)
     make_loc(q, R_NEEND,
              "You are at the northeast end of an immense room, even larger than the" SOFT_NL
              "Giant Room.  It appears to be a repository for the \"Adventure\"" SOFT_NL
+             /* Long has "smokey". I've changed it back to Woods' "smoky". */
              "program.  Massive torches far overhead bathe the room with smoky" SOFT_NL
              "yellow light.  Scattered about you can be seen a pile of bottles (all" SOFT_NL
              "of them empty), a nursery of young beanstalks murmuring quietly, a bed" SOFT_NL
@@ -1484,20 +1485,25 @@ void build_travel_table(void)
              "are sleeping on the floor, snoring loudly.  A sign nearby reads:  \"DO" SOFT_NL
              "NOT DISTURB THE DWARVES!\"  An immense mirror is hanging against one" SOFT_NL
              "wall, and stretches to the other end of the room, where various other" SOFT_NL
-             "sundry objects can be glimpsed dimly in the distance.",
+             "sundry objects can be glimpsed dimly in the distance.  An unoccupied" SOFT_NL
+             "telephone booth stands against the north wall.",
              "You're at NE end.", F_LIGHTED);
-    make_ins(SW, R_SWEND);
+    make_ins(SW, R_SWEND); ditto(ACROSS); ditto(CROSS);
+    make_ins(IN, R_REPO_BOOTH); ditto(ENTER); ditto(N);
     make_loc(q, R_SWEND,
              "You are at the southwest end of the repository.  To one side is a pit" SOFT_NL
              "full of fierce green snakes.  On the other side is a row of small" SOFT_NL
              "wicker cages, each of which contains a little sulking bird.  In one" SOFT_NL
-             "corner is a bundle of black rods with rusty marks on their ends." SOFT_NL
-             "A large number of velvet pillows are scattered about on the floor." SOFT_NL
-             "A vast mirror stretches off to the northeast.  At your feet is a" SOFT_NL
-             "large steel grate, next to which is a sign that reads, \"TREASURE" SOFT_NL
-             "VAULT.  KEYS IN MAIN OFFICE.\"",
+             "corner is a bundle of black rods with rusty marks on their ends.  A" SOFT_NL
+             "large number of velvet pillows are scattered about on the floor." SOFT_NL
+             "Beside one of the pillows is a large, dusty, leather-bound volume" SOFT_NL
+             "with the title \"History of Adventure\" embossed in pure gold." SOFT_NL
+             "A vast mirror stretches off to the northeast, almost reaching the" SOFT_NL
+             "phone booth.  At your feet is a large steel grate, next to which is" SOFT_NL
+             "a sign which reads, \"Treasure Vault.  Keys in Main Office.\"",
              "You're at SW end.", F_LIGHTED);
-    make_ins(NE, R_NEEND);
+    /* Long accidentally has SW here instead of CROSS. */
+    make_ins(NE, R_NEEND); ditto(ACROSS); ditto(CROSS);
     make_ins(D, remark(1));  /* You can't go through a locked steel grate! */
 
     make_loc(q, R_SWORD,
@@ -2145,6 +2151,13 @@ void build_travel_table(void)
              "ledge is above a large number of sharp vertical limestone spires." SOFT_NL
              "An attempt to climb down could be dangerous, if you get my *point*!",
              "You're on ledge above limestone pinnacles.", 0);
+    /* Moving from R_SPIRES to R_PINNACLES is always dangerous. I believe Long
+     * intends the expert player to sin against mimesis here and FILL BOTTLE
+     * WITH WINE, then climb up (a one-way trip) and PUT WINE IN CASK. The
+     * player cannot visit the Winery twice without braving the pinnacles.
+     * Alternatively, he could descend to this location first via the slippers,
+     * pick up the cask, and take it to the Winery via (his one trip through)
+     * the seaside entrance. */
     make_cond_ins(D, 65, R_PINNACLES); ditto(JUMP);
     make_ins(D, R_SKEWERED);
     make_ins(S, R_YELLOW); ditto(CRAWL);
@@ -2345,7 +2358,7 @@ bool is_well_inside(Location loc)
 struct ObjectData objs_[MAX_OBJ+1 - MIN_OBJ];
 
 Location last_knife_loc = R_LIMBO;
-int tally = 15;  /* treasures awaiting you */
+int tally = 30;  /* treasures awaiting you */
 int lost_treasures;  /* treasures that you won't find */
 bool troll_has_sapphire = false;
 bool river_has_sapphire = false;
@@ -3087,14 +3100,10 @@ bool cave_is_closing(void)
 
 void close_the_cave(void)
 {
-    /* Woods has "entones", but that's not a word, so I'm changing it.
-     * Knuth writes "Then your eyes refocus;" in place of "As your eyes
-     * refocus," but I don't see any reason to deviate from Woods'
-     * wording there. Maybe Knuth was working from a slightly earlier
-     * or later version than the one I'm looking at. */
-    puts("The sepulchral voice intones, \"The cave is now closed.\"  As the echoes" SOFT_NL
+    /* Woods has "entones", but that's not a word, so I'm changing it. */
+    puts("\nThe sepulchral voice intones, \"The cave is now closed.\"  As the echoes" SOFT_NL
          "fade, there is a blinding flash of light (and a small puff of orange" SOFT_NL
-         "smoke). . . .    As your eyes refocus, you look around and find...");
+         "smoke). . . .    As your eyes refocus, you look around and find...\n");
     move(BOTTLE, R_NEEND); objs(BOTTLE).prop = -2;  /* empty */
     move(PLANT, R_NEEND); objs(PLANT).prop = -1;
     move(OYSTER, R_NEEND); objs(OYSTER).prop = -1;
@@ -3200,7 +3209,7 @@ void check_lamp(Location loc)
         objs(LAMP).prop = 0;
         lamp_limit = -1;
     } else if (lamp_limit < 0 && loc < MIN_IN_CAVE) {
-        puts("There's not much point in wandering around out here, and you can't" SOFT_NL
+        puts("\nThere's not much point in wandering around out here, and you can't" SOFT_NL
              "explore the cave without a lamp.  So let's just call it a day.");
         give_up();
     } else if (lamp_limit < 30 && !warned && here(LAMP, loc)) {
@@ -3400,6 +3409,7 @@ int look_around(Location loc, bool dark, bool was_dark)
         /* Describe the objects at this location. */
         for (struct ObjectData *t = places[loc].objects; t != NULL; t = t->link) {
             struct ObjectData *tt = t->base ? t->base : t;
+            if (closed && (tt->prop < 0)) continue;  /* scenery objects */
             spot_treasure(tt - &objs(MIN_OBJ) + MIN_OBJ);
             if (tt == &objs(TREADS) && toting(GOLD)) {
                 /* The rough stone steps disappear if we are carrying the nugget. */
@@ -3625,7 +3635,7 @@ int score(void)
             if (qk[i].place == -CHEST && objs(CHEST).place != R_HOUSE) continue;
 
             /* The radium needs to be in the canister in the safe. */
-            if (qk[i].place == -CANISTER && objs(CANISTER).place != -SAFE) continue;
+            if (t == RADIUM && objs(CANISTER).place != -SAFE) continue;
 
             /* Okay, score full points for this treasure! */
             score += 3*qk[i].value;
@@ -4034,19 +4044,17 @@ void attempt_blast(Location loc)
     if (closed) {
         /* Unlike the original, you don't have to pick up the rod in order
          * for it to kill you. */
-        if (there(ROD2, R_REPO_BOOTH)) {
-            if (loc == R_SWEND) {
-                bonus = 30;
-                puts("There is a loud explosion, and a twenty-foot hole appears in the far" SOFT_NL
-                     "wall, burying the dwarves in the rubble.  You march through the hole" SOFT_NL
-                     "and find yourself in the Main Office, where a cheering band of" SOFT_NL
-                     "friendly elves carry the conquering adventurer off into the sunset.");
-            } else {
-                bonus = 25;
-                puts("There is a loud explosion, and a twenty-foot hole appears in the far" SOFT_NL
-                     "wall, burying the snakes in the rubble.  A river of molten lava pours" SOFT_NL
-                     "in through the hole, destroying everything in its path, including you!");
-            }
+        if (there(ROD2, R_REPO_BOOTH) && loc == R_SWEND) {
+            bonus = 30;
+            puts("There is a loud explosion, and a twenty-foot hole appears in the far" SOFT_NL
+                 "wall, burying the dwarves in the rubble.  You march through the hole" SOFT_NL
+                 "and find yourself in the Main Office, where a cheering band of" SOFT_NL
+                 "friendly elves carry the conquering adventurer off into the sunset.");
+        } else if (there(ROD2, R_SWEND) && loc != R_SWEND) {
+            bonus = 25;
+            puts("There is a loud explosion, and a twenty-foot hole appears in the far" SOFT_NL
+                 "wall, burying the snakes in the rubble.  A river of molten lava pours" SOFT_NL
+                 "in through the hole, destroying everything in its path, including you!");
         } else {
             bonus = 20;
             puts("There is a loud explosion, and you are suddenly splashed across the" SOFT_NL
@@ -5669,7 +5677,7 @@ Location attempt_drink(Location loc, ObjectWord obj, ObjectWord iobj)
              "and try to focus your eyes....");
         if (objs(LAMP).prop) {
             /* In Long's version, Fortran's lack of multi-line IF bodies
-             * led to an amusing case here: you could perpetually stave off
+             * led to an amusing case here: you can perpetually stave off
              * lamp burnout by getting drunk every 24 turns. */
             lamp_limit -= ran(lamp_limit)/2;
             if (lamp_limit < 10) lamp_limit = 25;
@@ -6569,7 +6577,7 @@ void simulate_an_adventure(void)
         switch (look_around(loc, now_in_darkness(loc), was_dark)) {
             case 'd': goto death;
             case 'p': goto pitch_dark;
-            case 't': goto try_move;
+            case 't': assert(mot != NOWHERE); goto try_move;
             default: break;
         }
         /* Upon leaving the rotunda, cause the gnome to vanish. Line 2045 in Long. */

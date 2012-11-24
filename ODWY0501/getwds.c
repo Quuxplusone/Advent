@@ -402,30 +402,30 @@ lin(96)
 lin(92)
     assert(wdx > 0);
     if (word_class(word) == WordClass_Object || word_class(word) == WordClass_Adjective) {
-	/* Long doesn't do this for adjectives, but it makes sense to;
-	 * consider "GET AXE AND BRASS LAMP" versus "GET AXE BRASS LAMP".
-	 * See also my comment on the codepath following line 600.
-	 * I believe adjectives were a late addition to Long's parser. */
-	if ((pflag ? iobx : objx) != 0) {
-	    /* We have one object already, which means each subsequent
-	     * object must be preceded by the word "AND". For example:
-	     * "GET LAMP AND AXE" is okay, but "GET LAMP AXE" is not. */
-	    assert(wdx >= 2);  /* we must be processing at least word #2 */
-	    if (words[wdx-2] == AND) {
-		/* we're fine */
-		goto lin99;
-	    } else {
-		/* There's one special case:
-		 * "THROW BEAR FOOD" => THROW FOOD TO BEAR */
-		if (is_reversed_construction()) {
-		    w_iobjs[iobx++] = w_objs[objx-1];
-		    w_objs[--objx] = NOTHING;
-		    /* now go on and parse the object as usual */
-		} else {
-		    goto lin800;  /* "Huh?" */
-		}
-	    }
-	}
+        /* Long doesn't do this for adjectives, but it makes sense to;
+         * consider "GET AXE AND BRASS LAMP" versus "GET AXE BRASS LAMP".
+         * See also my comment on the codepath following line 600.
+         * I believe adjectives were a late addition to Long's parser. */
+        if ((pflag ? iobx : objx) != 0) {
+            /* We have one object already, which means each subsequent
+             * object must be preceded by the word "AND". For example:
+             * "GET LAMP AND AXE" is okay, but "GET LAMP AXE" is not. */
+            assert(wdx >= 2);  /* we must be processing at least word #2 */
+            if (words[wdx-2] == AND) {
+                /* we're fine */
+                goto lin99;
+            } else {
+                /* There's one special case:
+                 * "THROW BEAR FOOD" => THROW FOOD TO BEAR */
+                if (is_reversed_construction()) {
+                    w_iobjs[iobx++] = w_objs[objx-1];
+                    w_objs[--objx] = NOTHING;
+                    /* now go on and parse the object as usual */
+                } else {
+                    goto lin800;  /* "Huh?" */
+                }
+            }
+        }
     }
 
 lin(99)
@@ -964,8 +964,8 @@ void shift_words(int *verb, int *obj, int *iobj, Location loc)
     const bool goto_next_verb = (!multiple_iobjs && w_objs[objx+1] == NOTHING)
                              || (!multiple_objs && w_iobjs[objx+1] == NOTHING);
     if (goto_next_verb) {
-	/* It might be that w_verbs[vrbx] is already NOTHING, if we just
-	 * answered "YES" to the dragon question. This is okay. */
+        /* It might be that w_verbs[vrbx] is already NOTHING, if we just
+         * answered "YES" to the dragon question. This is okay. */
         ++vrbx;
         objx = 0;
         iobx = 0;
