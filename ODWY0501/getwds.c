@@ -478,8 +478,14 @@ lin(200)
     }
     if (word == ALL) {
         bool get_all;
-        assert(vrbx >= 1);
-        switch (w_verbs[vrbx-1]) {
+	int old_verb = (vrbx >= 1) ? w_verbs[vrbx-1] : w_verbs[0];
+	/* This logic is slightly dubious; it relies on the fact that
+	 * w_verbs[0] is NOTHING if vrbx==0, *unless* we've been
+	 * invoked from please_clarify ("Get what?"), in which case
+	 * it's the old verb that we're trying to clarify. */
+	/* TODO: This does not replicate Long's behavior on the input
+	 * "GET" "Get what?" "ALL DROP". How to fix this? */
+        switch (old_verb) {
             case DROP: case PUT: case LEAVE:
                 get_all = false;
                 break;

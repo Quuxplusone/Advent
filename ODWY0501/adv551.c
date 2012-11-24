@@ -658,7 +658,7 @@ void build_travel_table(void)
     make_ins(ENTER, remark(1));
     make_loc(q, R_INSIDE,
              "You are in a small chamber beneath a 3x3 steel grate to the surface." SOFT_NL
-             "A low crawl over cobbles leads inwards to the west.",
+             "A low crawl over cobbles leads inward to the west.",
              "You're below the grate.", F_LIGHTED | F_PORTAL);
     make_cond_ins(OUT, unless_prop(GRATE, 0), R_OUTSIDE); ditto(U);
     make_ins(OUT, remark(1));
@@ -3781,7 +3781,7 @@ void kill_the_player(Location last_safe_place)
 bool now_in_darkness(Location loc)
 {
     if (places[loc].flags & F_LIGHTED) return false;
-    if (here(LAMP, loc) && objs(LAMP).prop) return false;
+    if (at_hand(LAMP, loc) && objs(LAMP).prop) return false;
     return true;
 }
 
@@ -4531,7 +4531,8 @@ bool attempt_play(Location loc, ActionWord verb, ObjectWord obj, ObjectWord iobj
             }
             return true;
         } else if (is_outside(loc)) {
-            puts("The blast of your horn echos throughout hill and dale.");
+            /* Long has "echos". */
+            puts("The blast of your horn echoes throughout hill and dale.");
         } else {
             puts("The chamber reverberates to the blast of the horn." SOFT_NL
                  "(Satchmo you ain't!)");
@@ -5201,7 +5202,9 @@ void attempt_wave(Location oldloc, Location loc, ObjectWord obj, ObjectWord iobj
         obj = ROD2;  /* TODO: combine with other places this happens */
     }
     const bool at_fissure = (iobj == NOTHING || iobj == FISSURE);
-    if (!holding(obj)) {
+    if (obj != NOTHING && !holding(obj)) {
+        /* Long gives this message for "WAVE TO FIGURE", etc., because
+         * he lets HOLDNG(0) be false. */
         puts("You aren't carrying it!");
     } else if (obj == ROD && is_at_loc(FISSURE, loc) && at_fissure && !cave_is_closing()) {
         if (!objs(FISSURE).prop) {
