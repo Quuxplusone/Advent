@@ -435,7 +435,7 @@ enum flagsBits {
     F_WITT_HINT  = 0x100
 };
 
-Instruction travels[740];
+Instruction travels[733];
 Instruction *start[MAX_LOC+2];
 struct Place {
     const char *long_desc;
@@ -462,6 +462,8 @@ void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned
 
 void make_inst(Instruction *q, MotionWord m, int c, Location d)
 {
+    assert(&travels[0] <= q && q < &travels[733]);
+    assert(m==0 || (MIN_MOTION <= m && m <= MAX_MOTION));
     q->mot = m;
     q->cond = c;
     q->dest = d;
