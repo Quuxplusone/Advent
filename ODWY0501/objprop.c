@@ -67,8 +67,8 @@ bool is_living(ObjectWord t)
     switch (t) {
         case SNAKE: case CLAM: case OYSTER: case DWARF: case PIRATE:
         case DRAGON: case TROLL: case BEAR: case BEES:
-	/* Long doesn't include DOG, GNOME, or WUMPUS in this list */
-	case DOG: case WUMPUS:
+        /* Long doesn't include DOG, GNOME, or WUMPUS in this list */
+        case DOG: case WUMPUS:
             return true;
         default:
             return false;
@@ -210,8 +210,8 @@ int weight(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
-	case BOAT: case BEAR:
-	    return 0;
+        case BOAT: case BEAR:
+            return 0;
         case LAMP: case CAGE: case PILLOW: case MAG: case BOTTLE:
         case FLOWERS: case CLOAK: case DIAMONDS: case PEARL:
         case SPICES: case CROWN: case SHOES: case RING:
@@ -306,7 +306,7 @@ bool is_ajar(ObjectWord t)
 {
     assert(MIN_OBJ <= t && t <= MAX_OBJ);
     switch (t) {
-	case LAMP: case MACHINE: case BOAT:
+        case LAMP: case MACHINE: case BOAT:
         case CHEST: case VASE: case GRAIL:
             /* These hingeless vessels are always open. */
             return true;
@@ -326,17 +326,19 @@ bool is_broken(ObjectWord t)
 int burden(ObjectWord t)
 {
     if (t == 0) {
-        /* Compute the total weight of the player's inventory. */
+        /* Compute the total weight of the player's inventory.
+         * Long's algorithm was:
+         *   For each object t, if TOTING(t) and PLACE(t) isn't -BOAT, add weight(t).
+         * This meant that if you filled the chest and then put the chest in
+         * the boat, you were burdened by the contents of the chest (but not
+         * by the chest itself).
+         * My algorithm is:
+         *   For each object t, if HOLDING(t), add burden(t).
+         * This doesn't count the contents of things in the boat. */
         int result = 0;
         for (ObjectWord i = MIN_OBJ; i <= MAX_OBJ; ++i) {
-            /* Long erroneously uses TOTING instead of HOLDNG, and skips the
-             * contents of the boat. This double-counts objects contained
-             * within the sack; counts objects contained within the sack
-             * even when the sack is the boat; and counts the weight of the
-             * empty boat itself. My fix counts everything once, and doesn't
-             * count the boat or its contents. */
             if (holding(i) && i != BOAT)
-                result += weight(i);
+                result += burden(i);
         }
         return result;
     } else {
@@ -346,7 +348,7 @@ int burden(ObjectWord t)
         if (t == BOAT) return result;
         /* Long doesn't recurse here, due to Fortran's lack of recursion. */
         for (struct ObjectData *p = objs(t).contents; p != NULL; p = p->link) {
-            result += weight(p - &objs(MIN_OBJ) + MIN_OBJ);
+            result += burden(p - &objs(MIN_OBJ) + MIN_OBJ);
         }
         return result;
     }

@@ -4188,6 +4188,9 @@ void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj)
         attempt_take(loc, TAKE, SWORD, NOTHING, NOTHING);
         if (holding(SWORD)) insert(SWORD, iobj);
     } else {
+        /* Notice that "PUT X IN (SACK|CHEST)" doesn't check your weight
+         * limit. I'm guessing that this was intentional; at least it makes
+         * the game a lot easier to speed-run once you figure this out. */
         insert(obj, iobj);
         if (obj == POSTER && maybe_reveal_safe(loc)) {
             /* No additional message. */
@@ -4226,7 +4229,8 @@ void attempt_remove_from(Location loc, ObjectWord obj, int iobj)
     } else if (!toting(obj) && burden(0)+burden(obj) > 15) {
         puts("It's too heavy.  You'll have to drop something first.");
     } else {
-        remove_from_containers(obj);
+        remove_from_containers(obj);  /* objs(objs).place is now R_INHAND */
+        assert(holding(obj));
         if (obj == BIRD) {
             /* The bird can't be held. */
             attempt_drop(loc, DROP, BIRD, NOTHING, NOTHING);
@@ -4334,8 +4338,6 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
         } else {
             puts("You have nothing in which to carry it.");
         }
-    } else if (obj != BEAR && burden(0)+burden(obj) > 15) {
-        puts("It's too heavy.  You'll have to drop something first.");
     } else if (obj == BOAT) {
         if (!toting(POLE) && !there(POLE, -BOAT)) {
             puts("The boat's oars were stolen by the dwarves to play bing-bong." SOFT_NL
@@ -4347,6 +4349,8 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
             objs(BOAT).prop = 1;
             carry(BOAT);
         }
+    } else if (obj != BEAR && burden(0)+burden(obj) > 15) {
+        puts("It's too heavy.  You'll have to drop something first.");
     } else if (obj == BIRD && !objs(BIRD).prop) {
         /* In Long's version, simply dropping the rod isn't good enough
          * to charm the bird; you have to put it away somewhere the bird
