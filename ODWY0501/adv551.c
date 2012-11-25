@@ -2151,13 +2151,14 @@ void build_travel_table(void)
              "ledge is above a large number of sharp vertical limestone spires." SOFT_NL
              "An attempt to climb down could be dangerous, if you get my *point*!",
              "You're on ledge above limestone pinnacles.", 0);
-    /* Moving from R_SPIRES to R_PINNACLES is always dangerous. I believe Long
-     * intends the expert player to sin against mimesis here and FILL BOTTLE
-     * WITH WINE, then climb up (a one-way trip) and PUT WINE IN CASK. The
-     * player cannot visit the Winery twice without braving the pinnacles.
-     * Alternatively, he could descend to this location first via the slippers,
-     * pick up the cask, and take it to the Winery via (his one trip through)
-     * the seaside entrance. */
+    /* Moving from R_SPIRES to R_PINNACLES is always dangerous, and the player
+     * cannot visit the Winery twice without braving the pinnacles. I believe Long
+     * intended the player to descend to this location first via the slippers,
+     * pick up the cask, and take it the long way around to the Winery via (his
+     * one trip through) the seaside entrance.
+     * The alternative "expert" solution of filling the bottle with wine and then
+     * filling the cask from the bottle works in this port, but did not work in
+     * Long's original, because of a bug in the FILL logic. See attempt_fill(). */
     make_cond_ins(D, 65, R_PINNACLES); ditto(JUMP);
     make_ins(D, R_SKEWERED);
     make_ins(S, R_YELLOW); ditto(CRAWL);
@@ -4005,7 +4006,11 @@ void attempt_fill(Location loc, ObjectWord obj, ObjectWord iobj)
             indent_appropriately();
             printf("%s is already full.\n", Your_bottle);
         } else {
-            /* Fill the vessel. */
+            /* Fill the vessel. Long's original logic here (line 22200)
+             * sets the prop value based on LOCCON(LOC), not on IOBJ,
+             * so if you FILL CASK WITH WINE (where the bottle contains
+             * wine) you'll instead receive a "cask of water" containing
+             * "Vintage wine". I've fixed this bug. */
             assert(objs(obj).prop == 1);
             if (iobj == WATER) {
                 indent_appropriately();
