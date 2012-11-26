@@ -7,13 +7,8 @@
 
 #ifdef Z_MACHINE
 #ifdef SAVE_AND_RESTORE
-int attempt_save(void) = "\t@save -> r0;\n";
-int attempt_restore(void) =
-    "\trestore Rmaybe;\n"
-    "\tr0 = 0;\n" /* restore failed */
-    "\t.RMaybe;\n"
-    "\tr0 = 2;\n";  /* ok */
-
+extern int attempt_save(void);
+extern int attempt_restore(void);
 #endif /* SAVE_AND_RESTORE */
 /* The Z-machine's "@random 42" instruction returns a value in the range 1..42. */
 int ran(int range) =
@@ -435,7 +430,7 @@ enum flagsBits {
     F_WITT_HINT  = 0x100
 };
 
-Instruction travels[740];
+Instruction travels[733];
 Instruction *start[MAX_LOC+2];
 struct Place {
     const char *long_desc;
@@ -462,6 +457,8 @@ void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned
 
 void make_inst(Instruction *q, MotionWord m, int c, Location d)
 {
+    assert(&travels[0] <= q && q < &travels[733]);
+    assert(m==0 || (MIN_MOTION <= m && m <= MAX_MOTION));
     q->mot = m;
     q->cond = c;
     q->dest = d;
@@ -547,7 +544,7 @@ void build_travel_table(void)
     make_ins(ENTER, remark(1));
     make_loc(q, R_INSIDE,
              "You are in a small chamber beneath a 3x3 steel grate to the surface." SOFT_NL
-             "A low crawl over cobbles leads inwards to the west.",
+             "A low crawl over cobbles leads inward to the west.",
              "You're below the grate.", F_LIGHTED);
     make_cond_ins(OUT, unless_prop(GRATE, 0), R_OUTSIDE); ditto(U);
     make_ins(OUT, remark(1));
@@ -785,6 +782,7 @@ void build_travel_table(void)
         "directions.",
         "You're in Hall of Mt King.", F_SNAKE_HINT);
     make_ins(STAIRS, R_EMIST); ditto(U); ditto(E);
+    /* I suppose our adventurer must be walking on the ceiling! */
     make_cond_ins(N, unless_prop(SNAKE, 0), R_NS); ditto(LEFT);
     make_cond_ins(S, unless_prop(SNAKE, 0), R_SOUTH); ditto(RIGHT);
     make_cond_ins(W, unless_prop(SNAKE, 0), R_WEST); ditto(FORWARD);
