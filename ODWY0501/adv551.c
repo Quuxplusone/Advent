@@ -2445,238 +2445,239 @@ void new_obj(ObjectWord t, const char *n, ObjectWord b, Location l)
 
 void build_object_table(void)
 {
+#define describe_obj(t, p, x) objs(t).desc[p] = x
     new_obj(LAMP, "Brass lantern", 0, R_HOUSE);
-    objs(LAMP).desc[0] = "There is a shiny brass lamp nearby.";
-    objs(LAMP).desc[1] = "There is a lamp shining nearby.";
+    describe_obj(LAMP, 0, "There is a shiny brass lamp nearby.");
+    describe_obj(LAMP, 1, "There is a lamp shining nearby.");
     new_obj(GRATE, "Grate", GRATE, R_OUTSIDE);
     new_obj(GRATE_, NULL, GRATE, R_INSIDE);
-    objs(GRATE).desc[0] = "The grate is locked.";
-    objs(GRATE).desc[1] = "The grate is open.";
+    describe_obj(GRATE, 0, "The grate is locked.");
+    describe_obj(GRATE, 1, "The grate is open.");
     new_obj(CAGE, "Wicker cage", 0, R_COBBLES);
-    objs(CAGE).desc[0] = "There is a small wicker cage discarded nearby.";
+    describe_obj(CAGE, 0, "There is a small wicker cage discarded nearby.");
     new_obj(ROD, "Black rod", 0, R_DEBRIS);
-    objs(ROD).desc[0] = "A three-foot black rod with a rusty star on an end lies nearby.";
+    describe_obj(ROD, 0, "A three-foot black rod with a rusty star on an end lies nearby.");
     new_obj(ROD2, "Black rod", 0, R_LIMBO);
-    objs(ROD2).desc[0] = "A three-foot black rod with a rusty mark on an end lies nearby.";
+    describe_obj(ROD2, 0, "A three-foot black rod with a rusty mark on an end lies nearby.");
     new_obj(TREADS, "Steps", TREADS, R_SPIT);
     new_obj(TREADS_, NULL, TREADS, R_EMIST);
-    objs(TREADS).desc[0] = "Rough stone steps lead down the pit.";
-    objs(TREADS).desc[1] = "Rough stone steps lead up the dome.";
+    describe_obj(TREADS, 0, "Rough stone steps lead down the pit.");
+    describe_obj(TREADS, 1, "Rough stone steps lead up the dome.");
     new_obj(POLE, "Wooden pole", 0, R_MARSH_EDGE);
-    objs(POLE).desc[0] = "A wooden pole is lying nearby.";
-    objs(POLE).desc[1] = "A wooden pole has been stuck in the mud here.";
+    describe_obj(POLE, 0, "A wooden pole is lying nearby.");
+    describe_obj(POLE, 1, "A wooden pole has been stuck in the mud here.");
     new_obj(PILLOW, "Velvet pillow", 0, R_SOFT);
-    objs(PILLOW).desc[0] = "A small velvet pillow lies on the floor.";
+    describe_obj(PILLOW, 0, "A small velvet pillow lies on the floor.");
     new_obj(SNAKE, "Snake", SNAKE, R_HMK);
-    objs(SNAKE).desc[0] = "A huge green fierce snake bars the way!";
-    objs(SNAKE).desc[1] = NULL;  /* chased away */
+    describe_obj(SNAKE, 0, "A huge green fierce snake bars the way!");
+    describe_obj(SNAKE, 1, NULL);  /* chased away */
     new_obj(FISSURE, "Fissure", FISSURE, R_EFISS);
     new_obj(FISSURE_, NULL, FISSURE, R_WFISS);
-    objs(FISSURE).desc[0] = NULL;
-    objs(FISSURE).desc[1] ="A crystal bridge now spans the fissure.";
+    describe_obj(FISSURE, 0, NULL);
+    describe_obj(FISSURE, 1, "A crystal bridge now spans the fissure.");
     new_obj(TABLET, "Stone tablet", TABLET, R_DARK);
-    objs(TABLET).desc[0] =  /* Woods has "imbedded". */
+    describe_obj(TABLET, 0,  /* Woods has "imbedded". */
         "A massive stone tablet embedded in the wall reads:" SOFT_NL
-        "\"Congratulations on bringing light into the Dark-Room!\"";
+        "\"Congratulations on bringing light into the Dark-Room!\"");
     new_obj(CLAM, "Giant clam  >grunt!<", 0, R_SHELL);
-    objs(CLAM).desc[0] = "There is an enormous clam here with its shell tightly closed.";
+    describe_obj(CLAM, 0, "There is an enormous clam here with its shell tightly closed.");
     new_obj(OYSTER, "Giant oyster  >groan!<", 0, R_LIMBO);
-    objs(OYSTER).desc[0] = "There is an enormous oyster here with its shell tightly closed.";
+    describe_obj(OYSTER, 0, "There is an enormous oyster here with its shell tightly closed.");
     new_obj(MAG, "\"Spelunker Today\"", 0, R_ANTE);
-    objs(MAG).desc[0] = "There are a few recent issues of \"Spelunker Today\" magazine here.";
+    describe_obj(MAG, 0, "There are a few recent issues of \"Spelunker Today\" magazine here.");
     new_obj(FOOD, "Tasty food", 0, R_PANTRY);
     new_obj(DWARF, "Dwarf", DWARF, R_LIMBO);
     new_obj(KNIFE, "Dwarf's knife", 0, R_LIMBO);
-    objs(FOOD).desc[0] = "There is food here.";
+    describe_obj(FOOD, 0, "There is food here.");
     new_obj(BOTTLE, "Small bottle", 0, R_PANTRY);
-    objs(BOTTLE).desc[0] = "There is a bottle of water here.";
-    objs(BOTTLE).desc[1] = "There is an empty bottle here.";
-    objs(BOTTLE).desc[2] = "There is a bottle of oil here.";
-    objs(BOTTLE).desc[3] = "There is a broken bottle here.";
-    objs(BOTTLE).desc[4] = "There is a bottle of wine here.";
+    describe_obj(BOTTLE, 0, "There is a bottle of water here.");
+    describe_obj(BOTTLE, 1, "There is an empty bottle here.");
+    describe_obj(BOTTLE, 2, "There is a bottle of oil here.");
+    describe_obj(BOTTLE, 3, "There is a broken bottle here.");
+    describe_obj(BOTTLE, 4, "There is a bottle of wine here.");
     new_obj(CHASM, "Troll bridge", CHASM, R_SWSIDE);
     new_obj(CHASM_, NULL, CHASM, R_NESIDE);
-    objs(CHASM).desc[0] =
+    describe_obj(CHASM, 0,
         "A rickety wooden bridge extends across the chasm, vanishing into the" SOFT_NL
-        "mist. A sign posted on the bridge reads, \"STOP! PAY TROLL!\"";
-    objs(CHASM).desc[1] =
+        "mist. A sign posted on the bridge reads, \"STOP! PAY TROLL!\"");
+    describe_obj(CHASM, 1,
         "The wreckage of a bridge (and a dead bear) can be seen at the bottom" SOFT_NL
-        "of the chasm.";
+        "of the chasm.");
     new_obj(CLAY, "Decrepit bridge", CLAY, R_DANTES);
     new_obj(CLAY_, NULL, CLAY, R_DEVILS);
-    objs(CLAY).desc[0] =
+    describe_obj(CLAY, 0,
         "A decrepit natural bridge spans the chasm.  A message scrawled into" SOFT_NL
-        "the rock wall reads: \"Bridge out of repair.  Maximum load: 35 Foonts.\"";
-    objs(CLAY).desc[1] =
-        "The remnants of a natural bridge partially overhang the chasm.";
+        "the rock wall reads: \"Bridge out of repair.  Maximum load: 35 Foonts.\"");
+    describe_obj(CLAY, 1,
+        "The remnants of a natural bridge partially overhang the chasm.");
     new_obj(MIRROR, "Mirror", MIRROR, R_MIRROR);
     new_obj(MIRROR_, NULL, MIRROR, R_LIMBO);  /* joins up with MIRROR later */
-    objs(MIRROR).desc[0] = NULL;  /* it's just scenery */
+    describe_obj(MIRROR, 0, NULL);  /* it's just scenery */
     new_obj(PLANT, "Plant", PLANT, R_WPIT);
-    objs(PLANT).desc[0] = "There is a tiny little plant in the pit, murmuring \"Water, water, ...\"";
-    objs(PLANT).desc[1] =
+    describe_obj(PLANT, 0, "There is a tiny little plant in the pit, murmuring \"Water, water, ...\"");
+    describe_obj(PLANT, 1,
         "There is a 12-foot-tall beanstalk stretching up out of the pit," SOFT_NL
-        "bellowing \"Water!! Water!!\"";
-    objs(PLANT).desc[2] = "There is a gigantic beanstalk stretching all the way up to the hole.";
+        "bellowing \"Water!! Water!!\"");
+    describe_obj(PLANT, 2, "There is a gigantic beanstalk stretching all the way up to the hole.");
     new_obj(PLANT2, "Beanstalk", PLANT2, R_W2PIT);
     new_obj(PLANT2_, NULL, PLANT2, R_E2PIT);
-    objs(PLANT2).desc[0] = NULL;
-    objs(PLANT2).desc[1] = "The top of a 12-foot-tall beanstalk is poking out of the west pit.";
-    objs(PLANT2).desc[2] = "There is a huge beanstalk growing out of the west pit up to the hole.";
+    describe_obj(PLANT2, 0, NULL);
+    describe_obj(PLANT2, 1, "The top of a 12-foot-tall beanstalk is poking out of the west pit.");
+    describe_obj(PLANT2, 2, "There is a huge beanstalk growing out of the west pit up to the hole.");
     new_obj(STALACTITE, "Stalactite", STALACTITE, R_TITE);
-    objs(STALACTITE).desc[0] = NULL;
+    describe_obj(STALACTITE, 0, NULL);
     new_obj(SHADOW, "Shadowy figure", SHADOW, R_WINDOE);
     new_obj(SHADOW_, NULL, SHADOW, R_WINDOW);
-    objs(SHADOW).desc[0] = "The shadowy figure seems to be trying to attract your attention.";
+    describe_obj(SHADOW, 0, "The shadowy figure seems to be trying to attract your attention.");
     new_obj(AXE, "Dwarf's axe", 0, R_LIMBO);
-    objs(AXE).desc[0] = "There is a little axe here.";
-    objs(AXE).desc[1] = "There is a little axe lying beside the bear.";
-    objs(AXE).desc[2] = "There is a little axe lying beside the Wumpus.";
-    objs(AXE).desc[3] = "There is a little axe lying beside the dog.";
+    describe_obj(AXE, 0, "There is a little axe here.");
+    describe_obj(AXE, 1, "There is a little axe lying beside the bear.");
+    describe_obj(AXE, 2, "There is a little axe lying beside the Wumpus.");
+    describe_obj(AXE, 3, "There is a little axe lying beside the dog.");
     new_obj(DRAWINGS, "Cave drawings", DRAWINGS, R_ORIENTAL);
-    objs(DRAWINGS).desc[0] = NULL;
+    describe_obj(DRAWINGS, 0, NULL);
     new_obj(PIRATE, "Pirate", PIRATE, R_LIMBO);
     new_obj(DRAGON, "Dragon", DRAGON, R_SCAN1);
     new_obj(DRAGON_, NULL, DRAGON, R_SCAN3);
-    objs(DRAGON).desc[0] = "A huge green fierce dragon bars the way!";
-    objs(DRAGON).desc[1] = "The body of a huge green dead dragon is lying off to one side.";
+    describe_obj(DRAGON, 0, "A huge green fierce dragon bars the way!");
+    describe_obj(DRAGON, 1, "The body of a huge green dead dragon is lying off to one side.");
     new_obj(TROLL, "Troll", TROLL, R_SWSIDE);
     new_obj(TROLL_, NULL, TROLL, R_NESIDE);
-    objs(TROLL).desc[0] =
+    describe_obj(TROLL, 0,
         "A burly troll stands by the bridge and insists you throw him a" SOFT_NL
-        "treasure before you may cross.";
-    objs(TROLL).desc[1] = "The troll steps out from beneath the bridge and blocks your way.";
-    objs(TROLL).desc[2] = NULL;  /* chased away */
+        "treasure before you may cross.");
+    describe_obj(TROLL, 1, "The troll steps out from beneath the bridge and blocks your way.");
+    describe_obj(TROLL, 2, NULL);  /* chased away */
     new_obj(NO_TROLL, "Troll", NO_TROLL, R_LIMBO);
     new_obj(NO_TROLL_, NULL, NO_TROLL, R_LIMBO);
-    objs(NO_TROLL).desc[0] = "The troll is nowhere to be seen.";
+    describe_obj(NO_TROLL, 0, "The troll is nowhere to be seen.");
     new_obj(BEAR, "Bear", BEAR, R_BARR);
-    objs(BEAR).desc[0] = "There is a ferocious cave bear eying you from the far end of the room!";
-    objs(BEAR).desc[1] = "There is a gentle cave bear sitting placidly in one corner.";
-    objs(BEAR).desc[2] = "There is a contented-looking bear wandering about nearby.";
-    objs(BEAR).desc[3] = NULL;  /* the dead bear remains as scenery where it fell */
+    describe_obj(BEAR, 0, "There is a ferocious cave bear eying you from the far end of the room!");
+    describe_obj(BEAR, 1, "There is a gentle cave bear sitting placidly in one corner.");
+    describe_obj(BEAR, 2, "There is a contented-looking bear wandering about nearby.");
+    describe_obj(BEAR, 3, NULL);  /* the dead bear remains as scenery where it fell */
     new_obj(MESSAGE, "Message", MESSAGE, R_LIMBO);
-    objs(MESSAGE).desc[0] =
+    describe_obj(MESSAGE, 0,
         "There is a message scrawled in the dust in a flowery script, reading:" SOFT_NL
-        "\"This is not the maze where the pirate hides his treasure chest.\"";
+        "\"This is not the maze where the pirate hides his treasure chest.\"");
     new_obj(GORGE, "Volcano", GORGE, R_VIEW);
-    objs(GORGE).desc[0] = NULL;  /* it's just scenery */
+    describe_obj(GORGE, 0, NULL);  /* it's just scenery */
     new_obj(MACHINE, "Vending machine", MACHINE, R_PONY);
-    objs(MACHINE).desc[0] =
+    describe_obj(MACHINE, 0,
         "There is a massive vending machine here. The instructions on it read:" SOFT_NL
-        "\"Drop coins here to receive fresh batteries.\"";
+        "\"Drop coins here to receive fresh batteries.\"");
     new_obj(BATTERIES, "Batteries", 0, R_LIMBO);
-    objs(BATTERIES).desc[0] = "There are fresh batteries here.";
-    objs(BATTERIES).desc[1] = "Some worn-out batteries have been discarded nearby.";
+    describe_obj(BATTERIES, 0, "There are fresh batteries here.");
+    describe_obj(BATTERIES, 1, "Some worn-out batteries have been discarded nearby.");
     new_obj(MOSS, "Moss", MOSS, R_SOFT);
-    objs(MOSS).desc[0] = NULL;  /* it's just scenery */
+    describe_obj(MOSS, 0, NULL);  /* it's just scenery */
     new_obj(RUSTY_DOOR, "Rusty door", RUSTY_DOOR, R_IMMENSE);
-    objs(RUSTY_DOOR).desc[0] = "The way north is barred by a massive, rusty, iron door.";
-    objs(RUSTY_DOOR).desc[1] = "The way north leads through a massive, rusty, iron door.";
+    describe_obj(RUSTY_DOOR, 0, "The way north is barred by a massive, rusty, iron door.");
+    describe_obj(RUSTY_DOOR, 1, "The way north leads through a massive, rusty, iron door.");
     new_obj(TINY_DOOR, "Tiny door", TINY_DOOR, R_TINYDOOR);
     new_obj(TINY_DOOR_, NULL, TINY_DOOR, R_WBLUE);
-    objs(TINY_DOOR).desc[0] = "The only way past the wall is through a tiny locked door.";
-    objs(TINY_DOOR).desc[1] = "The only way past the wall is through a tiny open door.";
+    describe_obj(TINY_DOOR, 0, "The only way past the wall is through a tiny locked door.");
+    describe_obj(TINY_DOOR, 1, "The only way past the wall is through a tiny open door.");
     new_obj(HUGE_DOOR, "Huge door", HUGE_DOOR, R_HUGEDOOR);
     new_obj(HUGE_DOOR_, NULL, HUGE_DOOR, R_SEA);
-    objs(HUGE_DOOR).desc[0] = "The door is locked.";
-    objs(HUGE_DOOR).desc[1] = "The door is open.";
+    describe_obj(HUGE_DOOR, 0, "The door is locked.");
+    describe_obj(HUGE_DOOR, 1, "The door is open.");
     new_obj(BOOTH_DOOR, "Phone booth door", BOOTH_DOOR, R_ROTUNDA);
     new_obj(BOOTH_DOOR_, NULL, BOOTH_DOOR, R_BOOTH);
-    objs(BOOTH_DOOR).desc[0] = NULL;  /* it's just scenery */
+    describe_obj(BOOTH_DOOR, 0, NULL);  /* it's just scenery */
     new_obj(FLOWERS, "Beautiful flowers", 0, R_CLIFF);
     /* Long has an exclamation mark "here!", but that's misleading.
      * The flowers aren't a treasure. So I'm removing the "!". */
-    objs(FLOWERS).desc[0] =
-        "There are some beautiful flowers here.";
-    objs(FLOWERS).desc[1] =
+    describe_obj(FLOWERS, 0,
+        "There are some beautiful flowers here.");
+    describe_obj(FLOWERS, 1,
         "On the other side of the room a swarm of bees eagerly buzzes over" SOFT_NL
-        "a bunch of fresh flowers.";
+        "a bunch of fresh flowers.");
     new_obj(CLOAK, "Silken cloak", CLOAK, R_CLOAKROOM);
-    objs(CLOAK).desc[0] = "There is a silken cloak here!";
-    objs(CLOAK).desc[1] = NULL;  /* it's being worn */
-    objs(CLOAK).desc[2] =
+    describe_obj(CLOAK, 0, "There is a silken cloak here!");
+    describe_obj(CLOAK, 1, NULL);  /* it's being worn */
+    describe_obj(CLOAK, 2,
         "A lovely silken cloak lies partially buried under a pile of" SOFT_NL
-        "loose rocks.";
+        "loose rocks.");
     new_obj(BOAT, "Wooden boat", 0, R_WBLUE);
-    objs(BOAT).desc[0] = "There is a small wooden boat here.";
+    describe_obj(BOAT, 0, "There is a small wooden boat here.");
     new_obj(STICKS, "Sticks at Styx", STICKS, R_WSTYX);
     new_obj(STICKS_, NULL, STICKS, R_ESTYX);
     new_obj(GOLD, "Large gold nugget", 0, R_NUGGET);
-    objs(GOLD).desc[0] = "There is a large sparkling nugget of gold here!";
+    describe_obj(GOLD, 0, "There is a large sparkling nugget of gold here!");
     new_obj(DIAMONDS, "Several diamonds", 0, R_ICE);
-    objs(DIAMONDS).desc[0] = "There are diamonds here!";
+    describe_obj(DIAMONDS, 0, "There are diamonds here!");
     new_obj(HORN, "Silver horn", 0, R_WFISS);
-    objs(HORN).desc[0] = "There is a silver horn here!";
+    describe_obj(HORN, 0, "There is a silver horn here!");
     new_obj(JEWELS, "Precious jewelry", 0, R_SOUTH);
-    objs(JEWELS).desc[0] = "There is precious jewelry here!";
-    objs(JEWELS).desc[1] = NULL;  /* being worn */
+    describe_obj(JEWELS, 0, "There is precious jewelry here!");
+    describe_obj(JEWELS, 1, NULL);  /* being worn */
     new_obj(COINS, "Rare coins", 0, R_WEST);
-    objs(COINS).desc[0] = "There are many coins here!";
+    describe_obj(COINS, 0, "There are many coins here!");
     new_obj(CHEST, "Treasure chest", 0, R_LIMBO);
-    objs(CHEST).desc[0] = "The pirate's treasure chest is here!";
+    describe_obj(CHEST, 0, "The pirate's treasure chest is here!");
     new_obj(EGGS, "Golden eggs", 0, R_GIANT);
-    objs(EGGS).desc[0] = "There is a large nest here, full of golden eggs!";
+    describe_obj(EGGS, 0, "There is a large nest here, full of golden eggs!");
     new_obj(TRIDENT, "Jeweled trident", 0, R_EBLUE);
-    objs(TRIDENT).desc[0] = "There is a jewel-encrusted trident here!";
+    describe_obj(TRIDENT, 0, "There is a jewel-encrusted trident here!");
     new_obj(VASE, "Ming vase", 0, R_ORIENTAL);
-    objs(VASE).desc[0] = "There is a delicate, precious, Ming vase here!";
-    objs(VASE).desc[1] = "The floor is littered with worthless shards of pottery.";
+    describe_obj(VASE, 0, "There is a delicate, precious, Ming vase here!");
+    describe_obj(VASE, 1, "The floor is littered with worthless shards of pottery.");
     new_obj(EMERALD, "Egg-sized emerald", 0, R_PLOVER);
-    objs(EMERALD).desc[0] = "There is an emerald here the size of a plover's egg!";
+    describe_obj(EMERALD, 0, "There is an emerald here the size of a plover's egg!");
     new_obj(PYRAMID, "Platinum pyramid", 0, R_DARK);
-    objs(PYRAMID).desc[0] = "There is a platinum pyramid here, 8 inches on a side!";
+    describe_obj(PYRAMID, 0, "There is a platinum pyramid here, 8 inches on a side!");
     new_obj(PEARL, "Glistening pearl", 0, R_LIMBO);
-    objs(PEARL).desc[0] = "Off to one side lies a glistening pearl!";
+    describe_obj(PEARL, 0, "Off to one side lies a glistening pearl!");
     new_obj(RUG, "Persian rug", RUG, R_SCAN1);
     new_obj(RUG_, NULL, RUG, R_SCAN3);
-    objs(RUG).desc[0] = "There is a Persian rug spread out on the floor!";
-    objs(RUG).desc[1] = "The dragon is sprawled out on a Persian rug!!";
+    describe_obj(RUG, 0, "There is a Persian rug spread out on the floor!");
+    describe_obj(RUG, 1, "The dragon is sprawled out on a Persian rug!!");
     new_obj(SPICES, "Rare spices", 0, R_CHAMBER);
-    objs(SPICES).desc[0] = "There are rare spices here!";
+    describe_obj(SPICES, 0, "There are rare spices here!");
     new_obj(CHAIN, "Golden chain", CHAIN, R_BARR);
-    objs(CHAIN).desc[0] = "There is a golden chain lying in a heap on the floor!";
-    objs(CHAIN).desc[1] = "The bear is locked to the wall with a golden chain!";
-    objs(CHAIN).desc[2] = "There is a golden chain locked to the wall!";
+    describe_obj(CHAIN, 0, "There is a golden chain lying in a heap on the floor!");
+    describe_obj(CHAIN, 1, "The bear is locked to the wall with a golden chain!");
+    describe_obj(CHAIN, 2, "There is a golden chain locked to the wall!");
     new_obj(SWORD, "Gleaming sword", 0, R_SWORD);
-    objs(SWORD).desc[0] = "There is a gleaming sword here!";
-    objs(SWORD).desc[1] = "A gleaming sword is stuck into the anvil!";
-    objs(SWORD).desc[2] = "Rusty shards of a elven sword lie scattered about.";
-    objs(SWORD).desc[3] = "A very clean sword is stuck into the anvil!";
-    objs(SWORD).desc[4] = "An oily sword is stuck into the anvil.";
+    describe_obj(SWORD, 0, "There is a gleaming sword here!");
+    describe_obj(SWORD, 1, "A gleaming sword is stuck into the anvil!");
+    describe_obj(SWORD, 2, "Rusty shards of a elven sword lie scattered about.");
+    describe_obj(SWORD, 3, "A very clean sword is stuck into the anvil!");
+    describe_obj(SWORD, 4, "An oily sword is stuck into the anvil.");
     new_obj(CROWN, "Elfin crown", 0, R_THRONE);
-    objs(CROWN).desc[0] = "An ancient crown of elfin kings lies here!";
+    describe_obj(CROWN, 0, "An ancient crown of elfin kings lies here!");
     new_obj(SHOES, "Ruby slippers", 0, R_OVER);
     /* Long has "here." instead of "here!", but I've normalized all the
      * treasures' descriptions to include exclamation marks. */
-    objs(SHOES).desc[0] = "There is a pair of ruby slippers here!";
-    objs(SHOES).desc[1] = NULL;  /* being worn */
+    describe_obj(SHOES, 0, "There is a pair of ruby slippers here!");
+    describe_obj(SHOES, 1, NULL);  /* being worn */
     /* TODO: Long has desc[2] = desc[0]. Why? What makes prop=2? */
     new_obj(LYRE, "Delicate lyre", 0, R_NS);
-    objs(LYRE).desc[0] = "There is a delicate lyre here!";
+    describe_obj(LYRE, 0, "There is a delicate lyre here!");
     new_obj(SAPPHIRE, "Star sapphire", 0, R_STAR);
-    objs(SAPPHIRE).desc[0] = "There is a star sapphire here!";
+    describe_obj(SAPPHIRE, 0, "There is a star sapphire here!");
     new_obj(GRAIL, "Holy Grail", 0, R_CHAPEL);
-    objs(GRAIL).desc[0] = "There is an ornate silver chalice here!";
+    describe_obj(GRAIL, 0, "There is an ornate silver chalice here!");
     new_obj(CASK, "Oaken cask", 0, R_SPIRES);
-    objs(CASK).desc[0] = "There is a cask of water here.";
-    objs(CASK).desc[1] = "There is an empty oaken cask here.";
-    objs(CASK).desc[2] = "There is a cask of oil here.";
-    objs(CASK).desc[3] = NULL;  /* unused; "broken cask" */
-    objs(CASK).desc[4] = "There is a cask of wine here.";
+    describe_obj(CASK, 0, "There is a cask of water here.");
+    describe_obj(CASK, 1, "There is an empty oaken cask here.");
+    describe_obj(CASK, 2, "There is a cask of oil here.");
+    describe_obj(CASK, 3, NULL);  /* unused); "broken cask" */
+    describe_obj(CASK, 4, "There is a cask of wine here.");
     new_obj(RING, "Golden ring", 0, R_LIMBO);
-    objs(RING).desc[0] = "There is a small gold ring here.";
-    objs(RING).desc[1] = NULL;  /* being worn */
-    objs(RING).desc[2] = "On the Wumpus' finger is a small gold ring.";
+    describe_obj(RING, 0, "There is a small gold ring here.");
+    describe_obj(RING, 1, NULL);  /* being worn */
+    describe_obj(RING, 2, "On the Wumpus' finger is a small gold ring.");
     new_obj(CLOVER, "Four-leafed clover", 0, R_KNOLL);
-    objs(CLOVER).desc[0] = "There is a four-leafed clover here!";
-    objs(CLOVER).desc[1] = NULL;  /* being worn */
+    describe_obj(CLOVER, 0, "There is a four-leafed clover here!");
+    describe_obj(CLOVER, 1, NULL);  /* being worn */
     new_obj(TREE, "Gold tree", 0, R_OUTER);
     /* Long has "."; I've normalized it. */
-    objs(TREE).desc[0] = "There is a gold statue of a tree here!";
+    describe_obj(TREE, 0, "There is a gold statue of a tree here!");
     new_obj(DROPLET, "Silver droplet", 0, R_INNER);
     /* Long has "."; I've normalized it. */
-    objs(DROPLET).desc[0] = "There is a single droplet of silver on the ground here!";
+    describe_obj(DROPLET, 0, "There is a single droplet of silver on the ground here!");
     /* In Long's game, each liquid has two forms; this is so that
      * you can carry both water-in-bottle and water-in-cask at the
      * same time. In the case of WATER, the two objects actually
@@ -2692,123 +2693,124 @@ void build_object_table(void)
     new_obj(WINE_IN_CASK, "Vintage wine", 0, R_LIMBO);
     /* TODO: What's the deal with objs(BEES).prop? */
     new_obj(BEES, "Bumblebees", BEES, R_FLOWER);
-    objs(BEES).desc[0] = NULL;
-    objs(BEES).desc[1] = "Some bumblebees are swarming around a bunch of fresh flowers.";
+    describe_obj(BEES, 0, NULL);
+    describe_obj(BEES, 1, "Some bumblebees are swarming around a bunch of fresh flowers.");
     new_obj(ECHO, "Hollow wall", ECHO, R_ARCHED);
-    objs(ECHO).desc[0] = "Your footsteps echo hollowly throughout the chamber.";
-    objs(ECHO).desc[1] = NULL;  /* the wall is just rubble now */
+    describe_obj(ECHO, 0, "Your footsteps echo hollowly throughout the chamber.");
+    describe_obj(ECHO, 1, NULL);  /* the wall is just rubble now */
     /* TODO: I'm fairly sure that SAFE_WALL could productively be combined
      * with SAFE. */
     new_obj(SAFE_WALL, "Wall with safe", SAFE_WALL, R_LIMBO);
-    objs(SAFE_WALL).desc[0] = "A steel safe is embedded in the wall.";
+    describe_obj(SAFE_WALL, 0, "A steel safe is embedded in the wall.");
     new_obj(TINY_KEY, "Tiny brass key", 0, R_CRAMPED);
-    objs(TINY_KEY).desc[0] = "There is a tiny brass key here.";
-    objs(TINY_KEY).desc[1] = "There is a tiny brass key on the shelf.";
+    describe_obj(TINY_KEY, 0, "There is a tiny brass key here.");
+    describe_obj(TINY_KEY, 1, "There is a tiny brass key on the shelf.");
     new_obj(ANVIL, "Anvil", ANVIL, R_SWORD);
-    objs(ANVIL).desc[0] = NULL;
+    describe_obj(ANVIL, 0, NULL);
     /* Long makes the rocks schizoid between R_TIGHT_NS and R_CLOAKROOM.
      * I think this was a typo for R_TIGHT_NS_BLOCKED and R_CLOAKROOM,
      * but anyway I see no reason to preserve the bad behavior and no
      * reason to implement the fixed behavior. */
     new_obj(CLOAKROOM_ROCKS, "Rocks", CLOAKROOM_ROCKS, R_CLOAKROOM);
-    objs(CLOAKROOM_ROCKS).desc[0] = NULL;  /* on cloak */
-    objs(CLOAKROOM_ROCKS).desc[1] = NULL;  /* after rockslide */
+    describe_obj(CLOAKROOM_ROCKS, 0, NULL);  /* on cloak */
+    describe_obj(CLOAKROOM_ROCKS, 1, NULL);  /* after rockslide */
     new_obj(BOOTH, "Telephone booth", BOOTH, R_ROTUNDA);
     new_obj(BOOTH_, NULL, BOOTH, R_LIMBO);  /* joins up with BOOTH later */
-    objs(BOOTH).desc[0] =
-        "The telephone booth is empty.  The phone is ringing.";
-    objs(BOOTH).desc[1] =
+    describe_obj(BOOTH, 0,
+        "The telephone booth is empty.  The phone is ringing.");
+    describe_obj(BOOTH, 1,
         "The phone booth is occupied by a gnome.  He is talking excitedly" SOFT_NL
-        "to someone at the other end.";
-    objs(BOOTH).desc[2] =
-        "The telephone booth is empty.";
-    objs(BOOTH).desc[3] = NULL;  /* it's just scenery in the repository */
+        "to someone at the other end.");
+    describe_obj(BOOTH, 2,
+        "The telephone booth is empty.");
+    describe_obj(BOOTH, 3, NULL);  /* it's just scenery in the repository */
     new_obj(PHONE, "Telephone", PHONE, R_BOOTH);
-    objs(PHONE).desc[0] = "The phone is ringing.";
-    objs(PHONE).desc[1] = "The telephone is out of order.";
-    objs(PHONE).desc[2] = "The telephone is out of order.  It is badly dented.";
-    objs(PHONE).desc[3] = NULL;  /* it's just scenery in the repository */
+    describe_obj(PHONE, 0, "The phone is ringing.");
+    describe_obj(PHONE, 1, "The telephone is out of order.");
+    describe_obj(PHONE, 2, "The telephone is out of order.  It is badly dented.");
+    describe_obj(PHONE, 3, NULL);  /* it's just scenery in the repository */
     new_obj(SLUGS, "Lead slugs", 0, R_LIMBO);
     /* Long has "!"; I've normalized it. */
-    objs(SLUGS).desc[0] = "There are some lead slugs here.";
+    describe_obj(SLUGS, 0, "There are some lead slugs here.");
     new_obj(HONEY, "Sweet honeycomb", 0, R_LIMBO);
     /* Long has "!"; I've normalized it. */
-    objs(HONEY).desc[0] = "There is a sweet honeycomb here.";
+    describe_obj(HONEY, 0, "There is a sweet honeycomb here.");
     new_obj(HIVE, "Beehive", HIVE, R_FLOWER);
-    objs(HIVE).desc[0] =
+    describe_obj(HIVE, 0,
         "There is an active beehive nearby.  The bees hum protectively" SOFT_NL
-        "around the hive.";
-    objs(HIVE).desc[1] =
-        "There is an empty beehive nearby.";
+        "around the hive.");
+    describe_obj(HIVE, 1,
+        "There is an empty beehive nearby.");
     new_obj(DOG, "Black dog", DOG, R_APPROACH);
-    objs(DOG).desc[0] =
-        "A hideous black dog bares his teeth and growls at your approach.";
-    objs(DOG).desc[1] =
-        "Nearby, a large black dog is in a deep slumber.";
+    describe_obj(DOG, 0,
+        "A hideous black dog bares his teeth and growls at your approach.");
+    describe_obj(DOG, 1,
+        "Nearby, a large black dog is in a deep slumber.");
     /* TODO: The Wumpus is like Platt's "Rover" or the gooseberry goblins;
      * it really only has two states, but it also has a "timer" that triggers
      * its other messages. Can we deal better with this? */
     new_obj(WUMPUS, "Dreaded Wumpus", WUMPUS, R_CLOAKROOM);
-    objs(WUMPUS).desc[0] =
-        "In the corner, a Wumpus is sleeping peacefully.";
-    objs(WUMPUS).desc[1] =
+    describe_obj(WUMPUS, 0,
+        "In the corner, a Wumpus is sleeping peacefully.");
+    describe_obj(WUMPUS, 1,
         "A sleepy Wumpus is ambling towards you.  He wants to invite you to" SOFT_NL
-        "dinner.  He wants you to *be* the dinner!";
-    objs(WUMPUS).desc[2] =
-        "The Wumpus is still on your trail!  And he's getting closer!!";
-    objs(WUMPUS).desc[3] =
+        "dinner.  He wants you to *be* the dinner!");
+    describe_obj(WUMPUS, 2,
+        "The Wumpus is still on your trail!  And he's getting closer!!");
+    describe_obj(WUMPUS, 3,
         "The Wumpus is only a few steps behind you!  All this exercise is" SOFT_NL
-        "making him veerrrrry hungry!";
-    objs(WUMPUS).desc[4] =
+        "making him veerrrrry hungry!");
+    describe_obj(WUMPUS, 4,
         "The Wumpus almost has you in his grasp!  You can feel his hot breath" SOFT_NL
-        "on your neck!";
-    objs(WUMPUS).desc[5] =
-        "\"Chomp, chomp.\"  Crunch!  Chew!  Slurp!  Smack!  Yum!!!";
-    objs(WUMPUS).desc[6] =
-        "Nearby is the smashed body of a defunct Wumpus.";
+        "on your neck!");
+    describe_obj(WUMPUS, 5,
+        "\"Chomp, chomp.\"  Crunch!  Chew!  Slurp!  Smack!  Yum!!!");
+    describe_obj(WUMPUS, 6,
+        "Nearby is the smashed body of a defunct Wumpus.");
     new_obj(BIRD, "Little bird in cage", 0, R_BIRD);
-    objs(BIRD).desc[0] = "A cheerful little bird is sitting here singing.";
-    objs(BIRD).desc[1] = "There is a little bird in the cage.";
+    describe_obj(BIRD, 0, "A cheerful little bird is sitting here singing.");
+    describe_obj(BIRD, 1, "There is a little bird in the cage.");
     new_obj(KEYS, "Set of keys", 0, R_PANTRY);
-    objs(KEYS).desc[0] = "There are some keys on the ground here.";
+    describe_obj(KEYS, 0, "There are some keys on the ground here.");
     new_obj(FOUNTAIN, "Fountain", FOUNTAIN, R_WINERY);
-    objs(FOUNTAIN).desc[0] = "There is a fountain of sparkling vintage wine here!";
+    describe_obj(FOUNTAIN, 0, "There is a fountain of sparkling vintage wine here!");
     new_obj(BATS, "Bats", BATS, R_BATCAVE);
-    objs(BATS).desc[0] = NULL;  /* they're just scenery */
+    describe_obj(BATS, 0, NULL);  /* they're just scenery */
     new_obj(GNOME, "Gnome in phone booth", GNOME, R_LIMBO);
-    objs(GNOME).desc[0] = NULL;  /* it's just scenery */
+    describe_obj(GNOME, 0, NULL);  /* it's just scenery */
     new_obj(MUSHROOMS, "Colored mushrooms", 0, R_DENSE);
-    objs(MUSHROOMS).desc[0] = "There are some oddly-colored mushrooms here.";
+    describe_obj(MUSHROOMS, 0, "There are some oddly-colored mushrooms here.");
     /* We don't need a non-"shelf" description for the cakes, because it's
      * impossible to take them out of R_CRAMPED. */
     new_obj(CAKES, "Tiny cakes", 0, R_CRAMPED);
-    objs(CAKES).desc[0] = "There are some tiny cakes on the shelf.";
+    describe_obj(CAKES, 0, "There are some tiny cakes on the shelf.");
     new_obj(SACK, "Leather sack", 0, R_HOUSE);
-    objs(SACK).desc[0] = "There is a leather sack here.";
+    describe_obj(SACK, 0, "There is a leather sack here.");
     new_obj(BOOK, "Rare book", 0, R_LIMBO);
-    objs(BOOK).desc[0] = "There is a dusty, leather-bound volume here.";
+    describe_obj(BOOK, 0, "There is a dusty, leather-bound volume here.");
     new_obj(REPO_BOOK, "Rare book", 0, R_LIMBO);
-    objs(REPO_BOOK).desc[0] = objs(BOOK).desc[0];
+    describe_obj(REPO_BOOK, 0, objs(BOOK).desc[0]);
     new_obj(SAFE, "Steel wall-safe", SAFE, R_LIMBO);
-    objs(SAFE).desc[0] = "The safe door is locked.";
-    objs(SAFE).desc[1] = "The safe door is open.";
+    describe_obj(SAFE, 0, "The safe door is locked.");
+    describe_obj(SAFE, 1, "The safe door is open.");
     new_obj(POSTER, "Faded poster", 0, R_HOUSE);
-    objs(POSTER).desc[0] = "Taped to the wall is a faded poster.";
-    objs(POSTER).desc[1] = "There is a faded poster here.";
+    describe_obj(POSTER, 0, "Taped to the wall is a faded poster.");
+    describe_obj(POSTER, 1, "There is a faded poster here.");
     new_obj(BROOM, "Whiskbroom", 0, R_TONGUE);
-    objs(BROOM).desc[0] = "There is a small whiskbroom here.";
+    describe_obj(BROOM, 0, "There is a small whiskbroom here.");
     new_obj(CARVING, "Carving on dusty rocks", CARVING, R_DUSTY);
-    objs(CARVING).desc[0] = NULL;  /* it's just scenery */
+    describe_obj(CARVING, 0, NULL);  /* it's just scenery */
     new_obj(BILLBOARD, "Billboard", BILLBOARD, R_FOREST);
-    objs(BILLBOARD).desc[0] = NULL;  /* it's just scenery */
+    describe_obj(BILLBOARD, 0, NULL);  /* it's just scenery */
     new_obj(CANISTER, "Small metal canister", 0, R_WINDOW);
-    objs(CANISTER).desc[0] = "There is a heavy, grey, metal canister here.";
+    describe_obj(CANISTER, 0, "There is a heavy, grey, metal canister here.");
     new_obj(RADIUM, "Glowing stone", 0, R_BUBBLE);
     /* Long has "."; I've normalized it. */
-    objs(RADIUM).desc[0] = "Nearby, a strange, greenish stone is glowing brightly!";
+    describe_obj(RADIUM, 0, "Nearby, a strange, greenish stone is glowing brightly!");
     new_obj(BALL, "Quartz sphere", 0, R_CRYSTAL);
-    objs(BALL).desc[0] = "There is a polished sphere of pure quartz here!";
+    describe_obj(BALL, 0, "There is a polished sphere of pure quartz here!");
     new_obj(ALL, NULL, 0, R_LIMBO);  /* this is a fake object */
+#undef describe_obj
 
     insert(WATER, BOTTLE);
     insert(BOOK, SAFE);
