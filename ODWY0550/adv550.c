@@ -9,13 +9,8 @@
 
 #ifdef Z_MACHINE
 #ifdef SAVE_AND_RESTORE
-int attempt_save(void) = "\t@save -> r0;\n";
-int attempt_restore(void) =
-    "\trestore Rmaybe;\n"
-    "\tr0 = 0;\n" /* restore failed */
-    "\t.RMaybe;\n"
-    "\tr0 = 2;\n";  /* ok */
-
+extern int attempt_save(void);
+extern int attempt_restore(void);
 #endif /* SAVE_AND_RESTORE */
 /* The Z-machine's "@random 42" instruction returns a value in the range 1..42. */
 int ran(int range) =

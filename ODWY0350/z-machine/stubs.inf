@@ -5,6 +5,8 @@
 !
 !     void fgets(buf, size, stdin)
 !     void putc(ch, stdout)
+!     int attempt_save()
+!     int attempt_restore()
 !
 ! The following inline function is defined in zlibc/include/stdlib.h:
 !
@@ -79,6 +81,15 @@ Global putc_codepoint;
     }
 ];
 
-[ _exit xp zero;
-    @quit;
+[_attempt_save xp  r0;
+    @save -> r0;
+    return r0;
+];
+
+[_attempt_restore xp  r0;
+    restore Rmaybe;
+    r0 = 0;  ! restore fell through: this should never happen
+    .Rmaybe;
+    r0 = 2;  ! restore explicitly failed
+    return r0;
 ];
