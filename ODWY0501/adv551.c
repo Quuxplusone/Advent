@@ -540,7 +540,7 @@ typedef struct {
     Location dest;
 } Instruction;
 
-Instruction travels[1214];
+Instruction travels[1195];
 Instruction *start[MAX_LOC+2];
 struct Place places[MAX_LOC+1];
 
@@ -560,7 +560,7 @@ void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned
 
 void make_inst(Instruction *q, MotionWord m, int c, Location d)
 {
-    assert(&travels[0] <= q && q < &travels[1214]);
+    assert(&travels[0] <= q && q < &travels[1195]);
     assert(m==0 || (MIN_MOTION <= m && m <= MAX_MOTION));
     q->mot = m;
     q->cond = c;
@@ -725,7 +725,8 @@ void build_travel_table(void)
     make_ins(LEFT, R_NUGGET); ditto(S);
     make_ins(FORWARD, R_EFISS); ditto(HALL); ditto(W);
     make_ins(STAIRS, R_HMK); ditto(D); ditto(N);
-    make_cond_ins(U, only_if_toting(GOLD), remark(15)); ditto(PIT); ditto(STEPS); ditto(DOME); ditto(PASSAGE); ditto(E);
+    make_cond_ins(U, only_if_toting(GOLD), remark(15)); ditto(PIT);
+        ditto(STEPS); ditto(DOME); ditto(PASSAGE); ditto(E);
     make_ins(U, R_SPIT);
     /* Crowther and Woods make "Y2" teleport you past the snake into the
      * jumble of rocks R_JUMBLE. Long straightens this out and lets you
@@ -906,8 +907,9 @@ void build_travel_table(void)
         "You're in Hall of Mt King.", F_SNAKE_HINT);
     /* Long makes these stairs unclimbable with the nugget, too;
      * not just the steps up the dome. */
-    make_cond_ins(U, only_if_toting(GOLD), remark(39)); ditto(PIT); ditto(STEPS); ditto(DOME); ditto(E);
-                          ditto(PASSAGE); ditto(CLIMB); ditto(STAIRS);
+    make_cond_ins(U, only_if_toting(GOLD), remark(39)); ditto(PIT);
+        ditto(STEPS); ditto(DOME); ditto(E); ditto(PASSAGE); ditto(CLIMB);
+        ditto(STAIRS);
     make_ins(U, R_EMIST);
     /* There's no royal road to the Mountain King's chamber; just luck. */
     make_cond_ins(NE, 75, remark(6));
@@ -1007,7 +1009,7 @@ void build_travel_table(void)
              "leads up.  A low hands-and-knees passage enters from the south.",
              "You're in Shell Room.", 0);
     make_cond_ins(U, unless_prop(ECHO, 0), R_ARCHED_RUBBLE); ditto(HALL);
-    make_ins(U, R_ARCHED); ditto(HALL);
+    make_ins(U, R_ARCHED);
     make_ins(D, R_RAGGED);
     make_cond_ins(S, only_if_toting(CLAM), remark(4));
     make_cond_ins(S, only_if_toting(OYSTER), remark(5));
@@ -1040,7 +1042,7 @@ void build_travel_table(void)
              "You are at Witt's End.  Passages lead off in *ALL* directions.",
              "You're at Witt's End.", F_WITT_HINT);
     make_cond_ins(E, 95, remark(6)); ditto(N); ditto(S);
-    ditto(NE); ditto(SE); ditto(SW); ditto(NW); ditto(U); ditto(D);
+        ditto(NE); ditto(SE); ditto(SW); ditto(NW); ditto(U); ditto(D);
     make_ins(E, R_ANTE);
     make_ins(W, remark(7));
     make_loc(q, R_BEDQUILT,
@@ -1214,8 +1216,8 @@ void build_travel_table(void)
     make_ins(S, R_ORIENTAL); ditto(ORIENTAL);
     make_ins(W, R_ALCOVE);
     make_cond_ins(U, 3, R_CHIMTOP); ditto(SW); ditto(CLIMB); ditto(SLIDE);
-    make_cond_ins(U, 75, remark(25)); ditto(SW); ditto(CLIMB); ditto(SLIDE);
-    make_ins(U, remark(26)); ditto(SW); ditto(CLIMB); ditto(SLIDE);
+    make_cond_ins(U, 75, remark(25));
+    make_ins(U, remark(26));
     make_ins(CHIMNEY, R_SWORD);
     /* Woods doesn't light the alcove; Long does. */
     make_loc(q, R_ALCOVE,
@@ -1234,7 +1236,7 @@ void build_travel_table(void)
     make_ins(W, R_ALCOVE);  /* never performed, but seen by "BACK" */
     /* Long adds the word "Y2" for teleporting back to R_Y2 from here. */
     make_cond_ins(PLOVER, only_if_toting(EMERALD), R_PDROP); ditto(Y2);
-    make_ins(PLOVER, R_Y2); ditto(Y2);
+    make_ins(PLOVER, R_Y2);
     make_ins(NE, R_DARK); ditto(DARK);
     make_loc(q, R_DARK,
              "You're in the Dark-Room.  A corridor leading south is the only exit.",
@@ -1348,7 +1350,8 @@ void build_travel_table(void)
      * via Lost River Canyon after the bridge is wrecked, so we need to handle that
      * case in the travel table as well. I've fixed that bug. */
     make_ins(SW, R_SLOPING);
-    make_cond_ins(OVER, only_if_here(TROLL), remark(11)); ditto(ACROSS); ditto(CROSS); ditto(NE);
+    make_cond_ins(OVER, only_if_here(TROLL), remark(11));
+        ditto(ACROSS); ditto(CROSS); ditto(NE); ditto(BRIDGE);  /* Long omits BRIDGE */
     make_cond_ins(OVER, unless_prop(CHASM, 0), remark(12));
     make_ins(OVER, R_TROLL);
     make_cond_ins(JUMP, unless_prop(CHASM, 0), R_LOSE);
@@ -1382,7 +1385,8 @@ void build_travel_table(void)
              "chasm on this side.",
              "You're on NE side of chasm.", 0);
     make_ins(NE, R_CORR);
-    make_cond_ins(OVER, only_if_here(TROLL), remark(11)); ditto(ACROSS); ditto(CROSS); ditto(SW); ditto(BRIDGE);
+    make_cond_ins(OVER, only_if_here(TROLL), remark(11));
+        ditto(ACROSS); ditto(CROSS); ditto(SW); ditto(BRIDGE);
     make_cond_ins(OVER, unless_prop(CHASM, 0), remark(12));
     make_ins(OVER, R_TROLL);
     make_cond_ins(JUMP, unless_prop(CHASM, 0), R_LOSE);
@@ -1557,7 +1561,7 @@ void build_travel_table(void)
              "You're in forest.", F_LIGHTED | F_OUTSIDE);
     make_ins(E, R_HILL); ditto(U); ditto(ROAD); ditto(CLIMB);
     make_cond_ins(S, 50, R_FOREST2); ditto(FOREST);
-    make_ins(S, R_DENSE); ditto(FOREST);
+    make_ins(S, R_DENSE);
     make_ins(W, R_KNOLL);
     make_ins(N, R_MARSH_EDGE);
     make_loc(q, R_KNOLL,
@@ -1714,9 +1718,7 @@ void build_travel_table(void)
     make_cond_ins(NE, only_if_toting(BOAT), R_BUBBLE);
     make_cond_ins(S, only_if_toting(BOAT), R_POLE_S);
     make_cond_ins(N, only_if_toting(BOAT), R_POLE_N);
-    make_ins(E, remark(20)); ditto(CROSS); ditto(OVER); ditto(ACROSS); ditto(NE);
-    /* The remark isn't given for SOUTH or NORTH. This was probably an
-     * oversight. */
+    make_ins(E, remark(20));
     make_cond_ins(PHUCE, unless_prop(BOAT, 1), R_SHRINKING2);
     make_ins(PHUCE, remark(19));
     make_loc(q, R_SEA,
@@ -1733,11 +1735,11 @@ void build_travel_table(void)
              "tunnel disappears into the darkness to the SE.",
              "You're on east side of the Blue Grotto.", F_LIGHTED);
     make_cond_ins(SE, unless_prop(BOAT, 1), R_WINDY); ditto(U); ditto(PASSAGE);
-    make_ins(SE, remark(36)); ditto(U); ditto(PASSAGE);
+    make_ins(SE, remark(36));
     make_cond_ins(N, only_if_toting(BOAT), R_BUBBLE);
     make_cond_ins(S, only_if_toting(BOAT), R_GRAVEL);
     make_cond_ins(W, only_if_toting(BOAT), R_WBLUE); ditto(CROSS); ditto(OVER); ditto(ACROSS);
-    make_ins(W, remark(20)); ditto(N); ditto(S);
+    make_ins(W, remark(20));
     make_loc(q, R_BUBBLE,
              "You are at a high rock on the NE side of a watery chamber at the mouth" SOFT_NL
              "of a small brook.  An unknown gas bubbles up through the water from" SOFT_NL
@@ -1745,9 +1747,9 @@ void build_travel_table(void)
              "You're in Bubble Chamber.", F_LIGHTED);
     make_cond_ins(S, only_if_toting(BOAT), R_EBLUE);
     make_cond_ins(SW, only_if_toting(BOAT), R_WBLUE);
-    make_ins(SW, remark(20)); ditto(S);
+    make_ins(SW, remark(20));
     make_cond_ins(PASSAGE, unless_prop(BOAT, 1), R_DEFILE); ditto(E); ditto(U);
-    make_ins(PASSAGE, remark(36)); ditto(U);
+    make_ins(PASSAGE, remark(36));
     make_loc(q, R_WINDY,
              "You are in a windy tunnel between two large rooms.",
              NULL, 0);
@@ -1874,7 +1876,7 @@ void build_travel_table(void)
              "You're on gravel beach.", F_LIGHTED);
     make_cond_ins(N, only_if_toting(BOAT), R_WBLUE);
     make_cond_ins(NE, only_if_toting(BOAT), R_EBLUE);
-    make_ins(N, remark(20)); ditto(NE);
+    make_ins(N, remark(20));
     make_cond_ins(E, unless_prop(BOAT, 1), R_VESTIBULE);
     make_ins(E, remark(19));
     make_loc(q, R_FLOWER,
