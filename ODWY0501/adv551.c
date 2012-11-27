@@ -4303,7 +4303,7 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
         take_something_immobile(obj);
     } else if (prep == INTO) {
         attempt_insert_into(loc, obj, iobj);
-    } else if (prep == FROM || enclosed(obj)) {
+    } else if (prep == FROM || (here(obj, loc) && enclosed(obj))) {
         attempt_remove_from(loc, obj, iobj);
     } else if (obj == WATER || obj == OIL || obj == WINE) {
         /* TAKE WATER. Long's line 20110.
