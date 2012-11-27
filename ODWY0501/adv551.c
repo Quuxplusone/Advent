@@ -4653,12 +4653,15 @@ void attempt_combo(Location loc)
     }
     /* Long doesn't check that the safe door is closed first.
      * TODO: maybe fix this. */
-    int number = atoi(vtxt[vrbx]);  /* TODO: don't use atoi on the Z-machine */
-    switch (number) {
-        case 7: number = 0; break;
-        case 22: number = 1; break;
-        case 34: number = 2; break;
-        default: assert(false);
+    int number;
+    if (streq(vtxt[vrbx], "7")) {
+        number = 0;
+    } else if (streq(vtxt[vrbx], "22")) {
+        number = 1;
+    } else if (streq(vtxt[vrbx], "34")) {
+        number = 2;
+    } else {
+        assert(false);
     }
     if (combo == -number) {
         combo = number+1;
@@ -7193,3 +7196,10 @@ int main()
     simulate_an_adventure();
     return 0;
 }
+
+#ifdef Z_MACHINE
+#include "getwds.c"
+#include "objprop.c"
+void set_indentation(int x) { }
+void indent_appropriately(void) { }
+#endif /* Z_MACHINE */

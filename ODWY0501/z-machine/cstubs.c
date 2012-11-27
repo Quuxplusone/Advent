@@ -7,6 +7,7 @@
 !     void printf(fmt, ...)
 !     void strcpy(dest, src)
 !     int strncmp(a, b, n)
+!     void memset(dest, v, n)
 !
 ! The following functions are defined in Inform, in the file stubs.inf:
 !
@@ -52,6 +53,15 @@ int strncmp(const char *a, const char *b, int n)
     ca = *a;
     cb = *b;
     return (ca < cb) ? -1 : (ca > cb);
+}
+
+void memset(void *vdest, int v, int n)
+{
+    unsigned char *dest = vdest;
+    while (n > 0) {
+        --n;
+        *dest++ = v;
+    }
 }
 
 void _print_int(int i) = "\t@print_num r0;\n";

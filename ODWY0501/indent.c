@@ -35,4 +35,3 @@ void puts_indented(const char *text)
     }
     putchar_indented('\n');
 }
-
