@@ -190,7 +190,6 @@ extern struct Place places[MAX_LOC+1];
 
 enum placesFlagsBits {
     F_LIGHTED    = 0x001,
-    F_WATER      = 0x004,
     F_CAVE_HINT  = 0x008,
     F_BIRD_HINT  = 0x010,
     F_SNAKE_HINT = 0x020,

@@ -581,7 +581,7 @@ void build_travel_table(void)
              "You are standing at the end of a road before a small brick building." SOFT_NL
              "Around you is a forest.  A small stream flows out of the building and" SOFT_NL
              "down a gully.",
-             "You're at end of road again.", F_LIGHTED | F_WATER | F_OUTSIDE);
+             "You're at end of road again.", F_LIGHTED | F_OUTSIDE);
     make_ins(W, R_HILL); ditto(U); ditto(ROAD); ditto(CLIMB);
     make_ins(E, R_HOUSE); ditto(IN); ditto(HOUSE); ditto(ENTER);
     make_ins(S, R_VALLEY); ditto(D); ditto(GULLY); ditto(STREAM); ditto(DOWNSTREAM);
@@ -600,7 +600,7 @@ void build_travel_table(void)
     make_loc(q, R_HOUSE,
              "You are inside a building, a well house for a large spring.  Off" SOFT_NL
              "to one side is a small pantry.",
-             "You're inside building.", F_LIGHTED | F_WATER | F_OUTSIDE);
+             "You're inside building.", F_LIGHTED | F_OUTSIDE);
     make_ins(OUT, R_ROAD); ditto(OUTDOORS); ditto(W);
     make_ins(XYZZY, R_DEBRIS);
     make_ins(PLUGH, R_Y2);
@@ -611,7 +611,7 @@ void build_travel_table(void)
     make_loc(q, R_VALLEY,
              "You are in a valley in the forest beside a stream tumbling along a" SOFT_NL
              "rocky bed.",
-             "You're in valley.", F_LIGHTED | F_WATER | F_OUTSIDE);
+             "You're in valley.", F_LIGHTED | F_OUTSIDE);
     make_ins(UPSTREAM, R_ROAD); ditto(HOUSE); ditto(N);
     make_ins(FOREST, R_FOREST); ditto(E); ditto(W); ditto(U);
     make_ins(DOWNSTREAM, R_SLIT); ditto(S); ditto(D);
@@ -633,7 +633,7 @@ void build_travel_table(void)
     make_loc(q, R_SLIT,
              "At your feet all the water of the stream splashes into a 2-inch slit" SOFT_NL
              "in the rock.  Downstream the streambed is bare rock.",
-             "You're at slit in streambed.", F_LIGHTED | F_WATER | F_OUTSIDE);
+             "You're at slit in streambed.", F_LIGHTED | F_OUTSIDE);
     make_ins(HOUSE, R_ROAD);
     make_ins(UPSTREAM, R_VALLEY); ditto(N);
     make_ins(FOREST, R_FOREST); ditto(E); ditto(W);
@@ -978,7 +978,7 @@ void build_travel_table(void)
     make_loc(q, R_WET,
              "You are in the bottom of a small pit with a little stream, which" SOFT_NL
              "enters and exits through tiny slits.",
-             "You're in pit by stream.", F_WATER);
+             "You're in pit by stream.", 0);
     make_ins(CLIMB, R_CLEAN); ditto(U); ditto(OUT);
     make_ins(SLIT, remark(0)); ditto(STREAM); ditto(D); ditto(UPSTREAM); ditto(DOWNSTREAM);
     make_loc(q, R_DUSTY,
@@ -1133,7 +1133,7 @@ void build_travel_table(void)
              "You are in a magnificent cavern with a rushing stream, which cascades" SOFT_NL
              "over a sparkling waterfall into a roaring whirlpool that disappears" SOFT_NL
              "through a hole in the floor.  Passages exit to the south and west.",
-             "You're in cavern with waterfall.", F_WATER);
+             "You're in cavern with waterfall.", 0);
     make_ins(S, R_IMMENSE); ditto(OUT);
     make_ins(GIANT, R_GIANT);
     make_ins(W, R_INCLINE);
@@ -1272,7 +1272,7 @@ void build_travel_table(void)
              "fed by a stream, which tumbles out of a hole in the wall about 10 feet" SOFT_NL
              "overhead and splashes noisily into the water somewhere within the" SOFT_NL
              "mist.  The only passage goes back toward the south.",
-             "You're at Reservoir.", F_WATER);
+             "You're at Reservoir.", 0);
     make_ins(S, R_MIRROR); ditto(OUT);
 
     /* R_SCAN1 and R_SCAN3 are the rooms the player sees when entering the
@@ -2378,14 +2378,14 @@ ObjectWord liquid_contents(ObjectWord t)
 bool water_at(Location loc)
 {
     switch (loc) {
-        case R_Y2: case R_ROAD: case R_HOUSE: case R_VALLEY: case R_SLIT:
-        case R_CLEAN: case R_MISTY: case R_WBLUE: case R_SEA: case R_EBLUE:
+        case R_ROAD: case R_HOUSE: case R_VALLEY: case R_SLIT:
+        case R_WET: case R_FALLS: case R_WBLUE: case R_SEA: case R_EBLUE:
         case R_BUBBLE: case R_GRAVEL: case R_FAIRY: case R_GREEN:
         case R_SLOST: case R_COVE: case R_WSTYX: case R_ESTYX: case R_RES:
-        /* Long includes R_RED here, despite there being no water in that
-         * room's description; and Long doesn't include R_WLOST, R_ELOST,
-         * or R_BEACH. I've added those. */
-        case R_RED:
+        /* Long includes R_Y2 and R_RED here, despite there being no water in
+         * those rooms' descriptions; and Long doesn't include R_WLOST,
+         * R_ELOST, or R_BEACH. I've added those. */
+        case R_Y2: case R_RED:
         case R_WLOST: case R_ELOST: case R_BEACH:
             return true;
         default:
