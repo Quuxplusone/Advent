@@ -7200,6 +7200,4 @@ int main()
 #ifdef Z_MACHINE
 #include "getwds.c"
 #include "objprop.c"
-void set_indentation(int x) { }
-void indent_appropriately(void) { }
 #endif /* Z_MACHINE */

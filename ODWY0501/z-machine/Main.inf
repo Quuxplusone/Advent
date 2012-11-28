@@ -1,5 +1,6 @@
 
 #include "stubs.inf";
+#include "../indent.inf";
 #include "cstubs.s";
 #include "advent.s";
 

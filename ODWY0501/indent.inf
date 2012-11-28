@@ -1,0 +1,49 @@
+!
+! This file contains a hand-coded Z-machine implementation of the stuff
+! corresponding to "indent.c" in the portable C version.
+!
+
+! The longest string literal in the game is about 1285 chars.
+! If it gets longer, this buffer must get bigger.
+Array BUFFER --> 1300;
+
+Global _ThisLine = 0;
+Global _Indentation = 0;
+
+[_set_indentation xp level;
+    _ThisLine = _Indentation = level;
+];
+
+[_indent_appropriately xp;
+    while (_ThisLine) {
+        @print_char ' ';
+        --_ThisLine;
+    }
+];
+
+[print_indented str  len start end i j ch;
+    ! Unlike the two above, this routine is actually called using
+    ! the Inform calling convention, not the xp/r0/r1 convention.
+
+    if (_Indentation || _ThisLine) {
+        ! Writing to output stream 3 is a kludgy way to decompress a text.
+        @output_stream 3 BUFFER;
+        @print_paddr str;
+        @output_stream -3;
+        len = BUFFER-->0;
+        start = BUFFER+2;
+        end = start + len;
+        for (i=start: i < end: ++i) {
+            ch = i->0;
+            if (ch == 13) {
+                @print_char ch;
+                _ThisLine = _Indentation;
+            } else {
+                _indent_appropriately(0);
+                @print_char ch;
+            }
+        }
+    } else {
+        print (string) str;
+    }
+];
