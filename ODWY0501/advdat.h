@@ -180,8 +180,8 @@ enum objectFlagsBits {
 };
 
 struct Place {
-    const char *long_desc;
-    const char *short_desc;
+    bool has_long_desc;
+    bool has_short_desc;
     unsigned int flags;
     struct ObjectData *objects;
     int visits;
