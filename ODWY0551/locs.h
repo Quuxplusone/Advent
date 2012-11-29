@@ -1146,8 +1146,8 @@
     make_cond_ins(S, only_if_toting(BOAT), R_POLE_S);
     make_cond_ins(N, only_if_toting(BOAT), R_POLE_N);
     make_ins(E, remark(20));
-    make_cond_ins(PHUCE, unless_prop(BOAT, 1), R_SHRINKING2);
-    make_ins(PHUCE, remark(19));
+    make_cond_ins(PHUCE, only_if_toting(BOAT), remark(19));
+    make_ins(PHUCE, R_SHRINKING2);
     make_loc(q, R_SEA,
              "You are on the shore of an underground sea.  A high wooden" SOFT_NL
              "structure of vast proportions extends out into the water to the" SOFT_NL
@@ -1161,8 +1161,8 @@
              "You are on the eastern shore of the Blue Grotto.  An ascending" SOFT_NL
              "tunnel disappears into the darkness to the SE.",
              "You're on east side of the Blue Grotto.", F_LIGHTED);
-    make_cond_ins(SE, unless_prop(BOAT, 1), R_WINDY); ditto(U); ditto(PASSAGE);
-    make_ins(SE, remark(36));
+    make_cond_ins(SE, only_if_toting(BOAT), remark(36)); ditto(U); ditto(PASSAGE);
+    make_ins(SE, R_WINDY);
     make_cond_ins(N, only_if_toting(BOAT), R_BUBBLE);
     make_cond_ins(S, only_if_toting(BOAT), R_GRAVEL);
     make_cond_ins(W, only_if_toting(BOAT), R_WBLUE); ditto(CROSS); ditto(OVER); ditto(ACROSS);
@@ -1175,8 +1175,8 @@
     make_cond_ins(S, only_if_toting(BOAT), R_EBLUE);
     make_cond_ins(SW, only_if_toting(BOAT), R_WBLUE);
     make_ins(SW, remark(20));
-    make_cond_ins(PASSAGE, unless_prop(BOAT, 1), R_DEFILE); ditto(E); ditto(U);
-    make_ins(PASSAGE, remark(36));
+    make_cond_ins(PASSAGE, only_if_toting(BOAT), remark(36)); ditto(E); ditto(U);
+    make_ins(PASSAGE, R_DEFILE);
     make_loc(q, R_WINDY,
              "You are in a windy tunnel between two large rooms.",
              NULL, 0);
@@ -1304,8 +1304,8 @@
     make_cond_ins(N, only_if_toting(BOAT), R_WBLUE);
     make_cond_ins(NE, only_if_toting(BOAT), R_EBLUE);
     make_ins(N, remark(20));
-    make_cond_ins(E, unless_prop(BOAT, 1), R_VESTIBULE);
-    make_ins(E, remark(19));
+    make_cond_ins(E, only_if_toting(BOAT), remark(19));
+    make_ins(E, R_VESTIBULE);
     make_loc(q, R_FLOWER,
              "You are in the Flower Room.  The walls are covered with colorful," SOFT_NL
              "intricate, flower-like patterns of crystallized gypsum. A hole leads" SOFT_NL
@@ -1468,8 +1468,8 @@
     make_cond_ins(S, only_if_toting(BOAT), R_WBLUE);
     make_cond_ins(SE, only_if_toting(BOAT), R_BUBBLE);
     make_ins(S, remark(20));
-    make_cond_ins(NE, unless_prop(BOAT, 1), R_BASIN);
-    make_ins(NE, remark(19));
+    make_cond_ins(NE, only_if_toting(BOAT), remark(19));
+    make_ins(NE, R_BASIN);
     make_loc(q, R_BASIN,
              "You are in a dry granite basin, worn smooth eons ago by water" SOFT_NL
              "swirling down from a now-dry spillway.",

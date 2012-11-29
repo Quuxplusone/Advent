@@ -2289,10 +2289,6 @@ void attempt_drop(Location loc, ActionWord verb, ObjectWord obj, int prep, int i
         verb = NOTHING;  /* suppress the usual message */
     }
 
-    if (obj == BOAT) {
-        objs(BOAT).prop = 0;  /* unnavigable */
-    }
-
     move(obj, loc);
     switch (verb) {
         case NOTHING: break;
@@ -2678,7 +2674,6 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
             /* So you can't get in the boat after all. */
         } else {
             puts("You are now sitting in a small boat.");
-            objs(BOAT).prop = 1;
             carry(BOAT);
         }
     } else if (obj != BEAR && burden(0)+burden(obj) > 15) {
