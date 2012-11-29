@@ -35,16 +35,16 @@ the Wumpus, elfin sword, River Styx, Alice puzzle, Altar,
 Winery, natural bridge, Lost River Canyon, Flower Room, and
 the combination safe in the Well House.
 
-McDonald's version (dated "Version:6.6, August 1990") adds a
-Castle of the Elves; a quartz sphere in the Crystal Palace;
-and a star sapphire in the Star Chamber.  I'm not sure which
-of the differences are due to McDonald and which to the anonymous
-author of Adventure 6.0.
+This 551-point version (dated "Version:6.6, August 1990") adds
+a Castle of the Elves; a quartz sphere in the Crystal Palace;
+and a star sapphire in the Star Chamber.  I believe these puzzles
+are all due to an anonymous contributor circa 1984; McDonald
+claims to have "added a small piece of game", but I'm not sure
+to what he was referring.
 
-There is another C port of MCDO0551, written by Robert R. Hall,
-available online at
+There is another C port of MCDO0551, written by Robert R. Hall
+(and dated "Version:7.0, July 1994") available online at
 ftp://ftp.uni-duesseldorf.de/ftp/ftp/pub/unix/minix/1.7.1/src/src/commands/advent/
-
 
 A 501(?)-point Fortran version (dated "Version:5.2/2, October-79",
 posted to comp.sources.games in May 1990) is available at
