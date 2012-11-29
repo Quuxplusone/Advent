@@ -1,6 +1,7 @@
 
-This project provides translations into modern, modular C99 of two classic
-games: Crowther and Woods' "Adventure" and David Platt's "Adventure 550".
+This project provides translations into modern, modular C99 of three classic
+games: Crowther and Woods' "Adventure", David Platt's 550-point "Adventure 3",
+and David Long et al.'s 551-point "Adventure 6".
 
 ===========================================================================
 
@@ -17,16 +18,18 @@ http://www.prismnet.com/~ged/www/advelist.html
 
   In 1998, Don Knuth rewrote the entire game in CWEB, a literate
   programming language that combines ANSI C and documentation.
-  He's updated the program several times since then; most recently
-  in January 2010.
+  The "woven" version of the program appears in its entirety in
+  Knuth's book "Selected Papers on Fun and Games", and has been
+  updated several times, correlated with the publication dates of
+  new editions of "Fun and Games".
 
   For this translation, my primary source was the "woven" version of
   Knuth's program, circa 2002, as available on literateprogramming.com.
   In cases when the behavior seemed suspect, I compared it to the
   "raw" version of Knuth's current program, and/or to Woods' Fortran
-  version. In this way I found at least two bugs in Knuth2010. However,
-  I may have unknowingly perpetuated other bugs, and of course I may
-  have introduced a few myself.
+  version. In this way I found at least three bugs in Knuth2010 (and
+  have the checks to prove it). However, I may have unknowingly
+  perpetuated other bugs, and I may have introduced a few myself.
 
 Both Gillogly's and (especially) Knuth's versions suffer from the
 extreme disadvantage that their main() functions are enormous and
@@ -37,7 +40,8 @@ a code snippet than to create a C function call for it.
 But even though Knuth's "tangled" C program is indeed a tangled mass of
 code (it uses 81 global variables, and the main() function is 3270 lines
 long), its construction is mostly modular. I've followed Knuth's
-organization very closely in my translation.
+organization very closely in my translation; my version could best be
+described as a port of Knuth's code from CWEB to conventional C.
 
 ===========================================================================
 
@@ -51,7 +55,8 @@ The history of "Adventure" on the Z-machine, as far as I know, is:
   Baggett's version keeps the "motion words" such as SLAB and GRATE,
   Nelson's Inform version gets rid of them. It's easy to distinguish
   this version, because there is no two-word command that will unlock
-  the grate. (You must UNLOCK GRATE WITH KEYS.)
+  the grate (you must UNLOCK GRATE WITH KEYS), and the magic words XYZZY,
+  PLUGH, and PLOVER do not immediately work at the start of the game.
   http://ifarchive.org/if-archive/games/source/inform/Advent.inf
 
   Circa 2010, Chris Conley ported Will Crowther's original ADVENT (that is,
@@ -66,10 +71,11 @@ The history of "Adventure" on the Z-machine, as far as I know, is:
 
 ===========================================================================
 
-The history of David Platt's "Adventure 550" is much shorter:
+The history of David Platt's 550-point "Adventure 3" is much shorter:
 
-  The original "Adventure" was written in Fortran IV by Will Crowther,
-  and extended also in Fortran by Don Woods.
+  Platt's "Adventure 3" was a largely faithful reimplementation of
+  Crowther and Woods' original 350-point "Adventure", augmented with
+  many totally new locations and items.
 
   Circa 1979, Dave Platt released the first version of "Adventure 550",
   while he was working for Honeywell. He continued maintaining it for
@@ -78,21 +84,84 @@ The history of David Platt's "Adventure 550" is much shorter:
   in Platt's own language called "A-code", which was compiled into a set
   of external data files consumed by the Adventure program itself.
 
+  In 1982, Ken Wellsch ported Platt's code to RATFOR, and then in 1985
+  ported the RATFOR code to C. Wellsch's version preserved Platt's original
+  design: a small kernel with accompanying A-code game logic.
+
   Circa 1989, Mike Arnautov released "Adventure 4+", which merged Platt's
   extension and Jack Pike's "Adventure II" extension (a.k.a. ADV440)
   into a single 660-point game.
 
+  Circa 1999, Platt's extensions were added to the TADS port "polyadv"
+  by Bennett Standeven et al. This being an extension of Baggett's
+  "Colossal Cave Revisited", it was not particularly faithful to the
+  original. The game's README stated: "The approach we took was to add
+  decorations in every reasonable place."
+
   For this translation, my primary source was Platt's A-code circa
   September 1984 (according to the in-game NEWS command), plus a
   copy of Platt's Fortran 77 kernel as reconstructed by Mike Arnautov
-  by removing features from his own "Adventure 4+" kernel, as described
-  in the file "PLAT0550/README.txt". 
+  by removing features from the kernel of Arnautov's 660-point
+  "Adventure 4+". For more information, see "PLAT0550/README.txt".
 
-The history of "Adventure 550" on the Z-machine, as far as I know, is:
+The history of "Adventure 3" on the Z-machine, as far as I know, is:
 
-  In June 2012, Arthur O'Dwyer (that's me!) ported "Adventure 550" to C
+  In June 2012, Arthur O'Dwyer (that's me!) ported "Adventure 3" to C
   and got it running on the Z-machine. Play it here:
   http://quuxplusone.github.com/Advent/play-550.html
+
+===========================================================================
+
+The history of David Long et al.'s 551-point "Adventure 6" is:
+
+  Long created his 500-point "Adventure 5" circa 1978, both by augmenting
+  the original Crowther and Woods "Adventure" and by slightly modifying
+  a few puzzles (for example, relocating the trident and providing an
+  alternative solution to the troll bridge). Long's game used Crowther
+  and Woods' original command-parsing code, but drastically extended it
+  (influenced by his experience playing DUNGEON, the game that would
+  later become "Zork") to support compound sentences, adjectives, and
+  prepositions, permitting commands such as "GET BRASS LAMP AND PUT LAMP
+  AND AXE IN SACK". Long wrote "Adventure 5" in DEC Fortran, a dialect
+  of Fortran IV.
+
+  David Long planned to release version 6 of his game in "summer 1979",
+  and in fact did at some point release a 751-point "Adventure", but that
+  version seems to be lost; or at least not available on the Internet
+  today.
+
+  In "late 1984" (according to the in-game "History of Adventure" text),
+  an anonymous coder extended the VAX version of the 500-point game,
+  increasing the maximum score to 551 points and adding the "castle of
+  the elves" puzzle.
+
+  Circa 1990, Doug McDonald ported the VAX game to standard Fortran 77,
+  enabling it to run on modern Unix systems, and posted the resulting
+  source code to Usenet.
+
+  In 1994, Robert R. Hall combined McDonald's code with the framework
+  of Jerry Pohl's C port of "Adventure", dating it "Version:7.0, July 1994".
+  ftp://ftp.uni-duesseldorf.de/ftp/ftp/pub/unix/minix/1.7.1/src/src/commands/advent/
+
+  In 1999, the 551-point version was added to the TADS port "polyadv"
+  by David Picton et al. This being an extension of Baggett's "Colossal
+  Cave Revisited", it was not particularly faithful to the original's
+  quirks. I believe that Picton's primary source was McDonald's version;
+  however, he made some changes, most notably the combination to the safe.
+
+  For this translation, I took McDonald's 1990 version as the gold
+  standard (since no "original" game by David Long alone appears to
+  have survived). When I doubted the "authenticity" of a particular
+  line of code, my secondary source was an earlier 501-point version
+  (dated October 1979, with contributions from a different anonymous
+  coder) posted to Usenet in May 1990:
+  http://cd.textfiles.com/gigagames9308/NET/USENET/VOLUME9/ADVEN
+
+The history of "Adventure 6" on the Z-machine, as far as I know, is:
+
+  In November 2012, Arthur O'Dwyer (that's me!) ported "Adventure 6"
+  to C and got it running on the Z-machine. Play it here:
+  http://quuxplusone.github.com/Advent/play-551.html
 
 ===========================================================================
 
@@ -114,4 +183,4 @@ The unimplemented areas might give an internal assertion error, if
 you're lucky, but they might just generate bad code. Use with caution.
 
                                                   Arthur O'Dwyer
-                                                  June 2012
+                                                  November 2012
