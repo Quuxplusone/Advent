@@ -2829,7 +2829,6 @@ void attempt_answer(ObjectWord obj)
         case TROLL:
             puts("He wants treasure, not gab."); break;
         case BIRD:
-            /* TODO: "KILL AND ANSWER BIRD" */
             puts("It isn't a parrot.  He didn't say anything."); break;
         default:
             puts("I think you are a little confused!"); break;
@@ -3531,9 +3530,6 @@ void attempt_extinguish(Location loc)
 
 void attempt_wave(Location oldloc, Location loc, ObjectWord obj, ObjectWord iobj)
 {
-    if (obj == ROD && !holding(ROD) && holding(ROD2)) {
-        obj = ROD2;  /* TODO: combine with other places this happens */
-    }
     const bool at_fissure = (iobj == NOTHING || iobj == FISSURE);
     if (obj != NOTHING && !holding(obj)) {
         /* Long gives this message for "WAVE TO FIGURE", etc., because
@@ -4105,8 +4101,6 @@ int attempt_toss(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
         /* THROW DOWN AXE: "Thrown." */
         attempt_drop(loc, TOSS, (obj != NOTHING) ? obj : iobj, NOTHING, NOTHING);
     }
-    /* TODO: factor this out from here and DROP */
-    if (obj==ROD && !holding(ROD) && holding(ROD2)) obj = ROD2;
     if (!holding(obj)) {
         indent_appropriately();
         printf("You aren't carrying %s!\n", is_plural(obj) ? "them" : "it");
@@ -4355,6 +4349,40 @@ void attempt_feed(Location loc, ObjectWord obj, ObjectWord iobj)
     } else {
         noway();
     }
+}
+
+/* This logic is not found in Long's version, but it's necessary; we must
+ * re-check each noun's availability right before each sub-action in a
+ * multi-verb command such as "EAT AND GET FOOD" or "KILL AND FEED BIRD",
+ * or else the player can cause much mischief (in Long's game, a crash).
+ * This also slightly modifies the messages you get for harmless
+ * like "PUT BOTTLE IN SACK. CLOSE SACK AND BOTTLE." In Long's version,
+ * this closes both objects. In my version, this closes the sack and
+ * after that you can't get at the bottle anymore. */
+bool its_not_here(ObjectWord t, Location loc)
+{
+    if (t == NOTHING) return false;
+    if (t == DWARF && dwarf_at(loc)) return false;
+    if (t == liquid_at_location(loc) ||
+               (at_hand(BOTTLE, loc) && t == liquid_contents(BOTTLE)) ||
+               (at_hand(CASK, loc) && t == liquid_contents(CASK))) {
+        return false;
+    } else if (blind_at(loc) && !toting(t)) {
+        puts("I can't see what you're referring to.");
+        return true;
+    } else if (!is_at_loc(t, loc) && !at_hand(t, loc)) {
+        if (toting(t)) {
+            /* It's here, but not at_hand; therefore it must be inside
+             * a closed container such as the sack. */
+            indent_appropriately();
+            printf("You can't get at %s.\n", is_plural(t) ? "them" : "it");
+        } else {
+            indent_appropriately();
+            printf("%s not here.\n", is_plural(t) ? "They're" : "It's");
+        }
+        return true;
+    }
+    return false;
 }
 
 Instruction *determine_motion_instruction(Location loc, MotionWord mot)
@@ -4958,7 +4986,13 @@ void simulate_an_adventure(void)
 
             assert(w_iobjs[1] == NOTHING);  /* TODO is this possible? verify */
             if (w_objs[1] != NOTHING) {
-                puts(objs(w_objs[objx]).name);
+                if (w_objs[objx] == BIRD && !enclosed(BIRD)) {
+                    /* As opposed to "Little bird in cage".
+                     * Long doesn't handle this case, but I want to. */
+                    puts("Little bird");
+                } else {
+                    puts(objs(w_objs[objx]).name);
+                }
                 set_indentation(4);
             }
 
@@ -5209,6 +5243,15 @@ void simulate_an_adventure(void)
 
         transitive:
             /* Analyze a transitive verb, with obj or iobj. */
+            if (verb != TAKE) {
+                /* Long duplicates this logic only for DROP, TOSS, and WAVE. */
+                if (obj==ROD && !holding(ROD) && holding(ROD2)) obj = ROD2;
+            }
+            if (verb != FIND) {
+                /* Long checks this only in the parser, which is too early. */
+                if (its_not_here(obj, loc)) continue;
+                if (its_not_here(iobj, loc)) continue;
+            }
             switch (verb) {
                 case TAKE:
                     /* TAKE INVENTORY is redirected in the parser. */

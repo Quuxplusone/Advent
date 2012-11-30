@@ -753,15 +753,16 @@ static int getobj(ObjectWord t, Location loc)
 {
     assert(word_class(t) == WordClass_Object);
     if (holding(t)) return t;
+    /* Notice that Long doesn't let you interact with enclosed objects
+     * if you're in the dark. */
     if (blind_at(loc)) return I_see_no(txt[wdx-1]);
     if (is_at_loc(t, loc) || at_hand(t, loc)) return t;
     if (here(t, loc)) {
         /* It's here, but not at_hand; therefore it must be inside
-         * a closed transparent container.
-         * This is Long's logic. It's not very good, because
-         * "GET LAMP AND WATER" will simply print "You can't get at it"
-         * (if the bottle is closed) and ignore the rest of the line.
-         * In particular, it won't try to get the lamp.
+         * a closed container. This is Long's logic. It's not very good,
+         * because "PUT AXE IN SACK / CLOSE SACK / GET LAMP AND AXE"
+         * will simply print "You can't get at it" (the axe) without trying
+         * to get the lamp at all.
          * TODO: maybe fix this. */
         if (is_plural(t)) {
             puts("You can't get at them.");
