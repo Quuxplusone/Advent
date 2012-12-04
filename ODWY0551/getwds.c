@@ -271,25 +271,28 @@ lin(20)
         if (words[wdx] == NOTHING || words[wdx] == AND) {
             goto lin99;
         }
-        if (word == SAY) {
-            printf("Okay, \"%s\".\n", txt[wdx]);
-        } else {
-            printf("Okay, \"%s\"!!!!!\n", txt[wdx]);
-        }
         word = words[wdx++];
         switch (word) {
             case XYZZY:
             case PLUGH:
             case PLOVER:
             case PHUCE:
+                /* In Long's version, SAINT_MICHEL was not handled here.
+                 * I believe that was the fault of the anonymous author
+                 * who added the puzzle; notice that Long added PHUCE
+                 * correctly here. I've taken the liberty of fixing the
+                 * bug, since it's rather important to that puzzle. */
+            case SAINT_MICHEL:
             case FEEFIE:
-                /* Note that SAINTMICHEL is not handled here.
-                 * That's because that puzzle was added later in the
-                 * game's development. Long added PHUCE in the right
-                 * place here; Anon didn't do as good a job. */
                 goto lin99;
+            default:
+                if (words[wdx-2] == SAY) {
+                    printf("Okay, \"%s\".\n", txt[wdx-1]);
+                } else {
+                    printf("Okay, \"%s\"!!!!!\n", txt[wdx-1]);
+                }
+                goto lin860;
         }
-        goto lin860;
     }
 
     if (word == ENTER) {
@@ -451,6 +454,8 @@ lin(100)
          * I've taken the liberty of disentangling this logic
          * and restoring Woods' behavior for those three verbs. */
         if (word_class(lastverb) == WordClass_Motion) {
+            /* Replace the old verb. */
+        } else if (lastverb == GO) {
             /* Replace the old verb. */
         } else if (lastverb == TAKE && can_TAKE_direction(word)) {
             /* Replace the old verb. */
@@ -713,6 +718,7 @@ lin(841)
     goto lin20;
 
 lin(860)
+    /* Finished a clause. Scan to "AND" or end-of-line. */
     clrlin();
     pflag = false;
     while (true) {

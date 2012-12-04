@@ -171,18 +171,17 @@
     make_ins(HALL, R_EMIST); ditto(E);
     make_cond_ins(JUMP, unless_prop(FISSURE, 0), remark(2));
     make_cond_ins(FORWARD, unless_prop(FISSURE, 1), R_LOSE);
-    make_cond_ins(OVER, unless_prop(FISSURE, 1), remark(3)); ditto(ACROSS); ditto(W); ditto(CROSS);
+    make_cond_ins(OVER, unless_prop(FISSURE, 1), remark(3)); ditto(ACROSS); ditto(W); ditto(CROSS); ditto(BRIDGE);
     make_ins(OVER, R_WFISS);
     make_loc(q, R_WFISS,
              "You are on the west side of the fissure in the Hall of Mists.",
              NULL, 0);
     make_cond_ins(JUMP, unless_prop(FISSURE, 0), remark(2));
     make_cond_ins(FORWARD, unless_prop(FISSURE, 1), R_LOSE);
-    make_cond_ins(OVER, unless_prop(FISSURE, 1), remark(3)); ditto(ACROSS); ditto(E); ditto(CROSS);
+    make_cond_ins(OVER, unless_prop(FISSURE, 1), remark(3)); ditto(ACROSS); ditto(E); ditto(CROSS); ditto(BRIDGE);
     make_ins(OVER, R_EFISS);
     make_ins(W, R_WMIST);
     make_ins(N, R_THRU);
-
     make_loc(q, R_WMIST,
              "You are at the west end of the Hall of Mists. A low wide crawl" SOFT_NL
              "continues west and another goes north. To the south is a little" SOFT_NL

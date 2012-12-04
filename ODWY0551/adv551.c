@@ -535,7 +535,7 @@ typedef struct {
     Location dest;
 } Instruction;
 
-Instruction travels[1195];
+Instruction travels[1197];
 Instruction *start[MAX_LOC+2];
 struct Place places[MAX_LOC+1];
 
@@ -555,7 +555,7 @@ void make_loc(Instruction *q, Location x, bool has_long_desc, bool has_short_des
 
 void make_inst(Instruction *q, MotionWord m, int c, Location d)
 {
-    assert(&travels[0] <= q && q < &travels[1195]);
+    assert(&travels[0] <= q && q < &travels[1197]);
     assert(m==0 || (MIN_MOTION <= m && m <= MAX_MOTION));
     q->mot = m;
     q->cond = c;
