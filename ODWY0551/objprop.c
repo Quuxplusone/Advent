@@ -67,7 +67,8 @@ bool is_living(ObjectWord t)
     switch (t) {
         case SNAKE: case CLAM: case OYSTER: case DWARF: case PIRATE:
         case DRAGON: case TROLL: case BEAR: case BEES:
-        /* Long doesn't include DOG, GNOME, or WUMPUS in this list */
+        /* Long doesn't include DOG, GNOME, BIRD, BATS, or WUMPUS in this list.
+         * DOG and WUMPUS have associated behaviors, so I've added them. */
         case DOG: case WUMPUS:
             return true;
         default:

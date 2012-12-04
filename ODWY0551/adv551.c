@@ -4254,31 +4254,26 @@ void attempt_inventory(void)
 void attempt_feed(Location loc, ObjectWord obj, ObjectWord iobj)
 {
     /* FEED BEAR HONEY is transformed by the parser into FEED HONEY TO BEAR. */
-    if (iobj == NOTHING || !is_living(iobj)) {
-        if (obj == BIRD) {
-            /* TODO: erroneously printed for FEED BIRD TO CHASM
-             * (and FEED BIRD TO DOG, for that matter) */
-            puts("It's not hungry (it's merely pinin' for the fjords).  Besides, you" SOFT_NL
-                 "have no bird seed.");
-        } else if (is_living(obj)) {
-            /* FEED BEAR. See if there is anything edible around here. */
-            ObjectWord food = find_an_edible_object(loc);
-            if (food == NOTHING) {
-                indent_appropriately();
-                printf("What do you want to feed the %s?\n", otxt[objx]);
-                /* Here Long sets OBJS(1)=0 OBJX=0 to end this clause,
-                 * in the case of FEED BIRD AND BEAR. Line 22112 in Long.
-                 * TODO: emulate this. */
-            } else {
-                attempt_feed(loc, food, obj);
-            }
+    if (obj == BIRD && iobj == NOTHING) {
+        /* Long erroneously prints this response for non-living iobjs;
+         * for example "FEED BIRD TO BATS". */
+        puts("It's not hungry (it's merely pinin' for the fjords).  Besides, you" SOFT_NL
+             "have no bird seed.");
+    } else if (is_living(obj) && iobj == NOTHING) {
+        /* FEED BEAR. See if there is anything edible around here.
+         * Long erroneously prints this response for non-living iobjs;
+         * for example, "FEED DRAGON TO BIRD". */
+        ObjectWord food = find_an_edible_object(loc);
+        if (food == NOTHING) {
+            indent_appropriately();
+            printf("What do you want to feed the %s?\n", otxt[objx]);
+            /* Here Long sets OBJS(1)=0 OBJX=0 to end this clause,
+             * in the case of FEED BIRD AND BEAR. Line 22112 in Long.
+             * TODO: emulate this. */
         } else {
-            noway();
+            attempt_feed(loc, food, obj);
         }
-        return;
-    }
-
-    if (iobj == DRAGON && objs(DRAGON).prop) {
+    } else if (iobj == DRAGON && objs(DRAGON).prop) {
         noway();  /* feeding a dead dragon */
     } else if (iobj == DRAGON) {
         puts("There's nothing here it wants to eat (except perhaps you).");
@@ -4353,7 +4348,7 @@ void attempt_feed(Location loc, ObjectWord obj, ObjectWord iobj)
 
 /* This logic is not found in Long's version, but it's necessary; we must
  * re-check each noun's availability right before each sub-action in a
- * multi-verb command such as "EAT AND GET FOOD" or "KILL AND FEED BIRD",
+ * multi-verb command such as "EAT AND GET FOOD" or "FEED SNAKE AND BIRD",
  * or else the player can cause much mischief (in Long's game, a crash).
  * This also slightly modifies the messages you get for harmless
  * like "PUT BOTTLE IN SACK. CLOSE SACK AND BOTTLE." In Long's version,
