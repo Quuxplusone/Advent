@@ -69,9 +69,10 @@
     make_ins(HOUSE, R_ROAD);
     make_ins(UPSTREAM, R_VALLEY); ditto(N);
     make_ins(FOREST, R_FOREST); ditto(E); ditto(W);
-    /* Long actually breaks the ROCK direction here by editing it to ROCKY, but
-     * since this is clearly unintentional, I'm keeping Woods' spelling. */
-    make_ins(DOWNSTREAM, R_OUTSIDE); ditto(ROCK); ditto(BED); ditto(S);
+    /* Crowther has ROCK as a synonym for BED here; Long actually breaks it
+     * by editing the data-file spelling to ROCKY, which is not a recognized
+     * spelling of any verb at runtime. */
+    make_ins(DOWNSTREAM, R_OUTSIDE); ditto(BED); ditto(S);
     make_ins(SLIT, remark(0)); ditto(STREAM); ditto(D);
     make_loc(q, R_OUTSIDE,
              "You are in a 20-foot depression floored with bare dirt.  Set into the" SOFT_NL
@@ -153,7 +154,8 @@
     make_ins(FORWARD, R_EFISS); ditto(HALL); ditto(W);
     make_ins(STAIRS, R_HMK); ditto(D); ditto(N);
     make_cond_ins(U, only_if_toting(GOLD), remark(15)); ditto(PIT);
-        ditto(STEPS); ditto(DOME); ditto(PASSAGE); ditto(E);
+        ditto(STEPS); ditto(DOME); ditto(E); ditto(PASSAGE); ditto(CLIMB);
+        ditto(STAIRS);
     make_ins(U, R_SPIT);
     /* Crowther and Woods make "Y2" teleport you past the snake into the
      * jumble of rocks R_JUMBLE. Long straightens this out and lets you
@@ -527,6 +529,7 @@
              "a small pool of oil in one corner of the pit.",
              "You're in east pit.", 0);
     make_ins(U, R_E2PIT); ditto(OUT);
+    make_ins(GIANT, R_GIANT);  /* a secret shortcut added by Long */
     make_loc(q, R_WPIT,
              "You are at the bottom of the western pit in the Twopit Room.  There is" SOFT_NL
              "a large hole in the wall about 25 feet above you.",
