@@ -680,11 +680,13 @@ ObjectWord liquid_contents(ObjectWord t)
     assert(t == BOTTLE || t == CASK);
     switch (objs(t).prop) {
         case -2: /* post-closing */ assert(t == BOTTLE); break;
+        case -1: /* pre-spotting */ assert(t == CASK); break;
         case 0: return WATER;
         case 1: /* empty */ break;
         case 2: return OIL;
         case 3: /* broken */ assert(t == BOTTLE); break;
         case 4: return WINE;
+        default: assert(false);
     }
     return NOTHING;
 }
@@ -873,8 +875,8 @@ void build_object_table(void)
     describe_obj(GORGE, 0, NULL);  /* it's just scenery */
     new_obj(MACHINE, "Vending machine", MACHINE, R_PONY);
     describe_obj(MACHINE, 0,
-        "There is a massive vending machine here. The instructions on it read:" SOFT_NL
-        "\"Drop coins here to receive fresh batteries.\"");
+        "There is a massive vending machine here. The instructions on it" SOFT_NL
+        "read:  \"Insert coins here to receive fresh batteries.\"");
     new_obj(BATTERIES, "Batteries", 0, R_LIMBO);
     describe_obj(BATTERIES, 0, "There are fresh batteries here.");
     describe_obj(BATTERIES, 1, "Some worn-out batteries have been discarded nearby.");
@@ -2444,7 +2446,10 @@ bool maybe_reveal_safe(Location loc)
 
 void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj)
 {
-    if (obj == SWORD && iobj == ANVIL && objs(SWORD).prop == 0) {
+    if (iobj == NOTHING) {
+        indent_appropriately();
+        printf("Where do you want to insert %s?\n", is_plural(obj) ? "them" : "it");
+    } else if (obj == SWORD && iobj == ANVIL && objs(SWORD).prop == 0) {
         puts("Only wizards can do that!");
     } else if (obj == iobj) {
         puts("You can't put a thing into itself!");
@@ -5155,7 +5160,7 @@ void simulate_an_adventure(void)
                      */
                     puts("Please read the supplied documentation files to find out where to" SOFT_NL
                          "send complaints, suggestions, and bug reports.");
-                    break;
+                    continue;
                 case DIAGNOSE:
                     attempt_diagnose();
                     continue;

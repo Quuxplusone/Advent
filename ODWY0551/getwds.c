@@ -471,7 +471,11 @@ lin(100)
 
 lin(200)
     /* Analyze an object. */
-    if (pflag) goto lin503;
+    if (pflag) {
+        /* "GET IN ALL" isn't allowed; "DROP ALL IN SACK" is. */
+        if (word == ALL) goto lin800;
+        else goto lin503;
+    }
     if (vrbx == 0) {
         /* We haven't seen a verb yet. But maybe this noun could be
          * an action word too? For example, FEEFIE. */
@@ -616,6 +620,7 @@ lin(510)
     if (is_valid_verb_prep_iobj(verb, prep, ALL)) {
         /* prep is valid with this verb. Now check object of prep. */
         if (word == NOTHING || word == AND) goto lin530;
+        if (word == ALL) goto lin570;
         if (is_valid_verb_prep_iobj(verb, prep, word)) {
             goto lin90;
         }
