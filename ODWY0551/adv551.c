@@ -673,7 +673,6 @@ struct ObjectData objs_[MAX_OBJ+1 - MIN_OBJ];
 Location last_knife_loc = R_LIMBO;
 int tally = 30;  /* treasures awaiting you */
 int lost_treasures;  /* treasures that you won't find */
-bool troll_has_sapphire = false;
 bool river_has_sapphire = false;
 
 ObjectWord liquid_contents(ObjectWord t)
@@ -3126,7 +3125,9 @@ void attempt_read(Location loc, ObjectWord obj)
 
 bool is_lighted_in_absentia(Location loc)
 {
-    if (loc < 0) {
+    if (loc == R_LIMBO || loc == R_INHAND) {
+        return false;
+    } else if (loc < 0) {
         ObjectWord container = -loc;
         assert(MIN_OBJ <= container && container <= MAX_OBJ);
         assert(is_vessel(container));
@@ -3196,16 +3197,7 @@ int attempt_look(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
                      "else entirely.\n");
                 Location sloc = objs(SAPPHIRE).place;
                 if (is_lighted_in_absentia(sloc)) {
-                    if (sloc > R_LIMBO) {
-                        assert(sloc <= MAX_LOC);
-                        print_long_room_description(sloc);
-                        static bool have_seen_elf = false;
-                        if (sloc == R_BAY && !have_seen_elf) {
-                            puts("A large, stately elf walks up the rise, says the word" SOFT_NL
-                                 "\"Saint-Michel\", and is instantly transported to the castle.");
-                            have_seen_elf = true;
-                        }
-                    } else if (sloc == -SACK) {
+                    if (sloc == -SACK) {
                         /* Here Long drops the ball (heh). If you put the
                          * ball and the lamp both in the sack, Long's code
                          * will print LTEXT(-SACK), which is garbage. I'm
@@ -3221,38 +3213,25 @@ int attempt_look(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
                     } else if (sloc == -CHEST) {
                         /* Ditto for the chest. */
                         puts("You are in a small wooden room with no exits.");
-                    } else if (sloc == R_LIMBO) {
-                        /* You can get here in at least two ways:
-                         * if you give the sapphire to the troll, or
-                         * if you fall into Lost River carrying it.
-                         * I've decided to add a couple of Easter eggs
-                         * here, just for fun. */
-                        if (troll_has_sapphire) {
-                            puts("You are in a wide niche burrowed into the sheer rock face of a" SOFT_NL
-                                 "canyon and open to the sky.  From here you can see a beautiful" SOFT_NL
-                                 "panoramic view of Lost River Falls.  At the back of the niche," SOFT_NL
-                                 "a narrow chimney leads upward out of sight.  Marks in the dust" SOFT_NL
-                                 "indicate that someone has been here recently.");
-                            if (there(TROLL, R_LIMBO)) {
-                                puts("A burly troll putters about in one corner of the room.");
-                            } else if (objs(TROLL).prop == 2) {
-                                puts("The troll is hunched shivering in the corner of the room," SOFT_NL
-                                     "staring out over the falls with tear-stained empty eyes.");
-                            }
-                        } else if (river_has_sapphire) {
-                            puts("You sense that you are in a dark place, murky greenish shadows" SOFT_NL
-                                 "swirling around you in the gloom. The only thing in sight appears" SOFT_NL
-                                 "to be a companion to the crystal ball which holds your gaze.  It" SOFT_NL
-                                 "seems to be searching the murk for something to show you, but all" SOFT_NL
-                                 "it can see is itself: a dim bluish star half-buried in the silt.");
-                        } else {
-                            goto dark_place;
-                        }
                     } else {
-                        assert(false);
+                        assert(R_LIMBO < sloc && sloc <= MAX_LOC);
+                        print_long_room_description(sloc);
+                        static bool have_seen_elf = false;
+                        if (sloc == R_BAY && !have_seen_elf) {
+                            puts("A large, stately elf walks up the rise, says the word" SOFT_NL
+                                 "\"Saint-Michel\", and is instantly transported to the castle.");
+                            have_seen_elf = true;
+                        }
                     }
+                } else if (river_has_sapphire) {
+                    /* Long doesn't have this Easter egg, but I figured what the heck. */
+                    assert(sloc == R_LIMBO);
+                    puts("You sense that you are in a dark place, murky greenish shadows" SOFT_NL
+                         "swirling around you in the gloom. The only thing in sight appears" SOFT_NL
+                         "to be a companion to the crystal ball which holds your gaze.  It" SOFT_NL
+                         "seems to be searching the murk for something to show you, but all" SOFT_NL
+                         "it can see is itself: a dim bluish star half-buried in the silt.");
                 } else {
-                  dark_place:
                     puts("You sense that you are in a dark place. The only thing in sight" SOFT_NL
                          "appears to be a companion to the crystal ball which holds your" SOFT_NL
                          "gaze. It seems to be searching the gloom for something to" SOFT_NL
