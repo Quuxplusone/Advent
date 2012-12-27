@@ -447,13 +447,16 @@ lin(99)
 lin(100)
     if (vrbx > 0) {
         int lastverb = w_verbs[vrbx-1];
-        /* Long messes up Woods' original three motion-helpers
-         * (CRAWL, JUMP, and CLIMB): "CRAWL NORTH" discards the
-         * second verb and acts as if you typed just "CRAWL":
-         * "Which way?".
-         * I've taken the liberty of disentangling this logic
-         * and restoring Woods' behavior for those three verbs. */
-        if (word_class(lastverb) == WordClass_Motion) {
+        /* Long changes the parsing of Woods' original three motion-helpers
+         * (CRAWL, JUMP, and CLIMB): "CRAWL NORTH" is now a synonym for
+         * "CRAWL" ("Which way?"), rather than a synonym for "NORTH".
+         * This is generally undesirable, but it makes "JUMP STREAM" a
+         * valid solution to the Styx puzzle, which is rather important.
+         * Long's line 140. */
+        if (lastverb == CRAWL || lastverb == JUMP || lastverb == CLIMB) {
+            /* Keep the old verb; discard this one. */
+            goto lin90;
+        } else if (word_class(lastverb) == WordClass_Motion) {
             /* Replace the old verb. */
         } else if (lastverb == GO) {
             /* Replace the old verb. */
