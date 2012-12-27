@@ -188,6 +188,7 @@ bool is_small(ObjectWord t)
         case DROPLET: case BIRD: case KEYS: case MUSHROOMS: case CAKES:
         case SACK: case BOOK: case POSTER:/*!*/ case BROOM: case CANISTER:
         case RADIUM: case BALL:  /* but not REPO_BOOK */
+        /* Long oddly omits FLOWERS from his list of small objects. */
             return true;
         default:
             return false;
