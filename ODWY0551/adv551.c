@@ -4088,6 +4088,7 @@ int attempt_toss(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
     if (!holding(obj)) {
         indent_appropriately();
         printf("You aren't carrying %s!\n", is_plural(obj) ? "them" : "it");
+        return 0;
     }
     if (obj == BOAT || obj == BEAR) {
         /* THROW BEAR? It's much too heavy!
