@@ -1071,7 +1071,7 @@
              NULL, 0);
     make_ins(0, R_LIMBO);
     make_loc(q, R_THUNDER,
-             "You are at Thunder Hole, a funnel shaped cavern opening onto the sea." SOFT_NL
+             "You are at Thunder Hole, a funnel-shaped cavern opening onto the sea." SOFT_NL
              "The noise of the surf pounding against the outer rocks of the cave is" SOFT_NL
              "amplified by the peculiar shape of the cave, causing a thunder-like" SOFT_NL
              "booming sound to reverberate throughout the cave.  Outside, a narrow" SOFT_NL
