@@ -1,0 +1,116 @@
+adv440:   The main directory, containing everything you need to build
+
+  README.txt   Information about AdventureII (now known as Adv440)
+
+  advII.f:     program source derived from code2t (see below), incorporating
+               some Nov 2001 bug fixes and corrections by Jack Pike. This is
+               an F77 code, so you need either an F77 compiler, or f2c
+               and a C compiler, in order to build it. The f2c-derived
+               C source is not included, because it needs f2c.h to compile
+               and libf2c to link. Machines which have these, will also
+               have f2c itself. Other machines would not be able to
+               build the C source anyway.
+
+  advII.dat:   "Full data base (coded to prevent reading of comments etc)"
+               The data file which is accessed by advII.f at runtime.
+
+  contents.txt This file
+
+  bits:        A sub-directory with bits and pieces, none of which are
+               required to build or play the game. It contains:
+
+    code2c:      "Program with text packing(slow to load but needs less store)"
+                 Jack Pike's original Fortran 66 program with text compression.
+                 Jack's work on this led him to publish a paper on text 
+                 compression:
+                   "Text compression using a 4 bit coding scheme" by J. Pike,
+                   The Computer Journal, vol 24, No. 4, 1981 (rec. Sep 1980)
+                   
+    code2t:      "Program without text packing"
+                 Jack Pike original program without text compression. His
+                 adventure effort indirectly inspired another published paper:
+                    "A free-format data input scheme written in standard
+                    FORTRAN (ANSI 66)" by G.F.Butler and J. Pike
+                    The Computer Journal,, vol 24, No. 3, 1981 (rec. Oct 1979)
+
+    advent.txt:  "Full DEC data base (uncoded data base,lower case)"
+                 This is the mixed case, "human-friendly" database a part
+                 of which got recovered in December 1999 from a Prime archive.
+                 It needs processing into the format understood by the program.
+                 Since the conversion program didn't survive (nor did a
+                 memory of it, baffling Jack and myself for a while), a
+                 Perl script (cv.pl) is included, which does the same task.
+                 However, it should be noted, that since the I/O element
+                 of the program had to be re-written anyway, the format
+                 expected by advII.f is simpler than that expected by
+                 either code2c or code2t. See below for details.
+
+                 You may notice, BTW, that section 12 of the database
+                 is not actually used. Jack Pike at some point removed
+                 all code and text which had anything to do with 
+                 restrictions on playing (in multi-user environments). 
+                 However, I deliberately reinstate the section 12 text as
+                 preserved in the earlier located, incomplete copy of
+                 the database, simply to give some idea as to what was
+                 involved.
+
+    codbug.txt:  "Log of bugs found and improvements"
+                 A list of patches as distributed by Jack Pike in 1981.
+                 All the patches in question have been applied to advII.f
+                 The main interest of this document lies in the fact that
+                 it demonstrates two things: (a) that despite the master
+                 database being written in mixed case, the program was
+                 being distributed in uppercase only (which fits with the
+                 messages hard-coded into code2c and code2t being in
+                 upper case, and (b) that the text in the post processed
+                 database was lightly scrambled to make reading more
+                 difficult.      
+ 
+    code2.txt:   "Comments for program(some out of date)"
+                 The restored advII.f source restores program comments,
+                 but the original code (both code2c and code2t) had
+                 comments stripped off, and replaced with 'CC number'
+                 comment lines. The comments, together with their 
+                 'CC number' labels were kept separately in this file.
+                 I believe this file was not a part of normal 
+                 distribution of Adventure II, and Jack Pike sent it
+                 to me separately, once we got down to fixing some
+                 bugs I reported back to him.
+
+    history.txt: The contents of a sheet of paper, hand-written by
+                 Jack Pike, which outlined a (fictional) brief history
+                 of the Colossal Cave, and also had some thoughts what
+                 additional commands the game should understand.
+ 
+    cv.pl:       My Perl script for dbs conversion from the human-friendly
+                 format to the format expected by the program. The original
+                 conversion program is lost (and its existence was
+                 entirely forgotten both by Jack and by me), and our
+                 understanding of its functionality is derived from
+                 the mismatch between the format of the preserved database
+                 and the data requirements of the preserved code, 
+                 coupled with a strong indication in our past correspondence
+                 that the database was maintained in a readable format,
+                 and had to be converted to another format for distribution
+                 (forcing upper case as a part of the conversion).
+
+                 Note that in adapting adv440 I/O and character handling
+                 I took the liberty of simplifying the structure of text
+                 sections of the dbs file expected by the program. All
+                 that the conversion program has to do is to force text
+                 into upper case and scramble it by shuffling about
+                 4-character blocks. 
+                
+                 In the following, all numbers are assumed to be blank
+                 padded, right justified:
+ 
+                 The structure of a line of text expected by advII.f is: 
+                 a 4-digit text ID number, followed by the scrambled text.
+ 
+                 The original format, as expect by code2t or code2c was:
+                 a 4-digit text ID number, a 2 digit number of
+                 4-character blocks in the text line (i.e. six character
+                 altogether), followed on the next line by the scrambled
+                 text.
+
+                                 - o O o -

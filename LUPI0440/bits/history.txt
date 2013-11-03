@@ -1,0 +1,98 @@
+                         Colossal Cave History
+
+In my archive of Adventure correspondence is a letter from Jack Pike.
+It is not dated but was sent sometime around 1981. Among other things it
+says:
+
+   I have dug around in the heap of stuff I have got on Adventure 2 and
+   extracted the notes I had on cave history. On rereading them I see
+   they omit much. I also found an old query list, most of which had
+   been fixed but I have jotted a few of the uncorrected ones on the
+   back of the History. The are mainly things I tried when I first 
+   played the game which did me no good (and I thought they should.)
+
+The letter was accompanied by a single hand-written sheet. I quote it in
+full -- the front page for obvious reasons, the back page to indicate
+the source of inspiration behind some of my subsequent work on Adv660.
+
+The front page contains:
+
+   Copies of the valuable limited edition are available by sending a SAE
+   and an appropriately sized cheque to Jack Pike.
+   
+   
+   A Brief History of Colossal Cave                         by Jack Pike
+   
+   In the beginning all was peace in the cave. The dwalves were dwalves and
+   washed the dishes, the giants were GIANT and did the *heavy* work, the
+   fairies danced around and gave orders (which were even sometimes obeyed)
+   and the elves did little or nothing except play practical jokes. Over
+   the whole menagerie ruled the mountain King with his assorted relitives
+   and hangers on. One day Old Nick himself happened to pass that way, and
+   seeing the accord in the cave was ill at ease. He resolved to help the
+   cave's occupants to lead a more eventful life, so with a flick of his
+   tale he released a little molten rock into the lower reaches of the
+   cave; just enough to destroy most of the giants' habitat (to say nothing
+   about most of the giants) and fill the rest of the cave with fog from
+   boiling lakes and steaming rivers.
+   
+   The dwalves, of course, could not miss such a hell-sent opportunity to
+   cause mischief, so in the confusion they stole the ring of Orion and
+   turned the fairies into mist and the Mountain King etc into diabolical
+   creatures. The elves needed little persuading to leave the steamy
+   environment of the cave, and the dwalves then felt they were free of all
+   their oppressors.
+   
+   For many years the situation remained the same, with the dwalves
+   squabbling and fighting among themselves and the elves playing pranks on
+   the wizards and humans and anyone else they could find on the surface.
+   Finally the wizards could stand it no longer, the pranks of the elves
+   were straining their relationship with the humans (who half the time did
+   not even seem to know the difference), and something had to be done. All
+   the wizards were invited to a majic circle, and they decided that now some
+   of the steam had cleared, the elves must go back into the cave, dwalves
+   or no dwalves. As the dwalves could not match the combined power of the
+   wizards, and Old Nick did not seem inclined to intervene on their behalf
+   so they were forced to negotiate. In a diplomatic masterpiece the
+   wizards got the dwalves to agree to let "adventurers" into the cave
+   under the administration of the elves, so placating the humans, and
+   solving the problem of the elves in one agreement. That is the situation
+   to this day, the elves administration of the cave is a bit elvin and the
+   dwalves keep to the agreement in their usual manner (not at all), but
+   the wizards have rarely to intervene, so unless Old Nick shows up
+   again...
+
+
+The back page deals with suggested additional commands:
+
+   Does no action on these matter?
+   
+   Push door
+   (Shove)
+   
+   Douse lamp   |   it took me a long time
+   Lamp out     |   to turn the lamp off.
+   Putout lamp  |
+   
+   Open cage
+   
+   Carry all
+   
+   Listen bird
+   
+   Open chest
+   
+   Try keys
+   
+   Dip rod (in oil)
+   Oil rod
+   
+   Drink oil
+   
+   What does Y2 stand for?
+
+
+-----------------------------------------------------------------------
+
+                                                  Mike Arnautov
+                                                  29 Sep 2001

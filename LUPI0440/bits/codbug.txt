@@ -1,0 +1,230 @@
+These and other bug fixes known in th 80s have been applied to the
+F77 version of Adventure II. This file is provided merely as an example
+of the way bug fixes were distributed by Jack Pike. 
+
+                                                 MLA, 28 September 2001
+
+======================================================================
+
+ADVENTURE II BUGS & UPDATE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+BUG LOCATION(@LABLE+LINE COUNT);BUG EFFECT & FIX.
+
+UPDATE MODS TO CODE2C/T 1981
+-----------------------------------------------------------------
+JULY 81
+
+@9171+6
+REMOVE OBJECT NUMBER REF
+OLD
+      IF(HERE(48))GOTO 9179
+NEW
+      IF(HERE(GIANT))GOTO 9179
+
+@6000+1
+1ST DWALF NOT TO APPEAR WHEN DARK.
+OLD
+      IF(LOC.LT.15.OR.PCT(95))GOTO 2000
+
+NEW
+      IF(LOC.LT.15.OR.PCT(95).OR.DARK(0))GOTO 2000
+
+REMOVE OWL LOOP AT CHEST LOC
+@8322+1
+OLD
+      SPK=204
+NEW
+      SPK=203
+@8322+4
+OLD
+     2)GOTO 7402
+      IF(HERE(OWL))SPK=207
+NEW
+     2.OR.LOC.EQ.114)GOTO 7402
+      SPK=204
+      IF(HERE(OWL))SPK=207
+
+
+DATA BASE IMPROVEMENTS(OPTIONAL)
+
+
+Improved OWL comment
+Section 7, comment 209(16)
+OLD
+G   TTINE SIST BT MUUT IL, BE OWR THG FOOKINT LOABOUBLE STUMYOU
+NEW
+G   TTINE SIST BT MUUT IL, BE OWR THG FOOPINT GRABOUBLE STUMYOU
+
+
+
+UPDATE MODS TO CODE2C 1980.
+
+888888888888888888888888888888888888888888888888888888888888888888
+JAN/MARCH 80
+
+PROGRAM MODS................................
+
+SUBROUTINE DTOT @30+2
+Dwalves toting CAGE or BIRD can cause LINK problems.
+Prevent dwalves carrying cage & bird.
+OLD:      IF(KH.EQ.14.OR.KH.EQ.15.OR..........
+NEW:      IF((KH.GE.4.AND.KH.LE.15).OR........
+
+
+@8302+6 & @8306+4
+TALLY2 not included in SAVE. May cause the cave never to close
+after a restart.
+Both changes the same  i.e.
+OLD:     3LOC,OLDLOC,OLDLC2,DFLAG,ORCT,ORCT1,LIMIT
+NEW:     3LOC,OLDLOC,OLDLC2,DFLAG,ORCT,ORCT1,LIMIT,TALLY2
+
+@6030+1
+Reset NEWLOC to ensure DWALF comments with ON,OFF of LAMP etc.
+OLD:6030      CONTINUE
+NEW:6030      CONTINUE
+          NEWLOC=LOC
+
+@999+1
+ARRAY KEY is declared as 200.
+OLD:      DO 1001 I=1,300
+NEW:      DO 1001 I=1,200
+
+
+
+@8320+2 & INTEGER FUNCTION DISTNT @2+2
+Goes into loop if use H**T in loc's 176 or 177  (change 178 to 176).
+OLD:      IF(LOC.GE.178.AND.LOC.LE.187.OR.LOC.EQ.145.OR.LOC.GE.154
+         1.AND.LOC.LE.166)GOTO 2011
+NEW:      IF((LOC.GE.176.AND.LOC.LE.187).OR.LOC.EQ.145.OR.(LOC.GE.154
+         1.AND.LOC.LE.166))GOTO 2011
+
+OLD:     1    .OR.(N.GE.178.AND.N.LE.187)
+NEW:     1    .OR.(N.GE.176.AND.N.LE.187)
+
+
+Improved dwalf carry comments(insert 2 lines).
+SUBROUTINE DTOT @10+3
+OLD:      DOBJ(I)=0
+NEW:      IDOBJ=DOBJ(I)
+          CALL PSPEAK(IDOBJ,PROP(IDOBJ))
+          DOBJ(I)=0
+
+
+@8302+5
+@8306+3
+DUNGO should be DUNG0!
+for both:
+OLD:
+     2HOLDNG,DKILL,FOOBAR,BONUS,CLOCK1,CLOCK2,TIDE,INSC1,DUNGO,THROWC,
+NEW:
+     2HOLDNG,DKILL,FOOBAR,BONUS,CLOCK1,CLOCK2,TIDE,INSC1,DUNG0,THROWC,
+
+
+DATA BASE CHANGES(OPTIONAL).................
+Make DRINK work at LOC'S 186 & 187 (& not at 185).
+Section 9 at line 5.
+OLD:  2   179185178  0  0  0  0  0  0  0
+NEW:  2   178179186187  0  0  0  0  0  0
+
+Improved  CHALICE message.
+Section 6, message 227.
+OLD:
+ 22715
+ THEARRYTO CLOW SHALTOO  IS T IT, BULICE CHA THEFILLCAN YOU
+ 227 5
+NCE.ISTANY DID ALIQU
+
+NEW:
+ 22715
+TOM! BOT THES INHOLE RAL SEVEHAS AND OLD ERY IS VICE CHALTHE
+ 22717
+AM. STRE OR POOLM A  FRORINK A DCOOPTO S IT  USEIGHTOU MST YT BE   A
+
+
+******************************************************************
+
+UPDATE MODS TO CODE2 & CODE2C. SEPT/DEC 79
+
+CODE2C only;@1006+1
+In PACKIT CALL 30000 should be 18870.Causes excessive storage
+requirement on initialization.
+OLD:                CALL PACKIT(ABB,K4,LINES,30000,LINUSE+1,KK)
+FIX:                CALL PACKIT(ABB,K4,LINES,18870,LINUSE+1,KK)
+
+
+@9030
+Jump to lable 9033 is into DO loop! Change jump to lable 9034 and
+lable line 9033+1 as 9034.
+OLD:                9030    IF(WD2X.EQ.0)GOTO 9033
+9033+1                      WDIX=WD2X
+FIX:                9030    IF(WD2X.EQ.0)GOTO 9034
+9033+1              9034    WD1X=WD2X
+(note change of WDIX to WD1X).
+
+@6012+2
+Cannot assume computational order in an IF statement.
+When J=1 TK(J-1) may be accessed(!) before the J>1 requirement is obeyed
+OLD:               IF((J.GT.1.AND.NEWLOC.EQ.TK(J-1)).OR.J.GE.20
+                  2.OR.NEWLOC.EQ.DLOC(I).OR.FORCED(NEWLOC)
+FIX:               IF(J.LE.1)GOTO 6013
+                   IF(NEWLOC.EQ.TK(J-1).OR.J.GE.20)GOTO 6014
+            6013   IF(NEWLOC.EQ.DLOC(I).OR.FORCED(NEWLOC)
+
+
+INTEGER FUNCTION DISTNT @2+1
+As above when J=0.
+OLD:               IF(N.GT.300.OR.N.LT.9.OR.(J.GT.0.AND.N.EQ.TK(J))
+FIX:               IF(J.LE.0)GOTO 10
+                   IF(N.EQ.TK(J))GOTO 3
+            10     IF(N.GT.300.OR.N.LE.9
+
+@40000
+Error in hint count may give wrong hints.
+OLD:               IHINT=HINT+1
+FIX:               IHINT=HINT-3
+
+@8306+7
+Make REWIND a comment prevent trouble with papertape I/O.
+OLD:      REWIND IPDUMP
+NEW:C      REWIND IPDUMP
+
+SUBROUTINE PSPEAK     +7
+Loop starts counting with 0.
+OLD:      DO 3 I=0,SKIP
+NEW:      ISKIP=SKIP+1
+          DO 3 I=1,ISKIP
+
+
+1900 SERIES STRING COMPARISON MODS.
+1900 Series computers evaluate .EQ. (.NE.?) by subtraction and
+comparison with zero. As A1 format etc. is stored left justified, this
+may give integer overflow when .EQ. is used to compare strings.
+The simplest fix for A1 is to replace (I.EQ.J) with (I/2.EQ.J/2).
+For A2 etc. (IABS(I).EQ.IABS(J).AND.ISIGN(I,1).EQ.ISIGN(J,1))
+does it. CODE2C contains no A2 comparisons if the redundant lines
+@25000+8
+      DATA LLL/2H>$/
+@25000+11
+      IF(LINES(N+1).EQ.LLL)RETURN
+are deleted from SUBROUTINE SPEAK..
+The A1 comparisons which require the /2 treatment are at:
+MAIN prog. @2608+1,@2610+2,CC 92+5
+SUBROUTINE GETIN  @4+2,@6+1,@6+2,@8+1,@8+2,@20+2
+LOGICAL FUNCTION YESX @8+1,@8+2
+LOGICAL FUNCTION VOCAB @4-1
+SUBROUTINE PACKIT @5+1,@15+6,@15+7,@15+8,@17+2,@17+3,@20+2,@50+1,@80+1
+SUBROUTINE WRITIT @70+1
+
+
+INSTALLATIONS...............................
+CODE2C is known to be running on the following computers.
+1.DEC KL10
+2.PRIME
+3.BURROUGHS B6700
+4.D.G.ECLIPSE
+5.ICL 1900 Series
+6.SIGMA 5 (with mods by John Humphreys to pack it in 8.5K 32bit words!)
+7.IBM 370(with mods)
+
+
