@@ -2702,8 +2702,8 @@ C* If the destination is the cellar (no exits!), make it the chapel. MLA.
 300   IF(PROP(9).NE.1.OR.ORC(3).GE.1)GOTO 900
       SPK=268
       ORC(3)=1
-900   CALL RSPEAK(SPK)
-      RETURN
+      CALL RSPEAK(SPK)
+900   RETURN
       END
 C
       INTEGER FUNCTION IODATA(N)
