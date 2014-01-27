@@ -1,0 +1,95 @@
+!
+! This file contains only those (pieces of) standard C library functions
+! which are required in order to build "advent.c" for the Z-machine, and
+! are not more easily written in C themselves. These functions are:
+!
+!     void fgets(buf, size, stdin)
+!     void putc(ch, stdout)
+!     int attempt_save()
+!     int attempt_restore()
+!
+! The following inline function is defined in zlibc/include/stdlib.h:
+!
+!     void exit(status)
+!
+! The following inline function is defined in zlibc/include/stdio.h:
+!
+!     void fflush(stdout)
+!
+! The following functions are defined in C, in the file cstubs.c:
+!
+!     void puts(buf)
+!     void printf(fmt, ...)
+!     void strcpy(dest, src)
+!     int strncmp(a, b, n)
+!
+
+! [ajo] I'm just going to assume that fp is stdin,
+! and that we don't need the *exact* semantics of fgets here.
+Array fgets_buffer -> 253;
+
+[ _fgets xp buf size stdin  len i;
+    fgets_buffer->0 = 250;
+    read fgets_buffer 0;
+    len = fgets_buffer->1;
+    ! Copy as many characters as we can from fgets_buffer to the caller's buffer.
+    if (len > size-2) len = size-2;
+    for (i=0 : i < len : ++i) {
+        buf->i = fgets_buffer->(2+i);
+    }
+    ! Newline- and null-terminate the string.
+    buf->i = 10;
+    buf->(i+1) = 0;
+    return buf;
+];
+
+Global putc_codepoint;
+
+[ _putc xp ch stdout;
+    ! The Z-machine cannot write arbitrary bytes to stdout; it works in
+    ! units of "characters", which may be encoded as single ZSCII bytes
+    ! or Unicode codepoints but must always represent Unicode characters.
+    ! Therefore, if the caller is trying to print a multibyte character,
+    ! we must collect the pieces here and put them back together before
+    ! calling the Z-machine's version of @print or @print_unicode.
+    !
+    ! If the last character emitted to stdout is a multibyte character,
+    ! it won't get printed. That's okay; the caller should ensure that
+    ! the last character emitted is always a newline, anyway.
+
+    ch = ch & $FF;
+    if (ch == 10) {
+        print (char) 13;
+    } else if ($80 <= ch && ch <= $BF) {
+        @log_shift putc_codepoint 6 -> putc_codepoint;
+        putc_codepoint = putc_codepoint | (ch & $3F);
+    } else {
+        ! This is the start of a new character.
+        if (putc_codepoint ~= 0) {
+            @print_unicode putc_codepoint;
+            putc_codepoint = 0;
+        }
+        if (0 <= ch && ch <= $7F) {
+            @print_unicode ch;
+        } else if ($C0 <= ch && ch <= $DF) {
+            putc_codepoint = (ch & $1F);
+        } else if ($E0 <= ch && ch <= $EF) {
+            putc_codepoint = (ch & $0F);
+        } else if ($F0 <= ch && ch <= $F7) {
+            putc_codepoint = (ch & $07);
+        }
+    }
+];
+
+[_attempt_save xp  r0;
+    @save -> r0;
+    return r0;
+];
+
+[_attempt_restore xp  r0;
+    restore Rmaybe;
+    r0 = 0;  ! restore fell through: this should never happen
+    .Rmaybe;
+    r0 = 2;  ! restore explicitly failed
+    return r0;
+];
