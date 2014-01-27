@@ -283,7 +283,7 @@ void build_vocabulary(void)
     new_object_word("nest", EGGS);
     new_object_word("tride", TRIDENT);
     new_object_word("ming", VASE); new_object_word("vase", VASE);
-    new_object_word("shard", VASE);
+    new_object_word("shard", VASE); new_object_word("potte", VASE);
     new_object_word("emera", EMERALD);
     new_object_word("plati", PYRAMID); new_object_word("pyram", PYRAMID);
     new_object_word("pearl", PEARL);
