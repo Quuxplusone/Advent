@@ -420,8 +420,6 @@ typedef struct {
 } Instruction;
 
 enum flagsBits {
-    F_LIGHTED    = 0x001,
-    F_WATER      = 0x004,
     F_CAVE_HINT  = 0x008,
     F_BIRD_HINT  = 0x010,
     F_SNAKE_HINT = 0x020,
@@ -473,7 +471,6 @@ void make_inst(Instruction *q, MotionWord m, int c, Location d)
 
 #define remark(n) (FIRST_REMARK + n)
 
-
 void build_travel_table(void)
 {
     Instruction *q = travels;
@@ -483,7 +480,7 @@ void build_travel_table(void)
              "You are standing at the end of a road before a small brick building." SOFT_NL
              "Around you is a forest.  A small stream flows out of the building and" SOFT_NL
              "down a gully.",
-             "You're at end of road again.", F_LIGHTED | F_WATER);
+             "You're at end of road again.", 0);
     make_ins(W, R_HILL); ditto(U); ditto(ROAD);
     make_ins(E, R_HOUSE); ditto(IN); ditto(HOUSE); ditto(ENTER);
     make_ins(S, R_VALLEY); ditto(D); ditto(GULLY); ditto(STREAM); ditto(DOWNSTREAM);
@@ -492,12 +489,12 @@ void build_travel_table(void)
     make_loc(q, R_HILL,
              "You have walked up a hill, still in the forest.  The road slopes back" SOFT_NL
              "down the other side of the hill.  There is a building in the distance.",
-             "You're at hill in road.", F_LIGHTED);
+             "You're at hill in road.", 0);
     make_ins(ROAD, R_ROAD); ditto(HOUSE); ditto(FORWARD); ditto(E); ditto(D);
     make_ins(FOREST, R_FOREST); ditto(N); ditto(S);
     make_loc(q, R_HOUSE,
              "You are inside a building, a well house for a large spring.",
-             "You're inside building.", F_LIGHTED | F_WATER);
+             "You're inside building.",  0);
     make_ins(ENTER, R_ROAD); ditto(OUT); ditto(OUTDOORS); ditto(W);
     make_ins(XYZZY, R_DEBRIS);
     make_ins(PLUGH, R_Y2);
@@ -505,28 +502,28 @@ void build_travel_table(void)
     make_loc(q, R_VALLEY,
              "You are in a valley in the forest beside a stream tumbling along a" SOFT_NL
              "rocky bed.",
-             "You're in valley.", F_LIGHTED | F_WATER);
+             "You're in valley.", 0);
     make_ins(UPSTREAM, R_ROAD); ditto(HOUSE); ditto(N);
     make_ins(FOREST, R_FOREST); ditto(E); ditto(W); ditto(U);
     make_ins(DOWNSTREAM, R_SLIT); ditto(S); ditto(D);
     make_ins(DEPRESSION, R_OUTSIDE);
     make_loc(q, R_FOREST,
              "You are in open forest, with a deep valley to one side.",
-             "You're in forest.", F_LIGHTED);
+             "You're in forest.", 0);
     make_ins(VALLEY, R_VALLEY); ditto(E); ditto(D);
     make_cond_ins(FOREST, 50, R_FOREST); ditto(FORWARD); ditto(N);
     make_ins(FOREST, R_FOREST2);
     make_ins(W, R_FOREST); ditto(S);
     make_loc(q, R_FOREST2,
              "You are in open forest near both a valley and a road.",
-             "You're in forest.", F_LIGHTED);
+             "You're in forest.", 0);
     make_ins(ROAD, R_ROAD); ditto(N);
     make_ins(VALLEY, R_VALLEY); ditto(E); ditto(W); ditto(D);
     make_ins(FOREST, R_FOREST); ditto(S);
     make_loc(q, R_SLIT,
              "At your feet all the water of the stream splashes into a 2-inch slit" SOFT_NL
              "in the rock.  Downstream the streambed is bare rock.",
-             "You're at slit in streambed.", F_LIGHTED | F_WATER);
+             "You're at slit in streambed.", 0);
     make_ins(HOUSE, R_ROAD);
     make_ins(UPSTREAM, R_VALLEY); ditto(N);
     make_ins(FOREST, R_FOREST); ditto(E); ditto(W);
@@ -536,7 +533,7 @@ void build_travel_table(void)
              "You are in a 20-foot depression floored with bare dirt.  Set into the" SOFT_NL
              "dirt is a strong steel grate mounted in concrete.  A dry streambed" SOFT_NL
              "leads into the depression.",
-             "You're outside grate.", F_LIGHTED | F_CAVE_HINT);
+             "You're outside grate.", F_CAVE_HINT);
     make_ins(FOREST, R_FOREST); ditto(E); ditto(W); ditto(S);
     make_ins(HOUSE, R_ROAD);
     make_ins(UPSTREAM, R_SLIT); ditto(GULLY); ditto(N);
@@ -545,7 +542,7 @@ void build_travel_table(void)
     make_loc(q, R_INSIDE,
              "You are in a small chamber beneath a 3x3 steel grate to the surface." SOFT_NL
              "A low crawl over cobbles leads inward to the west.",
-             "You're below the grate.", F_LIGHTED);
+             "You're below the grate.", 0);
     make_cond_ins(OUT, unless_prop(GRATE, 0), R_OUTSIDE); ditto(U);
     make_ins(OUT, remark(1));
     make_ins(CRAWL, R_COBBLES); ditto(COBBLES); ditto(IN); ditto(W);
@@ -554,7 +551,7 @@ void build_travel_table(void)
     make_loc(q, R_COBBLES,
              "You are crawling over cobbles in a low passage.  There is a dim light" SOFT_NL
              "at the east end of the passage.",
-             "You're in cobble crawl.", F_LIGHTED);
+             "You're in cobble crawl.", 0);
     make_ins(OUT, R_INSIDE); ditto(SURFACE); ditto(E);
     make_ins(IN, R_DEBRIS); ditto(DARK); ditto(W); ditto(DEBRIS);
     make_ins(PIT, R_SPIT);
@@ -851,7 +848,7 @@ void build_travel_table(void)
     make_loc(q, R_WET,
              "You are in the bottom of a small pit with a little stream, which" SOFT_NL
              "enters and exits through tiny slits.",
-             "You're in pit by stream.", F_WATER);
+             "You're in pit by stream.", 0);
     make_ins(CLIMB, R_CLEAN); ditto(U); ditto(OUT);
     make_ins(SLIT, remark(0)); ditto(STREAM); ditto(D); ditto(UPSTREAM); ditto(DOWNSTREAM);
     make_loc(q, R_DUSTY,
@@ -1007,7 +1004,7 @@ void build_travel_table(void)
              "You are in a magnificent cavern with a rushing stream, which cascades" SOFT_NL
              "over a sparkling waterfall into a roaring whirlpool that disappears" SOFT_NL
              "through a hole in the floor.  Passages exit to the south and west.",
-             "You're in cavern with waterfall.", F_WATER);
+             "You're in cavern with waterfall.", 0);
     make_ins(S, R_IMMENSE); ditto(OUT);
     make_ins(GIANT, R_GIANT);
     make_ins(W, R_INCLINE);
@@ -1093,7 +1090,7 @@ void build_travel_table(void)
     make_loc(q, R_PLOVER,
              "You're in a small chamber lit by an eerie green light.  An extremely" SOFT_NL
              "narrow tunnel exits to the west.  A dark corridor leads NE.",
-             "You're in Plover Room.", F_LIGHTED | F_DARK_HINT);
+             "You're in Plover Room.", F_DARK_HINT);
     make_ins(W, R_PPASS); ditto(PASSAGE); ditto(OUT);
     make_ins(W, R_ALCOVE);  /* never performed, but seen by "BACK" */
     make_cond_ins(PLOVER, only_if_toting(EMERALD), R_PDROP);
@@ -1138,7 +1135,7 @@ void build_travel_table(void)
              "fed by a stream, which tumbles out of a hole in the wall about 10 feet" SOFT_NL
              "overhead and splashes noisily into the water somewhere within the" SOFT_NL
              "mist.  The only passage goes back toward the south.",
-             "You're at reservoir.", F_WATER);
+             "You're at reservoir.", 0);
     make_ins(S, R_MIRROR); ditto(OUT);
 
     /* R_SCAN1 and R_SCAN3 are the rooms the player sees when entering the
@@ -1290,7 +1287,7 @@ void build_travel_table(void)
              "ominously.  The far right wall is aflame with an incandescence of its" SOFT_NL
              "own, which lends an additional infernal splendor to the already" SOFT_NL
              "hellish scene.  A dark, foreboding passage exits to the south.",
-             "You're at breath-taking view.", F_LIGHTED);
+             "You're at breath-taking view.", 0);
     make_ins(S, R_WARM); ditto(PASSAGE); ditto(OUT);
     make_ins(FORK, R_FORK);
     make_ins(D, remark(13)); ditto(JUMP);
@@ -1339,7 +1336,7 @@ void build_travel_table(void)
              "NOT DISTURB THE DWARVES!\"  An immense mirror is hanging against one" SOFT_NL
              "wall, and stretches to the other end of the room, where various other" SOFT_NL
              "sundry objects can be glimpsed dimly in the distance.",
-             "You're at NE end.", F_LIGHTED);
+             "You're at NE end.", 0);
     make_ins(SW, R_SWEND);
     /* The following description has several minor differences from Woods' original.
      * Woods' line breaks come after "A" on lines 4 and 5, "large" on line 6, and
@@ -1354,7 +1351,7 @@ void build_travel_table(void)
              "A vast mirror stretches off to the northeast.  At your feet is a" SOFT_NL
              "large steel grate, next to which is a sign that reads, \"TREASURE" SOFT_NL
              "VAULT.  KEYS IN MAIN OFFICE.\"",
-             "You're at SW end.", F_LIGHTED);
+             "You're at SW end.", 0);
     make_ins(NE, R_NEEND);
     make_ins(D, remark(1));  /* You can't go through a locked steel grate! */
 
@@ -1418,6 +1415,36 @@ bool is_forced(Location loc)
         default:
             return false;
     }
+}
+
+bool has_light(Location loc)
+{
+    switch (loc) {
+        case R_ROAD: case R_HILL: case R_HOUSE: case R_VALLEY:
+        case R_FOREST: case R_FOREST2: case R_SLIT: case R_OUTSIDE:
+        case R_INSIDE: case R_COBBLES:
+        case R_PLOVER: case R_VIEW:
+        case R_NEEND: case R_SWEND:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool has_water(Location loc)
+{
+    switch (loc) {
+        case R_ROAD: case R_HOUSE: case R_VALLEY: case R_SLIT:
+        case R_WET: case R_FALLS: case R_RES:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool has_oil(Location loc)
+{
+    return (loc == R_EPIT);
 }
 
 /*========== Data structures for objects. =================================
@@ -2443,7 +2470,7 @@ void kill_the_player(Location last_safe_place)
 
 bool now_in_darkness(Location loc)
 {
-    if (places[loc].flags & F_LIGHTED) return false;
+    if (has_light(loc)) return false;
     if (here(LAMP, loc) && objs(LAMP).prop) return false;
     return true;
 }
@@ -2717,9 +2744,9 @@ void attempt_find(ObjectWord obj, Location loc)  /* section 100 in Knuth */
             its_right_here = true;
         } else if (obj != NOTHING && obj == bottle_contents() && there(BOTTLE, loc)) {
             its_right_here = true;
-        } else if (obj == WATER && (places[loc].flags & F_WATER)) {
+        } else if (obj == WATER && has_water(loc)) {
             its_right_here = true;
-        } else if (obj == OIL && loc == R_EPIT) {
+        } else if (obj == OIL && has_oil(loc)) {
             its_right_here = true;
         } else if (obj == DWARF && dwarf_in(loc)) {
             its_right_here = true;
@@ -2803,7 +2830,7 @@ void throw_axe_at_dwarf(Location loc)  /* section 163 in Knuth */
 bool attempt_fill(ObjectWord obj, Location loc)  /* sections 110--111 in Knuth */
 {
     if (obj == VASE) {
-        if (loc != R_EPIT && !(places[loc].flags & F_WATER)) {
+        if (!has_oil(loc) && !has_water(loc)) {
             puts("There is nothing here with which to fill the vase.");
         } else if (!toting(VASE)) {
             puts("You aren't carrying it!");
@@ -2829,11 +2856,11 @@ bool attempt_fill(ObjectWord obj, Location loc)  /* sections 110--111 in Knuth *
         puts("You can't fill that.");
     } else if (bottle_contents() != NOTHING) {
         puts("Your bottle is already full.");
-    } else if (loc == R_EPIT) {
+    } else if (has_oil(loc)) {
         puts("Your bottle is now full of oil.");
         objs(BOTTLE).prop = 2;
         if (toting(BOTTLE)) objs(OIL).place = R_INHAND;
-    } else if (places[loc].flags & F_WATER) {
+    } else if (has_water(loc)) {
         puts("Your bottle is now full of water.");
         objs(BOTTLE).prop = 0;
         if (toting(BOTTLE)) objs(WATER).place = R_INHAND;
@@ -3094,11 +3121,11 @@ int check_noun_validity(ObjectWord obj, Location loc)  /* sections 90--91 in Knu
             if (!here(ROD2, loc)) return 'c';
             return 'r';  /* obj = ROD2 */
         case WATER:
-            if (places[loc].flags & F_WATER) return 0;
+            if (has_water(loc)) return 0;
             if (here(BOTTLE, loc) && bottle_contents() == WATER) return 0;
             return 'c';
         case OIL:
-            if (loc == R_EPIT) return 0;
+            if (has_oil(loc)) return 0;
             if (here(BOTTLE, loc) && bottle_contents() == OIL) return 0;
             return 'c';
     }
@@ -3501,7 +3528,7 @@ void simulate_an_adventure(void)
             /* Handle additional special cases of input (Knuth sections 83, 105) */
             if (streq(word1, "enter")) {
                 if (streq(word2, "water") || streq(word2, "strea")) {
-                    if (places[loc].flags & F_WATER) {
+                    if (has_water(loc)) {
                         puts("Your feet are now wet.");
                     } else {
                         puts("Where?");
@@ -3740,7 +3767,7 @@ void simulate_an_adventure(void)
                     attempt_off(loc);
                     continue;
                 case DRINK: {
-                    bool stream_here = (places[loc].flags & F_WATER);
+                    bool stream_here = has_water(loc);
                     bool evian_here = here(BOTTLE, loc) && (bottle_contents() == WATER);
                     if (obj == NOTHING) {
                         if (!stream_here && !evian_here)
@@ -3918,7 +3945,8 @@ void simulate_an_adventure(void)
                                  * He dies, the Persian rug becomes free, and R_SCAN2
                                  * takes the place of R_SCAN1 and R_SCAN3. */
                                 puts("With what?  Your bare hands?");
-                                verb = obj = NOTHING;
+                                verb = NOTHING;
+                                obj = NOTHING;
                                 listen();
                                 if (streq(word1, "yes") || streq(word1, "y")) {
                                     puts("Congratulations!  You have just vanquished a dragon with your bare" SOFT_NL
