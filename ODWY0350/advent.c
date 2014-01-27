@@ -3304,7 +3304,7 @@ bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot, Actio
         return false;
     }
     *newloc = q->dest;
-    
+
     if (*newloc >= FIRST_REMARK) {
         print_remark(*newloc - FIRST_REMARK);
         *newloc = loc;
@@ -4015,7 +4015,7 @@ void simulate_an_adventure(void)
         assert(R_LIMBO <= oldloc && oldloc <= MAX_LOC);
         assert(R_LIMBO < loc && loc <= MAX_LOC);
         newloc = loc;  /* by default we will stay put */
-        
+
         if (mot == CAVE) {
             /* No CAVE appears in the travel table; its sole purpose is to
              * give these messages. */
@@ -4038,7 +4038,7 @@ void simulate_an_adventure(void)
                 Location l = (is_forced(oldloc) ? oldoldloc : oldloc);
                 mot = try_going_back_to(l, loc); /* may return NOWHERE */
             }
-    
+
             if (mot != NOWHERE) {
                 /* Determine the next newloc. */
                 oldoldloc = oldloc;

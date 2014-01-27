@@ -871,7 +871,7 @@ void listen(void)
             got_a_command = true;
         }
     }
-  
+
     if (!got_a_command) {
         printf("> "); fflush(stdout);
         fgets(buffer, sizeof buffer, stdin);
@@ -965,7 +965,7 @@ bool dwarf_attack(void)
                     if (plural) {
                         puts("Your magic ring shoots a bolt of lightning that splinters the" SOFT_NL
                              "knives into dust before they can reach you!");
-                      
+
                     } else {
                         puts("Your magic ring shoots a bolt of lightning that splinters the" SOFT_NL
                              "knife into dust before it can reach you!");
@@ -1081,11 +1081,11 @@ void maybe_do_cameo(Location loc)
      */
     static bool no_more_cameos = false;
     if (no_more_cameos) return;
-  
+
     no_more_cameos = true;
     if (pct(95)) return;
     if (turns >= 100+ran(400)) return;
-  
+
     curclock = 10+ran(10);
     lastclock = curclock = 10+ran(10);
     if (places[loc].flags & (F_NODWARF | F_LIGHTED | F_ONE_EXIT)) return;
@@ -1452,7 +1452,7 @@ void close_the_cave(void)
         if (places[i].flags & F_NOTINCAVE)
             places[i].flags &= ~F_BEENHERE;
     }
-  
+
     closure = 3;
     curclock = 999;
     cylinder_escape_count = 0;
@@ -4359,7 +4359,7 @@ void simulate_an_adventure(void)
                 if (!there(DWARF, R_LIMBO) && !(places[loc].flags & (F_NOTINCAVE|F_NODWARF))) {
                     apport(DWARF, loc);
                 }
-              
+
                 look_around(loc, familiar_place);
             }
             lamp_just_ran_out = false;

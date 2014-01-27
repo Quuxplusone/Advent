@@ -35,4 +35,3 @@ extern va_list __va_start; /* magic */
 #define va_end(ap) ((ap) = 0)
 
 #endif
-
