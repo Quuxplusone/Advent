@@ -326,7 +326,7 @@ void build_vocabulary(void)
     new_action_word("ignit", BLAST); new_action_word("blowu", BLAST);
     new_action_word("attac", KILL); new_action_word("kill", KILL);
     new_action_word("fight", KILL); new_action_word("hit", KILL);
-    new_action_word("strik", KILL); new_action_word("slay", KILL);
+    new_action_word("strik", KILL);
     new_action_word("say", SAY);
     new_action_word("chant", SAY);
     new_action_word("sing", SAY);
