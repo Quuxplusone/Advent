@@ -2760,6 +2760,7 @@ void panic_at_closing_time(void)
 int turns;  /* how many times we've read your commands */
 int verbose_interval = 5;  /* command BRIEF sets this to 10000 */
 int foobar;  /* progress in the FEE FIE FOE FOO incantation */
+bool wizard_mode = false;
 
 void give_optional_plugh_hint(Location loc)
 {
@@ -2977,11 +2978,11 @@ int score(void)
             s += 2;  /* two points just for seeing a treasure */
             if (there(i, R_HOUSE) && objs(i).prop == 0) {
                 if (i < CHEST) {
-                    s += 10;
-                } else if (i == CHEST) {
                     s += 12;
-                } else {
+                } else if (i == CHEST) {
                     s += 14;
+                } else {
+                    s += 16;
                 }
             }
         }
@@ -3669,6 +3670,35 @@ void attempt_open_or_close(ActionWord verb, ObjectWord obj, Location loc)  /* se
     }
 }
 
+void attempt_ride(ObjectWord obj)
+{
+    if (obj == CHALICE && objs(CHALICE).prop == 1)
+    {
+        puts("With you aboard, the unicorn gallops off at a furious pace. The" SOFT_NL
+             "tunnel walls flash past dimly illuminated by an ethereal glow." SOFT_NL
+             "Suddenly tunnel walls, unicorn and everything disappear and you" SOFT_NL
+             "fly on in pitch blackness. Far below you a door opens revealing a" SOFT_NL
+             "dull red glow and grotesque creatures pour forth and dance and sway" SOFT_NL
+             "as you fall towards the aperture. Your descent is impeded, slowly at" SOFT_NL
+             "first and then more firmly by a web of gossamer threads, on which" SOFT_NL
+             "you can clearly see stamped at intervals  \"Made in Fairyland.\"" SOFT_NL
+             "Below you the creatures leap but try as they might they cannot reach" SOFT_NL
+             "you until there appears our horned fiend.  \"You chose the losing" SOFT_NL
+             "side my friend!\" he says and slashes through the supporting threads." SOFT_NL
+             "As you fall you hear his evil laugh and him shout \"Welcome to Hell!!\"\n\n"
+             "Now you really are in a mess, lost one of our best agents too." SOFT_NL
+             "People like you didn't ought to be allowed in the cave, poking your" SOFT_NL
+             "nose into things you can't handle. You'll always lose if you tangle" SOFT_NL
+             "with *him* and there is no way of helping the princess that I know of." SOFT_NL
+             "I don't think I can stand any more of your bungling I'm going........");
+        quit();
+    }
+    else
+    {
+        puts("Don't be ridiculous!");
+    }
+}
+
 /* This is some pretty baroque logic for an obscure case.
  * We're deciding what the noun should be if the player types
  * "READ" as a one-word command. If we return NOTHING, the
@@ -4128,6 +4158,15 @@ void print_message(MessageWord msg)
     }
 }
 
+void maybe_become_a_wizard(void)
+{
+    /* If on the first turn of the game the player types something
+     * like "MAGIC MOE", he'll gain the ability to FLY to distant
+     * locations. This is analogous to Platt's LPSD command. */
+    if (turns == 0 && word1[0] == 'm' && word2[0] == 'm')
+        wizard_mode = true;
+}
+
 void simulate_an_adventure(void)
 {
     Location oldoldloc, oldloc, loc, newloc;
@@ -4177,6 +4216,7 @@ void simulate_an_adventure(void)
             was_dark = now_in_darkness(loc);
             adjustments_before_listening(loc);
             listen();
+            maybe_become_a_wizard();
         pre_parse:
             ++turns;
             if (verb == SAY) {
@@ -4386,6 +4426,30 @@ void simulate_an_adventure(void)
                     }
                     continue;
                 }
+                case FLY:
+                    /* Wizards can move to a room by number. Unfortunately, this port's
+                     * room numbers don't match up to the original's, so if you enter
+                     * 163 to visit the dwarves' quarters, you'll actually wind up in
+                     * the inclined shaft. Oops. TODO: perhaps correct our numbering? */
+                    if (wizard_mode) {
+                        puts("Note: This means of travel can generate internal inconsistencies," SOFT_NL
+                              "so take care. Now enter new LOCATION number.");
+                        verb = NOTHING;
+                        obj = NOTHING;
+                        listen();
+                        int wizloc = atoi(word1);
+                        if (R_ROAD <= wizloc && wizloc <= R_SWEND) {
+                            loc = wizloc;
+                            mot = NOWHERE;
+                            goto try_move;
+                        } else {
+                            /* Let's not allow a wizard to crash the game. */
+                            puts("Nothing happens!");
+                        }
+                    } else {
+                        puts("Only wizards can do that!");
+                    }
+                    continue;
                 case SLEEP:
                 case REST:
                 case SCREAM:
@@ -4704,6 +4768,9 @@ void simulate_an_adventure(void)
                     continue;
                 case BLOW:
                     puts("Nothing happens.");
+                    continue;
+                case RIDE:
+                    attempt_ride(obj);
                     continue;
                 case FLY:
                     puts("Nothing happens.");
