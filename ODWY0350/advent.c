@@ -3036,20 +3036,17 @@ void attempt_open_or_close(ActionWord verb, ObjectWord obj, Location loc)  /* se
  * be handled as if we'd typed "READ <obj>". */
 ObjectWord read_what(Location loc)
 {
-    ObjectWord obj = NOTHING;
     if (now_in_darkness(loc))
         return NOTHING;  /* can't read in the dark */
-    if (here(MAG, loc)) obj = MAG;
-    if (here(TABLET, loc)) {
-        if (obj) return NOTHING;
-        obj = TABLET;
-    } else if (here(MESSAGE, loc)) {
-        if (obj) return NOTHING;
-        obj = MESSAGE;
-    } else if (closed && toting(OYSTER)) {
-        obj = OYSTER;
-    }
-    return obj;
+    if (closed && toting(OYSTER))
+        return OYSTER;
+
+    bool magazines_here = here(MAG, loc);
+    if (here(TABLET, loc))
+        return magazines_here ? NOTHING : TABLET;
+    if (here(MESSAGE, loc))
+        return magazines_here ? NOTHING : MESSAGE;
+    return magazines_here ? MAG : NOTHING;
 }
 
 void attempt_read(ObjectWord obj)  /* section 135 in Knuth */
