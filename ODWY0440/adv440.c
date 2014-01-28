@@ -471,7 +471,7 @@ typedef enum {
     R_151,
     R_152,
     R_153,
-    R_154,
+    R_CELLAR,
     R_155,
     R_156,
     R_157,
@@ -1557,7 +1557,7 @@ void build_travel_table(void)
              "ceiling.  A notice carved in the rock says \"Wizards only, Keep Out\"" SOFT_NL
              "There are some steps leading upward.",
              "You're in the basement.", 0);
-    make_cond_ins(S, 100, R_154);
+    make_cond_ins(S, 100, R_CELLAR);
     make_ins(U, R_153);
     make_loc(q, R_153,
              "You are at an entrance to a large room which you cannot see into" SOFT_NL
@@ -1567,7 +1567,7 @@ void build_travel_table(void)
     make_ins(D, R_152);
     make_ins(U, R_PANTRY);
     make_ins(ENTER, R_SOFT); ditto(IN); ditto(NW);
-    make_loc(q, R_154,
+    make_loc(q, R_CELLAR,
              "You are in a round cellar made completely of brick. In the center" SOFT_NL
              "of the floor is a small circular drain, towards which the floor" SOFT_NL
              "slopes.  Set in the south wall is a portcullis which is so rusty" SOFT_NL
@@ -1575,7 +1575,7 @@ void build_travel_table(void)
              "chamber with a spiral staircase can be seen.  An entrance leads" SOFT_NL
              "north but it is blocked by a large stone slab.",
              "You're in the circular cellar.", 0);
-    make_ins(BACK, R_154);  /* perhaps because every room needs at least one exit? TODO investigate this line */
+    make_ins(BACK, R_CELLAR);  /* perhaps because every room needs at least one exit? TODO investigate this line */
     const char *causeway =
         "In front of you, just discernible in the gloom, lies an old streambed" SOFT_NL
         "which has been long dry and you can just determine that there is a" SOFT_NL
@@ -1599,7 +1599,7 @@ void build_travel_table(void)
     make_cond_ins(U, 50, R_161);
     make_cond_ins(U, 50, R_162);
     make_ins(U, R_163); ditto(TOWER);
-    make_ins(D, R_154); ditto(BEDCHAMBER);
+    make_ins(D, R_CELLAR); ditto(BEDCHAMBER);
     make_loc(q, R_161,
              "You are at a window halfway up a flight of steps. The view is" SOFT_NL
              "quite beautiful, a deep ravine with a raging torrent" SOFT_NL
@@ -1608,7 +1608,7 @@ void build_travel_table(void)
     make_cond_ins(U, 50, R_162);
     make_ins(U, R_163); ditto(TOWER);
     make_cond_ins(D, 50, R_160);
-    make_ins(D, R_154); ditto(BEDCHAMBER);
+    make_ins(D, R_CELLAR); ditto(BEDCHAMBER);
     make_loc(q, R_162,
              "You are at a window halfway up a flight of steps. The view is" SOFT_NL
              "quite beautiful, below you is a cliff, an enraged sea battering" SOFT_NL
@@ -1617,7 +1617,7 @@ void build_travel_table(void)
     make_ins(U, R_163); ditto(TOWER);
     make_cond_ins(D, 50, R_161);
     make_cond_ins(D, 50, R_160);
-    make_ins(D, R_154); ditto(BEDCHAMBER);  /* end TODO investigate these rooms */
+    make_ins(D, R_CELLAR); ditto(BEDCHAMBER);  /* end TODO investigate these rooms */
     make_loc(q, R_163, NULL, NULL, 0);  /* dwarves' quarters -- no access */
     make_ins(D, R_149);  /* dwarves reappear in the tangled web of passages */
     make_loc(q, R_164, NULL, NULL, 0);  /* unused? TODO remove this room */
@@ -2009,6 +2009,18 @@ bool has_oil(Location loc)
     return (loc == R_EPIT);
 }
 
+bool has_sewage(Location loc)
+{
+    switch (loc) {
+        case R_176: case R_178: case R_179:
+        case R_181: case R_182: case R_183:
+        case R_184: case R_185: case R_186:
+            return true;
+        default:
+            return false;
+    }
+}
+
 /*========== Data structures for objects. =================================
  * This section corresponds to sections 63--70 in Knuth.
  */
@@ -2036,6 +2048,8 @@ int lost_treasures;  /* treasures that you won't find */
  * of the schizoid rug) does not need to be a treasure. You can
  * never be carrying it; the pirate can't steal it; and its prop
  * value is irrelevant (we use the prop value of the base object RUG).
+ * Also, FAKE_ORB *must* not be a treasure, or else the pirate might
+ * steal it.
  */
 bool is_treasure(ObjectWord t)
 {
@@ -2044,6 +2058,7 @@ bool is_treasure(ObjectWord t)
         case COINS: case CHEST: case EGGS: case TRIDENT:
         case VASE: case EMERALD: case PYRAMID: case PEARL:
         case RUG: case SPICES: case CHAIN:
+        case CROWN: case TUSK: case CHALICE: case RUBY: case ORB:
             return true;
         default:
             return false;
@@ -2269,8 +2284,12 @@ void build_object_table(void)
     new_obj(DOCUMENTS, "Legal documents", 0, R_LIMBO);
     objs(DOCUMENTS).desc[0] = "Some legal documents are stuck to the web where the spider was.";
     objs(DOCUMENTS).desc[1] = "There are some legal documents here.";
+    /* Pike uses a global variable INSC1 to say whether we've read the spoon's inscription.
+     * I use objs(SPOON).prop instead, since it's not used for anything else. */
     new_obj(SPOON, "Tarnished spoon", 0, R_180);
-    objs(SPOON).desc[0] = "A tarnished spoon lies here.";
+    const char* spoon_description = "A tarnished spoon lies here.";
+    objs(SPOON).desc[0] = spoon_description;
+    objs(SPOON).desc[1] = spoon_description;
     new_obj(HORN, "Little horn", 0, R_188);
     objs(HORN).desc[0] = "There is a little horn here.";
     new_obj(RATS, 0, RATS, R_182);
@@ -2328,12 +2347,13 @@ void build_object_table(void)
     objs(CHALICE).desc[1] = "A unicorn stands here pawing the ground.";
     new_obj(RUBY, "Large ruby", 0, R_188);
     objs(RUBY).desc[0] = "A very large ruby lies here.";
-    new_obj(ORB, "Crystal orb", 0, R_154);
+    new_obj(ORB, "Crystal orb", 0, R_CELLAR);
     objs(ORB).desc[0] = "A crystal orb lies here!";
-    new_obj(ORB_, 0, ORB, R_198);
-    objs(ORB_).desc[0] =
+    new_obj(FAKE_ORB, 0, FAKE_ORB, R_198);
+    objs(FAKE_ORB).desc[0] =
         "A glistening globe lies in a small depression on the sloping cellar" SOFT_NL
         "floor!";
+    objs(FAKE_ORB).desc[1] = NULL;  /* once the real orb has been taken, this one disappears */
 
     /* The food's natural place is the pantry, of course; but we still
      * start it out in the building. If the food is eaten or otherwise
@@ -3253,7 +3273,47 @@ bool attempt_take(ObjectWord obj, Location loc)
     return false;
 }
 
-void attempt_drop(ObjectWord obj, Location loc)
+Location get_kicked_out_of_cellar()
+{
+    puts("Through the portcullis steps a tall wizard clothed in grey. \"Be Off!\"" SOFT_NL
+         "he commands, raising an arm. As the scene fades his distant voice" SOFT_NL
+         "continues \"And take your belongings with you!\".");
+
+    Location loc;
+    switch (ran(6))
+    {
+        case 0: loc = R_WMIST; break;
+        case 1: loc = R_LIKE1; break;
+        case 2: loc = R_LIKE2; break;
+        case 3: loc = R_ABOVER; break;
+        case 4: loc = R_ABOVEP; break;
+        case 5: loc = R_SJUNC; break;
+    }
+
+    /* Once you've picked up the orb, the "fake" orb visible from the
+     * cellar view must disappear. It will never reappear, since
+     * nothing can ever be successfully dropped in the cellar.
+     * Pike handles this by making the fake orb invisible via prop
+     * manipulation; a better solution would be to just destroy it.
+     * The difference is observable if you go back to the cellar view
+     * and type "GET" or "GET GLOBE". */
+    if (!there(ORB, R_CELLAR)) {
+        objs(FAKE_ORB).prop = 1;
+    }
+
+    /* Pike's wizard not only moves you out of the cellar, but also
+     * attempts (line 9023) to move every non-orb object at R_198 to
+     * the dwarves' quarters. However, due to a bug in that loop
+     * (namely, following LINK(I) after object I has already been moved),
+     * if you drop anything at the R_198 before annoying the wizard,
+     * Pike's loop never terminates and the game crashes. Even without
+     * that bug, I don't understand what purpose the loop was originally
+     * meant to accomplish. I've omitted it here. */
+
+    return loc;
+}
+
+Location attempt_drop(ObjectWord obj, Location loc)
 {
     if (obj == ROD && toting(ROD2) && !toting(ROD)) {
         obj = ROD2;
@@ -3303,8 +3363,44 @@ void attempt_drop(ObjectWord obj, Location loc)
         /* Now that the bird is dead, you can never get past the snake
          * into the south side chamber, so the precious jewelry is lost. */
         if (there(SNAKE, R_HMK)) ++lost_treasures;
+    } else if (obj == BIRD && here(SPIDER, loc)) {
+        puts("The bird attacks the spider and in an astounding flurry gets" SOFT_NL
+             "very messily eaten. It was a horrible sight, a flurry of" SOFT_NL
+             "feathers, hairy legs and blood.");
+        destroy(BIRD);
+        objs(BIRD).prop = 0;  /* no longer in the cage */
+        /* Now that the bird is dead, you can never get past the snake
+         * into the south side chamber, so the precious jewelry is lost. */
+        if (there(SNAKE, R_HMK)) ++lost_treasures;
     } else {
         /* The usual case for dropping any old object. */
+
+        if (has_sewage(loc)) {
+            if (obj == FOOD && loc == R_182) {
+                puts("The food disappears into the sewage and the water thrashes" SOFT_NL
+                     "with activity.  My, those rats *are* hungry!");
+                objs(RATS).prop = 0;
+            } else if (loc == R_176 || loc == R_178 || loc == R_179) {
+                puts("It resides momentarily on the slippery surface, then slides down" SOFT_NL
+                     "the shaft and disappears.");
+            } else {
+                puts("It has disappeared in the sewage!");
+            }
+            drop(obj, (obj == FOOD) ? R_163 : R_180);
+        } else {
+            puts(ok);
+            if (obj == TUSK && loc == R_HOUSE) {
+                puts("Tusk....Tusk....Tusk...      Thats not on the list!" SOFT_NL
+                     "Its ivory isn't it? must be valuable....." SOFT_NL
+                     "OK we'll give you the benefit of the doubt.");
+            } else if (obj == SPOON && objs(SPOON).prop == 0) {
+                puts("Oh! There appears to be an inscription on the spoon.");
+            }
+        }
+
+        if (loc == R_CELLAR) {
+            loc = get_kicked_out_of_cellar();
+        }
 
         if (obj == BIRD) objs(BIRD).prop = 0;  /* no longer caged */
         if (obj == CAGE && objs(BIRD).prop) drop(BIRD, loc);
@@ -3316,8 +3412,20 @@ void attempt_drop(ObjectWord obj, Location loc)
             move(bottle_contents(), R_LIMBO);
 
         drop(obj, loc);
-        puts(ok);
+
+        /* Items dropped in the swirling mist end up in the dwarves' quarters.
+         * However, dropping the cage in the mist leaves the caged bird
+         * still in the mist even as the cage itself goes to the dwarves.
+         * TODO: fix this original bug? */
+        if (loc == R_195) {
+            move(obj, R_163);
+        } else if (loc == R_148) {
+            if (here(SPIDER, R_148)) juggle(SPIDER);
+            juggle(WEB);
+        }
     }
+
+    return loc;
 }
 
 void attempt_wave(ObjectWord obj, Location loc)  /* section 99 in Knuth */
@@ -3706,20 +3814,19 @@ void attempt_ride(ObjectWord obj)
  * be handled as if we'd typed "READ <obj>". */
 ObjectWord read_what(Location loc)
 {
-    ObjectWord obj = NOTHING;
     if (now_in_darkness(loc))
         return NOTHING;  /* can't read in the dark */
-    if (here(MAG, loc)) obj = MAG;
-    if (here(TABLET, loc)) {
-        if (obj) return NOTHING;
-        obj = TABLET;
-    } else if (here(MESSAGE, loc)) {
-        if (obj) return NOTHING;
-        obj = MESSAGE;
-    } else if (closed && toting(OYSTER)) {
-        obj = OYSTER;
-    }
-    return obj;
+    if (closed && toting(OYSTER))
+        return OYSTER;
+    if (here(DOCUMENTS, loc))
+        return DOCUMENTS;
+
+    bool magazines_here = here(MAG, loc);
+    if (here(TABLET, loc))
+        return magazines_here ? NOTHING : TABLET;
+    if (here(MESSAGE, loc))
+        return magazines_here ? NOTHING : MESSAGE;
+    return magazines_here ? MAG : NOTHING;
 }
 
 void attempt_read(ObjectWord obj)  /* section 135 in Knuth */
@@ -3733,6 +3840,14 @@ void attempt_read(ObjectWord obj)  /* section 135 in Knuth */
             break;
         case MESSAGE:
             puts("\"This is not the maze where the pirate leaves his treasure chest.\"");
+            break;
+        case DOCUMENTS:
+            puts("The documents seem to be a set of deeds with some associated plans," SOFT_NL
+                 "but the language is odd and the plans are incomprehensible.");
+            break;
+        case SPOON:
+            objs(SPOON).prop = 1;  /* we've seen the inscription */
+            puts("It says EPNS in flowery script.");
             break;
         case OYSTER:
             if (closed && toting(OYSTER)) {
@@ -4598,9 +4713,15 @@ void simulate_an_adventure(void)
                         goto transitive;
                     }
                     continue;
-                case DROP:
-                    attempt_drop(obj, loc);
+                case DROP: {
+                    Location droploc = attempt_drop(obj, loc);
+                    if (droploc != loc) {
+                        loc = droploc;
+                        mot = NOWHERE;
+                        goto try_move;
+                    }
                     continue;
+                }
                 case TOSS:
                     if (obj == ROD && toting(ROD2) && !toting(ROD)) obj = ROD2;
                     if (!toting(obj)) {
