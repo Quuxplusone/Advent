@@ -1801,15 +1801,26 @@ void shift_words(void)
  */
 
 int dflag;  /* how angry are the dwarves? */
-Location dloc[6] = { R_PIRATES_NEST, R_HMK, R_WFISS, R_Y2, R_LIKE3, R_COMPLEX };
-Location odloc[6];
-bool dseen[6];
 
-bool dwarf_in(int loc)  /* is a dwarf present? Section 160 in Knuth. */
+struct Dwarf {
+    bool seen;
+    Location oldloc;
+    Location loc;
+} dwarves[6] = {
+    { false, R_LIMBO, R_PIRATES_NEST },  /* this one is really the pirate */
+    { false, R_LIMBO, R_HMK },
+    { false, R_LIMBO, R_WFISS },
+    { false, R_LIMBO, R_Y2 },
+    { false, R_LIMBO, R_LIKE3 },
+    { false, R_LIMBO, R_COMPLEX },
+};
+struct Dwarf *pirate = &dwarves[0];
+
+bool dwarf_at(Location loc)  /* is a dwarf present? Section 160 in Knuth. */
 {
     if (dflag < 2) return false;
     for (int j=1; j <= 5; ++j) {
-        if (dloc[j] == loc) return true;
+        if (loc == dwarves[j].loc) return true;
     }
     return false;
 }
@@ -1820,8 +1831,8 @@ void return_pirate_to_lair(bool with_chest)
         drop(CHEST, R_PIRATES_NEST);
         drop(MESSAGE, R_PONY);
     }
-    dloc[0] = odloc[0] = R_PIRATES_NEST;
-    dseen[0] = false;
+    pirate->loc = pirate->oldloc = R_PIRATES_NEST;
+    pirate->seen = false;
 }
 
 bool too_easy_to_steal(ObjectWord t, Location loc)
@@ -1882,7 +1893,7 @@ void pirate_tracks_you(Location loc)
         return_pirate_to_lair(true);
         return;
     }
-    if (odloc[0] != dloc[0] && pct(20)) {
+    if (pirate->oldloc != pirate->loc && pct(20)) {
         puts("There are faint rustling noises from the darkness behind you.");
     }
 }
@@ -1914,11 +1925,11 @@ bool move_dwarves_and_pirate(Location loc)
              * dwarf is presently tracking you. Another dwarf does,
              * however, toss an axe and grumpily leave the scene. */
             dflag = 2;
-            if (pct(50)) dloc[1+ran(5)] = R_LIMBO;
-            if (pct(50)) dloc[1+ran(5)] = R_LIMBO;
+            if (pct(50)) dwarves[1+ran(5)].loc = R_LIMBO;
+            if (pct(50)) dwarves[1+ran(5)].loc = R_LIMBO;
             for (int j=1; j <= 5; ++j) {
-                if (dloc[j] == loc) dloc[j] = R_NUGGET;
-                odloc[j] = dloc[j];
+                if (dwarves[j].loc == loc) dwarves[j].loc = R_NUGGET;
+                dwarves[j].oldloc = dwarves[j].loc;
             }
             /* Knuth quietly fixes the garden-path grammar here:
              *   A little dwarf just walked around a corner, saw you, threw a
@@ -1935,36 +1946,37 @@ bool move_dwarves_and_pirate(Location loc)
         int attack = 0;  /* this many have had time to draw their knives */
         int stick = 0;  /* this many have hurled their knives accurately */
         for (int j=0; j <= 5; ++j) {
-            if (dloc[j] != R_LIMBO) {
+            struct Dwarf *d = &dwarves[j];
+            if (d->loc != R_LIMBO) {
                 Location ploc[19];  /* potential locations for the next random step */
                 int i = 0;
                 /* Make a table of all potential exits.
                  * Dwarves think R_SCAN1, R_SCAN2, R_SCAN3 are three different locations,
                  * although you will never have that perception. */
-                for (Instruction *q = start[dloc[j]]; q < start[dloc[j]+1]; ++q) {
+                for (Instruction *q = start[d->loc]; q < start[d->loc + 1]; ++q) {
                     Location newloc = q->dest;
                     if (i != 0 && newloc == ploc[i-1]) continue;
                     if (newloc < MIN_LOWER_LOC) continue;  /* don't follow above level 2 */
-                    if (newloc == odloc[j] || newloc == dloc[j]) continue;  /* don't double back */
+                    if (newloc == d->oldloc || newloc == d->loc) continue;  /* don't double back */
                     if (q->cond == 100) continue;
-                    if (j == 0 && forbidden_to_pirate(newloc)) continue;
+                    if (d == pirate && forbidden_to_pirate(newloc)) continue;
                     if (is_forced(newloc) || newloc > MAX_LOC) continue;
                     ploc[i++] = newloc;
                 }
-                if (i==0) ploc[i++] = odloc[j];
-                odloc[j] = dloc[j];
-                dloc[j] = ploc[ran(i)];  /* this is the random walk */
-                dseen[j] = (dloc[j] == loc ||
-                            odloc[j] == loc ||
-                            (dseen[j] && loc >= MIN_LOWER_LOC));
-                if (dseen[j]) {
-                    /* Make dwarf j follow */
-                    dloc[j] = loc;
-                    if (j == 0) {
+                if (i==0) ploc[i++] = d->oldloc;
+                d->oldloc = d->loc;
+                d->loc = ploc[ran(i)];  /* this is the random walk */
+                d->seen = (d->loc == loc ||
+                            d->oldloc == loc ||
+                            (d->seen && loc >= MIN_LOWER_LOC));
+                if (d->seen) {
+                    /* Make dwarf d follow */
+                    d->loc = loc;
+                    if (d == pirate) {
                         pirate_tracks_you(loc);
                     } else {
                         ++dtotal;
-                        if (odloc[j] == dloc[j]) {
+                        if (d->oldloc == d->loc) {
                             ++attack;
                             last_knife_loc = loc;
                             if (ran(1000) < 95*(dflag-2)) ++stick;
@@ -2064,8 +2076,8 @@ bool check_clocks_and_lamp(Location loc)
         objs(GRATE).prop = 0;
         objs(FISSURE).prop = 0;
         for (int j=0; j <= 5; ++j) {
-            dseen[j] = false;
-            dloc[j] = R_LIMBO;
+            dwarves[j].seen = false;
+            dwarves[j].loc = R_LIMBO;
         }
         destroy(TROLL); destroy(TROLL_);
         move(NO_TROLL, R_SWSIDE); move(NO_TROLL_, R_NESIDE);
@@ -2749,7 +2761,7 @@ void attempt_find(ObjectWord obj, Location loc)  /* section 100 in Knuth */
             its_right_here = true;
         } else if (obj == OIL && has_oil(loc)) {
             its_right_here = true;
-        } else if (obj == DWARF && dwarf_in(loc)) {
+        } else if (obj == DWARF && dwarf_at(loc)) {
             its_right_here = true;
         }
         if (its_right_here) {
@@ -2804,24 +2816,30 @@ void attempt_off(Location loc)  /* section 102 in Knuth */
     }
 }
 
-void throw_axe_at_dwarf(Location loc)  /* section 163 in Knuth */
+void kill_a_dwarf(Location loc)
 {
+    static bool first_time = true;
+    if (first_time) {
+        puts("You killed a little dwarf.  The body vanishes in a cloud of greasy" SOFT_NL
+             "black smoke.");
+        first_time = false;
+    } else {
+        puts("You killed a little dwarf.");
+    }
+
     int j;
     for (j=1; j <= 5; ++j) {
-        if (dloc[j] == loc) break;
+        if (dwarves[j].loc == loc) break;
     }
     assert(j <= 5);
+    dwarves[j].loc = R_LIMBO;  /* Once killed, a dwarf never comes back. */
+    dwarves[j].seen = false;
+}
+
+void throw_axe_at_dwarf(Location loc)  /* section 163 in Knuth */
+{
     if (ran(3) < 2) {
-        static bool first_time = true;
-        if (first_time) {
-            puts("You killed a little dwarf.  The body vanishes in a cloud of greasy" SOFT_NL
-                 "black smoke.");
-            first_time = false;
-        } else {
-            puts("You killed a little dwarf.");
-        }
-        dloc[j] = R_LIMBO;  /* Once killed, a dwarf never comes back. */
-        dseen[j] = false;
+        kill_a_dwarf(loc);
     } else {
         puts("You attack a little dwarf, but he dodges out of the way.");
     }
@@ -3096,7 +3114,7 @@ int check_noun_validity(ObjectWord obj, Location loc)  /* sections 90--91 in Knu
             }
             return 'c';  /* can't see it */
         case DWARF:
-            if (dflag >= 2 && dwarf_in(loc)) return 0;
+            if (dflag >= 2 && dwarf_at(loc)) return 0;
             return 'c';  /* can't see it */
         case PLANT:
             if (is_at_loc(PLANT2, loc) && objs(PLANT2).prop != 0) {
@@ -3470,7 +3488,7 @@ void simulate_an_adventure(void)
         } else if (newloc != loc && !forbidden_to_pirate(loc)) {
             /* Stay in loc if a dwarf is blocking the way to newloc */
             for (int j=1; j <= 5; ++j) {
-                if (odloc[j] == newloc && dseen[j]) {
+                if (dwarves[j].seen && dwarves[j].oldloc == newloc) {
                     puts("A little dwarf with a big knife blocks your way.");
                     newloc = loc; break;
                 }
@@ -3608,7 +3626,7 @@ void simulate_an_adventure(void)
                 case TAKE: {
                     /* TAKE makes sense by itself if there's only one possible thing to take. */
                     ObjectWord object_here = places[loc].objects;
-                    if (dwarf_in(loc))
+                    if (dwarf_at(loc))
                         goto get_object;
                     if (object_here != NOTHING && objs(object_here).link == NOTHING) {
                         obj = object_here;
@@ -3880,7 +3898,7 @@ void simulate_an_adventure(void)
                         verb = DROP;
                         goto transitive;
                     }
-                    if (dwarf_in(loc)) {
+                    if (dwarf_at(loc)) {
                         throw_axe_at_dwarf(loc);
                     } else if (is_at_loc(DRAGON, loc) && !objs(DRAGON).prop) {
                         puts("The axe bounces harmlessly off the dragon's thick scales.");
@@ -3908,7 +3926,7 @@ void simulate_an_adventure(void)
                     if (obj == NOTHING) {
                         /* See if there's a unique object to attack. */
                         int k = 0;
-                        if (dwarf_in(loc)) { ++k; obj = DWARF; }
+                        if (dwarf_at(loc)) { ++k; obj = DWARF; }
                         if (here(SNAKE, loc)) { ++k; obj = SNAKE; }
                         if (is_at_loc(DRAGON, loc) && !objs(DRAGON).prop) { ++k; obj = DRAGON; }
                         if (is_at_loc(TROLL, loc)) { ++k; obj = TROLL; }
