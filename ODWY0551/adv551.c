@@ -3200,7 +3200,7 @@ int attempt_look(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
             } else {
                 puts("You feel rather disembodied, as if you were suddenly somewhere" SOFT_NL
                      "else entirely.\n");
-                Location sloc = objs(SAPPHIRE).place;
+                int sloc = objs(SAPPHIRE).place;
                 if (is_lighted_in_absentia(sloc)) {
                     if (sloc == -SACK) {
                         /* Here Long drops the ball (heh). If you put the

@@ -4439,19 +4439,20 @@ void simulate_an_adventure(void)
             continue;
         }
 
-        newloc = places[loc].f();
-        if (R_LIMBO < newloc && newloc < R_YLEM) {
+        int destination = places[loc].f();
+        if (R_LIMBO < destination && destination < R_YLEM) {
+            newloc = destination;
             moved = true;
             continue;
-        } else if (R_YLEM < newloc && newloc <= 2*R_YLEM) {
-            newloc -= R_YLEM;
+        } else if (R_YLEM < destination && destination <= 2*R_YLEM) {
+            newloc = (destination - R_YLEM);
             goto death;  /* moving that direction killed you */
-        } else if (newloc == STAY_STILL) {
+        } else if (destination == STAY_STILL) {
             newloc = loc;
             moved = false;
             continue;
         }
-        assert(newloc == 0);  /* unhandled */
+        assert(destination == 0);  /* unhandled */
         newloc = loc;
 
         if (word1.type == WordClass_Place) {
@@ -4468,27 +4469,29 @@ void simulate_an_adventure(void)
                 moved = true;
             }
         } else {
-            newloc = process_verb(loc);
-            if (wizard_mode && keywordv(LPSD) && newloc == R_LIMBO) {
+            int destination = process_verb(loc);
+            if (wizard_mode && keywordv(LPSD) && destination == R_LIMBO) {
                 /* Special case, since I'm using 0 (R_LIMBO) to mean
                  * "unhandled". If a wizard types "LPSD LIMBO", we do
                  * in fact want to move to room number zero. Why?
                  * To get the mithril ring, of course!
                  * There's no way to LPSD to R_YLEM, so that's okay. */
+                newloc = destination;
                 moved = true;
                 continue;
-            } else if (R_LIMBO < newloc && newloc < R_YLEM) {
+            } else if (R_LIMBO < destination && destination < R_YLEM) {
+                newloc = destination;
                 moved = true;
                 continue;
-            } else if (R_YLEM < newloc && newloc < 2*R_YLEM) {
-                newloc -= R_YLEM;
+            } else if (R_YLEM < destination && destination < 2*R_YLEM) {
+                newloc = (destination - R_YLEM);
                 goto death;  /* moving that direction killed you */
-            } else if (newloc == STAY_STILL) {
+            } else if (destination == STAY_STILL) {
                 newloc = loc;
                 moved = false;
                 continue;
             }
-            assert(newloc == 0);  /* unhandled */
+            assert(destination == 0);  /* unhandled */
             newloc = loc;
             moved = false;
             deal_with_syntax_errors(loc);
