@@ -2165,6 +2165,39 @@ void give_optional_plugh_hint(Location loc)
     }
 }
 
+void spot_treasure(ObjectWord t)
+{
+    if (objs(t).prop >= 0) return;
+    assert(is_treasure(t) && !closed);  /* You've spotted a treasure */
+    switch (t) {
+        case RUG:  /* trapped */
+        case CHAIN:  /* locked */
+            objs(t).prop = 1;
+            break;
+        default:
+            objs(t).prop = 0;
+            break;
+    }
+    tally--;
+    if (tally == lost_treasures && tally > 0 && lamp_limit > 35) {
+        /* Zap the lamp if the remaining treasures are too elusive */
+        lamp_limit = 35;
+    }
+}
+
+void describe_object(ObjectWord t, Location loc)
+{
+    if (t == TREADS && toting(GOLD)) {
+        /* The rough stone steps disappear if we are carrying the nugget. */
+        return;
+    }
+    int going_up = (t == TREADS && loc == R_EMIST);
+    const char *obj_description = objs(t).desc[objs(t).prop + going_up];
+    if (obj_description != NULL) {
+        puts(obj_description);
+    }
+}
+
 int look_around(Location loc, bool dark, bool was_dark)
 {
     const char *room_description;
@@ -2190,24 +2223,9 @@ int look_around(Location loc, bool dark, bool was_dark)
         /* Describe the objects at this location. */
         for (ObjectWord t = places[loc].objects; t != NOTHING; t = objs(t).link) {
             ObjectWord tt = objs(t).base ? objs(t).base : t;
-            if (objs(tt).prop < 0) {  /* you've spotted a treasure */
-                if (closed) continue;  /* no automatic prop change after hours */
-                objs(tt).prop = (tt == RUG || tt == CHAIN);
-                tally--;
-                if (tally == lost_treasures && tally > 0 && lamp_limit > 35) {
-                    /* Zap the lamp if the remaining treasures are too elusive */
-                    lamp_limit = 35;
-                }
-            }
-            if (tt == TREADS && toting(GOLD)) {
-                /* The rough stone steps disappear if we are carrying the nugget. */
-            } else {
-                int going_up = (tt == TREADS && loc == R_EMIST);
-                const char *obj_description = objs(tt).desc[objs(tt).prop + going_up];
-                if (obj_description != NULL) {
-                    puts(obj_description);
-                }
-            }
+            if (closed && (objs(tt).prop < 0)) continue;  /* scenery objects */
+            spot_treasure(tt);
+            describe_object(tt, loc);
         }
     }
     return 0;  /* just continue normally */

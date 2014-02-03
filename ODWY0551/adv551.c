@@ -1680,9 +1680,8 @@ bool update_health(Location loc)
 
 void spot_treasure(ObjectWord t)
 {
-    if (closed) return;
     if (objs(t).prop >= 0) return;
-    assert(is_treasure(t));  /* You've spotted a treasure */
+    assert(is_treasure(t) && !closed);  /* You've spotted a treasure */
     switch (t) {
         case CLOAK:  /* trapped */
         case RING:  /* worn */
@@ -1702,6 +1701,20 @@ void spot_treasure(ObjectWord t)
     if (tally == lost_treasures && tally > 0 && lamp_limit > 35) {
         /* Zap the lamp if the remaining treasures are too elusive */
         lamp_limit = 35;
+    }
+}
+
+void describe_object(ObjectWord t, Location loc)
+{
+    if (t == TREADS && toting(GOLD)) {
+        /* The rough stone steps disappear if we are carrying the nugget. */
+        return;
+    }
+    int going_up = (t == TREADS && loc == R_EMIST);
+    const char *obj_description = objs(t).desc[objs(t).prop + going_up];
+    if (obj_description != NULL) {
+        puts(obj_description);
+        lookin(t);
     }
 }
 
@@ -1758,16 +1771,7 @@ int look_around(Location loc, bool dark, bool was_dark)
             ObjectWord tt = objs(t).base ? objs(t).base : t;
             if (closed && (objs(tt).prop < 0)) continue;  /* scenery objects */
             spot_treasure(tt);
-            if (tt == TREADS && toting(GOLD)) {
-                /* The rough stone steps disappear if we are carrying the nugget. */
-            } else {
-                int going_up = (tt == TREADS && loc == R_EMIST);
-                const char *obj_description = objs(tt).desc[objs(tt).prop + going_up];
-                if (obj_description != NULL) {
-                    puts(obj_description);
-                    lookin(tt);
-                }
-            }
+            describe_object(tt, loc);
         }
     }
     return 0;  /* just continue normally */
