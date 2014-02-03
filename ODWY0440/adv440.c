@@ -31,6 +31,7 @@ void dwarves_upset(void);
 void give_up(void);
 void quit(void);
 
+
 /*========== The vocabulary. ==============================================
  * This section corresponds to sections 4--17 in Knuth.
  */
@@ -108,8 +109,8 @@ typedef enum {
     OWL, WEB, SPIDER, DOCUMENTS, SPOON, HORN, RATS, GIANT, FLAGSTONE,
     GOLD, DIAMONDS, SILVER, JEWELS, COINS, CHEST, EGGS,
     TRIDENT, VASE, EMERALD, PYRAMID, PEARL, RUG, RUG_, SPICES, CHAIN,
-    CROWN, TUSK, CHALICE, RUBY, ORB, ORB_,
-    MAX_OBJ=ORB_
+    CROWN, TUSK, CHALICE, RUBY, ORB, FAKE_ORB,
+    MAX_OBJ=FAKE_ORB
 } ObjectWord;
 
 typedef enum {
@@ -320,7 +321,7 @@ void build_vocabulary(void)
     /* The noun "GLOBE" works at the cellar view; the nouns "CRYSTAL" and "ORB"
      * work only in the circular cellar itself. */
     new_object_word("orb", ORB); new_object_word("cryst", ORB);
-    new_object_word("globe", ORB_);
+    new_object_word("globe", FAKE_ORB);
 
     new_action_word("take", TAKE); new_action_word("carry", TAKE);
     new_action_word("keep", TAKE); new_action_word("catch", TAKE);
@@ -549,10 +550,13 @@ struct Place {
     const char *long_desc;
     const char *short_desc;
     unsigned int flags;
-    struct ObjectData *objects;
+    ObjectWord objects;  /* first object at this location, or NOTHING */
     int visits;
 };
 struct Place places[MAX_LOC+1];
+
+bool now_in_darkness(Location loc);
+void describe_object(ObjectWord t, Location loc);
 
 void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned int f)
 {
@@ -563,7 +567,7 @@ void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned
     places[x].long_desc = l;
     places[x].short_desc = s;
     places[x].flags = f;
-    places[x].objects = NULL;
+    places[x].objects = NOTHING;
     places[x].visits = 0;
     start[x] = q;
 }
@@ -2026,8 +2030,8 @@ bool has_sewage(Location loc)
  */
 
 struct ObjectData {
-    struct ObjectData *link;
-    struct ObjectData *base;
+    ObjectWord link;  /* next object at this location, or NOTHING */
+    ObjectWord base;  /* NOTHING for mobile objects */
     int prop;
     Location original_place;
     Location place;
@@ -2042,6 +2046,7 @@ int tally = 15;  /* treasures awaiting you */
 int lost_treasures;  /* treasures that you won't find */
 
 #define toting(t) (objs(t).place < 0)
+#define is_immobile(t) (objs(t).base != NOTHING)
 #define there(t, loc) (objs(t).place == (loc))
 
 /* Return true if t is a treasure. Notice that RUG_ (the other half
@@ -2084,14 +2089,14 @@ bool here(ObjectWord t, Location loc)
 void drop(ObjectWord t, Location l)
 {
     assert(objs(t).place == R_INHAND || objs(t).place == R_LIMBO);
-    assert(objs(t).link == NULL);
+    assert(objs(t).link == NOTHING);
     if (toting(t)) --holding_count;
     objs(t).place = l;
     if (l == R_INHAND) {
         ++holding_count;
     } else if (l != R_LIMBO) {
         objs(t).link = places[l].objects;
-        places[l].objects = &objs(t);
+        places[l].objects = t;
     }
 }
 
@@ -2105,48 +2110,48 @@ void carry(ObjectWord t)
     if (l != R_INHAND) {
         if (l > R_LIMBO) {
             /* Remove t from l's object-list */
-            struct ObjectData **p = &places[l].objects;
-            while (*p != &objs(t)) p = &(*p)->link;
-            *p = (*p)->link;
+            ObjectWord *p = &places[l].objects;
+            while (*p != t) p = &objs(*p).link;
+            *p = objs(*p).link;
         }
         objs(t).place = R_INHAND;
-        objs(t).link = NULL;
+        objs(t).link = NOTHING;
         ++holding_count;
     }
 }
 
 bool is_at_loc(ObjectWord t, Location loc)
 {
-    if (objs(t).base == NULL)
+    if (objs(t).base == NOTHING)
         return there(t, loc);
     /* Check the "alternative" objects based on this one. */
-    for (ObjectWord tt = t; objs(tt).base == &objs(t); ++tt) {
+    for (ObjectWord tt = t; objs(tt).base == t; ++tt) {
         if (there(tt, loc))
             return true;
     }
     return false;
 }
 
-void mobilize(ObjectWord t) { objs(t).base = NULL; }
-void immobilize(ObjectWord t) { objs(t).base = &objs(t); }
+void mobilize(ObjectWord t) { objs(t).base = NOTHING; }
+void immobilize(ObjectWord t) { objs(t).base = t; }
 
 void new_obj(ObjectWord t, const char *n, ObjectWord b, Location l)
 {
     objs(t).name = n;
     objs(t).prop = (is_treasure(t) ? -1 : 0);
-    objs(t).base = (b != 0 ? &objs(b) : NULL);
+    objs(t).base = b;
     objs(t).original_place = l;
     objs(t).place = l;
-    objs(t).link = NULL;
+    objs(t).link = NOTHING;
     if (l > R_LIMBO) {
        /* Drop the object at the *end* of its list. Combined with the
          * ordering of the item numbers, this ensures that the CHASM
          * is described before the TROLL, the DRAGON before the RUG,
          * and so on. */
-        struct ObjectData **p = &places[l].objects;
-        while (*p != NULL)
-            p = &(*p)->link;
-        *p = &objs(t);
+        ObjectWord *p = &places[l].objects;
+        while (*p != NOTHING)
+            p = &objs(*p).link;
+        *p = t;
     }
 }
 
@@ -2429,15 +2434,27 @@ void shift_words(void)
  */
 
 int dflag;  /* how angry are the dwarves? */
-Location dloc[6] = { R_PIRATES_NEST, R_HMK, R_WFISS, R_Y2, R_LIKE3, R_COMPLEX };
-Location odloc[6];
-bool dseen[6];
 
-bool dwarf_in(int loc)  /* is a dwarf present? Section 160 in Knuth. */
+struct Dwarf {
+    bool seen;
+    ObjectWord toted;  /* Pike's DOBJ array */
+    Location oldloc;
+    Location loc;
+} dwarves[6] = {
+    { false, NOTHING, R_LIMBO, R_PIRATES_NEST },  /* this one is really the pirate */
+    { false, NOTHING, R_LIMBO, R_HMK },
+    { false, NOTHING, R_LIMBO, R_WFISS },
+    { false, NOTHING, R_LIMBO, R_RES },  /* in Woods this dwarf starts at R_Y2 */
+    { false, NOTHING, R_LIMBO, R_LIKE3 },
+    { false, NOTHING, R_LIMBO, R_COMPLEX },
+};
+struct Dwarf *pirate = &dwarves[0];
+
+bool dwarf_at(Location loc)  /* is a dwarf present? Section 160 in Knuth. */
 {
     if (dflag < 2) return false;
     for (int j=1; j <= 5; ++j) {
-        if (dloc[j] == loc) return true;
+        if (loc == dwarves[j].loc) return true;
     }
     return false;
 }
@@ -2448,8 +2465,8 @@ void return_pirate_to_lair(bool with_chest)
         drop(CHEST, R_PIRATES_NEST);
         drop(MESSAGE, R_PONY);
     }
-    dloc[0] = odloc[0] = R_PIRATES_NEST;
-    dseen[0] = false;
+    pirate->loc = pirate->oldloc = R_PIRATES_NEST;
+    pirate->seen = false;
 }
 
 bool too_easy_to_steal(ObjectWord t, Location loc)
@@ -2466,7 +2483,7 @@ void steal_all_your_treasure(Location loc)  /* sections 173--174 in Knuth */
     for (int t = MIN_OBJ; t <= MAX_OBJ; ++t) {
         if (!is_treasure(t)) continue;
         if (too_easy_to_steal(t, loc)) continue;
-        if (here(t, loc) && objs(t).base == NULL) {
+        if (here(t, loc) && !is_immobile(t)) {
             /* The vase, rug, and chain can all be immobile at times. */
             move(t, R_PIRATES_NEST);
         }
@@ -2511,7 +2528,7 @@ void pirate_tracks_you(Location loc)
         return_pirate_to_lair(true);
         return;
     }
-    if (odloc[0] != dloc[0] && pct(20)) {
+    if (pirate->oldloc != pirate->loc && pct(20)) {
         puts("There are faint rustling noises from the darkness behind you.");
     }
 }
@@ -2524,6 +2541,80 @@ bool forbidden_to_pirate(Location loc)
         return true;  /* also forbid the sewer maze, so as not to steal the tusk */
     } else {
         return false;
+    }
+}
+
+/* Certain objects will never be carried by the dwarves. */
+bool dwarves_wont_tote(ObjectWord obj)
+{
+    switch (obj) {
+        case BOTTLE: case CAGE: case BIRD: case PILLOW: case BEAR:
+        case WATER: case OIL:
+            /* these have special logic for TAKE/DROP */
+        case CLAM: case OYSTER:
+            /* these shouldn't leave the Shell Room area */
+        case KNIFE:
+            /* this one isn't a real item */
+        case AXE:
+            /* don't be evil */
+        case ROD: case ROD2:
+            /* not sure why we need to disallow these. TODO investigate */
+        /* Pike also lists the STEPS, DOOR, SNAKE, FISSURE, TABLET, TROLL,
+         * and OWL, but these are already 100% immobile, so we don't need
+         * to repeat them here. */
+            return true;
+        default:
+            return false;
+    }
+}
+
+void dwarves_tote_objects(Location loc)
+{
+    /* Only three of the dwarves tote things? Check this! TODO FIXME BUG HACK */
+    for (int i=0; i < 3; ++i)  // DO 40
+    {
+        struct Dwarf *d = &dwarves[i];
+        if (d->loc == R_LIMBO) {
+            if (d->toted != NOTHING) {
+                /* Dead dwarf drops items in front of player.
+                 * TODO: is this codepath dead?
+                 * Certainly objs(d->toted).place should always be R_188! */
+                if (objs(d->toted).place == R_188) {
+                    move(d->toted, loc);
+                }
+                describe_object(d->toted, loc);
+                d->toted = NOTHING;
+            }
+            continue;
+        }
+        if (d->toted != NOTHING && objs(d->toted).original_place == d->loc)
+        {
+            /* Drop the object in its rightful place. */
+            move(d->toted, d->loc);
+            d->toted = NOTHING;
+        }
+
+        /* Okay, the dwarf is not dead (he's somewhere). Let's see what's
+         * available here for him to tote around. */
+        ObjectWord candidate = d->toted;  /* Pike's "KN" */
+        for (ObjectWord t = places[d->loc].objects; t != NOTHING; t = objs(t).link) {
+            if (is_immobile(t)) continue;
+            if (d->loc == objs(t).original_place) continue;
+            if (dwarves_wont_tote(t)) continue;
+            /* Maybe the dwarf prefers object "t" (Pike's "KH") to whatever
+             * he's currently toting. */
+            if (t > candidate) candidate = t;
+        }
+
+        if (candidate != d->toted) {
+            if (d->toted != NOTHING) {
+                /* Drop the originally carried object here. */
+                move(d->toted, d->loc);
+            }
+            /* Pick up the new object. */
+            d->toted = candidate;
+            move(candidate, R_188);
+        }
     }
 }
 
@@ -2542,18 +2633,18 @@ bool move_dwarves_and_pirate(Location loc)
     } else if (dflag == 0) {
         if (loc >= MIN_LOWER_LOC) dflag = 1;
     } else if (dflag == 1) {
-        if (loc >= MIN_LOWER_LOC && pct(5)) {
+        if (loc >= MIN_LOWER_LOC && pct(5) && !now_in_darkness(loc)) {
             /* When level 2 of the cave is reached, we silently kill 0, 1,
              * or 2 of the dwarves. Then if any of the survivors is in
              * the current location, we move him to R_NUGGET; thus no
              * dwarf is presently tracking you. Another dwarf does,
              * however, toss an axe and grumpily leave the scene. */
             dflag = 2;
-            if (pct(50)) dloc[1+ran(5)] = R_LIMBO;
-            if (pct(50)) dloc[1+ran(5)] = R_LIMBO;
+            if (pct(50)) dwarves[1+ran(5)].loc = R_LIMBO;
+            if (pct(50)) dwarves[1+ran(5)].loc = R_LIMBO;
             for (int j=1; j <= 5; ++j) {
-                if (dloc[j] == loc) dloc[j] = R_NUGGET;
-                odloc[j] = dloc[j];
+                if (dwarves[j].loc == loc) dwarves[j].loc = R_NUGGET;
+                dwarves[j].oldloc = dwarves[j].loc;
             }
             /* Knuth quietly fixes the garden-path grammar here:
              *   A little dwarf just walked around a corner, saw you, threw a
@@ -2566,40 +2657,43 @@ bool move_dwarves_and_pirate(Location loc)
         }
     } else {
         /* Move dwarves and the pirate. */
+        dwarves_tote_objects(loc);
+
         int dtotal = 0;  /* this many dwarves are in the room with you */
         int attack = 0;  /* this many have had time to draw their knives */
         int stick = 0;  /* this many have hurled their knives accurately */
         for (int j=0; j <= 5; ++j) {
-            if (dloc[j] != R_LIMBO) {
+            struct Dwarf *d = &dwarves[j];
+            if (d->loc != R_LIMBO) {
                 Location ploc[19];  /* potential locations for the next random step */
                 int i = 0;
                 /* Make a table of all potential exits.
                  * Dwarves think R_SCAN1, R_SCAN2, R_SCAN3 are three different locations,
                  * although you will never have that perception. */
-                for (Instruction *q = start[dloc[j]]; q < start[dloc[j]+1]; ++q) {
+                for (Instruction *q = start[d->loc]; q < start[d->loc + 1]; ++q) {
                     Location newloc = q->dest;
                     if (i != 0 && newloc == ploc[i-1]) continue;
                     if (newloc < MIN_LOWER_LOC) continue;  /* don't follow above level 2 */
-                    if (newloc == odloc[j] || newloc == dloc[j]) continue;  /* don't double back */
+                    if (newloc == d->oldloc || newloc == d->loc) continue;  /* don't double back */
                     if (q->cond == 100) continue;
-                    if (j == 0 && forbidden_to_pirate(newloc)) continue;
+                    if (d == pirate && forbidden_to_pirate(newloc)) continue;
                     if (is_forced(newloc) || newloc > MAX_LOC) continue;
                     ploc[i++] = newloc;
                 }
-                if (i==0) ploc[i++] = odloc[j];
-                odloc[j] = dloc[j];
-                dloc[j] = ploc[ran(i)];  /* this is the random walk */
-                dseen[j] = (dloc[j] == loc ||
-                            odloc[j] == loc ||
-                            (dseen[j] && loc >= MIN_LOWER_LOC));
-                if (dseen[j]) {
-                    /* Make dwarf j follow */
-                    dloc[j] = loc;
-                    if (j == 0) {
+                if (i==0) ploc[i++] = d->oldloc;
+                d->oldloc = d->loc;
+                d->loc = ploc[ran(i)];  /* this is the random walk */
+                d->seen = (d->loc == loc ||
+                            d->oldloc == loc ||
+                            (d->seen && loc >= MIN_LOWER_LOC));
+                if (d->seen) {
+                    /* Make dwarf d follow */
+                    d->loc = loc;
+                    if (d == pirate) {
                         pirate_tracks_you(loc);
                     } else {
                         ++dtotal;
-                        if (odloc[j] == dloc[j]) {
+                        if (d->oldloc == d->loc) {
                             ++attack;
                             last_knife_loc = loc;
                             if (ran(1000) < 95*(dflag-2)) ++stick;
@@ -2699,8 +2793,8 @@ bool check_clocks_and_lamp(Location loc)
         objs(GRATE).prop = 0;
         objs(FISSURE).prop = 0;
         for (int j=0; j <= 5; ++j) {
-            dseen[j] = false;
-            dloc[j] = R_LIMBO;
+            dwarves[j].seen = false;
+            dwarves[j].loc = R_LIMBO;
         }
         destroy(TROLL); destroy(TROLL_);
         move(NO_TROLL, R_SWSIDE); move(NO_TROLL_, R_NESIDE);
@@ -2789,6 +2883,39 @@ void give_optional_plugh_hint(Location loc)
     }
 }
 
+void spot_treasure(ObjectWord t)
+{
+    if (objs(t).prop >= 0) return;
+    assert(is_treasure(t) && !closed);  /* You've spotted a treasure */
+    switch (t) {
+        case RUG:  /* trapped */
+        case CHAIN:  /* locked */
+            objs(t).prop = 1;
+            break;
+        default:
+            objs(t).prop = 0;
+            break;
+    }
+    tally--;
+    if (tally == lost_treasures && tally > 0 && lamp_limit > 35) {
+        /* Zap the lamp if the remaining treasures are too elusive */
+        lamp_limit = 35;
+    }
+}
+
+void describe_object(ObjectWord t, Location loc)
+{
+    if (t == TREADS && toting(GOLD)) {
+        /* The rough stone steps disappear if we are carrying the nugget. */
+        return;
+    }
+    int going_up = (t == TREADS && loc == R_EMIST);
+    const char *obj_description = objs(t).desc[objs(t).prop + going_up];
+    if (obj_description != NULL) {
+        puts(obj_description);
+    }
+}
+
 int look_around(Location loc, bool dark, bool was_dark)
 {
     const char *room_description;
@@ -2812,26 +2939,11 @@ int look_around(Location loc, bool dark, bool was_dark)
     if (!dark) {
         places[loc].visits += 1;
         /* Describe the objects at this location. */
-        for (struct ObjectData *t = places[loc].objects; t != NULL; t = t->link) {
-            struct ObjectData *tt = t->base ? t->base : t;
-            if (tt->prop < 0) {  /* you've spotted a treasure */
-                if (closed) continue;  /* no automatic prop change after hours */
-                tt->prop = (tt == &objs(RUG) || tt == &objs(CHAIN));
-                tally--;
-                if (tally == lost_treasures && tally > 0 && lamp_limit > 35) {
-                    /* Zap the lamp if the remaining treasures are too elusive */
-                    lamp_limit = 35;
-                }
-            }
-            if (tt == &objs(TREADS) && toting(GOLD)) {
-                /* The rough stone steps disappear if we are carrying the nugget. */
-            } else {
-                int going_up = (tt == &objs(TREADS) && loc == R_EMIST);
-                const char *obj_description = tt->desc[tt->prop + going_up];
-                if (obj_description != NULL) {
-                    puts(obj_description);
-                }
-            }
+        for (ObjectWord t = places[loc].objects; t != NOTHING; t = objs(t).link) {
+            ObjectWord tt = objs(t).base ? objs(t).base : t;
+            if (closed && (objs(tt).prop < 0)) continue;  /* scenery objects */
+            spot_treasure(tt);
+            describe_object(tt, loc);
         }
     }
     return 0;  /* just continue normally */
@@ -2956,9 +3068,9 @@ void maybe_give_a_hint(Location loc, Location oldloc, Location oldoldloc, Object
                     hints[j].count = 0;
                     break;
                 case 5:  /* How to map the twisty passages all alike. */
-                    if (places[loc].objects == NULL &&
-                            places[oldloc].objects == NULL &&
-                            places[oldoldloc].objects == NULL &&
+                    if (places[loc].objects == NOTHING &&
+                            places[oldloc].objects == NOTHING &&
+                            places[oldoldloc].objects == NOTHING &&
                             holding_count > 1) {
                         offer(j);
                     }
@@ -3249,7 +3361,7 @@ bool attempt_take(ObjectWord obj, Location loc)
     if (toting(obj)) {
         puts("You are already carrying it!");
         return false;
-    } else if (objs(obj).base != NULL) {
+    } else if (is_immobile(obj)) {
         take_something_immobile(obj);
         return false;
     } else if (obj != NOTHING && here(BOTTLE, loc) && obj == bottle_contents()) {
@@ -3497,7 +3609,7 @@ void attempt_find(ObjectWord obj, Location loc)  /* section 100 in Knuth */
             its_right_here = true;
         } else if (obj == OIL && has_oil(loc)) {
             its_right_here = true;
-        } else if (obj == DWARF && dwarf_in(loc)) {
+        } else if (obj == DWARF && dwarf_at(loc)) {
             its_right_here = true;
         }
         if (its_right_here) {
@@ -3552,24 +3664,30 @@ void attempt_off(Location loc)  /* section 102 in Knuth */
     }
 }
 
-void throw_axe_at_dwarf(Location loc)  /* section 163 in Knuth */
+void kill_a_dwarf(Location loc)
 {
+    static bool first_time = true;
+    if (first_time) {
+        puts("You killed a little dwarf.  The body vanishes in a cloud of greasy" SOFT_NL
+             "black smoke.");
+        first_time = false;
+    } else {
+        puts("You killed a little dwarf.");
+    }
+
     int j;
     for (j=1; j <= 5; ++j) {
-        if (dloc[j] == loc) break;
+        if (dwarves[j].loc == loc) break;
     }
     assert(j <= 5);
+    dwarves[j].loc = R_LIMBO;  /* Once killed, a dwarf never comes back. */
+    dwarves[j].seen = false;
+}
+
+void throw_axe_at_dwarf(Location loc)  /* section 163 in Knuth */
+{
     if (ran(3) < 2) {
-        static bool first_time = true;
-        if (first_time) {
-            puts("You killed a little dwarf.  The body vanishes in a cloud of greasy" SOFT_NL
-                 "black smoke.");
-            first_time = false;
-        } else {
-            puts("You killed a little dwarf.");
-        }
-        dloc[j] = R_LIMBO;  /* Once killed, a dwarf never comes back. */
-        dseen[j] = false;
+        kill_a_dwarf(loc);
     } else {
         puts("You attack a little dwarf, but he dodges out of the way.");
     }
@@ -3883,7 +4001,7 @@ int check_noun_validity(ObjectWord obj, Location loc)  /* sections 90--91 in Knu
             }
             return 'c';  /* can't see it */
         case DWARF:
-            if (dflag >= 2 && dwarf_in(loc)) return 0;
+            if (dflag >= 2 && dwarf_at(loc)) return 0;
             return 'c';  /* can't see it */
         case PLANT:
             if (is_at_loc(PLANT2, loc) && objs(PLANT2).prop != 0) {
@@ -4297,13 +4415,13 @@ void simulate_an_adventure(void)
 
     while (true) {
         /* Check for interference with the proposed move to newloc. */
-        if (cave_is_closing() && newloc < MIN_IN_CAVE && newloc != R_LIMBO) {
+        if (cave_is_closing() && (newloc < MIN_IN_CAVE || newloc == R_167) && newloc != R_LIMBO) {
             panic_at_closing_time();
             newloc = loc;
         } else if (newloc != loc && !forbidden_to_pirate(loc)) {
             /* Stay in loc if a dwarf is blocking the way to newloc */
             for (int j=1; j <= 5; ++j) {
-                if (odloc[j] == newloc && dseen[j]) {
+                if (dwarves[j].seen && dwarves[j].oldloc == newloc) {
                     puts("A little dwarf with a big knife blocks your way.");
                     newloc = loc; break;
                 }
@@ -4441,11 +4559,11 @@ void simulate_an_adventure(void)
                     goto transitive;
                 case TAKE: {
                     /* TAKE makes sense by itself if there's only one possible thing to take. */
-                    struct ObjectData *object_here = places[loc].objects;
-                    if (dwarf_in(loc))
+                    ObjectWord object_here = places[loc].objects;
+                    if (dwarf_at(loc))
                         goto get_object;
-                    if (object_here != NULL && object_here->link == NULL) {
-                        obj = MIN_OBJ + (object_here - &objs(MIN_OBJ));
+                    if (object_here != NOTHING && objs(object_here).link == NOTHING) {
+                        obj = object_here;
                         goto transitive;
                     }
                     goto get_object;
@@ -4748,7 +4866,7 @@ void simulate_an_adventure(void)
                         verb = DROP;
                         goto transitive;
                     }
-                    if (dwarf_in(loc)) {
+                    if (dwarf_at(loc)) {
                         throw_axe_at_dwarf(loc);
                     } else if (is_at_loc(DRAGON, loc) && !objs(DRAGON).prop) {
                         puts("The axe bounces harmlessly off the dragon's thick scales.");
@@ -4776,7 +4894,7 @@ void simulate_an_adventure(void)
                     if (obj == NOTHING) {
                         /* See if there's a unique object to attack. */
                         int k = 0;
-                        if (dwarf_in(loc)) { ++k; obj = DWARF; }
+                        if (dwarf_at(loc)) { ++k; obj = DWARF; }
                         if (here(SNAKE, loc)) { ++k; obj = SNAKE; }
                         if (is_at_loc(DRAGON, loc) && !objs(DRAGON).prop) { ++k; obj = DRAGON; }
                         if (is_at_loc(TROLL, loc)) { ++k; obj = TROLL; }
