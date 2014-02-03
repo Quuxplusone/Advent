@@ -548,7 +548,7 @@ void make_loc(Instruction *q, Location x, bool has_long_desc, bool has_short_des
     places[x].has_long_desc = has_long_desc;
     places[x].has_short_desc = has_short_desc;
     places[x].flags = f;
-    places[x].objects = NULL;
+    places[x].objects = NOTHING;
     places[x].visits = 0;
     start[x] = q;
 }
@@ -729,28 +729,28 @@ bool blind_at(Location loc)
     }
 }
 
-void mobilize(ObjectWord t) { objs(t).base = NULL; }
-void immobilize(ObjectWord t) { objs(t).base = &objs(t); }
+void mobilize(ObjectWord t) { objs(t).base = NOTHING; }
+void immobilize(ObjectWord t) { objs(t).base = t; }
 
 void new_obj(ObjectWord t, const char *n, ObjectWord b, Location l)
 {
     objs(t).name = n;
     objs(t).prop = (is_treasure(t) ? -1 : 0);
-    objs(t).base = (b != 0 ? &objs(b) : NULL);
+    objs(t).base = b;
     objs(t).place = l;
     objs(t).flags = 0;
-    objs(t).contents = NULL;
-    objs(t).link = NULL;
+    objs(t).contents = NOTHING;
+    objs(t).link = NOTHING;
     assert(l >= R_LIMBO);
     if (l > R_LIMBO) {
        /* Drop the object at the *end* of its list. Combined with the
          * ordering of the item numbers, this ensures that the CHASM
          * is described before the TROLL, the DRAGON before the RUG,
          * and so on. */
-        struct ObjectData **p = &places[l].objects;
-        while (*p != NULL)
-            p = &(*p)->link;
-        *p = &objs(t);
+        ObjectWord *p = &places[l].objects;
+        while (*p != NOTHING)
+            p = &objs(*p).link;
+        *p = t;
     }
 }
 
@@ -1203,7 +1203,7 @@ void steal_all_your_treasure(Location loc)  /* sections 173--174 in Knuth */
          "the gloom.");
     for (int t = MIN_OBJ; t <= MAX_OBJ; ++t) {
         if (!pirate_covets(t, loc)) continue;
-        if (here(t, loc) && objs(t).base == NULL) {
+        if (here(t, loc) && !is_immobile(t)) {
             /* The vase, rug, and chain can all be immobile at times. */
             insert(t, CHEST);
         }
@@ -1742,18 +1742,18 @@ int look_around(Location loc, bool dark, bool was_dark)
     if (!dark && !too_bright) {
         places[loc].visits += 1;
         /* Describe the objects at this location. */
-        for (struct ObjectData *t = places[loc].objects; t != NULL; t = t->link) {
-            struct ObjectData *tt = t->base ? t->base : t;
-            if (closed && (tt->prop < 0)) continue;  /* scenery objects */
-            spot_treasure(tt - &objs(MIN_OBJ) + MIN_OBJ);
-            if (tt == &objs(TREADS) && toting(GOLD)) {
+        for (ObjectWord t = places[loc].objects; t != NOTHING; t = objs(t).link) {
+            ObjectWord tt = objs(t).base ? objs(t).base : t;
+            if (closed && (objs(tt).prop < 0)) continue;  /* scenery objects */
+            spot_treasure(tt);
+            if (tt == TREADS && toting(GOLD)) {
                 /* The rough stone steps disappear if we are carrying the nugget. */
             } else {
-                int going_up = (tt == &objs(TREADS) && loc == R_EMIST);
-                const char *obj_description = tt->desc[tt->prop + going_up];
+                int going_up = (tt == TREADS && loc == R_EMIST);
+                const char *obj_description = objs(tt).desc[objs(tt).prop + going_up];
                 if (obj_description != NULL) {
                     puts(obj_description);
-                    lookin(tt - &objs(MIN_OBJ) + MIN_OBJ);
+                    lookin(tt);
                 }
             }
         }
@@ -1875,9 +1875,9 @@ void maybe_give_a_hint(Location loc, Location oldloc, Location oldoldloc, Object
                     hints[j].count = 0;
                     break;
                 case 5:  /* How to map the twisty passages all alike. */
-                    if (places[loc].objects == NULL &&
-                            places[oldloc].objects == NULL &&
-                            places[oldoldloc].objects == NULL &&
+                    if (places[loc].objects == NOTHING &&
+                            places[oldloc].objects == NOTHING &&
+                            places[oldoldloc].objects == NOTHING &&
                             burden(0) > 1) {
                         offer(j);
                     }
@@ -2457,7 +2457,7 @@ void attempt_insert_into(Location loc, ObjectWord obj, ObjectWord iobj)
         noway();
     } else if (obj == BOAT && iobj == CHEST) {
         noway();
-    } else if (objs(obj).base != NULL) {
+    } else if (is_immobile(obj)) {
         take_something_immobile(obj);
     } else if (is_liquid(obj)) {
         /* PUT WATER IN LAMP redirects to FILL LAMP WITH WATER.
@@ -2627,7 +2627,7 @@ void attempt_take(Location loc, ActionWord verb, ObjectWord obj, PrepositionWord
         } else {
             puts("You are already carrying it!");
         }
-    } else if (objs(obj).base != NULL) {
+    } else if (is_immobile(obj)) {
         take_something_immobile(obj);
     } else if (prep == INTO) {
         attempt_insert_into(loc, obj, iobj);
@@ -3152,11 +3152,11 @@ void lookin(ObjectWord container)
     assert(word_class(container) == WordClass_Object);
     if (!is_vessel(container)) return;
     if (is_opaque(container) && !is_ajar(container)) return;
-    if (objs(container).contents == NULL) return;
+    if (objs(container).contents == NOTHING) return;
     puts("It contains:");
-    for (struct ObjectData *p = objs(container).contents; p != NULL; p = p->link) {
+    for (ObjectWord p = objs(container).contents; p != NOTHING; p = objs(p).link) {
         indent_appropriately();
-        printf("     %s\n", p->name);
+        printf("     %s\n", objs(p).name);
     }
 }
 
@@ -3184,7 +3184,7 @@ int attempt_look(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
             /* Look into something (a container). */
             if (is_opaque(iobj) && !is_ajar(iobj)) {
                 puts("It's not open.");
-            } else if (objs(iobj).contents == NULL) {
+            } else if (objs(iobj).contents == NOTHING) {
                 puts("There's nothing inside.");
             } else {
                 indent_appropriately();
@@ -5027,11 +5027,11 @@ void simulate_an_adventure(void)
                 case REMOVE:
                 case BURN:
                     if (blind_at(loc) ||
-                            places[loc].objects == NULL ||
-                            places[loc].objects->link != NULL ||
+                            places[loc].objects == NOTHING ||
+                            objs(places[loc].objects).link != NOTHING ||
                             dwarf_at(loc))
                         goto act_on_what;
-                    obj = (places[loc].objects - &objs(MIN_OBJ) + MIN_OBJ);
+                    obj = places[loc].objects;
                     goto transitive;
                 case OPEN:
                 case CLOSE:

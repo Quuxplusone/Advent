@@ -434,7 +434,7 @@ struct Place {
     const char *long_desc;
     const char *short_desc;
     unsigned int flags;
-    struct ObjectData *objects;
+    ObjectWord objects;  /* first object at this location, or NOTHING */
     int visits;
 };
 struct Place places[MAX_LOC+1];
@@ -448,7 +448,7 @@ void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned
     places[x].long_desc = l;
     places[x].short_desc = s;
     places[x].flags = f;
-    places[x].objects = NULL;
+    places[x].objects = NOTHING;
     places[x].visits = 0;
     start[x] = q;
 }
@@ -1452,8 +1452,8 @@ bool has_oil(Location loc)
  */
 
 struct ObjectData {
-    struct ObjectData *link;
-    struct ObjectData *base;
+    ObjectWord link;  /* next object at this location, or NOTHING */
+    ObjectWord base;  /* NOTHING for mobile objects */
     int prop;
     Location place;
     const char *name;
@@ -1467,6 +1467,7 @@ int tally = 15;  /* treasures awaiting you */
 int lost_treasures;  /* treasures that you won't find */
 
 #define toting(t) (objs(t).place < 0)
+#define is_immobile(t) (objs(t).base != NOTHING)
 #define there(t, loc) (objs(t).place == (loc))
 
 /* Return true if t is a treasure. Notice that RUG_ (the other half
@@ -1506,14 +1507,14 @@ bool here(ObjectWord t, Location loc)
 void drop(ObjectWord t, Location l)
 {
     assert(objs(t).place == R_INHAND || objs(t).place == R_LIMBO);
-    assert(objs(t).link == NULL);
+    assert(objs(t).link == NOTHING);
     if (toting(t)) --holding_count;
     objs(t).place = l;
     if (l == R_INHAND) {
         ++holding_count;
     } else if (l != R_LIMBO) {
         objs(t).link = places[l].objects;
-        places[l].objects = &objs(t);
+        places[l].objects = t;
     }
 }
 
@@ -1527,47 +1528,47 @@ void carry(ObjectWord t)
     if (l != R_INHAND) {
         if (l > R_LIMBO) {
             /* Remove t from l's object-list */
-            struct ObjectData **p = &places[l].objects;
-            while (*p != &objs(t)) p = &(*p)->link;
-            *p = (*p)->link;
+            ObjectWord *p = &places[l].objects;
+            while (*p != t) p = &objs(*p).link;
+            *p = objs(*p).link;
         }
         objs(t).place = R_INHAND;
-        objs(t).link = NULL;
+        objs(t).link = NOTHING;
         ++holding_count;
     }
 }
 
 bool is_at_loc(ObjectWord t, Location loc)
 {
-    if (objs(t).base == NULL)
+    if (objs(t).base == NOTHING)
         return there(t, loc);
     /* Check the "alternative" objects based on this one. */
-    for (ObjectWord tt = t; objs(tt).base == &objs(t); ++tt) {
+    for (ObjectWord tt = t; objs(tt).base == t; ++tt) {
         if (there(tt, loc))
             return true;
     }
     return false;
 }
 
-void mobilize(ObjectWord t) { objs(t).base = NULL; }
-void immobilize(ObjectWord t) { objs(t).base = &objs(t); }
+void mobilize(ObjectWord t) { objs(t).base = NOTHING; }
+void immobilize(ObjectWord t) { objs(t).base = t; }
 
 void new_obj(ObjectWord t, const char *n, ObjectWord b, Location l)
 {
     objs(t).name = n;
     objs(t).prop = (is_treasure(t) ? -1 : 0);
-    objs(t).base = (b != 0 ? &objs(b) : NULL);
+    objs(t).base = b;
     objs(t).place = l;
-    objs(t).link = NULL;
+    objs(t).link = NOTHING;
     if (l > R_LIMBO) {
        /* Drop the object at the *end* of its list. Combined with the
          * ordering of the item numbers, this ensures that the CHASM
          * is described before the TROLL, the DRAGON before the RUG,
          * and so on. */
-        struct ObjectData **p = &places[l].objects;
-        while (*p != NULL)
-            p = &(*p)->link;
-        *p = &objs(t);
+        ObjectWord *p = &places[l].objects;
+        while (*p != NOTHING)
+            p = &objs(*p).link;
+        *p = t;
     }
 }
 
@@ -1837,7 +1838,7 @@ void steal_all_your_treasure(Location loc)  /* sections 173--174 in Knuth */
     for (int t = MIN_OBJ; t <= MAX_OBJ; ++t) {
         if (!is_treasure(t)) continue;
         if (too_easy_to_steal(t, loc)) continue;
-        if (here(t, loc) && objs(t).base == NULL) {
+        if (here(t, loc) && !is_immobile(t)) {
             /* The vase, rug, and chain can all be immobile at times. */
             move(t, R_PIRATES_NEST);
         }
@@ -2175,22 +2176,22 @@ int look_around(Location loc, bool dark, bool was_dark)
     if (!dark) {
         places[loc].visits += 1;
         /* Describe the objects at this location. */
-        for (struct ObjectData *t = places[loc].objects; t != NULL; t = t->link) {
-            struct ObjectData *tt = t->base ? t->base : t;
-            if (tt->prop < 0) {  /* you've spotted a treasure */
+        for (ObjectWord t = places[loc].objects; t != NOTHING; t = objs(t).link) {
+            ObjectWord tt = objs(t).base ? objs(t).base : t;
+            if (objs(tt).prop < 0) {  /* you've spotted a treasure */
                 if (closed) continue;  /* no automatic prop change after hours */
-                tt->prop = (tt == &objs(RUG) || tt == &objs(CHAIN));
+                objs(tt).prop = (tt == RUG || tt == CHAIN);
                 tally--;
                 if (tally == lost_treasures && tally > 0 && lamp_limit > 35) {
                     /* Zap the lamp if the remaining treasures are too elusive */
                     lamp_limit = 35;
                 }
             }
-            if (tt == &objs(TREADS) && toting(GOLD)) {
+            if (tt == TREADS && toting(GOLD)) {
                 /* The rough stone steps disappear if we are carrying the nugget. */
             } else {
-                int going_up = (tt == &objs(TREADS) && loc == R_EMIST);
-                const char *obj_description = tt->desc[tt->prop + going_up];
+                int going_up = (tt == TREADS && loc == R_EMIST);
+                const char *obj_description = objs(tt).desc[objs(tt).prop + going_up];
                 if (obj_description != NULL) {
                     puts(obj_description);
                 }
@@ -2317,9 +2318,9 @@ void maybe_give_a_hint(Location loc, Location oldloc, Location oldoldloc, Object
                     hints[j].count = 0;
                     break;
                 case 5:  /* How to map the twisty passages all alike. */
-                    if (places[loc].objects == NULL &&
-                            places[oldloc].objects == NULL &&
-                            places[oldoldloc].objects == NULL &&
+                    if (places[loc].objects == NOTHING &&
+                            places[oldloc].objects == NOTHING &&
+                            places[oldoldloc].objects == NOTHING &&
                             holding_count > 1) {
                         offer(j);
                     }
@@ -2588,7 +2589,7 @@ bool attempt_take(ObjectWord obj, Location loc)
     if (toting(obj)) {
         puts("You are already carrying it!");
         return false;
-    } else if (objs(obj).base != NULL) {
+    } else if (is_immobile(obj)) {
         take_something_immobile(obj);
         return false;
     } else if (obj != NOTHING && here(BOTTLE, loc) && obj == bottle_contents()) {
@@ -3606,11 +3607,11 @@ void simulate_an_adventure(void)
                     goto transitive;
                 case TAKE: {
                     /* TAKE makes sense by itself if there's only one possible thing to take. */
-                    struct ObjectData *object_here = places[loc].objects;
+                    ObjectWord object_here = places[loc].objects;
                     if (dwarf_in(loc))
                         goto get_object;
-                    if (object_here != NULL && object_here->link == NULL) {
-                        obj = MIN_OBJ + (object_here - &objs(MIN_OBJ));
+                    if (object_here != NOTHING && objs(object_here).link == NOTHING) {
+                        obj = object_here;
                         goto transitive;
                     }
                     goto get_object;

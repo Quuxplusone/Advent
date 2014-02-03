@@ -257,10 +257,10 @@ bool here(ObjectWord t, Location loc)
 
 bool is_at_loc(ObjectWord t, Location loc)
 {
-    if (objs(t).base == NULL)
+    if (objs(t).base == NOTHING)
         return there(t, loc);
     /* Check the "alternative" objects based on this one. */
-    for (ObjectWord tt = t; objs(tt).base == &objs(t); ++tt) {
+    for (ObjectWord tt = t; objs(tt).base == t; ++tt) {
         if (there(tt, loc))
             return true;
     }
@@ -349,8 +349,8 @@ int burden(ObjectWord t)
         int result = weight(t);
         if (t == BOAT) return result;
         /* Long doesn't recurse here, due to Fortran's lack of recursion. */
-        for (struct ObjectData *p = objs(t).contents; p != NULL; p = p->link) {
-            result += burden(p - &objs(MIN_OBJ) + MIN_OBJ);
+        for (ObjectWord p = objs(t).contents; p != NOTHING; p = objs(p).link) {
+            result += burden(p);
         }
         return result;
     }
@@ -375,12 +375,12 @@ void drop(ObjectWord t, Location l)
 {
     assert(l >= R_LIMBO);
     assert(objs(t).place == R_INHAND || objs(t).place == R_LIMBO);
-    assert(objs(t).link == NULL);
+    assert(objs(t).link == NOTHING);
     objs(t).place = l;
     jostle_object(t);
     if (l > R_LIMBO) {
         objs(t).link = places[l].objects;
-        places[l].objects = &objs(t);
+        places[l].objects = t;
     }
 }
 
@@ -390,7 +390,7 @@ void insert(ObjectWord t, ObjectWord container)
     move(t, R_LIMBO);
     objs(t).place = -container;
     objs(t).link = objs(container).contents;
-    objs(container).contents = &objs(t);
+    objs(container).contents = t;
 }
 
 void remove_from_containers(ObjectWord t)
@@ -401,12 +401,12 @@ void remove_from_containers(ObjectWord t)
     assert(is_vessel(container));
 
     /* Remove t from container's object-list */
-    struct ObjectData **p = &objs(container).contents;
-    while (*p != &objs(t)) p = &(*p)->link;
-    *p = (*p)->link;
+    ObjectWord *p = &objs(container).contents;
+    while (*p != t) p = &objs(*p).link;
+    *p = objs(*p).link;
 
     objs(t).place = R_INHAND;
-    objs(t).link = NULL;
+    objs(t).link = NOTHING;
 }
 
 void carry(ObjectWord t)
@@ -416,12 +416,12 @@ void carry(ObjectWord t)
     if (l != R_INHAND) {
         if (l > R_LIMBO) {
             /* Remove t from l's object-list */
-            struct ObjectData **p = &places[l].objects;
-            while (*p != &objs(t)) p = &(*p)->link;
-            *p = (*p)->link;
+            ObjectWord *p = &places[l].objects;
+            while (*p != t) p = &objs(*p).link;
+            *p = objs(*p).link;
         }
         objs(t).place = R_INHAND;
-        objs(t).link = NULL;
+        objs(t).link = NOTHING;
     }
     jostle_object(t);
 }

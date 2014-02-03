@@ -161,9 +161,9 @@ typedef enum {
 #define BAD_WORD 999
 
 struct ObjectData {
-    struct ObjectData *link;
-    struct ObjectData *contents;
-    struct ObjectData *base;
+    ObjectWord link;  /* next object at this location, or NOTHING */
+    ObjectWord contents;
+    ObjectWord base;  /* NOTHING for mobile objects */
     int prop;
     int place;
     const char *name;
@@ -183,7 +183,7 @@ struct Place {
     bool has_long_desc;
     bool has_short_desc;
     unsigned int flags;
-    struct ObjectData *objects;
+    ObjectWord objects;  /* first object at this location, or NOTHING */
     int visits;
 };
 extern struct Place places[MAX_LOC+1];
@@ -215,7 +215,7 @@ ObjectWord liquid_at_location(Location loc);
 void noway(void);
 void confuz(void);
 
-#define is_immobile(t) (objs(t).base != NULL)
+#define is_immobile(t) (objs(t).base != NOTHING)
 #define there(t, loc) (objs(t).place == (loc))
 
 #include "getwds.h"
