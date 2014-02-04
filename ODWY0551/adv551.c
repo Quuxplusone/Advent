@@ -1327,7 +1327,7 @@ bool move_dwarves_and_pirate(Location loc)
                 for (Instruction *q = start[d->loc]; q < start[d->loc + 1]; ++q) {
                     Location newloc = q->dest;
                     if (i != 0 && newloc == ploc[i-1]) continue;
-                    if (!is_well_inside(newloc)) continue;  /* don't follow above level 2 */
+                    if (!is_well_inside(newloc)) continue;  /* don't wander above level 2 */
                     if (newloc == d->oldloc || newloc == d->loc) continue;  /* don't double back */
                     if (q->cond == 100) continue;
                     if (d == pirate && forbidden_to_pirate(newloc)) continue;
@@ -1337,9 +1337,15 @@ bool move_dwarves_and_pirate(Location loc)
                 if (i==0) ploc[i++] = d->oldloc;
                 d->oldloc = d->loc;
                 d->loc = ploc[ran(i)];  /* this is the random walk */
-                d->seen = (d->loc == loc ||
-                            d->oldloc == loc ||
-                            (d->seen && is_well_inside(loc)));
+
+                /* Dwarves follow the player once they've spotted him. But
+                 * they won't follow outside the lower cave. */
+                if (d->loc == loc || d->oldloc == loc) {
+                    d->seen = true;
+                } else if (!is_well_inside(loc)) {
+                    d->seen = false;
+                }
+
                 if (d->seen) {
                     /* Make dwarf j follow */
                     d->loc = loc;
