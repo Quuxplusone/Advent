@@ -2025,6 +2025,20 @@ bool has_sewage(Location loc)
     }
 }
 
+bool dwarves_wont_follow_into(Location loc)
+{
+    switch (loc) {
+        case R_176: case R_177: case R_178:
+        case R_179: case R_180: case R_181:
+        case R_182: case R_183: case R_184:
+        case R_185: case R_186: case R_187:
+        case R_188:
+            return true;
+        default:
+            return false;
+    }
+}
+
 /*========== Data structures for objects. =================================
  * This section corresponds to sections 63--70 in Knuth.
  */
@@ -2662,9 +2676,15 @@ bool move_dwarves_and_pirate(Location loc)
         int dtotal = 0;  /* this many dwarves are in the room with you */
         int attack = 0;  /* this many have had time to draw their knives */
         int stick = 0;  /* this many have hurled their knives accurately */
+        bool dwarf_is_toting_something = false;
         for (int j=0; j <= 5; ++j) {
             struct Dwarf *d = &dwarves[j];
-            if (d->loc != R_LIMBO) {
+            if (d->loc == R_LIMBO) {
+                /* Pike allows dead dwarves to resurrect themselves! */
+                if (ran(400) == 0) {
+                    d->loc = R_163;
+                }
+            } else {
                 Location ploc[19];  /* potential locations for the next random step */
                 int i = 0;
                 /* Make a table of all potential exits.
@@ -2673,39 +2693,53 @@ bool move_dwarves_and_pirate(Location loc)
                 for (Instruction *q = start[d->loc]; q < start[d->loc + 1]; ++q) {
                     Location newloc = q->dest;
                     if (i != 0 && newloc == ploc[i-1]) continue;
-                    if (newloc < MIN_LOWER_LOC) continue;  /* don't follow above level 2 */
+                    if (newloc < MIN_LOWER_LOC) continue;  /* don't wander above level 2 */
                     if (newloc == d->oldloc || newloc == d->loc) continue;  /* don't double back */
                     if (q->cond == 100) continue;
                     if (d == pirate && forbidden_to_pirate(newloc)) continue;
                     if (is_forced(newloc) || newloc > MAX_LOC) continue;
+                    if (there(OWL, newloc)) continue;  /* dwarves avoid the owl */
                     ploc[i++] = newloc;
                 }
                 if (i==0) ploc[i++] = d->oldloc;
                 d->oldloc = d->loc;
                 d->loc = ploc[ran(i)];  /* this is the random walk */
-                d->seen = (d->loc == loc ||
-                            d->oldloc == loc ||
-                            (d->seen && loc >= MIN_LOWER_LOC));
+
+                /* Dwarves follow the player once they've spotted him. But
+                 * they won't follow outside the lower cave. */
+                if (d->loc == loc || d->oldloc == loc) {
+                    d->seen = true;
+                } else if (loc < MIN_LOWER_LOC || dwarves_wont_follow_into(loc)) {
+                    d->seen = false;
+                }
+
                 if (d->seen) {
                     /* Make dwarf d follow */
                     d->loc = loc;
                     if (d == pirate) {
                         pirate_tracks_you(loc);
                     } else {
+                        if (d->toted != NOTHING) {
+                            dwarf_is_toting_something = true;
+                        }
                         ++dtotal;
                         if (d->oldloc == d->loc) {
                             ++attack;
                             last_knife_loc = loc;
-                            if (ran(1000) < 95*(dflag-2)) ++stick;
+                            if (ran(10) < (dflag-2)) ++stick;
                         }
                     }
                 }
             }
         }
-        if (dtotal != 0) {
-            /* Make the threatening dwarves attack. */
+        if (dtotal != 0 && !now_in_darkness(loc)) {
+            /* Make the threatening dwarves attack.
+             * Unlike Woods', Pike's dwarves don't attack in the dark. */
             if (dtotal == 1) {
                 puts("There is a threatening little dwarf in the room with you!");
+                if (dwarf_is_toting_something) {
+                    puts("He scuttles along clutching his bulging coat front and muttering.");
+                }
             } else {
                 printf("There are %d threatening little dwarves in the room with you!\n", dtotal);
             }
@@ -2949,6 +2983,66 @@ int look_around(Location loc, bool dark, bool was_dark)
     return 0;  /* just continue normally */
 }
 
+Location announce_tides(Location loc)
+{
+    /* The tides start flowing as soon as you enter R_178 for the first time. */
+    static bool tides_have_started = false;
+    if (!tides_have_started) {
+        if (loc == R_178) {
+            tides_have_started = true;
+        } else {
+            return loc;
+        }
+    }
+
+    static int tide = 3;
+    ++tide;
+    if (tide == 15) tide = -15;
+
+    switch (loc) {
+        case R_178:
+            if (abs(tide) >= 5) {
+                /* A few turns after the culvert becomes passable, the description of
+                 * the shaft with sewage below will change to describe the culvert
+                 * below. This is implemented in a clever way: R_176 is always adjacent
+                 * to R_178 in the travel table, but if the tide is low, then we simply
+                 * teleport the player to R_179 before describing where he is. The
+                 * effect is that DOWN from R_176 appears to lead to either R_178 or
+                 * R_179 depending on the tides, but dwarves always see it as leading
+                 * to R_178. Thus, dwarves can never wander into R_179. */
+                return R_179;
+            }
+            break;
+        case R_180: case R_181: case R_182:
+            if (loc == R_182) {
+                /* The rats get hungrier the longer you stay in their location. */
+                objs(RATS).prop = (objs(RATS).prop + 1) % 7;
+            }
+            switch (abs(tide)) {
+                case 0: case 1: case 2: case 3: case 4:
+                    puts("You have drowned horribly in a mixture of sea-water and sewage!");
+                    return R_LIMBO;
+                case 5: puts("You are nearly up to your neck in sewage.  Help!"); return loc;
+                case 6: puts("The sewage comes nearly up to your chest! Lets get out of here!"); return loc;
+                case 7: puts("You are up to your waist in sewage. Lets leave!"); return loc;
+                case 8: puts("The sewage comes nearly up to your waist. This is not at all" SOFT_NL
+                             "pleasant!"); return loc;
+                case 9: puts("Sewage laps about your legs."); return loc;
+                case 10: puts("The sewage comes above your knees."); return loc;
+                default: puts("Sewage laps about your knees."); return loc;
+            }
+            break;
+        case R_183: case R_184: case R_185: case R_186:
+            if (tide == 0) {
+                puts("The pipe has completely filled with sewage.........");
+                return R_LIMBO;
+            }
+            break;
+        default:
+            break;
+    }
+    return loc;
+}
 
 /*========== Hints. =======================================================
  * This section corresponds to sections 80 and 193--196 in Knuth.
@@ -4433,6 +4527,7 @@ void simulate_an_adventure(void)
             goto death;
         }
     commence:
+        loc = announce_tides(loc);
         if (loc == R_LIMBO) goto death;
         switch (look_around(loc, now_in_darkness(loc), was_dark)) {
             case 'p': goto pitch_dark;
