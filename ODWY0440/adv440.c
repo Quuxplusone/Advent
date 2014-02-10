@@ -2058,6 +2058,7 @@ int holding_count;  /* how many objects have objs(t).place < 0? */
 Location last_knife_loc = R_LIMBO;
 int tally = 15;  /* treasures awaiting you */
 int lost_treasures;  /* treasures that you won't find */
+int thirst = -200;  /* when it reaches 900, you're dead */
 
 #define toting(t) (objs(t).place < 0)
 #define is_immobile(t) (objs(t).base != NOTHING)
@@ -2585,7 +2586,7 @@ bool dwarves_wont_tote(ObjectWord obj)
 void dwarves_tote_objects(Location loc)
 {
     /* Only three of the dwarves tote things? Check this! TODO FIXME BUG HACK */
-    for (int i=0; i < 3; ++i)  // DO 40
+    for (int i=0; i < 3; ++i)
     {
         struct Dwarf *d = &dwarves[i];
         if (d->loc == R_LIMBO) {
@@ -3042,6 +3043,27 @@ Location announce_tides(Location loc)
             break;
     }
     return loc;
+}
+
+bool maybe_die_of_thirst(Location loc)
+{
+    int previous_thirst = thirst;
+    thirst += (holding + 2);
+    if (loc == R_VIEW) {
+        /* Visiting the volcano view pushes your thirst counter rapidly
+         * toward 880, for some reason. TODO understand this. */
+        thirst = (880 + thirst) / 2;
+    }
+    if (thirst >= 900) {
+        puts("You have collapsed and died of thirst!");
+        return true;
+    } else if (thirst >= 880) {
+        puts("I cannot go much farther without a drink.");
+    } else if (previous_thirst < 800 && thirst > 800) {
+        puts("Exploring is thirsty work, you must soon take a drink or lighten" SOFT_NL
+             "your load.");
+    }
+    return false;
 }
 
 /*========== Hints. =======================================================
@@ -4529,6 +4551,7 @@ void simulate_an_adventure(void)
     commence:
         loc = announce_tides(loc);
         if (loc == R_LIMBO) goto death;
+        if (maybe_die_of_thirst(loc)) goto death;
         switch (look_around(loc, now_in_darkness(loc), was_dark)) {
             case 'p': goto pitch_dark;
             case 't': goto try_move;
