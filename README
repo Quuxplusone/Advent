@@ -114,7 +114,7 @@ The history of "Adventure 3" on the Z-machine, as far as I know, is:
 
 The history of David Long et al.'s 551-point "Adventure 6" is:
 
-  Long created his 500-point "Adventure 5" circa 1978, both by augmenting
+  Long created his 501-point "Adventure 5" circa 1978, both by augmenting
   the original Crowther and Woods "Adventure" and by slightly modifying
   a few puzzles (for example, relocating the trident and providing an
   alternative solution to the troll bridge). Long's game used Crowther
@@ -130,31 +130,39 @@ The history of David Long et al.'s 551-point "Adventure 6" is:
   version seems to be lost; or at least not available on the Internet
   today.
 
-  In "late 1984" (according to the in-game "History of Adventure" text),
-  an anonymous coder extended the VAX version of the 500-point game,
-  increasing the maximum score to 551 points and adding the "castle of
-  the elves" puzzle.
+  In late 1984, Doug McDonald expanded Long's 501-point game, increasing
+  the maximum score to 551 points and porting the game to Fortran 77.
+  He called his version "Adventure 6".
 
-  Circa 1990, Doug McDonald ported the VAX game to standard Fortran 77,
-  enabling it to run on modern Unix systems, and posted the resulting
-  source code to Usenet.
+  A 501-point version of Long's game (dated October 1979) was posted to
+  Usenet by Bill Randle in May 1990. By that point Long's single aamain.f
+  had been fragmented into many smaller source files, contained "GRIPE"
+  code attributed to Mike St Johns, and may have had other (anonymous)
+  contributors as well.
+  http://cd.textfiles.com/gigagames9308/NET/USENET/VOLUME9/ADVEN
 
-  In 1994, Robert R. Hall combined McDonald's code with the framework
-  of Jerry Pohl's C port of "Adventure", dating it "Version:7.0, July 1994".
+  This 501-point version was ported to Fortran 77 by Johann Oskarsson
+  circa 2003:
+  http://www.ifarchive.org/if-archive/games/source/advent-5.2.2-5.tar.gz
 
-  In 1999, the 551-point version was added to the TADS port "polyadv"
+  Randle's Usenet post prompted McDonald to release his 551-point version
+  onto Usenet in August 1990.
+
+  In 1994, Robert R. Hall combined Long's and McDonald's new features
+  with the guts of a C port of "Adventure" due to Jay Jaeger, Jerry Pohl,
+  et al. Hall's port was dated "Version:7.0, July 1994", but contains no
+  rooms or items besides those in McDonald's version "6.6".
+
+  In 1999, McDonald's version was added to the TADS port "polyadv"
   by David Picton et al. This being an extension of Baggett's "Colossal
   Cave Revisited", it was not particularly faithful to the original's
-  quirks. I believe that Picton's primary source was McDonald's version;
-  however, he made some changes, most notably the combination to the safe.
+  quirks. Picton made some idiosyncratic changes, most notably adding
+  some hints and randomizing the combination to Long's safe.
 
-  For this translation, I took McDonald's 1990 version as the gold
-  standard (since no "original" game by David Long alone appears to
-  have survived). When I doubted the "authenticity" of a particular
-  line of code, my secondary source was an earlier 501-point version
-  (dated October 1979, with contributions from a different anonymous
-  coder) posted to Usenet in May 1990:
-  http://cd.textfiles.com/gigagames9308/NET/USENET/VOLUME9/ADVEN
+  For this translation, I took as my gold standard Doug McDonald's
+  August 1990 version ("Adventure 6.6"), since no "original" game by
+  David Long alone appears to have survived. My secondary source was
+  the 501-point Randle version.
 
 The history of "Adventure 6" on the Z-machine, as far as I know, is:
 
