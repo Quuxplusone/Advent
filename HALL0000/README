@@ -1,0 +1,38 @@
+This directory contains a copy of
+http://github.com/jncraton/minix3/commands/advent/
+which seems to have other mirrors here and here:
+ftp://ftp.uni-duesseldorf.de/ftp/ftp/pub/unix/minix/1.7.1/src/src/commands/advent/
+http://www.cise.ufl.edu/~cop4600/cgi-bin/lxr/http/source.cgi/commands/advent/
+
+The original "Makefile" (which would install the game when run with root
+permissions) is now located in "Makefile.original"; the new "Makefile" is
+written by me and merely builds "advent" in the current directory.
+
+This is the version of "advent" that was shipped with version 1.x of MINIX,
+sometime between 1987 and 1997. It was written by Robert R. Hall and contains
+the version string "<Generic Adventure -- Version:7.0, July 1994>".
+
+As the format of that version string implies, Hall's game is a port of Doug
+McDonald's "<Generic Adventure 551 -- Version:6.6, August 1990>" (found here
+in the MCDO0551/ subdirectory).  Hall's version builds on top of Jerry Pohl's
+C port (found here in the POHL0000/ subdirectory). Amazingly, Hall manages to
+integrate Long's Infocom-style parser with Pohl's code, a feat almost as
+impressive as Long's original modification of Woods' code.
+
+
+Hall's version shares some misfeatures with Pohl's; for example, the dwarves
+teleport randomly instead of wandering, and never block your way.
+
+Interestingly, Hall modifies Long's game in at least two ways: the treacherous
+path along the ledge to the west of Lost River leads not to the far side of
+the troll bridge but merely to the low room (removing an alternative solution
+to the troll puzzle), and acting "with your bare hands" actually causes you to
+drop all your items. (The latter was not inherited from Pohl; it is unique to
+Hall's version.)
+
+
+Notice that even though this is a C port of "Adventure" distributed under the
+command name "advent", it is NOT the same C port found in most Unix and Linux
+distributions under the "bsdgames" package. That version was written by Jim
+Gillogly for the Berkeley project circa 1991, and is a direct port of Woods'
+Fortran code to C.

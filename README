@@ -141,7 +141,6 @@ The history of David Long et al.'s 551-point "Adventure 6" is:
 
   In 1994, Robert R. Hall combined McDonald's code with the framework
   of Jerry Pohl's C port of "Adventure", dating it "Version:7.0, July 1994".
-  ftp://ftp.uni-duesseldorf.de/ftp/ftp/pub/unix/minix/1.7.1/src/src/commands/advent/
 
   In 1999, the 551-point version was added to the TADS port "polyadv"
   by David Picton et al. This being an extension of Baggett's "Colossal

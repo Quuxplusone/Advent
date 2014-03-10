@@ -1,0 +1,23 @@
+This directory contains the unzipped contents of
+http://cd.textfiles.com/pcsig13/PRO/DISK0259.ZIP
+which appears identical to
+http://cd.textfiles.com/pcsig08/201_300/DISK0259/
+
+This is Jerry Pohl's 350-point "Adventure" (dated 12 JUNE 1984),
+distributed by PC-SIG with the comment "Author Version: 03/90".
+Its version information lists
+    
+        Conversion to BDS  C by J. R. Jaeger.
+        Unix standardization by Jerry D. Pohl.
+    
+and no other authors, suggesting that it is Pohl's original
+(without the later tweaks by Martin Heller, Daimler, et cetera).
+
+Pohl's dwarves don't wander the cave as in the Fortran original.
+Instead, the dwarves() function moves each living dwarf to a random
+cave location each turn. The effect is similar to PLAT0550's random
+dwarf encounters. Furthermore, due to a precedence bug on line 36 of
+"turn.c", the player will NEVER see the message "A little dwarf with
+a big knife blocks your way!", not even once in a million times.
+This bug is carried over into HALL0000; DAIM0000 not only preserves
+this bug but adds at least one more similar bug.
