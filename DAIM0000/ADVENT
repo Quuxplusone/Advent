@@ -1,0 +1,25 @@
+.c.obj:
+    cl -c $*.c
+
+advent0.obj: advent0.c
+
+advent0.exe: advent0.obj
+    cl -Lp advent0
+
+advtext.h: advent1.txt advent2.txt advent3.txt advent4.txt
+    advent0
+
+advent.obj: advent.c advtext.h
+
+database.obj: database.c
+
+english.obj: english.c
+
+itverb.obj: itverb.c
+
+turn.obj: turn.c
+
+verb.obj: verb.c
+
+advent.exe: advent.obj database.obj english.obj itverb.obj turn.obj verb.obj
+    cl -Lp advent database english itverb turn verb

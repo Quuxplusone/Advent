@@ -1,0 +1,99 @@
+
+
+							12 JUNE 1984
+
+		Notes on ADVENTURE  (for IBM PC)
+
+
+    1)  TO PLAY ADVENTURE
+	The ADVENTURE game requires one single sided drive & 96K of
+	memory.  The system file "CONFIG.SYS"  <MUST>  contain the
+	the two statements, "BUFFERS=10" and "FILES=10".  The following
+	files  MUST  reside on the default drive:
+
+	ADVENT.EXE, ADVENT1.TXT, ADVENT2.TXT, ADVENT3.TXT, ADVENT4.TXT
+
+
+	The game may be started by typing       "ADVENT<cr>".
+	A saved game may be restarted by typing "ADVENT -r<cr>".
+	Debug data will be output by typing     "ADVENT -d -d -d<cr>".
+
+
+    2)  TO HACK ADVENTURE
+	The ADVENTURE game source files are either, header, code or
+	text files.
+
+	ADVENT	.C	- initialization, save game, restore game
+	ENGLISH	.C	- interpret game player's commands
+	DATABASE.C	- text file management & output
+	ITVERB	.C	- intransitive verbs execution
+	VERB	.C	-   transitive verbs execution
+	TURN	.C	- analysis & execution of player's command
+
+	ADVENT0	.C	- utility to create "ADVTEXT.H" file
+	ADVENT1	.TXT	- long  cave description
+	ADVENT2	.TXT	- short cave description
+	ADVENT3	.TXT	- long & short object description
+	ADVENT4	.TXT	- conversational descriptions & responses
+	ADVENT	.DOC	- this ADVENTURE documentation file
+
+	STDIO	.H	- standard i/o header
+	ADVENT	.H	- #define & structure statements
+	ADVWORD	.H	- words & codes array
+	ADVCAVE	.H	- cave & travel arrays
+	ADVTEXT	.H	- TXT file message indexes
+	ADVDEF	.H	- data constants & variables definitions
+	ADVDEC	.H	- data constants & variables declarations
+
+	WARNING:
+	The TXT files are the ASCII text messages used throughout the
+	game.  They may be modified ONLY if you have the utility
+	program, "ADVENT0.EXE" or the source "ADVENT0.C".  This program
+	creates the header file "ADVTEXT.H" which is "#include"d into
+	"ADVENT.C" during compilation.  After ANY changes to the "TXT"
+	files, recreate a new "ADVTEXT.H" file.  Make sure that the
+	four "TXT" files and the utility "ADVENT0.EXE" are on the
+	default drive, then type "ADVENT0<cr>".
+
+
+	The game was translated from BDS C to CII C86 and standardized
+	as per UNIX standard i/o library functions.  The following
+	changes were instituted:
+
+	0) UNIX standard i/o
+	1) "include"d header files & "extern"al statements added
+	2) cave/travel  data arrays are now internal
+	3) word/code    data arrays are now internal
+	4) TXT message index arrays are now internal
+	5) TXT file format doesn't require # terminator character
+	6) save & restore game overlays intergrated with "ADVENT.C"
+	7) word/code syntax parsing optimized in "ENGLISH.C"
+	   BINARY LEX-ORDERED WORD LOOK-UP added in "DATABASE.C"
+	8) TXT message indexing & output optimized in "DATABASE.C"
+	9) TXT message typos corrected
+	A) created "ADVENT0.C" utility (cf. #1, #4 & #5)
+	B) created "ADVENT.DOC" documentation file
+
+
+	Compile with CII C OPTIMIZING C86 version 2.10+, via:
+	(See CCADV.BAT)
+
+		CC1 filename
+		CC2 filename -u
+		CC3 filename
+		CC4 filename
+
+	Link with the standard PC-DOS linker, via:
+	(See CLADV.BAT)
+
+	A>B:
+	B>A:LINK ADVENT,ENGLISH,DATABASE,ITVERB,VERB,TURN,,CON/MAP,A:C86S2S
+
+
+	The modifications described above were implemented by:
+	Jerry D. Pohl
+	1922 Junction Avenue
+	San Jose, CA 95131
+	(408) 298-1262 / (408) 298-3185		(both 8..6, m..f)
+
+
