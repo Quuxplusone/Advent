@@ -2039,6 +2039,22 @@ bool dwarves_wont_follow_into(Location loc)
     }
 }
 
+bool forbidden_to_owl(Location loc)
+{
+    switch (loc) {
+        case R_ROAD: case R_HILL: case R_HOUSE: case R_VALLEY:
+        case R_FOREST: case R_FOREST2: case R_SLIT: case R_OUTSIDE:
+        case R_INSIDE:
+        case R_176: case R_177: case R_178:
+        case R_179: case R_180: case R_181:
+        case R_182: case R_183: case R_184:
+        case R_185: case R_186: case R_187:
+            return true;
+        default:
+            return false;
+    }
+}
+
 /*========== Data structures for objects. =================================
  * This section corresponds to sections 63--70 in Knuth.
  */
@@ -2573,11 +2589,15 @@ bool dwarves_wont_tote(ObjectWord obj)
         case AXE:
             /* don't be evil */
         case ROD: case ROD2:
-            /* not sure why we need to disallow these. TODO investigate */
+            /* These are disallowed basically by accident. Pike had
+             * originally disallowed merely CLAM/OYSTER, but realized in
+             * March 1980 (according to codbug.txt) that he also needed
+             * to disallow CAGE/BIRD. The items whose numbers fell
+             * between those two ranges were collateral damage. */
+            return true;
         /* Pike also lists the STEPS, DOOR, SNAKE, FISSURE, TABLET, TROLL,
          * and OWL, but these are already 100% immobile, so we don't need
          * to repeat them here. */
-            return true;
         default:
             return false;
     }
@@ -2585,7 +2605,10 @@ bool dwarves_wont_tote(ObjectWord obj)
 
 void dwarves_tote_objects(Location loc)
 {
-    /* Only three of the dwarves tote things? Check this! TODO FIXME BUG HACK */
+    /* Jack Pike wrote to me on 2014-03-20: "All the dwarves toting makes it
+     * difficult to solve the maze where all locations are the same because
+     * they move the dropped objects. To make it easier I restricted the
+     * number of toting dwarves [from Woods' 5 down to 3]." */
     for (int i=0; i < 3; ++i)
     {
         struct Dwarf *d = &dwarves[i];
@@ -2761,6 +2784,59 @@ bool move_dwarves_and_pirate(Location loc)
         }
     }
     return false;  /* the player survived this function */
+}
+
+Location distnt(Location from, int howfar)
+{
+    Location loc = from;
+    for (int h=0; h < howfar; ++h) {
+        Location ploc[19];  /* potential locations for the next random step */
+        int i = 0;
+        /* Make a table of all potential exits, similar to how
+         * move_dwarves_and_pirate() does it. */
+        for (Instruction *q = start[loc]; q < start[loc + 1]; ++q) {
+            Location newloc = q->dest;
+            if (i != 0 && newloc == ploc[i-1]) continue;
+            /* Unlike dwarves, the owl is permitted to double back. */
+            if (forbidden_to_owl(newloc)) continue;
+            if (is_forced(newloc) || newloc > MAX_LOC) continue;
+            ploc[i++] = newloc;
+        }
+        if (i == 0) {
+            /* Here, Pike restarts the loop if we've gotten ourselves into a dead end.
+             * This could cause an infinite loop if there were a room all of whose
+             * exits led (after one or two hops) to dead ends; but since the only
+             * dead end on the map is the wizard's cellar, and the room outside the
+             * cellar has two exits, we're all good. */
+            return distnt(from, howfar);
+        }
+        loc = ploc[ran(i)];
+    }
+    /* Mike Arnautov added some code here to ensure that the owl never
+     * accidentally flies into the wizard's cellar and gets trapped.
+     * I've preserved that code here. */
+    if (loc == R_CELLAR || loc == from) {
+        loc = R_141;
+    }
+    return loc;
+}
+
+void move_owl(Location loc)
+{
+    if (there(OWL, loc) && !now_in_darkness(loc)) {
+        puts("The light from your lamp disturbs an enormous owl which" SOFT_NL
+             "flies off with a flurry of wingbeats (and a loud \"HOOT\").");
+
+        Location owl_loc;
+        do {
+            /* The owl flies off to somewhere three "hops" from your current room,
+             * which is dark and free of spiders. (That room can't currently be
+             * lit by the lamp because you must be carrying the lamp with you
+             * in order to scare the owl in the first place.) */
+            owl_loc = distnt(loc, 3);
+        } while (owl_loc == loc || owl_loc == R_148 || has_light(owl_loc));
+        move(OWL, owl_loc);
+    }
 }
 
 
@@ -3048,10 +3124,19 @@ Location announce_tides(Location loc)
 bool maybe_die_of_thirst(Location loc)
 {
     int previous_thirst = thirst;
-    thirst += (holding + 2);
+    thirst += (holding_count + 2);
     if (loc == R_VIEW) {
         /* Visiting the volcano view pushes your thirst counter rapidly
-         * toward 880, for some reason. TODO understand this. */
+         * toward 880. Jack Pike wrote to me on 2014-03-20: "The logic behind
+         * this was that it was very hot in the volcano room and you were
+         * going to get very thirsty if you stayed there. This worked with
+         * the original thirst counter at about 800 but introduced a bug
+         * when it was increased to 900!"
+         *
+         * After that thirst-counter increase, it became possible to hang out
+         * at the volcano indefinitely, since you'd never thirst to death and
+         * you'd never fall in a pit (the volcano view has its own light).
+         */
         thirst = (880 + thirst) / 2;
     }
     if (thirst >= 900) {
@@ -4012,6 +4097,73 @@ void attempt_open_or_close(ActionWord verb, ObjectWord obj, Location loc)  /* se
     }
 }
 
+int attempt_hoot(Location loc)
+{
+    if (closed) {
+        puts("An enormous owl appears from nowhere and gives a loud \"HOOT\".");
+        dwarves_upset();
+    }
+
+    if ((R_176 <= loc && loc <= R_187) || loc == R_145 || (R_CELLAR <= loc && loc <= R_166)) {
+        puts("Nothing happens.");
+        return 'c';
+    } else if (has_light(loc) || (abs(loc - objs(OWL).place) / 25 > ran(5))) {
+        /* TODO: Here we run into difficulty.
+         * Pike's code:
+         * IF(IABS(LOC-PLACE(OWL))/25.GT.RAN(5))GOTO 8321
+         * i.e. he's looking at the numerical difference between loc and the owl's current location
+         * to decide whether the owl is "within range" of the hoot. We need to make our room
+         * numbers match Woods' original (not Knuth's) before this will work properly.
+         */
+        puts("A distant owl calls \"HOOT\".");
+        return 'd';  /* move the dwarves but not the owl; this is Pike's line 7404 */
+    } else if (!now_in_darkness(loc)) {
+        puts("With a flurry of wingbeats (and a loud \"HOOT\") an enormous owl" SOFT_NL
+             "appears. Disturbed by the light from your lamp he flies off again.");
+        return 'o';  /* move the owl; this is Pike's line 7402 */
+    } else if ((is_at_loc(DRAGON, loc) && objs(DRAGON).prop == 0) ||
+               there(SNAKE, loc) ||
+               there(BEAR, loc) ||  /* even a dead bear! */
+               (is_at_loc(TROLL, loc) && objs(TROLL).prop < 2) ||
+               loc == R_PIRATES_NEST) {
+        /* Some creatures scare away the owl. The only mobile such creature
+         * is the bear, and Pike doesn't let the bear meet the dwarves or
+         * spider. */
+        puts("A distant owl calls \"HOOT\".");
+        return 'o';  /* move the owl */
+    } else {
+        /* Summon the owl! */
+        const bool owl_was_here = there(OWL, loc);
+        bool owl_ate_something = false;
+        if (there(SPIDER, loc)) {
+            move(SPIDER, R_LIMBO);  /* The owl eats spiders... */
+            move(DOCUMENTS, loc);
+            move(OWL, loc);
+            juggle(WEB);
+            owl_ate_something = true;
+        } else {
+            move(OWL, loc);
+        }
+        /* ...and also dwarves. */
+        for (int i=1; i < 5; ++i) {
+            if (dwarves[i].loc == loc) {
+                dwarves[i].loc = R_LIMBO;
+                dwarves[i].oldloc = R_LIMBO;
+                owl_ate_something = true;
+            }
+        }
+        if (owl_ate_something) {
+            puts("You hear a flurry of wingbeats and sounds of a tremendous battle" SOFT_NL
+                 "(rustle .. rustle .. hisss .. HOOOT!  scrape .. GULP! .. hoot?)");
+        } else if (owl_was_here) {
+            puts("Nearby an owl cries \"HOOT\".");
+        } else {
+            puts("You hear a flurry of wingbeats and a loud \"HOOT\".");
+        }
+        return 'd';  /* move the dwarves but not the owl */
+    }
+}
+
 void attempt_ride(ObjectWord obj)
 {
     if (obj == CHALICE && objs(CHALICE).prop == 1)
@@ -4544,6 +4696,9 @@ void simulate_an_adventure(void)
             }
         }
         loc = newloc;  /* hey, we actually moved you */
+    label_move_owl:
+        move_owl(loc);
+    label_move_dwarves:
         if (move_dwarves_and_pirate(loc)) {
             oldoldloc = loc;
             goto death;
@@ -4777,6 +4932,15 @@ void simulate_an_adventure(void)
                     }
                     continue;
                 }
+                case HOOT:
+                    switch (attempt_hoot(loc))
+                    {
+                        case 'c': break;
+                        case 'd': goto label_move_dwarves;
+                        case 'o': goto label_move_owl;
+                        default: assert(false);
+                    }
+                    continue;
                 case FLY:
                     /* Wizards can move to a room by number. Unfortunately, this port's
                      * room numbers don't match up to the original's, so if you enter
