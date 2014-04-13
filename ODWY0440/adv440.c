@@ -3016,6 +3016,25 @@ void spot_treasure(ObjectWord t)
 
 void describe_object(ObjectWord t, Location loc)
 {
+    if (t == RATS) {
+        switch (objs(RATS).prop) {
+            case 0: case 1: break;
+            case 2: puts("There is some *thing* swimming in the sewage!"); break;
+            case 3: puts("You feel a vicious bite on the ankle from something in the sewage!"); break;
+            case 4: puts("A large black sewer rat eyes you hungrily from the edge of the" SOFT_NL
+                         "sewage, then slips below the surface............."); break;
+            case 5: puts("There are sewer rats all around you, their eyes glinting in" SOFT_NL
+                         "the lamp light."); break;
+            case 6: puts("You feel several bites on your legs.  You try to protect them, but" SOFT_NL
+                         "more rats sink their teeth into your arms, then one leaps from" SOFT_NL
+                         "the sewage and hangs on to your ear, weighing you down, now they are" SOFT_NL
+                         "at your throat.............");
+                    /* At this point you die, but that's handled elsewhere. */
+                    break;
+            default: assert(false);
+        }
+        return;
+    }
     if (t == TREADS && toting(GOLD)) {
         /* The rough stone steps disappear if we are carrying the nugget. */
         return;
@@ -3469,9 +3488,19 @@ Location attempt_plover_passage(Location from)  /* section 149 in Knuth */
 
 Location attempt_tusk_passage(Location from)
 {
-    /* TODO write this */
-    assert(false);
-    return R_LIMBO;
+    /* Sewer section. Keep bottle, vase, etc. out, and tusk in. */
+    ObjectWord prohibited_items[] = {
+        VASE, BOTTLE, CAGE, TUSK, GOLD, CHEST,
+        CHALICE, SILVER, TRIDENT, PYRAMID, EGGS, CROWN
+    };
+    for (int i=0; i < (int)(sizeof prohibited_items / sizeof *prohibited_items); ++i) {
+        if (toting(prohibited_items[i])) {
+            puts("You may just get your lamp though that awkward slit, but most hard" SOFT_NL
+                 "objects will not go through."); /* Pike has "though" */
+            return from;
+        }
+    }
+    return (from == R_174) ? R_176 : R_174;
 }
 
 Location attempt_giant_quarters(Location from)
@@ -4712,6 +4741,23 @@ void simulate_an_adventure(void)
             case 't': goto try_move;
             default: break;
         }
+
+        if (loc == R_182 && objs(RATS).prop == 6) {
+            /* Spend too much time in the culvert in the dark and you'll
+             * die with no explanation, since the "rats kill you" message
+             * is visible only when the room is lighted. */
+            goto death;
+        }
+
+        /* TODO: giant stuff.
+           IF(MOD(PROP(GIANT),2).EQ.1)GOTO 30500
+           IF(LOC.EQ.145)GOTO 30600 */
+
+        if (objs(CHALICE).prop == 1 && !there(CHALICE, loc)) {
+            /* The unicorn runs away if you don't jump on. */
+            move(CHALICE, R_LIMBO);
+        }
+
         while (true) {
             int k;
             verb = oldverb = NOTHING;
