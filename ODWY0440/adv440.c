@@ -14,6 +14,7 @@ extern int attempt_restore(void);
 int ran(int range) =
     "\t@random r0 -> r0;\n"
     "\t@sub r0 0+1 -> r0;\n";
+int abs(int x) { return x < 0 ? -x : x; }
 #else
 int ran(int range) { return rand() % range; }
 #endif /* Z_MACHINE */
@@ -463,7 +464,7 @@ typedef enum {
     R_142,
     R_143,
     R_144,
-    R_145,
+    R_DUNGEON,
     R_146,
     R_147,
     R_148,
@@ -544,7 +545,7 @@ enum flagsBits {
     F_WITT_HINT  = 0x100
 };
 
-Instruction travels[950];
+Instruction travels[951];
 Instruction *start[MAX_LOC+2];
 struct Place {
     const char *long_desc;
@@ -574,7 +575,7 @@ void make_loc(Instruction *q, Location x, const char *l, const char *s, unsigned
 
 void make_inst(Instruction *q, MotionWord m, int c, Location d)
 {
-    assert(&travels[0] <= q && q < &travels[950]);
+    assert(&travels[0] <= q && q < &travels[951]);
     assert(m==0 || (MIN_MOTION <= m && m <= MAX_MOTION));
     q->mot = m;
     q->cond = c;
@@ -1474,8 +1475,8 @@ void build_travel_table(void)
     make_ins(TESTO, R_HOUSE);
     make_ins(CLIMB, R_144);
     make_ins(N, R_ANTE);
-    make_cond_ins(E, 100, R_142);  /* dwarves not permitted */
-    make_cond_ins(W, 100, R_169);  /* dwarves not permitted */
+    make_cond_ins(E, 100, R_142);           /* dwarves not permitted */
+    make_cond_ins(W, 100, R_169); ditto(U); /* dwarves not permitted */
     make_ins(D, R_168);
     make_loc(q, R_142,
              "You are in a room that appears to be a stable for a fearsome" SOFT_NL
@@ -1497,14 +1498,14 @@ void build_travel_table(void)
              "is a very large solidly built couch.",
              "You're in the living quarters.", 0);
     make_ins(E, R_PANTRY);
-    make_cond_ins(N, 100, R_145);
+    make_cond_ins(N, 100, R_DUNGEON);
     make_ins(S, R_146);
     make_loc(q, R_144,
              "You have climbed the rope and crawled into a small recess in the" SOFT_NL
              "beams.",
              "You're in the recess in the beams.", 0);
     make_ins(D, R_141); ditto(OUT);
-    make_loc(q, R_145,
+    make_loc(q, R_DUNGEON,
              "You are in a dungeon.  The walls and ceiling appear to be made of" SOFT_NL
              "solid rock and the floor is made up of tightly fitting flagstones." SOFT_NL
              "High on the walls are some stanchions for chains, but the chains are" SOFT_NL
@@ -2337,7 +2338,7 @@ void build_object_table(void)
         "and shakes you scattering your possessions across the floor.";
     objs(GIANT).desc[2] = "The giant reclines on the couch eating eggs!";
     objs(GIANT).desc[3] = "A giant hand descends from above and picks you up.";
-    new_obj(FLAGSTONE, 0, FLAGSTONE, R_145);
+    new_obj(FLAGSTONE, 0, FLAGSTONE, R_DUNGEON);
     objs(FLAGSTONE).desc[0] = NULL;  /* it's just scenery */
     new_obj(GOLD, "Large gold nugget", 0, R_NUGGET);
     objs(GOLD).desc[0] = "There is a large sparkling nugget of gold here!";
@@ -2985,6 +2986,7 @@ void panic_at_closing_time(void)
 int turns;  /* how many times we've read your commands */
 int verbose_interval = 5;  /* command BRIEF sets this to 10000 */
 int foobar;  /* progress in the FEE FIE FOE FOO incantation */
+int dung0 = 0;  /* how many turns the player has been sitting in the dungeon */
 bool wizard_mode = false;
 
 void give_optional_plugh_hint(Location loc)
@@ -3503,11 +3505,96 @@ Location attempt_tusk_passage(Location from)
     return (from == R_174) ? R_176 : R_174;
 }
 
-Location attempt_giant_quarters(Location from)
+bool giant_can_shake_loose(ObjectWord obj)
 {
-    /* TODO write this */
-    assert(false);
-    return R_LIMBO;
+    /* The giant will shake loose certain items from you. Pike starts iterating
+     * through the objects starting with the axe's index (number 28), which
+     * means you get to keep a lot of items, including the lamp.
+     * However, the list of shake-loose-able items includes all the treasures.
+     */
+    switch (obj)
+    {
+        case AXE: case BEAR: case BATTERIES: case DOCUMENTS:
+        case SPOON: case HORN:
+        case GOLD: case DIAMONDS: case SILVER: case JEWELS:
+        case COINS: case CHEST: case EGGS: case TRIDENT:
+        case VASE: case EMERALD: case PYRAMID: case PEARL:
+        case RUG: case SPICES: case CHAIN:
+        case CROWN: case TUSK: case CHALICE: case RUBY: case ORB:
+            return true;
+        default:
+            return false;
+    }
+}
+
+Location giant_grabs_you(Location oldoldloc, Location oldloc, Location loc);
+
+Location attempt_giant_quarters(Location oldoldloc, Location oldloc, Location loc)  /* line 30500 in Pike */
+{
+    if (objs(GIANT).prop <= 0 && !toting(EGGS)) {
+        objs(GIANT).prop = (holding_count <= 1) ? 3 : 1;
+        return R_143;
+    }
+
+    if (objs(GIANT).prop != 2) {
+        if (!toting(EGGS)) goto line_30530;
+        objs(GIANT).prop = 2;
+        move(EGGS, R_LIMBO);
+        puts("\"AH....EGG FOO.....YUM YUM\"" SOFT_NL
+             "the giant drawls, and grabs the eggs leaving you shaken but unharmed.");
+    }
+    if (toting(DOCUMENTS)) {
+        puts("\"MY DEEDS!\" the giant shouts, \"For those you shall be rewarded!\"" SOFT_NL
+             "and tosses a large ruby in your direction as he takes the documents.");
+        move(DOCUMENTS, R_LIMBO);
+        move(RUBY, R_143);
+    }
+    return R_143;
+line_30530:
+    loc = R_DUNGEON;
+    if (toting(FOOD)) {
+        puts("The giant grabs your food and bellows  \"A MISERABLE MORSEL!\"" SOFT_NL
+             "but stuffs it in his mouth and swallows it whole.");
+        move(FOOD, R_163);
+        loc = R_PANTRY;
+    }
+    for (int kobj = MIN_OBJ; kobj <= MAX_OBJ; ++kobj) {
+        if (giant_can_shake_loose(kobj) && toting(kobj)) {
+            drop(kobj, R_143);
+            if (is_treasure(kobj)) loc = R_PANTRY;
+        }
+    }
+    if (loc == R_PANTRY) {
+        puts("\"FEE FIE FOE FOO\n"
+             "FIN FOO OR I'LL EAT YOU!\"" SOFT_NL
+             "the giant thunders, and as you cast about for your possessions you" SOFT_NL
+             "are pushed back into the pantry.");
+        objs(GIANT).prop = 0;
+        return R_PANTRY;
+    }
+    return giant_grabs_you(oldoldloc, oldloc, loc);
+}
+
+Location giant_grabs_you(Location oldoldloc, Location oldloc, Location loc)
+{
+    if (oldloc != R_DUNGEON) {
+        dung0 = 0;
+        puts("\"FEE FIE FOE FOO!\"" SOFT_NL
+             "the giant thunders, and at the thought of foo' great slivers of" SOFT_NL
+             "saliva issue from the giants mouth and further soil his already" SOFT_NL
+             "filthy shirt front.");
+    }
+    objs(GIANT).prop = 0;
+    if (oldoldloc == R_DUNGEON) {
+        puts("This time he gets you. He is now wearing a bib which is even more" SOFT_NL
+             "soiled than his shirt. He opens his mouth wide revealing great" SOFT_NL
+             "rows of black teeth. The stench of his breath mercifully renders you" SOFT_NL
+             "unconscious as he bites into your leg and pulls...................");
+        return R_LIMBO;
+    }
+    puts("\"STAY IN THERE UNTIL I AM READY TO EAT YOU!!\"" SOFT_NL
+         "the giant bellows and throws you into his dungeon.");
+    return loc;
 }
 
 void attempt_inventory(void)  /* section 94 in Knuth */
@@ -3945,6 +4032,9 @@ bool attempt_fill(ObjectWord obj, Location loc)  /* sections 110--111 in Knuth *
             drop(VASE, loc);
             immobilize(VASE);
         }
+    } else if (obj == CHALICE) {
+        puts("The chalice is very old and has several holes in the bottom!" SOFT_NL
+             "At best you might use it to scoop a drink from a pool or stream.");
     } else if (!here(BOTTLE, loc)) {
         if (obj == NOTHING)
             return true;
@@ -4126,6 +4216,61 @@ void attempt_open_or_close(ActionWord verb, ObjectWord obj, Location loc)  /* se
     }
 }
 
+int original_room_number(int loc, bool convert_backwards)
+{
+    Location original_locations[200] = {
+        0, R_ROAD, R_HILL, R_HOUSE, R_VALLEY, R_FOREST, R_FOREST2, R_SLIT, R_OUTSIDE,
+        R_INSIDE, R_COBBLES, R_DEBRIS, R_AWK, R_BIRD, R_SPIT, R_EMIST,
+        0, R_EFISS, R_NUGGET, R_HMK, R_NECK, R_LOSE,
+        0, R_W2PIT, R_EPIT, R_WPIT, R_CLIMB, R_WFISS, R_NS, R_SOUTH, R_WEST, R_CHECK,
+        0, R_Y2, R_JUMBLE, R_WINDOE, R_DIRTY, R_CLEAN, R_WET, R_DUSTY, R_THRU, R_WMIST,
+        R_LIKE1, R_LIKE2, R_LIKE3, R_LIKE4, R_DEAD3, R_DEAD4, R_DEAD5,
+        R_LIKE5, R_LIKE6, R_LIKE7, R_LIKE8, R_LIKE9, R_DEAD6, R_LIKE10,
+        R_DEAD7, R_BRINK, R_DEAD8, R_DUCK,
+        R_ELONG, R_WLONG, R_CROSS, R_DEAD0,
+        R_COMPLEX, R_BEDQUILT, R_SWISS, R_E2PIT, R_SLAB, R_ABOVER, R_ABOVEP,
+        R_SJUNC, R_LOW, R_CRAWL, R_SECRET, R_WIDE, R_TIGHT, R_TALL, R_BOULDERS,
+        0, R_LIKE11, R_DEAD1, R_DEAD9, R_LIKE12, R_LIKE13, R_DEAD10, R_DEAD11, R_LIKE14,
+        R_NARROW, R_UPNOUT, R_DIDIT, R_INCLINE, R_GIANT, R_BLOCK, R_IMMENSE, R_FALLS,
+        R_SOFT, R_ORIENTAL, R_MISTY, R_ALCOVE, R_PLOVER, R_DARK,
+        R_ARCHED, R_SHELL, R_RAGGED, R_SAC, R_ANTE, R_DIFF0, R_WITT,
+        R_MIRROR, R_WINDOW, R_TITE, R_DIFF10, R_RES, R_PIRATES_NEST, R_NEEND, R_SWEND,
+        R_SWSIDE, R_SLOPING, R_SCAN1, R_SCAN2, R_SCAN3, R_NESIDE, R_CORR, R_FORK, R_WARM,
+        R_VIEW, R_CHAMBER, R_LIME, R_FBARR, R_BARR,
+        R_DIFF1, R_DIFF2, R_DIFF3, R_DIFF4, R_DIFF5, R_DIFF6, R_DIFF7, R_DIFF8, R_DIFF9, R_PONY,
+        R_141, R_142, R_143, R_144, R_DUNGEON, R_146, R_147, R_148, R_149, R_150, R_151, R_152, R_153,
+        R_CELLAR, R_155, R_156, R_157, R_158, R_159, R_160, R_161, R_162, R_163, R_164, R_165,
+        R_166, R_167, R_168, R_169, R_170, R_171, R_172, R_PANTRY, R_174, R_175, R_176, R_177,
+        R_178, R_179, R_180, R_181, R_182, R_183, R_184, R_185, R_186, R_187, R_188,
+        R_189, R_190, R_191, R_192, R_193, R_194, R_195, R_196, R_197, R_198, R_199
+    };
+    assert(original_locations[16] == 0);  /* pseudo-rooms that I've turned into remarks */
+    assert(original_locations[22] == 0);
+    assert(original_locations[32] == 0);
+    assert(original_locations[79] == 0);
+    assert(original_locations[114] == R_PIRATES_NEST);
+    assert(original_locations[140] == R_PONY);
+    assert(original_locations[199] == R_199);
+
+    if (convert_backwards) {
+        /* Convert an original number to an internal number, for use by FLY. */
+        if (1 <= loc && loc <= 199) {
+            return original_locations[loc];
+        } else {
+            return 0;
+        }
+    } else {
+        /* Convert an internal number to an original number, for use by HOOT. */
+        for (int i=0; i < 200; ++i) {
+            if (original_locations[i] == loc) {
+                return i;
+            }
+        }
+        assert(false);
+        return 0;
+    }
+}
+
 int attempt_hoot(Location loc)
 {
     if (closed) {
@@ -4133,17 +4278,10 @@ int attempt_hoot(Location loc)
         dwarves_upset();
     }
 
-    if ((R_176 <= loc && loc <= R_187) || loc == R_145 || (R_CELLAR <= loc && loc <= R_166)) {
+    if ((R_176 <= loc && loc <= R_187) || loc == R_DUNGEON || (R_CELLAR <= loc && loc <= R_166)) {
         puts("Nothing happens.");
         return 'c';
-    } else if (has_light(loc) || (abs(loc - objs(OWL).place) / 25 > ran(5))) {
-        /* TODO: Here we run into difficulty.
-         * Pike's code:
-         * IF(IABS(LOC-PLACE(OWL))/25.GT.RAN(5))GOTO 8321
-         * i.e. he's looking at the numerical difference between loc and the owl's current location
-         * to decide whether the owl is "within range" of the hoot. We need to make our room
-         * numbers match Woods' original (not Knuth's) before this will work properly.
-         */
+    } else if (has_light(loc) || (abs(original_room_number(loc, /*convert_backwards=*/false) - original_room_number(objs(OWL).place, /*convert_backwards=*/false)) / 25 > ran(5))) {
         puts("A distant owl calls \"HOOT\".");
         return 'd';  /* move the dwarves but not the owl; this is Pike's line 7404 */
     } else if (!now_in_darkness(loc)) {
@@ -4523,7 +4661,7 @@ void collapse_the_troll_bridge(void)
 }
 
 /* Modify newloc in place, and return true if the player died crossing the troll bridge. */
-bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot, ActionWord verb)
+bool determine_next_newloc(Location oldloc, Location loc, Location *newloc, MotionWord mot, ActionWord verb)
 {
     Instruction *q = determine_motion_instruction(loc, mot);
     if (q == NULL) {
@@ -4569,7 +4707,7 @@ bool determine_next_newloc(Location loc, Location *newloc, MotionWord mot, Actio
     } else if (*newloc == R_TDROP) {
         *newloc = attempt_tusk_passage(loc);
     } else if (*newloc == R_GRAB) {
-        *newloc = attempt_giant_quarters(loc);
+        *newloc = attempt_giant_quarters(oldloc, loc, loc);
     }
 
     return false;
@@ -4732,7 +4870,7 @@ void simulate_an_adventure(void)
             oldoldloc = loc;
             goto death;
         }
-    commence:
+    commence:  /* line 2000 in Pike */
         loc = announce_tides(loc);
         if (loc == R_LIMBO) goto death;
         if (maybe_die_of_thirst(loc)) goto death;
@@ -4749,11 +4887,25 @@ void simulate_an_adventure(void)
             goto death;
         }
 
-        /* TODO: giant stuff.
-           IF(MOD(PROP(GIANT),2).EQ.1)GOTO 30500
-           IF(LOC.EQ.145)GOTO 30600 */
-
-        if (objs(CHALICE).prop == 1 && !there(CHALICE, loc)) {
+        if (objs(GIANT).prop % 2 == 1) {
+            /* The player has just entered the giant's quarters. */
+            loc = attempt_giant_quarters(oldoldloc, oldloc, loc);
+            goto commence;
+        } else if (loc == R_DUNGEON) {
+            /* line 30600 in Pike */
+            dung0 += 1;
+            if (now_in_darkness(loc)) {
+                /* As long as he's in darkness, the player is safe. */
+            } else if ((dung0 == 3 || dung0 == 5) && objs(GIANT).prop != 2) {
+                puts("The giants hand enters the dungeon and makes a grab but he misses!");
+            } else if (dung0 == 4) {
+                puts("A tiny mouse appears from beneath a flagstone, sees you and hastily" SOFT_NL
+                     "retreats.");
+            } else if (dung0 == 7 && objs(GIANT).prop != 2) {
+                loc = giant_grabs_you(oldoldloc, oldloc, loc);
+                goto commence;
+            }
+        } else if (objs(CHALICE).prop == 1 && !there(CHALICE, loc)) {
             /* The unicorn runs away if you don't jump on. */
             move(CHALICE, R_LIMBO);
         }
@@ -4988,10 +5140,6 @@ void simulate_an_adventure(void)
                     }
                     continue;
                 case FLY:
-                    /* Wizards can move to a room by number. Unfortunately, this port's
-                     * room numbers don't match up to the original's, so if you enter
-                     * 163 to visit the dwarves' quarters, you'll actually wind up in
-                     * the inclined shaft. Oops. TODO: perhaps correct our numbering? */
                     if (wizard_mode) {
                         puts("Note: This means of travel can generate internal inconsistencies," SOFT_NL
                               "so take care. Now enter new LOCATION number.");
@@ -4999,6 +5147,7 @@ void simulate_an_adventure(void)
                         obj = NOTHING;
                         listen();
                         int wizloc = atoi(word1);
+                        wizloc = original_room_number(wizloc, /*convert_backwards=*/ true);
                         if (R_ROAD <= wizloc && wizloc <= R_SWEND) {
                             loc = wizloc;
                             mot = NOWHERE;
@@ -5067,7 +5216,7 @@ void simulate_an_adventure(void)
                     }
                     objs(LAMP).prop = 1;
                     puts("Your lamp is now on.");
-                    if (was_dark) goto commence;
+                    if (was_dark) goto label_move_owl;
                     continue;
                 case OFF:
                     attempt_off(loc);
@@ -5081,6 +5230,40 @@ void simulate_an_adventure(void)
                     } else if (obj != WATER) {
                         puts("Don't be ridiculous!");
                         continue;
+                    }
+                    if (stream_here) {
+                        thirst = 0;
+                    }
+                    if (toting(CHALICE) && (loc == R_WET || loc == R_RES)) {
+                        /* Drink from the chalice! Line 9155 in Pike. */
+                        bool drank = yes(
+                            "A glowing figure of a beautiful woman appears. In a distant voice she" SOFT_NL
+                            "says, \"You have drunk pure water from the sacred chalice, my brave" SOFT_NL
+                            "adventurer. I come to you as the spirit of goodness, but my power is" SOFT_NL
+                            "weak, for the wicked dwarves have stolen the Ring of Orion and have" SOFT_NL
+                            "hidden it deep in the Land of Mists, where I cannot go. Return the" SOFT_NL
+                            "ring to me and together we shall drive the evil from the caves.....\"\n"
+                            "A distant roll of thunder drowns the voice, and as the woman fades" SOFT_NL
+                            "from a cloud of smoke steps a horned creature with a pointed tail." SOFT_NL
+                            "\"If you have anything more to do with that wisp,\" he says \"you will" SOFT_NL
+                            "find yourself in infernal hot water. Just you stick to stealing a few" SOFT_NL
+                            "treasures and you won't come to much harm!\" With that he points to the" SOFT_NL
+                            "chalice and it crumbles to dust, then with a flick of his tail he" SOFT_NL
+                            "disappears.\n"
+                            "A  ringing in your ears seems to say \"Will you help me adventurer?\".",
+
+                            "A swirl of mist rises from the floor. Gosh! its turned into a" SOFT_NL
+                            "unicorn!",
+
+                            "The ringing is replaced by a distant laugh.");
+                        if (!drank) {
+                            move(CHALICE, R_LIMBO);
+                        } else {
+                            drop(CHALICE, loc);
+                            objs(CHALICE).prop = 1;
+                            immobilize(CHALICE);
+                        }
+                        goto commence;
                     }
                     /* Drink from the bottle if we can; otherwise from the stream. */
                     if (evian_here) {
@@ -5366,8 +5549,7 @@ void simulate_an_adventure(void)
                     continue;
             }
         get_object:
-            word1[0] = toupper(word1[0]);
-            printf("%s what?\n", word1);
+            printf("What do you want to %s?\n", word1);
             goto cycle;
         cant_see_it:
             if ((verb == FIND || verb == INVENTORY) && *word2 != '\0')
@@ -5409,7 +5591,7 @@ void simulate_an_adventure(void)
                 /* Determine the next newloc. */
                 oldoldloc = oldloc;
                 oldloc = loc;
-                if (determine_next_newloc(loc, &newloc, mot, verb)) {
+                if (determine_next_newloc(oldloc, loc, &newloc, mot, verb)) {
                     /* Player died trying to cross the troll bridge. */
                     oldoldloc = newloc;  /* if you are revived, you got across */
                     goto death;
