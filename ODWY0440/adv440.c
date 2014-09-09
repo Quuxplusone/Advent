@@ -2397,6 +2397,15 @@ void build_object_table(void)
      * winds up in R_LIMBO, the dwarves will helpfully tote it back to
      * R_PANTRY given enough time. */
     move(FOOD, R_HOUSE);
+
+    /* Contrariwise, the little horn starts out in the dwarves'
+     * quarters (inaccessible), and wants to move to R_188 (also
+     * inaccessible). What this means is that it cannot be encountered
+     * by normal means; but the first dwarf you kill will pick it up,
+     * and then carry it forever (since the dwarf will never reach R_188
+     * by wandering). When you kill that dwarf, it will drop the horn.
+     */
+    move(HORN, R_163);
 }
 
 
@@ -3620,11 +3629,12 @@ void attempt_eat(ObjectWord obj)  /* section 98 in Knuth */
 {
     switch (obj) {
         case FOOD:
-            destroy(FOOD);
+            move(FOOD, R_163);
             puts("Thank you, it was delicious!");
             break;
         case BIRD: case SNAKE: case CLAM: case OYSTER:
         case DWARF: case DRAGON: case TROLL: case BEAR:
+        case SPIDER:
             puts("I think I just lost my appetite.");
             break;
         default:
@@ -3641,6 +3651,8 @@ void take_something_immobile(ObjectWord obj)
         puts("The bear is still chained to the wall.");
     } else if (obj == PLANT && objs(PLANT).prop <= 0) {
         puts("The plant has exceptionally deep roots and cannot be pulled free.");
+    } else if (obj == FAKE_ORB) {
+        puts("It lies out of reach on the cellar floor!");
     } else {
         puts("You can't be serious!");
     }
@@ -3905,6 +3917,8 @@ void attempt_rub(ObjectWord obj)  /* section 99 in Knuth */
     if (obj == LAMP) {
         puts("Rubbing the electric lamp is not particularly rewarding. Anyway," SOFT_NL
              "nothing exciting happens.");
+    } else if (obj == SPOON && objs(SPOON).prop == 0) {
+        puts("Oh! There appears to be an inscription on the spoon.");
     } else {
         puts("Peculiar.  Nothing unexpected happens.");
     }
@@ -4075,11 +4089,19 @@ void attempt_feed(ObjectWord obj, Location loc)  /* section 129 in Knuth */
             }
             break;
         case SNAKE:
+        case SPIDER:
             if (!closed && here(BIRD, loc)) {
+                if (obj == SNAKE) {
+                    puts("The snake has now devoured your bird.");
+                } else {
+                    puts("The spider has eaten the poor little bird. It was a" SOFT_NL
+                         "horrible sight, all blood, feathers and hairy legs.");
+                }
                 destroy(BIRD);
                 objs(BIRD).prop = 0;
-                ++lost_treasures;
-                puts("The snake has now devoured your bird.");
+                /* Now that the bird is dead, you can never get past the snake
+                 * into the south side chamber, so the precious jewelry is lost. */
+                if (there(SNAKE, R_HMK)) ++lost_treasures;
             } else {
                 puts("There's nothing here it wants to eat (except perhaps you).");
             }
@@ -4087,7 +4109,7 @@ void attempt_feed(ObjectWord obj, Location loc)  /* section 129 in Knuth */
         case BEAR:
             if (here(FOOD, loc)) {
                 assert(objs(BEAR).prop == 0);
-                destroy(FOOD);
+                destroy(FOOD);  /* it doesn't move back to the pantry in this case */
                 objs(BEAR).prop = 1;
                 objs(AXE).prop = 0;
                 mobilize(AXE);  /* if it was immobilized by the bear */
@@ -4106,6 +4128,28 @@ void attempt_feed(ObjectWord obj, Location loc)  /* section 129 in Knuth */
             if (here(FOOD, loc)) {
                 ++dflag;
                 puts("You fool, dwarves eat only coal!  Now you've made him *REALLY* mad!!");
+            } else {
+                puts("There is nothing here to eat.");
+            }
+            break;
+        case RATS:
+            if (here(FOOD, loc)) {
+                puts("The food disappears into the sewage and the water thrashes" SOFT_NL
+                     "with activity.  My, those rats *are* hungry!");
+                move(FOOD, R_163);
+                objs(RATS).prop = 0;
+            } else {
+                puts("There is nothing here to eat.");
+            }
+            break;
+        case CHALICE:
+            if (objs(CHALICE).prop != 1) {
+                puts("I'm game.  Would you care to explain how?");
+            } else if (here(FOOD, loc)) {
+                puts("The unicorn eats the food and looks around for more. On finding none" SOFT_NL
+                     "it raises its tail and presents you with a neat pile of dung.");
+                move(FOOD, R_163);
+                objs(RATS).prop = 0;  /* Pike combines the RATS and CHALICE cases, producing this odd side-effect. */
             } else {
                 puts("There is nothing here to eat.");
             }
@@ -4907,6 +4951,7 @@ void simulate_an_adventure(void)
             }
         } else if (objs(CHALICE).prop == 1 && !there(CHALICE, loc)) {
             /* The unicorn runs away if you don't jump on. */
+            assert(objs(CHALICE).place == R_WET || objs(CHALICE).place == R_RES || objs(CHALICE).place == R_LIMBO);
             move(CHALICE, R_LIMBO);
         }
 
@@ -5148,7 +5193,10 @@ void simulate_an_adventure(void)
                         listen();
                         int wizloc = atoi(word1);
                         wizloc = original_room_number(wizloc, /*convert_backwards=*/ true);
-                        if (R_ROAD <= wizloc && wizloc <= R_SWEND) {
+                        if (wizloc == R_LIMBO) {
+                            /* for the sake of completeness */
+                            goto death;
+                        } else if (R_ROAD <= wizloc && wizloc <= R_SWEND) {
                             loc = wizloc;
                             mot = NOWHERE;
                             goto try_move;
@@ -5267,8 +5315,12 @@ void simulate_an_adventure(void)
                     }
                     /* Drink from the bottle if we can; otherwise from the stream. */
                     if (evian_here) {
+                        if (thirst >= 800) {
+                            puts("Thank you, it was delicious!");
+                        }
                         objs(BOTTLE).prop = 1;  /* empty */
                         objs(WATER).place = R_LIMBO;
+                        thirst = 0;
                         puts("The bottle of water is now empty.");
                     } else {
                         puts("You have taken a drink from the stream.  The water tastes strongly of" SOFT_NL
@@ -5335,7 +5387,14 @@ void simulate_an_adventure(void)
                     }
                     continue;
                 case TAKE:
-                    if (attempt_take(obj, loc)) {
+                    if (obj == FLAGSTONE && loc == R_DUNGEON) {
+                        puts("The flagstone lifts suddenly and you topple headlong into the" SOFT_NL
+                             "darkness below.");
+                        dung0 = 0;  /* escape the dungeon */
+                        loc = R_165;
+                        mot = NOWHERE;
+                        goto try_move;
+                    } else if (attempt_take(obj, loc)) {
                         oldverb = TAKE;
                         verb = FILL;
                         obj = BOTTLE;
@@ -5357,6 +5416,13 @@ void simulate_an_adventure(void)
                         puts("You aren't carrying it!");
                         continue;
                     }
+                    if (now_in_darkness(loc)) {
+                        /* Throwing things in darkness never works: you can't see your target
+                         * (the troll, dwarves, bear, or orb). This is a change from Woods' version. */
+                        oldverb = TOSS;
+                        verb = DROP;
+                        goto transitive;
+                    }
                     if (is_treasure(obj) && is_at_loc(TROLL, loc)) {
                         /* Snarf a treasure for the troll. */
                         drop(obj, R_LIMBO);
@@ -5371,6 +5437,34 @@ void simulate_an_adventure(void)
                         verb = FEED;
                         obj = BEAR;
                         goto transitive;
+                    }
+                    if (loc == R_198) {
+                        /* Throw an object at the portcullis. Line 9173 in Pike. */
+                        static int throwc = 0;
+                        switch (obj) {
+                            case VASE: case CAGE: case TUSK: case GOLD:
+                            case CHALICE: case BIRD: case BOTTLE: case OIL: case WATER:
+                                oldverb = TOSS;
+                                verb = DROP;
+                                goto transitive;
+                            default:
+                                break;
+                        }
+                        drop(obj, R_180);
+                        if (obj == FOOD) move(FOOD, R_163);
+                        throwc += ran(3) + 1;
+                        if (throwc < 4 || objs(FAKE_ORB).prop != 0) {
+                            puts("It lands near the round drain in the cellar, slides towards it and" SOFT_NL
+                                 "drops in!");
+                        } else {
+                            puts("It strikes the globe a glancing blow and slides off into the drain." SOFT_NL
+                                 "The globe rocks slightly revealing a small cross attached to its" SOFT_NL
+                                 "far side, then it rolls towards the drain and disappears also.");
+                            move(ORB, R_180);
+                            objs(FAKE_ORB).prop = 1;
+                            destroy(FAKE_ORB); /* Pike doesn't actually destroy FAKE_ORB, but he should. */
+                        }
+                        continue;
                     }
                     if (obj != AXE) {
                         oldverb = TOSS;
@@ -5392,6 +5486,11 @@ void simulate_an_adventure(void)
                         juggle(BEAR);  /* keep bear first in the list */
                         puts("The axe misses and lands near the bear where you can't get at it.");
                         continue;
+                    } else if (here(GIANT, loc)) {
+                        drop(AXE, loc);
+                        puts("The axe hits the giant, who lets out a roar of pain and rage, raises" SOFT_NL
+                             "one foot high in the air..........and brings it down  *SPLAT*.");
+                        goto death;
                     } else {
                         obj = NOTHING;
                         oldverb = TOSS;
@@ -5410,6 +5509,7 @@ void simulate_an_adventure(void)
                         if (is_at_loc(DRAGON, loc) && !objs(DRAGON).prop) { ++k; obj = DRAGON; }
                         if (is_at_loc(TROLL, loc)) { ++k; obj = TROLL; }
                         if (here(BEAR, loc) && !objs(BEAR).prop) { ++k; obj = BEAR; }
+                        if (here(SPIDER, loc)) { ++k; obj = SPIDER; }
                         if (k == 0) {
                             /* no enemies present */
                             if (here(BIRD, loc) && oldverb != TOSS) { ++k; obj = BIRD; }
@@ -5483,6 +5583,9 @@ void simulate_an_adventure(void)
                                 case 3: puts("For crying out loud, the poor thing is already dead!"); break;
                                 default: puts("The bear is confused; he only wants to be your friend."); break;
                             }
+                            continue;
+                        case SPIDER:
+                            puts("I'm not going anywhere near that horrible hairy thing!!");
                             continue;
                         default:
                             puts("Don't be ridiculous!");
