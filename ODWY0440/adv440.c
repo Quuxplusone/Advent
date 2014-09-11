@@ -2998,6 +2998,61 @@ int foobar;  /* progress in the FEE FIE FOE FOO incantation */
 int dung0 = 0;  /* how many turns the player has been sitting in the dungeon */
 bool wizard_mode = false;
 
+int original_room_number(int loc, bool convert_backwards)
+{
+    Location original_locations[200] = {
+        0, R_ROAD, R_HILL, R_HOUSE, R_VALLEY, R_FOREST, R_FOREST2, R_SLIT, R_OUTSIDE,
+        R_INSIDE, R_COBBLES, R_DEBRIS, R_AWK, R_BIRD, R_SPIT, R_EMIST,
+        0, R_EFISS, R_NUGGET, R_HMK, R_NECK, R_LOSE,
+        0, R_W2PIT, R_EPIT, R_WPIT, R_CLIMB, R_WFISS, R_NS, R_SOUTH, R_WEST, R_CHECK,
+        0, R_Y2, R_JUMBLE, R_WINDOE, R_DIRTY, R_CLEAN, R_WET, R_DUSTY, R_THRU, R_WMIST,
+        R_LIKE1, R_LIKE2, R_LIKE3, R_LIKE4, R_DEAD3, R_DEAD4, R_DEAD5,
+        R_LIKE5, R_LIKE6, R_LIKE7, R_LIKE8, R_LIKE9, R_DEAD6, R_LIKE10,
+        R_DEAD7, R_BRINK, R_DEAD8, R_DUCK,
+        R_ELONG, R_WLONG, R_CROSS, R_DEAD0,
+        R_COMPLEX, R_BEDQUILT, R_SWISS, R_E2PIT, R_SLAB, R_ABOVER, R_ABOVEP,
+        R_SJUNC, R_LOW, R_CRAWL, R_SECRET, R_WIDE, R_TIGHT, R_TALL, R_BOULDERS,
+        0, R_LIKE11, R_DEAD1, R_DEAD9, R_LIKE12, R_LIKE13, R_DEAD10, R_DEAD11, R_LIKE14,
+        R_NARROW, R_UPNOUT, R_DIDIT, R_INCLINE, R_GIANT, R_BLOCK, R_IMMENSE, R_FALLS,
+        R_SOFT, R_ORIENTAL, R_MISTY, R_ALCOVE, R_PLOVER, R_DARK,
+        R_ARCHED, R_SHELL, R_RAGGED, R_SAC, R_ANTE, R_DIFF0, R_WITT,
+        R_MIRROR, R_WINDOW, R_TITE, R_DIFF10, R_RES, R_PIRATES_NEST, R_NEEND, R_SWEND,
+        R_SWSIDE, R_SLOPING, R_SCAN1, R_SCAN2, R_SCAN3, R_NESIDE, R_CORR, R_FORK, R_WARM,
+        R_VIEW, R_CHAMBER, R_LIME, R_FBARR, R_BARR,
+        R_DIFF1, R_DIFF2, R_DIFF3, R_DIFF4, R_DIFF5, R_DIFF6, R_DIFF7, R_DIFF8, R_DIFF9, R_PONY,
+        R_141, R_142, R_143, R_144, R_DUNGEON, R_146, R_147, R_148, R_149, R_150, R_151, R_152, R_153,
+        R_CELLAR, R_155, R_156, R_157, R_158, R_159, R_160, R_161, R_162, R_163, R_164, R_165,
+        R_166, R_167, R_168, R_169, R_170, R_171, R_172, R_PANTRY, R_174, R_175, R_176, R_177,
+        R_178, R_179, R_180, R_181, R_182, R_183, R_184, R_185, R_186, R_187, R_188,
+        R_189, R_190, R_191, R_192, R_193, R_194, R_195, R_196, R_197, R_198, R_199
+    };
+    assert(original_locations[16] == 0);  /* pseudo-rooms that I've turned into remarks */
+    assert(original_locations[22] == 0);
+    assert(original_locations[32] == 0);
+    assert(original_locations[79] == 0);
+    assert(original_locations[114] == R_PIRATES_NEST);
+    assert(original_locations[140] == R_PONY);
+    assert(original_locations[199] == R_199);
+
+    if (convert_backwards) {
+        /* Convert an original number to an internal number, for use by FLY. */
+        if (1 <= loc && loc <= 199) {
+            return original_locations[loc];
+        } else {
+            return 0;
+        }
+    } else {
+        /* Convert an internal number to an original number, for use by HOOT. */
+        for (int i=0; i < 200; ++i) {
+            if (original_locations[i] == loc) {
+                return i;
+            }
+        }
+        assert(false);
+        return 0;
+    }
+}
+
 void give_optional_plugh_hint(Location loc)
 {
     if (loc == R_Y2 && pct(25) && !cave_is_closing()) {
@@ -3057,11 +3112,11 @@ void describe_object(ObjectWord t, Location loc)
     }
 }
 
-int look_around(Location loc, bool dark, bool was_dark)
+int look_around(Location loc, bool dark, bool was_dark, ActionWord verb)
 {
     const char *room_description;
     if (dark && !is_forced(loc)) {
-        if (was_dark && pct(35)) return 'p';  /* goto pitch_dark; */
+        if (was_dark && (verb != BLOW) && (verb != HOOT) && pct(35)) return 'p';  /* goto pitch_dark; */
         room_description = pitch_dark_msg;
     } else if (places[loc].short_desc == NULL || places[loc].visits % verbose_interval == 0) {
         room_description = places[loc].long_desc;
@@ -3127,7 +3182,7 @@ Location announce_tides(Location loc)
             }
             switch (abs(tide)) {
                 case 0: case 1: case 2: case 3: case 4:
-                    puts("You have drowned horribly in a mixture of sea-water and sewage!");
+                    puts("You have drowned horribly in a mixture of sea-water and sewage!\n");
                     return R_LIMBO;
                 case 5: puts("You are nearly up to your neck in sewage.  Help!"); return loc;
                 case 6: puts("The sewage comes nearly up to your chest! Lets get out of here!"); return loc;
@@ -3179,6 +3234,47 @@ bool maybe_die_of_thirst(Location loc)
              "your load.");
     }
     return false;
+}
+
+void maybe_spot_orc(Location loc)
+{
+    static int orct = 0;
+    static int previous_tally = 0;
+    if (orct < 41) {
+        ++orct;
+        if (orct != 41) return;
+    }
+    if (cave_is_closing() || closed) return;
+    if (dwarf_at(loc)) return;  /* Pike actually tests DTOTAL, but that should be equivalent here. */
+    int roomno = original_room_number(loc, /*convert_backwards=*/false);
+    if (roomno < 20 || 150 < roomno) return;
+    if (tally == previous_tally && !now_in_darkness(loc)) {
+        static bool given_hint[3] = { false, false, false };
+        if (objs(FISSURE).prop == 0 && !given_hint[0]) {
+            puts("Suddenly, as if from nowhere, appears a little figure.  He looks at" SOFT_NL
+                 "you quizzically and then says in a deep voice:\n"
+                 "\"I'll tell you a secret. You can't fly or jump across the fissure," SOFT_NL
+                 "but you might get across by using magic.\"\n"
+                 "Then he hops from foot to foot chuckling to himself and disappears" SOFT_NL
+                 "into the gloom just as suddenly as he came.");
+            given_hint[0] = true;
+        } else if (objs(CHALICE).prop == -1 && !given_hint[1]) {
+            puts("Out from the gloom jumps a little figure.  He looks at you and" SOFT_NL
+                 "says in a surprisingly deep voice \"Chalice, chalice? now where did" SOFT_NL
+                 "I put that chalice?  If you should perchance find it, be careful," SOFT_NL
+                 "for it is said to have strange powers\"." SOFT_NL
+                 "With that he scurries off back into the gloom.");
+            given_hint[1] = true;
+        } else if (objs(RUSTY_DOOR).prop == 1 && !given_hint[2]) {
+            puts("A deep voice behind you says:\n"
+                 "\"Where do the eggs come from? There is no goose around here and the" SOFT_NL
+                 "owl can't have done it....\". You turn round in time to see a small" SOFT_NL
+                 "figure disappear muttering \"It must be magic again!\"");
+            given_hint[2] = true;
+        }
+    }
+    previous_tally = tally;
+    orct = 1;
 }
 
 /*========== Hints. =======================================================
@@ -4260,61 +4356,6 @@ void attempt_open_or_close(ActionWord verb, ObjectWord obj, Location loc)  /* se
     }
 }
 
-int original_room_number(int loc, bool convert_backwards)
-{
-    Location original_locations[200] = {
-        0, R_ROAD, R_HILL, R_HOUSE, R_VALLEY, R_FOREST, R_FOREST2, R_SLIT, R_OUTSIDE,
-        R_INSIDE, R_COBBLES, R_DEBRIS, R_AWK, R_BIRD, R_SPIT, R_EMIST,
-        0, R_EFISS, R_NUGGET, R_HMK, R_NECK, R_LOSE,
-        0, R_W2PIT, R_EPIT, R_WPIT, R_CLIMB, R_WFISS, R_NS, R_SOUTH, R_WEST, R_CHECK,
-        0, R_Y2, R_JUMBLE, R_WINDOE, R_DIRTY, R_CLEAN, R_WET, R_DUSTY, R_THRU, R_WMIST,
-        R_LIKE1, R_LIKE2, R_LIKE3, R_LIKE4, R_DEAD3, R_DEAD4, R_DEAD5,
-        R_LIKE5, R_LIKE6, R_LIKE7, R_LIKE8, R_LIKE9, R_DEAD6, R_LIKE10,
-        R_DEAD7, R_BRINK, R_DEAD8, R_DUCK,
-        R_ELONG, R_WLONG, R_CROSS, R_DEAD0,
-        R_COMPLEX, R_BEDQUILT, R_SWISS, R_E2PIT, R_SLAB, R_ABOVER, R_ABOVEP,
-        R_SJUNC, R_LOW, R_CRAWL, R_SECRET, R_WIDE, R_TIGHT, R_TALL, R_BOULDERS,
-        0, R_LIKE11, R_DEAD1, R_DEAD9, R_LIKE12, R_LIKE13, R_DEAD10, R_DEAD11, R_LIKE14,
-        R_NARROW, R_UPNOUT, R_DIDIT, R_INCLINE, R_GIANT, R_BLOCK, R_IMMENSE, R_FALLS,
-        R_SOFT, R_ORIENTAL, R_MISTY, R_ALCOVE, R_PLOVER, R_DARK,
-        R_ARCHED, R_SHELL, R_RAGGED, R_SAC, R_ANTE, R_DIFF0, R_WITT,
-        R_MIRROR, R_WINDOW, R_TITE, R_DIFF10, R_RES, R_PIRATES_NEST, R_NEEND, R_SWEND,
-        R_SWSIDE, R_SLOPING, R_SCAN1, R_SCAN2, R_SCAN3, R_NESIDE, R_CORR, R_FORK, R_WARM,
-        R_VIEW, R_CHAMBER, R_LIME, R_FBARR, R_BARR,
-        R_DIFF1, R_DIFF2, R_DIFF3, R_DIFF4, R_DIFF5, R_DIFF6, R_DIFF7, R_DIFF8, R_DIFF9, R_PONY,
-        R_141, R_142, R_143, R_144, R_DUNGEON, R_146, R_147, R_148, R_149, R_150, R_151, R_152, R_153,
-        R_CELLAR, R_155, R_156, R_157, R_158, R_159, R_160, R_161, R_162, R_163, R_164, R_165,
-        R_166, R_167, R_168, R_169, R_170, R_171, R_172, R_PANTRY, R_174, R_175, R_176, R_177,
-        R_178, R_179, R_180, R_181, R_182, R_183, R_184, R_185, R_186, R_187, R_188,
-        R_189, R_190, R_191, R_192, R_193, R_194, R_195, R_196, R_197, R_198, R_199
-    };
-    assert(original_locations[16] == 0);  /* pseudo-rooms that I've turned into remarks */
-    assert(original_locations[22] == 0);
-    assert(original_locations[32] == 0);
-    assert(original_locations[79] == 0);
-    assert(original_locations[114] == R_PIRATES_NEST);
-    assert(original_locations[140] == R_PONY);
-    assert(original_locations[199] == R_199);
-
-    if (convert_backwards) {
-        /* Convert an original number to an internal number, for use by FLY. */
-        if (1 <= loc && loc <= 199) {
-            return original_locations[loc];
-        } else {
-            return 0;
-        }
-    } else {
-        /* Convert an internal number to an original number, for use by HOOT. */
-        for (int i=0; i < 200; ++i) {
-            if (original_locations[i] == loc) {
-                return i;
-            }
-        }
-        assert(false);
-        return 0;
-    }
-}
-
 int attempt_hoot(Location loc)
 {
     if (closed) {
@@ -4918,7 +4959,8 @@ void simulate_an_adventure(void)
         loc = announce_tides(loc);
         if (loc == R_LIMBO) goto death;
         if (maybe_die_of_thirst(loc)) goto death;
-        switch (look_around(loc, now_in_darkness(loc), was_dark)) {
+        maybe_spot_orc(loc);
+        switch (look_around(loc, now_in_darkness(loc), was_dark, verb)) {
             case 'p': goto pitch_dark;
             case 't': goto try_move;
             default: break;
