@@ -86,3 +86,15 @@ void printf(const char *format, ...)
     }
     va_end(ap);
 }
+
+/* We don't handle signed inputs, but that's fine for our purpose. */
+int atoi(const char *str)
+{
+    int result = 0;
+    while ('0' <= *str && *str <= '9') {
+        result *= 10;
+        result += (*str - '0');
+        ++str;
+    }
+    return result;
+}
