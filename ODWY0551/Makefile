@@ -21,7 +21,7 @@ adv551: adv551.o getwds.o objprop.o indent.o
 adv551.z8: z-machine/Main.inf z-machine/stubs.inf ./indent.inf z-machine/cstubs.s z-machine/advent.s
 	cd z-machine ; inform -v8 -ew~S~X~D $(MAXES) Main.inf ../adv551.z8
 
-z-machine/advent.s: adv551.c
+z-machine/advent.s: adv551.c locs.h
 	$(VBCCZ) -c $< -o $@ -module-name=advent -opt-puts=print_indented
 
 z-machine/cstubs.s: z-machine/cstubs.c

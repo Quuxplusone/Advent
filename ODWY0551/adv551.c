@@ -539,11 +539,15 @@ Instruction travels[1199];
 Instruction *start[MAX_LOC+2];
 struct Place places[MAX_LOC+1];
 
+bool is_forced(Location loc);
+
 void make_loc(Instruction *q, Location x, bool has_long_desc, bool has_short_desc, unsigned int f)
 {
     static int last_x = 0;
     assert(x == last_x + 1);
     last_x = x;
+
+    assert(has_long_desc || is_forced(x));
 
     places[x].has_long_desc = has_long_desc;
     places[x].has_short_desc = has_short_desc;
@@ -593,7 +597,10 @@ void build_travel_table(void)
 
 void print_long_room_description(Location loc)
 {
-    assert(places[loc].has_long_desc);
+    if (!places[loc].has_long_desc) {
+        assert(is_forced(loc));
+        return;
+    }
     switch (loc) {
 #define make_loc(q,x,l,s,f) case x: puts(l); break;
 #define make_ins(x,y)
@@ -611,6 +618,10 @@ void print_long_room_description(Location loc)
 
 void print_short_room_description(Location loc)
 {
+    if (!places[loc].has_short_desc) {
+        assert(is_forced(loc));
+        return;
+    }
     assert(places[loc].has_short_desc);
     switch (loc) {
 #define make_loc(q,x,l,s,f) case x: puts(s); break;
@@ -1264,6 +1275,9 @@ void pirate_tracks_you(Location loc)
 
 bool forbidden_to_pirate(Location loc)
 {
+    if (is_forced(loc)) {
+        return true;
+    }
     switch (loc) {
         case R_MAZEA46: case R_MAZEA47: case R_MAZEA48:
         case R_MAZEA54: case R_MAZEA56: case R_MAZEA58:
@@ -1970,7 +1984,8 @@ int score(void)
         { DROPLET,  -SAFE,  5 },
         { BOOK,     -SAFE,  2 },
         { RADIUM, -CANISTER,4 },
-        { BALL,     -SAFE,  2 }
+        { BALL,     -SAFE,  2 },
+        { NOTHING,      0,  0 }
     };
     /* First tally up the treasures. */
     for (ObjectWord t = MIN_OBJ; t <= MAX_OBJ; ++t) {

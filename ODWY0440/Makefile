@@ -8,7 +8,7 @@ MAXES = \$$MAX_ARRAYS=1700 \
 
 all: adv440 adv440.z8
 
-adv440: adv440.c
+adv440: adv440.c locs.h
 	gcc -std=c99 -O3 -pedantic -W -Wall -Wextra \
 		-Wno-switch -Wno-unused-result \
 		adv440.c -o $@
@@ -16,7 +16,7 @@ adv440: adv440.c
 adv440.z8: z-machine/Main.inf z-machine/stubs.inf z-machine/cstubs.s z-machine/adv440.s
 	cd z-machine ; inform -v8 -ew~S~X~D $(MAXES) Main.inf ../adv440.z8
 
-z-machine/adv440.s: adv440.c
+z-machine/adv440.s: adv440.c locs.h
 	$(VBCCZ) -c $< -o $@ -module-name=adv440
 
 z-machine/cstubs.s: z-machine/cstubs.c
