@@ -526,7 +526,7 @@ typedef enum {
     R_199, MAX_LOC = R_199,
     R_PPASS, R_PDROP,
     R_TROLL,
-    R_TDROP, R_GRAB,
+    R_TPASS, R_GRAB,
     FIRST_REMARK
 } Location;
 
@@ -611,7 +611,7 @@ void build_travel_table(void)
 #undef make_cond_ins
 #undef make_ins
 #undef make_loc
-    /* The remaining "locations" R_PPASS, R_PDROP, R_TROLL, R_TDROP, and R_GRAB are special. */
+    /* The remaining "locations" R_PPASS, R_PDROP, R_TROLL, R_TPASS, and R_GRAB are special. */
     start[R_PPASS] = q;
 }
 
@@ -774,7 +774,7 @@ struct ObjectData {
 
 int holding_count;  /* how many objects have objs(t).place < 0? */
 Location last_knife_loc = R_LIMBO;
-int tally = 15;  /* treasures awaiting you */
+int tally = 20;  /* treasures awaiting you */
 int lost_treasures;  /* treasures that you won't find */
 int thirst = -200;  /* when it reaches 900, you're dead */
 
@@ -1035,10 +1035,10 @@ void build_object_table(void)
     new_obj(GIANT, 0, GIANT, R_143);
     objs(GIANT).desc[0] = NULL;  /* it's just scenery */
     objs(GIANT).desc[1] =
-        "Suddenly a giant hand descends from above, picks you up" SOFT_NL
+        "\nSuddenly a giant hand descends from above, picks you up" SOFT_NL
         "and shakes you scattering your possessions across the floor.";
     objs(GIANT).desc[2] = "The giant reclines on the couch eating eggs!";
-    objs(GIANT).desc[3] = "A giant hand descends from above and picks you up.";
+    objs(GIANT).desc[3] = "\nA giant hand descends from above and picks you up.";
     new_obj(FLAGSTONE, 0, FLAGSTONE, R_DUNGEON);
     objs(FLAGSTONE).desc[0] = NULL;  /* it's just scenery */
     new_obj(GOLD, "Large gold nugget", 0, R_NUGGET);
@@ -1328,8 +1328,10 @@ void dwarves_tote_objects(Location loc)
     /* Jack Pike wrote to me on 2014-03-20: "All the dwarves toting makes it
      * difficult to solve the maze where all locations are the same because
      * they move the dropped objects. To make it easier I restricted the
-     * number of toting dwarves [from Woods' 5 down to 3]." */
-    for (int i=0; i < 3; ++i)
+     * number of toting dwarves [from Woods' 5 down to 3]."
+     * Dwarf number 0 is the pirate; he never totes anything.
+     */
+    for (int i=1; i <= 3; ++i)
     {
         struct Dwarf *d = &dwarves[i];
         if (d->loc == R_LIMBO) {
@@ -2144,7 +2146,7 @@ void maybe_give_a_hint(Location loc, Location oldloc, Location oldoldloc, Object
  * This section corresponds to sections 193 and 197 in Knuth.
  */
 
-#define MAX_SCORE 350
+#define MAX_SCORE 440
 #define MAX_DEATHS 4
 bool gave_up;
 int death_count;
@@ -2159,11 +2161,11 @@ int score(void)
             s += 2;  /* two points just for seeing a treasure */
             if (there(i, R_HOUSE) && objs(i).prop == 0) {
                 if (i < CHEST) {
-                    s += 12;
+                    s += 10;
                 } else if (i == CHEST) {
-                    s += 14;
+                    s += 12;
                 } else {
-                    s += 16;
+                    s += 14;
                 }
             }
         }
@@ -2255,6 +2257,10 @@ const char *death_wishes[2*MAX_DEATHS] = {
 
 void kill_the_player(Location last_safe_place)
 {
+    if (has_sewage(last_safe_place)) {
+        last_safe_place = R_180;
+    }
+
     death_count++;
     if (cave_is_closing()) {
         puts("It looks as though you're dead.  Well, seeing as how it's"
@@ -2267,6 +2273,7 @@ void kill_the_player(Location last_safe_place)
     if (toting(LAMP)) objs(LAMP).prop = 0;
     objs(WATER).place = R_LIMBO;
     objs(OIL).place = R_LIMBO;
+    thirst = 0;
     for (int j = MAX_OBJ; j >= MIN_OBJ; --j) {
         if (toting(j)) drop(j, (j == LAMP) ? R_ROAD : last_safe_place);
     }
@@ -2317,10 +2324,18 @@ Location attempt_plover_passage(Location from)  /* section 149 in Knuth */
 
 Location attempt_tusk_passage(Location from)
 {
-    /* Sewer section. Keep bottle, vase, etc. out, and tusk in. */
+    /* Sewer section.
+     * Any item allowed through this passage will have to work properly when
+     * dropped into either the slippery shaft or the sewage. The bottle, cage,
+     * and vase must be kept out.
+     * Contrariwise, the point of the puzzle is to keep the tusk in.
+     * Pike forbids various "hard items" (nugget, chest, chalice, bars, trident,
+     * pyramid, eggs, crown) for no reason other than realism.
+     */
     ObjectWord prohibited_items[] = {
-        VASE, BOTTLE, CAGE, TUSK, GOLD, CHEST,
-        CHALICE, SILVER, TRIDENT, PYRAMID, EGGS, CROWN
+        VASE, BOTTLE, CAGE,
+        TUSK,
+        GOLD, CHEST, CHALICE, SILVER, TRIDENT, PYRAMID, EGGS, CROWN
     };
     for (int i=0; i < (int)(sizeof prohibited_items / sizeof *prohibited_items); ++i) {
         if (toting(prohibited_items[i])) {
@@ -2525,8 +2540,11 @@ bool attempt_take(ObjectWord obj, Location loc)
         /* The bird was uncatchable. */
     } else {
         carry(obj);
-        if (obj == BOTTLE && bottle_contents() != NOTHING)
+        if (obj == BOTTLE && bottle_contents() != NOTHING) {
             objs(bottle_contents()).place = R_INHAND;
+        } else if (obj == DOCUMENTS) {
+            objs(DOCUMENTS).prop = 1;  /* no longer stuck to the web */
+        }
         puts(ok);
     }
     return false;
@@ -2551,7 +2569,7 @@ Location get_kicked_out_of_cellar()
 
     /* Once you've picked up the orb, the "fake" orb visible from the
      * cellar view must disappear. It will never reappear, since
-     * nothing can ever be successfully dropped in the cellar.
+     * the (real) orb can never be successfully dropped in the cellar.
      * Pike handles this by making the fake orb invisible via prop
      * manipulation; a better solution would be to just destroy it.
      * The difference is observable if you go back to the cellar view
@@ -2587,7 +2605,6 @@ Location attempt_drop(ObjectWord obj, Location loc)
         objs(BATTERIES).prop = 0;
         puts("There are fresh batteries here.");
     } else if (obj == VASE && loc != R_SOFT) {
-        drop(VASE, loc);
         if (there(PILLOW, loc)) {
             /* In Long's "Adventure 6", the response is this message
              * plus the default "Dropped." */
@@ -2597,6 +2614,10 @@ Location attempt_drop(ObjectWord obj, Location loc)
             objs(VASE).prop = 1;  /* the vase is now broken */
             immobilize(VASE);
         }
+        if (loc == R_CELLAR) {
+            loc = get_kicked_out_of_cellar();
+        }
+        drop(VASE, loc);
     } else if (obj == BEAR && is_at_loc(TROLL, loc)) {
         /* Chase the troll away. */
         puts("The bear lumbers toward the troll, who lets out a startled shriek and" SOFT_NL
@@ -2646,6 +2667,7 @@ Location attempt_drop(ObjectWord obj, Location loc)
                 puts("It has disappeared in the sewage!");
             }
             drop(obj, (obj == FOOD) ? R_163 : R_180);
+            return loc;
         } else {
             puts(ok);
             if (obj == TUSK && loc == R_HOUSE) {
@@ -3158,7 +3180,7 @@ void attempt_ride(ObjectWord obj)
              "People like you didn't ought to be allowed in the cave, poking your" SOFT_NL
              "nose into things you can't handle. You'll always lose if you tangle" SOFT_NL
              "with *him* and there is no way of helping the princess that I know of." SOFT_NL
-             "I don't think I can stand any more of your bungling I'm going........");
+             "I don't think I can stand any more of your bungling I'm going........\n");
         quit();
     }
     else
@@ -3511,7 +3533,7 @@ bool determine_next_newloc(Location oldloc, Location loc, Location *newloc, Moti
                 return true;  /* goto death */
             }
         }
-    } else if (*newloc == R_TDROP) {
+    } else if (*newloc == R_TPASS) {
         *newloc = attempt_tusk_passage(loc);
     } else if (*newloc == R_GRAB) {
         *newloc = attempt_giant_quarters(oldloc, loc, loc);
@@ -3678,9 +3700,17 @@ void simulate_an_adventure(void)
             goto death;
         }
     commence:  /* line 2000 in Pike */
-        loc = announce_tides(loc);
-        if (loc == R_LIMBO) goto death;
-        if (maybe_die_of_thirst(loc)) goto death;
+        if (true) {
+            Location newloc = announce_tides(loc);
+            if (newloc == R_LIMBO) {
+                oldoldloc = loc;
+                goto death;
+            } else if (maybe_die_of_thirst(newloc)) {
+                oldoldloc = newloc;
+                goto death;
+            }
+            loc = newloc;
+        }
         maybe_spot_orc(loc);
         switch (look_around(loc, now_in_darkness(loc), was_dark, verb)) {
             case 'p': goto pitch_dark;
@@ -3692,6 +3722,7 @@ void simulate_an_adventure(void)
             /* Spend too much time in the culvert in the dark and you'll
              * die with no explanation, since the "rats kill you" message
              * is visible only when the room is lighted. */
+            oldoldloc = loc;
             goto death;
         }
 
@@ -3922,7 +3953,7 @@ void simulate_an_adventure(void)
                             continue;
                         }
                         if (there(EGGS, R_LIMBO) && there(TROLL, R_LIMBO) && objs(TROLL).prop == 0)
-                            objs(TROLL).prop = 1;  /* the troll returns */
+                            objs(TROLL).prop = 1;  /* the troll returns, but Pike's giant is unaffected */
                         if (loc == R_GIANT) {
                             puts("There is a large nest here, full of golden eggs!");
                         } else if (here(EGGS, loc)) {
@@ -4214,8 +4245,7 @@ void simulate_an_adventure(void)
                             default:
                                 break;
                         }
-                        drop(obj, R_180);
-                        if (obj == FOOD) move(FOOD, R_163);
+                        drop(obj, (obj == FOOD) ? R_163 : R_180);
                         throwc += ran(3) + 1;
                         if (throwc < 4 || objs(FAKE_ORB).prop != 0) {
                             puts("It lands near the round drain in the cellar, slides towards it and" SOFT_NL

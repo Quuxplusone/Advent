@@ -1111,7 +1111,7 @@
              "You're in the unsafe tunnel.", 0);
     make_ins(S, R_ANTE);
     make_ins(N, R_175);
-    make_cond_ins(CRACK, 100, R_TDROP); ditto(W); ditto(HOLE); ditto(SLIT);
+    make_cond_ins(CRACK, 100, R_TPASS); ditto(W); ditto(HOLE); ditto(SLIT);
     make_loc(q, R_175,
              "A smell of decaying timber fills this part of the passage." SOFT_NL
              "To the north the passage is blocked by a larger than usual rock fall" SOFT_NL
@@ -1126,7 +1126,7 @@
              "Water drips from the roof making everything damp and the floor" SOFT_NL
              "slippery. There are no signs that anyone has been this way before.",
              "You're in the very low room.", 0);
-    make_ins(U, R_TDROP); ditto(E);
+    make_ins(U, R_TPASS); ditto(E);
     make_ins(W, R_177); ditto(UPSTREAM);
     make_ins(D, R_178);
     make_loc(q, R_177,
@@ -1362,7 +1362,7 @@
              "find a stone slab blocking your ascent. You give the slab a push and" SOFT_NL
              "it opens. You clamber through into daylight and look round just in" SOFT_NL
              "time to see the slab fall perfectly into the floor, so perfectly you" SOFT_NL
-             "cannot see the join.",
+             "cannot see the join.\n",
              NULL, 0);
     make_ins(0, R_HOUSE);
     make_loc(q, R_196,
