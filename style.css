@@ -135,17 +135,44 @@ distance.
 	margin-top: 0;
 }
 
+/* Courtesy of css3buttongenerator.com */
+a.btn {
+  background: #5588bb;
+  background-image: -webkit-linear-gradient(top, #5588bb, #77aadd);
+  background-image: -moz-linear-gradient(top, #5588bb, #77aadd);
+  background-image: -ms-linear-gradient(top, #5588bb, #77aadd);
+  background-image: -o-linear-gradient(top, #5588bb, #77aadd);
+  background-image: linear-gradient(to bottom, #5588bb, #77aadd);
+  -webkit-border-radius: 28;
+  -moz-border-radius: 28;
+  border-radius: 28px;
+  text-shadow: 1px 1px 3px #336699;
+  color: #FFF;
+  font-size: 20px;
+  padding: 10px 20px 10px 20px;
+}
+
+a.btn:hover {
+  background: #77aadd;
+  background-image: -webkit-linear-gradient(top, #77aadd, #99ccff);
+  background-image: -moz-linear-gradient(top, #77aadd, #99ccff);
+  background-image: -ms-linear-gradient(top, #77aadd, #99ccff);
+  background-image: -o-linear-gradient(top, #77aadd, #99ccff);
+  background-image: linear-gradient(to bottom, #77aadd, #99ccff);
+}
+
 /* 
 Playinfo affects the paragraph at the bottom of the home-page that supplies
 the IFID for the game and suggests interpreters for the author to use. */
 
 .playinfo
 {
-	margin: 1em 0px 0px 15.4em;
+	margin: 4em 0px 0px 15.4em;
 	width: 33em;
 }
 
 .playinfo p {
+	margin-top: 5em;
 	font-size: .75em;
 }
 
