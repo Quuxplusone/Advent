@@ -1035,8 +1035,8 @@ void build_object_table(void)
     new_obj(GIANT, 0, GIANT, R_143);
     objs(GIANT).desc[0] = NULL;  /* it's just scenery */
     objs(GIANT).desc[1] =
-        "\nSuddenly a giant hand descends from above, picks you up" SOFT_NL
-        "and shakes you scattering your possessions across the floor.";
+        "\nSuddenly a giant hand descends from above, picks you up," SOFT_NL
+        "and shakes you, scattering your possessions across the floor.";
     objs(GIANT).desc[2] = "The giant reclines on the couch eating eggs!";
     objs(GIANT).desc[3] = "\nA giant hand descends from above and picks you up.";
     new_obj(FLAGSTONE, 0, FLAGSTONE, R_DUNGEON);
@@ -1084,7 +1084,7 @@ void build_object_table(void)
     objs(CHALICE).desc[0] = "A magnificent inlaid chalice lies here!";
     objs(CHALICE).desc[1] = "A unicorn stands here pawing the ground.";
     new_obj(RUBY, "Large ruby", 0, R_188);
-    objs(RUBY).desc[0] = "A very large ruby lies here.";
+    objs(RUBY).desc[0] = "A very large ruby lies here!";
     new_obj(ORB, "Crystal orb", 0, R_CELLAR);
     objs(ORB).desc[0] = "A crystal orb lies here!";
     new_obj(FAKE_ORB, 0, FAKE_ORB, R_198);
@@ -1804,8 +1804,8 @@ void describe_object(ObjectWord t, Location loc)
             case 5: puts("There are sewer rats all around you, their eyes glinting in" SOFT_NL
                          "the lamp light."); break;
             case 6: puts("You feel several bites on your legs.  You try to protect them, but" SOFT_NL
-                         "more rats sink their teeth into your arms, then one leaps from" SOFT_NL
-                         "the sewage and hangs on to your ear, weighing you down, now they are" SOFT_NL
+                         "more rats sink their teeth into your arms; then one leaps from" SOFT_NL
+                         "the sewage and hangs on to your ear, weighing you down; now they are" SOFT_NL
                          "at your throat.............");
                     /* At this point you die, but that's handled elsewhere. */
                     break;
@@ -1909,8 +1909,8 @@ Location announce_tides(Location loc)
                     puts("You have drowned horribly in a mixture of sea-water and sewage!\n");
                     return R_LIMBO;
                 case 5: puts("You are nearly up to your neck in sewage.  Help!"); return loc;
-                case 6: puts("The sewage comes nearly up to your chest! Lets get out of here!"); return loc;
-                case 7: puts("You are up to your waist in sewage. Lets leave!"); return loc;
+                case 6: puts("The sewage comes nearly up to your chest! Let's get out of here!"); return loc;
+                case 7: puts("You are up to your waist in sewage. Let's leave!"); return loc;
                 case 8: puts("The sewage comes nearly up to your waist. This is not at all" SOFT_NL
                              "pleasant!"); return loc;
                 case 9: puts("Sewage laps about your legs."); return loc;
@@ -1954,7 +1954,7 @@ bool maybe_die_of_thirst(Location loc)
     } else if (thirst >= 880) {
         puts("I cannot go much farther without a drink.");
     } else if (previous_thirst < 800 && thirst > 800) {
-        puts("Exploring is thirsty work, you must soon take a drink or lighten" SOFT_NL
+        puts("Exploring is thirsty work; you must soon take a drink or lighten" SOFT_NL
              "your load.");
     }
     return false;
@@ -1984,16 +1984,16 @@ void maybe_spot_orc(Location loc)
             given_hint[0] = true;
         } else if (objs(CHALICE).prop == -1 && !given_hint[1]) {
             puts("Out from the gloom jumps a little figure.  He looks at you and" SOFT_NL
-                 "says in a surprisingly deep voice \"Chalice, chalice? now where did" SOFT_NL
+                 "says in a surprisingly deep voice, \"Chalice, chalice? now where did" SOFT_NL
                  "I put that chalice?  If you should perchance find it, be careful," SOFT_NL
-                 "for it is said to have strange powers\"." SOFT_NL
+                 "for it is said to have strange powers.\"" SOFT_NL
                  "With that he scurries off back into the gloom.");
             given_hint[1] = true;
         } else if (objs(RUSTY_DOOR).prop == 1 && !given_hint[2]) {
             puts("A deep voice behind you says:\n"
-                 "\"Where do the eggs come from? There is no goose around here and the" SOFT_NL
-                 "owl can't have done it....\". You turn round in time to see a small" SOFT_NL
-                 "figure disappear muttering \"It must be magic again!\"");
+                 "\"Where do the eggs come from? There is no goose around here, and the" SOFT_NL
+                 "owl can't have done it...\" You turn round in time to see a small" SOFT_NL
+                 "figure disappear muttering, \"It must be magic again!\"");
             given_hint[2] = true;
         }
     }
@@ -2382,12 +2382,12 @@ Location attempt_giant_quarters(Location oldoldloc, Location oldloc, Location lo
         if (!toting(EGGS)) goto line_30530;
         objs(GIANT).prop = 2;
         move(EGGS, R_LIMBO);
-        puts("\"AH....EGG FOO.....YUM YUM\"" SOFT_NL
-             "the giant drawls, and grabs the eggs leaving you shaken but unharmed.");
+        puts("\"AH... EGG FOO... YUM YUM!\"" SOFT_NL
+             "the giant drawls, and grabs the eggs, leaving you shaken but unharmed.");
     }
     if (toting(DOCUMENTS)) {
-        puts("\"MY DEEDS!\" the giant shouts, \"For those you shall be rewarded!\"" SOFT_NL
-             "and tosses a large ruby in your direction as he takes the documents.");
+        puts("\"MY DEEDS!\" the giant shouts. \"For those you shall be rewarded!\"" SOFT_NL
+             "He tosses a large ruby in your direction as he takes the documents.");
         move(DOCUMENTS, R_LIMBO);
         move(RUBY, R_143);
     }
@@ -2395,7 +2395,7 @@ Location attempt_giant_quarters(Location oldoldloc, Location oldloc, Location lo
 line_30530:
     loc = R_DUNGEON;
     if (toting(FOOD)) {
-        puts("The giant grabs your food and bellows  \"A MISERABLE MORSEL!\"" SOFT_NL
+        puts("The giant grabs your food and bellows \"A MISERABLE MORSEL!\"" SOFT_NL
              "but stuffs it in his mouth and swallows it whole.");
         move(FOOD, R_163);
         loc = R_PANTRY;
@@ -2407,7 +2407,7 @@ line_30530:
         }
     }
     if (loc == R_PANTRY) {
-        puts("\"FEE FIE FOE FOO\n"
+        puts("\"FEE FIE FOE FOO " EMDASH("--") SOFT_NL
              "FIN FOO OR I'LL EAT YOU!\"" SOFT_NL
              "the giant thunders, and as you cast about for your possessions you" SOFT_NL
              "are pushed back into the pantry.");
@@ -2423,13 +2423,13 @@ Location giant_grabs_you(Location oldoldloc, Location oldloc, Location loc)
         dung0 = 0;
         puts("\"FEE FIE FOE FOO!\"" SOFT_NL
              "the giant thunders, and at the thought of foo' great slivers of" SOFT_NL
-             "saliva issue from the giants mouth and further soil his already" SOFT_NL
+             "saliva issue from the giant's mouth and further soil his already" SOFT_NL
              "filthy shirt front.");
     }
     objs(GIANT).prop = 0;
     if (oldoldloc == R_DUNGEON) {
         puts("This time he gets you. He is now wearing a bib which is even more" SOFT_NL
-             "soiled than his shirt. He opens his mouth wide revealing great" SOFT_NL
+             "soiled than his shirt. He opens his mouth wide, revealing great" SOFT_NL
              "rows of black teeth. The stench of his breath mercifully renders you" SOFT_NL
              "unconscious as he bites into your leg and pulls...................");
         return R_LIMBO;
@@ -2552,9 +2552,9 @@ bool attempt_take(ObjectWord obj, Location loc)
 
 Location get_kicked_out_of_cellar()
 {
-    puts("Through the portcullis steps a tall wizard clothed in grey. \"Be Off!\"" SOFT_NL
+    puts("Through the portcullis steps a tall wizard clothed in grey. \"Be off!\"" SOFT_NL
          "he commands, raising an arm. As the scene fades his distant voice" SOFT_NL
-         "continues \"And take your belongings with you!\".");
+         "continues, \"And take your belongings with you!\".");
 
     Location loc;
     switch (ran(6))
@@ -2671,9 +2671,9 @@ Location attempt_drop(ObjectWord obj, Location loc)
         } else {
             puts(ok);
             if (obj == TUSK && loc == R_HOUSE) {
-                puts("Tusk....Tusk....Tusk...      Thats not on the list!" SOFT_NL
-                     "Its ivory isn't it? must be valuable....." SOFT_NL
-                     "OK we'll give you the benefit of the doubt.");
+                puts("Tusk... Tusk... Tusk... That's not on the list!" SOFT_NL
+                     "It's ivory isn't it? must be valuable..." SOFT_NL
+                     "OK, we'll give you the benefit of the doubt.");
             } else if (obj == SPOON && objs(SPOON).prop == 0) {
                 puts("Oh! There appears to be an inscription on the spoon.");
             }
@@ -3115,7 +3115,7 @@ int attempt_hoot(Location loc)
         return 'd';  /* move the dwarves but not the owl; this is Pike's line 7404 */
     } else if (!now_in_darkness(loc)) {
         puts("With a flurry of wingbeats (and a loud \"HOOT\") an enormous owl" SOFT_NL
-             "appears. Disturbed by the light from your lamp he flies off again.");
+             "appears. Disturbed by the light from your lamp, he flies off again.");
         return 'o';  /* move the owl; this is Pike's line 7402 */
     } else if ((is_at_loc(DRAGON, loc) && objs(DRAGON).prop == 0) ||
                there(SNAKE, loc) ||
@@ -3168,19 +3168,19 @@ void attempt_ride(ObjectWord obj)
              "tunnel walls flash past dimly illuminated by an ethereal glow." SOFT_NL
              "Suddenly tunnel walls, unicorn and everything disappear and you" SOFT_NL
              "fly on in pitch blackness. Far below you a door opens revealing a" SOFT_NL
-             "dull red glow and grotesque creatures pour forth and dance and sway" SOFT_NL
+             "dull red glow; grotesque creatures pour forth and dance and sway" SOFT_NL
              "as you fall towards the aperture. Your descent is impeded, slowly at" SOFT_NL
-             "first and then more firmly by a web of gossamer threads, on which" SOFT_NL
-             "you can clearly see stamped at intervals  \"Made in Fairyland.\"" SOFT_NL
-             "Below you the creatures leap but try as they might they cannot reach" SOFT_NL
+             "first and then more firmly, by a web of gossamer threads on which" SOFT_NL
+             "you can clearly see stamped at intervals \"Made in Fairyland.\"" SOFT_NL
+             "Below you the creatures leap, but try as they might they cannot reach" SOFT_NL
              "you until there appears our horned fiend.  \"You chose the losing" SOFT_NL
-             "side my friend!\" he says and slashes through the supporting threads." SOFT_NL
-             "As you fall you hear his evil laugh and him shout \"Welcome to Hell!!\"\n\n"
-             "Now you really are in a mess, lost one of our best agents too." SOFT_NL
+             "side, my friend!\" he says, and slashes through the supporting threads." SOFT_NL
+             "As you fall you hear his evil laugh and his shout, \"Welcome to Hell!!\"\n\n"
+             "Now you really are in a mess! Lost one of our best agents, too." SOFT_NL
              "People like you didn't ought to be allowed in the cave, poking your" SOFT_NL
-             "nose into things you can't handle. You'll always lose if you tangle" SOFT_NL
+             "noses into things you can't handle. You'll always lose if you tangle" SOFT_NL
              "with *him* and there is no way of helping the princess that I know of." SOFT_NL
-             "I don't think I can stand any more of your bungling I'm going........\n");
+             "I don't think I can stand any more of your bungling! I'm going........\n");
         quit();
     }
     else
@@ -3623,10 +3623,10 @@ void print_message(MessageWord msg)
             puts("Nothing happens.");
             break;
         case EPNS:
-            puts("Electro-plated nickel silver.  Its nearly worthless.");
+            puts("Electro-plated nickel silver.  It's nearly worthless.");
             break;
         case BONES:
-            puts("Bones UGH!  I've got a thing about bones, I will have nothing" SOFT_NL
+            puts("Bones " EMDASH("--") " UGH!  I've got a thing about bones.  I will have nothing" SOFT_NL
                  "to do with them.");
             break;
         case DEBRIS:
@@ -3736,7 +3736,7 @@ void simulate_an_adventure(void)
             if (now_in_darkness(loc)) {
                 /* As long as he's in darkness, the player is safe. */
             } else if ((dung0 == 3 || dung0 == 5) && objs(GIANT).prop != 2) {
-                puts("The giants hand enters the dungeon and makes a grab but he misses!");
+                puts("The giant's hand enters the dungeon and makes a grab, but he misses!");
             } else if (dung0 == 4) {
                 puts("A tiny mouse appears from beneath a flagstone, sees you and hastily" SOFT_NL
                      "retreats.");
@@ -4088,14 +4088,14 @@ void simulate_an_adventure(void)
                             "ring to me and together we shall drive the evil from the caves.....\"\n"
                             "A distant roll of thunder drowns the voice, and as the woman fades" SOFT_NL
                             "from a cloud of smoke steps a horned creature with a pointed tail." SOFT_NL
-                            "\"If you have anything more to do with that wisp,\" he says \"you will" SOFT_NL
+                            "\"If you have anything more to do with that wisp,\" he says, \"you will" SOFT_NL
                             "find yourself in infernal hot water. Just you stick to stealing a few" SOFT_NL
                             "treasures and you won't come to much harm!\" With that he points to the" SOFT_NL
-                            "chalice and it crumbles to dust, then with a flick of his tail he" SOFT_NL
+                            "chalice and it crumbles to dust; then with a flick of his tail he" SOFT_NL
                             "disappears.\n"
-                            "A  ringing in your ears seems to say \"Will you help me adventurer?\".",
+                            "A ringing in your ears seems to say, \"Will you help me adventurer?\".",
 
-                            "A swirl of mist rises from the floor. Gosh! its turned into a" SOFT_NL
+                            "A swirl of mist rises from the floor. Gosh! it's turned into a" SOFT_NL
                             "unicorn!",
 
                             "The ringing is replaced by a distant laugh.");
@@ -4184,7 +4184,7 @@ void simulate_an_adventure(void)
                 case TAKE:
                     if (obj == FLAGSTONE && loc == R_DUNGEON) {
                         puts("The flagstone lifts suddenly and you topple headlong into the" SOFT_NL
-                             "darkness below.");
+                             "darkness below.\n");
                         dung0 = 0;  /* escape the dungeon */
                         loc = R_165;
                         mot = NOWHERE;
@@ -4252,8 +4252,8 @@ void simulate_an_adventure(void)
                                  "drops in!");
                         } else {
                             puts("It strikes the globe a glancing blow and slides off into the drain." SOFT_NL
-                                 "The globe rocks slightly revealing a small cross attached to its" SOFT_NL
-                                 "far side, then it rolls towards the drain and disappears also.");
+                                 "The globe rocks slightly, revealing a small cross attached to its" SOFT_NL
+                                 "far side; then it rolls towards the drain and disappears also.");
                             move(ORB, R_180);
                             objs(FAKE_ORB).prop = 1;
                             destroy(FAKE_ORB); /* Pike doesn't actually destroy FAKE_ORB, but he should. */
@@ -4283,7 +4283,7 @@ void simulate_an_adventure(void)
                     } else if (here(GIANT, loc)) {
                         drop(AXE, loc);
                         puts("The axe hits the giant, who lets out a roar of pain and rage, raises" SOFT_NL
-                             "one foot high in the air..........and brings it down  *SPLAT*.");
+                             "one foot high in the air..........and brings it down *SPLAT*.");
                         goto death;
                     } else {
                         obj = NOTHING;
@@ -4434,7 +4434,7 @@ void simulate_an_adventure(void)
                     puts("Rest?  Rest?  You don't have time to rest!");
                     continue;
                 case SCREAM:
-                    puts("Ok..................AAAAAAAAAARRRRRRRRRGGGGGGHHHHHHHHH!!!!!!!!!!!!");
+                    puts("OK..................AAAAAAAAAARRRRRRRRRGGGGGGHHHHHHHHH!!!!!!!!!!!!");
                     continue;
                 case SCORE:
                 case QUIT:

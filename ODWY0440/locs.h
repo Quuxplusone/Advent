@@ -972,7 +972,7 @@
              "You are in a room which appears to be a basement for a very large" SOFT_NL
              "building. There is an opening to the south above which hangs a slab" SOFT_NL
              "of rock precisely balanced by counterweights suspended from the" SOFT_NL
-             "ceiling.  A notice carved in the rock says \"Wizards only, Keep Out\"" SOFT_NL
+             "ceiling.  A notice carved in the rock says \"Wizards Only. Keep Out.\"" SOFT_NL
              "There are some steps leading upward.",
              "You're in the basement.", 0);
     make_cond_ins(S, 100, R_CELLAR);
@@ -989,14 +989,14 @@
              "You are in a round cellar made completely of brick. In the center" SOFT_NL
              "of the floor is a small circular drain, towards which the floor" SOFT_NL
              "slopes.  Set in the south wall is a portcullis which is so rusty" SOFT_NL
-             "it clearly will never move again. Though the portcullis a small" SOFT_NL
+             "it clearly will never move again. Through the portcullis a small" SOFT_NL
              "chamber with a spiral staircase can be seen.  An entrance leads" SOFT_NL
-             "north but it is blocked by a large stone slab.",
+             "north, but it is blocked by a large stone slab.",
              "You're in the circular cellar.", 0);
     make_ins(BACK, R_CELLAR);  /* perhaps because every room needs at least one exit? TODO investigate this line */
     make_loc(q, R_155,
              "In front of you, just discernible in the gloom, lies an old streambed" SOFT_NL
-             "which has been long dry and you can just determine that there is a" SOFT_NL
+             "which has been long dry. You can just determine that there is a" SOFT_NL
              "stone causeway leading across the gap.",
              "You're west of the causeway.", 0);
     make_ins(OVER, R_156); ditto(ACROSS); ditto(CROSS); ditto(E);
@@ -1004,7 +1004,7 @@
     make_ins(D, R_199);
     make_loc(q, R_156,
              "In front of you, just discernible in the gloom, lies an old streambed" SOFT_NL
-             "which has been long dry and you can just determine that there is a" SOFT_NL
+             "which has been long dry. You can just determine that there is a" SOFT_NL
              "stone causeway leading across the gap.",
              "You're east of the causeway.", 0);
     make_ins(OVER, R_155); ditto(ACROSS); ditto(CROSS); ditto(W);
@@ -1015,7 +1015,7 @@
     make_loc(q, R_159, "", NULL, 0);
     make_loc(q, R_160,  /* completely unreachable? TODO investigate these rooms */
              "You are at a window halfway up a flight of steps. The view is" SOFT_NL
-             "quite beautiful, a lake with rolling green meadows beyond it," SOFT_NL
+             "quite beautiful: a lake with rolling green meadows beyond it," SOFT_NL
              "gradually rising to large snow-capped mountains.",
              NULL, 0);
     make_cond_ins(U, 50, R_161);
@@ -1024,7 +1024,7 @@
     make_ins(D, R_CELLAR); ditto(BEDCHAMBER);
     make_loc(q, R_161,
              "You are at a window halfway up a flight of steps. The view is" SOFT_NL
-             "quite beautiful, a deep ravine with a raging torrent" SOFT_NL
+             "quite beautiful: a deep ravine with a raging torrent" SOFT_NL
              "tumbling over rapids.",
              NULL, 0);
     make_cond_ins(U, 50, R_162);
@@ -1033,7 +1033,7 @@
     make_ins(D, R_CELLAR); ditto(BEDCHAMBER);
     make_loc(q, R_162,
              "You are at a window halfway up a flight of steps. The view is" SOFT_NL
-             "quite beautiful, below you is a cliff, an enraged sea battering" SOFT_NL
+             "quite beautiful: below you is a cliff, an enraged sea battering" SOFT_NL
              "at its base.",
              NULL, 0);
     make_ins(U, R_163); ditto(TOWER);
@@ -1061,7 +1061,7 @@
              "You are in a crypt.  All around you are the tombs of people long" SOFT_NL
              "dead.  The dust on the vaults would seem to indicate that the place" SOFT_NL
              "is rarely used. High above you massive cobwebs almost cover the" SOFT_NL
-             "ceiling.  A spiral staircase which leads upwards is the only exit." SOFT_NL
+             "ceiling.  A spiral staircase which leads upwards is the only exit.\n"
              "Brrr! It is cold down here!",
              "You're in the crypt.", 0);
     make_ins(U, R_141); ditto(OUT);
@@ -1085,10 +1085,10 @@
     make_ins(S, R_170);
     make_ins(N, R_172);
     make_loc(q, R_172,
-             "This must be a thieves den!\n"
+             "This must be a thieves' den!\n"
              "High on one wall, out of reach, hangs a large bag labelled \"SWAG\"" SOFT_NL
              "and a black mask.  The only exit is to the south.",
-             "You're in the thieves den.", 0);
+             "You're in the thieves' den.", 0);
     make_ins(S, R_171); ditto(OUT);
     make_loc(q, R_PANTRY,
              "You are in a room which shows signs of having been used as a pantry." SOFT_NL
@@ -1119,8 +1119,8 @@
              NULL, 0);
     make_ins(S, R_174); ditto(OUT);
     make_loc(q, R_176,
-             "You are in a very low sloping room whose roof is barely 3' from" SOFT_NL
-             "the floor.  At the lower end a trickle of water enters from a" SOFT_NL
+             "You are in a very low sloping room whose roof is barely three feet" SOFT_NL
+             "from the floor.  At the lower end a trickle of water enters from a" SOFT_NL
              "tunnel in the west and runs down a shaft in the floor.  At the" SOFT_NL
              "upper end the roof nearly meets the floor to give a narrow exit." SOFT_NL
              "Water drips from the roof making everything damp and the floor" SOFT_NL
@@ -1131,7 +1131,7 @@
     make_ins(D, R_178);
     make_loc(q, R_177,
              "The passage opens into a sizable cave which does not appear to" SOFT_NL
-             "have any other exit although a number of huge bones lie here." SOFT_NL
+             "have any other exit, although a number of huge bones lie here." SOFT_NL
              "Close inspection shows that they are very old and are covered with" SOFT_NL
              "strange score marks which have been made recently. There are also" SOFT_NL
              "some droppings which might have been made by rats if they weren't" SOFT_NL
@@ -1140,7 +1140,7 @@
     make_ins(E, R_176); ditto(OUT);
     make_loc(q, R_178,
              "You are in an inclined shaft which steepens at this point. The walls" SOFT_NL
-             "are covered in a thin layer of slime making it very slippery.  Below" SOFT_NL
+             "are covered in a thin layer of slime, making it very slippery.  Below" SOFT_NL
              "you the shaft is filled with dark water which surges rhythmically." SOFT_NL
              "The smell of the sea is mingled with an altogether more unpleasant" SOFT_NL
              "odour.",
@@ -1150,9 +1150,9 @@
 
     make_loc(q, R_179,
              "You are in an inclined shaft which steepens at this point. The walls" SOFT_NL
-             "of the shaft are covered in a thin layer of slime making it very" SOFT_NL
+             "of the shaft are covered in a thin layer of slime, making it very" SOFT_NL
              "slippery.  Below you the shaft steepens and enters a N/S culvert" SOFT_NL
-             "partially filled with a brackish evil smelling liquid.  You could" SOFT_NL
+             "partially filled with a brackish evil-smelling liquid.  You could" SOFT_NL
              "slide down here but you could not climb back up.",
              "You're on the inclined shaft above a N/S culvert.", 0);
     make_ins(U, R_176);
@@ -1182,23 +1182,23 @@
     make_ins(W, R_191); ditto(NW);
     make_ins(SW, R_186);
     make_loc(q, R_183,
-             "You are at a junction of 3 sewer pipes which go se, sw and north.",
+             "You are at a junction of three sewer pipes which go se, sw and north.",
              NULL, 0);
     make_ins(N, R_182);
     make_ins(SE, R_184); ditto(SW);
     make_loc(q, R_184,
-             "The large diameter pipe from the north splits into 2 smaller diameter" SOFT_NL
+             "The large-diameter pipe from the north splits into two smaller-diameter" SOFT_NL
              "pipes going south and south-east. You could get through either of" SOFT_NL
              "them but it does not look advisable.",
              "You are at the large sewer pipe.", 0);
     make_ins(N, R_183);
     make_ins(S, R_185); ditto(SE);
     make_loc(q, R_185,
-             "The sewer pipe has got too narrow, you will have to go back.",
-             "Dead end, the sewer pipe has become too narrow.", 0);
+             "The sewer pipe has got too narrow; you will have to go back.",
+             "Dead end; the sewer pipe has become too narrow.", 0);
     make_ins(N, R_184); ditto(OUT);
     make_loc(q, R_186,
-             "You are at a junction of 3 sewer pipes, which has partially collapsed" SOFT_NL
+             "You are at a junction of three sewer pipes, which has partially collapsed" SOFT_NL
              "where a stream enters the pipe. You cannot get past but you could" SOFT_NL
              "crawl through the fracture in the pipe where the stream enters.",
              NULL, 0);
@@ -1228,7 +1228,7 @@
     make_ins(W, R_189);
     make_ins(E, R_ABOVER); ditto(CRAWL); ditto(U);
     make_loc(q, R_191,
-             "The pipe has got too narrow, you will have to go back.",
+             "The pipe has got too narrow; you will have to go back.",
              NULL, 0);
     make_ins(E, R_182); ditto(OUT);
     make_loc(q, R_192,
@@ -1256,7 +1256,7 @@
     make_ins(SW, R_193);
     make_cond_ins(N, 100, R_195);
     make_loc(q, R_195,
-             "You are in the middle of a swirling mist that eddys to and fro around" SOFT_NL
+             "You are in the middle of a swirling mist that eddies to and fro around" SOFT_NL
              "you. The sound of thundering water can be heard afar off and" SOFT_NL
              "occasionally quick footsteps closer, but it is difficult to tell the" SOFT_NL
              "direction of the sound.",
