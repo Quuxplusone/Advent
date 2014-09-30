@@ -1,7 +1,8 @@
 
-This project provides translations into modern, modular C99 of three classic
-games: Crowther and Woods' "Adventure", David Platt's 550-point "Adventure 3",
-and David Long et al.'s 551-point "Adventure 6".
+This project provides translations into modern, modular C99 of four classic
+games: Crowther and Woods' "Adventure", Luckett and Pike's 440-point
+"Adventure II", David Platt's 550-point "Adventure 3", and David Long
+et al.'s 551-point "Adventure 6".
 
 ===========================================================================
 
@@ -169,6 +170,39 @@ The history of "Adventure 6" on the Z-machine, as far as I know, is:
   In November 2012, Arthur O'Dwyer (that's me!) ported "Adventure 6"
   to C and got it running on the Z-machine. Play it here:
   http://quuxplusone.github.com/Advent/play-551.html
+
+===========================================================================
+
+The history of Luckett and Pike's 440-point "Adventure II" is:
+
+  Coworkers Peter Luckett and Jack Pike collaborated to write
+  "Adventure II", an expansion of Crowther and Woods' "Adventure",
+  circa 1978. Pike, at least, continued to work on it through at
+  least July 1981, as indicated by his notes (which include bugfixes
+  with dates attached). Whereas Platt's and Long's versions involved
+  a great deal of "engine" work, Luckett and Pike reused Crowther and
+  Woods' engines almost entirely wholesale; the only major innovation
+  is that Pike's dwarves can pick up and carry objects, "tidying up"
+  the cave and causing mischief in the maze.
+
+  Circa 1989, Mike Arnautov released "Adventure 4+", which merged Platt's
+  extension and Jack Pike's "Adventure II" extension (a.k.a. ADV440)
+  into a single 660-point game, written in A-code rather than Fortran.
+
+  In 2001, Pike contacted Arnautov and together they reconstructed a
+  new version of "Adventure II", combining a version of the engine code
+  saved by Arnautov with the latest data files from Pike. This new version
+  was compilable as Fortran 77 and included some bugfixes from Arnautov,
+  Volker Blasius, Dave Picton (the author of polyadv), and perhaps others.
+  To judge from comments in the source, it was developed between September
+  and November 2001.
+
+The history of "Adventure II" on the Z-machine, as far as I know, is:
+
+  In September 2014, Arthur O'Dwyer (that's me!) ported "Adventure II"
+  to C and got it running on the Z-machine. Play it here:
+  http://quuxplusone.github.com/Advent/play-440.html
+
 
 ===========================================================================
 
