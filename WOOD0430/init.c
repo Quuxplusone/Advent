@@ -164,6 +164,13 @@
  *	%B = VARIABLE NUMBER OF BLANKS
  *	%! = THE ENTIRE MESSAGE SHOULD BE SUPPRESSED */
 
+static raw_init();
+static finish_init();
+static report();
+static quick_init();
+static quick_save();
+static quick_io();
+
 initialise() {
 	printf("Initialising...\n");
 	if(!quick_init()){raw_init(); report(); quick_save();}
