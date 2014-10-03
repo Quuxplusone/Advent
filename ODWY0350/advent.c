@@ -242,7 +242,7 @@ void build_vocabulary(void)
     new_object_word("rod", ROD);
     new_object_word("bird", BIRD);
     new_object_word("door", RUSTY_DOOR);
-    new_object_word("pillo", PILLOW);
+    new_object_word("pillo", PILLOW); new_object_word("velve", PILLOW);
     new_object_word("snake", SNAKE);
     new_object_word("fissu", FISSURE);
     new_object_word("table", TABLET);
