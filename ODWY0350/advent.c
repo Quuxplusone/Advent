@@ -2274,8 +2274,8 @@ struct {
     "                             -  -  -\n"
     "The first Adventure program was developed by Willie Crowther.\n"
     "Most of the features of the current program were added by Don Woods.\n"
-    "This particular program was translated from Fortran to CWEB by Don Knuth," SOFT_NL
-    "and then from CWEB to ANSI C by Arthur O'Dwyer." },
+    "This particular program was translated from Fortran to CWEB by" SOFT_NL
+    "Don Knuth, and then from CWEB to ANSI C by Arthur O'Dwyer." },
     { 0, false, 0, 10,
     "Hmmm, this looks like a clue, which means it'll cost you 10 points to" SOFT_NL
     "read it.  Should I go ahead and read it anyway?",
