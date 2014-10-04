@@ -3,9 +3,11 @@
 ! which are required in order to build "advent.c" for the Z-machine, and
 ! are not more easily written in Inform. These functions are:
 !
+!     int atoi(s)
 !     void puts(buf)
 !     void printf(fmt, ...)
 !     void strcpy(dest, src)
+!     int strlen(s)
 !     int strncmp(a, b, n)
 !
 ! The following functions are defined in Inform, in the file stubs.inf:
@@ -15,9 +17,10 @@
 !     void exit(0)
 */
 
-#include <stdio.h>   /* puts, printf */
-#include <string.h>  /* strcpy, strncmp */
 #include <stdarg.h>  /* va_list */
+#include <stdio.h>   /* puts, printf */
+#include <stdlib.h>  /* atoi */
+#include <string.h>  /* strcpy, strlen, strncmp */
 
 /* These should have unique values, but that's about it. */
 FILE *stdin = (FILE *)&stdin;
@@ -38,6 +41,13 @@ void strcpy(char *dst, const char *src)
         *dst++ = *src++;
     }
     *dst = '\0';
+}
+
+int strlen(const char *s)
+{
+    const char *end = s;
+    while (*end != '\0') ++end;
+    return (end - s);
 }
 
 int strncmp(const char *a, const char *b, int n)

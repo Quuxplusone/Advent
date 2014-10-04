@@ -3575,6 +3575,7 @@ void simulate_an_adventure(void)
                     }
                     continue;
                 } else if (*word2 != '\0') {
+                    /* ENTER TUNNEL becomes just TUNNEL. */
                     shift_words();
                     goto parse;
                 }
