@@ -18,7 +18,7 @@ into portable Fortran 77) and expansion of an earlier "Adventure"
 due originally to David Long and perhaps including some anonymous
 contributions before McDonald acquired it.
 
-Long's 500-point game is for some reason version-numbered "Adventure 5",
+Long's 501-point game is for some reason version-numbered "Adventure 5",
 and McDonald's version is therefore numbered "Adventure 6".
 
 This is not to be confused with David Platt's 550-point early-1980s
@@ -31,7 +31,7 @@ aspects for the sake of ease-of-implementation, Long started with
 Woods' original code and preserved much of it, right down to the
 original copious comments.
 
-Compared to the original game, Long's 500-point version added
+Compared to the original game, Long's 501-point version added
 the Wumpus, elfin sword, River Styx, Alice puzzle, Altar,
 Winery, natural bridge, Lost River Canyon, Flower Room, and
 the combination safe in the Well House.
@@ -52,11 +52,11 @@ of an "Adventure 6.0" on the VAX, referred to as "ANON0551", but
 unless this version was actually authored by McDonald, its existence
 seems questionable to me.
 
-McDonald's game is one of the bases for Robert R. Hall's 551-point
+McDonald's game is one of the bases for Robert R. Hall's 501-point [sic]
 C port of "Adventure", done for the Minix project around 1994. Hall's
-port is available here in the HALL0000/ subdirectory.
+port is available here in the HALL0501/ subdirectory.
 
-A 501(?)-point Fortran version (dated "Version:5.2/2, October-79",
+A 501-point Fortran version (dated "Version:5.2/2, October-79",
 posted to comp.sources.games in May 1990) is available at
 http://cd.textfiles.com/gigagames9308/NET/USENET/VOLUME9/ADVEN
 Unfortunately, this version is not F77-friendly.

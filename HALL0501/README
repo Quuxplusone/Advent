@@ -31,6 +31,24 @@ drop all your items. (The latter was not inherited from Pohl; it is unique to
 Hall's version.)
 
 
+Another interesting feature of Hall's game is its maximum score of 501 points.
+This is (coincidentally?) the same number as the maximum score of David Long's
+"Adventure 5", to which Doug McDonald added 50 points of treasures to create
+his 551-point game. Hall doesn't remove McDonald's treasures; instead, he
+removes 34 points of "starting bonus" (30 points for not dying and 4 points
+for not quitting) and 16 points of unconditional "fudge" from Long and
+McDonald's scoring system.
+
+Long: 50 points just for showing up; 501 points total
+McDonald: 50 points just for showing up (46 of them pro-rated); 50 points of new treasures; 551 points total
+Hall: 0 points just for showing up; 50 points of new treasures; 501 points total
+
+It's tempting to conclude that Hall must have known about Long's earlier
+501-point game and deliberately tried to "restore" a 501-point maximum score,
+perhaps not even realizing that his game contained two treasures not found
+in Long's 501-point game. I have no evidence for this hypothesis, though.
+
+
 Notice that even though this is a C port of "Adventure" distributed under the
 command name "advent", it is NOT the same C port found in most Unix and Linux
 distributions under the "bsdgames" package. That version was written by Jim
