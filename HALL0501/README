@@ -15,7 +15,7 @@ the version string "<Generic Adventure -- Version:7.0, July 1994>".
 As the format of that version string implies, Hall's game is a port of Doug
 McDonald's "<Generic Adventure 551 -- Version:6.6, August 1990>" (found here
 in the MCDO0551/ subdirectory).  Hall's version builds on top of Jerry Pohl's
-C port (found here in the POHL0000/ subdirectory). Amazingly, Hall manages to
+C port (found here in the POHL0350/ subdirectory). Amazingly, Hall manages to
 integrate Long's Infocom-style parser with Pohl's code, a feat almost as
 impressive as Long's original modification of Woods' code.
 
