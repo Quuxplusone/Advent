@@ -1,0 +1,9 @@
+This directory contains the unzipped contents of
+http://www.ifarchive.org/if-archive/games/source/adv_crowther.zip
+
+This is an "original" (pre-Don-Woods) version of Colossal Cave Adventure,
+written by Will Crowther. Long believed lost, this was found from a backup
+of Don Wood's student account thanks to the efforts of Dennis Jerz. Included
+are three versions of the Fortran-IV source code, along with two versions of
+the data file. The f77/ subdirectory contains the same code ported to
+Fortran 77 by Matthew Russotto in 2007.
