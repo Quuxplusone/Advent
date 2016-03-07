@@ -51,16 +51,12 @@ int strlen(const char *s)
 
 int strncmp(const char *a, const char *b, int n)
 {
-    unsigned char ca, cb;
-    while (n > 0 && *a == *b) {
-        --n;
-        if (n == 0 || *a == '\0')
-            return 0;
-        ++a, ++b;
+    for (int i=0; i < n; ++i) {
+        unsigned char ca = *a++, cb = *b++;
+        if (ca != cb) return (ca < cb) ? -1 : (ca > cb);
+        if (ca == '\0') return 0;
     }
-    ca = *a;
-    cb = *b;
-    return (ca < cb) ? -1 : (ca > cb);
+    return 0;
 }
 
 void memset(void *vdest, int v, int n)
