@@ -1,0 +1,20 @@
+This directory contains source code received from "Tom A" (meteoricshipyards@yahoo.com).
+Tom's notes are in "readmefirst.txt".
+
+  adventp.pdf - original source code printed out in 1986
+  adventp.ocr.txt - OCRed text of adventp.pdf
+  adventure_data.txt - data file received from George Richmond sometime
+      between August 2015 and May 2016
+
+Notice that the spacing in the source code shows signs of having had the word
+"DWARF" changed to "ORC" throughout.  The data file (received 2015-2016)
+still has the word "DWARF", and doesn't mention the word "ORC".
+
+The source file also shows that the variable named RVALUE used to be named
+something with five letters.
+
+In two places, on lines with labels in the Pascal source code, the printed
+source code had a carriage return with no accompanying line feed, which led
+to overstriking. For the benefit of modern editors, I have added a newline
+in the OCRed text in those cases rather than attempting to preserve the
+raw carriage return.

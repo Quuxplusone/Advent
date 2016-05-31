@@ -1,0 +1,1666 @@
+                       A D V E N T U R E
+
+Please report bugs or suggestions to George Richmond at xxx-xxxx.
++
+  Welcome to Adventure.  Somewhere nearby is Colossal Cavern National
+Park, where others have found fame for their explorations and fortune
+for the treasures they discovered.  Although it is rumored that some who
+enter are never seen again, the Park Service believes the Cavern to be
+safe for all ages.  Magic is said to work in the cave.  I will be your
+eyes and hands.  Direct me with commands of one or two words.  Should
+you get stuck, type 'Help' for some general hints.  For information on
+how to end your Adventure and other pertinent items, type 'Info'.
++
+  I know of directions, actions, and objects.  To move from one place to
+another, use compass points or directions like:  East, Down, or Enter.
+You may abbreviate compass points and some directions to N, E, NW, etc.
+Sometimes, a magic word will move you from one place to another.  If you
+know the exact route, you may list a series of directions and I will
+follow them.
+  I know about many objects.  But please be aware of the difference
+between objects and scenery.  To manipulate objects, use some action
+word followed by an object.  To pick up a rod, say 'Take rod'.
+Sometimes, if you omit the object, I will assume all objects present.
+Objects can have side effects.  The rod scares the bird.  Some objects
+will change the Cavern if properly used.  The presence of some objects
+is required to change the state of other objects.
+  Some helpful words are:  If you say 'Look', I will describe to you the
+surroundings as fully as possible.  If you say 'Describe object', I will
+tell you more about an object.  Say 'Inventory' and I will list what
+you're carrying.
+  Usually, people having trouble are trying something beyond my
+capabilities and should try a completely different tack.  Also, cave
+passages turn a lot, and leaving a room to the north doesn't guarantee
+you can return to it by going south.
+  Good luck!
++
+  If you want to end your Adventure, say 'Quit'.   If you're in trouble
+and can't find a way out, say 'Resign'.   To see how well you're doing,
+say 'Score'.   To save paper, say 'Brief', and I'll tell you the full
+description of a room only the first time you get there.  To always get
+the full description, say 'Verbose'.   If you can't figure out what to
+do, you may ask for a hint by typing 'Hint'.
+  To save your game you must first allocate a small 'VB' format data
+set, of record length 240, under you user id.  For example, allocate
+'xxx.ADVSAV' (where xxx is your user id).  Then call Adventure by
+'ADVENT S(ADVSAV)'.  To save your Adventure, answer 'Yes' when quitting
+and to restore it say 'Yes' when starting.
+  To get full credit for finding a treasure, you must leave it safely in
+the Wellhouse.  You do get points for just discovering treasures and
+exploring the Cavern.  You lose points for getting killed or resigning.
+-ENTER EXIT ALTER CROSS DOWN EAST JUMP MAGIC NORTH NORTHEAST NORTHWEST
+SOUTH SOUTHEAST SOUTHWEST UP WEST BRIEF BUILD DESCRIBE DRINK DROP EAT
+EMPTY FEED FEE FIE FOE FUE FILL HELP HINT INFO INVEN KILL LOCK LOOK NO
+OFF ON QUIT RAISE RESIGN RESTORE RIGHT ROW SAVE SCORE SWIM TAKE THROW
+UNLOCK VERBOSE WAVE YES ALL AXE BOAT BOTTLE BRIDGE CAGE FOOD HAMMER KEYS
+KNIFE LADDER LAMP 300 MATCH 5 NAIL 2 OIL PLANT ROD ROPE SHARD WATER
+WOOD 2 CHAIN CHEST COIN CRYSTAL DIAMOND EGG EMERALD FUR GOLD IVORY
+NECKLACE PEARL PILLOW PLATINUM PYRAMID RING RUBY RUG SILVER SPICE TEAK
+TRIDENT VASE BEAR BIRD CLAM DRAGON DWARF PIRATE SNAKE TROLL WOLF
++ALL
+All.
+All.
++AXE
+An axe.
+A skillfully crafted dwarf's axe.
++BOAT
+A boat.
+This is a sturdy rowboat with oars in the locks.  It is capable of
+carrying an Adventurer and his possessions.
++BOTTLE
+A bottle.
+A plastic bottle and lid that can be sealed tight.
+A bottle full of oil.
+A bottle full of water.
++BRIDGE
+A bridge.
+A rather rickity bridge which may hold your weight.
++CAGE
+A wicker cage.
+A small wicker cage with a door and latch.
+A wicker cage with a singing bird inside.
++FOOD
+Tasty food.
+Tasty food for nourishing Adventurer and beast.
++HAMMER
+A hammer.
+A sturdy claw hammer.
++KEYS
+Several keys.
+A ring of unmarked keys.
++KNIFE
+a knife.
+A dwarf's knife.  Be careful, it is dangerous.
++LADDER
+A ladder.
+A flimsy ladder which may support your weight.
++LAMP
+A lantern.
+A kerosene lantern.  It is hard to tell how much fuel is left in it.
+A brightly burning kerosene lantern.
++MATCH
+A match box.
+A box of waterproof matches.
+An empty match box.
++NAIL
+Some nails.
+A bag of eightpenny nails.
++OIL
+Oil.
+This oil will burn or lubricate moving parts.
++PLANT
+A beanstalk plant.
+There is a small beanstalk plant here murmuring 'Water... Water...'
+There is a four foot beanstalk plant here saying 'Water.  Water.'
+There is an eight foot beanstalk plant here demanding 'WATER.'
+There is a tall beanstalk plant reaching to the ceiling.
+There is a over watered beanstalk plant here.
++ROD
+A rod.
+A three foot iron rod with a rusty star on the end.
++ROPE
+A rope.
+A fifty foot hemp rope of high quality.
++SHARD
+Worthless shards.
+A pile of worthless shards of pottery.
++WATER
+Water.
+Clear and fresh water.
++WOOD
+Some wood.
+A pile of wood planks of various lengths and sizes.
++CHAIN
+A golden chain.
+A golden chain with a strong lock.
++CHEST
+A Treasure Chest.
+An unlocked and empty Treasure Chest.
+An unlocked and open Treasure Chest.
+A locked Treasure Chest.
++COIN
+Coins.
+Several valuable coins.
++CRYSTAL
+A Crystal Cup.
+A rare Crystal Cup.
++DIAMOND
+A diamond.
+A large sparkling diamond.
++EGG
+A nest of eggs.
+A nest of golden eggs.
++EMERALD
+An emerald.
+An emerald the size of a plover's egg.
++FUR
+A fur pelt.
+A fur pelt of obvious high value.
++GOLD
+A gold nugget.
+A three ounce gold nugget which is brightly polished.
++IVORY
+An Ivory Box.
+An intricately carved and ancient Ivory Box.
++NECKLACE
+A necklace.
+A necklace of precious gems.
++PEARL
+A pearl.
+A perfect pearl an inch in diameter.
++PILLOW
+A velvet pillow.
+A plump and soft velvet pillow.
++PLATINUM
+A platinum cube.
+A polished platinum cube weighing two kilograms.
++PYRAMID
+A brass pyramid.
+A small brass pyramid covered with inscriptions.
++RING
+A ring.
+A beautiful ring.
++RUBY
+A ruby.
+A brilliant ruby.
++RUG
+A rug.
+A rare persian rug.
++SILVER
+A silver bar.
+A bar of silver.
++SPICE
+Spices.
+Rare and powerful spices.
++TEAK
+A teak crate.
+A well crafted teak crate about the size of a shoe box.
++TRIDENT
+A Trident.
+Neptune's Trident.
++VASE
+A Vase.
+A delicate Ming Vase.
++BEAR
+A large black bear.
+A large vicious bear.
+A large friendly bear.
++BIRD
+A bird.
+A cheerfully singing bird.
+A caged singing bird (he pines for his freedom).
++CLAM
+A large clam.
+A large clam.
+A large oyster.
++DRAGON
+A dragon.
+A dreadful, fire breathing dragon has captured you.
++DWARF
+A dwarf.
+A small angry thick-skinned dwarf.
++PIRATE
+A pirate.
+A bearded pirate.
++SNAKE
+A snake.
+A large green snake has captured you in his coils.
++TROLL
+A troll.
+A jolly troll bars your way.
++WOLF
+A wolf.
+A sly and dangerous wolf crosses your path.
+A dead wolf lies nearby.
+-BOAT     CANOE     ROWBOAT
+-BOTTLE   CONTAINER FLASK
+-BRIEF    SHORT     QUICK
+-BUILD    CONSTRUCT ASSEMBLE
+-CAGE     WICKER    BIRDCAGE
+-CHAIN    LINKS
+-CHEST    TREASURE
+-CLAM     OYSTER
+-COIN     COINS
+-CROSS    ACROSS    C
+-CRYSTAL  CUP
+-DESCRIBE TELL
+-DIAMOND  DIAMONDS
+-DOWN     D         DESCEND   DESCENT   DOWNSTREAM
+-DRINK    SIP       GUZZLE
+-DROP     RELEASE
+-DWARF    DWARVES
+-EAST     E         EASTERN
+-EAT      GOBBLE    CONSUME
+-EGG      NEST      EGGS
+-EMPTY    POUR      SPILL
+-ENTER    INSIDE    IN
+-EXIT     LEAVE     OUT       OUTSIDE
+-FILL     ADD
+-FUR      PELT      HIDE      SKIN
+-GOLD     NUGGET
+-HELP     AID
+-HINT     CLUE      CLUES
+-INFO     INFORMATION         RULES
+-INVEN    INVENTORY INV       LIST      INVENT    CARRY     CARRYING
+-JUMP     LEAP      DIVE      HURDLE
+-KEYS     KEY
+-KILL     SLAY      MURDER
+-KNIFE    KNIVES
+-LAMP     LANTERN
+-LOCK     CLOSE     FASTEN
+-LOOK     SEE
+-MAGIC    WIZARDRY  SECRET  M  RUSH  PLUGH  ABRA  ZAP  RUN  RACE
+-MATCH    MATCHES   BOX
+-NAIL     NAILS
+-NECKLACE GEMS      GEM
+-NORTHEAST          NE
+-NORTHWEST          NW
+-NORTH    N         NORTHERN
+-NO       NEGATIVE  NOT       NOPE      NA        NYET
+-OFF      QUENCH    SMOTHER   DARK
+-OIL      PETROLEUM KEROSENE  GAS       GASOLINE
+-ON       LIGHT     LITE
+-PILLOW   VELVET
+-PLANT    BEANSTALK STALK
+-PLATINUM CUBE
+-QUIT     HALT      STOP      FINISH    END       BYE    GOODBYE
+-RAISE    LIFT
+-RESIGN DIE RESTART RESET
+-RIGHT    LEFT      WALK      GO        FORWARD   BACKWARD
+-ROW      PADDLE    R
+-RUG      PERSIAN
+-SAVE     SUSPEND   HOLD
+-SCORE    TALLY     RANK      RANKING
+-SHARD    SHARDS    POTTERY
+-SILVER   BAR       BARS
+-SOUTHEAST          SE
+-SOUTHWEST          SW
+-SOUTH    S         SOUTHERN
+-SPICE    SPICES
+-TAKE     GATHER    CATCH     CAPTURE   GET
+-TEAK     CRATE
+-THROW    TOSS      HURL
+-UNLOCK   OPEN      RELEASE
+-UP       U         UPWARD    ASCEND    CLIMB     UPSTREAM
+-VASE     MING
+-VERBOSE  WORDY     EXTENDED  LENGTHY
+-WEST     W         WESTWARD
+-WOLF     WOLVES
+-WOOD     TIMBER    STICKS
+-YES      Y         POSITIVE
++  OS01   1
+Open forest.
+A faint path leads thru the open forest from the south to the
+northwest.
++  OS02   1
+Open forest.
+A faint path leads thru the open forest from the southwest to the
+northeast.  The path crosses a low rock ledge which runs north-south.
++  OS03   1
+Open forest.
+A faint path leads thru the open forest from west to east.
++  OS04   1
+Open forest.
+A low rock ledge runs north-south thru the open forest.
++  OS05   1
+Tall grass.
+Tall grass obscures your view in all directions.
++ WOS06   1
+A stream in the tall grass.
+A stream flows from the northeast to the southwest thru the tall
+grass.
++  OS07   1
+Tall grass.
+A faint trail runs from west to east thru the tall grass.
++  OS08   1
+Tall grass.
+Tall grass obscures your view in all directions.
++  OS09
+Towering cliff.
+The trail has lead up to the face of a towering cliff.
++  OS10
+Dense forest trail.
+You're on a trail thru a forest so dense that you cannot leave
+the path.  To the northeast the forest is darker.
++  OS11
+Base of high cliff.
+You're at the base of a high cliff.  There are handholds and
+footholds visible in the face of the cliff.
++  OS12   1
+Top of high cliff.
+You're at the top of a high cliff.  A large valley ringed by cliffs
+is west of you.  At the foot of the cliff, a forest stretches
+out and there is a clearing with a house visible.  Beyond the forest
+are tall grass lands and beyond that there is a lake with a patch of
+fog at one end.  There is a break in the cliffs on the southwest
+side of the valley where a deep canyon starts.
++  OS13
+Dense forest trail.
+Your path has taken you into a dense forest where it is impossible
+to get off the trail.  The path continues both east and west.
++  OS14
+A log the path.
+A log has fallen across the trail.  Ahead, the forest looks rather
+foreboding.  I'd recommend turning back.
++ WOS15
+River in canyon.
+The stream which you have been following has grown into a large
+river and has cut itself a deep canyon.  Here, the river goes
+underground and the streambed is dry further downstream.
++  OS16   2
+Box canyon.
+The riverbed stops abruptly in a box canyon.  A steel gate is
+imbedded in the floor of the canyon and a cool breeze can be
+felt coming up from it.
++BWOS17
+Finger of land.
+The trail has lead you to a narrow finger of land which juts into
+a large lake.  The opposite shore is too far away to see any details.
++ WOS18
+In a Wellhouse.
+You're in a Wellhouse.  The center of the room is occupied by a well.
++ WOS19   3
+Before a Wellhouse.
+You're in front of a Wellhouse.  A stream flows to the southwest.
++WWOS20
+Center of large lake.
+You're in the center of a large lake with far away shores.
+There is a fog bank to the northeast.
++  OE01
+Dry chamber.
+This is a dry chamber with a sandy floor.  There is a steel grate
+in the ceiling and there is a dark and foreboding passage to the
+northwest.
++  OE02
+Rocky crawl.
+You're in a dimly lit rocky crawl.  The floor of the passage is
+covered with scattered bits of broken rock.
++   E03
+Sandy room.
+You're in a sandy floored room with a high ceiling.  There are
+passages off to the northwest, southeast, and southwest.
++   E04   4
+Dead end.
+You're at a dead end.  A plaque on the walls is inscribed with
+the saying:  "If you were in a hurry you would '   ' along".
+Unfortunately, the word you need is obscured.
++   E05
+Narrow passage.
+You're in a narrow passage which is high enough to clear your head.
++   E06
+Flowstone room.
+You've entered a room with walls made out of flowstone.  Narrow
+passages lead away to the northwest, southeast, and southwest.
++   E07
+Dead end.
+You're at a dead end in hard rock.
++   E08
+Slot in floor.
+In this passage there is a small slot in the floor which you might be
+able to squeeze thru.  There is also a small hole in the northeast wall.
++   E09
+Pit beneath slot.
+You're in a pit beneath the slot in the floor.  There is
+a passage to the east.
++   E10
+Cave-in ahead.
+A note scrawled in the dust here says cave-in ahead.
++   E11
+Chimney.
+The horizontal passage terminates at a chimney.  The only
+possible routes are down or southeast.  Up is too tight.
++   A101
+West end of bedrock room.
+You're at the west end of the bedrock room.  The floor of the room
+is a pile of broken rock that has fallen from the ceiling sometime
+in the past.  This end of the room has a chimney in which you
+can move up, down, or north.
++   A102
+East end of bedrock room.
+You're at the east end of the bedrock room.  The floor of the room
+is a pile of broken rock that has fallen from the ceiling sometime
+in the past.  There are passages to the northeast and southeast.
++   A103
+Feather passage.
+This passage runs from southwest to northeast.  It is noted for
+the presence of many bird feathers and a door to the northeast.
++   A104
+Smooth passage.
+This passage runs from southeast to northwest.  It is almost a
+perfect horizontal cylinder with smooth walls.
++   A105  5
+Reptile chamber.
+This chamber has the smell of reptiles.  The floor is littered
+with the remains of trapped Adventurers.  There is a hole in the
+floor as well as passages to the northwest and southeast.
++   A106
+Teak room.
+This room is make out of solid teak wood.  There is just one exit
+to the northwest.
++   A107  7
+Tall narrow passage.
+This passage is a tall but narrow fracture in the rock.  At the north
+end of the passage, an immense east-west fissure has ripped the rock
+apart and separates this part of the narrow passage from its northern
+extension.
++   A108
+Tall narrow passage.
+This passage is a tall but narrow fracture in the rock.  At the south
+end of the passage, an immense east-west fissure has ripped the rock
+apart and separates this part of the narrow passage from its southern
+extenstion.
++   A109
+Center of long hall.
+You're in the center of a long hall running east-west.  There is
+a fracture to the south.  It also continues in the north wall.
++   A110
+East end of long hall.
+You're at the east end of a long hall.
++   A111
+West end of long hall.
+You're at the west end of a long hall.  A passage leads north.
++   A112
+Chimney bottom.
+This is the bottom of a chimney beneath the bedrock room.  There
+is a doorway to the south made out of massive iron.
++   A113
+Construction area.
+Colossal Cavern is under construction in this area.  Please return
+to this location at a later date for interesting Adventures.
++   A114
+Low passage.
+You're in a low east-west passage.  There is barely enough room to
+crawl between the ceiling and floor.
++   A115
+Chowder chamber.
+This chamber smells of sea life.  There are numbers clam shells
+scattered all over the floor.
++BW A116
+Lake shore.
+You're at the shore of an immense underground lake.  Two paths
+lead away from the shore in a northerly direction.
++WW A117
+Underground lake.
+You're somewhere in the middle of an immense underground lake.
++BW A118
+Lake shore.
+You're at the shore of an immense underground lake.  A path
+leads away from the shore to the south.
++BW A119
+Lake shore.
+You're at the shore of an immense underground lake.  A path
+leads away from the shore to the east.
++WW A120
+Underground lake.
+You're somewhere in the middle of an immense underground lake.
++WW A121
+Underground lake.
+You're somewhere in the middle of an immense underground lake.
++BW A122
+Underground island.
+You're at an underground island in the middle of an immense
+undergound lake.
++BW A123
+Lake shore.
+You're at the shore of an immense underground lake.  A path
+leads away from the shore to the west.
++   A124  8
+Fractured passage.
+An earthquake has split the passage in two and raise the other side
+of the passage above you.  There is no way to climb up.
++   A125  8
+Fractured passage.
+An earthquake has split the passage in two and lowered the other side
+of the passage beneath you.  There is no way to climb down.
++   A126  9
+North rim of canyon.
+You've reached the north rim of a narrow canyon formed by an
+underground river.  The canyon is too wide to jump.
++   A127 9
+South rim of canyon.
+You've reached the south rim of a narrow canyon formed by an
+underground river.  The canyon is too wide to jump.
++   A128
+Stake room.
+This room has walls formed out of metal stakes.
++   A129
+Rough passage.
+You're in a rough passage which runs northeast to southwest.
+There is a door to the southwest.
++   A130
+Steep passageway.
+The passage turns sharply downward here.
++   A131
+Vertical passage.
+The passage has turned into a vertical chimney.
++ O A132
+Petrol room.
+You're in the north part of the petrol room.  Oil is present in
+several pools around the room.  There is a chimmney above you.
++ O A133
+Petrol room.
+You're in the west part of the petrol room.  Oil is present
+in several pools around the room.  There is a passage to the west.
++ O A134
+Petrol room.
+You're in the south part of the petrol room.  Oil is present
+in several pools around the room.  There is a chimney above you.
++   A135
+Vertical passage.
+You're in a chimney with few hand holds.
++   A136
+Ruby room.
+You're in a room whose walls are covered with firmly imbedded
+rubies.  There is a hole in the floor.
++   A137
+Smokey passage.
+You're in an east-west passage that smells of oil.  To the west,
+the air is full of dense smoke.  It doesn't look inviting.
++   A138
+Narrow passage.
+You're in a narrow passage formed when the rock split apart.
++   A139
+Fresh air room.
+You're in a room filled with the obvious smell of fresh air.
+It is possible to climb higher in the room.
++  OA140
+Fresh air room.
+You're in the upper portion of a large room filled with fresh
+air.  There is dim light filtering down from above.
++  OA141
+Ledge on cliff.
+You're perched pecariously on a narrow ledge in the middle of a
+tall cliff.  Beneath you a swift river is confined in a narrow
+canyon.  The river dries up further downstream.  There are dark
+and forboding passages into the rock to the northeast and
+southwest.  It looks like a very dangerous walk to the northeast.
++   A142
+Cavern Warning.
+You are about to enter an area of Colossal Cavern for which
+you must carefully prepare.  Do not proceed unless you are
+ready.
++   A143
+Smokey passage.
+This passageway is filled with acrid foul smoke.
+The floor slopes downward to the south where strange
+noises emanate.  The floor is so slick you may not be
+able to come up this way.
++WW A144
+Foggy lake.
+You're in the middle of an immense fog bank that obscures your
+view and blocks out the sun.
++BW A145
+Foggy island.
+You've found a small island which is just barely visible
+thru the dense fog.
++   A201  6
+Dragon room.
+This room is filled with the foul odor of a dragon.  The floor is
+littered with the remains of 'Johnny come lately' Adventurers.
++   A202
+Beanstalk room.
+This room has passages off in several directions.  There is a hole
+in the ceiling.
++   A203
+Low junction.
+This is the meeting point of three passageways.  The ceiling is
+low here.  The passage to the northwest is an obvious dead end.
++   A204
+Rumbling junction.
+Three passageways come together here.  A low rumble can be heard
+off to the northwest.  A dark tunnel leads away to the southeast.
+The passage to the south is an obious dead end.
++   A205
+Quiet corner.
+Here the passage turns a corner.  It is very quiet.
++   A206
+Vase room.
+The room is filled with many wonderful pieces of pottery, all
+in locked cases.  There is a pottery stand in the middle of
+the room.
++   A207
+Waterfall room.
+The air is filled with the thundering roar of an emense waterfall.
+Tunnels lead away to the southeast and southwest.  There is a ledge
+underneath the waterfall.
++ W A208
+Under waterfall.
+You're underneath an emense waterfall.  You just have room to stand
+on the ledge.  You can reach out and touch the flowing water.
++   A209
+Sandy passage.
+You are in a passage with a sandy floor.
+A rumble can be heard off to the east.
++   A210
+Dusty passage.
+You are in a dry dusty passage.  Northward, the passage gets
+smaller and starts twisting.
++   A211
+Helpful room.
+You're in a room with a plaque on the wall.  The plaque reads:
+"At a few nearby locations, the word 'PL GH' will transport
+you to '   ' and '   '."  Unfortunately, parts of the message
+are obscured.
++   A212
+Spherical junction.
+Three passages join here in a spherical room.
++   A213
+Tight corner.
+The passage goes around a very sharp corner.
++ O A214
+Oily room.
+You've discovered a room with plenty of oil seaping out of the walls
+and floor.  In fact, the oil is flowing out to the northeast.
++   A215
+Deep dark corner.
+This is a deep dark corner of Colossal Cavern.
++   A216
+Hall with passage above.
+You're in a curving hall with a passage to the southeast above you.
+The walls are too smooth to climb.  A ladder would be helpful.
++   A217
+Many door room.
+You've entered a room with doors off in five directions.  Select
+which way you want to go.
++   A218
+South Sponge Room.
+You're in the south end of the Sponge Room.  There are passages
+off in all directions.
++   A219
+North sponge room.
+You're in the north end of the Sponge Room.  There are passages
+off in all directions.
++   A220
+Base Metal Room.
+You're in a room formed out of base metals.
++   A221
+Precious Metal Room.
+You're in a room formed out of precious metals.
++   A222
+Brick passage.
+The floor of the passage is made of red brick.  The walls
+appear to be concrete.
++   A223
+Brick junction.
+Three passages meet in a completely red brick walled junction.
++   A224
+Coin room.
+This room contains many coin collections securely protected
+in glass cases.
++   A225
+Low hole in wall.
+In this east-west passage, there is a low hole to the south.
+It looks like you might be able to go through.
++   A226
+Hair room.
+The floor is littered with bits of hair from various animals.
++   A227
+Bottomless pit.
+The floor of this passage falls steeply away in front of you.
+It looks like a bottomless pit down there.
++   A228
+Round corner.
+The passage turns a rounded corner.
++   A229
+Slanted shaft.
+This shaft slants at a 45 degree angle.
++   A230
+East checkpoint.
+This is the east checkpoint of a border crossing.  Watch out
+for the Guards.  There is a passage to the side.
++   A231
+Side chamber.
+This is a side chamber off the east checkpoint.  There
+is a small passage to the east which slopes immediately
+downward.  You may not be able to come back this way.
++   A232
+West checkpoint.
+This is the west checkpoint of a border crossing.  Watch out
+for the Guards.  There are passages to the west and south.
++   A233
+Bald pocket.
+You've dropped into a bald pocket.  The walls and floor around
+you are very smooth.
++   A234
+Hazy junction.
+The air here is obscure with sulfurous smoke.  There appears
+to be three ways to go.
++   A235
+Twisty passage.
+The passage twists about here.
++   A236
+Velvet room.
+You've entered a room lined with soft velvet.  It looks quite
+comfortable.
++   A237
+Lava field.
+You're standing on a partially solidified lava field.  The lava
+is still quite hot.  Better move on.
++   A238
+Hazy passage.
+The air here is obscure with sulfurous smoke.  The passage
+continues.
++   A239
+T junction.
+Three passages meet at right angles to form a 'T' junction.
++ O A240
+Oil Service Room.
+You've found the Oil Service Room.  Several
+open fifty-five gallon oil drums are here.
++   A241
+North-south passage.
+The passage runs from north to south.  To the south, the
+passage becomes small and twisting.
++   A242
+Rough passage.
+This passage is lined with rough stone.
++   A243
+Spice room.
+You've entered the spice room.  The odor of parsley, sage,
+rosemary, and thyme is overpowering.
++   A244
+Top of beanstalk.
+You've climbed to the top of the beanstalk.  You have
+an excellent view of the room.
++   A245
+Passage above hall.
+You're at the beginning of a passage to the southeast
+above a curved hall.
++   A301
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A302
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A303
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A304
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A305
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A306
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A307
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A308
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A309
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A310
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A311
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A312
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A313
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A314
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A315
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A316
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A317
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A318
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A319
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A320
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A321
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A322
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A323
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A324
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A325
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A326
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A327
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A328
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A329
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A330
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A331
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A332
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   A333
+You're in a crazy maze of weird passages.
+You're in a crazy maze of weird passages.
++   M101
+You're in a maze of twisty little passages, all alike.
+You're in a maze of twisty little passages, all alike.
++   M102
+You're in a maze of twisty little passages, all alike.
+You're in a maze of twisty little passages, all alike.
++   M103
+You're in a maze of twisty little passages, all alike.
+You're in a maze of twisty little passages, all alike.
++   M104
+You're in a maze of twisty little passages, all alike.
+You're in a maze of twisty little passages, all alike.
++   M105
+You're in a maze of twisty little passages, all alike.
+You're in a maze of twisty little passages, all alike.
++   M106
+You're in a maze of twisty little passages, all alike.
+You're in a maze of twisty little passages, all alike.
++   M107
+You're in a maze of twisty little passages, all alike.
+You're in a maze of twisty little passages, all alike.
++ O M108
+You're in a maze of twisty little passages, all alike.
+You're in a maze of twisty little passages, all alike.
+There is oil here.
++   M109
+You're in a maze of twisty little passages, all alike.
+You're in a maze of twisty little passages, all alike.
++   M110
+You're in a maze of twisty little passages, all alike.
+You're in a maze of twisty little passages, all alike.
++   M111
+You're in a maze of twisty little passages, all alike.
+You're in a maze of twisty little passages, all alike.
++   M112
+You're in a maze of twisty little passages, all alike.
+You're in a maze of twisty little passages, all alike.
++   M113
+You're in a maze of twisty little passages, all alike.
+You're in a maze of twisty little passages, all alike.
++   M114
+You're in a maze of twisty little passages, all alike.
+You're in a maze of twisty little passages, all alike.
++   M115
+You're in a maze of twisty little passages, all alike.
+You're in a maze of twisty little passages, all alike.
++   M116
+You're in a maze of twisty little passages, all alike.
+You're in a maze of twisty little passages, all alike.
++   M117
+You're in a maze of twisty little passages, all alike.
+You're in a maze of twisty little passages, all alike.
++   M118
+You're in a maze of twisty little passages, all alike.
+You're in a maze of twisty little passages, all alike.
++   M201
+You're in a little maze of twisty passages.
+You're in a little maze of twisty passages.
++   M202
+You're in a little maze of twisting passages.
+You're in a little maze of twisting passages.
++   M203
+You're in a maze of twisty little passages.
+You're in a maze of twisty little passages.
++   M204
+You're in a maze of little twisty passages.
+You're in a maze of little twisty passages.
++   M205
+You're in a twisty maze of little passages.
+You're in a twisty maze of little passages.
++   M206
+You're in a twisting maze of little passages.
+You're in a twisting maze of little passages.
++   M207
+You're in a little twisty maze of passages.
+You're in a little twisty maze of passages.
++   M208
+You're in a little twisting maze of passages.
+You're in a little twisting maze of passages.
++   M209
+You're in a maze of twisting little passages.
+You're in a maze of twisting little passages.
++   M210
+You're in a maze of little twisting passages.
+You're in a maze of little twisting passages.
++   M211
+You're in a twisty little maze of passages.
+You're in a twisty little maze of passages.
++   M212
+You're in a twisting little maze of passages.
+You're in a twisting little maze of passages.
++   M213
+You're in the maze anteroom.
+You're in the maze anteroom.
++   M214
+You're in the maze sanctum.
+You're in the maze sanctum.
+-A101     A102      E
+-A101     A112      D
+-A101     A107      N
+-A101     E11       U
+-A102     A101      W
+-A102     A103      NE
+-A102     A104      SE
+-A103     A102      SW
+-A103     A129      NE        1
+-A104     A102      NW
+-A104     A105      SE
+-A105     A104      NW
+-A105     A106      SE
+-A105     A116      D
+-A106     A105      NW
+-A107     A101      S
+-A107     A108      N         5         CROSS     5
+-A108     A107      S         5         CROSS     5
+-A108     A109      N
+-A109     A108      S
+-A109     A110      E
+-A109     A111      W
+-A109     A138      N
+-A110     A109      W
+-A111     A109      E
+-A111     A130      N
+-A112     A101      U
+-A112     A113      S         3
+-A113     A112      N         3
+-A114     A123      E
+-A114     A115      W
+-A115     A114      N
+-A116     A105      N
+-A116     A128      NE
+-A116     A117      S
+-A116     A119      SE
+-A116     A121      SW
+-A116     A122      W
+-A117     A116      N
+-A117     A117      NE        SE
+-A117     A118      S
+-A117     A119      E
+-A117     A120      SW
+-A117     A121      W
+-A117     A122      NW
+-A118     A117      N
+-A118     A119      NE
+-A118     A120      W
+-A118     A121      NW
+-A118     A126      S
+-A119     A116      NW
+-A119     A117      W
+-A119     A118      SW
+-A119     A124      E
+-A120     A117      NE
+-A120     A118      E
+-A120     A120      W         S         SE
+-A120     A121      N
+-A120     A123      NW
+-A120     A144      SW
+-A121     A116      NE
+-A121     A117      E
+-A121     A118      SE
+-A121     A120      S
+-A121     A121      SW        NW
+-A121     A122      N
+-A121     A123      W
+-A122     A116      E
+-A122     A117      SE
+-A122     A121      S
+-A122     A123      SW
+-A123     A114      W
+-A123     A120      SE
+-A123     A121      E
+-A123     A122      NE
+-A124     A119      W
+-A124     A125      U         7
+-A125     A124      D         7
+-A125     A142      E
+-A126     A118      N
+-A126     A127      S         9         CROSS     9
+-A127     A126      N         9         CROSS     9
+-A127     A143      S
+-A128     A116      SW
+-A129     A103      SW        1
+-A129     M101      NE
+-A130     A111      S
+-A130     A131      D
+-A131     A130      U
+-A131     A132      D
+-A132     A131      U
+-A132     A133      SW
+-A132     A134      S
+-A133     A132      NE
+-A133     A134      SE
+-A133     A137      W
+-A134     A132      N
+-A134     A133      NW
+-A134     A135      U
+-A135     A134      D
+-A135     A136      U
+-A136     A135      D
+-A137     A133      E
+-A137     A137      W         18
+-A138     A109      S
+-A138     A139      N
+-A139     A138      S
+-A139     A140      U
+-A140     A139      D
+-A140     A141      U
+-A141     A140      SW
+-A141     E09       NE        19
+-A142     A125      W
+-A142     A301      EAST
+-A143     A127      N
+-A143     A201      S
+-A144     A120      NE
+-A144     A144      N  E  SE  S  SW
+-A144     S20       W
+-A144     A145      NW
+-A145     A144      N  NE  E   SE  S   SW  W   NW
+-A201     A202      W
+-A202     A201      SE
+-A202     A203      N
+-A202     A228      SW
+-A202     A229      U         4
+-A202     A244      ALTER
+-A203     A202      W
+-A203     A204      PLUGH
+-A203     A211      NE
+-A204     A203      PLUGH
+-A204     A205      SE
+-A204     A207      NW
+-A205     A204      W
+-A205     A206      N
+-A206     A205      S
+-A207     A204      SE
+-A207     A208      JUMP
+-A207     A209      SW
+-A208     A207      JUMP
+-A209     A207      E
+-A209     A210      W
+-A210     A209      S
+-A210     M201      N
+-A211     A203      SW
+-A211     A212      E
+-A212     A211      W
+-A212     A213      NE
+-A212     A215      SE
+-A213     A212      W
+-A213     A214      NW
+-A214     A213      S
+-A214     M108      NE
+-A215     A212      NW
+-A215     A216      SW
+-A216     A215      N
+-A216     A245      U         8
+-A216     A222      W
+-A217     A218      E
+-A217     A219      N
+-A217     A220      S         SW
+-A217     A245      NW
+-A218     A217      W         20
+-A218     A219      N  S  E  NE  SE  NW  SW  U  D  ALTER
+-A219     A217      W         20
+-A219     A218      N  S  E  NE  SE  NW  SW  U  D  ALTER
+-A220     A217      N         W
+-A220     A221      SE
+-A221     A220      NW
+-A222     A216      SE
+-A222     A223      NW
+-A223     A222      SE
+-A223     A224      N
+-A223     A225      SW
+-A224     A223      S
+-A225     A223      E
+-A225     A226      S
+-A225     A228      W
+-A226     A225      N
+-A226     A227      S
+-A227     A226      N
+-A227     A227      S         17
+-A228     A202      E
+-A228     A225      S
+-A228     S19       PLUGH
+-A229     A202      D         NE
+-A229     A230      SW        U
+-A230     A229      E
+-A230     A231      N
+-A230     A232      W         12
+-A231     A143      E
+-A231     A230      S
+-A232     A230      E         12
+-A232     A233      W
+-A232     A234      S
+-A233     A232      U
+-A234     A232      N
+-A234     A235      W
+-A234     A237      SE
+-A235     A234      E
+-A235     A236      S
+-A236     A235      W
+-A237     A234      N         14
+-A237     A238      S
+-A238     A237      N
+-A238     A239      SW
+-A239     A238      E
+-A239     A240      S
+-A239     A242      W
+-A240     A239      W
+-A240     A241      E
+-A241     A240      N
+-A241     M201      S
+-A242     A239      NE
+-A242     A243      SW
+-A243     A242      NE
+-A244     A202      D
+-A245     A216      D         8
+-A245     A217      SE
+-A301     A333      E
+-A301     A310      D
+-A301     A307      SW
+-A302     A306      N
+-A302     A322      E
+-A302     A317      D
+-A302     A309      NE
+-A302     A329      SW
+-A303     A327      N
+-A303     A307      W
+-A303     A319      U
+-A303     A320      SW
+-A304     A328      U
+-A304     A314      NE
+-A304     A319      SE
+-A305     A323      U
+-A305     A318      D
+-A305     A328      NW
+-A305     A314      SE
+-A305     A303      SW
+-A306     A328      N
+-A306     A315      S
+-A306     A327      U
+-A306     A318      NE
+-A306     A331      SW
+-A307     A303      E
+-A307     A302      U
+-A307     A330      D
+-A307     A310      NW
+-A308     A324      N
+-A308     A329      S
+-A308     A311      W
+-A308     A318      D
+-A308     A315      NE
+-A309     A304      N
+-A309     A328      S
+-A309     A327      E
+-A309     A320      W
+-A309     A321      SE
+-A310     A316      S
+-A310     A312      E
+-A310     A302      U
+-A310     A323      D
+-A310     A313      NE
+-A311     A326      S
+-A311     A316      U
+-A311     A318      NW
+-A312     A308      S
+-A312     A328      D
+-A312     A330      NE
+-A312     A307      NW
+-A312     A306      SE
+-A313     A318      N
+-A313     A312      E
+-A313     A302      W
+-A313     A301      NE
+-A313     A305      NW
+-A314     A301      W
+-A314     A305      NE
+-A314     A331      NW
+-A315     A310      E
+-A315     A331      W
+-A315     A304      D
+-A315     A321      NW
+-A316     A312      E
+-A316     A329      W
+-A316     A326      NE
+-A316     A315      NW
+-A316     A325      SW
+-A317     A312      W
+-A317     A323      D
+-A317     A331      NE
+-A317     A316      SE
+-A317     A332      SW
+-A318     A325      E
+-A318     A301      NE
+-A318     A317      NW
+-A318     A322      SE
+-A319     A305      S
+-A319     A302      E
+-A319     A312      W
+-A319     A326      D
+-A319     A321      SE
+-A320     A333      E
+-A320     A325      W
+-A320     A308      U
+-A320     A311      NW
+-A321     A314      NE
+-A321     A327      NW
+-A321     A319      SW
+-A322     A307      N
+-A322     A303      E
+-A322     A302      D
+-A322     A317      SE
+-A323     A327      N
+-A323     A325      S
+-A323     A309      E
+-A323     A306      D
+-A323     A307      NE
+-A324     A329      W
+-A324     A303      U
+-A324     A311      SE
+-A325     A333      U
+-A325     A305      NE
+-A325     A324      SE
+-A325     A304      SW
+-A326     A306      W
+-A326     A321      U
+-A326     A301      NE
+-A326     A330      SE
+-A326     A311      SW
+-A327     A313      W
+-A327     A320      D
+-A327     A324      NW
+-A328     A319      S
+-A328     A314      E
+-A328     A320      W
+-A328     A308      SW
+-A329     A305      D
+-A329     A315      NW
+-A329     A309      SW
+-A330     A314      N
+-A330     A325      D
+-A330     A303      SE
+-A331     A311      N
+-A331     A320      E
+-A331     A324      NW
+-A332     A321      N
+-A332     A317      E
+-A332     A310      U
+-A332     A324      SE
+-A333     A142      W
+-A333     A332      U
+-A333     A313      NW
+-A333     A322      SW
+-E01      E02       NW
+-E01      S16       U         2         EXIT       2
+-E02      E01       SE
+-E02      E03       NW
+-E03      E02       SE
+-E03      E04       SW
+-E03      E05       NW
+-E04      E03       NE
+-E04      S18       RUSH
+-E05      E03       SE
+-E05      E06       NW
+-E06      E05       SE
+-E06      E07       SW
+-E06      E08       NW
+-E07      E06       NE
+-E08      E06       SE
+-E08      E09       D         16
+-E08      E10       NE
+-E08      E11       NW
+-E09      A141      E
+-E09      E08       U         16
+-E10      E08       SW
+-E10      E10       NE        15
+-E11      A101      D
+-E11      E08       SE
+-M101     A129      SW
+-M101     M102      W
+-M101     M103      E
+-M102     M101      S
+-M102     M104      NE
+-M103     M101      S
+-M103     M105      N
+-M104     M102      SW
+-M104     M106      D         20
+-M104     M107      N
+-M104     M114      ALTER
+-M105     M103      S
+-M105     M107      W
+-M106     M104      U
+-M106     M114      E
+-M107     M104      S
+-M107     M105      E
+-M107     M108      NE
+-M107     M109      N
+-M108     M107      SW
+-M108     M112      N
+-M109     M107      E
+-M109     M110      W
+-M109     M111      N
+-M110     M109      D
+-M111     M109      S
+-M112     M108      S
+-M112     M113      U
+-M113     M112      D
+-M114     M104      U
+-M114     M106      W
+-M115     M115      N   NE  E   SE  S   SW      NW  U   D
+-M115     M116                              W
+-M116     M115      N   NE      SE  S   SW  W   NW  U   D
+-M116     M117              E
+-M117     M115      N   NE  E   SE      SW  W   NW  U   D
+-M117     M118                      S
+-M118     M115      N   NE  E   SE  S   SW  W   NW      D
+-M118     M108                                      U
+-M201     A210      N
+-M201     M202      S
+-M201     M203      E
+-M201     M204      W
+-M201     M202      NE
+-M201     M203      NW
+-M201     M204      SE
+-M201     M202      SW
+-M201     M203      U
+-M201     M204      D
+-M202     M204      N
+-M202     M202      S
+-M202     M205      E
+-M202     M203      W
+-M202     M204      NE
+-M202     M202      NW
+-M202     M203      SE
+-M202     M204      SW
+-M202     M201      U
+-M202     M203      D
+-M203     M203      N
+-M203     M204      S
+-M203     M202      E
+-M203     M205      W
+-M203     M203      NE
+-M203     M204      NW
+-M203     M202      SE
+-M203     M201      SW
+-M203     M204      U
+-M203     M202      D
+-M204     M202      N
+-M204     M203      S
+-M204     M204      E
+-M204     M202      W
+-M204     M205      NE
+-M204     M203      NW
+-M204     M201      SE
+-M204     M202      SW
+-M204     M203      U
+-M204     M204      D
+-M205     M203      N
+-M205     M206      S
+-M205     M204      E
+-M205     M202      W
+-M205     M203      NE
+-M205     M204      NW
+-M205     M202      SE
+-M205     M203      SW
+-M205     M204      U
+-M205     M202      D
+-M206     M208      N
+-M206     M209      S
+-M206     M207      E
+-M206     M208      W
+-M206     M209      NE
+-M206     M206      NW
+-M206     M207      SE
+-M206     M208      SW
+-M206     M209      U
+-M206     M207      D
+-M207     M208      N
+-M207     M205      S
+-M207     M209      E
+-M207     M202      W
+-M207     M207      NE
+-M207     M203      NW
+-M207     M210      SE
+-M207     M204      SW
+-M207     M207      U
+-M207     M205      D
+-M208     M205      N
+-M208     M209      S
+-M208     M204      E
+-M208     M207      W
+-M208     M203      NE
+-M208     M208      NW
+-M208     M202      SE
+-M208     M210      SW
+-M208     M205      U
+-M208     M208      D
+-M209     M209      N
+-M209     M205      S
+-M209     M207      E
+-M209     M202      W
+-M209     M208      NE
+-M209     M203      NW
+-M209     M209      SE
+-M209     M204      SW
+-M209     M210      U
+-M209     M205      D
+-M210     M205      N
+-M210     M206      S
+-M210     M202      E
+-M210     M209      W
+-M210     M203      NE
+-M210     M208      NW
+-M210     M204      SE
+-M210     M207      SW
+-M210     M205      U
+-M210     M211      D
+-M211     M211      N
+-M211     M212      S
+-M211     M211      E
+-M211     M211      W
+-M211     M211      NE
+-M211     M211      NW
+-M211     M211      SE
+-M211     M211      SW
+-M211     M211      U
+-M211     M210      D
+-M212     M212      N
+-M212     M212      S
+-M212     M212      E
+-M212     M212      W
+-M212     M212      NE
+-M212     M211      NW
+-M212     M213      SE
+-M212     M212      SW
+-M212     M212      U
+-M212     M212      D
+-M213     M213      N
+-M213     M213      S
+-M213     M213      E
+-M213     M214      W
+-M213     M212      NE
+-M213     M213      NW
+-M213     M213      SE
+-M213     M213      SW
+-M213     M213      U
+-M213     M213      D
+-M214     M213      E
+-S01      S01       N         NE
+-S01      S02       E         SE
+-S01      S08       SW        W
+-S01      S09       NW
+-S01      S19       S
+-S02      S01       W         NW
+-S02      S02       N         E
+-S02      S03       SE        S
+-S02      S10       NE
+-S02      S19       SW
+-S03      S02       N         NW
+-S03      S03       NE        SE
+-S03      S04       S         SW
+-S03      S12       W
+-S03      S13       E
+-S04      S03       NE        N
+-S04      S04       E         SE S
+-S04      S05       SW        W
+-S04      S19       NW
+-S05      S04       E NE
+-S05      S05       SE S SW
+-S05      S06       W NW
+-S05      S19       N
+-S06      S05       E         SE
+-S06      S06       S         W
+-S06      S07       NW        N
+-S06      S15       SW        D
+-S06      S19       NE        U
+-S07      S06       S         SE
+-S07      S07       SW        NW
+-S07      S08       N         NE
+-S07      S17       W
+-S07      S19       E
+-S08      S01       NE        E
+-S08      S07       SW        S
+-S08      S08       W         NW        N
+-S08      S19       SE
+-S09      S01       SE
+-S10      S02       SW
+-S10      M115      NE        20
+-S10      M116      ALTER
+-S11      S02       N
+-S11      S04       S
+-S11      S12       U
+-S11      S19       W         NW        SW
+-S12      S02       N
+-S12      S03       NE        E         SE
+-S12      S04       S
+-S12      S11       D
+-S13      S03       W
+-S13      S14       E
+-S14      S13       W
+-S14      M117      E         20
+-S14      M118      ALTER
+-S15      S06       NE        U
+-S15      S16       SW        D
+-S16      E01       D         2        ENTER     2
+-S16      S15       NE        U
+-S17      S07       E
+-S17      S20       W
+-S18      E04       RUSH
+-S18      S19       EXIT
+-S19      A228      PLUGH
+-S19      S01       N
+-S19      S02       NE
+-S19      S04       SE
+-S19      S05       S
+-S19      S06       SW        D
+-S19      S07       W
+-S19      S08       NW
+-S19      S11       E
+-S19      S18       ENTER
+-S20      A144      NE
+-S20      S17       SE
+-S20      S20       N   E   S   SW  W   NW
++A103     BIRD
++A105     SNAKE
++A106     TEAK
++A110     GOLD
++A115     CLAM
++A122     TRIDENT
++A128     ROD
++A136     RUBY
++A145     IVORY
++A201     DRAGON
++A202     PLANT
++A206     VASE
++A221     SILVER
++A224     COIN
++A226     FUR
++A236     PILLOW
++A243     SPICE
++A306     CRYSTAL
++A312     DIAMOND
++A318     NECKLACE
++A324     PLATINUM
++A330     RUG
++E01      MATCH
++E07      CAGE
++E09      RING
++E10      HAMMER
++M106     WOOD
++M110     NAIL
++M113     ROPE
++M214     CHEST
++S18      LAMP      KEYS      FOOD      BOTTLE
+- 1    HINT 1
+I suggest you find the Wellhouse.
+- 5    HINT 2
+You'll need keys to unlock the grate.
+-10    HINT 3
+I suggest you enter the Wellhouse and look around.
+- 5    HINT 4
+If you say here the word that is missing in the plaque, you'll
+find yourself supprised by what happens.
+-10    HINT 5
+For your information, serpents hate avian creatures.
+-10    HINT 6
+This particular dragon is very hard to slay.  I suggest you
+hack away at his hide repeatedly.
+-10    HINT 7
+A crystal bridge would fit perfectly here.  As you can't build
+one yourself, I suggest you try an old magician's trick.
+-10    HINT 8
+A rope could be thrown over the split and it just might catch.
+-10    HINT 9
+A wooden bridge might be build here if you could find the right
+tools and materials.
++S19      STARTING LOCATION
++S18      TREASURE DEPOSIT LOCATION
++A116     BOAT HOME LOCATION
++M214     PIRATE'S CHEST LOCATION
++A113     PEARL'S RESTING PLACE
