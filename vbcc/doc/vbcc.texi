@@ -1,3 +1,8 @@
+\ifx\pdfminorversion\undefined
+ \pdfoptionpdfminorversion=3
+\else
+ \pdfminorversion=3
+\fi
 \input texinfo
 
 @setfilename index.texi
@@ -379,6 +384,10 @@ assign >NIL: vlibwos: vbcc:target/ppc-warpos/lib
 @node 68hc12 Backend
 @chapter 68hc12 Backend
 @include vbcchc12.texi
+
+@node VideoCore IV Backend
+@chapter VideoCore IV Backend
+@include vbccvidcore.texi
 
 @node Instruction Scheduler
 @chapter Instruction Scheduler

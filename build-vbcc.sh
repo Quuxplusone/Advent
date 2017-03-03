@@ -1,5 +1,5 @@
 #!/bin/bash
-patch -d vbcc -p1 <vbcc-patch.diff
+patch -d vbcc -p2 <vbcc-patch.diff
 mkdir -p vbcc/bin
 cd vbcc
-TARGET=z make < /dev/null
+yes '' | TARGET=z make

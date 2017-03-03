@@ -106,6 +106,9 @@ struct ext_ic {
 /* OSEK support */
 #define HAVE_OSEK 1
 
+/* We use builtin libcalls for some operations */
+#define HAVE_LIBCALLS 1
+
 /* support for variable-length arrays */
 #define ALLOCVLA_REG 4
 #if 0

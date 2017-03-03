@@ -211,8 +211,9 @@ or additional options.
     @item -maxerrors=n
                 Abort the compilation after n errors; do not stop if n==0.
 
-    @item -dontwarn=n
+    @item -dontwarn=n[,n...]
                 Suppress warning number n; suppress all warnings if n<0.
+                Multiple warnings may be separated by commas.
                 @xref{Errors and Warnings}
 
     @item -warn=n
@@ -225,6 +226,10 @@ or additional options.
                 way, but message browsers or
                 similar programs might need full paths.
 
+    @item -no-include-stack
+                Do not display the include stack in error messages.
+
+
     @item -+
     @itemx -cpp-comments
                 Allow C++ style comments (not ISO89 conforming).
@@ -234,6 +239,14 @@ or additional options.
 
     @item -E
                 Write the preprocessor output to <file>.i.
+
+    @item -deps
+                Write a make-style dependency-line to <file>.dep.
+
+    @item -deps-for-libs
+                By default, @code{-deps} will not include files that are
+                included using the syntax @code{#include <...>}. Specify this option
+                to add those files as well.
 
     @item -reserve-reg=<register>
                 Reserve that register not to be used by the backend.
@@ -1496,7 +1509,7 @@ using @option{-iso} or @option{-ansi}.
       @item #pragma warn <n>
         Enables warning number n. Must be followed by @code{#pragma popwarn}.
 
-      @item pragma popwarn
+      @item #pragma popwarn
         Undoes the last modification done by @code{#pragma warn} or
         @code{#pragma dontwarn}.
 
@@ -1716,10 +1729,10 @@ not possible to analyze the code. In this case, it is possible to specify
 these side-effects using the following special variable-attributes
 (@pxref{Variable Attributes}).
 
-The @code{__regsused(<register-list>)} attribute specifies the registers
-used or modified by a function. The register list is a list of register
-names (as defined in the backend-documentation) separated by slashes and
-enclosed in double-quotes, e.g.
+The @code{__regsused(<register-list>)} attribute specifies the volatile
+registers used or modified by a function. The register list is a list of
+register names (as defined in the backend-documentation) separated by
+slashes and enclosed in double-quotes, e.g.
 
 @code{        __regsused("d0/d1") int abs();}
 
@@ -1814,6 +1827,7 @@ The following macros are defined by the compiler.
     @item Gary Watson
     @item Andrea Vallinotto
     @item Johnny Tevessen
+    @item Eero Tamminen
     @item Gabriele Svelto
     @item Dirk Stoecker
     @item Ralph Schmidt
@@ -1856,7 +1870,3 @@ The following macros are defined by the compiler.
     @item Alkinoos Alexandros Argiropoulos
     @item Thomas Aglassinger
 @end itemize
-
-
-
-

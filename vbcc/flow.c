@@ -373,7 +373,7 @@ struct flowgraph *jump_optimization(void)
                 struct IC *m;
                 if(DEBUG&1024) printf("deleting dead block %d\n",g->index);
 #ifdef HAVE_MISRA
-/* removed */
+		misra_neu(52,14,1,-1);
 #endif
                 p=g->start;i=0;
                 while(p&&!i){

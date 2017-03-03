@@ -32,6 +32,7 @@
 #ifdef HAVE_MISRA
 void misra(int,...);
 #endif
+extern void handle_deps(char *,int);
 
 #define VERS_MAJ	1
 #define VERS_MIN	0
@@ -276,6 +277,12 @@ static char *convert_path(char *path)
 	*d = '\0';
 
 	return newp;
+}
+
+#else  /* no conversion */
+static char *convert_path(char *path)
+{
+	return sdup(path);
 }
 #endif
 
@@ -1153,13 +1160,11 @@ do_include_next:
 	      misra_neu(88,19,2,-1);
 	}
 #endif
-#if defined(MSDOS) || defined(ATARI) || defined(AMIGA)
 	{
 		char *conv_fname = convert_path(fname);
 		freemem(fname);
 		fname = conv_fname;
 	}
-#endif
 	f = nex ? find_file_next(fname) : find_file(fname, string_fname);
 	if (!f) {
 		pop_file_context(ls);
@@ -1181,6 +1186,7 @@ do_include_next:
 	if (!strcmp("time.h",fname)) misra(127,20,12,-1);
 #endif
 	set_current_filename(fname);
+	handle_deps(fname,string_fname);
 	enter_file(ls, flags);
 	return 0;
 
@@ -1967,13 +1973,8 @@ void init_include_path(char *incpath[])
 	if (incpath) {
 		int i;
 
-		for (i = 0; incpath[i]; i ++) {
-#if defined(MSDOS) || defined(ATARI) || defined(AMIGA)
+		for (i = 0; incpath[i]; i ++)
 			aol(include_path, include_path_nb, convert_path(incpath[i]), INCPATH_MEMG);
-#else
-			aol(include_path, include_path_nb, sdup(incpath[i]), INCPATH_MEMG);
-#endif
-		}
 	}
 }
 
@@ -1982,11 +1983,7 @@ void init_include_path(char *incpath[])
  */
 void add_incpath(char *path)
 {
-#if defined(MSDOS) || defined(ATARI) || defined(AMIGA)
 	aol(include_path, include_path_nb, convert_path(path), INCPATH_MEMG);
-#else
-	aol(include_path, include_path_nb, sdup(path), INCPATH_MEMG);
-#endif
 }
 
 #ifdef STAND_ALONE

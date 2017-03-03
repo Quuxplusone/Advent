@@ -7,39 +7,74 @@ static char FILE_[]=__FILE__;
 
 static struct IC *first_pushed;
 static unsigned int opushed;
-
 static int volatile_convert;
 
 int do_arith(np,struct IC *,np,struct obj *);
+np gen_libcall(char *fname,np arg1,struct Typ *t1,np arg2,struct Typ *t2);
 
 static void handle_reglist(struct regargs_list *,struct obj *);
+
+#if HAVE_LIBCALLS
+/* avoid calling use_libcall with illegal operands */
+static char *use_libcall_wrap(int c,int t,int t2)
+{
+  if(optflags&2)
+    return 0;
+
+  if(c==PMULT) c=MULT;
+  if((c>=OR&&c<=XOR)||(c>=LSHIFT&&c<=KOMPLEMENT)||c==COMPARE||c==CONVERT||c==MINUS||c==TEST)
+    return use_libcall(c,t,t2);
+  return 0;
+}
+#endif
 
 void gen_test(struct obj *o,int t,int branch,int label)
 /*  Generiert ein test o, branch label und passt auf, dass      */
 /*  kein TEST const generiert wird.                             */
 {
-    struct IC *new;
-    if(o->flags&KONST){
-        eval_const(&o->val,t);
-        if(zldeqto(vldouble,d2zld(0.0))&&zmeqto(vmax,l2zm(0L))&&zumeqto(vumax,ul2zum(0UL))){
-            if(branch==BEQ) branch=BRA; else branch=0;
-        }else{
-            if(branch==BNE) branch=BRA; else branch=0;
-        }
+  struct IC *new;
+  if(o->flags&KONST){
+    eval_const(&o->val,t);
+    if(zldeqto(vldouble,d2zld(0.0))&&zmeqto(vmax,l2zm(0L))&&zumeqto(vumax,ul2zum(0UL))){
+      if(branch==BEQ) branch=BRA; else branch=0;
     }else{
-        new=new_IC();
-        new->code=TEST;
-        new->q2.flags=new->z.flags=0;
-        new->typf=t;
-        new->q1=*o;
-        add_IC(new);
+      if(branch==BNE) branch=BRA; else branch=0;
     }
-    if(branch){
-        new=new_IC();
-        new->code=branch;
-        new->typf=label;
-        add_IC(new);
+  }else{
+#if HAVE_LIBCALLS
+    static struct node n={TEST},nn={REINTERPRET};
+    static struct Typ nt,it={INT};
+    char *libname;
+    n.left=&nn;
+    n.ntyp=&it;
+    nn.ntyp=&nt;
+    nt.flags=t;
+    n.o=nn.o=*o;
+    if(libname=use_libcall_wrap(TEST,t,0)){
+      new=new_IC();
+      new->code=TEST;
+      new->q2.flags=new->z.flags=0;
+      new->typf=INT;
+      new->q1=gen_libcall(libname,&nn,&nt,0,0)->o;
+      add_IC(new);
+    }else{
+#endif
+      new=new_IC();
+      new->code=TEST;
+      new->q2.flags=new->z.flags=0;
+      new->typf=t;
+      new->q1=*o;
+      add_IC(new);
+#if HAVE_LIBCALLS
     }
+#endif
+  }
+  if(branch){
+    new=new_IC();
+    new->code=branch;
+    new->typf=label;
+    add_IC(new);
+  }
 }
 
 /* remove a freereg if a scratch register is needed more than once */
@@ -228,7 +263,7 @@ void add_IC(struct IC *new)
     if(!new) return;
     if(nocode) {
 #ifdef HAVE_MISRA
-/* removed */
+      misra_neu(52,14,1,-1);
 #endif
       /*free(new);*/ /* building a list to free later would be nice... */
       return;
@@ -241,7 +276,8 @@ void add_IC(struct IC *new)
     if(code==ALLOCREG||code==FREEREG||code==SAVEREGS||code==RESTOREREGS) new->typf=0;
     if(DEBUG&64){ pric(stdout,first_ic);printf("new\n");pric2(stdout,new);printf("-\n");}
     if(new->q1.flags&VAR){
-        if(!new->q1.v) ierror(0);
+        if(!new->q1.v) 
+	  ierror(0);
         new->q1.v->flags|=USEDASSOURCE;
         if(code==ADDRESS||(new->q1.flags&VARADR))
 	  if(!is_vlength(new->q1.v->vtyp))
@@ -392,7 +428,7 @@ void add_IC(struct IC *new)
             /*  momentan noch nicht perfekt, da es bei alloc/freereg stoppt */
                 free(new);
 #ifdef HAVE_MISRA
-/* removed */
+		misra_neu(52,14,1,-1);
 #endif
                 if(DEBUG&1) printf("Unreachable Statement deleted\n");
                 return;
@@ -439,10 +475,10 @@ np gen_libcall(char *fname,np arg1,struct Typ *t1,np arg2,struct Typ *t2)
 {
   np new; 
   struct argument_list *al=0,*t;
-  new=mymalloc(NODES);
+  new=new_node();
   new->flags=CALL;
   new->right=0;
-  new->left=mymalloc(NODES);
+  new->left=new_node();
   new->left->flags=IDENTIFIER;
   new->left->left=new->left->right=0;
   new->left->identifier=add_identifier(fname,strlen(fname));
@@ -455,7 +491,7 @@ np gen_libcall(char *fname,np arg1,struct Typ *t1,np arg2,struct Typ *t2)
     al->arg=arg1;
     al->next=0;
     if(t1){
-      np cnv=mymalloc(NODES);
+      np cnv=new_node();
       cnv->flags=CAST;
       cnv->left=arg1;
       cnv->right=0;
@@ -469,7 +505,7 @@ np gen_libcall(char *fname,np arg1,struct Typ *t1,np arg2,struct Typ *t2)
     t->next=0;
     al->next=t;
     if(t2){
-      np cnv=mymalloc(NODES);
+      np cnv=new_node();
       cnv->flags=CAST;
       cnv->left=arg2;
       cnv->right=0;
@@ -553,23 +589,31 @@ void gen_IC(np p,int ltrue,int lfalse)
         p->o=p->right->o;
         return;
     }
+    if(p->flags==REINTERPRET){
+      if(p->left){
+	gen_IC(p->left,0,0);
+	p->o=p->left->o;
+      }
+      /* if no left, do nothing, use just object */
+      return;
+    }
     if(p->flags==CAST){
-        gen_IC(p->left,0,0);
-        if((p->ntyp->flags&NQ)==VOID){
-            if((p->left->o.flags&(SCRATCH|REG))==(SCRATCH|REG)) free_reg(p->left->o.reg);
-            p->o.flags=0;
-        }else{
-	  if(ISPOINTER(p->ntyp->flags)&&(p->ntyp->next->flags&VOLATILE))
-	    volatile_convert=1;
-	  convert(p->left,p->ntyp->flags);
-	  if(volatile_convert){
-	    if((p->left->o.flags&VAR)&&p->left->o.v->vtyp->next)
-	      p->left->o.v->vtyp->next->flags|=VOLATILE;
-	    volatile_convert=0;
-	  }
-	  p->o=p->left->o;
-        }
-        return;
+      gen_IC(p->left,0,0);
+      if((p->ntyp->flags&NQ)==VOID){
+	if((p->left->o.flags&(SCRATCH|REG))==(SCRATCH|REG)) free_reg(p->left->o.reg);
+	p->o.flags=0;
+      }else{
+	if(ISPOINTER(p->ntyp->flags)&&(p->ntyp->next->flags&VOLATILE))
+	  volatile_convert=1;
+	convert(p->left,p->ntyp->flags);
+	if(volatile_convert){
+	  if((p->left->o.flags&VAR)&&p->left->o.v->vtyp->next)
+	    p->left->o.v->vtyp->next->flags|=VOLATILE;
+	  volatile_convert=0;
+	}
+	p->o=p->left->o;
+      }
+      return;
     }
     if(p->flags==FIRSTELEMENT){
         gen_IC(p->left,0,0);
@@ -577,27 +621,28 @@ void gen_IC(np p,int ltrue,int lfalse)
         return;
     }
 #if HAVE_LIBCALLS
-    { char *libname;
-    if(libname=use_libcall(p)){
-      np lc;struct Typ *t1,*t2;
-      if(p->flags==LSHIFT||p->flags==RSHIFT){
-	t1=clone_typ(p->ntyp);
-	t2=new_typ();
-	t2->flags=INT;
-      }else{
-	if(p->right){
-	  t1=arith_typ(p->left->ntyp,p->right->ntyp);
-	  t2=clone_typ(t1);
+    if(!(optflags&2)){
+      char *libname;
+      if(libname=use_libcall_wrap(p->flags,p->ntyp->flags,0)){
+	np lc;struct Typ *t1,*t2;
+	if(p->flags==LSHIFT||p->flags==RSHIFT){
+	  t1=clone_typ(p->ntyp);
+	  t2=new_typ();
+	  t2->flags=INT;
 	}else{
-	  t1=arith_typ(p->left->ntyp,p->left->ntyp);
-	  t2=0;
+	  if(p->right){
+	    t1=arith_typ(p->left->ntyp,p->right->ntyp);
+	    t2=clone_typ(t1);
+	  }else{
+	    t1=arith_typ(p->left->ntyp,p->left->ntyp);
+	    t2=0;
+	  }
 	}
+	lc=gen_libcall(libname,p->left,t1,p->right,t2);
+	*p=*lc;
+	free(lc);
+	return;
       }
-      lc=gen_libcall(libname,p->left,t1,p->right,t2);
-      *p=*lc;
-      free(lc);
-      return;
-    }
     }
 #endif
     new=new_IC();
@@ -654,6 +699,8 @@ void gen_IC(np p,int ltrue,int lfalse)
       new->z=p->left->o;
       new->q2.val.vmax=szof(p->left->ntyp);
       p->o=new->z;
+      if(!ISSCALAR(p->ntyp->flags))
+	new->typf2=zm2l(falign(p->ntyp));
       add_IC(new);
       return;
     }
@@ -668,17 +715,25 @@ void gen_IC(np p,int ltrue,int lfalse)
 	return;
       }
 #if HAVE_LIBCALLS
-      if(libname=use_libcall(p->right)){
+      if(libname=use_libcall_wrap(p->right->flags,p->right->ntyp->flags,(p->right->flags==LSHIFT||p->right->flags==LSHIFT)?INT:0)){
 	struct Typ *t1,*t2;
-	t1=clone_typ(p->ntyp);
+	np a1;
+	gen_IC(p->left,0,0);
+	a1=new_node();
+	a1->o=p->left->o;
+	a1->flags=REINTERPRET;
+	a1->o.flags&=~SCRATCH;
+	a1->ntyp=clone_typ(p->left->ntyp);
+	t1=clone_typ(p->right->ntyp);
 	if(p->right->flags==LSHIFT||p->right->flags==RSHIFT){
 	  t2=new_typ();
 	  t2->flags=INT;
 	}else
-	  t2=clone_typ(p->ntyp);
-	lc=gen_libcall(libname,p->right->left,t1,p->right->right,t2);
+	  t2=clone_typ(t1);
+	lc=gen_libcall(libname,a1/*p->right->left*/,t1,p->right->right,t2);
 	/**p->right=*lc;*/
 	o=p->left->o;
+	free(a1);
 	/*p->left=0;*/
 	/*free(lc);*/
       }else
@@ -768,6 +823,12 @@ void gen_IC(np p,int ltrue,int lfalse)
     if(p->flags==LAND||p->flags==LOR){
         int l1,l2,l3,l4;
 /*        printf("%s true=%d false=%d\n",ename[p->flags],ltrue,lfalse);*/
+
+	if(ISVECTOR(p->ntyp->flags)){
+	  do_arith(p,new,0,0);
+	  return;
+	}
+
         l1=++label;
 	if(!ltrue) {l2=++label;l3=++label;l4=++label;}
         if(!ltrue){
@@ -815,6 +876,21 @@ void gen_IC(np p,int ltrue,int lfalse)
     }
     if(p->flags==NEGATION){
         int l1,l2,l3;
+	if(ISVECTOR(p->ntyp->flags)){
+	  gen_IC(p->left,0,0);
+	  if((p->left->o.flags&(SCRATCH|REG))==(SCRATCH|REG)&&regok(p->left->o.reg,p->ntyp->flags,0)){
+	    new->z=p->left->o;
+	    new->z.flags&=~DREFOBJ;
+	  }else{
+	    get_scratch(&new->z,p->left->ntyp->flags,0,p->left->ntyp);
+	  }
+	  new->typf=p->left->ntyp->flags;
+	  new->q1=p->left->o;
+	  p->o=new->z;
+	  new->code=NEGATION;
+	  add_IC(new);
+	  return;
+	}
         if(!ltrue) {l1=++label;l2=++label;l3=++label;}
         if(ltrue)
 	  gen_IC(p->left,lfalse,ltrue);
@@ -838,35 +914,49 @@ void gen_IC(np p,int ltrue,int lfalse)
         return;
     }
     if(p->flags>=EQUAL&&p->flags<=GREATEREQ){
-        int l1,l2,l3,tl,tr;
-        if(!ltrue) {l1=++label;l2=++label;l3=++label;}
-        if(p->left->flags==CEXPR){
+      int l1,l2,l3,tl,tr;
+      struct Typ *at=0;
+      char *libname;
+      if(ISVECTOR(p->ntyp->flags)){
+	do_arith(p,new,0,0);
+	return;
+      }
+      if(!ltrue) {l1=++label;l2=++label;l3=++label;}
+      if(p->left->flags==CEXPR){
         /*  Konstanten nach rechts  */
-            np merk;merk=p->left;p->left=p->right;p->right=merk;
-            if(p->flags==LESS) p->flags=GREATER;
-            else if(p->flags==LESSEQ) p->flags=GREATEREQ;
-            else if(p->flags==GREATER) p->flags=LESS;
-            else if(p->flags==GREATEREQ) p->flags=LESSEQ;
-        }
+	np merk;merk=p->left;p->left=p->right;p->right=merk;
+	if(p->flags==LESS) p->flags=GREATER;
+	else if(p->flags==LESSEQ) p->flags=GREATEREQ;
+	else if(p->flags==GREATER) p->flags=LESS;
+	else if(p->flags==GREATEREQ) p->flags=LESSEQ;
+      }
+#if HAVE_LIBCALLS
+      at=arith_typ(p->left->ntyp,p->right->ntyp);
+      if(libname=use_libcall_wrap(COMPARE,at->flags,0)){
+	new->q1=gen_libcall(libname,p->left,at,p->right,clone_typ(at))->o;
+	new->code=TEST;
+	new->typf=INT;
+      }else{
+#endif
         new->code=COMPARE;
         tl=p->left->ntyp->flags&NU;tr=p->right->ntyp->flags&NU;
         if(p->right->flags==CEXPR&&ISINT(tr)&&ISINT(tl)){
-            int negativ;
-            eval_constn(p->right);
-            if(zmleq(vmax,l2zm(0L))) negativ=1; else negativ=0;
-            if((tl&UNSIGNED)||(tr&UNSIGNED)) negativ=0;
-            if((!negativ||zmleq(t_min(tl),vmax))&&(negativ||zumleq(vumax,t_max(tl)))){
-                convert(p->right,tl);
-                tr=tl;
-            }
+	  int negativ;
+	  eval_constn(p->right);
+	  if(zmleq(vmax,l2zm(0L))) negativ=1; else negativ=0;
+	  if((tl&UNSIGNED)||(tr&UNSIGNED)) negativ=0;
+	  if((!negativ||zmleq(t_min(tl),vmax))&&(negativ||zumleq(vumax,t_max(tl)))){
+	    convert(p->right,tl);
+	    tr=tl;
+	  }
         }
         if(ISARITH(tl)&&(tl!=tr||!shortcut(COMPARE,tl))){
-            struct Typ *t;
-            t=arith_typ(p->left->ntyp,p->right->ntyp);
-            new->typf=t->flags;
-            freetyp(t);
+	  struct Typ *t;
+	  t=arith_typ(p->left->ntyp,p->right->ntyp);
+	  new->typf=t->flags;
+	  freetyp(t);
         }else{
-            new->typf=p->left->ntyp->flags;
+	  new->typf=p->left->ntyp->flags;
         }
         gen_IC(p->left,0,0);
         convert(p->left,new->typf);
@@ -885,30 +975,36 @@ void gen_IC(np p,int ltrue,int lfalse)
 	    }
 	  }
 	}
-        add_IC(new);
-        new=new_IC();
-        if(p->flags==EQUAL) new->code=BEQ;
-        if(p->flags==INEQUAL) new->code=BNE;
-        if(p->flags==LESS) new->code=BLT;
-        if(p->flags==LESSEQ) new->code=BLE;
-        if(p->flags==GREATER) new->code=BGT;
-        if(p->flags==GREATEREQ) new->code=BGE;
-        if(ltrue) new->typf=ltrue; else new->typf=l1;
-        add_IC(new);
-        if(ltrue){
-            new=new_IC();
-            new->code=BRA;
-            new->typf=lfalse;
-            add_IC(new);
-            p->o.flags=0;
-        }else{
-            gen_label(l3);
-            gen_cond(&p->o,1,l1,l2);
-        }
-        return;
+#if HAVE_LIBCALLS
+      }
+#endif
+      freetyp(at);
+      add_IC(new);
+      new=new_IC();
+      if(p->flags==EQUAL) new->code=BEQ;
+      if(p->flags==INEQUAL) new->code=BNE;
+      if(p->flags==LESS) new->code=BLT;
+      if(p->flags==LESSEQ) new->code=BLE;
+      if(p->flags==GREATER) new->code=BGT;
+      if(p->flags==GREATEREQ) new->code=BGE;
+      if(ltrue) new->typf=ltrue; else new->typf=l1;
+      add_IC(new);
+      if(ltrue){
+	new=new_IC();
+	new->code=BRA;
+	new->typf=lfalse;
+	add_IC(new);
+	p->o.flags=0;
+      }else{
+	gen_label(l3);
+	gen_cond(&p->o,1,l1,l2);
+      }
+      return;
     }
     if(p->flags==CALL){
-        int r=0;struct obj *op,cfunc,ret_obj;zmax sz;
+        int r=0,radrpush=0;
+	struct obj *op,cfunc,ret_obj;
+	zmax sz;
         int mregs[MAXR+1];
 	struct IC *callic;
 #ifdef ORDERED_PUSH
@@ -960,6 +1056,7 @@ void gen_IC(np p,int ltrue,int lfalse)
                     new->z.val.vmax=l2zm(0L);
                     new->z.v=argl2[i];
                     new->typf=vp->vtyp->flags;
+		    new->typf2=falign(vp->vtyp);
                     add_IC(new);
                     i++;
                     al=al->next;
@@ -1129,25 +1226,31 @@ void gen_IC(np p,int ltrue,int lfalse)
           struct IC *new2;static struct Typ ptyp={0};
 	  struct reg_handle reg_handle=empty_reg_handle;
 	  int reg;
-          new2=new_IC();
-          new2->code=ADDRESS;
-          new2->typf=p->ntyp->flags;
-	  new2->typf2=POINTER_TYPE(p->ntyp);
-          new2->q1.flags=VAR;
-          new2->q1.v=add_var(empty,clone_typ(p->ntyp),AUTO,0);
-          new2->q1.val.vmax=l2zm(0L);
-          op=&new2->q1;
-          new2->q2.flags=0;
-          get_scratch(&new2->z,POINTER_TYPE(p->ntyp),p->ntyp->flags,0);
-          ret_obj=new2->z;
-          add_IC(new2);
 	  ptyp.next=p->ntyp;
 	  ptyp.flags=POINTER_TYPE(p->ntyp);
 	  reg=reg_parm(&reg_handle,&ptyp,0,p->left->ntyp);
-	  if(!reg) ierror(0);
-	  sz=push_args(p->alist,p->left->ntyp->next->exact,0,&rl,&reg_handle,&ret_obj,p->ntyp,reg,p->left->ntyp);
-	  if(optflags&2)
-	    handle_reglist(rl,&ret_obj);
+	  if(reg){
+	    new2=new_IC();
+	    new2->code=ADDRESS;
+	    new2->typf=p->ntyp->flags;
+	    new2->typf2=POINTER_TYPE(p->ntyp);
+	    new2->q1.flags=VAR;
+	    new2->q1.v=add_var(empty,clone_typ(p->ntyp),AUTO,0);
+	    new2->q1.val.vmax=l2zm(0L);
+	    op=&new2->q1;
+	    new2->q2.flags=0;
+	    get_scratch(&new2->z,POINTER_TYPE(p->ntyp),p->ntyp->flags,0);
+	    ret_obj=new2->z;
+	    add_IC(new2);
+	    sz=push_args(p->alist,p->left->ntyp->next->exact,0,&rl,&reg_handle,&ret_obj,p->ntyp,reg,p->left->ntyp);
+	    if(optflags&2)
+	      handle_reglist(rl,&ret_obj);
+	  }else{
+	    sz=push_args(p->alist,p->left->ntyp->next->exact,0,&rl,&reg_handle,0,p->ntyp,reg,p->left->ntyp);
+	    radrpush=1;
+	    if(optflags&2)
+	      handle_reglist(rl,0);
+	  }
 	}else{
 	  struct reg_handle reg_handle=empty_reg_handle;
 	  sz=push_args(p->alist,p->left->ntyp->next->exact,0,&rl,&reg_handle,0,0,-1,p->left->ntyp);
@@ -1211,35 +1314,38 @@ void gen_IC(np p,int ltrue,int lfalse)
         }
 #endif
 
-#ifndef HAVE_REGPARMS
         /*  gegebenenfalls Adresse des Ziels auf den Stack  */
-        if(!ffreturn(p->ntyp)&&(p->ntyp->flags&NQ)!=VOID){
-#ifdef ORDERED_PUSH
-            ierror(0);
+#ifdef HAVE_REGPARMS
+	if(radrpush)
+#else
+        if(!ffreturn(p->ntyp)&&(p->ntyp->flags&NQ)!=VOID)
 #endif
-            new=new_IC();
-            new->code=ADDRESS;
-            new->typf=p->ntyp->flags;
-	    new->typf2=POINTER_TYPE(p->ntyp);
-            new->q1.flags=VAR;
-            new->q1.v=add_var(empty,clone_typ(p->ntyp),AUTO,0);
-            new->q1.val.vmax=l2zm(0L);
-            op=&new->q1;
-            new->q2.flags=0;
-            get_scratch(&new->z,POINTER_TYPE(p->ntyp),p->ntyp->flags,0);
-            ret_obj=new->z;
-            add_IC(new);
-            new=new_IC();
-            new->code=PUSH;
-            new->typf=POINTER_TYPE(p->ntyp);
-            new->q1=ret_obj;
-            new->q2.flags=new->z.flags=0;
-            new->q2.val.vmax=sizetab[new->typf&NQ];
-	    new->z.val.vmax=new->q2.val.vmax;
-            add_IC(new);
-            sz=zmadd(sz,sizetab[new->typf&NQ]);
+	{
+#if defined(ORDERED_PUSH) && defined(HAVE_REGPARMS)
+	  ierror(0);
+#endif
+	  new=new_IC();
+	  new->code=ADDRESS;
+	  new->typf=p->ntyp->flags;
+	  new->typf2=POINTER_TYPE(p->ntyp);
+	  new->q1.flags=VAR;
+	  new->q1.v=add_var(empty,clone_typ(p->ntyp),AUTO,0);
+	  new->q1.val.vmax=l2zm(0L);
+	  op=&new->q1;
+	  new->q2.flags=0;
+	  get_scratch(&new->z,POINTER_TYPE(p->ntyp),p->ntyp->flags,0);
+	  ret_obj=new->z;
+	  add_IC(new);
+	  new=new_IC();
+	  new->code=PUSH;
+	  new->typf=POINTER_TYPE(p->ntyp);
+	  new->q1=ret_obj;
+	  new->q2.flags=new->z.flags=0;
+	  new->q2.val.vmax=sizetab[new->typf&NQ];
+	  new->z.val.vmax=new->q2.val.vmax;
+	  add_IC(new);
+	  sz=zmadd(sz,sizetab[new->typf&NQ]);
         }
-#endif
 
         /*  Scratchregister evtl. sichern   */
 	cfunc=p->o;
@@ -1393,7 +1499,7 @@ void gen_IC(np p,int ltrue,int lfalse)
 	      new->next=p->next;
 	      if(p==last_ic) last_ic=new;
 	      if(p==first_ic) first_ic=new;
-              if(new->q1.flags){
+              if(new->q1.flags&&!(p->flags&ORDERED_PUSH_COPY)){
                 new->code=ASSIGN;
                 new->z.flags=VAR;
                 new->z.val.vmax=l2zm(0L);
@@ -1406,6 +1512,7 @@ void gen_IC(np p,int ltrue,int lfalse)
                 remove_IC(new);
               }
 	      p->next=p->prev=0;
+	      p->flags|=ORDERED_PUSH_COPY;
               add_IC(p);
               if(!m&&!nocode) m=p;
             }
@@ -1451,7 +1558,7 @@ void gen_IC(np p,int ltrue,int lfalse)
 	gval.vmax=l2zm(1L);
 	eval_const(&gval,MAXINT);
 	insert_const(&one.val,p->ntyp->flags&NU);
-	if(libname=use_libcall(&tn)){
+	if(libname=use_libcall_wrap(tn.flags,tn.ntyp->flags,0)){
 	  np lc;
 	  lc=gen_libcall(libname,p->left,0,&one,0);
 	  new=new_IC();
@@ -1948,12 +2055,16 @@ void convert(np p,int f)
 {
   struct IC *new;
   int o=p->ntyp->flags;
-  int to,tn;
+  int to,tn,mc,dr;
+  static struct node n,nn;
+  static struct Typ nt;
+  char *libname;
   if((f&NQ)==VOID) return;
+
   if(p->flags==CEXPR||p->flags==PCEXPR){
 #ifdef HAVE_MISRA
-/* removed */
-/* removed */
+    if((o&NU)<(f&NU))
+      misra_neu(18,0,0,-1);
 #endif
     eval_constn(p);
     p->ntyp->flags=f;
@@ -1979,6 +2090,7 @@ void convert(np p,int f)
     new->code=COMPARE;
     new->typf=o;
     new->q1=p->o;
+    new->q1.flags&=~SCRATCH;
     new->q2.flags=KONST;
     new->q2.val.vumax=t_max[it];
     eval_const(&new->q2.val,MAXINT|UNSIGNED);
@@ -1994,11 +2106,12 @@ void convert(np p,int f)
     new->code=SUB;
     new->typf=o;
     new->q1=p->o;
+    new->q1.flags&=~SCRATCH;
     new->q2.flags=KONST;
     new->q2.val=val;
     new->z.flags=VAR;
     get_scratch(&new->z,o,0,0);
-    t=mymalloc(NODES);
+    t=new_node();
     t->ntyp=clone_typ(p->ntyp);
     t->ntyp->flags&=~UNSIGNED;
     t->o=new->z;
@@ -2008,6 +2121,7 @@ void convert(np p,int f)
     new->code=ADD;
     new->typf=f;
     new->q1=t->o;
+    new->q1.flags&=~SCRATCH;
     freetyp(t->ntyp);
     free(t);
     new->q2.flags=KONST;
@@ -2046,7 +2160,11 @@ void convert(np p,int f)
     add_IC(new);
     return;
   }
-  if(!volatile_convert&&((o&NU)==(f&NU)||(!must_convert(o,f,const_expr)&&(const_expr||!(optflags&2))))){
+  if(ISVECTOR(f)&&ISSCALAR(o)){
+    o=VECTYPE(f);
+    convert(p,o);
+  }
+  if(!volatile_convert&&((o&NU)==(f&NU)||(!(mc=must_convert(o,f,const_expr))&&(const_expr||!(optflags&2))))){
     p->ntyp->flags=f;
     if(!ISPOINTER(f)&&!ISARRAY(f)){freetyp(p->ntyp->next);p->ntyp->next=0;}
     return;
@@ -2063,19 +2181,41 @@ void convert(np p,int f)
   }else{
     to=o;
   }
-  new=new_IC();
-  new->q1=p->o;
-  new->q2.flags=0;
-  new->code=CONVERT;
-  new->typf2=to;
-  new->typf=tn;
-  if((p->o.flags&(SCRATCH|REG))!=(SCRATCH|REG)||!regok(p->o.reg,tn,0)){
-    get_scratch(&new->z,tn,0,0);
+#if HAVE_LIBCALLS
+  n.flags=CONVERT;
+  n.ntyp=&nt;
+  nt.flags=f;
+  n.left=&nn;
+  nn.ntyp=p->ntyp;
+  if((libname=use_libcall_wrap(CONVERT,tn,to))&&mc){
+    struct node *n=new_node();
+    n->flags=REINTERPRET;
+    n->o=p->o;
+    n->ntyp=p->ntyp;
+    p->o=gen_libcall(libname,n,p->ntyp,0,0)->o;
   }else{
-    new->z=p->o;new->z.flags&=~DREFOBJ;
+#endif
+    new=new_IC();
+    new->q1=p->o;
+    new->q2.flags=0;
+    new->code=CONVERT;
+    new->typf2=to;
+    new->typf=tn;
+    if((p->o.flags&(SCRATCH|REG))!=(SCRATCH|REG)||!regok(p->o.reg,tn,0)){
+      get_scratch(&new->z,tn,0,0);
+    }else{
+      new->z=p->o;new->z.flags&=~DREFOBJ;
+    }
+    p->o=new->z;
+    /* hmm... */
+    if(!mc&&libname){
+      new->code=ASSIGN;
+      new->q2.val.vmax=sizetab[tn&NQ];
+    }
+    add_IC(new);
+#if HAVE_LIBCALLS
   }
-  p->o=new->z;
-  add_IC(new);
+#endif
   if(f!=tn){
     p->ntyp->flags=tn;
     convert(p,f);
@@ -2193,7 +2333,7 @@ void scratch_var(struct obj *o,int t,struct Typ *typ)
 /*  nicht effizient, aber wer hat schon so wenig Register...    */
 {
   struct Typ *nt;
-  if(!ISSCALAR(t)){
+  if(!ISSCALAR(t)&&!ISVECTOR(t)){
     if(!typ) ierror(0);
     nt=clone_typ(typ);
   }else{
@@ -2316,7 +2456,8 @@ int do_arith(np p,struct IC *new,np dest,struct obj *o)
       if(dest) dest->o.flags=mflags;
       return f;
     }
-    convert(p->left,p->ntyp->flags);
+    if(!ISVECTOR(p->ntyp->flags)||!ISVECTOR(p->left->ntyp->flags))
+      convert(p->left,p->ntyp->flags);
     if(p->flags==LSHIFT||p->flags==RSHIFT){
       if(shortcut(p->flags,p->left->ntyp->flags&NU)){
 	convert(p->right,p->right->ntyp->flags);
@@ -2334,11 +2475,17 @@ int do_arith(np p,struct IC *new,np dest,struct obj *o)
       new->typf2=st->flags;
       freetyp(st);
 #endif
-    }else
-      convert(p->right,p->ntyp->flags);
+    }else{
+      if(!ISVECTOR(p->ntyp->flags)||!ISVECTOR(p->right->ntyp->flags))
+	convert(p->right,p->ntyp->flags);
+    }
     new->q1=p->left->o;
     new->q2=p->right->o;
-    new->typf=p->ntyp->flags;
+    if(ISVECTOR(p->ntyp->flags)){
+      new->typf=p->left->ntyp->flags;
+      new->typf2=p->ntyp->flags;
+    }else
+      new->typf=p->ntyp->flags;
     /*  Bei dest!=0, d.h. ASSIGNOP, darf q1 nicht als Ziel benuzt werden!  */
     if(!dest&&(new->q1.flags&(SCRATCH|REG))==(SCRATCH|REG)&&regok(new->q1.reg,p->ntyp->flags,0)){
       new->z=new->q1;

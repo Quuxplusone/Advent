@@ -36,6 +36,7 @@
 #undef UNION
 #undef ENUM
 #undef FUNKT
+#undef BOOL
 #undef MAXINT
 #undef MAX_TYPE
 
@@ -57,8 +58,9 @@
 #define UNION 16
 #define ENUM 17
 #define FUNKT 18
+#define BOOL 19
 
-#define MAXINT 19
+#define MAXINT 20
 
 #define MAX_TYPE MAXINT
 

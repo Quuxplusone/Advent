@@ -457,7 +457,7 @@ int propagate(struct IC *sic,struct obj *o,int cponly,int global)
     p=dlist[j];
     if(!(p->z.flags&VAR)) return 0;
     if(p->z.v!=o->v) continue;
-    t=ztyp(p);
+    t=ztyp(p)&NU;
     if(cponly&&!ISSCALAR(t)) continue;
     if(!zmeqto(p->z.val.vmax,o->val.vmax)) continue;
     if(cponly){
@@ -486,9 +486,14 @@ int propagate(struct IC *sic,struct obj *o,int cponly,int global)
       voff=p->q1.val.vmax;
     }
   }
+
   /* found constant */
   if(val){
     if(!cponly) return 0;
+    if(o==&sic->q1&&(q1typ(sic)&NU)!=t) return 0;
+    if(o==&sic->q2&&(q2typ(sic)&NU)!=t) return 0;
+    if(o==&sic->z&&(ztyp(sic)&NU)!=t) return 0;
+
     if(DEBUG&1024) printf("can replace <%s> by constant\n",o->v->identifier);
     o->val=*val;
     o->flags=KONST;
@@ -505,6 +510,9 @@ int propagate(struct IC *sic,struct obj *o,int cponly,int global)
     return 2;
   }
   if(vaddr&&(o->flags&DREFOBJ)){
+    if(o==&sic->q1&&(q1typ(sic)&NU)!=(t&NU)) return 0;
+    if(o==&sic->q2&&(q2typ(sic)&NU)!=(t&NU)) return 0;
+    if(o==&sic->z&&(ztyp(sic)&NU)!=(t&NU)) return 0;
     if(DEBUG&1024) printf("can replace *<%s> by address\n",o->v->identifier);
     o->v=vaddr;
     o->val.vmax=voff;
@@ -515,7 +523,7 @@ int propagate(struct IC *sic,struct obj *o,int cponly,int global)
   if(!found&&global&&v->storage_class!=EXTERN&&v->storage_class!=STATIC&&!(v->flags&USEDBEFORE)&&v->reg==0&&zmleq(l2zm(0L),v->offset)){
     if(*v->identifier||!(optflags&4096)){
 #ifdef HAVE_MISRA
-/* removed */
+      misra_neu(30,9,1,0,v->identifier);
 #endif
       error(171,v->identifier);v->flags|=USEDBEFORE;
       if(!*v->identifier) {printf("<%p>\n",(void *)v);ierror(0);}

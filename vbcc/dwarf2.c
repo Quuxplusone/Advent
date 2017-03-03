@@ -808,6 +808,8 @@ static void dwarf2_var(FILE *f,struct Var *v)
 {
   char *p;int l;
   if(!(v->flags&(DEFINED|TENTATIVE))) return;
+  if(v->storage_class==STATIC&&v->nesting>0&&!(v->flags&(USEDASSOURCE|USEDASDEST))) return;
+
   if(ISFUNC(v->vtyp->flags)) return;
   if(*v->identifier&&v->storage_class!=TYPEDEF){
     l=dwarf2_type(f,v->vtyp);

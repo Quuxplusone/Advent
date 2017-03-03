@@ -360,3 +360,5 @@
 "unterminated // comment",PREPROC|WARNING|ANSIV,
 "initialization of variable-length array",ERROR|ANSIV,
 "initialization of flexible array member",ERROR|ANSIV,
+"empty initializer",ERROR|FATAL|ANSIV,                             /* 360 */
+"redeclaration of var <%s> as new function",ERROR|FATAL|ANSIV,

@@ -1043,6 +1043,12 @@ that can be added to a pointer. Smaller types will be automatically converted
 to type @code{MINADDI2P} when they are to be added to a pointer.
 This may be subsumed by @code{shortcut()} in the future.
 
+@item #define MAXADDI2P <type>
+Insert the largest integer type
+that can be added to a pointer. Larger types will be automatically converted
+to type @code{MAXADDI2P} when they are to be added to a pointer.
+This may be subsumed by @code{shortcut()} in the future.
+
 @item #define BIGENDIAN <0/1>
 Insert 1 if integers are represented in big endian, i.e. the
 most significant byte is at the lowest memory address, the least significant
@@ -1127,6 +1133,30 @@ Insert this line if the backend supports additional types
 @item #define HAVE_TGT_PRINTVAL 1
 Insert this line if the backend provides an own @code{printval} function
 @pxref{tgtprintval}).
+
+@item #define JUMP_TABLE_DENSITY <float>
+@item #define JUMP_TABLE_LENGTH <int>
+These values controls the creation of jump-tables (@pxref{jumptables}).
+
+
+@item #define ALLOCVLA_REG <reg>
+@item #define ALLOCVLA_INLINEASM <inline-asm>
+@item #define FREEVLA_REG <reg>
+@item #define FREEVLA_INLINEASM <inline-asm>
+@item #define OLDSPVLA_INLINEASM <inline-asm>
+@item #define FPVLA_REG <reg>
+Necessary defines for C99 variable-length-arrays (@pxref{vlas}).
+
+@item #define HAVE_LIBCALLS 1
+Insert this line if the backend wants certain ICs to be replaced with
+calls to library functions (@pxref{libcalls}).
+
+@item #define AVOID_FLOAT_TO_UNSIGNED 1
+@item #define AVOID_UNSIGNED_TO_FLOAT 1
+Insert these lines to tell the frontend not to generate @code{CONVERT} ICs
+that convert between unsigned integers and floating point. In those cases,
+additional intermediate code will be generated that implements the
+conversion using only signed integers.
 
 @end table
 
@@ -2039,10 +2069,62 @@ by
     jmp   somefunc
 @end example
 
-
+@node jumptables
 @subsection Jump Tables
 
-FIXME: To be written.
+An important optimization is the creation of jump-tables for a series of
+comparisons with constants. Such series are usually created by a C
+@code{switch} construct, but vbcc can also recognize some of them if they
+are created through @code{if}-sequences.
+
+@file{supp.c} provides the function @code{calc_case_table(<IC>,<density>)}
+to check for constructs that can be replaced by a jump table. The arguments
+are the start IC to look for (it has to be a @code{COMPARE}-IC with a 
+constant as @code{q2}) and a minimal density. The density reflects the
+number of cases that are used divided by the range of cases. If the density
+is high, vbcc will use jump-tables only for sequences that have few unused
+cases inside. If the case tables occupy multiple ranges, vbcc is able to split
+them up and create multiple jump-tables.
+
+@code{calc_case_table} returns a pointer to a @code{struct case_table} with
+the following content:
+
+@table @code
+@item num
+The number of cases.
+
+@item typf
+The type of the case IDs.
+
+@item next_ic
+The first IC after the list of ICs that can be replaced by the jump-table.
+
+@item density
+The case density.
+
+@item vals
+The values of the case IDs (array containing @code{num} entries).
+
+@item labels
+The labels of the code corresponding to the case IDs
+(array containing @code{num} entries).
+
+@item min
+The lowest case ID.
+
+@item max
+The highest case ID.
+
+@item diff
+@code{max-min}.
+
+@end table
+
+If the backend decides to emit a jump-table, it has to generate code that
+will check that the control expression lies between @code{min} and @code{max}.
+If not, the jump-table must not be executed. Code for the computed jump
+must then be generated. The actual table can be emitted using
+@code{emit_jump_table()}. Processing can then continue with @code{next_ic}.
 
 @node targetralloc
 @subsection Context-sensitive Register-Allocation
@@ -2098,7 +2180,21 @@ if the register is not suitable for a certain operation.
 @node regsmodified
 @subsection Inter-procedural Register-Allocation
 
-FIXME: To be written.
+To support inter-procedural register allocation, the backend must tell the
+optimizer which registers are used by a function. As the backend might use
+some registers internally, the frontend can not know this.
+
+Apart from defining @code{HAVE_REGS_MODIFIED} in @file{machine.h}, the
+backend has to mark all registers that are modified in the bitfield
+@code{regs_modified}. A register can be marked with
+@code{BSET(regs_modified,<reg>)}. For a call IC, the function @code{calc_regs()}
+(from @file{supp.h}) can be called to mark the registers used by a call IC.
+It will return 1 if it was able to determine all registers used by this IC.
+
+If the register usage could be determined for the entire function, the
+backend can set the bit @code{ALL_REGS} in the fi-member of the function
+variable (@code{v->fi->flags|=ALL_REGS;}).
+
 
 @subsection Conditional Instructions
 
@@ -2107,7 +2203,9 @@ FIXME: To be written.
 @node extic
 @subsection Extended ICs
 
-FIXME: To be written.
+If the backend defines @code{HACE_EXT_IC}, it has to define a
+@code{struct ext_ic} in @file{machine.h}. This structure will be added
+to each IC and can be used by the backend for private use.
 
 @node asmpeephole
 @subsection Peephole Optimizations on Assembly Output
@@ -2173,7 +2271,17 @@ enabling optimizations between generated code and inline assembly.
 @node markeffics
 @subsection Marking of efficient ICs
 
-FIXME: To be written.
+If the backend sets @code{HAVE_EFF_ICS} in @file{machine.h}, it has to
+provide a function @code{void mark_eff_ics(void)}. This function will be
+called (possibly multiple times) by the frontend. The function has to set
+or clear the bit @code{EFF_IC} in the member @code{flags} of every IC.
+
+The flag should be set when the operation is in a context that suggests
+it will translate to efficient machine code. The optimizer will transform
+this IC less aggressively.
+
+As this is all happens before register allocation, the decision is of a very
+heuristic nature.
 
 @subsection Function entry/exit Code
 
@@ -2228,7 +2336,31 @@ static long pof2(zumax x)
 
 @subsection Block copying
 
-FIXME: To be written.
+There are many cases of copying of larger data. For the backend, those
+will mostly be used in @code{PUSH} and @code{ASSIGN} ICs. It is very
+important to implement those as efficient as possible.
+
+Some things to consider:
+
+@itemize @minus
+@item When alignment is known, use word-copy instead of byte-copy.
+
+@item Copy small blocks by a series of copy instructions.
+
+@item For larger blocks, loading addresses in registers may help.
+
+@item For large blocks, use a loop. Implement it efficiently and try to
+unroll the loop a few times.
+
+@item For very large blocks, calling a library function may be useful. While
+this creates some overhead, the function can dynamically check the alignment
+or perhaps even use special hardware, if available.
+
+@item Set @code{INLINEMEMCOPY} to reasonable values. Set it to a very high
+value if you implement very good block copying.
+
+@end itemize
+
 
 @subsection Optimized Library Functions
 
@@ -2558,11 +2690,105 @@ obviously has to be done before allocating the stack-frame.
 The library function is responsible to take into account its own
 stack-frame.
 
-
 @subsection Profiling
 
 FIXME: To be written.
 
+@node{vlas}
+@subsection Variable-length Arrays
+
+With the @code{-c99} option, vbcc supports variable-length arrays that
+are allocated on the stack. The backend has to take several steps to
+support this:
+
+@table @code
+@item vlas
+When this variable is non-zero, the current function uses variable-length
+arrays. The backend may take necessary steps to support this. For example,
+if local variables are usually addressed via stackpointer, switching to a
+separate framepointer may be necessary.
+
+@item ALLOCVLA_INLINEASM
+This define must contain inline code that is called when a vla is
+allocated. It has to create additional room on the stack and return a
+pointer to the beginning of the new space.
+
+@item ALLOCVLA_REG
+The register in which to pass the size to be allocated on the stack. 0 will
+pass on the stack.
+
+@item FREEVLA_INLINEASM
+This define must contain inline code that is called when a vla is
+freed. It has to restore the old stack pointer.
+
+@item FREEVLA_REG
+The register in which to pass the old stack pointer. 0 will
+pass on the stack.
+
+@item OLDSPVLA_INLINEASM
+This define must contain inline code that is called before the first vla is
+allocated. It has to return the current stack pointer before any vla has
+been allocated.
+
+@item FPVLA_REG
+An additional register used in functions containing vlas. The backend can
+specify a register (usually framepointer) that can not be used in functions
+with vlas. Therefore, it is possible to use this register in other functions
+(for example, if local variables are usually addressed directly through the
+stackpointer).
+
+@end table
+
+@node{libcalls}
+@subsection Library Calls
+
+Sometimes operations may be very complicated to generate code for (e.g.
+floating-point operations for machines without FPU, multiplication/division
+on some architectures or big data types like @code{long long}). Those are
+usually implemented by calling library functions.
+
+vbcc can be told to generate calls to library functions for certain ICs. When
+defining @code{HAVE_LIBCALLS}, the backend must provide the function
+@code{char *use_libcall(<code>,<typf>,<typf2>)}. This function gets
+called with the elements @code{code}, @code{typf} and @code{typf2} of an IC.
+If @code{use_libcall} returns a name, this library function will be called
+instead of the IC. Otherwise, 0 must be returned.
+
+All library functions have to be declared in @code{init_cg()} with
+@code{declare_builtin()}, supporting the following arguments:
+
+@table @code
+
+@item name
+The name of the library function. Usually, a reserved identifier should be
+chosen (e.g. starting with @code{__}).
+
+@item ztyp
+The return type of the function (only integral and float types are supported).
+
+@item q1typ
+The type of the first parameter (only integral and float types are supported).
+
+@item q1reg
+The register to pass the first argument in (0 passes via stack).
+
+@item q2typ
+The type of the second parameter (only integral and float types are supported).
+For functions with a single parameter, use 0.
+
+@item q2reg
+The register to pass the second argument in (0 passes via stack).
+
+@item nosidefx
+If this is non-zero, the function will be declared to have no side-effects
+and allow some more optimizations.
+
+@item inline_asm
+Inline assembly can be specified for the function.
+
+@end table
+
+Note that not all ICs can be converted to library calls.
 
 
 @section Changes from 0.7 Interface

@@ -3,12 +3,7 @@ this LICENSE file itself, is (c) 2011 Volker Barthelmann.
 
 The initial checkin of this vbcc/ directory contains the original
 source code of Volker Barthelmann's VBCC compiler, as downloaded
-on 2012-05-02 from http://www.ibaug.de/vbcc/vbcc.tar.gz.
-
-According to http://compilers.de/vbcc.html, these sources were
-last updated on 2011-08-16; this corresponds to the modification
-date of machines/ppc/machine.c. The modification date of
-machines/z/* was 2006-05-06.
+on 2016-04-12 from http://server.owl.de/~frank/tags/vbcc0_9e.tar.gz.
 
 Barthelmann's license text is included in the TEXI documentation
 in this directory (doc/vbcc.texi), and also available online

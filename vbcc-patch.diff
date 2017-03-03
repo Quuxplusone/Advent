@@ -1,162 +1,75 @@
-diff -Nur vbcc/config/z vbcc-patched/config/z
---- vbcc/config/z	1969-12-31 16:00:00.000000000 -0800
-+++ vbcc-patched/config/z	2012-06-05 11:17:56.000000000 -0700
+diff --git a/vbcc/Makefile b/vbcc/Makefile
+index 5ff828d..ce5a260 100644
+--- a/vbcc/Makefile
++++ b/vbcc/Makefile
+@@ -1,6 +1,6 @@
+ 
+ # used to create vbcc, vc and ucpp
+-CC = gcc -std=c9x -g -DHAVE_AOS4 #-DHAVE_ECPP -DHAVE_MISRA
++CC = gcc -std=c9x -g -DHAVE_AOS4 $(CFLAGS) #-DHAVE_ECPP -DHAVE_MISRA
+ LDFLAGS = -lm
+ 
+ # native version; used to create dtgen
+diff --git a/vbcc/config/z b/vbcc/config/z
+new file mode 100644
+index 0000000..fdd0f32
+--- /dev/null
++++ b/vbcc/config/z
 @@ -0,0 +1,5 @@
-+-cc=../bin/vbccz -quiet %s -o=%s %s -O=%ld
-+-ccv=../bin/vbccz %s -o=%s %s -O=%ld
++-cc=$VBCC/bin/vbccz -quiet %s -o=%s %s -O=%ld
++-ccv=$VBCC/bin/vbccz %s -o=%s %s -O=%ld
 +-as=cp %s %s
 +-ld=echo "Don't know how to link Z-machine code" 1>&2; exit 0
 +-rm=rm %s
-diff -Nur vbcc/datatypes/dtgen.c vbcc-patched/datatypes/dtgen.c
---- vbcc/datatypes/dtgen.c	2012-06-05 12:54:33.000000000 -0700
-+++ vbcc-patched/datatypes/dtgen.c	2012-06-05 11:17:56.000000000 -0700
-@@ -133,8 +133,8 @@
-   do{
-     printf("Type y or n [%s]: ",def);
-     fflush(stdout);
--    fgets(in,sizeof(in),stdin);
--    if(*in=='\n') strcpy(in,def);
-+    if (fgets(in,sizeof(in),stdin) == NULL || *in == '\n')
-+      strcpy(in,def);
-   }while(*in!='y'&&*in!='n');
-   return *in=='y';
- }
-diff -Nur vbcc/frontend/vc.c vbcc-patched/frontend/vc.c
---- vbcc/frontend/vc.c	2012-06-05 12:54:33.000000000 -0700
-+++ vbcc-patched/frontend/vc.c	2012-06-05 11:17:56.000000000 -0700
-@@ -2,6 +2,7 @@
- /*  (c) in 1995-2010 by Volker Barthelmann  */
- /*  #define AMIGA for Amiga-Version         */
- 
-+#include <assert.h>
- #include <stdlib.h>
- #include <string.h>
- #include <stdio.h>
-@@ -204,41 +205,50 @@
-     }
- }
- 
-+static char *derelativize(int from_cfg, char *old_path)
-+{
-+    if (from_cfg && !strncmp(old_path, "../", 3)) {
-+        char *vbcc_dir = getenv("VBCC");
-+        int vbcc_dir_len;
-+        char *new_path;
-+        assert(vbcc_dir != NULL);  /* or we'd already have bailed */
-+        vbcc_dir_len = strlen(vbcc_dir);
-+        new_path = malloc(vbcc_dir_len + 1 + strlen(old_path+3) + 1);
-+        sprintf(new_path, "%s%s%s",
-+                vbcc_dir,
-+                vbcc_dir[vbcc_dir_len-1] == '/' ? "" : "/",
-+                old_path+3);
-+        return new_path;
-+    }
-+    return old_path;
-+}
-+
- static int read_config(const char *cfg_name)
- {
-     int i,count; long size;
--    char *p,*name;
--    FILE *file=0;
--    for(i=0;i<sizeof(search_dirs)/sizeof(search_dirs[0]);i++){
--      name=malloc(strlen(search_dirs[i])+strlen(cfg_name)+1);
--      if(!name) {printf(nomem);raus(EXIT_FAILURE);}
--      strcpy(name,search_dirs[i]);
--      strcat(name,cfg_name);
--      file=fopen(name,"r");
--      free(name);
--      if(file) break;
--    }
--    if(!file){
--      p=getenv("VBCC");
--      if(p){
--        name=malloc(strlen(p)+strlen(cfg_name)+20);
--        if(!name){printf(nomem);raus(EXIT_FAILURE);}
--        strcpy(name,p);
--#if defined(_WIN32)||defined(MSDOS)||defined(ATARI)
--        strcat(name,"\\config\\");
--        strcat(name,cfg_name);
--#elif defined(AMIGA)
--        AddPart(name,"config",strlen(p)+strlen(cfg_name)+20);
--        AddPart(name,(STRPTR)cfg_name,strlen(p)+strlen(cfg_name)+20);
--#else
--        strcat(name,"/config/");
--        strcat(name,cfg_name);
--#endif
--        file=fopen(name,"r");
--        free(name);
--      }
-+    char *p;
-+    char *vbcc_dir = getenv("VBCC");
-+    int vbcc_dir_len;
-+    char *config_fullpath;
-+    FILE *file;
-+    if (vbcc_dir == NULL) {
-+        puts("Environment variable VBCC must point to the vbcc install directory!");
-+        raus(EXIT_FAILURE);
-+    }
-+    vbcc_dir_len = strlen(vbcc_dir);
-+    config_fullpath = malloc(vbcc_dir_len + 1 + 7 + strlen(cfg_name) + 1);
-+    sprintf(config_fullpath, "%s%s%s%s",
-+            vbcc_dir,
-+            vbcc_dir[vbcc_dir_len-1] == '/' ? "" : "/",
-+            "config/",
-+            cfg_name);
-+    file = fopen(config_fullpath, "r");
-+    if (file == NULL) {
-+        printf("Config file %s not found!\n"
-+               "Is environment variable VBCC set correctly?\n",
-+               config_fullpath);
-+        raus(EXIT_FAILURE);
-     }
--    if(!file) {puts("No config file!");raus(EXIT_FAILURE);}
-     if(fseek(file,0,SEEK_END)) return 0;
-     size=ftell(file);
-     if(fseek(file,0,SEEK_SET)) return 0;
-@@ -333,25 +343,26 @@
-         if(!strncmp(parm,"-ul=",4)){ul=parm+4;*parm=0;}
-     }
-     for(i=1;i<argc+count;i++){
--        if(i<argc) parm=argv[i]; else parm=confp[i-argc];
-+        int from_cfg = (i >= argc);
-+        parm = (from_cfg ? confp[i-argc] : argv[i]);
- /*        printf("Parameter %d=%s\n",i,parm);*/
-         if(!strncmp(parm,"-ldnodb=",8)){nodb=parm+8;*parm=0;}
-         if(!strncmp(parm,"-ldstatic=",10)){staticflag=parm+10;*parm=0;}
-         if(!strcmp(parm,"-g")) db=1;
-         if(!strcmp(parm,"-static")){staticmode=1;*parm=0;}
-         if(!strncmp(parm,"-ml=",4)){MAXCLEN=atoi(parm+4);*parm=0;}
--        if(!strncmp(parm,"-pp=",4)){ppname=parm+4;*parm=0;}
--        if(!strncmp(parm,"-cc=",4)){ccname=parm+4;*parm=0;}
--        if(!strncmp(parm,"-as=",4)){asname=parm+4;*parm=0;}
--        if(!strncmp(parm,"-ld=",4)){ldname=parm+4;*parm=0;}
--        if(!strncmp(parm,"-l2=",4)){l2name=parm+4;*parm=0;}
--        if(!strncmp(parm,"-rm=",4)){rmname=parm+4;*parm=0;}
--        if(!strncmp(parm,"-ppv=",5)){ppv=parm+5;*parm=0;}
--        if(!strncmp(parm,"-ccv=",5)){ccv=parm+5;*parm=0;}
--        if(!strncmp(parm,"-asv=",5)){asv=parm+5;*parm=0;}
--        if(!strncmp(parm,"-ldv=",5)){ldv=parm+5;*parm=0;}
--        if(!strncmp(parm,"-l2v=",5)){l2v=parm+5;*parm=0;}
--        if(!strncmp(parm,"-rmv=",5)){rmv=parm+5;*parm=0;}
-+        if(!strncmp(parm,"-pp=",4)){ppname=derelativize(from_cfg, parm+4);*parm=0;}
-+        if(!strncmp(parm,"-cc=",4)){ccname=derelativize(from_cfg, parm+4);*parm=0;}
-+        if(!strncmp(parm,"-as=",4)){asname=derelativize(from_cfg, parm+4);*parm=0;}
-+        if(!strncmp(parm,"-ld=",4)){ldname=derelativize(from_cfg, parm+4);*parm=0;}
-+        if(!strncmp(parm,"-l2=",4)){l2name=derelativize(from_cfg, parm+4);*parm=0;}
-+        if(!strncmp(parm,"-rm=",4)){rmname=derelativize(from_cfg, parm+4);*parm=0;}
-+        if(!strncmp(parm,"-ppv=",5)){ppv=derelativize(from_cfg, parm+5);*parm=0;}
-+        if(!strncmp(parm,"-ccv=",5)){ccv=derelativize(from_cfg, parm+5);*parm=0;}
-+        if(!strncmp(parm,"-asv=",5)){asv=derelativize(from_cfg, parm+5);*parm=0;}
-+        if(!strncmp(parm,"-ldv=",5)){ldv=derelativize(from_cfg, parm+5);*parm=0;}
-+        if(!strncmp(parm,"-l2v=",5)){l2v=derelativize(from_cfg, parm+5);*parm=0;}
-+        if(!strncmp(parm,"-rmv=",5)){rmv=derelativize(from_cfg, parm+5);*parm=0;}
-         if(!strncmp(parm,"-cf=",4)){cf=parm+4;*parm=0;}
-         if(!strncmp(parm,"-isc=",5)){scname=parm+5;*parm=0;}
-         if(!strncmp(parm,"-iscv=",6)){scv=parm+6;*parm=0;}
-diff -Nur vbcc/ic.c vbcc-patched/ic.c
---- vbcc/ic.c	2012-11-28 10:31:25.000000000 -0800
-+++ vbcc-patched/ic.c	2012-11-27 17:55:31.000000000 -0800
+diff --git a/vbcc/cse.c b/vbcc/cse.c
+index 6a355b8..9b4baf1 100644
+--- a/vbcc/cse.c
++++ b/vbcc/cse.c
+@@ -164,7 +164,7 @@ void num_exp(void)
+     if(DEBUG&1024){ printf("num_exp loop1\n");}
+     for(p=first_ic;p;p=p->next){
+         c=p->code;
+-        if(p->z.flags&&p->q1.flags&&(c!=ASSIGN||(p->q1.flags&DREFOBJ)||(static_cse&&(p->q1.flags&(VAR|VARADR))==VAR&&ISSCALAR(p->q1.v->vtyp->flags)&&(p->q1.v->storage_class==EXTERN||p->q1.v->storage_class==STATIC)))&&c!=MOVETOREG&&c!=MOVEFROMREG){
++        if(p->z.flags&&p->q1.flags&&(c!=ASSIGN||((p->q1.flags&DREFOBJ)&&ISSCALAR(q1typ(p)))||(static_cse&&(p->q1.flags&(VAR|VARADR))==VAR&&ISSCALAR(q1typ(p))&&(p->q1.v->storage_class==EXTERN||p->q1.v->storage_class==STATIC)))&&c!=MOVETOREG&&c!=MOVEFROMREG){
+             p->expindex=ecount++;
+             if(c==ADD||c==MULT||(c>=OR&&c<=AND)){
+                 if(p->q2.flags&&compare_objs(&p->q1,&p->q2,p->typf)<0&&(USEQ2ASZ||compare_objs(&p->q1,&p->z,p->typf))){
+diff --git a/vbcc/declaration.c b/vbcc/declaration.c
+index 070853b..20bb496 100644
+--- a/vbcc/declaration.c
++++ b/vbcc/declaration.c
+@@ -992,6 +992,10 @@ struct Typ *declaration_specifiers(void)
+   if(type_qualifiers&(XSIGNED|UNSIGNED))
+     if(!ISINT(typ))
+       error(58);
++  if ((type_qualifiers & XSIGNED) && (typ == CHAR)) {
++    type_qualifiers |= SIGNED_CHARACTER;
++  }
++  type_qualifiers &= ~XSIGNED;
+   new->flags=typ|type_qualifiers;
+   new->attr=attr;
+   return new;
+@@ -3084,14 +3088,14 @@ void gen_vars(struct Var *v)
+             /*  und dann der Rest   */
+             if(mode==2&&p->clist) continue;
+             if(!(p->flags&(TENTATIVE|DEFINED))){
+-              if(!((p->vtyp->flags&NQ)==FUNKT)||!p->fi||!p->fi->inline_asm)
++              if(((p->vtyp->flags&NQ)!=FUNKT)||!p->fi||!p->fi->inline_asm)
+                 gen_var_head(out,p);
+               if(p->storage_class==STATIC&&(!p->fi||!p->fi->inline_asm)) error(127,p->identifier);
+               continue;
+             }else{
+               /*gen_align(out,falign(p->vtyp));*/
+             }
+-            if(!(p->vtyp->flags&NQ)==FUNKT||!p->fi||!p->fi->inline_asm)
++            if(((p->vtyp->flags&NQ)!=FUNKT)||!p->fi||!p->fi->inline_asm)
+               gen_var_head(out,p);
+             if(!p->clist){
+               if(type_uncomplete(p->vtyp)) error(202,p->identifier);
+diff --git a/vbcc/ic.c b/vbcc/ic.c
+index ea785bb..5685c66 100644
+--- a/vbcc/ic.c
++++ b/vbcc/ic.c
 @@ -1,5 +1,6 @@
  /*  $VER: vbcc (ic.c) V0.8  */
  
@@ -164,7 +77,34 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
  #include "vbc.h"
  #include "opt.h"
  
-@@ -488,6 +489,194 @@
+@@ -181,13 +182,14 @@ void insert_bitfield(struct obj *dest,struct obj *src,struct obj *val,int bfs,in
+   val->flags=vmerk;
+ }
+ 
+-void inline_memcpy(np z,np q,zmax size)
++int inline_memcpy(np z,np q,zmax size)
+ /*  fuegt ein ASSIGN-IC ein, das memcpy(z,q,size) entspricht    */
+ {
+-    struct IC *new=new_IC();
+-    if(!ISPOINTER(z->ntyp->flags)) ierror(0);
+-    if(!ISPOINTER(q->ntyp->flags)) ierror(0);
++    struct IC *new;
++    if(!ISPOINTER(z->ntyp->flags)) return 0;
++    if(!ISPOINTER(q->ntyp->flags)) return 0;
+ 
++    new=new_IC();
+     if(z->flags==ADDRESS||z->flags==ADDRESSA||z->flags==ADDRESSS){
+       gen_IC(z,0,0);
+       new->z=z->left->o;
+@@ -254,6 +256,7 @@ void inline_memcpy(np z,np q,zmax size)
+     new->q2.flags=0;
+     new->q2.val.vmax=size;
+     add_IC(new);
++    return 1;  // success
+ }
+ 
+ void add_IC(struct IC *new)
+@@ -524,6 +527,193 @@ np gen_libcall(char *fname,np arg1,struct Typ *t1,np arg2,struct Typ *t2)
    return new;
  }
  
@@ -176,20 +116,20 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
 +{
 +    int len = 0;
 +    for (struct const_list *cx = cl; cx != NULL; cx = cx->next, ++len) {
-+	int ch = cx->other->val.vchar;
-+	switch (ch) {
-+	    case '\0': if (cx->next != NULL) return NULL; break;
-+	    case '\t': case '\n': /* okay */ break;
-+	    default:
-+		if (cx->next == NULL) return NULL;  /* not null-terminated */
-+		break;
-+	}
++        int ch = cx->other->val.vchar;
++        switch (ch) {
++            case '\0': if (cx->next != NULL) return NULL; break;
++            case '\t': case '\n': /* okay */ break;
++            default:
++                if (cx->next == NULL) return NULL;  /* not null-terminated */
++                break;
++        }
 +    }
 +    /* Okay, the string is a valid, printable string. */
 +    char *text = mymalloc(len);
 +    int i = 0;
 +    for (struct const_list *cx = cl; cx != NULL; cx = cx->next, ++i) {
-+	text[i] = cx->other->val.vchar;
++        text[i] = cx->other->val.vchar;
 +    }
 +    return text;
 +}
@@ -199,19 +139,19 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
 +    struct const_list *cl = NULL;
 +    struct const_list **pp = &cl;
 +    for (int i=0; /*true*/; ++i) {
-+	*pp = mymalloc(CLS);
-+	(*pp)->tree = NULL;
-+	(*pp)->idx = i;
-+	(*pp)->val.vmax = 0;
-+	(*pp)->other = mymalloc(CLS);
-+	(*pp)->other->next = (*pp)->other->other = NULL;
-+	(*pp)->other->tree = NULL;
-+	(*pp)->other->idx = 0;
-+	(*pp)->other->val.vchar = text[i];
-+	pp = &(*pp)->next;
-+	*pp = NULL;
-+	if (text[i] == '\0')
-+	    break;
++        *pp = mymalloc(CLS);
++        (*pp)->tree = NULL;
++        (*pp)->idx = i;
++        (*pp)->val.vmax = 0;
++        (*pp)->other = mymalloc(CLS);
++        (*pp)->other->next = (*pp)->other->other = NULL;
++        (*pp)->other->tree = NULL;
++        (*pp)->other->idx = 0;
++        (*pp)->other->val.vchar = text[i];
++        pp = &(*pp)->next;
++        *pp = NULL;
++        if (text[i] == '\0')
++            break;
 +    }
 +    return cl;
 +}
@@ -219,26 +159,26 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
 +static void emit_print_num(np p, struct argument_list *arg)
 +{
 +    assert(strcmp(p->left->left->o.v->identifier, "printf") == 0);
-+    
++
 +    static struct Var *internal_print_num = NULL;
 +    static struct Typ *voidfunc_ptr_typ = NULL;
 +    if (internal_print_num == NULL) {
-+	struct Typ voidt = {VOID};
-+	struct Typ *voidfunctyp = new_typ();
-+	voidfunctyp->next = clone_typ(&voidt);  /* returning void */
-+	voidfunctyp->exact = mymalloc(sizeof *voidfunctyp->exact);
-+	voidfunctyp->exact->count = 0;  /* taking unspecified arguments */
-+	voidfunctyp->flags = FUNKT;
-+	internal_print_num = add_var("XXinternal_print_num", voidfunctyp, EXTERN, NULL);
-+	internal_print_num->fi = new_fi();
-+	internal_print_num->fi->inline_asm = malloc(sizeof("\t@print_num r0;\n"));
-+	strcpy(internal_print_num->fi->inline_asm, "\t@print_num r0;\n");
-+	
-+	voidfunc_ptr_typ = new_typ();
-+	voidfunc_ptr_typ->next = clone_typ(voidfunctyp);
-+	voidfunc_ptr_typ->flags = POINTER_TYPE(voidfunc_ptr_typ->next);
++        struct Typ voidt = {VOID};
++        struct Typ *voidfunctyp = new_typ();
++        voidfunctyp->next = clone_typ(&voidt);  /* returning void */
++        voidfunctyp->exact = mymalloc(sizeof *voidfunctyp->exact);
++        voidfunctyp->exact->count = 0;  /* taking unspecified arguments */
++        voidfunctyp->flags = FUNKT;
++        internal_print_num = add_var("XXinternal_print_num", voidfunctyp, EXTERN, NULL);
++        internal_print_num->fi = new_fi();
++        internal_print_num->fi->inline_asm = malloc(sizeof("\t@print_num r0;\n"));
++        strcpy(internal_print_num->fi->inline_asm, "\t@print_num r0;\n");
++
++        voidfunc_ptr_typ = new_typ();
++        voidfunc_ptr_typ->next = clone_typ(voidfunctyp);
++        voidfunc_ptr_typ->flags = POINTER_TYPE(voidfunc_ptr_typ->next);
 +    }
-+    
++
 +    struct argument_list *saved_alist = p->alist;
 +    struct Var *saved_ov = p->left->left->o.v;
 +    struct Typ *saved_ntyp = p->left->ntyp;
@@ -268,10 +208,10 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
 +    int saved_size = al->arg->left->ntyp->size;
 +    int length = 0;
 +    for (struct const_list *sx = cl; sx; sx = sx->next)
-+	++length;
++        ++length;
 +    assert(length >= 1);
 +    al->arg->left->ntyp->size = length;
-+    
++
 +    struct argument_list *saved_alist = p->alist;
 +    struct argument_list *new_alist = mymalloc(sizeof(struct argument_list));
 +    new_alist->arg = al->arg;
@@ -297,40 +237,40 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
 +    sprintf(inline_asm, "\t%s(\"", z_optimize_puts_name);
 +    int len = strlen(inline_asm);
 +    for (int i=0; text[i] != '\0'; ++i) {
-+	cap += strlen(z_optimize_puts_name) + 32;
++        cap += strlen(z_optimize_puts_name) + 32;
 +        inline_asm = myrealloc(inline_asm, cap);
-+	if ((text[i] & 0x80) != 0) {
-+	    unsigned int w = text[i] & 0xFF;
-+	    if (0xC2 <= w && w <= 0xDF) {
-+		w &= 0x1F;
-+		w = (w << 6) | text[++i] & 0x3F;
-+	    } else if (0xE0 <= w && w <= 0xEF) {
-+		w &= 0x0F;
-+		w = (w << 6) | text[++i] & 0x3F;
-+		w = (w << 6) | text[++i] & 0x3F;
-+	    } else {
-+		ierror(0);  /* unsupported or invalid UTF-8 encoding */
-+	    }
++        if ((text[i] & 0x80) != 0) {
++            unsigned int w = text[i] & 0xFF;
++            if (0xC2 <= w && w <= 0xDF) {
++                w &= 0x1F;
++                w = (w << 6) | (text[++i] & 0x3F);
++            } else if (0xE0 <= w && w <= 0xEF) {
++                w &= 0x0F;
++                w = (w << 6) | (text[++i] & 0x3F);
++                w = (w << 6) | (text[++i] & 0x3F);
++            } else {
++                ierror(0);  /* unsupported or invalid UTF-8 encoding */
++            }
 +            strcpy(inline_asm+len, "\");\n"); len += 3;
-+	    sprintf(inline_asm+len, "\t@print_unicode $%04X;\n"
-+		                    "\t%s(\"", w, z_optimize_puts_name);
-+	    len = strlen(inline_asm);
-+	} else {
-+	    switch (text[i]) {
-+		case '\n': inline_asm[len++] = '^'; break;
-+		case '\t': strcpy(inline_asm+len, "@{9}"); len += 4; break;
-+		case '"': inline_asm[len++] = '~'; break;
-+		case '@': strcpy(inline_asm+len, "@{40}"); len += 5; break;
-+		case '\\': strcpy(inline_asm+len, "@{5c}"); len += 5; break;
-+		case '~': strcpy(inline_asm+len, "@{7e}"); len += 5; break;
-+		case '^': strcpy(inline_asm+len, "@@94\",\""); len += 7; break;
-+		default:
-+		    /* This should have been assured by const_list_to_string(). */
-+		    assert(32 <= text[i] && text[i] <= 126);
-+		    inline_asm[len++] = text[i];
-+		    break;
-+	    }
-+	}
++            sprintf(inline_asm+len, "\t@print_unicode $%04X;\n"
++                                    "\t%s(\"", w, z_optimize_puts_name);
++            len = strlen(inline_asm);
++        } else {
++            switch (text[i]) {
++                case '\n': inline_asm[len++] = '^'; break;
++                case '\t': strcpy(inline_asm+len, "@{9}"); len += 4; break;
++                case '"': inline_asm[len++] = '~'; break;
++                case '@': strcpy(inline_asm+len, "@{40}"); len += 5; break;
++                case '\\': strcpy(inline_asm+len, "@{5c}"); len += 5; break;
++                case '~': strcpy(inline_asm+len, "@{7e}"); len += 5; break;
++                case '^': strcpy(inline_asm+len, "@@94\",\""); len += 7; break;
++                default:
++                    /* This should have been assured by const_list_to_string(). */
++                    assert(32 <= text[i] && text[i] <= 126);
++                    inline_asm[len++] = text[i];
++                    break;
++            }
++        }
 +    }
 +    strcpy(inline_asm+len, "\");\n"); len += 3;
 +
@@ -355,11 +295,10 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
 +    p->left->left->o.v = saved_v;
 +    p->alist = saved_alist;
 +}
-+
  
  void gen_IC(np p,int ltrue,int lfalse)
  /*  Erzeugt eine IC-Liste aus einer expression      */
-@@ -915,6 +1104,129 @@
+@@ -1011,6 +1201,129 @@ void gen_IC(np p,int ltrue,int lfalse)
          struct IC *merk_fp,*lp;
  	unsigned int merk_opushed=opushed;
  #endif
@@ -489,21 +428,73 @@ diff -Nur vbcc/ic.c vbcc-patched/ic.c
          if(p->left->flags==ADDRESS&&p->left->left->flags==IDENTIFIER){
              struct Var *v;
              gen_IC(p->left,0,0); r=1;
-diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
---- vbcc/machines/z/machine.c	2012-11-28 10:31:26.000000000 -0800
-+++ vbcc-patched/machines/z/machine.c	2016-03-07 21:18:22.000000000 -0800
-@@ -60,6 +60,10 @@
- static char FILE_[]=__FILE__;
- char cg_copyright[]="vbcc code-generator for Z-machine V0.0a (c) in 2001 by David Given";
+@@ -1187,8 +1500,7 @@ void gen_IC(np p,int ltrue,int lfalse)
+                                 if(zmeqto(zc2zm(cl->other->val.vchar),l2zm(0L))) break;
+                                 cl=cl->next;
+                             }
+-                            if(zmleq(len,l2zm((long)INLINEMEMCPY))){
+-                                inline_memcpy(p->alist->arg,n,len);
++                            if(zmleq(len,l2zm((long)INLINEMEMCPY)) && inline_memcpy(p->alist->arg,n,len)){
+                                 p->o=p->alist->arg->o;
+                                 return;
+                             }
+@@ -1199,8 +1511,7 @@ void gen_IC(np p,int ltrue,int lfalse)
+                            &&p->alist->next->next->arg
+                            &&p->alist->next->next->arg->flags==CEXPR){
+                             eval_constn(p->alist->next->next->arg);
+-                            if(zmleq(vmax,l2zm((long)INLINEMEMCPY))){
+-                                inline_memcpy(p->alist->arg,p->alist->next->arg,vmax);
++                            if(zmleq(vmax,l2zm((long)INLINEMEMCPY)) && inline_memcpy(p->alist->arg,p->alist->next->arg,vmax)){
+                                 p->o=p->alist->arg->o;
+                                 return;
+                             }
+@@ -2568,4 +2879,3 @@ void savescratch(int code,struct IC *p,int dontsave,struct obj *o)
+     }
+   }
+ }
+-
+diff --git a/vbcc/loop.c b/vbcc/loop.c
+index f3cd29a..72eec0a 100644
+--- a/vbcc/loop.c
++++ b/vbcc/loop.c
+@@ -1268,6 +1268,7 @@ int do_unroll(int donothing)
+     if(flags&UNROLL_INVARIANT){
+       struct IC *new,*mc,*mn; struct Var *v; int out=++label,code;
+       long i; struct Typ *t;static struct Typ tptrdiff={0};
++      ierror(0);  // [ajo] if this is hit, try to trigger the bug below
+       if(DEBUG&1024) printf("unrolling non-constant loop\n");
+       if(ISPOINTER(cmp->typf)){
+ 	tptrdiff.flags=PTRDIFF_T(cmp->typf);
+@@ -1477,15 +1478,17 @@ int do_unroll(int donothing)
+     if(flags&UNROLL_REVERSE){
+       struct IC *new,*mc; struct Var *v; int out=++label,code;
+       long i; struct Typ *t;static struct Typ tptrdiff={0};
++      static struct Typ totherwise={0};
+       if(DEBUG&1024) printf("reversing loop\n");
+       if(ISPOINTER(cmp->typf)){
+ 	tptrdiff.flags=PTRDIFF_T(cmp->typf);
+ 	t=&tptrdiff;
+       }else{
++	t=&totherwise;
+ 	if(cmp->q1.flags&VAR)
+-	  t=cmp->q1.v->vtyp;
++	  t->flags=q1typ(cmp);
+ 	else
+-	  t=cmp->q2.v->vtyp;
++	  t->flags=q2typ(cmp);
+       }
+       v=add_tmp_var(clone_typ(t));
+       new=new_IC();
+@@ -1920,4 +1923,3 @@ int loop_optimizations(struct flowgraph *fg)
  
-+extern char *strdup(const char *);
-+
-+#define NOT_ON_STACK 999999
-+
- /* Command-line flags. */
- 
- int g_flags[MAXGF] = {
-@@ -68,7 +72,9 @@
+   return changed;
+ }
+-
+diff --git a/vbcc/machines/z/machine.c b/vbcc/machines/z/machine.c
+index a242fff..add4f5a 100644
+--- a/vbcc/machines/z/machine.c
++++ b/vbcc/machines/z/machine.c
+@@ -68,7 +68,9 @@ int g_flags[MAXGF] = {
  	0,
  	0,
  	0,
@@ -514,7 +505,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  };
  char *g_flags_name[MAXGF] = {
  	"module-name",
-@@ -76,7 +82,9 @@
+@@ -76,7 +78,9 @@ char *g_flags_name[MAXGF] = {
  	"trace-all",
  	"safe-branches",
  	"comment-ic",
@@ -525,7 +516,16 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  };
  union ppi g_flags_val[MAXGF];
  
-@@ -197,6 +205,10 @@
+@@ -180,7 +184,7 @@ int regsa[] = {
+ 
+ int regscratch[] = {
+ 	0,
+-	0,	0,	0,	0,	0,	0,	0,	0,
++	0,	1,	0,	0,	0,	0,	0,	0,
+ 	0,	0,	0,	0,	0,	0};
+ 
+ /* Default state for register parameter passing. */
+@@ -197,6 +201,10 @@ static char* labelprefix = "L";
  
  static char* modulename;
  
@@ -536,32 +536,73 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  /* Stack frame layout:
   *
   *  --------------
-@@ -337,20 +349,16 @@
+@@ -243,8 +251,8 @@ enum {
  
- /* Extract the sign extended byte n of a value. */
+ /* Some useful zops. */
  
--static char xbyte(zmax val, int byte)
-+static unsigned char xbyte(zmax val, int byte)
+-struct zop zop_zero = {ZOP_CONSTANT, {constant: 0}};
+-struct zop zop_xp = {ZOP_REG, {reg: XP}};
++struct zop zop_zero = {ZOP_CONSTANT, {.constant = 0}};
++struct zop zop_xp = {ZOP_REG, {.reg = XP}};
+ struct zop zop_stack = {ZOP_STACK, 0};
+ 
+ /* Temporaries used to store comparison register numbers. */
+@@ -357,20 +365,33 @@ static zshort xword(zmax val, int word)
+ 
+ static void dump_type(FILE* fp, int typf)
  {
--	val <<= (sizeof(val)*8) - (byte*8) - 8;
--	val >>= (sizeof(val)*8) - 8;
--	return (unsigned char) val;
-+	return val >> (byte*8);
+-	switch (typf)
++	if (typf & CONST) fprintf(fp, "CONST|");
++	if (typf & VOLATILE) fprintf(fp, "VOLATILE|");
++	if (typf & UNSIGNED) fprintf(fp, "UNSIGNED|");
++	if (typf & BOOLEAN) fprintf(fp, "BOOLEAN|");
++	if (typf & SIGNED_CHARACTER) fprintf(fp, "SIGNED|");
++	switch (typf & NQ)
+ 	{
+-		case VOID:	fprintf(fp, "VOID"); break;
+ 		case CHAR:	fprintf(fp, "CHAR"); break;
+ 		case SHORT:	fprintf(fp, "SHORT"); break;
+ 		case INT:	fprintf(fp, "INT"); break;
+ 		case LONG:	fprintf(fp, "LONG"); break;
++		case LLONG:	fprintf(fp, "LLONG"); break;
++		case FLOAT:	fprintf(fp, "FLOAT"); break;
++		case DOUBLE:	fprintf(fp, "DOUBLE"); break;
++		case LDOUBLE:	fprintf(fp, "LDOUBLE"); break;
++		case VOID:	fprintf(fp, "VOID"); break;
+ 		case POINTER:	fprintf(fp, "POINTER"); break;
+-		case STRUCT:	fprintf(fp, "STRUCT"); break;
+ 		case ARRAY:	fprintf(fp, "ARRAY"); break;
++		case STRUCT:	fprintf(fp, "STRUCT"); break;
+ 		case UNION:	fprintf(fp, "UNION"); break;
++		case ENUM:	fprintf(fp, "ENUM"); break;
+ 		case FUNKT:	fprintf(fp, "FUNKT"); break;
+ 		default:	fprintf(fp, "unknown %X", typf);
+ 	}
++	if (typf & ~(NQ|CONST|VOLATILE|UNSIGNED|BOOLEAN|SIGNED_CHARACTER)) {
++		fprintf(fp, "|0x%x", (unsigned)(typf & ~(NQ|CONST|VOLATILE|UNSIGNED|BOOLEAN|SIGNED_CHARACTER)));
++	}
  }
  
- /* Extract the sign extended word n of a value. */
+ /* Debug function: outputs the obj. */
+@@ -391,7 +412,7 @@ static void dump_obj(FILE* fp, struct obj* obj, int typf)
+ 	if (f & VARADR)
+ 		fprintf(fp, "&");
  
--static zshort xword(zmax val, int word)
-+static short xword(zmax val, int word)
- {
--	val <<= (sizeof(val)*8) - (word*16) - 16;
--	val >>= (sizeof(val)*8) - 16;
--	return (zshort) val;
-+	return val >> (word*16);
- }
+-	if (f == KONST)
++	if (f & KONST)
+ 	{
+ 		switch (typf & NU)
+ 		{
+@@ -416,7 +437,7 @@ static void dump_obj(FILE* fp, struct obj* obj, int typf)
+ 				break;
  
- /* Debug function: prints the text name of a type. */
-@@ -428,17 +436,12 @@
+ 			case UNSIGNED|INT:
+-				fprintf(fp, "[uint #%d]", obj->val.vuint);
++				fprintf(fp, "[uint #%u]", obj->val.vuint);
+ 				break;
+ 
+ 			case LONG:
+@@ -428,25 +449,19 @@ static void dump_obj(FILE* fp, struct obj* obj, int typf)
  				break;
  
  			case FLOAT:
@@ -574,35 +615,44 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
 +				fprintf(fp, "[double #%f]", obj->val.vdouble);
  				break;
 -#if 0
--			case POINTER:
++
+ 			case POINTER:
 -				fprintf(fp, "[pointer #%04X]", obj->val.vpointer);
--				break;
++				fprintf(fp, "[pointer #%04X]", obj->val.vuint);
+ 				break;
 -#endif
  		}
  	}
- 	else if (f == REG)
-@@ -455,13 +458,15 @@
- 		if ((obj->v->storage_class == AUTO) ||
- 		    (obj->v->storage_class == REGISTER))
- 		{
--			zmax offset = obj->v->offset;
--			//if (offset < 0)
--			//	offset = -(offset+maxalign);
+-	else if (f == REG)
+-		fprintf(fp, "[reg %s]", regnames[obj->reg]);
+-	else if (f == (REG|DREFOBJ))
+-		fprintf(fp, "[deref reg %s]", regnames[obj->reg]);
+-	//else if (f & VAR)
+-	else
++	if (f & VAR)
+ 	{
+ 		fprintf(fp, "[var ");
+ 		dump_type(fp, typf);
+@@ -458,14 +473,16 @@ static void dump_obj(FILE* fp, struct obj* obj, int typf)
+ 			zmax offset = obj->v->offset;
+ 			//if (offset < 0)
+ 			//	offset = -(offset+maxalign);
 -			fprintf(fp, " at fp%+d", offset);
-+			int offset = obj->v->offset;
-+			if (offset == NOT_ON_STACK) {
-+				fprintf(fp, " (not on stack)", offset);
-+			} else {
-+				fprintf(fp, " at fp%+d", offset);
-+			}
++			fprintf(fp, " at fp%+ld", offset);
  		}
  
 -		fprintf(fp, "+%ld", obj->val.vlong);
-+		fprintf(fp, "+%d", (int)obj->val.vlong);
++		fprintf(fp, "+%d", obj->val.vlong);
  
  		if (f & REG)
  			fprintf(fp, " in %s", regnames[obj->reg]);
-@@ -503,19 +508,7 @@
+ 		fprintf(fp, "]");
++	} else if (f & REG) {
++		fprintf(fp, "[reg %s]", regnames[obj->reg]);
+ 	}
+ }
+ 
+@@ -503,19 +520,7 @@ static void dump_ic(FILE* fp, struct IC* ic)
  		case MINUS:		p = "MINUS";		break;
  		case ADDRESS:		p = "ADDRESS";		break;
  		case CALL:		p = "CALL";		break;
@@ -623,7 +673,22 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  		case ALLOCREG:		p = "ALLOCREG";		break;
  		case FREEREG:		p = "FREEREG";		break;
  		case COMPARE:		p = "COMPARE";		break;
-@@ -580,6 +573,10 @@
+@@ -558,11 +563,11 @@ static void dump_ic(FILE* fp, struct IC* ic)
+ 			goto epilogue;
+ 	}
+ 	
+-	dump_obj(fp, &ic->q1, ic->typf);
++	dump_obj(fp, &ic->q1, q1typ(ic));
+ 	fprintf(fp, " ");
+-	dump_obj(fp, &ic->q2, ic->typf);
++	dump_obj(fp, &ic->q2, q2typ(ic));
+ 	fprintf(fp, " -> ");
+-	dump_obj(fp, &ic->z, ic->typf);
++	dump_obj(fp, &ic->z, ztyp(ic));
+ 
+ epilogue:
+ 	if (g_flags[2] & USEDFLAG)
+@@ -580,6 +585,10 @@ int init_cg(void)
  	if (!modulename)
  		modulename = "";
  
@@ -634,23 +699,33 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
    /*  Initialize the min/max-settings. Note that the types of the     */
    /*  host system may be different from the target system and you may */
    /*  only use the smallest maximum values ANSI guarantees if you     */
-@@ -743,8 +740,8 @@
- 			break;
- 			
- 		case STATIC:
--			fprintf(fp, "Array STATIC_%s_%ld ->\n",
--				modulename, var->offset);
-+			fprintf(fp, "Array STATIC_%s_%d ->\n",
-+				modulename, (int)var->offset);
- 			currentvar.type = STATIC;
- 			currentvar.val.number = var->offset;
- 			currentvar.offset = 0;
-@@ -757,7 +754,13 @@
+@@ -647,17 +656,17 @@ int dangerous_IC(struct IC *ic)
+ 	if ((ic->q1.flags & DREFOBJ) ||
+ 	    (ic->q2.flags & DREFOBJ) ||
+ 	    (ic->z.flags & DREFOBJ))
+-		return 0;
++		return 1;
+ 
+ 	/* Division or modulo? */
+ 
+ 	if ((ic->code == DIV) ||
+ 	    (ic->code == MOD))
+-		return 0;
++		return 1;
+ 
+ 	/* Safe, as far as we can tell. */
+ 
+-	return 1;
++	return 0;
+ }
+ 
+ /* Returns zero if the code for converting type p->ntyp to type typ is a noop.
+@@ -757,7 +766,13 @@ void gen_var_head(FILE* fp, struct Var* var)
  
  void gen_ds(FILE *fp, zmax size, struct Typ *typ)
  {
 -	fprintf(fp, " %ld\n", size);
-+	if (currentvar.offset != 0) {
++	if (size == 1 || currentvar.offset != 0) {
 +		for (int i=0; i < (int)size; ++i) {
 +			fprintf(fp, " (0)\n");
 +		}
@@ -660,40 +735,51 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  	currentvar.offset += size;
  }
  
-@@ -834,6 +837,8 @@
- zmax voff(struct obj* obj)
- {
- 	zmax offset = obj->v->offset;
-+	if (offset == NOT_ON_STACK)
-+		return NOT_ON_STACK;  /* this result should never be used */
- 	if (offset < 0)
- 		offset = stackparamadjust + stackoffset - offset - maxalign;
- 	else
-@@ -892,8 +897,8 @@
- 	switch (obj->v->storage_class)
- 	{
- 		case STATIC:
--			fprintf(fp, "STATIC_%s_%ld",
--				modulename, obj->v->offset);
-+			fprintf(fp, "STATIC_%s_%d",
-+				modulename, (int)obj->v->offset);
- 			break;
+@@ -852,8 +867,8 @@ static int find_varargs(void)
+ 	int offset = 0;
+ 	struct reg_handle rh = empty_reg_handle;
+ 	struct struct_declaration* sd = function->vtyp->exact;
+-	int stackalign;
+ 	int i;
++	struct Typ *parameter_type;
  
- 		case EXTERN:
-@@ -956,10 +961,10 @@
- 		case AUTO:
- 		case REGISTER: /* Local variable */
- 		{
--			zmax offset = voff(obj);
-+			int offset = voff(obj);
+ 	for (i=0; i<sd->count; i++)
+ 	{
+@@ -867,21 +882,12 @@ static int find_varargs(void)
+ 		if (((*sd->sl)[i].styp->flags & NQ) == VOID)
+ 			ierror(0);
+ 
+-		/* Does the backend want to assign it to a register? */
+-
+-		if (reg_parm(&rh, (*sd->sl)[i].styp, 0, 0))
+-			continue;
+-
+ 		/* Add on the size of this parameter. */
+ 
+-		offset += sizetab[(*sd->sl)[i].styp->flags & NQ];
+-
+-		/* Stack align. */
+-
+-		stackalign = align[(*sd->sl)[i].styp->flags & NQ];
+-		offset = ((offset+1) / stackalign) * stackalign;
++		parameter_type = (*sd->sl)[i].styp;
++		offset = (offset + align[parameter_type->flags&NQ]-1) & ~(align[parameter_type->flags&NQ]-1);
++		offset += szof(parameter_type);
+ 	}
+-
+ 	return (offset + stackoffset);
+ }
+ 
+@@ -959,7 +965,7 @@ static void write_reg(FILE* fp, struct obj* obj, int typf, int reg)
+ 			zmax offset = voff(obj);
  
  			if ((typf & NQ) == CHAR)
 -				fprintf(fp, "\t@storeb xp 0%+ld %s;\n",
-+				fprintf(fp, "\t@storeb xp (%d) %s;\n",
++				fprintf(fp, "\t@storeb xp (%ld) %s;\n",
  					offset, regnames[reg]);
  			else
  			{
-@@ -969,11 +974,11 @@
+@@ -969,11 +975,11 @@ static void write_reg(FILE* fp, struct obj* obj, int typf, int reg)
  					c.type = ZOP_CONSTANT;
  					c.val.constant = offset;
  					emit_add(fp, &zop_xp, &c, &zop_stack);
@@ -703,43 +789,38 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  				}
  				else
 -					fprintf(fp, "\t@storew xp 0%+ld %s;\n",
-+					fprintf(fp, "\t@storew xp (%d) %s;\n",
++					fprintf(fp, "\t@storew xp (%ld) %s;\n",
  						offset >> 1, regnames[reg]);
  			}
  			return;
-@@ -988,8 +993,8 @@
+@@ -988,7 +994,7 @@ static void write_reg(FILE* fp, struct obj* obj, int typf, int reg)
  			{
  				fprintf(fp, "\t@storeb ");
  				emit_identifier(fp, obj);
 -				fprintf(fp, " 0%+ld %s;\n",
--					obj->val.vlong, regnames[reg]);
 +				fprintf(fp, " (%d) %s;\n",
-+					(int)obj->val.vlong, regnames[reg]);
+ 					obj->val.vlong, regnames[reg]);
  			}
  			else
- 			{
-@@ -997,8 +1002,8 @@
+@@ -997,7 +1003,7 @@ static void write_reg(FILE* fp, struct obj* obj, int typf, int reg)
  				{
  					fprintf(fp, "\t@add ");
  					emit_identifier(fp, obj);
 -					fprintf(fp, " 0%+ld -> sp;\n",
--						obj->val.vlong);
 +					fprintf(fp, " (%d) -> sp;\n",
-+						(int)obj->val.vlong);
+ 						obj->val.vlong);
  					fprintf(fp, "\t@storew sp 0 %s;\n",
  						regnames[reg]);
- 				}
-@@ -1006,15 +1011,15 @@
+@@ -1006,7 +1012,7 @@ static void write_reg(FILE* fp, struct obj* obj, int typf, int reg)
  				{
  					fprintf(fp, "\t@storew ");
  					emit_identifier(fp, obj);
 -					fprintf(fp, " 0%+ld %s;\n",
--						obj->val.vlong >> 1, regnames[reg]);
 +					fprintf(fp, " (%d) %s;\n",
-+						(int)(obj->val.vlong >> 1), regnames[reg]);
+ 						obj->val.vlong >> 1, regnames[reg]);
  				}
  			}
- 			return;
+@@ -1014,7 +1020,7 @@ static void write_reg(FILE* fp, struct obj* obj, int typf, int reg)
  #if 0
  		case EXTERN: /* External linkage */
  			if ((typf & NQ) == CHAR)
@@ -748,7 +829,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  					obj->v->identifier, offset, regnames[reg]);
  			else
  			{
-@@ -1025,7 +1030,7 @@
+@@ -1025,7 +1031,7 @@ static void write_reg(FILE* fp, struct obj* obj, int typf, int reg)
  
  		case STATIC: /* Static global */
  			if ((typf & NQ) == CHAR)
@@ -757,7 +838,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  					modulename, obj->v->offset, offset, regnames[reg]);
  			else
  				fprintf(fp, "\t@storew STATIC_%s_%ld 0 %s;\n",
-@@ -1071,12 +1076,6 @@
+@@ -1071,12 +1077,6 @@ static void read_reg(FILE* fp, struct obj* obj, int typf, int reg)
  	int flags = obj->flags &
  		(KONST|REG|VAR|DREFOBJ|VARADR);
  
@@ -770,59 +851,52 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  	/* Is this a memory dereference? */
  
  	if (flags & DREFOBJ)
-@@ -1096,7 +1095,7 @@
+@@ -1096,7 +1096,7 @@ static void read_reg(FILE* fp, struct obj* obj, int typf, int reg)
  			case UNSIGNED|CHAR:	c.val.constant = obj->val.vuchar;	break;
  			case SHORT:		c.val.constant = obj->val.vshort;	break;
  			case UNSIGNED|SHORT:	c.val.constant = obj->val.vushort;	break;
 -		case POINTER:	      ierror(0);
-+			case POINTER:	      	c.val.constant = obj->val.vulong;	break;
++			case POINTER:		c.val.constant = obj->val.vulong;	break;
  			case INT:		c.val.constant = obj->val.vint;		break;
  			case UNSIGNED|INT:	c.val.constant = obj->val.vuint;	break;
  			default:
-@@ -1127,8 +1126,8 @@
+@@ -1127,7 +1127,7 @@ static void read_reg(FILE* fp, struct obj* obj, int typf, int reg)
  			case REGISTER: /* Local variable */
  				if (flags & VARADR)
  				{
 -					fprintf(fp, "\t@add xp 0%+ld -> %s;\n",
--						voff(obj), regnames[reg]);
-+					fprintf(fp, "\t@add xp (%d) -> %s;\n",
-+						(int)voff(obj), regnames[reg]);
++					fprintf(fp, "\t@add xp (%ld) -> %s;\n",
+ 						voff(obj), regnames[reg]);
  				}
  				else if (flags & REG)
- 				{
-@@ -1138,20 +1137,20 @@
- 				}
- 				else
- 				{
--					zmax offset = voff(obj);
-+					int offset = voff(obj);
+@@ -1141,17 +1141,17 @@ static void read_reg(FILE* fp, struct obj* obj, int typf, int reg)
+ 					zmax offset = voff(obj);
  
  					if ((typf & NQ) == CHAR)
 -						fprintf(fp, "\t@loadb xp 0%+ld -> %s;\n",
-+						fprintf(fp, "\t@loadb xp (%d) -> %s;\n",
++						fprintf(fp, "\t@loadb xp (%ld) -> %s;\n",
  							offset, regnames[reg]);
  					else
  					{
  						if (offset & 1)
  						{
 -							fprintf(fp, "\t@add xp 0%+ld -> sp;\n", offset);
-+							fprintf(fp, "\t@add xp (%d) -> sp;\n", offset);
++							fprintf(fp, "\t@add xp (%ld) -> sp;\n", offset);
  							fprintf(fp, "\t@loadw sp 0 -> %s;\n", regnames[reg]);
  						}
  						else
 -							fprintf(fp, "\t@loadw xp 0%+ld -> %s;\n",
-+							fprintf(fp, "\t@loadw xp (%d) -> %s;\n",
++							fprintf(fp, "\t@loadw xp (%ld) -> %s;\n",
  								offset >> 1, regnames[reg]);
  					}
  				}
-@@ -1170,12 +1169,12 @@
+@@ -1170,12 +1170,12 @@ static void read_reg(FILE* fp, struct obj* obj, int typf, int reg)
  
  					fprintf(fp, "\t@add ");
  					emit_identifier(fp, obj);
 -					fprintf(fp, " 0%+ld -> %s;\n",
--						obj->val.vlong, regnames[reg]);
 +					fprintf(fp, " (%d) -> %s;\n",
-+						(int)obj->val.vlong, regnames[reg]);
+ 						obj->val.vlong, regnames[reg]);
  				}
  				else if (strcmp(obj->v->identifier, "__va_start") == 0)
  				{
@@ -831,40 +905,34 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  						find_varargs(), regnames[reg]);
  				}
  				else
-@@ -1186,8 +1185,8 @@
+@@ -1186,7 +1186,7 @@ static void read_reg(FILE* fp, struct obj* obj, int typf, int reg)
  					{
  						fprintf(fp, "\t@loadb ");
  						emit_identifier(fp, obj);
 -						fprintf(fp, " 0%+ld -> %s;\n",
--							obj->val.vlong, regnames[reg]);
 +						fprintf(fp, " (%d) -> %s;\n",
-+							(int)obj->val.vlong, regnames[reg]);
+ 							obj->val.vlong, regnames[reg]);
  					}
  					else
- 					{
-@@ -1195,8 +1194,8 @@
+@@ -1195,7 +1195,7 @@ static void read_reg(FILE* fp, struct obj* obj, int typf, int reg)
  						{
  							fprintf(fp, "\t@add ");
  							emit_identifier(fp, obj);
 -							fprintf(fp, " 0%+ld -> sp;\n",
--								obj->val.vlong);
 +							fprintf(fp, " (%d) -> sp;\n",
-+								(int)obj->val.vlong);
+ 								obj->val.vlong);
  							fprintf(fp, "\t@loadw sp 0 -> %s;\n",
  								regnames[reg]);
- 						}
-@@ -1204,8 +1203,8 @@
+@@ -1204,7 +1204,7 @@ static void read_reg(FILE* fp, struct obj* obj, int typf, int reg)
  						{
  							fprintf(fp, "\t@loadw ");
  							emit_identifier(fp, obj);
 -							fprintf(fp, " 0%+ld -> %s;\n",
--								obj->val.vlong >> 1, regnames[reg]);
 +							fprintf(fp, " (%d) -> %s;\n",
-+								(int)(obj->val.vlong >> 1), regnames[reg]);
+ 								obj->val.vlong >> 1, regnames[reg]);
  						}
  					}
- 				}
-@@ -1224,7 +1223,7 @@
+@@ -1224,13 +1224,13 @@ dereference:
  	obj->flags &= ~DREFOBJ;
  	read_reg(fp, obj, POINTER, 0);
  		
@@ -873,7 +941,23 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  	{
  		switch (typf & NQ)
  		{
-@@ -1266,18 +1265,13 @@
+ 			case CHAR:
+ 				fprintf(fp, "\t@loadb sp 0 -> %s;\n",
+-					regnames[reg], regnames[reg]);
++					regnames[reg]);
+ 				break;
+ 
+ 			case SHORT:
+@@ -1238,7 +1238,7 @@ dereference:
+ 			case POINTER:
+ 			case FUNKT:
+ 				fprintf(fp, "\t@loadw sp 0 -> %s;\n",
+-					regnames[reg], regnames[reg]);
++					regnames[reg]);
+ 				break;
+ 
+ 			default:
+@@ -1266,7 +1266,7 @@ static void push_value(FILE* fp, struct obj* obj, int typf, struct zop* op)
  			case UNSIGNED|SHORT:	op->val.constant = obj->val.vushort;	break;
  			case INT:		op->val.constant = obj->val.vint;	break;
  			case UNSIGNED|INT:	op->val.constant = obj->val.vuint;	break;
@@ -882,18 +966,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  			default:
  				fprintf(fp, "XXX !!! bad konst type %X\n", typf);
  		}
- 		return;
- 	}
- 
--	/* The only thing you can do with a function is to take the address of it. */
--
--	if ((typf & NQ) == FUNKT)
--		flags &= ~DREFOBJ & ~VARADR;
--
- 	/* This is used by the long code. The longop functions can only operate
- 	 * on pointers to longs; so if we need to pass in a constant, we have
- 	 * to stash it on the stack and return a pointer. */
-@@ -1309,7 +1303,7 @@
+@@ -1309,7 +1309,7 @@ static void push_value(FILE* fp, struct obj* obj, int typf, struct zop* op)
  
  	if ((flags == (VAR|VARADR)) &&
  	    (obj->v->storage_class == EXTERN) &&
@@ -902,7 +975,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  	{
  		debugemit(fp, "! zop varaddr extern %s\n", obj->v->identifier);
  		op->type = ZOP_EXTERN;
-@@ -1319,7 +1313,7 @@
+@@ -1319,7 +1319,7 @@ static void push_value(FILE* fp, struct obj* obj, int typf, struct zop* op)
  
  	if ((flags == (VAR|VARADR)) &&
  	    (obj->v->storage_class == STATIC) &&
@@ -911,34 +984,16 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  	{
  		debugemit(fp, "! zop varaddr static %ld\n", obj->v->offset);
  		op->type = ZOP_STATIC;
-@@ -1404,7 +1398,7 @@
+@@ -1404,7 +1404,7 @@ static void emit_zop(FILE* fp, struct zop* op)
  			return;
  
  		case ZOP_CONSTANT:
 -			fprintf(fp, "0%+ld", (zshort)op->val.constant);
-+			fprintf(fp, "(%d)", (short)op->val.constant);
++			fprintf(fp, "(%d)", (zshort)op->val.constant);
  			return;
  
  		case ZOP_EXTERN:
-@@ -1412,13 +1406,13 @@
- 			return;
- 
- 		case ZOP_STATIC:
--			fprintf(fp, "STATIC_%s_%ld",
--				modulename, op->val.constant);
-+			fprintf(fp, "STATIC_%s_%d",
-+				modulename, (int)op->val.constant);
- 			return;
- 
- 		case ZOP_CONSTANTADDR:
--			fprintf(fp, "CONSTANT_%s_%ld",
--				modulename, op->val.constant);
-+			fprintf(fp, "CONSTANT_%s_%d",
-+				modulename, (int)op->val.constant);
- 			return;
- 
- 		default:
-@@ -1585,7 +1579,7 @@
+@@ -1585,7 +1585,7 @@ static void move_long_value(FILE* fp, struct obj* q1, struct obj* z, int typf)
  		push_addrof(fp, z, POINTER, &zz);
  		fprintf(fp, "\t@call_vn __long_loadconst ");
  		emit_zop(fp, &zz);
@@ -947,145 +1002,55 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  		return;
  	}
  
-@@ -1598,6 +1592,101 @@
- 	fprintf(fp, " 4;\n");
- }
- 
-+static int ssf_max = 0;
-+static short *ssf_frameusage = NULL;
-+
-+void ssf_record_frameusage(int where, int len)
-+{
-+	if (!(len >= 1)) ierror(0);
-+	if (!(0 <= where && where+len <= ssf_max)) ierror(0);
-+	while (len--) {
-+		ssf_frameusage[where+len] = 1;
-+	}
-+}
-+
-+int ssf_record_object(struct obj *obj)
-+{
-+	if (obj->flags & VAR) {
-+		int sc = obj->v->storage_class;
-+		if (sc != AUTO && sc != REGISTER)
-+			return 0;  /* don't care about non-stack vars */
-+		/* Mark this variable for updating later. */
-+		obj->v->nesting = 1;
-+		if (obj->flags & REG) {
-+			if (obj->flags & VARADR) ierror(0);
-+			return 0;  /* it's allocated to a register */
-+		}
-+		/* don't optimize function containing pointer arithmetic
-+		 * on stack objects */
-+		if (obj->flags & VARADR)
-+			return 1;
-+		/* don't optimize function containing VLA */
-+		if (obj->v->vtyp->dsize != NULL)
-+			return 1;
-+		/* don't optimize function taking 'long int' parameters; TODO understand what goes wrong */
-+		if (obj->v->offset < 0)
-+			return 1;
-+		ssf_record_frameusage(obj->v->offset, szof(obj->v->vtyp));
-+	}
-+	return 0;
-+}
-+
-+void ssf_update_object(struct obj *obj)
-+{
-+	if (obj->flags & VAR) {
-+		int sc = obj->v->storage_class;
-+		if (sc != AUTO && sc != REGISTER)
-+			return;  /* don't care about non-stack vars */
-+		if (obj->v->nesting) {
-+			if (ssf_frameusage[obj->v->offset] == -1) {
-+				obj->v->offset = NOT_ON_STACK;
-+			} else {
-+				obj->v->offset = ssf_frameusage[obj->v->offset];
-+			}
-+			obj->v->nesting = 0;
-+		}
-+	}
-+}
-+
-+/* The middle-end likes to make tons of temporaries on the stack and then
-+ * mostly optimize them away, leaving a "stackframe" of several thousand
-+ * sparsely occupied bytes. This little hack counts the stack space that's
-+ * actually being used, and squashes the remaining variables down into
-+ * that smaller space. */
-+int squash_stack_frame(struct IC *orig_ic, zmax stackframe)
-+{
-+	struct IC *ic;
-+	int bytes_used;
-+	int i;
-+
-+	ssf_max = stackframe;
-+	ssf_frameusage = realloc(ssf_frameusage, ssf_max * sizeof *ssf_frameusage);
-+	memset(ssf_frameusage, -1, ssf_max * sizeof *ssf_frameusage);
-+
-+	for (ic = orig_ic; ic != NULL; ic = ic->next) {
-+		/* Record the bytes actually referenced by this IC's operands.
-+		 * If optimization is inhibited, return the old stackframe. */
-+		if (ssf_record_object(&ic->q1)) return stackframe;
-+		if (ssf_record_object(&ic->q2)) return stackframe;
-+		if (ssf_record_object(&ic->z)) return stackframe;
-+	}
-+
-+	bytes_used = 0;
-+	for (i=0; i < ssf_max; ++i) {
-+		if (ssf_frameusage[i] != -1) {
-+			ssf_frameusage[i] = bytes_used++;
-+		}
-+	}
-+	
-+	for (ic = orig_ic; ic != NULL; ic = ic->next) {
-+		ssf_update_object(&ic->q1);
-+		ssf_update_object(&ic->q2);
-+		ssf_update_object(&ic->z);
-+	}
-+
-+	return bytes_used;
-+}
-+
- /* The code generator itself.
-  * This big, complicated, hairy and scary function does the work to actually
-  * produce the code.  fp is the output stream, ic the beginning of the ic
-@@ -1615,6 +1704,8 @@
+@@ -1615,6 +1615,8 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
  
      int c,t,lastcomp=0,reg;
  	    
-+	stackframe = squash_stack_frame(ic, stackframe);
-+    
++	if (fp == NULL) return;
++
      	function = func;
  
  	/* r0..r5 are always used for parameter passing. */
-@@ -1638,7 +1729,7 @@
- 	reflower(fp);
+@@ -1626,6 +1628,13 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+ 	regused[6] = 1;
+ 	regused[7] = 1;
  
- 	if (func->storage_class == STATIC)
--		fprintf(fp, "[ STATIC_%s_%ld xp\n", modulename, func->offset);
-+		fprintf(fp, "[ STATIC_%s_%d xp\n", modulename, (int)func->offset);
- 	else
- 		fprintf(fp, "[ _%s xp\n", func->identifier);
++	/* The indep code seems to underestimate the size of the frame for
++	 * some reason. For example, long f(long x) { return x; } requires
++	 * a temporary variable at xp(2), but stackframe remains 0.
++	 * I don't understand this bug yet. Anyway, +2 to compensate. */
++
++	stackframe += maxalign;
++
+ 	/* This is the offset of the stack frame, relative to the current stack
+ 	 * pointer. */
  
-@@ -1658,7 +1749,7 @@
- 	if (g_flags[1] & USEDFLAG)
- 	{
- 		if (func->storage_class == STATIC)
--			fprintf(fp, "print \"STATIC_%s_%ld^\";\n", modulename, func->offset);
-+			fprintf(fp, "print \"STATIC_%s_%d^\";\n", modulename, (int)func->offset);
- 		else
- 			fprintf(fp, "print \"_%s^\";\n", func->identifier);
- 	}
-@@ -1666,7 +1757,7 @@
+@@ -1666,7 +1675,7 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
  	/* Adjust stack for locals. */
  
  	if (stackframe)
 -		fprintf(fp, "\t@sub xp 0%+ld -> xp;\n", stackframe);
-+		fprintf(fp, "\t@sub xp (%d) -> xp;\n", (int)stackframe);
++		fprintf(fp, "\t@sub xp (%ld) -> xp;\n", stackframe);
  	//if (stackoffset)
  	//	fprintf(fp, "\txp = xp - %ld\n", stackframe);
  
-@@ -1862,17 +1953,29 @@
+@@ -1772,6 +1781,7 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+ 						 * noop. */
+ 					case LONG:
+ 					case STRUCT:
++					case UNION:
+ 					case VOID:
+ 					case ARRAY:
+ 						break;
+@@ -1809,6 +1819,7 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+ 
+ 					case LONG:
+ 					case STRUCT:
++					case UNION:
+ 					case VOID:
+ 					case ARRAY:
+ #if 0
+@@ -1862,18 +1873,46 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
  				continue;
  
  			case KOMPLEMENT: /* Unary komplement */
@@ -1093,47 +1058,75 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
 -				/* The @not opcode doesn't work. We have to use a
 -				 * wrapper function instead. */
 -				
- 				push_value(fp, &ic->q1, typf, &q1);
- 				pop_value(fp, &ic->z, typf, &z);
+-				push_value(fp, &ic->q1, typf, &q1);
+-				pop_value(fp, &ic->z, typf, &z);
 -				fprintf(fp, "\t@call_2s __not ");
 -				emit_zop(fp, &q1);
 -				fprintf(fp, " -> ");
 -				emit_zop(fp, &z);
 -				fprintf(fp, ";\n");
-+				if (g_flags[6] & USEDFLAG) {
-+					/* Prior to Inform 6.30, the assembler
-+					 * had a major bug in the @not opcode;
-+					 * it would generate bogus code and
-+					 * crash some Z-machine interpreters. */
-+					fprintf(fp, "\t@call_2s __not ");
-+					emit_zop(fp, &q1);
-+					fprintf(fp, " -> ");
-+					emit_zop(fp, &z);
-+					fprintf(fp, ";\n");
-+				} else {
-+					/* The bug was fixed in Inform 6.30.
-+					 * The current distribution of Inform 6
-+					 * is 6.31; the version distributed
-+					 * with Inform 7 is 6.32. */
-+					fprintf(fp, "\t@not ");
-+					emit_zop(fp, &q1);
-+					fprintf(fp, " -> ");
-+					emit_zop(fp, &z);
-+					fprintf(fp, ";\n");
+-				fin_zop(fp, &ic->z, typf, &z);
++				switch (typf & NQ)
++				{
++					case CHAR:
++					case SHORT:
++					case INT:
++						push_value(fp, &ic->q1, typf, &q1);
++						pop_value(fp, &ic->z, typf, &z);
++						if (g_flags[6] & USEDFLAG) {
++							/* Prior to Inform 6.30, the assembler
++							 * had a major bug in the @not opcode;
++							 * it would generate bogus code and
++							 * crash some Z-machine interpreters. */
++							fprintf(fp, "\t@call_2s __not ");
++						} else {
++							/* The bug was fixed in Inform 6.30.
++							 * The current distribution of Inform 6
++							 * is 6.31; the version distributed
++							 * with Inform 7 is 6.32. */
++							fprintf(fp, "\t@not ");
++						}
++						emit_zop(fp, &q1);
++						fprintf(fp, " -> ");
++						emit_zop(fp, &z);
++						fprintf(fp, ";\n");
++						fin_zop(fp, &ic->z, typf, &z);
++						break;
++
++					case LONG:
++						push_addrof(fp, &ic->z, typf, &z);
++						push_addrof(fp, &ic->q1, typf, &q1);
++						fprintf(fp, "\t@call_vn __long_not ");
++						emit_zop(fp, &q1);
++						fprintf(fp, " ");
++						emit_zop(fp, &z);
++						fprintf(fp, ";\n");
++						break;
++
++					default:
++						ierror(0);
 +				}
- 				fin_zop(fp, &ic->z, typf, &z);
  				continue;
  
-@@ -1912,7 +2015,7 @@
+ 			case MOVEFROMREG: /* Write a register to memory */
+@@ -1903,6 +1942,7 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+ 						break;
+ 
+ 					case STRUCT:
++					case UNION:
+ 					case VOID:
+ 					case ARRAY:
+ 					assign_copy_struct:
+@@ -1912,7 +1952,7 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
  						emit_zop(fp, &q1);
  						fprintf(fp, " ");
  						emit_zop(fp, &z);
 -						fprintf(fp, " 0%+ld;\n", ic->q2.val.vlong);
-+						fprintf(fp, " (%d);\n", (int)ic->q2.val.vlong);
++						fprintf(fp, " (%d);\n", ic->q2.val.vlong);
  						break;
  
  					default:
-@@ -1924,15 +2027,15 @@
+@@ -1924,18 +1964,21 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
  					 AUTO or STATIC */
  				i = voff(&ic->q1);
  				pop_value(fp, &ic->z, typf, &z);
@@ -1146,22 +1139,61 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  
  			case PUSH: /* Push a value onto the stack */
 -				fprintf(fp, "\t@sub xp 0%+ld -> xp;\n",
--					ic->q2.val.vlong);
 +				fprintf(fp, "\t@sub xp (%d) -> xp;\n",
-+					(int)ic->q2.val.vlong);
+ 					ic->q2.val.vlong);
  				//stackoffset += ic->q2.val.vlong;
  				stackparamadjust += ic->q2.val.vlong;
  
-@@ -1956,7 +2059,7 @@
++				if ((typf & NQ) == STRUCT || (typf & NQ) == UNION)
++					goto push_copy_struct;
++
+ 				switch (ic->q2.val.vlong)
+ 				{
+ 					case 1:
+@@ -1953,10 +1996,11 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+ 						break;
+ 
+ 					default:
++					push_copy_struct:
  						push_addrof(fp, &ic->q1, typf, &q1);
  						fprintf(fp, "\t@copy_table ");
  						emit_zop(fp, &q1);
 -						fprintf(fp, " xp 0%+ld;\n", ic->q2.val.vlong);
-+						fprintf(fp, " xp (%d);\n", (int)ic->q2.val.vlong);
++						fprintf(fp, " xp (%d);\n", ic->q2.val.vlong);
  						break;
  				}
  				continue;
-@@ -2148,7 +2251,7 @@
+@@ -2060,7 +2104,13 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+ 						/* Destination parameter first! */
+ 
+ 						push_addrof(fp, &ic->z, typf, &z);
+-						push_addrof(fp, &ic->q2, typf, &q2);
++						if (code == LSHIFT || code == RSHIFT) {
++							if ((q2typ(ic) & NQ) != INT) ierror(0);
++							push_value(fp, &ic->q2, INT, &q2);
++						} else {
++							if ((q2typ(ic) & NQ) != LONG) ierror(0);
++							push_addrof(fp, &ic->q2, typf, &q2);
++						}
+ 						push_addrof(fp, &ic->q1, typf, &q1);
+ 
+ 						fprintf(fp, "\t@call_vn __long_");
+@@ -2135,29 +2185,27 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+ 
+ 		case CONVERT:
+ 		  if((q1typ(ic)&NU)==CHAR){
+-				switch (ztyp(ic) & NU)
++				switch (ztyp(ic) & NQ)
+ 				{
+ 					case CHAR:
+-					case UNSIGNED|CHAR:
+-					case UNSIGNED|SHORT:
+-					case UNSIGNED|INT:
+ 					case SHORT:
+ 					case INT:
++					case POINTER:
+ 						push_value(fp, &ic->q1, CHAR, &q1);
+ 						pop_value(fp, &ic->z, typf, &z);
  						fprintf(fp, "\t@log_shift ");
  						emit_zop(fp, &q1);
  						fprintf(fp, " 8 -> sp;\n");
@@ -1170,7 +1202,136 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  						emit_zop(fp, &z);
  						fprintf(fp, ";\n");
  						fin_zop(fp, &ic->z, typf, &z);
-@@ -2545,12 +2648,10 @@
+ 						break;
+ 					
+ 					case LONG:
+-						push_value(fp, &ic->q1, INT, &q1);
++						push_value(fp, &ic->q1, CHAR, &q1);
+ 						push_addrof(fp, &ic->z, typf, &z);
+-						fprintf(fp, "\t@call_vn __long_fromchar");
++						fprintf(fp, "\t@call_vn __long_fromchar ");
+ 						emit_zop(fp, &z);
+ 						fprintf(fp, " ");
+ 						emit_zop(fp, &q1);
+@@ -2176,26 +2224,21 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+ 					case CHAR:
+ 					case SHORT:
+ 					case INT:
+-						push_value(fp, &ic->q1, UNSIGNED|CHAR, &q1);
++					case POINTER:
++						push_value(fp, &ic->q1, CHAR, &q1);
+ 						pop_value(fp, &ic->z, typf, &z);
+-						if ((z.type != ZOP_STACK) || (q1.type != ZOP_STACK))
+-						{
+-							emit_add(fp, &q1, &zop_zero, &z);
+-#if 0
+-							fprintf(fp, "\t@add ");
+-							emit_zop(fp, &q1);
+-							fprintf(fp, " 0 -> ");
+-							emit_zop(fp, &z);
+-							fprintf(fp, ";\n");
+-#endif
+-						}
++						fprintf(fp, "\t@and ");
++						emit_zop(fp, &q1);
++						fprintf(fp, " 255 -> ");
++						emit_zop(fp, &z);
++						fprintf(fp, ";\n");
+ 						fin_zop(fp, &ic->z, typf, &z);
+ 						break;
+ 					
+ 					case LONG:
+ 						push_value(fp, &ic->q1, UNSIGNED|CHAR, &q1);
+ 						push_addrof(fp, &ic->z, typf, &z);
+-						fprintf(fp, "\t@call_vn __long_fromint");
++						fprintf(fp, "\t@call_vn __long_loadconst ");
+ 						emit_zop(fp, &z);
+ 						fprintf(fp, " 0 ");
+ 						emit_zop(fp, &q1);
+@@ -2216,6 +2259,7 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+ 					case UNSIGNED|INT:
+ 					case SHORT:
+ 					case INT:
++					case POINTER:
+ 						push_value(fp, &ic->q1, INT, &q1);
+ 						pop_value(fp, &ic->z, typf, &z);
+ 						if ((z.type != ZOP_STACK) || (q1.type != ZOP_STACK))
+@@ -2233,6 +2277,7 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+ 						break;
+ 
+ 					case LONG:
++					case UNSIGNED|LONG:
+ 						push_value(fp, &ic->q1, INT, &q1);
+ 						push_addrof(fp, &ic->z, typf, &z);
+ 						fprintf(fp, "\t@call_vn __long_fromint ");
+@@ -2242,16 +2287,6 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+ 						fprintf(fp, ";\n");
+ 						break;
+ 
+-					case UNSIGNED|LONG:
+-						push_value(fp, &ic->q1, INT, &q1);
+-						push_addrof(fp, &ic->z, typf, &z);
+-						fprintf(fp, "\t@call_vn __long_loadconst ");
+-						emit_zop(fp, &z);
+-						fprintf(fp, " 0 ");
+-						emit_zop(fp, &q1);
+-						fprintf(fp, ";\n");
+-						break;
+-					
+ 					default:
+ 						ierror(typf);
+ 				}
+@@ -2323,6 +2358,7 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+ 
+ 					case SHORT:
+ 					case INT:
++					case POINTER:
+ 						push_addrof(fp, &ic->q1, LONG, &q1);
+ 						pop_value(fp, &ic->z, typf, &z);
+ 						fprintf(fp, "\t@loadw ");
+@@ -2333,6 +2369,16 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+ 						fin_zop(fp, &ic->z, typf, &z);
+ 						break;
+ 					
++					case LONG:
++						push_addrof(fp, &ic->q1, LONG, &q1);
++						push_addrof(fp, &ic->z, typf, &z);
++						fprintf(fp, "\t@call_vn __long_copy ");
++						emit_zop(fp, &q1);
++						fprintf(fp, " ");
++						emit_zop(fp, &z);
++						fprintf(fp, ";\n");
++						break;
++
+ 					default:
+ 						ierror(typf & NQ);
+ 				}
+@@ -2359,7 +2405,6 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+ 					case CHAR:
+ 					case SHORT:
+ 					case INT:
+-					case POINTER:
+ 						/* Second parameter first! */
+ 						push_value(fp, &ic->q2, typf, &compare2);
+ 						push_value(fp, &ic->q1, typf, &compare1);
+@@ -2368,6 +2413,7 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+ 					case UNSIGNED|CHAR:
+ 					case UNSIGNED|SHORT:
+ 					case UNSIGNED|INT:
++					case POINTER:
+ 						/* Because the Z-machine only
+ 						 * has signed comparisons, we
+ 						 * need a dodgy algorithm to
+@@ -2451,7 +2497,7 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+ 						q2.type = ZOP_CONSTANTADDR;
+ 						q2.val.constant = addconstant(0);
+ 						emit_zop(fp, &q2);
+-						fprintf(fp, " -> sp;\n", i);
++						fprintf(fp, " -> sp;\n");
+ 						compare1.type = ZOP_STACK;
+ 						compare2.type = ZOP_CONSTANT;
+ 						compare2.val.constant = 0;
+@@ -2545,12 +2591,10 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
  				/* If any parameters have been pushed, adjust
  				 * the stack to pop them. */
  
@@ -1187,7 +1348,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  				}
  				continue;
  			}
-@@ -2622,9 +2723,9 @@
+@@ -2622,9 +2666,9 @@ void cleanup_cg(FILE *fp)
  
  		while (constant)
  		{
@@ -1199,12 +1360,12 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  				xword(constant->value, 1),
  				xword(constant->value, 0));
  			constant = constant->next;
-@@ -2639,12 +2740,12 @@
+@@ -2639,12 +2683,12 @@ void cleanup_cg(FILE *fp)
  		fprintf(fp, "[ __init_vars_%s;\n", modulename);
  		while (fixup)
  		{
 -			fprintf(fp, "\t@add 0%+ld ", fixup->offset);
-+			fprintf(fp, "\t@add (%d) ", (int)fixup->offset);
++			fprintf(fp, "\t@add (%ld) ", fixup->offset);
  
  			switch (fixup->value.type)
  			{
@@ -1214,7 +1375,7 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  						modulename, fixup->value.val.number);
  					break;
  
-@@ -2660,15 +2761,15 @@
+@@ -2660,15 +2704,15 @@ void cleanup_cg(FILE *fp)
  			switch (fixup->identifier.type)
  			{
  				case STATIC:
@@ -1234,10 +1395,33 @@ diff -Nur vbcc/machines/z/machine.c vbcc-patched/machines/z/machine.c
  					break;
  
  				default:
-diff -Nur vbcc/machines/z/machine.h vbcc-patched/machines/z/machine.h
---- vbcc/machines/z/machine.h	2012-11-28 10:31:26.000000000 -0800
-+++ vbcc-patched/machines/z/machine.h	2012-11-27 17:43:48.000000000 -0800
-@@ -18,7 +18,7 @@
+@@ -2685,18 +2729,17 @@ void cleanup_cg(FILE *fp)
+ 
+ int reg_parm(struct reg_handle *rh, struct Typ *typ, int vararg, struct Typ *ft)
+ {
+-	/* Vararg parameters never go in registers. */
++	int s = sizetab[typ->flags & NQ];
+ 
++	/* Vararg parameters never go in registers. */
+ 	if (vararg)
+ 		return 0;
+ 
+ 	/* Will the parameter fit? */
+-
+-	if (sizetab[typ->flags & NQ] > 2)
++	if (s > sizetab[INT] || s <= 0)
+ 		return 0;
+ 
+ 	/* Still enough registers? */
+-
+ 	if (rh->reg >= NUM_REGPARMS+USERREG)
+ 		return 0;
+ 
+diff --git a/vbcc/machines/z/machine.h b/vbcc/machines/z/machine.h
+index 6f43fc8..e8f4b5e 100644
+--- a/vbcc/machines/z/machine.h
++++ b/vbcc/machines/z/machine.h
+@@ -18,7 +18,7 @@ struct AddressingMode{
  
  /* Number of command-line options we accept. */
  
@@ -1246,14 +1430,131 @@ diff -Nur vbcc/machines/z/machine.h vbcc-patched/machines/z/machine.h
  
  /* If this is set to zero vbcc will not generate ICs where the target operand
   * is the same as the 2nd source operand. This can sometimes simplify the
-diff -Nur vbcc/Makefile vbcc-patched/Makefile
---- vbcc/Makefile	2012-06-05 12:54:33.000000000 -0700
-+++ vbcc-patched/Makefile	2012-06-05 11:17:56.000000000 -0700
-@@ -1,6 +1,6 @@
+diff --git a/vbcc/opt.c b/vbcc/opt.c
+index 724c34d..36528d8 100644
+--- a/vbcc/opt.c
++++ b/vbcc/opt.c
+@@ -1014,7 +1014,7 @@ static int to_be_inlined(struct Var *v)
+   if(c>inline_size) return 0;
+   /* we assume that inlining saves size if the number of arguments
+      is larger than the number of ICs + CALL +SETRETURN  */
+-  if(optsize&&c-2>(c=v->vtyp->exact->count)) return 0;
++  if(optsize&&c-2>(v->vtyp->exact->count)) return 0;
+   return 1;
+ }
  
- # used to create vbcc, vc and ucpp
--CC = gcc -std=c9x -g -DHAVE_AOS4 #-DHAVE_ECPP -DHAVE_MISRA
-+CC = gcc -std=c9x -g -Wno-format-security #-DHAVE_AOS4 -DHAVE_ECPP -DHAVE_MISRA
- LDFLAGS = -lm
+diff --git a/vbcc/regs.c b/vbcc/regs.c
+index f020493..a8f6d36 100644
+--- a/vbcc/regs.c
++++ b/vbcc/regs.c
+@@ -1279,7 +1279,7 @@ int find_best_local_reg(struct IC *fp,struct Var *v,int preferred)
+     }
  
- # native version; used to create dtgen
+     /* check for register arguments */
+-    if((p->z.flags&(VAR|DREFOBJ))==VAR&&!*p->z.v->identifier&&p->z.v->reg){
++    if(p!=fp&&(p->z.flags&(VAR|DREFOBJ))==VAR&&!*p->z.v->identifier&&p->z.v->reg){
+       savings[abs(p->z.v->reg)]=INT_MIN;
+       if(reg_pair(abs(p->z.v->reg),&rp)){
+ 	savings[rp.r1]=INT_MIN;
+diff --git a/vbcc/statements.c b/vbcc/statements.c
+index cfd08a6..c520e97 100644
+--- a/vbcc/statements.c
++++ b/vbcc/statements.c
+@@ -278,14 +278,15 @@ void if_statement(void)
+   }
+   next_token();
+   lout=++label;
++  nocode=cm;
+   if(cexpr!=2){
+     new=new_IC();
+     new->code=BRA;
+     new->typf=lout;
+     add_IC(new);
+   }
+-  if(cexpr!=1) {nocode=cm;gen_label(lfalse);}
+-  if(cexpr==1) nocode=1; else nocode=cm;
++  if(cexpr!=1) gen_label(lfalse);
++  if(cexpr==1) nocode=1;
+   if(ctok->type!=LBRA){
+ 	  if(ctok->type!=NAME||strcmp("if",ctok->name)) {
+ #ifdef HAVE_MISRA
+diff --git a/vbcc/type_expr.c b/vbcc/type_expr.c
+index f0b7d22..ac00481 100644
+--- a/vbcc/type_expr.c
++++ b/vbcc/type_expr.c
+@@ -6,7 +6,6 @@ static char FILE_[]=__FILE__;
+ 
+ int alg_opt(np,struct Typ *),type_expression2(np,struct Typ *);
+ int test_assignment(struct Typ *,np);
+-void make_cexpr(np);
+ 
+ int dontopt;
+ int no_cast_free;
+@@ -742,9 +741,7 @@ int type_expression2(np p,struct Typ *ttyp)
+     return 1;
+   }
+ 
+-  if(f==BITFIELD) return 1;
+-
+-  if(f==LITERAL){
++  if(f==BITFIELD||f==LITERAL){
+     p->lvalue=1;
+     return 1;
+   }
+@@ -2110,7 +2107,7 @@ int alg_opt(np p,struct Typ *ttyp)
+             return type_expression2(p,ttyp);
+         }
+         /*  a*0=0   */
+-        if(null2&&(f==MULT||f==PMULT||f==AND||f==DIV||f==MOD)){
++        if(null2&&(f==MULT||f==PMULT||f==AND||f==DIV||f==MOD)&&!p->sidefx){
+             if(DEBUG&1) printf("a*&/%%0->0\n");
+             if(null2&&(f==DIV||f==MOD)) error(84);
+             if(p->flags==PMULT) p->flags=PCEXPR; else p->flags=CEXPR;
+@@ -2118,8 +2115,8 @@ int alg_opt(np p,struct Typ *ttyp)
+ 	    eval_const(&gval,INT);
+             /*  hier nur int,long,float,double moeglich, hoffe ich  */
+             insert_constn(p);
+-            if(!p->left->sidefx){free_expression(p->left);p->left=0;} else make_cexpr(p->left);
+-            if(!p->right->sidefx){free_expression(p->right);p->right=0;} else make_cexpr(p->right);
++            free_expression(p->left);p->left=0;
++            free_expression(p->right);p->right=0;
+ /*            return(type_expression2(p,ttyp));   */
+             return 1;
+         }
+@@ -2144,33 +2141,20 @@ int alg_opt(np p,struct Typ *ttyp)
+             return type_expression2(p,ttyp);
+         }
+         /*  0/a=0   */
+-        if(null1&&(f==DIV||f==MOD||f==LSHIFT||f==RSHIFT)){
++        if(null1&&(f==DIV||f==MOD||f==LSHIFT||f==RSHIFT)&&!p->sidefx){
+             if(DEBUG&1) printf("0/%%<<>>a->0\n");
+             p->flags=CEXPR;
+ 	    gval.vint=zm2zi(l2zm(0L));
+ 	    eval_const(&gval,INT);
+             insert_constn(p);
+-            if(!p->left->sidefx){free_expression(p->left);p->left=0;}else make_cexpr(p->left);
+-            if(!p->right->sidefx){free_expression(p->right);p->right=0;} else make_cexpr(p->right);
++            free_expression(p->left);p->left=0;
++            free_expression(p->right);p->right=0;
+ 	    dontopt=0;
+             return type_expression2(p,ttyp);
+         }
+     }
+     return 1;
+ }
+-void make_cexpr(np p)
+-/*  Macht aus einem Knoten, der durch constant-folding ueberfluessig    */
+-/*  wurde, eine PCEXPR, sofern er keine Nebenwirkungen von sich aus     */
+-/*  erzeugt. Hier noch ueberpruefen, ob CEXPR besser waere.             */
+-/*  Fuehrt rekursiven Abstieg durch. Ist das so korrekt?                */
+-{
+-    int f=p->flags;
+-    if(f!=ASSIGN&&f!=ASSIGNOP&&f!=CALL&&f!=POSTINC&&f!=POSTDEC&&f!=PREINC&&f!=PREDEC){
+-        p->flags=PCEXPR;
+-        if(p->left) make_cexpr(p->left);
+-        if(p->right) make_cexpr(p->right);
+-    }
+-}
+ int test_assignment(struct Typ *zt,np q)
+ /*  testet, ob q an Typ z zugewiesen werden darf    */
+ {

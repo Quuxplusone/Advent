@@ -1,0 +1,157 @@
+This chapter documents the Backend for the VideoCore IV processor family.
+
+The backend is in a very early stage, it is not complete, and it can not
+yet be considered useful!
+
+Also note that it is based on freely available, inofficial, and possibly
+incorrect information on the target processor.
+
+@section Additional options for this version
+
+This backend provides the following additional options:
+
+@table @option
+
+    @item -short-double
+
+                Use native 32bit floating point for double and long double.
+                This is much more efficient, but not ISO C conforming.
+
+    @item -one-section
+
+                Put all code and data in the same section (.text).
+
+
+    @item -no-delayed-popping
+
+                By default arguments of function calls are not always popped
+                from the stack immediately after the call, so that the
+                arguments of several calls may be popped at once.
+                With this option @command{vbcc} can be forced to pop them after every
+                function call.
+                This may simplify debugging and reduce the
+                stack size needed by the compiled program.
+
+    @item -no-peephole
+
+                Disable most backend peephole optimizations.
+                Just for testing.
+
+    @item -noext-regs
+
+                Do not use registers r16-r23. Just for testing.
+
+    @item -cond-limit=<n>
+
+                Set the limit (in number of intermediate code instructions)
+                for the length of code-sequences considered for conditional
+                execution (default: 2).
+
+
+@end table
+
+@section ABI
+
+        This backend supports the following registers:
+
+        @itemize @minus
+        @item @code{r0} through @code{r31} for the general purpose registers
+        @end itemize
+
+        Additionally, the register pairs @code{r0/r1} @code{r2/r3, r4/r5, r6/r7, r8/r9,
+        r10/r11, r12/r13, r14/r15,
+        r16/r17, r18/r19, r20/r21, r22/r23} are
+        available.
+
+        @code{r14, r15, r24-r31} are currently reserved by the
+        backend.
+
+        
+
+    The current version generates assembly output for use with @file{vasm}.
+
+
+    The registers r0-r5 and r14-r15 are used as scratch registers
+    (i.e. they can be destroyed in function calls), all other registers are
+    preserved. r25 is the stack-pointer.
+
+    The first 6 function arguments which have integer, float32 or pointer types
+    are passed in registers r0 through r5. All other arguments
+    are passed on the stack.
+
+    Integers, float32 and pointers are returned in r0.
+    All other types are returned by passing the function the address
+    of the result as a hidden argument - so when you call such a function
+    without a proper declaration in scope you can expect a crash.
+
+    The elementary data types are represented like:
+
+    @example
+    type        size in bits        alignment in bytes
+
+    char                8                       1 
+    short              16                       2 
+    int                32                       4 
+    long               32                       4 
+    long long          64                       8    not yet supported
+    all pointers       32                       4 
+    float              32                       4 
+    double             64 (32)                  4 
+    long double        64 (32)                  4
+    @end example
+
+@section Target-specific variable-attributes
+
+    The vidcore-backend offers the following variable-attributes:
+
+@table @code
+
+    @item __section("name","attr")
+                 Place this function/object in section "name" with
+                 attributes "attr".
+@end table
+
+
+@section Target-specific pragmas
+
+    The vidcore-backend offers the following #pragmas:
+
+@table @code
+
+       @item none at the moment...
+
+@end table
+
+@section Predefined Macros
+
+        This backend defines the following macros:
+
+@table @code
+        @item __VIDEOCORE__
+
+        @item __SHORT_DOUBLE__ (if -short-double is used)        
+@end table
+
+@section Stdarg
+
+stdarg-implementation is not yet fully working. One restriction is that
+when calling a varargs function, the prototype must be in scope (this is
+ISO C conforming). Another one is that the stdarg-macros only work as
+long as all fixed arguments are passed in registers.
+
+This will be fixed in the future.
+
+
+@section Known problems
+
+@itemize @minus
+         @item no support for long long
+         @item no support for 64bit floating point
+         @item stdarg problems mentioned above
+         @item suboptimal code quality
+         @item ...
+@end itemize
+
+
+
+

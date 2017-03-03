@@ -714,8 +714,14 @@ void frequency_reduction(struct flowgraph *start,struct flowgraph *end,struct fl
 		k1=0;
 	      }else{
 		i=p->q1.v->index;
-		if(p->q1.flags&DREFOBJ) i+=vcount-rcount;
-		k1=def_invariant(i,-1);
+		if(p->q1.flags&DREFOBJ){
+		  i+=vcount-rcount;
+		  if(p->q1.dtyp&VOLATILE)
+		    k1=0;
+		  else
+		    k1=def_invariant(i,-1);
+		}else
+		  k1=def_invariant(i,-1);
 	      }
 	    }
 	    if(k1){
@@ -726,12 +732,18 @@ void frequency_reduction(struct flowgraph *start,struct flowgraph *end,struct fl
 		  k2=0;
 		}else{
 		  i=p->q2.v->index;
-		  if(p->q2.flags&DREFOBJ) i+=vcount-rcount;
-		  k2=def_invariant(i,-1);
+		  if(p->q2.flags&DREFOBJ){
+		    i+=vcount-rcount;
+		    if(p->q2.dtyp&VOLATILE)
+		      k2=0;
+		    else
+		      k2=def_invariant(i,-1);
+		  }else
+		    k2=def_invariant(i,-1);
 		}
 	      }
 	    }
-	    if(k1&&k2){
+	    if(k1&&k2&&!(ztyp(p)&VOLATILE)&&!(q1typ(p)&VOLATILE)){
 	      if(DEBUG&1024){ printf("found loop-invariant IC:\n");pric2(stdout,p);}
 	      if(!BTST(moved,p->defindex)&&(always_reached(start,end,g,p,0)||(!dangerous_IC(p)&&used_in_loop_only(start,end,&p->z)))){
 		if(p->z.flags&DREFOBJ){
@@ -1023,7 +1035,8 @@ void strength_reduction(struct flowgraph *start,struct flowgraph *end,struct flo
     for(p=g->start;p;p=p->next){
       int c=p->code;
       if(c==ADD||c==ADDI2P||c==SUB||c==SUBIFP){
-	if(!compare_objs(&p->q1,&p->z,p->typf)){
+	/* TODO: what is possible/useful with floating point induction variables? */
+	if(!compare_objs(&p->q1,&p->z,p->typf)&&!ISFLOAT(p->typf)){
 	  if(DEBUG&1024){printf("possible induction:\n");pric2(stdout,p);}
 	  if(p->q2.flags&VAR){
 	    i=p->q2.v->index;

@@ -12,6 +12,27 @@ int line,errors;
 bvtype task_preempt_regs[RSIZE/sizeof(bvtype)];
 bvtype task_schedule_regs[RSIZE/sizeof(bvtype)];
 char *multname[]={"","s"};
+
+struct deplist {char *name; struct deplist *next;} *deps;
+FILE *depout;
+void handle_deps(char *name,int string)
+{
+  struct deplist *p=deps;
+  if(!depout||!name||!*name) return;
+  /* by default omit <...> includes */
+  if(!string&&!(c_flags[51]&USEDFLAG)) return;
+  while(p){
+    if(!strcmp(p->name,name)) return;
+    p=p->next;
+  }
+  p=mymalloc(sizeof(*p));
+  p->name=mymalloc(strlen(name)+1);
+  strcpy(p->name,name);
+  p->next=deps;
+  deps=p;
+  fprintf(depout," %s",name);
+}
+
 void raus(void)
 /*  Beendet das Programm                                            */
 {
@@ -43,7 +64,8 @@ void translation_unit(void)
   struct Var *p;
   if(cross_module){
     for(p=first_ext;p;p=p->next)
-      p->flags|=NOTINTU;
+      if(!(p->flags&BUILTIN))
+	p->flags|=NOTINTU;
   }
   while(1){
     killsp();
@@ -95,18 +117,20 @@ void reserve_reg(char *p)
 void dontwarn(char *p)
 /*  schaltet flags fuer Meldung auf DONTWARN    */
 {
-  int i;
   if(*p!='=') error(4,"-dontwarn");
-  i=atoi(p+1);
-  if(i>=err_num) error(159,i);
-  if(i<0){
-    for(i=0;i<err_num;i++)
-      if(!(err_out[i].flags&(ANSIV|FATAL)))
-	err_out[i].flags|=DONTWARN;
-    return;
-  }
-  if(err_out[i].flags&(ANSIV|FATAL)) error(160,i);
-  err_out[i].flags|=DONTWARN;
+  do{
+    int i=atoi(p+1);
+    if(i>=err_num) error(159,i);
+    if(i<0){
+      for(i=0;i<err_num;i++)
+        if(!(err_out[i].flags&(ANSIV|FATAL)))
+    err_out[i].flags|=DONTWARN;
+      return;
+    }
+    if(err_out[i].flags&(ANSIV|FATAL)) error(160,i);
+    err_out[i].flags|=DONTWARN;
+    p=strchr(p+1,',');
+  } while(p);
 }
 
 
@@ -575,6 +599,8 @@ int main(int argc,char *argv[])
   if(c_flags[45]&USEDFLAG) {ecpp=1;}
   if(c_flags[46]&USEDFLAG) {short_push=1;}
   if(c_flags[47]&USEDFLAG) {default_unsigned=1;}
+  if(c_flags[48]&USEDFLAG) {opencl=1;}
+
 
   if(wpo){
     cross_module=1;
@@ -609,6 +635,9 @@ int main(int argc,char *argv[])
   if(!init_cg()) exit(EXIT_FAILURE);
   if(zmeqto(stackalign,l2zm(0L)))
     stackalign=maxalign;
+  for(i=0;i<=MAX_TYPE;i++)
+    if(zmeqto(align[i],l2zm(0L)))
+      align[i]=l2zm(1L);
   for(i=0;i<EMIT_BUF_DEPTH;i++)
     emit_buffer[i]=mymalloc(EMIT_BUF_LEN);
   emit_p=emit_buffer[0];
@@ -673,6 +702,13 @@ int main(int argc,char *argv[])
       ungetc(first_byte,in);
       input_wpo=0;
     }
+    if(c_flags[50]&USEDFLAG){
+      char *p;
+      depout=open_out(inname,"dep");
+      /* nicht super schoen (besser letzten Punkt statt ersten), aber kurz.. */
+      for(p=inname;*p&&*p!='.';p++) fprintf(depout,"%c",*p);
+      fprintf(depout,".o: %s",inname);
+    }
     if(c_flags[18]&USEDFLAG) ppout=open_out(inname,"i");
     if(!input_wpo){
       int mcmerk=misracheck;
@@ -721,6 +757,7 @@ int main(int argc,char *argv[])
     translation_unit();
     fclose(in); /*FIXME: do I have to close??*/   
     if((c_flags[18]&USEDFLAG)&&ppout) fclose(ppout);
+    if((c_flags[50]&USEDFLAG)&&depout){fprintf(depout,"\n");fclose(depout);}
     if(!input_wpo)
       free_lexer_state(&ls);
   }
@@ -732,111 +769,111 @@ int main(int argc,char *argv[])
     struct tunit *t;
     struct Var *v,*sf;
 #if HAVE_OSEK
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
+    int tprio;
+    char tstring[16];
+    static bvtype rused[RSIZE/sizeof(bvtype)];
+    static bvtype taskregs[RSIZE/sizeof(bvtype)];
+    static bvtype nonpairs[RSIZE/sizeof(bvtype)];
+    static bvtype isrregs[RSIZE/sizeof(bvtype)];
+    static bvtype tmpr[RSIZE/sizeof(bvtype)];
+    tasklist *tasks=0;
+    int tcnt=0;
+    if(DEBUG&1) printf("optimizing tasks:\n");
+    bvclear(taskregs,RSIZE);
+    for(i=1;i<=MAXR;i++)
+      if(!reg_pair(i,&rp))
+	BSET(nonpairs,i);
+    /*FIXME: more than 20*/
+    for(tprio=20;tprio>=0;tprio--){
+      int flag=0,r;
+      sprintf(tstring,"taskprio(%d)",tprio);
+      bvunite(rused,taskregs,RSIZE);
+      for(r=1;r<=MAXR;r++){
+	if(!noitra&&BTST(rused,r)){
+	  if(DEBUG&1) printf("taskreg used: %s\n",regnames[r]);
+	  reg_prio[r]=-1; /*FIXME: ugly intermediate hack */
+	}
+      }
+      for(v=first_ext;v;v=v->next){
+	if(ISFUNC(v->vtyp->flags)&&(v->flags&DEFINED)&&v->vattr&&strstr(v->vattr,tstring)){
+	  if(DEBUG&1) printf("optimizing task at prio %d\n",tprio);
+	  tcnt++;
+	  tasks=myrealloc(tasks,sizeof(*tasks)*tcnt);
+	  tasks[tcnt-1].v=v;
+	  if(!v->vattr||!strstr(v->vattr,"taskid(")) ierror(0);
+	  {
+	    char *p=strstr(v->vattr,"taskid(");
+	    sscanf(p+7,"%i",&tasks[tcnt-1].taskid);
+	  }
+	  tasks[tcnt-1].prio=tprio;
+	  bvclear(task_preempt_regs,RSIZE);
+	  bvclear(task_schedule_regs,RSIZE);
+	  do_function(v);
+	  if(!v->fi) v->fi=new_fi();
+	  tasks[tcnt-1].flags=v->fi->osflags;
+	  if(v->vattr&&strstr(v->vattr,"nonpreemptive;")) tasks[tcnt-1].flags|=NON_PREEMPTIVE;
+	  if(v->vattr&&strstr(v->vattr,"isr;"))
+	    tasks[tcnt-1].flags|=ISR;
+	  if(!(v->fi->flags&ALL_REGS))
+	    memset(v->fi->regs_modified,0xff,RSIZE);
+	  bvunite(taskregs,v->fi->regs_modified,RSIZE);
+	  bvcopy(tasks[tcnt-1].preempt_context,task_preempt_regs,RSIZE);
+	  bvcopy(tasks[tcnt-1].schedule_context,task_schedule_regs,RSIZE);
+	  bvcopy(tasks[tcnt-1].context,rused,RSIZE);
+	  if(tasks[tcnt-1].flags&NON_PREEMPTIVE)
+	    bvintersect(tasks[tcnt-1].context,task_schedule_regs,RSIZE);
+	  else
+	    bvintersect(tasks[tcnt-1].context,v->fi->regs_modified,RSIZE);
+	  if(tasks[tcnt-1].flags&ISR){
+	    bvunite(isrregs,v->fi->regs_modified,RSIZE);
+	  }else{
+	    /* all (incl. non-preemptive) tasks can be preempted by ISRs */
+	    bvcopy(tmpr,v->fi->regs_modified,RSIZE);
+	    bvintersect(tmpr,isrregs,RSIZE);
+	    bvunite(tasks[tcnt-1].context,tmpr,RSIZE);
+	  }
+	  bvintersect(tasks[tcnt-1].context,nonpairs,RSIZE);
+	  bvcopy(tasks[tcnt-1].unsaved_context,v->fi->regs_modified,RSIZE);
+	  bvintersect(tasks[tcnt-1].unsaved_context,nonpairs,RSIZE);
+	  bvdiff(tasks[tcnt-1].unsaved_context,tasks[tcnt-1].context,RSIZE);
+	}
+      }
+    }  
+    /* add preempted registers */
+    bvunite(rused,taskregs,RSIZE);
+    for(i=0;i<tcnt;i++){
+      for(j=0;j<tcnt;j++)
+	if(i!=j)
+	  bvintersect(tasks[i].preempt_context,tasks[j].v->fi->regs_modified,RSIZE);
+      bvunite(tasks[i].context,tasks[i].preempt_context,RSIZE);
+    }
+    
+    if(tcnt) printf("\ntask information:\n");
+    for(i=0;i<tcnt;i++){
+      int r;
+      printf("\ntask %d (%s) id %d prio %d:\n",i,tasks[i].v->identifier,tasks[i].taskid,tasks[i].prio);
+      if(tasks[i].flags&DOES_BLOCK) printf("does block\n");
+      if(tasks[i].flags&NON_PREEMPTIVE) printf("non-preemptive\n");
+      if(tasks[i].flags&CALLS_SCHED) printf("calls scheduler\n");
+      if(tasks[i].flags&ISR) printf("is interrupt\n");
+      printf("context: ");
+      for(r=1;r<=MAXR;r++)
+	if(BTST(tasks[i].context,r)) printf(" %s",regnames[r]);
+      printf("\nlive across WaitEvent(): ");
+      for(r=1;r<=MAXR;r++)
+	if(BTST(tasks[i].preempt_context,r)) printf(" %s",regnames[r]);
+      printf("\nlive across Schedule(): ");
+      for(r=1;r<=MAXR;r++)
+	if(BTST(tasks[i].schedule_context,r)) printf(" %s",regnames[r]);
+      printf("\nall registers used: ");
+      for(r=1;r<=MAXR;r++)
+	if(BTST(tasks[i].v->fi->regs_modified,r)) printf(" %s",regnames[r]);
+      printf("\n");
+    }
+    if(tcnt>0){
+      extern void emit_os(FILE *,tasklist *,int);
+      emit_os(out,tasks,tcnt);
+    }
 #endif
     if(DEBUG&1) printf("first optimizing\n");
     for(v=first_ext;v;v=v->next){
@@ -1176,7 +1213,7 @@ void next_token(void)
   if(misracheck&&ctok->type!=PRAGMA&&ctok->type!=NONE&&ctok->type!=NEWLINE&&ctok->type!=COMMENT)
     misratok=1;
   /*FIXME: do not store multiple */
-  if(filename!=current_filename){
+  if(filename!=current_filename&&strcmp(filename,current_filename)){
     filename=mymalloc(strlen(current_filename)+1);
     strcpy(filename,current_filename);
   }
@@ -1526,32 +1563,32 @@ void do_pragma(char *s)
     if(tree) free_expression(tree);
 #endif
 #ifdef HAVE_ECPP
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
+  /* cd: for more detailed debugging */
+  }else if(!strncmp("print_decls",s,11)){
+    int i=0;
+    struct struct_declaration *sd;
+    s+=11;pragma_killsp();
+    sd = first_sd[0];
+    while(sd){
+      fprintf(stdout, "decl %d: ", i);
+      prl(stdout, sd);
+      fprintf(stdout, "\n");
+      sd = sd->next;
+      ++i;
+    }
+  }else if(!strncmp("print_vars",s,10)){
+    int i=0;
+    struct Var *v;
+    s+=10;pragma_killsp();
+    v = first_ext;
+    while(v){
+      fprintf(stdout, "var %d: ", i);
+      print_var(stdout, v);
+      fprintf(stdout, "\n");
+      v = v->next;
+      ++i;
+    }
+    fprintf(stdout, "\n");
 #endif
   }else{
 #ifdef HAVE_TARGET_PRAGMAS
@@ -1594,9 +1631,9 @@ void enter_block(void)
         afterlabel=0;
     }
 #ifdef HAVE_ECPP
-/* removed */
-/* removed */
-/* removed */
+  if(ecpp){
+    ecpp_dlist[nesting]=0;
+  }
 #endif
 }
 void leave_block(void)
@@ -1607,9 +1644,9 @@ void leave_block(void)
   if(inleave) return;
   inleave=1;
 #ifdef HAVE_ECPP
-/* removed */
-/* removed */
-/* removed */
+  if(ecpp&&nesting>1){
+    ecpp_auto_call_dtors();
+  }
 #endif
   for(i=1;i<=MAXR;i++)
     if(regbnesting[i]==nesting) regsbuf[i]=0;
@@ -1710,14 +1747,14 @@ static int pp_line;
 void do_error(int errn,va_list vl)
 /*  Behandelt Ausgaben wie Fehler und Meldungen */
 {
-    int type;
+  int type,have_stack=0;
     char *errstr="",*txt=filename;
     if(c_flags_val[8].l&&c_flags_val[8].l<=errors)
       return;
     if(errn==-1) errn=158;
     type=err_out[errn].flags;
 #ifdef HAVE_MISRA
-/* removed */
+    if(type&ANSIV) misra_neu(1,1,1,-1);
 #endif
     if(type&DONTWARN) return;
     if(type&WARNING) errstr="warning";
@@ -1729,6 +1766,8 @@ void do_error(int errn,va_list vl)
     }else if(type&(INFUNC|INIC)){
       if((type&INIC)&&err_ic&&err_ic->line){
 	fprintf(stderr,"%s %d in line %d of \"%s\": ",errstr,errn,err_ic->line,err_ic->file);
+
+
       }else{
 	fprintf(stderr,"%s %d in function \"%s\": ",errstr,errn,cur_func);
       }
@@ -1755,9 +1794,18 @@ void do_error(int errn,va_list vl)
 	  if(c==':'||c=='/'||c=='\\') txt=p;
       }
       fprintf(stderr,"%s %d in line %d of \"%s\": ",errstr,errn,n,txt);
+      have_stack=1; /* we can report the include stack */
     }
     vfprintf(stderr,err_out[errn].text,vl);
     fprintf(stderr,"\n");
+    if(have_stack&&(!(c_flags[49]&USEDFLAG))){
+      int i;
+      struct stack_context *sc = report_context();
+      for(i=0;;i++){
+	if(sc[i].line==-1) break;
+	fprintf(stderr,"\tincluded from file \"%s\":%ld\n",sc[i].long_name?sc[i].long_name:sc[i].name,sc[i].line);
+      }
+    }
     if(type&ERROR){
       errors++;
       if(c_flags_val[8].l&&c_flags_val[8].l<=errors&&!(type&NORAUS))
@@ -1769,6 +1817,8 @@ void error(int errn,...)
 {
   va_list vl;
   va_start(vl,errn);
+  if(errn==0)
+    printf("error=0\n");
   do_error(errn,vl);
   va_end(vl);
 }

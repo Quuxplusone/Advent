@@ -887,13 +887,27 @@ which requires @file{libc.so}. To force a statically linked executable:
 @end example
 
 
-@section Atari MiNT
- 
-This section describes specifics of the C library for MiNT, a multitasking
-operating system for Atari 16/32 bit computers. Executables linked with
-this C library do also run on plain TOS, without modifications.
+@section Atari TOS/MiNT
+
+This section describes specifics of the C library for Atari TOS and MiNT.
+M680x0 processors are supported by the target @file{m68k-atari}, while
+ColdFire processors are supported by the target @file{cf-atari}. Both
+share the same startup-code and are based on common library sources and
+header files. Executables linked with this C library run on plain TOS as
+well as on MiNT, without modifications.
+
 The relevant files are @file{startup.o}, @file{minstart.o},
-@file{libvc.a}, @file{libvcs.a}, @file{libm.a}, @file{libms.a}.
+@file{libvc.a}, @file{libvc16.a}, @file{libm.a}, @file{libm16.a}.
+
+The following config files are available:
+@table @code
+@item tos
+  M68k 32-bit @code{int}
+@item tos16
+  M68k 16-bit @code{int}
+@item toscf
+  ColdFire 32-bit @code{int}
+@end table
 
 @subsection Startup
  
@@ -901,7 +915,7 @@ The startup code @file{startup.o} sets up some
 global variables and initializes stdin, stdout and stderr and returns
 the unneeded memory to the system.
 The exit code closes all open files and frees all memory.
- 
+
 @subsection Floating point
 
 Note that you have to link with a math library if you want to use
@@ -919,20 +933,25 @@ The default stack size is 64k. There is a MiNT tool called @file{stack}
 which can adjust the stack size of an executable to any value, by looking
 for a symbol named @code{__stksize} (defined by vclib's startup code).
 
-@subsection Small data model
+Additionally the required stack size can be specified by defining a
+variable @code{__stack} (of type @code{size_t}) with external linkage, as
+in other vbcc targets.
 
-When using the small data model, you also have
-to link with appropriate libraries. Most libraries documented here are
-also available as small data versions (with an 's' attached to the
-file name).
- 
-To compile and link a program using the small data model a command like
- 
+@subsection 16-bit integer model
+
+The default libraries use 32-bit @code{int} types, but you may want to
+use 16-bit @code{int} types for compatibility reasons. In this case you
+have to specify the config file @code{tos16} and link with the appropriate
+16-bit libraries (which have a '@file{16}' attached to their name).
+
+To compile and link a program using 16-bit integers a command like
+
 @example
-vc test.c -o test -sd -lms -lvcs
+vc +tos16 test.c -o test -lm16 -lvc16
 @end example
  
-might be used.
+may be used. There are no 16-bit versions for ColdFire targets,
+because this is strictly a 32-bit CPU.
 
 @subsection Restrictions
  
@@ -946,74 +965,177 @@ The @code{tmpfile()} function always returns an error.
  
 @item clock()
 The @code{clock()} function always returns -1. This is correct,
-according to the C standard, because under MiNT it is not possible to
-obtain the time used by the calling process.
+according to the C standard, because neither under TOS nor under MiNT it
+is possible to obtain the time used by the calling process.
 
 @end table
 
+@section VideoCore/Linux
 
-@section Atari TOS
- 
-This section describes specifics of the C library for Atari 16/32 bit
-computers (Atari ST/TT, Atari Falcon, etc.).
-The relevant files are @file{startup.o}, @file{minstart.o},
-@file{libvc.a}, @file{libvcs.a}, @file{libm.a}, @file{libms.a}.
+This section describes specifics of the C library for VideoCore under Linux.
 
-This target differs from Atari MiNT, as it uses 16 bit @code{int} data types.
-@code{int} arguments on the stack are also passed in 2 bytes. Therefore you
-should use the 16 bit aware @code{vbccm68ks} compiler.
+The relevant files are @code{vcload}, @file{startup.o},
+@file{libvc.a}, @file{libm.a}, @file{libms.a}.
+
+The config file @code{vc4-linux} is part of the library.
 
 @subsection Startup
  
-The startup code @file{startup.o} sets up some
-global variables and initializes stdin, stdout and stderr and returns
-the unneeded memory to the system.
-The exit code closes all open files and frees all memory.
- 
+The startup code @file{startup.o} sets up stack and heap and provides
+a function @code{__armcall()} to transfer control to the loader on
+the ARM side.
+The startup process calls constructors to set up some
+global variables and initialize stdin, stdout and stderr if needed.
+
 @subsection Floating point
 
 Note that you have to link with a math library if you want to use
-floating point. All math functions, special startup code and
+floating point operations that are not natively implemented.
+All math functions, special startup code and
 printf/scanf functions which support floating point are contained in
 the math libraries only.
 
-At the moment (@file{libm.a}) is a soft-float library, which is compatible
-with all the Atari models without an FPU. There may be real FPU support
-in future updates.
-
 @subsection Stack
 
-Stack-handling is similar to AmigaOS/68k (@xref{amiga-stack}).
-The default stack size is 4k.
+The library contains a default stack of 32KB. If another size is needed,
+you can add the following to your project:
 
-@subsection Small data model
-
-When using the small data model, you also have
-to link with appropriate libraries. Most libraries documented here are
-also available as small data versions (with an 's' attached to the
-file name).
- 
-To compile and link a program using the small data model a command like
- 
 @example
-vc test.c -o test -sd -lms -lvcs
+        .align  4
+        .space  <desired-size, suitably aligned>
+___stackend:
+        .global ___stackend
 @end example
- 
-might be used.
+
+@subsection Heap
+
+Currently, a global variable of 16KB is used to get memory for
+malloc() etc.  If another size is needed,
+you can add the following to your project:
+
+@example
+#define HEAPSIZE <desired size>
+
+char __heap[HEAPSIZE],*__heapptr=__heap;
+size_t __heapsize=HEAPSIZE;
+@end example
+
+Note that this mechanism will likely be changed in the future!
+
+@subsection System Calls
+
+To access system functions from the VideoCore-side, the function
+@code{__armcall()} can be used. It will save the current context and return
+to the loader. Registers @code{r0-r5} (the function arguments) will be saved
+and are available to the loader. The loader can then execute the system
+call and resume execution, passing the return value of the system
+function.
+
+Resuming is done by calling the image with offset 2.
+
+This functionality can also be used for debugging purposes.
+
+@subsection Loader
+
+A loader is required to execute VideoCore code from the ARM side. For
+standalone VideoCore code, the provided loader can be used. Usually, it
+will be necessary to adapt the loader to communicate between ARM and
+VideoCore side during runtime.
+
+@subsubsection Object Format
+
+Currently, the loader loads an simple binary image that must be pc-relative
+and located to address 0x00000000. Additionally, if present, a file
+with extension @file{.reltext} will be loaded for some limited
+relocation. This file contains a 32bit word containing the number of
+relocations followed by n 32bit words containing an offset. For each
+offset, the address will be relocated to the image load address.
+
+@subsubsection Command line arguments
+
+@code{vcload [-debug] [-cache] [-offset] <image-name>}
+
+The loader currently has the following options:
+
+@table @code
+
+@item -debug
+
+    The loader will enter debug mode (see below).
+
+@item -cache
+
+    The loader will set the LSB in the start address when executing
+    code. This is supposed to inhibit a cache flush.
+
+    Just for testing!
+
+@item -offset
+
+    The loader will allocate 1 KB more memory than required and leaves
+    this space unused at the beginning of the allocated memory.
+
+    Just for testing!
+
+@end table
+
+@subsubsection Debug Mode
+
+In debug mode, the loader will wait for user input before starting the
+VideoCore code as well as after every @code{__armcall}.
+
+The following commands are available:
+
+@table @code
+@item w <addr> [<num>]
+      Display <num> 32bit words starting at <addr>.
+      <addr> must be the offset into the image. If <num> is omitted,
+      one unit is displayed.
+
+      If one word is displayed, it is additionally displayed translated
+      as an offset into the image.
+
+@item h <addr> [<num>]
+      Display <num> 16bit halfwords starting at <addr>.
+      <addr> must be the offset into the image. If <num> is omitted,
+      one unit is displayed.
+
+@item b <addr> [<num>]
+      Display <num> 8bit bytes starting at <addr>.
+      <addr> must be the offset into the image. If <num> is omitted,
+      one unit is displayed.
+
+@item c
+      Start/continue execution.
+
+@item q
+      Quit.
+
+@item bp <addr>
+      Set a breakpoint at <addr>.
+
+      This is currently a very crude implementation. It will just write
+      a branch to @code{__armcall()} to <addr>. If everything works well,
+      you will end in the debugger if <addr> is reached. However, the
+      arguments passed are random (and might be dangerous syscalls by 
+      accident). Also, the old code at this address is currently not
+      restored.
+
+      As a result, you must not continue execution after hitting a
+      breakpoint!
+@end table
+
 
 @subsection Restrictions
  
 The following list contains some restrictions of this version of the
 library:
  
-@table @code
+@itemize @minus
  
-@item tmpfile()
-The @code{tmpfile()} function always returns an error.
- 
-@item clock()
-The @code{clock()} function always returns -1. This is correct,
-according to the C standard, because under TOS it is not possible to
-obtain the time used by the calling process.
+@item no real floating point support yet
 
-@end table
+@item lots, lots, lots...
+
+
+@end itemize

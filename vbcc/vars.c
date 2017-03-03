@@ -1,7 +1,7 @@
 /*  $VER: vbcc (vars.c) V0.8    */
 #include "vbc.h"
 #ifdef AMIGA
-static const char *__ver="$VER: vbcc 0.9b (19.05.2011)\r\n";
+static const char *__ver="$VER: vbcc 0.9e (07.02.2016)\r\n";
 long __stack=65536;
 #endif
 char *s,*ident;
@@ -19,6 +19,7 @@ struct vlaadjust_list *vlaadjusts[MAXN];
 struct rpair rp;
 FILE *out,*ic1,*ic2,*ppout,*cmdfile;
 int c99;
+int opencl;
 int disallow_statics;
 int header_cnt;
 int wpo,wpo_key;
@@ -44,6 +45,7 @@ int c_flags[MAXCF]={
     0,VALFLAG,0,0,0,STRINGFLAG,0,
     VALFLAG,VALFLAG,0,VALFLAG,0,
     FUNCFLAG,FUNCFLAG,FUNCFLAG,0,
+    0,0,0,0,
     0,0
 };
 char *c_flags_name[MAXCF]={
@@ -57,7 +59,8 @@ char *c_flags_name[MAXCF]={
     "stack-check","inline-depth","g","c99","wpo","cmd","noitra",
     "misra","coloring","dmalloc","disable","soft-float",
     "misrawarn","misradontwarn","reserve-reg","ecpp",
-    "short-push","unsigned-char"
+    "short-push","unsigned-char","opencl","no-include-stack",
+    "deps","deps-for-libs"
 };
 union ppi c_flags_val[MAXCF];
 char *inname;
@@ -84,4 +87,4 @@ struct ecpp_dtor_list *ecpp_dlist[MAXN];
 #endif
 
 char *cur_func="shouldn't happen!";
-char *copyright="vbcc V0.9b (c) in 1995-2011 by Volker Barthelmann";
+char *copyright="vbcc V0.9e (c) in 1995-2016 by Volker Barthelmann";

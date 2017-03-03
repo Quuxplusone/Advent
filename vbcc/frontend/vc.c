@@ -1,6 +1,7 @@
 /*  Frontend for vbcc                       */
-/*  (c) in 1995-2010 by Volker Barthelmann  */
-/*  #define AMIGA for Amiga-Version         */
+/*  (c) in 1995-2014 by Volker Barthelmann  */
+/*  #define AMIGA for Amiga version         */
+/*  #define ATARI for Atari version         */
 
 #include <stdlib.h>
 #include <string.h>
@@ -14,6 +15,7 @@
 #include <dos/dosasl.h>
 #endif
 #include <dos/dosextens.h>
+#include <dos/dostags.h>
 #include <exec/libraries.h>
 #include <proto/dos.h>
 #pragma default-align
@@ -66,6 +68,7 @@ int MAXCLEN=32000;
 #define ASSRC 4
 #define OBJ 5
 
+char *vbccenv;
 char empty[]="";
 /*  Namen der einzelnen Phasen  */
 char *ppname=empty,*ccname=empty,*asname=empty,*ldname=empty,*l2name=empty;
@@ -126,13 +129,13 @@ int linklen=10,flags=0;
 char *tmpnam(char *p)
 {
   static int c=1675;
-  static char tmp[256];
+  static char tmp[NAMEBUF];
   char *env;
 
   env=getenv("TEMP");
   if(!env) env=".";
   if(!p) p=tmp;
-  sprintf(p,"%s\\vbcc%04x",env,++c);
+  snprintf(p,NAMEBUF,"%s\\vbcc%04x",env,++c);
   return p;
 }
 #endif
@@ -176,12 +179,37 @@ static void raus(int rc)
     exit(rc);
 }
 
+#ifdef NO_LONGER_NEEDED
+/* Launch command from "$VBCC\bin\", when no absolute path was specified. */
+static int runcmd(char *cmd)
+{
+    char *p;
+
+    for(p=cmd;*p!=0&&*p>' ';p++){
+        if(*p==':')  /* absolute path */
+            goto do_cmd;
+    }
+    if(vbccenv){
+        /* prepend "$VBCC\bin\" in front of our command */
+        int len=strlen(vbccenv);
+        if(vbccenv[len-1]=='\\') len--;
+        memmove(cmd+len+5,cmd,strlen(cmd)+1);
+        memcpy(cmd,vbccenv,len);
+        memcpy(cmd+len,"\\bin\\",5);
+    }
+do_cmd:
+    return system(cmd);
+}
+#else
+#define runcmd(c) system(c)
+#endif
+
 static void del_scratch(struct NameList *p)
 {
     while(p){
         sprintf(command,rmname,p->obj);
         if(flags&VERBOSE) printf("%s\n",command);
-        if(system(command)){printf("%s failed\n",command);raus(EXIT_FAILURE);}
+        if(runcmd(command)){printf("%s failed\n",command);raus(EXIT_FAILURE);}
         p=p->next;
     }
 }
@@ -219,8 +247,7 @@ static int read_config(const char *cfg_name)
       if(file) break;
     }
     if(!file){
-      p=getenv("VBCC");
-      if(p){
+      if(p=vbccenv){
         name=malloc(strlen(p)+strlen(cfg_name)+20);
         if(!name){printf(nomem);raus(EXIT_FAILURE);}
         strcpy(name,p);
@@ -296,6 +323,32 @@ static char *add_suffix(char *s,char *suffix)
     return str;
 }
 
+#if defined(_WIN32)||defined(MSDOS)||defined(ATARI)||defined(AMIGA)
+static char *convert_path(char *path)
+{
+    char c,*p,*newpath;
+    newpath=p=malloc(strlen(path)+1);
+    while(c=*path++){
+#ifdef AMIGA
+        if(c=='.'){
+            if(*path=='/') continue;
+            if(*path=='.'&&*(path+1)=='/'){
+                path++;
+                continue;
+            }
+        }
+#else
+        if(c=='/') c='\\';
+#endif
+        *p++=c;
+    }
+    *p=0;
+    return newpath;
+}
+#else
+#define convert_path(p) (p)
+#endif
+
 int main(int argc,char *argv[])
 {
     int tfl,i,len=10,pm,count,db=0,staticmode=0;
@@ -309,6 +362,7 @@ int main(int argc,char *argv[])
             break;
         }
     }
+    vbccenv=getenv("VBCC");
     count=read_config(config_name);
 #ifdef AMIGA
 #if !defined(__amigaos4__) && !defined(__MORPHOS__)
@@ -406,6 +460,10 @@ int main(int argc,char *argv[])
             *parm=0;continue;
         }
         len+=strlen(parm)+10;
+#ifdef ATARI
+        if(vbccenv)
+          len+=strlen(vbccenv)+5;
+#endif
     }
     if(!db&&*nodb){
       if(strlen(userlibs)+2+strlen(nodb)>=USERLIBS){
@@ -425,7 +483,7 @@ int main(int argc,char *argv[])
       userlibs[slen]=' ';
     }
     if(flags&VERBOSE){
-      printf("vc frontend for vbcc (c) in 1995-2010 by Volker Barthelmann\n");
+      printf("vc frontend for vbcc (c) in 1995-2014 by Volker Barthelmann\n");
 #ifdef SPECIAL_COPYRIGHT
       printf("%s\n",SPECIAL_COPYRIGHT);
 #endif
@@ -471,59 +529,60 @@ int main(int argc,char *argv[])
           parm=argv[i];
         else if(i<argc+count)
           parm=confp[i-argc];
-        else{
-#ifdef USECMDFILE
-          fclose(cmdfile);
-#endif
+        else
           parm=cmfiles;
-        }
         if(!parm||(*parm=='-'&&parm!=cmfiles)||!*parm) continue;
         if(flags&VERYVERBOSE) printf("Argument %d:%s\n",i,parm);
 #ifdef AMIGA
-        if(pm&&parm!=cmfiles) if(MatchFirst((STRPTR)parm,ap)) {printf("No match for %s\n",parm);continue;}
+        if(pm&&parm!=cmfiles)
+            if(MatchFirst((STRPTR)convert_path(parm),ap)){
+                printf("No match for %s\n",parm);continue;
+            }
 #endif
         do{
             if(parm==cmfiles){
-              file=parm;
-              t=CCSRC;
+                file=parm;
+                t=CCSRC;
             }else{
 #ifdef AMIGA
 #ifdef __amigaos4__
-        if(pm) file=(char *)ap->ap_Buffer; else file=parm;
+                if(pm) file=(char *)ap->ap_Buffer; else file=parm;
 #else
-              if(pm) file=(char *)&ap->ap_Buf[0]; else file=parm;
+                if(pm) file=(char *)&ap->ap_Buf[0]; else file=parm;
 #endif
 #else
-              file=parm;
+                file=convert_path(parm);
 #endif
-              t=typ(file);
-              strcpy(namebuf+1,file);
-              strcat(namebuf,"\"");
-              file=namebuf;
+                t=typ(file);
+                strcpy(namebuf+1,file);
+                strcat(namebuf,"\"");
+                file=namebuf;
             }
             if(flags&VERYVERBOSE) printf("File %s=%d\n",file,t);
             if(!cmname&&(flags&CROSSMODULE)&&t<=CCSRC){
-              cmname=malloc(NAMEBUF);
-              if(!cmname){printf(nomem);exit(EXIT_FAILURE);}
-              if(tfl==OBJ){
-                strcpy(cmname,file);
-              }else{
-                cmname[0]='\"';
-                tmpnam(cmname+1);
-              }
+                cmname=malloc(NAMEBUF);
+                if(!cmname){printf(nomem);exit(EXIT_FAILURE);}
+                if(tfl==OBJ){
+                    strcpy(cmname,file);
+                }else{
+                    cmname[0]='\"';
+                    tmpnam(cmname+1);
+                }
             }
             for(j=t;j<tfl;j++){
-                if(j==OBJ){ if(j==t) add_name(file,&first_obj,&last_obj);
-                            continue;}
+                if(j==OBJ){
+                    if(j==t) add_name(file,&first_obj,&last_obj);
+                    continue;
+                }
                 strcpy(oldfile,file);
                 if(file==cmfiles){
-                  file=cmoutput;
+                    file=cmoutput;
                 }else{
-                  if(j==t&&j!=tfl-1&&!(flags&(NOTMPFILE|KEEPSCRATCH))){
-                    file=namebuf2;
-                    tmpnam(file+1);
-                  }
-                  if(j==tfl-1||(flags&WPO)) file=namebuf;
+                    if(j==t&&j!=tfl-1&&!(flags&(NOTMPFILE|KEEPSCRATCH))){
+                        file=namebuf2;
+                        tmpnam(file+1);
+                    }
+                    if(j==tfl-1||(flags&WPO)) file=namebuf;
                 }
                 if(j==PPSRC){
                     file=add_suffix(file,".i");
@@ -533,11 +592,11 @@ int main(int argc,char *argv[])
                 }
                 /* MUST come before CCSRC-handling! */
                 if(j==SCSRC){
-                  /*if(final) file=cmname;*/
-                  file=add_suffix(file,".asm");
-                  if(tfl==ASSRC&&(flags&OUTPUTSET)) file=destname;
-                  sprintf(command,scname,oldfile,file);
-                  if(tfl!=ASSRC) add_name(file,&first_scratch,&last_scratch);
+                    /*if(final) file=cmname;*/
+                    file=add_suffix(file,".asm");
+                    if(tfl==ASSRC&&(flags&OUTPUTSET)) file=destname;
+                    sprintf(command,scname,oldfile,file);
+                    if(tfl!=ASSRC) add_name(file,&first_scratch,&last_scratch);
                 }
                 if(j==CCSRC){
                     if(file!=cmoutput){
@@ -586,7 +645,13 @@ int main(int argc,char *argv[])
                         break;
                       }
                     }
-                    if(flags&CROSSMODULE) final=1;
+                    if(flags&CROSSMODULE){
+#ifdef USECMDFILE
+                      fclose(cmdfile);
+                      cmdfile=0;
+#endif
+                      final=1;
+                    }
                     if((flags&(CROSSMODULE|SCHEDULER))==CROSSMODULE) j++;
                     sprintf(command,ccname,oldfile,file,options,opt);
                     if(flags&WPO){
@@ -605,7 +670,19 @@ int main(int argc,char *argv[])
                     if((tfl)!=OBJ) add_name(file,&first_scratch,&last_scratch);
                 }
                 if(flags&VERBOSE) printf("%s\n",command);
-                if(system(command)){printf("%s failed\n",command);raus(EXIT_FAILURE);}
+#ifdef AMIGA
+#if !defined(__amigaos4__) && !defined(__MORPHOS__)
+                if(DOSBase->dl_lib.lib_Version>=36){
+#else
+                if(1){
+#endif
+                    if(SystemTags(command,NP_Priority,-2,TAG_DONE)){
+                        printf("%s failed\n",command);
+                        raus(EXIT_FAILURE);
+                    }
+                }else
+#endif
+                if(runcmd(command)){printf("%s failed\n",command);raus(EXIT_FAILURE);}
             }
 #ifdef AMIGA
         }while(pm&&!MatchNext(ap));
@@ -622,6 +699,9 @@ int main(int argc,char *argv[])
         objects=malloc(linklen);
         if(!objects){printf(nomem);raus(EXIT_FAILURE);}
         linklen+=strlen(ldname)+strlen(destname)+strlen(userlibs)+10;
+#ifdef ATARI
+        if(vbccenv) linklen+=strlen(vbccenv)+5;
+#endif
         if(flags&VERYVERBOSE) printf("linklen=%d\n",linklen);
         if(!(linkcmd=malloc(linklen))){printf(nomem);raus(EXIT_FAILURE);}
         p=first_obj;
@@ -649,7 +729,7 @@ int main(int argc,char *argv[])
             sprintf(linkcmd,ldname,objects,userlibs,destname);
             if(flags&VERBOSE) printf("%s\n",linkcmd);
             /*  hier wird objfile bei Fehler nicht geloescht    */
-            if(system(linkcmd)){printf("%s failed\n",linkcmd);raus(EXIT_FAILURE);}
+            if(runcmd(linkcmd)){printf("%s failed\n",linkcmd);raus(EXIT_FAILURE);}
 #ifdef AMIGA
             if(flags&VERBOSE){
                 BPTR l;

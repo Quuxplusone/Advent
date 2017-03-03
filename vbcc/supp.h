@@ -23,10 +23,19 @@
 #define UNION 13
 #define ENUM 14
 #define FUNKT 15
-#define MAXINT 16 /* should not be accesible to application */
+#define BOOL 16
+#define MAXINT 17 /* should not be accessible to application */
 #define MAX_TYPE MAXINT
-#define NQ 127   /* f&NQ gives type without any qualifiers */
-#define NU 255   /* f&NU gives type without any qualifiers but UNSIGNED */
+#define MAXVECDIM 16
+#define VECBOOL (MAXINT+1)
+#define VECCHAR (VECBOOL+MAXVECDIM)
+#define VECSHORT (VECCHAR+MAXVECDIM)
+#define VECINT (VECSHORT+MAXVECDIM)
+#define VECLONG (VECINT+MAXVECDIM)
+#define VECFLOAT (VECLONG+MAXVECDIM)
+#define VECLAST (VECFLOAT+MAXVECDIM)
+#define NQ 255   /* f&NQ gives type without any qualifiers */
+#define NU 511   /* f&NU gives type without any qualifiers but UNSIGNED */
 #define q1typ(p) ((p->code==ADDI2P||p->code==SUBIFP||p->code==CONVERT||p->code==SUBPFP)?p->typf2:p->typf)
 #define q2typ(p) ((p->code==SUBPFP||p->code==LSHIFT||p->code==RSHIFT)?p->typf2:p->typf)
 #define ztyp(p) ((p->code==ADDI2P||p->code==SUBIFP||p->code==ADDRESS)?p->typf2:p->typf)
@@ -45,26 +54,26 @@ typedef unsigned int bvtype;
 #define BCLR(array,bit) (array)[(bit)/BVBITS]&=~(1<<((bit)%BVBITS))
 #define BTST(array,bit) ((array)[(bit)/BVBITS]&(1<<((bit)%BVBITS)))
 /* type-qualifiers */
-#define UNSIGNED 128
-#define CONST 256
-#define VOLATILE 512
-#define RESTRICT 1024
-#define UNCOMPLETE 2048
-#define STRINGCONST 4096
-#define BOOLEAN 8192
-#define SIGNED_CHARACTER	16384
+#define UNSIGNED (NQ+1)
+#define CONST (UNSIGNED<<1)
+#define VOLATILE (CONST<<1)
+#define RESTRICT (VOLATILE<<1)
+#define UNCOMPLETE (RESTRICT<<1)
+#define STRINGCONST (UNCOMPLETE<<1)
+#define BOOLEAN (STRINGCONST<<1)
+#define SIGNED_CHARACTER (BOOLEAN<<1)
 #ifdef HAVE_ECPP
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
+#define ECPP_VIRTUAL 1
+#define ECPP_STATIC 2
+#define ECPP_TV 4
+#define ECPP_CTOR 8
+#define ECPP_DTOR 16
+#define ECPP_POD 32
+#define ECPP_PRIVATE 64
+#define ECPP_PROTECTED 128
+#define ECPP_PUBLIC 256
+#define ECPP_NESTED_CLASS 512
+#define ECPP_FRIEND 1024
 #endif
 #define t_min(x) (((x)&UNSIGNED)?l2zm(0L):t_min[(x)&NQ])
 #define t_max(x) (((x)&UNSIGNED)?tu_max[(x)&NQ]:t_max[(x)&NQ])
@@ -99,6 +108,12 @@ typedef zullong zumax;
 #endif
 #ifndef ISARRAY
 #define ISARRAY(x) ((x&NQ)==ARRAY)
+#endif
+#ifndef ISVECTOR
+#define ISVECTOR(x) ((x&NQ)>=VECBOOL&&(x&NQ)<=VECLAST)
+#endif
+#ifndef VECDIM
+#define VECDIM(x) ((((x&NQ)-VECBOOL)&15)+1)
 #endif
 #ifndef ISSCALAR
 #define ISSCALAR(x) ((x&NQ)>=CHAR&&(x&NQ)<=POINTER)
@@ -155,9 +170,9 @@ struct function_info{
   /* registers used and modified by that function */
   bvtype regs_modified[RSIZE/sizeof(bvtype)];
 #if HAVE_OSEK
-/* removed */
-/* removed */
-/* removed */
+  bvtype preempt_regs[RSIZE/sizeof(bvtype)];
+  bvtype schedule_regs[RSIZE/sizeof(bvtype)];
+  int osflags;
 #endif
   zumax stack1;
   zumax stack2;
@@ -172,7 +187,7 @@ struct Typ{
   char *attr;
   int reg;
 #ifdef HAVE_ECPP
-/* removed */
+	int ecpp_flags;
 #endif
 };
 #define TYPS sizeof(struct Typ)
@@ -277,7 +292,7 @@ struct Var{
 #define REFERENCED 65536    /* variable referenced */
 #define INLINEFUNC (REFERENCED*2)
 #define INLINEEXT (INLINEFUNC*2)
-
+#define BUILTIN (INLINEFUNC*2)
 
 /* C-only */
 struct struct_list{
@@ -289,7 +304,7 @@ struct struct_list{
   int storage_class;  /* storage-class of function-parameter */
   int reg;            /* register to pass function-parameter */
 #ifdef HAVE_ECPP
-/* removed */
+	char *mangled_identifier;
 #endif
 };
 
@@ -306,15 +321,15 @@ struct struct_declaration{
   struct struct_list (*sl)[];
   char *identifier;
 #ifdef HAVE_ECPP
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
+  /* the class this declaration is nested in, i.e. if it's a class, the surrounding */
+  /* class, if it's a function, the class this function belongs to */
+  struct struct_declaration *higher_nesting;
+  struct struct_declaration *base_class;
+  int base_access;
+  int ecpp_flags;
+  char *mangled_identifier;
+  int num_friends;
+  struct struct_declaration **friends;
 #endif
 };
 
@@ -359,6 +374,8 @@ struct IC{
 /* flags for ICs */
 #define LOOP_COND_TRUE 1  /* loop condition is true at first iteration */
 #define EFF_IC 2          /* do not transform IC with doubtful optimizations */
+#define ORDERED_PUSH_COPY 4 /* mark a copy of an ordered push */
+
 /*  Available codes for struct IC. See interface.doc. */
 #define KOMMA 1
 #define ASSIGN 2
@@ -468,6 +485,7 @@ struct IC{
 #define NOP 97
 #define BITFIELD 98
 #define LITERAL 99
+#define REINTERPRET 100
 extern char *typname[];
 extern zmax sizetab[];
 extern char *storage_class_name[];
@@ -490,7 +508,7 @@ extern union atyps gval;
 extern int DEBUG;
 #endif
 #ifdef HAVE_MISRA
-/* removed */
+int misra_check_use_warn(const char*);
 #endif
 /*  used by the optimizer */
 /* for lists in ICs flags may be DREFOBJ to mark dereferences */
@@ -592,8 +610,8 @@ extern int ecpp;
 extern void add_IC(struct IC *);
 extern void error(int,...);
 #ifdef HAVE_MISRA
-/* removed */
-/* removed */
+extern void misra(int,...);
+extern void misra_neu(int, int, int, int, ...);
 #endif
 extern struct Var *add_tmp_var(struct Typ *);
 extern void free_var(struct Var *);
@@ -635,6 +653,8 @@ extern struct Typ *clone_typ(struct Typ *);
 #ifdef HAVE_EXT_TYPES
 extern void conv_typ(struct Typ *);
 #endif
+extern int VECTYPE(int);
+extern int mkvec(int,int);
 extern zmax szof(struct Typ *);
 extern int is_vlength(struct Typ *);
 extern struct Var *vlength_szof(struct Typ *);
@@ -657,6 +677,7 @@ extern int is_volatile_obj(struct obj *);
 extern int is_volatile_ic(struct IC *);
 extern struct case_table *calc_case_table(struct IC *,double);
 int calc_regs(struct IC *,int);
+struct Var *declare_builtin(char *name,int ztyp,int q1typ,int q1reg,int q2typ,int q2reg,int nosidefx,char *asm);
 extern void emit_jump_table(FILE *,struct case_table *,char *,char *,int);
 extern void optimize(long, struct Var *);
 int bvcmp(bvtype *dest,bvtype *src,size_t len);
@@ -703,7 +724,7 @@ extern int must_convert(int,int,int);
 extern int handle_pragma(const char *);
 #endif
 #ifdef HAVE_LIBCALLS
-extern char *use_libcall(np);
+extern char *use_libcall(int code,int t1,int t2);
 #endif
 extern int cost_savings(struct IC *,int,struct obj *);
 /* additional declarations for targets which pass arguments in */
@@ -754,18 +775,18 @@ extern void mark_eff_ics(void);
 #define AVOID_UNSIGNED_TO_FLOAT 0
 #endif
 #if HAVE_OSEK
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
+/* used for special operating system support */
+extern bvtype task_preempt_regs[],task_schedule_regs[];
+typedef struct tasklist {
+  struct Var *v;
+  int prio;
+  int taskid;
+  enum {NON_PREEMPTIVE=1,DOES_BLOCK=2,CALLS_SCHED=4,ISR=8} flags;
+  bvtype context[BVSIZE(MAXR+1)/sizeof(bvtype)];
+  bvtype preempt_context[BVSIZE(MAXR+1)/sizeof(bvtype)];
+  bvtype schedule_context[BVSIZE(MAXR+1)/sizeof(bvtype)];
+  bvtype unsaved_context[BVSIZE(MAXR+1)/sizeof(bvtype)];
+} tasklist;
 #endif
 
 

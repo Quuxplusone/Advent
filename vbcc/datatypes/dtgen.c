@@ -271,7 +271,7 @@ int main(int argc,char **argv)
     }else{
       if(!tst(i,spec)){
 	printf("Problem! Your system does not seem to provide all of the data types\n"
-	       "this version of vbcc needs.\nWrite to volker@vb.franken.de!\n");
+	       "this version of vbcc needs.\nWrite to vb@compilers.de!\n");
 	exit(EXIT_FAILURE);
       }
     }

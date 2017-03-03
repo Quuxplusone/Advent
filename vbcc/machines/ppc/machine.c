@@ -21,7 +21,7 @@ char *g_flags_name[MAXGF]={"cpu","fpu","const-in-data","sd","merge-constants","f
                            "elf","amiga-align","no-regnames","no-peephole","setccs",
                            "use-lmw","poweropen","sc","madd","eabi","gas",
 			   "no-align-args","conservative-sr","use-commons",
-                           "baserel32os4","baserel32mos"};
+                           "baserel32os4","baserel32mos","oldlibcalls"};
 union ppi g_flags_val[MAXGF];
 
 /*  Alignment-requirements for all types in bytes.              */
@@ -115,6 +115,7 @@ char *g_attr_name[]={"__far","__near","__chip","__saveds","__rfi","__saveall",
 #define USE_COMMONS (g_flags[19]&USEDFLAG)
 #define BASERELOS4 (g_flags[20]&USEDFLAG)
 #define BASERELMOS (g_flags[21]&USEDFLAG)
+#define OLDLIBCALLS (g_flags[22]&USEDFLAG)
 
 
 static char *mregnames[MAXR+1];
@@ -132,6 +133,9 @@ static char *marray[]={"__section(x,y)=__vattr(\"section(\"#x\",\"#y\")\")",
 		       "__linearvarargs=__attr(\"linearvarargs;\")",
 		       "__interrupt=__rfi __saveall",
 		       0};
+
+const int r4=5,r5=6,r6=7,r3r4=74,r5r6=75;
+
 
 static int r0=1;                   /*  special register                    */
 static int r2=3;                   /*  reserved or toc                     */
@@ -160,8 +164,8 @@ static int bp32mos=14;             /*  baserel32 pointer for MorphOS       */
 #define SPECIAL 8
 
 #if HAVE_OSEK
-/* removed */
-/* removed */
+static bvtype usedsysregs[RSIZE/sizeof(bvtype)];
+static int sysstack;
 #endif
 
 static long stack;
@@ -423,7 +427,7 @@ static void load_reg(FILE *f,int r,struct obj *o,int typ,int tmp)
       if(l)
 	emit(f,"\taddi\t%s,%s,%ld\n",mregnames[r],mregnames[r],l);
     }else{
-      emit(f,"\tli\t%s,%ld\n",mregnames[r],zm2l(vmax));
+      emit(f,"\tli\t%s,%ld\n",mregnames[r],lo(vmax));
     }
     return;
   }
@@ -1618,8 +1622,8 @@ static int get_reg()
 
 static int handle_llong(FILE *f,struct IC *p)
 {
-  const int r3=4,r4=5,r5=6,r6=7,r3r4=74,r5r6=75;
   int c=p->code,t,savemask=0;char *libfuncname;
+  int msp;long mtmpoff;
 
   t=(ztyp(p)&NU);
 
@@ -1791,7 +1795,7 @@ static int handle_llong(FILE *f,struct IC *p)
     char *sh;
     struct IC *b;
     if(multiple_ccs)
-      ierror(0);
+      ierror(0); /* still needed? */
     else
       p->z.reg=cr0;
     b=p->next;
@@ -1802,7 +1806,7 @@ static int handle_llong(FILE *f,struct IC *p)
       sh="cmplw";
     else
       sh="cmpw";
-    if((c==BNE||c==BEQ)&&(p->q2.flags&KONST)){
+    if((c==BNE||c==BEQ)&&(p->q2.flags&KONST)&&p->z.reg==cr0){
       eval_const(&p->q2.val,q2typ(p));
       if(zmeqto(vmax,l2zm(0L))&&zumeqto(vumax,ul2zum(0UL))){
 	if(isreg(q1)){
@@ -2075,12 +2079,20 @@ static int handle_llong(FILE *f,struct IC *p)
 
   create_loadable(f,&p->q1,t1);
 
-  if(tmpoff>=32768) ierror(0);
+  if(tmpoff>=32768&&(regs[r3]||regs[r4]||regs[r5]||regs[r6])){
+    emit(f,"\taddis\t%s,%s,%ld\n",mregnames[t2],mregnames[sp],hi(tmpoff));
+    if(lo(tmpoff)) emit(f,"\taddi\t%s,%s,%ld\n",mregnames[t2],mregnames[t2],lo(tmpoff));
+    msp=t2;
+    mtmpoff=0;
+  }else{
+    msp=sp;
+    mtmpoff=tmpoff;
+  }
 
-  if(regs[r3]){ emit(f,"\tstw\t%s,%ld(%s)\n",mregnames[r3],tmpoff-4,mregnames[sp]);savemask|=1;}
-  if(regs[r4]){ emit(f,"\tstw\t%s,%ld(%s)\n",mregnames[r4],tmpoff-8,mregnames[sp]);savemask|=2;}
-  if(regs[r5]) {emit(f,"\tstw\t%s,%ld(%s)\n",mregnames[r5],tmpoff-12,mregnames[sp]);savemask|=4;}
-  if(regs[r6]) {emit(f,"\tstw\t%s,%ld(%s)\n",mregnames[r6],tmpoff-16,mregnames[sp]);savemask|=8;}
+  if(regs[r3]){ emit(f,"\tstw\t%s,%ld(%s)\n",mregnames[r3],mtmpoff-4,mregnames[msp]);savemask|=1;}
+  if(regs[r4]){ emit(f,"\tstw\t%s,%ld(%s)\n",mregnames[r4],mtmpoff-8,mregnames[msp]);savemask|=2;}
+  if(regs[r5]) {emit(f,"\tstw\t%s,%ld(%s)\n",mregnames[r5],mtmpoff-12,mregnames[msp]);savemask|=4;}
+  if(regs[r6]) {emit(f,"\tstw\t%s,%ld(%s)\n",mregnames[r6],mtmpoff-16,mregnames[msp]);savemask|=8;}
 
   if((p->q1.flags&(REG|DREFOBJ))==(REG|DREFOBJ)&&p->q1.reg>=r3&&p->q1.reg<=r6){
     emit(f,"\tmr\t%s,%s\n",mregnames[t1],mregnames[p->q1.reg]);
@@ -2110,8 +2122,8 @@ static int handle_llong(FILE *f,struct IC *p)
     create_loadable(f,&p->q2,t2);
     if((q2typ(p)&NQ)==LLONG){
       if(isreg(q2)&&p->q2.reg==r3r4){
-	emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[r5],tmpoff-4,mregnames[sp]);
-	emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[r6],tmpoff-8,mregnames[sp]);
+	emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[r5],mtmpoff-4,mregnames[msp]);
+	emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[r6],mtmpoff-8,mregnames[msp]);
       }else{
 	if(p->q2.am&&p->q2.am->base==r5){
 	  if(p->q2.am->flags==REG_IND&&p->q2.am->offset==r6) ierror(0);
@@ -2126,7 +2138,7 @@ static int handle_llong(FILE *f,struct IC *p)
     }else{
       if((q2typ(p)&NQ)>=LLONG) ierror(0);
       if(isreg(q2)&&p->q2.reg==r3){
-	emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[r5],tmpoff-4,mregnames[sp]);
+	emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[r5],mtmpoff-4,mregnames[msp]);
       }else{
 	load_reg(f,r5,&p->q2,q2typ(p),0);
       }      
@@ -2172,13 +2184,13 @@ static int handle_llong(FILE *f,struct IC *p)
        (p->z.reg==r5&&(savemask&4))||
        (p->z.reg==r6&&(savemask&8))){
       if(p->z.reg==r3)
-	emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[t1],tmpoff-4,mregnames[sp]);
+	emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[t1],mtmpoff-4,mregnames[msp]);
       else if(p->z.reg==r4)
-	emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[t1],tmpoff-8,mregnames[sp]);
+	emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[t1],mtmpoff-8,mregnames[msp]);
       else if(p->z.reg==r5)
-	emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[t1],tmpoff-12,mregnames[sp]);
+	emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[t1],mtmpoff-12,mregnames[msp]);
       else if(p->z.reg==r6)
-	emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[t1],tmpoff-16,mregnames[sp]);
+	emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[t1],mtmpoff-16,mregnames[msp]);
       else
 	ierror(0);
       p->z.reg=t1;
@@ -2209,13 +2221,13 @@ static int handle_llong(FILE *f,struct IC *p)
   }
 
   if(savemask&1)
-    emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[r3],tmpoff-4,mregnames[sp]);
+    emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[r3],mtmpoff-4,mregnames[msp]);
   if(savemask&2)
-    emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[r4],tmpoff-8,mregnames[sp]);
+    emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[r4],mtmpoff-8,mregnames[msp]);
   if(savemask&4)
-    emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[r5],tmpoff-12,mregnames[sp]);
+    emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[r5],mtmpoff-12,mregnames[msp]);
   if(savemask&8)
-    emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[r6],tmpoff-16,mregnames[sp]);
+    emit(f,"\tlwz\t%s,%ld(%s)\n",mregnames[r6],mtmpoff-16,mregnames[msp]);
   
   return 1;
 }
@@ -2326,6 +2338,15 @@ int init_cg(void)
   if(BASERELOS4) bssname="\t.bss\n";
 
   target_macros=marray;
+
+  declare_builtin("__mulint64",LLONG,LLONG,r3r4,LLONG,r5r6,1,0);
+  declare_builtin("__divsint64",LLONG,LLONG,r3r4,LLONG,r5r6,1,0);
+  declare_builtin("__divuint64",UNSIGNED|LLONG,UNSIGNED|LLONG,r3r4,UNSIGNED|LLONG,r5r6,1,0);
+  declare_builtin("__modsint64",LLONG,LLONG,r3r4,LLONG,r5r6,1,0);
+  declare_builtin("__moduint64",UNSIGNED|LLONG,UNSIGNED|LLONG,r3r4,UNSIGNED|LLONG,r5r6,1,0);
+  declare_builtin("__lshint64",LLONG,LLONG,r3r4,INT,r5,1,0);
+  declare_builtin("__rshsint64",LLONG,LLONG,r3r4,INT,r5,1,0);
+  declare_builtin("__rshuint64",LLONG,UNSIGNED|LLONG,r3r4,INT,r5,1,0);
 
   return 1;
 }
@@ -3297,26 +3318,26 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
 	    stack_valid=0;
 	  }
 #if HAVE_OSEK
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
+	  if(p->call_list[i].v->fi)
+	    v->fi->osflags|=p->call_list[i].v->fi->osflags;
+	  if(p->call_list[i].v->vattr&&strstr(p->call_list[i].v->vattr,"obtainsemaphore;"))
+	    v->fi->osflags|=DOES_BLOCK;
+	  if(p->call_list[i].v->vattr&&strstr(p->call_list[i].v->vattr,"scheduler;"))
+	    v->fi->osflags|=CALLS_SCHED;
 #endif
 	}
       }
       if(!calc_regs(p,f!=0)&&v->fi) all_regs=0;
 #if HAVE_OSEK
-/* removed */
-/* removed */
+      bvunite(v->fi->preempt_regs,task_preempt_regs,RSIZE);
+      bvunite(v->fi->schedule_regs,task_schedule_regs,RSIZE);
 #endif
       if((p->q1.flags&(VAR|DREFOBJ))==VAR&&p->q1.v->fi&&p->q1.v->fi->inline_asm){
         emit_inline_asm(f,p->q1.v->fi->inline_asm);
       }else{
         if((p->q1.flags&(VAR|DREFOBJ))==VAR){
           if(!strcmp("__va_start",p->q1.v->identifier)){
-            emit(f,"\taddi\t%s,%s,%lu\n",mregnames[r3],mregnames[sp],framesize+minframe+zm2l(va_offset(v))+vparmos);
+            emit(f,"\taddi\t%s,%s,%lu\n",mregnames[r3],mregnames[sp],framesize+minframe+zm2l(va_offset(v))/*+vparmos*/);
             BSET(regs_modified,r3);continue;
           }
           if(!strcmp("__va_regbase",p->q1.v->identifier)){
@@ -3471,7 +3492,11 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
       }
       if(c==RSHIFT&&!(t&UNSIGNED)){
         emit(f,"\tsraw%s%s\t%s,%s,",isimm[q2reg==0],record[setcc],mregnames[zreg],mregnames[q1reg]);
-        emit_obj(f,&p->q2,q2typ(p)); emit(f,"\n");
+        emit_obj(f,&p->q2,q2typ(p));
+	/* fix for illegal shift values (undefined behaviour) */
+	if(!isreg(q2))
+	  emit(f,"&31");
+	emit(f,"\n");
         ccset|=setcc;
         continue;
       }
@@ -3543,7 +3568,7 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
   free(once);free(twice);
   function_bottom(f,v,of);
 #if HAVE_OSEK
-/* removed */
+  if(v->tattr&SYSCALL) bvunite(usedsysregs,regs_modified,RSIZE);
 #endif
   if(stack_valid){
     if(!v->fi) v->fi=new_fi();
@@ -3551,9 +3576,9 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
       if(v->fi->stack1!=stack&&!(v->tattr&SAVEALL))
 	if(f) error(319,"",stack,v->fi->stack1);
 #if HAVE_OSEK
-/* removed */
-/* removed */
-/* removed */
+      /*FIXME: stimmt nicht wirklich */
+      if((v->tattr&SYSCALL)&&stack>sysstack)
+	sysstack=stack;
 #endif
     }else{
       v->fi->flags|=ALL_STACK;
@@ -3769,192 +3794,219 @@ void mark_eff_ics(void)
   }
 }
 
+char *use_libcall(int c,int t,int t2)
+{
+  static char fname[32];
+  char *ret=0;
+
+  if(OLDLIBCALLS) return 0;
+
+  if((t&NQ)==LLONG){
+    ret=fname;
+    if(c==MULT)
+      sprintf(fname,"__mulint64");
+    else if(c==DIV)
+      sprintf(fname,"__div%cint64",(t&UNSIGNED)?'u':'s');
+    else if(c==MOD)
+      sprintf(fname,"__mod%cint64",(t&UNSIGNED)?'u':'s');
+    else if(c==RSHIFT)
+      sprintf(fname,"__rsh%cint64",(t&UNSIGNED)?'u':'s');
+    else if(c==LSHIFT)
+      sprintf(fname,"__lshint64");
+    else
+      ret=0;
+  }
+  return ret;
+}
+
+
+
 #if HAVE_OSEK
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
-/* removed */
+
+/* helper functions for stack optimization */
+
+int *cost,*slot_size,*slot,*slot_start,next_slot;
+bvtype *preempts;
+
+static int fits_slot(int s,int node,int tcnt)
+{
+  int i;
+  for(i=0;i<tcnt;i++)
+    if(slot[i]==s&&(BTST(preempts,node+i*tcnt)||BTST(preempts,i+node*tcnt)))
+      return 0;
+  return 1;
+}
+
+static void put_node(int node,int tcnt)
+{
+  int i;
+  for(i=0;i<next_slot;i++){
+    if(fits_slot(i,node,tcnt)){
+      slot[node]=i;
+      return;
+    }
+  }
+  slot[node]=next_slot;
+  slot_size[next_slot]=cost[node];
+  next_slot++;
+}
+
+/* special operating system support */
+void emit_os(FILE *f,tasklist *tasks,int tcnt)
+{
+  int i,j,t,r,mw,size,node,msize;
+  if(!f) return;
+
+  /* needed for interference graph */
+  cost=mymalloc(tcnt*sizeof(*cost));
+  preempts=mymalloc(BVSIZE(tcnt*tcnt));
+
+  /* emit load/save routines for system context */
+
+  if(section!=CODE){emit(f,codename);section=CODE;}
+
+  sysstack+=16; /*FIXME: 8 wegen lr + 8 misstrauen */
+
+  /* emit load/save routines for each task */
+
+  for(t=0;t<tcnt;t++){
+    emit(f,"%s__save%s:\n",idprefix,tasks[t].v->identifier);
+    size=0;
+    for(mw=0,r=32;r>=1;r--){
+      if(BTST(tasks[t].unsaved_context,r)&&BTST(usedsysregs,r))
+	BSET(tasks[t].context,r);
+      if((!regsa[r]||r==t3)&&BTST(tasks[t].context,r)){
+	if(mw!=0)
+	  emit(f,"\tstwu\t%s,-4(%s)\n",mregnames[r],mregnames[sp]);
+	size+=4;
+      }else{
+	if(mw==0){
+	  mw=1;
+	  if(r!=32){
+	    /*FIXME: could be improved*/
+	    emit(f,"\taddi\t%s,%s,%d\n",mregnames[sp],mregnames[sp],-4*(32-r));
+	    emit(f,"\tstmw\t%s,0(%s)\n",mregnames[r+1],mregnames[sp]);
+	  }
+	}
+      }
+    }
+    for(r=33;r<=64;r++){
+      if(BTST(tasks[t].context,r)||((tasks[t].flags&DOES_BLOCK)&&BTST(tasks[t].preempt_context,r))){
+	emit(f,"\tstfdu\t%s,-8(%s)\n",mregnames[r],mregnames[sp]);
+	size+=8;
+      }
+    }
+    cost[tasks[t].taskid]=size+28; /* 28 = r11,ip,msr,lr,r12,cr,xer */
+
+    if(t==0) emit(f,"%s_nothing:\n",idprefix);
+    emit(f,"\tblr\n");
+    emit(f,"%s__load%s:\n",idprefix,tasks[t].v->identifier);
+    msize=size;
+    for(mw=0,r=32;r>=1;r--){
+      if((!regsa[r]||r==t3)&&(BTST(tasks[t].context,r)||((tasks[t].flags&DOES_BLOCK)&&BTST(tasks[t].preempt_context,r)))){
+	size-=4;
+	if(mw!=0)
+	  emit(f,"\tlwz\t%s,%d(%s)\n",mregnames[r],size,mregnames[sp]);
+      }else{
+	if(mw==0){
+	  mw=1;
+	  if(r!=32)
+	    emit(f,"\tlmw\t%s,%d(%s)\n",mregnames[r+1],size,mregnames[sp]);
+	}
+      }
+    }
+    for(r=33;r<=64;r++){
+      if(BTST(tasks[t].context,r)||((tasks[t].flags&DOES_BLOCK)&&BTST(tasks[t].preempt_context,r))){
+	size-=8;
+	emit(f,"\tlfd\t%s,%d(%s)\n",mregnames[r],size,mregnames[sp]);
+      }
+    }
+    if(msize) emit(f,"\taddi\t%s,%s,%d\n",mregnames[sp],mregnames[sp],msize);
+    emit(f,"\tblr\n");
+  }
+
+  /* emit the function pointer tables */
+  if(section!=RODATA){emit(f,rodataname);section=RODATA;}
+  emit(f,"%s__loadctxt:\n",idprefix);
+  for(t=0;t<tcnt;t++)
+    for(r=0;r<tcnt;r++)
+      if(tasks[r].taskid==t)
+	emit(f,"\t.long\t%s__load%s\n",idprefix,tasks[r].v->identifier);
+  emit(f,"\t.long\t%s__nothing\n",idprefix);
+  emit(f,"%s__savectxt:\n",idprefix);
+  for(t=0;t<tcnt;t++)
+    for(r=0;r<tcnt;r++)
+      if(tasks[r].taskid==t)
+	emit(f,"\t.long\t%s__save%s\n",idprefix,tasks[r].v->identifier);
+  emit(f,"\t.long\t%s__nothing\n",idprefix);
+
+  /* create interference graph for stack optimization */
+
+  for(i=0;i<tcnt;i++){
+    if(!tasks[i].v->fi) ierror(0);
+    if(!(tasks[i].v->fi->flags&ALL_STACK)) ierror(0);
+    cost[tasks[i].taskid]+=tasks[i].v->fi->stack1;
+  }
+
+  for(i=0;i<tcnt;i++){
+    for(j=0;j<tcnt;j++){
+      if(strstr(tasks[i].v->vattr,"isr;")&&!strstr(tasks[j].v->vattr,"isr;"))
+	BSET(preempts,tasks[i].taskid+tasks[j].taskid*tcnt);
+      else if(tasks[j].flags&DOES_BLOCK)
+	BSET(preempts,tasks[i].taskid+tasks[j].taskid*tcnt);
+      else if(tasks[j].prio>=tasks[i].prio)
+	BCLR(preempts,tasks[i].taskid+tasks[j].taskid*tcnt);
+      else if((tasks[j].flags&(NON_PREEMPTIVE|CALLS_SCHED))==NON_PREEMPTIVE)
+	BCLR(preempts,tasks[i].taskid+tasks[j].taskid*tcnt);
+      else
+	BSET(preempts,tasks[i].taskid+tasks[j].taskid*tcnt);
+    }
+  }
+
+  /* compute optimized stack assignment */
+  slot_size=mymalloc(tcnt*sizeof(*slot_size));
+  slot=mymalloc(tcnt*sizeof(*slot));
+
+  for(i=0;i<tcnt;i++) slot[i]=slot_size[i]=-1;
+  next_slot=0;
+  while(1){
+    node=-1;
+    for(i=0;i<tcnt;i++){
+      if(slot[i]==-1&&(node==-1||cost[i]>=cost[node]))
+	node=i;
+    }
+    if(node==-1){
+      /* now we have n=next_slot slots of slot_size[0..ns] */
+      break;
+    }
+    put_node(node,tcnt);
+  }
+
+  slot_start=mymalloc(next_slot*sizeof(*slot_start));
+  
+  for(size=0,i=0;i<next_slot;i++){
+    size+=slot_size[i];
+    slot_start[i]=size;
+  }
+
+  emit(f,"\t.global\t%s__stack\n",idprefix);
+  emit(f,"\t.global\t%s__sys_stack\n",idprefix);
+  emit(f,"\t.set\t%s__sys_stack,%sOSEKOSstacks+%d\n",idprefix,idprefix,size+sysstack);
+  emit(f,"\t.set\t%s__stack,%sOSEKOSstacks+%d\n",idprefix,idprefix,size+sysstack);
+
+
+  emit(f,"\t.global\t%sOSEKOStaskStack\n",idprefix);
+  emit(f,"%sOSEKOStaskStack:\n",idprefix);
+  for(i=0;i<tcnt;i++)
+    emit(f,"\t.long\t%sOSEKOSstacks+%d\n",idprefix,slot_start[slot[i]]);
+  emit(f,"\t.global\t%sOSEKOStaskRbIndex\n",idprefix);
+  emit(f,"%sOSEKOStaskRbIndex:\n",idprefix);
+  for(i=0;i<tcnt;i++)
+    emit(f,"\t.byte\t%d\n",slot[i]);
+  emit(f,"\t.global\t%sOSEKOSstacks\n",idprefix);
+  emit(f,"\t.lcomm\t%sOSEKOSstacks,%d\n",idprefix,size+sysstack);
+  emit(f,"\t.lcomm\t%sOSEKOSrbliste,%d\n",idprefix,tcnt*4);
+ 
+}
+
 #endif

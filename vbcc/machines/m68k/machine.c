@@ -1,8 +1,10 @@
 /*  Code generator for Motorola 680x0 CPUs. Supports 68000-68060+68881/2    */
 /*  and ColdFire.                                                           */
-/*  Vasm, PhxAss and the GNU assembler is supported.                        */
+/*  vasm, PhxAss and the GNU assembler is supported.                        */
 
 #include "supp.h"
+
+#define NEW_RET 0
 
 static char FILE_[]=__FILE__;
 
@@ -11,16 +13,16 @@ static char FILE_[]=__FILE__;
 /*  Public data that MUST be there.                             */
 
 /* Name and copyright. */
-char cg_copyright[]="vbcc code-generator for m68k/ColdFire V1.8 (c) in 1995-2010 by Volker Barthelmann";
+char cg_copyright[]="vbcc code-generator for m68k/ColdFire V1.10 (c) in 1995-2014 by Volker Barthelmann";
 
 /*  Commandline-flags the code-generator accepts                */
-int g_flags[MAXGF]={VALFLAG,VALFLAG,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+int g_flags[MAXGF]={VALFLAG,VALFLAG,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 char *g_flags_name[MAXGF]={
     "cpu","fpu","d2scratch","noa4","sc","sd","prof","const-in-data",
     "use-framepointer","no-peephole","no-delayed-popping",
     "gas","branch-opt","no-fp-return","no-mreg-return","hunkdebug",
     "no-intz","old-peephole","conservative-sr","elf","use-commons",
-    "a2scratch"
+    "a2scratch","old-softfloat","amiga-softfloat","fastcall","fp2scratch"
 };
 
 union ppi g_flags_val[MAXGF];
@@ -72,6 +74,8 @@ int regscratch[MAXR+1]={0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,
 
 int reg_prio[MAXR+1]={0,4,4,3,3,3,3,3,0,2,2,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0};
 
+struct reg_handle empty_reg_handle={0,0,0};
+
 /* Names of target-specific variable attributes.                */
 char *g_attr_name[]={"__far","__near","__chip","__saveds",
                      "__interrupt","__amigainterrupt","__stdargs",0};
@@ -110,6 +114,10 @@ int MINADDI2P=SHORT;
 #define ELF             (g_flags[19]&USEDFLAG)
 #define USE_COMMONS     (g_flags[20]&USEDFLAG)
 #define A2SCRATCH       (g_flags[21]&USEDFLAG)
+#define OLD_SOFTFLOAT   (g_flags[22]&USEDFLAG)
+#define AMI_SOFTFLOAT   (g_flags[23]&USEDFLAG)
+#define FASTCALL        (g_flags[24]&USEDFLAG)
+#define FP2SCRATCH      (g_flags[25]&USEDFLAG)
 
 
 static int use_sd;
@@ -181,6 +189,7 @@ static int pushedreg,stored_cc; /* pushedreg&2: aregsaved; 4: dreg; 8: freg */
 static int comptyp;
 static int pushflag;
 static int geta4;
+static int dscratch=1,ascratch=1,fscratch=1;
 
 #define D16OFF 1024
 
@@ -209,6 +218,8 @@ static void scratch_modified(void)
   }
   if(D2SCRATCH) BSET(regs_modified,d2);
   if(A2SCRATCH) BSET(regs_modified,a2);
+  if(FP2SCRATCH) BSET(regs_modified,fp2);
+
 }
 
 static long pof2(zumax x)
@@ -244,6 +255,7 @@ static int offlabel,regoffset;
 static struct obj *cc_set,*cc_set_tst;
 static int cc_typ,cc_typ_tst;
 static int missing,savedemit,savedalloc;
+static int lastpush,unorderedpush,pushoff[MAXR+1];
 
 static int special_section(FILE *f,struct Var *v)
 {
@@ -390,13 +402,20 @@ static int get_reg(FILE *f,int flag,struct IC *p)
 	}
       }
       regs[i]+=4;
+      if(i<lastpush){
+	unorderedpush=1;
+	/*printf("%s %s\n",mregnames[lastpush],mregnames[i]);*/
+      }
       if(i<fp0){
 	emit(f,"\tmove.l\t%s,-(%s)\n",mregnames[i],mregnames[sp]);
 	push(4);
+	pushoff[i]=pushoff[lastpush]+4;
       }else{
 	emit(f,"\tfmove.x\t%s,-(%s)\n",mregnames[i],mregnames[sp]);
 	push(12);
+	pushoff[i]=pushoff[lastpush]+12;
       }
+      lastpush=i;
       if(i<d0)
 	pushedreg|=2;
       else if(i<fp0)
@@ -582,20 +601,31 @@ static void pr(FILE *f,struct IC *p)
     if(regs[i]&4){
       regs[i]&=~4;
       if(i>=1&&i<=d7){
-	if(cf&&*s=='m'){
-	  emit(f,"\tmove%s.l\t(%s),%s\n\taddq.l\t#4,%s\n",s,mregnames[sp],mregnames[i],mregnames[sp]);
-	}else{
-	  emit(f,"\tmove%s.l\t(%s)+,%s\n",s,mregnames[sp],mregnames[i]);
+	if(unorderedpush)
+	  emit(f,"\tmove%s.l\t%d(%s),%s\n",s,pushoff[lastpush]-pushoff[i],mregnames[sp],mregnames[i]);
+	else{
+	  if(cf&&*s=='m'){
+	    emit(f,"\tmove%s.l\t(%s),%s\n\taddq.l\t#4,%s\n",s,mregnames[sp],mregnames[i],mregnames[sp]);
+	  }else{
+	    emit(f,"\tmove%s.l\t(%s)+,%s\n",s,mregnames[sp],mregnames[i]);
+	  }
 	}
 	pop(4);size+=4;
       }else if(i>=fp0&&i<=fp7){
-	emit(f,"\tfmove%s.x\t(%s)+,%s\n",s,mregnames[sp],mregnames[i]);
+	if(unorderedpush)
+	  emit(f,"\tfmove%s.x\t%d(%s),%s\n",s,pushoff[lastpush]-pushoff[i],mregnames[sp],mregnames[i]);
+	else
+	  emit(f,"\tfmove%s.x\t(%s)+,%s\n",s,mregnames[sp],mregnames[i]);
 	pop(12);size+=12;
       }else if(i>=25&&i<=28){
-	if(cf)
-	  emit(f,"\tmovem.l\t(%s),%s\n\taddq.l\t#8,%s\n",mregnames[sp],mregnames[i],mregnames[sp]);
-	else
-	  emit(f,"\tmovem.l\t(%s)+,%s\n",mregnames[sp],mregnames[i]);
+	if(unorderedpush)
+	  emit(f,"\tmovem.l\t%d(%s),%s\n",pushoff[lastpush]-pushoff[i],mregnames[sp],mregnames[i]);
+	else{
+	  if(cf)
+	    emit(f,"\tmovem.l\t(%s),%s\n\taddq.l\t#8,%s\n",mregnames[sp],mregnames[i],mregnames[sp]);
+	  else
+	    emit(f,"\tmovem.l\t(%s)+,%s\n",mregnames[sp],mregnames[i]);
+	}
 	pop(8);size+=8;
       }else
 	ierror(0);
@@ -609,6 +639,10 @@ static void pr(FILE *f,struct IC *p)
   if((pushedreg&12)&&(p->code==TEST||p->code==COMPARE))
     emit(f,"\ttst.b\t-%d(%s)\n",size+2,mregnames[sp]);
 #endif
+  if(unorderedpush)
+    emit(f,"\tadd%s.%c\t#%d,%s\n",pushoff[lastpush]<=8?"q":"",cf?'l':'w',pushoff[lastpush],mregnames[sp]);
+  lastpush=0;
+  unorderedpush=0;
 }
 static void emit_obj(FILE *f,struct obj *p,int t)
 /*  Write object.   */
@@ -890,7 +924,7 @@ static void function_bottom(FILE *f,struct Var *v,long offset)
     if(cf){
       if(GAS){
         if(popval)
-	  emit(f,"\t.equ\t%s%d,%u\n\tmovem.l\t(%s),#%u\n\tadd.l\t#%s%d,%s\n",labprefix,reglabel,pushval,mregnames[sp],popval,labprefix,offlabel,mregnames[sp]);
+	  emit(f,"\t.equ\t%s%d,%u\n\tmovem.l\t(%s),#%u\n\tadd.l\t#%s%d%s,%s\n",labprefix,reglabel,pushval,mregnames[sp],popval,labprefix,offlabel,pushflag?"-4":"",mregnames[sp]);
         else
 	  emit(f,"\t.equ\t%s%d,0\n",labprefix,reglabel);
       }else{
@@ -899,7 +933,7 @@ static void function_bottom(FILE *f,struct Var *v,long offset)
 	else
 	  emit(f,"%s%d\treg\n",labprefix,reglabel);
 	if(*popreglist)
-	  emit(f,"\tmovem.l\t(%s),%s\n\tadd.l\t#%s%d,%s\n",mregnames[sp],popreglist,labprefix,offlabel,mregnames[sp]);
+	  emit(f,"\tmovem.l\t(%s),%s\n\tadd.l\t#%s%d%s,%s\n",mregnames[sp],popreglist,labprefix,offlabel,pushflag?"-4":"",mregnames[sp]);
       }
     }else{
       if(GAS){
@@ -1204,6 +1238,26 @@ static void mod_reg(int r)
   }
 #endif
 }
+/* return non-zero if IC is implemented by a function call */
+static int islibcall(struct IC *p)
+{
+  int c=p->code,t=p->typf/NQ;
+  if((c==DIV||c==MOD)&&CPU<68020)
+    return 1;
+  if(t==LLONG&&c!=ADD&&c!=SUB&&c!=OR&&c!=AND&&c!=XOR&&c!=COMPARE)
+    return 1;
+  if(ISFLOAT(t)&&FPU<=68000)
+    return 1;
+  if(c==CONVERT){
+    if(t==LLONG||ISFLOAT(t)) 
+      return 1;
+    t=p->typf2&NQ;
+    if(t==LLONG||ISFLOAT(t))
+      return 1;
+  }
+  return 0;
+}
+
 static int new_peephole(struct IC *first)
 {
   int localused=0,c,r,t,c2;long sz;
@@ -1230,7 +1284,7 @@ static int new_peephole(struct IC *first)
 	  c2=p2->code;
 	  if(!p2->q1.am&&(p2->q1.flags&(REG|DREFOBJ))==(REG|DREFOBJ)&&p2->q1.reg==r&&(!(p2->q2.flags&REG)||p2->q2.reg!=r)&&(!(p2->z.flags&REG)||p2->z.reg!=r)&&(c2!=CONVERT||(q1typ(p2)&NQ)<=(ztyp(p2)&NQ))){
 	    t=(q1typ(p2)&NQ);
-	    if((ISINT(t)||ISPOINTER(t))&&t!=LLONG&&zmeqto(sizetab[q1typ(p2)&NQ],l2zm(sz))){
+	    if((ISINT(t)||ISPOINTER(t))&&t!=LLONG&&zmeqto(sizetab[q1typ(p2)&NQ],l2zm(sz))&&!islibcall(p2)){
 	      p2->q1.am=am=mymalloc(sizeof(*am));
 	      p2->q1.val.vmax=l2zm(0L);
 	      am->basereg=r;
@@ -1244,7 +1298,7 @@ static int new_peephole(struct IC *first)
 	  }
 	  if(!p2->q2.am&&(p2->q2.flags&(REG|DREFOBJ))==(REG|DREFOBJ)&&p2->q2.reg==r&&(!(p2->q1.flags&REG)||p2->q1.reg!=r)&&(!(p2->z.flags&REG)||p2->z.reg!=r)){
 	    t=(q2typ(p2)&NQ);
-	    if((ISINT(t)||ISPOINTER(t))&&t!=LLONG&&zmeqto(sizetab[q2typ(p2)&NQ],l2zm(sz))){
+	    if((ISINT(t)||ISPOINTER(t))&&t!=LLONG&&zmeqto(sizetab[q2typ(p2)&NQ],l2zm(sz))&&!islibcall(p2)){
 	      p2->q2.am=am=mymalloc(sizeof(*am));
 	      p2->q2.val.vmax=l2zm(0L);
 	      am->basereg=r;
@@ -1258,7 +1312,7 @@ static int new_peephole(struct IC *first)
 	  }
 	  if(!p2->z.am&&(p2->z.flags&(REG|DREFOBJ))==(REG|DREFOBJ)&&p2->z.reg==r&&(!(p2->q2.flags&REG)||p2->q2.reg!=r)&&(!(p2->q1.flags&REG)||p2->q1.reg!=r)){
 	    t=(ztyp(p2)&NQ);
-	    if((ISINT(t)||ISPOINTER(t))&&t!=LLONG&&zmeqto(sizetab[ztyp(p2)&NQ],l2zm(sz))){
+	    if((ISINT(t)||ISPOINTER(t))&&t!=LLONG&&zmeqto(sizetab[ztyp(p2)&NQ],l2zm(sz))&&!islibcall(p2)){
 	      p2->z.am=am=mymalloc(sizeof(*am));
 	      p2->z.val.vmax=l2zm(0L);
 	      am->basereg=r;
@@ -1285,7 +1339,7 @@ static int new_peephole(struct IC *first)
       if((sz==1||sz==2||sz==4||sz==8)&&(ISINT(t)||ISPOINTER(t))&&t!=LLONG&&(!(p->q2.flags&REG)||p->q2.reg!=r)&&(!(p->z.flags&REG)||p->z.reg!=r)){
 	for(p2=p->next;p2;p2=p2->next){
 	  c2=p2->code;
-	  if(c2==ADDI2P&&(p2->q1.flags&(REG|DREFOBJ))==REG&&p2->q1.reg==r&&(p2->z.flags&(REG|DREFOBJ))==REG&&p2->z.reg==r&&(p2->q2.flags&(KONST|DREFOBJ))==KONST){
+	  if(c2==ADDI2P&&(p2->q1.flags&(REG|DREFOBJ))==REG&&p2->q1.reg==r&&(p2->z.flags&(REG|DREFOBJ))==REG&&p2->z.reg==r&&(p2->q2.flags&(KONST|DREFOBJ))==KONST&&!islibcall(p)){
 	    eval_const(&p2->q2.val,q2typ(p2));
 	    if(zmeqto(vmax,l2zm(sz))){
 	      p->q1.am=am=mymalloc(sizeof(*am));
@@ -1314,7 +1368,7 @@ static int new_peephole(struct IC *first)
       if((sz==1||sz==2||sz==4||sz==8)&&(ISINT(t)||ISPOINTER(t))&&t!=LLONG&&(!(p->q1.flags&REG)||p->q1.reg!=r)&&(!(p->z.flags&REG)||p->z.reg!=r)){
 	for(p2=p->next;p2;p2=p2->next){
 	  c2=p2->code;
-	  if(c2==ADDI2P&&(p2->q1.flags&(REG|DREFOBJ))==REG&&p2->q1.reg==r&&(p2->z.flags&(REG|DREFOBJ))==REG&&p2->z.reg==r&&(p2->q2.flags&(KONST|DREFOBJ))==KONST){
+	  if(c2==ADDI2P&&(p2->q1.flags&(REG|DREFOBJ))==REG&&p2->q1.reg==r&&(p2->z.flags&(REG|DREFOBJ))==REG&&p2->z.reg==r&&(p2->q2.flags&(KONST|DREFOBJ))==KONST&&!islibcall(p)){
 	    eval_const(&p2->q2.val,q2typ(p2));
 	    if(zmeqto(vmax,l2zm(sz))){
 	      p->q2.am=am=mymalloc(sizeof(*am));
@@ -1343,7 +1397,7 @@ static int new_peephole(struct IC *first)
       if((sz==1||sz==2||sz==4||sz==8)&&(ISINT(t)||ISPOINTER(t))&&t!=LLONG&&(!(p->q1.flags&REG)||p->q1.reg!=r)&&(!(p->q2.flags&REG)||p->q2.reg!=r)){
 	for(p2=p->next;p2;p2=p2->next){
 	  c2=p2->code;
-	  if(c2==ADDI2P&&(p2->q1.flags&(REG|DREFOBJ))==REG&&p2->q1.reg==r&&(p2->z.flags&(REG|DREFOBJ))==REG&&p2->z.reg==r&&(p2->q2.flags&(KONST|DREFOBJ))==KONST){
+	  if(c2==ADDI2P&&(p2->q1.flags&(REG|DREFOBJ))==REG&&p2->q1.reg==r&&(p2->z.flags&(REG|DREFOBJ))==REG&&p2->z.reg==r&&(p2->q2.flags&(KONST|DREFOBJ))==KONST&&!islibcall(p)){
 	    eval_const(&p2->q2.val,q2typ(p2));
 	    if(zmeqto(vmax,l2zm(sz))){
 	      p->z.am=am=mymalloc(sizeof(*am));
@@ -1446,6 +1500,7 @@ static int new_peephole(struct IC *first)
 		if(free_base) move_IC(use,free_base);
 		if(idx_ic){
 		  am->dreg=idx;
+		  if(ISHWORD(idx_ic->typf)) am->dreg|=128;
 		  if(free_idx) move_IC(use,free_idx);
 		  idx_ic->code=NOP;
 		  idx_ic->q1.flags=idx_ic->q2.flags=idx_ic->z.flags=0;
@@ -1538,6 +1593,9 @@ static int new_peephole(struct IC *first)
           else
             m=p2->z.reg;
           if(m==r){
+	    /* do not use addressing mode for libcalls */
+	    if(FPU<=68000&&o&&o==&use->z&&(ISFLOAT(use->typf)||ISFLOAT(use->typf2))&&use->code!=ASSIGN)
+	      break;
             if(o){
               o->am=am=mymalloc(sizeof(*am));
 	      o->val.vmax=l2zm(0L);
@@ -1985,7 +2043,7 @@ static int alignment(struct obj *o)
 {
     /*  wenn es keine Variable ist, kann man nichts aussagen    */
     long os;
-    if((o->flags&(DREFOBJ|VAR))!=VAR||o->am) return 0;
+    if((o->flags&(DREFOBJ|VAR))!=VAR||o->am) return -1;
     if(!o->v) ierror(0);
     os=zm2l(o->val.vmax);
     if(o->v->storage_class==AUTO||o->v->storage_class==REGISTER){
@@ -2007,7 +2065,7 @@ static void stored0d1(FILE *f,struct obj *o,int t)
     emit(f,"\tmove.l\t%s,%s\n",mregnames[d0],mregnames[rp.r1]);
     emit(f,"\tmove.l\t%s,%s\n",mregnames[10],mregnames[rp.r2]);
   }else{
-    if(cf){
+    if(cf&&(o->flags&(REG|DREFOBJ))!=(REG|DREFOBJ)){
       emit(f,"\tmove.l\t%s,",mregnames[d0]);
       emit_obj(f,o,t);
       emit(f,"\n");
@@ -2242,6 +2300,7 @@ static void assign(FILE *f,struct IC *p,struct obj *q,struct obj *z,int c,long s
     }
     a1=alignment(q);
     if(c!=PUSH)  a2=alignment(z); else a2=0;
+    if(a1<0||a2<0) {a1=1;a2=2;}
     if((c==PUSH||(scratch&1))&&(q->flags&(REG|DREFOBJ))==(REG|DREFOBJ)&&q->reg>=1&&q->reg<=8&&!q->am){
       qreg=q->reg;
       if(c==PUSH&&(a1&1)==0&&(a2&1)==0)
@@ -2483,6 +2542,7 @@ static int handle_llong(FILE *f,struct IC *p)
     if(ISPOINTER(told)) told=UNSIGNED|LONG;
     if(ISPOINTER(tnew)) tnew=UNSIGNED|LONG;
     if(ISFLOAT(told)){
+      if(!OLD_SOFTFLOAT) ierror(0);
       saveregs(f,p);
       assign(f,p,&p->q1,0,PUSH,msizetab[told&NQ],told);
       scratch_modified();
@@ -2665,7 +2725,7 @@ static int handle_llong(FILE *f,struct IC *p)
       return 1;
     }
     if(!isreg(z)&&compare_objects(&p->q1,&p->z)){
-      if(isreg(q2)||(isconst(q2)&&(c==ADD||c==SUB))){
+      if(isreg(q2)||(isconst(q2)&&(c==ADD||c==SUB)&&!cf)){
 	if(!r) r=get_reg(f,1,p);
 	emit(f,"\t%s\t",sl);
 	emit_lword(f,&p->q2);
@@ -2896,6 +2956,16 @@ static int handle_llong(FILE *f,struct IC *p)
   return 1;
 }
 
+/* generate inlines for Amiga IEEE softcalls */
+static char *ami_ieee(char *base,int off)
+{
+  char *s;
+  if(cf) ierror(0);
+  s=mymalloc(128);
+  sprintf(s,"\tmove.l\t%s,-(%s)\n\tmove.l\t%sMathIeee%sBase,%s\n\tjsr\t%d(%s)\n\tmove.l\t(%s)+,%s",mregnames[a6],mregnames[sp],idprefix,base,mregnames[a6],off,mregnames[a6],mregnames[sp],mregnames[a6]);
+  return s;
+}
+
 /****************************************/
 /*  End of private fata and functions.  */
 /****************************************/
@@ -2945,8 +3015,11 @@ int init_cg(void)
     /*  no FPU by default       */
     if(!(g_flags[1]&USEDFLAG)) FPU=0;
     if(FPU<=68000) {x_t[FLOAT]='l';}
-    if(D2SCRATCH) regscratch[11]=1;
-    if(A2SCRATCH) regscratch[3]=1;
+    if(D2SCRATCH){regscratch[d2]=1;dscratch++;}
+    if(A2SCRATCH) {regscratch[a2]=1;ascratch++;}
+    if(FP2SCRATCH) {regscratch[fp2]=1;fscratch++;}
+
+
     if(NOA4) regsa[5]=1;
     if(GAS){
         codename="\t.text\n";
@@ -3037,6 +3110,118 @@ int init_cg(void)
     marray[5]=0;
     target_macros=marray;
 
+    if(AMI_SOFTFLOAT&&!optsize){
+      declare_builtin("_ieeeaddl",FLOAT,FLOAT,d0,FLOAT,d1,1,ami_ieee("SingBas",-66));
+      declare_builtin("_ieeesubl",FLOAT,FLOAT,d0,FLOAT,d1,1,ami_ieee("SingBas",-72));
+      declare_builtin("_ieeemull",FLOAT,FLOAT,d0,FLOAT,d1,1,ami_ieee("SingBas",-78));
+      declare_builtin("_ieeedivl",FLOAT,FLOAT,d0,FLOAT,d1,1,ami_ieee("SingBas",-84));
+      declare_builtin("_ieeenegl",FLOAT,FLOAT,d0,0,0,1,ami_ieee("SingBas",-60));
+      declare_builtin("_ieeeaddd",DOUBLE,DOUBLE,d0d1,DOUBLE,d2d3,1,ami_ieee("DoubBas",-66));
+      declare_builtin("_ieeesubd",DOUBLE,DOUBLE,d0d1,DOUBLE,d2d3,1,ami_ieee("DoubBas",-72));
+      declare_builtin("_ieeemuld",DOUBLE,DOUBLE,d0d1,DOUBLE,d2d3,1,ami_ieee("DoubBas",-78));
+      declare_builtin("_ieeedivd",DOUBLE,DOUBLE,d0d1,DOUBLE,d2d3,1,ami_ieee("DoubBas",-84));
+      declare_builtin("_ieeenegd",DOUBLE,DOUBLE,d0d1,0,0,1,ami_ieee("DoubBas",-60));
+      declare_builtin("_ieees2d",DOUBLE,FLOAT,d0,0,0,1,ami_ieee("DoubTrans",-108));
+      declare_builtin("_ieeed2s",FLOAT,DOUBLE,d0d1,0,0,1,ami_ieee("DoubTrans",-102));
+      declare_builtin("_ieeefltsl",FLOAT,LONG,d0,0,0,1,ami_ieee("SingBas",-36));
+      declare_builtin("_ieeefltsd",DOUBLE,LONG,d0,0,0,1,ami_ieee("DoubBas",-36));
+      declare_builtin("_ieeefltul",FLOAT,UNSIGNED|LONG,0,0,0,1,0);
+      declare_builtin("_ieeefltud",DOUBLE,UNSIGNED|LONG,0,0,0,1,0);
+      declare_builtin("_ieeefixlsl",LONG,FLOAT,d0,0,0,1,ami_ieee("SingBas",-30));
+      declare_builtin("_ieeefixlsw",SHORT,FLOAT,d0,0,0,1,ami_ieee("SingBas",-30));
+      declare_builtin("_ieeefixlsb",CHAR,FLOAT,d0,0,0,1,ami_ieee("SingBas",-30));
+      declare_builtin("_ieeefixdsl",LONG,DOUBLE,d0d1,0,0,1,ami_ieee("DoubBas",-30));
+      declare_builtin("_ieeefixdsw",SHORT,DOUBLE,d0d1,0,0,1,ami_ieee("DoubBas",-30));
+      declare_builtin("_ieeefixdsb",CHAR,DOUBLE,d0d1,0,0,1,ami_ieee("DoubBas",-30));
+      declare_builtin("_ieeefixlul",UNSIGNED|LONG,FLOAT,0,0,0,1,0);
+      declare_builtin("_ieeefixluw",UNSIGNED|SHORT,FLOAT,0,0,0,1,0);
+      declare_builtin("_ieeefixlub",UNSIGNED|CHAR,FLOAT,0,0,0,1,0);
+      declare_builtin("_ieeefixdul",UNSIGNED|LONG,DOUBLE,0,0,0,1,0);
+      declare_builtin("_ieeefixduw",UNSIGNED|SHORT,DOUBLE,0,0,0,1,0);
+      declare_builtin("_ieeefixdub",UNSIGNED|CHAR,DOUBLE,0,0,0,1,0);
+      declare_builtin("_ieeecmpl",INT,FLOAT,d0,FLOAT,d1,1,ami_ieee("SingBas",-42));
+      declare_builtin("_ieeecmpd",INT,DOUBLE,d0d1,DOUBLE,d2d3,1,ami_ieee("DoubBas",-42));
+#if 0
+      declare_builtin("_ieeecmpllt",INT,FLOAT,0,FLOAT,0,1,0);
+      declare_builtin("_ieeecmplle",INT,FLOAT,0,FLOAT,0,1,0);
+      declare_builtin("_ieeecmplgt",INT,FLOAT,0,FLOAT,0,1,0);
+      declare_builtin("_ieeecmplge",INT,FLOAT,0,FLOAT,0,1,0);
+      declare_builtin("_ieeecmpleq",INT,FLOAT,0,FLOAT,0,1,0);
+      declare_builtin("_ieeecmplneq",INT,FLOAT,0,FLOAT,0,1,0);
+      declare_builtin("_ieeecmpdlt",INT,DOUBLE,0,DOUBLE,0,1,0);
+      declare_builtin("_ieeecmpdle",INT,DOUBLE,0,DOUBLE,0,1,0);
+      declare_builtin("_ieeecmpdgt",INT,DOUBLE,0,DOUBLE,0,1,0);
+      declare_builtin("_ieeecmpdge",INT,DOUBLE,0,DOUBLE,0,1,0);
+      declare_builtin("_ieeecmpdeq",INT,DOUBLE,0,DOUBLE,0,1,0);
+      declare_builtin("_ieeecmpdneq",INT,DOUBLE,0,DOUBLE,0,1,0);
+#endif
+      declare_builtin("_ieeetstl",INT,FLOAT,d0,0,0,1,ami_ieee("SingBas",-48));
+      declare_builtin("_ieeetstd",INT,DOUBLE,d0d1,0,0,1,ami_ieee("DoubBas",-48));
+      declare_builtin("_flt32tosint64",LLONG,FLOAT,0,0,0,1,0);
+      declare_builtin("_flt64tosint64",LLONG,DOUBLE,0,0,0,1,0);
+      declare_builtin("_flt32touint64",UNSIGNED|LLONG,FLOAT,0,0,0,1,0);
+      declare_builtin("_flt64touint64",UNSIGNED|LLONG,DOUBLE,0,0,0,1,0);
+      declare_builtin("_sint64toflt32",FLOAT,LLONG,0,0,0,1,0);
+      declare_builtin("_sint64toflt64",DOUBLE,LLONG,0,0,0,1,0);
+      declare_builtin("_uint64toflt32",FLOAT,UNSIGNED|LLONG,0,0,0,1,0);
+      declare_builtin("_uint64toflt64",DOUBLE,UNSIGNED|LLONG,0,0,0,1,0);
+    }else{
+      declare_builtin("_ieeeaddl",FLOAT,FLOAT,0,FLOAT,0,1,0);
+      declare_builtin("_ieeesubl",FLOAT,FLOAT,0,FLOAT,0,1,0);
+      declare_builtin("_ieeemull",FLOAT,FLOAT,0,FLOAT,0,1,0);
+      declare_builtin("_ieeedivl",FLOAT,FLOAT,0,FLOAT,0,1,0);
+      declare_builtin("_ieeenegl",FLOAT,FLOAT,0,0,0,1,0);
+      declare_builtin("_ieeeaddd",DOUBLE,DOUBLE,0,DOUBLE,0,1,0);
+      declare_builtin("_ieeesubd",DOUBLE,DOUBLE,0,DOUBLE,0,1,0);
+      declare_builtin("_ieeemuld",DOUBLE,DOUBLE,0,DOUBLE,0,1,0);
+      declare_builtin("_ieeedivd",DOUBLE,DOUBLE,0,DOUBLE,0,1,0);
+      declare_builtin("_ieeenegd",DOUBLE,DOUBLE,0,0,0,1,0);
+      declare_builtin("_ieees2d",DOUBLE,FLOAT,0,0,0,1,0);
+      declare_builtin("_ieeed2s",FLOAT,DOUBLE,0,0,0,1,0);
+      declare_builtin("_ieeefltsl",FLOAT,LONG,0,0,0,1,0);
+      declare_builtin("_ieeefltsd",DOUBLE,LONG,0,0,0,1,0);
+      declare_builtin("_ieeefltul",FLOAT,UNSIGNED|LONG,0,0,0,1,0);
+      declare_builtin("_ieeefltud",DOUBLE,UNSIGNED|LONG,0,0,0,1,0);
+      declare_builtin("_ieeefixlsl",LONG,FLOAT,0,0,0,1,0);
+      declare_builtin("_ieeefixlsw",SHORT,FLOAT,0,0,0,1,0);
+      declare_builtin("_ieeefixlsb",CHAR,FLOAT,0,0,0,1,0);
+      declare_builtin("_ieeefixdsl",LONG,DOUBLE,0,0,0,1,0);
+      declare_builtin("_ieeefixdsw",SHORT,DOUBLE,0,0,0,1,0);
+      declare_builtin("_ieeefixdsb",CHAR,DOUBLE,0,0,0,1,0);
+      declare_builtin("_ieeefixlul",UNSIGNED|LONG,FLOAT,0,0,0,1,0);
+      declare_builtin("_ieeefixluw",UNSIGNED|SHORT,FLOAT,0,0,0,1,0);
+      declare_builtin("_ieeefixlub",UNSIGNED|CHAR,FLOAT,0,0,0,1,0);
+      declare_builtin("_ieeefixdul",UNSIGNED|LONG,DOUBLE,0,0,0,1,0);
+      declare_builtin("_ieeefixduw",UNSIGNED|SHORT,DOUBLE,0,0,0,1,0);
+      declare_builtin("_ieeefixdub",UNSIGNED|CHAR,DOUBLE,0,0,0,1,0);
+      declare_builtin("_ieeefixdub",UNSIGNED|CHAR,DOUBLE,0,0,0,1,0);
+      declare_builtin("_ieeecmpl",INT,FLOAT,0,FLOAT,0,1,0);
+      declare_builtin("_ieeecmpd",INT,DOUBLE,0,DOUBLE,0,1,0);
+#if 0
+      declare_builtin("_ieeecmpllt",INT,FLOAT,0,FLOAT,0,1,0);
+      declare_builtin("_ieeecmplle",INT,FLOAT,0,FLOAT,0,1,0);
+      declare_builtin("_ieeecmplgt",INT,FLOAT,0,FLOAT,0,1,0);
+      declare_builtin("_ieeecmplge",INT,FLOAT,0,FLOAT,0,1,0);
+      declare_builtin("_ieeecmpleq",INT,FLOAT,0,FLOAT,0,1,0);
+      declare_builtin("_ieeecmplneq",INT,FLOAT,0,FLOAT,0,1,0);
+      declare_builtin("_ieeecmpdlt",INT,DOUBLE,0,DOUBLE,0,1,0);
+      declare_builtin("_ieeecmpdle",INT,DOUBLE,0,DOUBLE,0,1,0);
+      declare_builtin("_ieeecmpdgt",INT,DOUBLE,0,DOUBLE,0,1,0);
+      declare_builtin("_ieeecmpdge",INT,DOUBLE,0,DOUBLE,0,1,0);
+      declare_builtin("_ieeecmpdeq",INT,DOUBLE,0,DOUBLE,0,1,0);
+      declare_builtin("_ieeecmpdneq",INT,DOUBLE,0,DOUBLE,0,1,0);
+#endif
+      declare_builtin("_ieeetstl",INT,FLOAT,0,0,0,1,0);
+      declare_builtin("_ieeetstd",INT,DOUBLE,0,0,0,1,0);
+      declare_builtin("_flt32tosint64",LLONG,FLOAT,0,0,0,1,0);
+      declare_builtin("_flt64tosint64",LLONG,DOUBLE,0,0,0,1,0);
+      declare_builtin("_flt32touint64",UNSIGNED|LLONG,FLOAT,0,0,0,1,0);
+      declare_builtin("_flt64touint64",UNSIGNED|LLONG,DOUBLE,0,0,0,1,0);
+      declare_builtin("_sint64toflt32",FLOAT,LLONG,0,0,0,1,0);
+      declare_builtin("_sint64toflt64",DOUBLE,LLONG,0,0,0,1,0);
+      declare_builtin("_uint64toflt32",FLOAT,UNSIGNED|LLONG,0,0,0,1,0);
+      declare_builtin("_uint64toflt64",DOUBLE,UNSIGNED|LLONG,0,0,0,1,0);
+    }
 
     return 1;
 }
@@ -3052,23 +3237,35 @@ int freturn(struct Typ *t)
         else
             return d0;
     }
-    if(tu==DOUBLE){
+    if(tu==DOUBLE||tu==LDOUBLE){
         if(FPU>68000&&!NOFPRETURN){
             return fp0;
         }else{
             if(NOMREGRETURN) return 0;
-            return d0;
+#if NEW_RET
+            return d0d1;
+#else
+	    return d0;
+#endif
         }
     }
     if(tu==STRUCT||tu==UNION){
         if(!NOMREGRETURN){
             l=zm2l(szof(t));
+#if NEW_RET
+	    if(l==4) return d0;
+	    if(l==8) return d0d1;
+	    /* alte Variante; unschoen */
+	    if(l==12) return d0;
+	    if(l==16) return d0;
+#else
             if(l==4||l==8||l==12||l==16) return d0;
+#endif
         }
         return 0;
     }
     if(tu==LLONG)
-      return 25;
+      return d0d1;
     if(zmleq(szof(t),l2zm(4L))) return d0; else return 0;
 }
 int cost_savings(struct IC *p,int r,struct obj *o)
@@ -3719,7 +3916,7 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
 #endif
       if(ISFLOAT(t)||ISFLOAT(to)){
 	if(FPU>68000){
-	  int zreg=0;
+	  int zreg=0,freg=0;
 	  if(ISFLOAT(t)&&ISFLOAT(to)){
 	    if(isreg(q1)&&isreg(z)){
 	      if(p->q1.reg!=p->z.reg)
@@ -3733,8 +3930,8 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
 	    if(!zreg&&(t&UNSIGNED)&&!ISHWORD(t))
 	      zreg=p->q1.reg; 
 	    else 
-	      zreg=get_reg(f,2,p);}
-	  if(!zreg) zreg=get_reg(f,2,p);
+	      zreg=freg=get_reg(f,2,p);}
+	  if(!zreg) zreg=freg=get_reg(f,2,p);
 	  if((to&UNSIGNED)&&x_t[to&NQ]!='l'){
 	    int dreg=get_reg(f,1,p);
 	    emit(f,"\tmoveq\t#0,%s\n",mregnames[dreg]);
@@ -3756,6 +3953,13 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
 		dreg1=get_reg(f,1,p);
 	      if(FPU==68040)
 		dreg2=get_reg(f,1,p);
+	      if(!freg){
+		if(!(isreg(q1)&&p->next&&p->next->code==FREEREG&&p->next->q1.reg==zreg)){
+		  freg=get_reg(f,2,p);
+		  emit(f,"\tfmove.x\t%s,%s\n",mregnames[zreg],mregnames[freg]);
+		  zreg=freg;
+		}		
+	      }
 	      emit(f,"\tfcmp.d\t#%s41e0000000000000,%s\n",s,mregnames[zreg]);
 	      emit(f,"\tfbge\t%s%d\n",labprefix,l1);
 	      if(FPU==68040){
@@ -3856,6 +4060,8 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
 	    continue;
 	  }
 	  if((to&NQ)==FLOAT&&((t&NQ)==DOUBLE||(t&NQ)==LDOUBLE)){
+	    if(!OLD_SOFTFLOAT)
+	      ierror(0);
 	    saveregs(f,p);
 	    assign(f,p,&p->q1,0,PUSH,msizetab[FLOAT],FLOAT);
 	    scratch_modified();
@@ -3871,6 +4077,7 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
 	    continue;
 	  }
 	  if(((to&NQ)==DOUBLE||(to&NQ)==LDOUBLE)&&(t&NQ)==FLOAT){
+	    if(!OLD_SOFTFLOAT) ierror(0);
 	    saveregs(f,p);
 	    assign(f,p,&p->q1,0,PUSH,msizetab[DOUBLE],DOUBLE);
 	    scratch_modified();
@@ -3887,6 +4094,7 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
 	  }
 	  if(ISFLOAT(to)){
 	    int uns;
+	    if(!OLD_SOFTFLOAT) ierror(0);
 	    saveregs(f,p);
 	    if(t&UNSIGNED) uns='u'; else uns='s';
 	    assign(f,p,&p->q1,0,PUSH,sizetab[to&NQ],to);
@@ -3903,6 +4111,7 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
 	    continue;
 	  }else{
 	    int uns,xt=x_t[to&NQ];
+	    if(!OLD_SOFTFLOAT) ierror(0);
 	    saveregs(f,p);
 	    if(to&UNSIGNED) uns='u'; else uns='s';
 	    if(xt!='l'){
@@ -3947,11 +4156,20 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
 	    emit(f,"\tand.%c\t#%lu,%s\n",cf?'l':x_t[t&NQ],l,mregnames[zreg]);
 	    continue;
 	  }
-	  if(to&UNSIGNED) emit(f,"\tmoveq\t#0,%s\n",mregnames[zreg]);
-	  move(f,&p->q1,0,0,zreg,to);
+	  if((to&UNSIGNED)&&p->q1.am&&(zreg==p->q1.am->basereg||zreg==(p->q1.am->dreg&127))){
+	    /*  aufpassen, falls unsigned und Ziel im am  */
+	    unsigned long l;
+	    if((to&NQ)==CHAR) l=0xff; else l=0xffff;
+	    move(f,&p->q1,0,0,zreg,to);
+	    emit(f,"\tand.%c\t#%lu,%s\n",cf?'l':x_t[t&NQ],l,mregnames[zreg]);
+	  }else{
+	    if(to&UNSIGNED)
+	      emit(f,"\tmoveq\t#0,%s\n",mregnames[zreg]);
+	    move(f,&p->q1,0,0,zreg,to);
+	  }
 	  if(!(to&UNSIGNED)){
 #ifdef M68K_16BIT_INT
-	    if((to&NQ)==CHAR&&((to&NQ)==SHORT||(t&NQ)==INT)) emit(f,"\text.w\t%s\n",mregnames[zreg]);
+	    if((to&NQ)==CHAR&&((t&NQ)==SHORT||(t&NQ)==INT)) emit(f,"\text.w\t%s\n",mregnames[zreg]);
 	    if(((to&NQ)==SHORT||(to&NQ)==INT)&&msizetab[t&NQ]==4) emit(f,"\text.l\t%s\n",mregnames[zreg]);
 #else
 	    if((to&NQ)==CHAR&&(t&NQ)==SHORT) emit(f,"\text.w\t%s\n",mregnames[zreg]);
@@ -4002,6 +4220,7 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
 	  }
 	  continue;
 	}else{
+	  if(!OLD_SOFTFLOAT) ierror(0);
 	  saveregs(f,p);
 	  assign(f,p,&p->q1,0,PUSH,msizetab[t&NQ],t);
 	  scratch_modified();
@@ -4080,7 +4299,7 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
     }
     if(c==GETRETURN){
       /*  Returnwert holen - q2.val.vmax==size, q1.reg==Returnregister     */
-      if(((t&NQ)==DOUBLE||(t&NQ)==LDOUBLE)&&p->q1.reg==d0){
+      if(((t&NQ)==DOUBLE||(t&NQ)==LDOUBLE)&&(p->q1.reg==d0||p->q1.reg==d0d1)){
 	if(isreg(z)&&p->z.reg>=fp0&&p->z.reg<=fp7){
 	  emit(f,"\tmovem.l\t%s,-(%s)\n\tfmove.d\t(%s)+,%s\n",mregnames[d0d1],mregnames[sp],mregnames[sp],mregnames[p->z.reg]);
 	}else{
@@ -4108,6 +4327,19 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
       continue;
     }
     if(c==CALL){
+      if((p->q1.flags&(VAR|DREFOBJ))==VAR&&!strcmp("__va_start",p->q1.v->identifier)){
+	int sr=(USEFRAMEPOINTER||vlas)?fbp:sp;
+	long va_off=0;
+	if(USEFRAMEPOINTER||vlas){
+	  emit(f,"\tmove.l\t%s,%s\n",mregnames[fbp],mregnames[d0]);
+	  emit(f,"\tadd.l\t#%ld,%s\n",(long)(8+zm2l(va_offset(v)))+(PROFILER?16:0),mregnames[d0]);
+	}else{
+	  emit(f,"\tmove.l\t%s,%s\n",mregnames[sp],mregnames[d0]);
+	  emit(f,"\tadd.l\t#%s%d+%ld,%s\n",labprefix,offlabel,(long)(4+zm2l(va_offset(v)))+loff+(PROFILER?16:0),mregnames[d0]);
+	}
+	BSET(regs_modified,d0);
+	continue;
+      }
       if((p->q1.flags&VAR)&&p->q1.v->fi&&p->q1.v->fi->inline_asm){
 	emit_inline_asm(f,p->q1.v->fi->inline_asm);
 	if(stack_valid&&(p->q1.flags&(VAR|DREFOBJ))==VAR&&p->q1.v->fi&&(p->q1.v->fi->flags&ALL_STACK))
@@ -4192,6 +4424,7 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
       if(ISFLOAT(t)&&FPU<=68000){
 	/*  nicht sehr schoen   */
 	int result=get_reg(f,1,p);
+	if(!OLD_SOFTFLOAT) ierror(0);
 	saveregs(f,p);
 	assign(f,p,&p->q1,0,PUSH,msizetab[t&NQ],t);
 	scratch_modified();
@@ -4278,6 +4511,7 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
 	}else{
 	  /*  nicht sehr schoen   */
 	  int result=get_reg(f,1,p);
+	  if(!OLD_SOFTFLOAT) ierror(0);
 	  saveregs(f,p);
 	  assign(f,p,&p->q2,0,PUSH,msizetab[t&NQ],t);
 	  assign(f,p,&p->q1,0,PUSH,msizetab[t&NQ],t);
@@ -4495,6 +4729,7 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
 	  }
 	  continue;
 	}else{
+	  if(!OLD_SOFTFLOAT) ierror(0);
 	  saveregs(f,p);
 	  assign(f,p,&p->q2,0,PUSH,msizetab[t&NQ],t);
 	  assign(f,p,&p->q1,0,PUSH,msizetab[t&NQ],t);
@@ -4831,8 +5066,6 @@ int emit_peephole(void)
   int entries,i,r1,r2,r3,r4;
   char *asmline[EMIT_BUF_DEPTH],c1,c2,c3,c4,e;
 
-  return 0;
-  
   if(OLDPEEPHOLE) return 0;
   i=emit_l;
   if(emit_f==0)
@@ -4847,27 +5080,116 @@ int emit_peephole(void)
     if(sscanf(asmline[1],"\tmove.l\t(a7)+,%c%d\n%c",&c1,&r1,&e)==2&&
        sscanf(asmline[0],"\tmove.l\t%c%d,-(a7%c",&c2,&r2,&e)==3&&
        c1==c2&&r1==r2&&(c1=='a'||c1=='d')&&r1>=0&&r1<=7&&e==')'){
+      sprintf(asmline[1],"\tmove.l\t(a7),%c%d\n",c1,r1);
       remove_asm();
-      remove_asm();
-      savedemit+=2;
+      savedemit++;
       return 1;
     }
     if(sscanf(asmline[1],"\tmovem.l\t(a7)+,%c%d\n%c",&c1,&r1,&e)==2&&
        sscanf(asmline[0],"\tmove.l\t%c%d,-(a7%c",&c2,&r2,&e)==3&&
        c1==c2&&r1==r2&&(c1=='a'||c1=='d')&&r1>=0&&r1<=7&&e==')'){
+      sprintf(asmline[1],"\tmove.l\t(a7),%c%d\n",c1,r1);
       remove_asm();
-      remove_asm();
-      savedemit+=2;
+      savedemit++;
       return 1;
     }
+
     if(sscanf(asmline[1],"\tmove.l\t%c%d,%c%d\n%c",&c1,&r1,&c2,&r2,&e)==4&&
        sscanf(asmline[0],"\tmove.l\t%c%d,%c%d\n%c",&c3,&r3,&c4,&r4,&e)==4&&
        c1==c4&&r1==r4&&c2==c3&&r2==r3&&r1>=0&&r1<=7&&r2>=0&&r2<=7&&
        (c1=='a'||c1=='d')&&(c2=='a'||c2=='d')){
-      remove_asm();
+      /* create tst instruction if condition codes of address register are needed */
+      if(c1=='d'&&c2=='a'&&cc_set!=0&&(cc_set->flags&(REG|DREFOBJ))==REG&&cc_set->reg==a0+r2)
+	sprintf(asmline[0],"\ttst.l\t%s\n",mregnames[d0+r1]);
+      else
+	remove_asm();
       savedemit++;
       return 1;
     }
   }
   return 0;
+}
+
+char *use_libcall(int c,int t,int t2)
+{
+  static char fname[32];
+  char *ret=0;
+  int f;
+
+  if(FPU>68000){
+    if(c!=CONVERT) return 0;
+    if((!ISFLOAT(t)||(t2&NQ)!=LLONG)&&
+       (!ISFLOAT(t2)||(t&NQ)!=LLONG))
+      return 0;
+  }
+  if(OLD_SOFTFLOAT) return 0;
+  t&=NU;
+  t2&=NU;
+  if(t==LDOUBLE) t=DOUBLE;
+  if(t2==LDOUBLE) t2=DOUBLE;
+
+  if(c==COMPARE){
+    if(ISFLOAT(t)){
+      sprintf(fname,"_ieeecmp%c",x_t[t]);
+      ret=fname;
+    }
+  }else if(c==CONVERT){
+    if(t2==INT) t2=(sizetab[INT]==4?LONG:SHORT);
+    if(t2==(UNSIGNED|INT)) t2=(sizetab[INT]==4?(UNSIGNED|LONG):(UNSIGNED|SHORT));
+    if(t==FLOAT&&t2==DOUBLE) return "_ieeed2s";
+    if(t==DOUBLE&&t2==FLOAT) return "_ieees2d";
+    if(t==DOUBLE&&t2==DOUBLE) return 0;
+    if(t==FLOAT||t==DOUBLE){
+      if((t2&NQ)==LLONG)
+	sprintf(fname,"_%cint64toflt%s",(t2&UNSIGNED)?'u':'s',t==FLOAT?"32":"64");
+      else
+	sprintf(fname,"_ieeeflt%c%c",(t2&UNSIGNED)?'u':'s',x_t[t]);
+      ret=fname;
+    }
+    if(t2==FLOAT||t2==DOUBLE){
+      if((t&NQ)==LLONG)
+	sprintf(fname,"_flt%sto%cint64",t2==FLOAT?"32":"64",(t&UNSIGNED)?'u':'s');
+      else
+	sprintf(fname,"_ieeefix%c%c%c",x_t[t2],(t2&UNSIGNED)?'u':'s',x_t[t&NQ]);
+      ret=fname;
+    }
+  }else if(ISFLOAT(t)){
+    if(c==MINUS){
+      sprintf(fname,"_ieeeneg%c",x_t[t&NQ]);
+      ret=fname;
+    }else if(c>=ADD&&c<=DIV){
+      sprintf(fname,"_ieee%s%c",ename[c],x_t[t&NQ]);
+      ret=fname;
+    }
+    if(c==TEST){
+      sprintf(fname,"_ieeetst%c",x_t[t&NQ]);
+      ret=fname;
+    }
+  }
+  return ret;
+}
+
+int reg_parm(struct reg_handle *p,struct Typ *t,int mode,struct Typ *fkt)
+{
+  int f;
+  if(!FASTCALL) return 0;
+  f=t->flags&NQ;
+  if(mode||f==LLONG||!ISSCALAR(f))
+    return 0;
+  if(ISPOINTER(f)){
+    if(p->ar>ascratch)
+      return 0;
+    else
+      return a0+p->ar++;
+  }
+  if(ISFLOAT(f)){
+    if(FPU<=68000||p->fr>fscratch)
+      return 0;
+    else
+      return fp0+p->fr++;
+  }
+  if(p->dr>dscratch)
+    return 0;
+  else
+    return d0+p->dr++;
 }

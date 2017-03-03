@@ -41,6 +41,82 @@ int gchanged;   /*  Merker, ob Optimierungslauf etwas geaendert hat */
 int norek;      /*  diese Funktion wird nicht rekursiv auf          */
 int nocall;     /*  diese Funktion kehrt nicht zum Caller zurueck   */
 
+#if HAVE_LIBCALLS
+extern np gen_libcall(char *fname,np arg1,struct Typ *t1,np arg2,struct Typ *t2);
+
+
+/* insert libcalls just before register allocation */
+static int insert_libcalls(struct flowgraph *fg)
+{
+  struct IC *p,*next,*add;
+  int replaced=0;
+  static struct node n,nl,nr;
+  static struct Typ t,tl,tr;
+  if(DEBUG&1024) printf("insert_libcalls\n");
+  while(fg){
+    for(p=fg->start;p;p=next){
+      int c=p->code,end=0;
+      char *libname;
+      next=p->next;
+      if((c>=OR&&c<=XOR)||(c>=LSHIFT&&c<=KOMPLEMENT)||c==COMPARE||c==CONVERT||c==MINUS||c==TEST){
+	if(libname=use_libcall(c,p->typf,p->typf2)){
+	  struct IC *merk_first,*merk_last;
+	  static struct node n1,n2;
+	  static struct Typ t1,t2;
+	  if(DEBUG&1024){
+	    printf("converting IC to libcall:\n");
+	    pric2(stdout,p);
+	  }
+	  replaced=1;
+	  merk_last=last_ic;
+	  merk_first=first_ic;
+	  first_ic=last_ic=0;
+	  n1.flags=REINTERPRET;
+	  n1.o=p->q1;
+	  n1.ntyp=&t1;
+	  t1.flags=q1typ(p);
+	  if(p->q2.flags){
+	    n2.flags=REINTERPRET;
+	    n2.o=p->q2;
+	    n2.ntyp=&t2;
+	    t2.flags=q2typ(p);
+	    gen_libcall(libname,&n1,&t1,&n2,&t2);
+	  }else
+	    gen_libcall(libname,&n1,&t1,0,0);
+	  if(!last_ic||last_ic->code!=GETRETURN) ierror(0);
+	  last_ic->z=p->z;
+	  add=first_ic;
+	  last_ic=merk_last;
+	  first_ic=merk_first;
+	  for(;add;add=next){
+	    next=add->next;
+	    insert_IC_fg(fg,p->prev,add);
+	  }
+	  next=p->next;
+	  if(fg->end==p) end=1;
+	  if(p->z.flags){
+	    remove_IC_fg(fg,p);
+	  }else{
+	    struct Typ *t=new_typ();
+	    t->flags=INT;
+	    p->code=TEST;
+	    p->typf=INT;
+	    p->q1.flags=VAR;
+	    p->q1.v=add_tmp_var(t);
+	    p->q1.val.vmax=l2zm(0L);
+	    p->prev->z=p->q1;
+	    p->q2.flags=p->z.flags=0;
+	  }
+	}
+      }
+      if(end||p==fg->end) break;
+    }
+    fg=fg->normalout;
+  }
+  return replaced;
+}
+#endif
+
 /*  temporary fuer verschiedene Bitvektoren */
 bvtype *tmp;
 
@@ -578,6 +654,26 @@ int peephole()
 	  p->code=c=MINUS;p->q2.flags=0;
 	  changed=1;
 	}
+
+	if(c==LSHIFT||c==RSHIFT){
+	  zmax size;
+	  size=zmmult(sizetab[q1typ(p)&NQ],char_bit);
+	  if(zmleq(size,vmax)){
+	    if(c==LSHIFT){
+	      if(DEBUG&1024){ printf("lshift converted to ASSIGN 0:\n");pric2(stdout,p);}
+	      o.val.vmax=l2zm(0L);eval_const(&o.val,MAXINT);
+	      insert_const(&p->q1.val,t);p->q1.flags=KONST;
+	      p->code=c=ASSIGN;p->q2.flags=0;p->q2.val.vmax=sizetab[t&NQ];
+	      changed=1;
+	    }else{
+	      if(DEBUG&1024){ printf("rshift changed to maxlength:\n");pric2(stdout,p);}
+	      o.val.vmax=zmsub(size,l2zm(1L));eval_const(&o.val,MAXINT);
+	      insert_const(&p->q2.val,t);
+	      changed=1;	      
+	    }
+	  }
+	}
+
 	if((c==SUB||c==ADD||c==ADDI2P||c==SUBIFP)&&!(q2typ(p)&UNSIGNED)&&zmleq(vmax,l2zm(0L))&&zldleq(vldouble,d2zld(0.0))){
 	  struct obj o;int ct=q2typ(p);
 	  o=p->q2;
@@ -1117,7 +1213,9 @@ void optimize(long flags,struct Var *function)
 /*             in Verbindung mit 32), 256=recalc_offsets                */
 {
 #ifndef NO_OPTIMIZER
-  struct flowgraph *g,*fg=0;int r,i,pass=0,mustrepeat,intask;
+  struct flowgraph *g,*fg=0;
+  int r,i,pass=0,mustrepeat,intask;
+  int lc_freed,lc_done=0;
   if(!function) ierror(0);
   norek=nocall=0;
   report_suspicious_loops=report_weird_code=1;
@@ -1330,6 +1428,20 @@ void optimize(long flags,struct Var *function)
 	}
       }
 
+
+#if HAVE_LIBCALLS
+      /* if no further optimizations are found, insert libcalls
+	 and look some more */
+      if(!lc_done&&(!gchanged||pass>=maxoptpasses)){
+	int r;
+	r=insert_libcalls(fg);
+	lc_done=1;
+	if(r){
+	  gchanged|=1;
+	  pass--;
+	}
+      }
+#endif
       
       if((!gchanged||pass>=maxoptpasses)){
 	/*  Funktion evtl. fuer inlining vorbereiten und    */
@@ -1373,7 +1485,8 @@ void optimize(long flags,struct Var *function)
 	}
 	
 	if(cross_module) calc_finfo(function,CALC_USES|CALC_CHANGES);
-	
+       
+
 	if(flags&1){
 	  local_combine(fg);
 	  if(DEBUG&1024) print_flowgraph(fg);
@@ -1429,13 +1542,14 @@ void optimize(long flags,struct Var *function)
 	  }
 	}
       }
+
       free_alias(fg);
       free_flowgraph(fg);
       free(vilist);
       FREEAV;
-      
+
       if((flags&32)&&gchanged&&pass>=maxoptpasses) error(172,maxoptpasses);
-      
+
     }while(gchanged&&pass<maxoptpasses);
     /*  nur, um nochmal ueberfluessige Labels zu entfernen  */
     fg=construct_flowgraph();

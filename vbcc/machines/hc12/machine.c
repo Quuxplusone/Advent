@@ -1071,6 +1071,81 @@ int init_cg(void)
 
   target_macros=marray;
 
+
+  /* TODO: set argument registers */
+  declare_builtin("__mulint32",LONG,LONG,0,LONG,0,1,0);
+  declare_builtin("__addint32",LONG,LONG,0,LONG,0,1,0);
+  declare_builtin("__subint32",LONG,LONG,0,LONG,0,1,0);
+  declare_builtin("__andint32",LONG,LONG,0,LONG,0,1,0);
+  declare_builtin("__orint32",LONG,LONG,0,LONG,0,1,0);
+  declare_builtin("__eorint32",LONG,LONG,0,LONG,0,1,0);
+  declare_builtin("__negint32",LONG,LONG,0,0,0,1,0);
+  declare_builtin("__lslint32",LONG,LONG,0,INT,0,1,0);
+
+  declare_builtin("__divsint32",LONG,LONG,0,LONG,0,1,0);
+  declare_builtin("__divuint32",UNSIGNED|LONG,UNSIGNED|LONG,0,UNSIGNED|LONG,0,1,0);
+  declare_builtin("__modsint32",LONG,LONG,0,LONG,0,1,0);
+  declare_builtin("__moduint32",UNSIGNED|LONG,UNSIGNED|LONG,0,UNSIGNED|LONG,0,1,0);
+  declare_builtin("__lsrsint32",LONG,LONG,0,INT,0,1,0);
+  declare_builtin("__lsruint32",UNSIGNED|LONG,UNSIGNED|LONG,0,INT,0,1,0);
+  declare_builtin("__cmpsint32",INT,LONG,0,LONG,0,1,0);
+  declare_builtin("__cmpuint32",INT,UNSIGNED|LONG,0,UNSIGNED|LONG,0,1,0);
+  declare_builtin("__sint32toflt32",FLOAT,LONG,0,0,0,1,0);
+  declare_builtin("__uint32toflt32",FLOAT,UNSIGNED|LONG,0,0,0,1,0);
+  declare_builtin("__sint32toflt64",DOUBLE,LONG,0,0,0,1,0);
+  declare_builtin("__uint32toflt64",DOUBLE,UNSIGNED|LONG,0,0,0,1,0);
+  declare_builtin("__flt32tosint32",LONG,FLOAT,0,0,0,1,0);
+  declare_builtin("__flt32touint32",UNSIGNED|LONG,FLOAT,0,0,0,1,0);
+  declare_builtin("__flt64tosint32",LONG,DOUBLE,0,0,0,1,0);
+  declare_builtin("__flt64touint32",UNSIGNED|LONG,DOUBLE,0,0,0,1,0);
+
+
+
+  declare_builtin("__mulint64",LLONG,LLONG,0,LLONG,0,1,0);
+  declare_builtin("__addint64",LLONG,LLONG,0,LLONG,0,1,0);
+  declare_builtin("__subint64",LLONG,LLONG,0,LLONG,0,1,0);
+  declare_builtin("__andint64",LLONG,LLONG,0,LLONG,0,1,0);
+  declare_builtin("__orint64",LLONG,LLONG,0,LLONG,0,1,0);
+  declare_builtin("__eorint64",LLONG,LLONG,0,LLONG,0,1,0);
+  declare_builtin("__negint64",LLONG,LLONG,0,0,0,1,0);
+  declare_builtin("__lslint64",LLONG,LLONG,0,INT,0,1,0);
+
+  declare_builtin("__divsint64",LLONG,LLONG,0,LLONG,0,1,0);
+  declare_builtin("__divuint64",UNSIGNED|LLONG,UNSIGNED|LLONG,0,UNSIGNED|LLONG,0,1,0);
+  declare_builtin("__modsint64",LLONG,LLONG,0,LLONG,0,1,0);
+  declare_builtin("__moduint64",UNSIGNED|LLONG,UNSIGNED|LLONG,0,UNSIGNED|LLONG,0,1,0);
+  declare_builtin("__lsrsint64",LLONG,LLONG,0,INT,0,1,0);
+  declare_builtin("__lsruint64",UNSIGNED|LLONG,UNSIGNED|LLONG,0,INT,0,1,0);
+  declare_builtin("__cmpsint64",INT,LLONG,0,LLONG,0,1,0);
+  declare_builtin("__cmpuint64",INT,UNSIGNED|LLONG,0,UNSIGNED|LLONG,0,1,0);
+  declare_builtin("__sint64toflt32",FLOAT,LLONG,0,0,0,1,0);
+  declare_builtin("__uint64toflt32",FLOAT,UNSIGNED|LLONG,0,0,0,1,0);
+  declare_builtin("__sint64toflt64",DOUBLE,LLONG,0,0,0,1,0);
+  declare_builtin("__uint64toflt64",DOUBLE,UNSIGNED|LLONG,0,0,0,1,0);
+  declare_builtin("__flt32tosint64",LLONG,FLOAT,0,0,0,1,0);
+  declare_builtin("__flt32touint64",UNSIGNED|LLONG,FLOAT,0,0,0,1,0);
+  declare_builtin("__flt64tosint64",LLONG,DOUBLE,0,0,0,1,0);
+  declare_builtin("__flt64touint64",UNSIGNED|LLONG,DOUBLE,0,0,0,1,0);
+
+  declare_builtin("__flt32toflt64",DOUBLE,FLOAT,0,0,0,1,0);
+  declare_builtin("__flt64toflt32",FLOAT,DOUBLE,0,0,0,1,0);
+
+
+  declare_builtin("__addflt32",FLOAT,FLOAT,0,FLOAT,0,1,0);
+  declare_builtin("__subflt32",FLOAT,FLOAT,0,FLOAT,0,1,0);
+  declare_builtin("__mulflt32",FLOAT,FLOAT,0,FLOAT,0,1,0);
+  declare_builtin("__divflt32",FLOAT,FLOAT,0,FLOAT,0,1,0);
+  declare_builtin("__negflt32",FLOAT,FLOAT,0,FLOAT,0,1,0);
+  declare_builtin("__cmpflt32",INT,FLOAT,0,FLOAT,0,1,0);
+
+  declare_builtin("__addflt64",DOUBLE,DOUBLE,0,DOUBLE,0,1,0);
+  declare_builtin("__subflt64",DOUBLE,DOUBLE,0,DOUBLE,0,1,0);
+  declare_builtin("__mulflt64",DOUBLE,DOUBLE,0,DOUBLE,0,1,0);
+  declare_builtin("__divflt64",DOUBLE,DOUBLE,0,DOUBLE,0,1,0);
+  declare_builtin("__negflt64",DOUBLE,DOUBLE,0,DOUBLE,0,1,0);
+  declare_builtin("__cmpflt64",INT,DOUBLE,0,DOUBLE,0,1,0);
+
+
   return 1;
 }
 
@@ -1186,46 +1261,57 @@ int dangerous_IC(struct IC *p)
 
 /* Return name of library function, if this node should be
    implemented via libcall. */
-char *use_libcall(np p)
+char *use_libcall(int c,int t,int t2)
 {
   static char fname[16];
   char *ret=0;
-  if((p->flags>=LSHIFT&&p->flags<=MOD)||(p->flags>=OR&&p->flags<=AND)||p->flags==PMULT){
-    int f=p->ntyp->flags&NU;
-    if(f==FLOAT){
-      sprintf(fname,"__%sfs",ename[p->flags]);
+
+  if(c==COMPARE){
+    if((t&NQ)==LONG||(t&NQ)==LLONG||ISFLOAT(t)){
+      sprintf(fname,"__cmp%s%s%ld",(t&UNSIGNED)?"u":"s",ISFLOAT(t)?"flt":"int",zm2l(sizetab[t&NQ])*8);
       ret=fname;
-    }else if(f==DOUBLE||f==LDOUBLE){
-      sprintf(fname,"__%sfd",ename[p->flags]);
-      ret=fname;
-    }else if(f==(UNSIGNED|LONG)&&(p->flags==DIV||p->flags==MOD)){
-      sprintf(fname,"__%sul",ename[p->flags]);
-      ret=fname;
-    }else if(f==(UNSIGNED|LLONG)&&(p->flags==DIV||p->flags==MOD)){
-      sprintf(fname,"__%sull",ename[p->flags]);
-      ret=fname;
-    }else if((f&NQ)==LONG){
-      sprintf(fname,"__%sl",ename[p->flags]);
-      ret=fname;
-    }else if((f&NQ)==LLONG){
-      sprintf(fname,"__%sll",ename[p->flags]);
-      ret=fname;
+    }
+  }else{
+    t&=NU;
+    t2&=NU;
+    if(t==LDOUBLE) t=DOUBLE;
+    if(t2==LDOUBLE) t2=DOUBLE;
+    if(c==CONVERT){
+      if(t==t2) return 0;
+      if(t==FLOAT&&t2==DOUBLE) return "__flt64toflt32";
+      if(t==DOUBLE&&t2==FLOAT) return "__flt32toflt64";
+
+      if(ISFLOAT(t)){
+        sprintf(fname,"__%cint%ldtoflt%d",(t2&UNSIGNED)?'u':'s',zm2l(sizetab[t2&NQ])*8,(t==FLOAT)?32:64);
+        ret=fname;
+      }
+      if(ISFLOAT(t2)){
+        sprintf(fname,"__flt%dto%cint%ld",((t2&NU)==FLOAT)?32:64,(t&UNSIGNED)?'u':'s',zm2l(sizetab[t&NQ])*8);
+        ret=fname;
+      }
+    }
+    if((t&NQ)==LONG||(t&NQ)==LLONG||ISFLOAT(t)){
+      if((c>=LSHIFT&&c<=MOD)||(c>=OR&&c<=AND)||c==KOMPLEMENT||c==MINUS){
+	if(t==(UNSIGNED|LLONG)&&(c==DIV||c==MOD||c==RSHIFT)){
+	  sprintf(fname,"__%suint64",ename[c]);
+	  ret=fname;
+	}else if((t&NQ)==LLONG){
+          sprintf(fname,"__%sint64",ename[c]);
+          ret=fname;
+	}else if(t==(UNSIGNED|LONG)&&(c==DIV||c==MOD||c==RSHIFT)){
+	  sprintf(fname,"__%suint32",ename[c]);
+	  ret=fname;
+	}else if((t&NQ)==LONG){
+          sprintf(fname,"__%sint32",ename[c]);
+          ret=fname;
+        }else{
+	  sprintf(fname,"__%s%s%s%ld",ename[c],(t&UNSIGNED)?"u":"",ISFLOAT(t)?"flt":"int",zm2l(sizetab[t&NQ])*8);
+          ret=fname;
+	}
+      }
     }
   }
 
-  if(ret){
-    /* declare function if necessary */
-    struct struct_declaration *sd;struct Typ *t;struct Var *v;
-    if(!find_ext_var(ret)){
-      sd=mymalloc(sizeof(*sd));
-      sd->count=0;
-      t=new_typ();
-      t->flags=FUNKT;
-      t->exact=add_sd(sd,FUNKT);
-      t->next=clone_typ(p->ntyp);
-      add_var(ret,t,EXTERN,0);  
-    }
-  }
   return ret;
 }
 

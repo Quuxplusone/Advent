@@ -61,7 +61,11 @@ extern np identifier_expression(void),constant_expression(void),string_expressio
    inclusive_or_expression(void),logical_and_expression(void),
    logical_or_expression(void),conditional_expression(void),
    assignment_expression(void),expression(void),primary_expression(void);
-struct argument_list *argument_list_expression(void);
+extern struct argument_list *argument_list_expression(void);
+extern struct const_list *cl_from_string(char *start, char *end);
+
+extern np new_node(void);
+
 /* puh  */
 extern int is_keyword(char *);
 extern void pre(FILE *,np),pra(FILE *,struct argument_list *);
@@ -110,6 +114,7 @@ extern void fi_from_attr(struct Var *);
 extern int usz;
 
 extern int c99;
+extern int opencl;
 extern int disallow_statics;
 extern int header_cnt;
 extern int softfloat;
@@ -118,6 +123,7 @@ extern int wpo,wpo_key;
 extern FILE *input_wpo;
 
 extern void gen_IC(np,int,int),convert(np,int),gen_label(int);
+extern void gen_test(struct obj *,int,int,int);
 extern void savescratch(int,struct IC *,int,struct obj *);
 struct regargs_list{
   struct regargs_list *next;
@@ -177,7 +183,7 @@ extern void scratch_var(struct obj *,int,struct Typ *);
 extern void get_scratch(struct obj *,int,int,struct Typ *);
 extern void gen_cond(struct obj *,int,int,int);
 
-#define MAXCF 50
+#define MAXCF 60
 extern int c_flags[MAXCF];
 extern char *c_flags_name[MAXCF];
 extern union ppi c_flags_val[MAXCF];

@@ -1277,6 +1277,16 @@ int find_best_local_reg(struct IC *fp,struct Var *v,int preferred)
 	}
       }
     }
+
+    /* check for register arguments */
+    if((p->z.flags&(VAR|DREFOBJ))==VAR&&!*p->z.v->identifier&&p->z.v->reg){
+      savings[abs(p->z.v->reg)]=INT_MIN;
+      if(reg_pair(abs(p->z.v->reg),&rp)){
+	savings[rp.r1]=INT_MIN;
+	savings[rp.r2]=INT_MIN;
+      }
+    }
+
     p=p->prev;
   }
   r=0;

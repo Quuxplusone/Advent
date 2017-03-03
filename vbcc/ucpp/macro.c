@@ -987,7 +987,7 @@ static char *stringify(struct token_fifo *tf)
  * C99 specifies that these macros should remain constant throughout
  * the whole preprocessing.
  */
-char compile_time[12], compile_date[24], compile_adate[12];
+char compile_time[12], compile_date[24], compile_adate[16];
 
 /*
  * substitute_macro() performs the macro substitution. It is called when
