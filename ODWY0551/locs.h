@@ -876,8 +876,8 @@
     make_loc(q, R_CHAMBER,
              "You are in a small chamber filled with large boulders.  The walls are" SOFT_NL
              "very warm, causing the air in the room to be almost stifling from the" SOFT_NL
-             "heat.  The only exit is a crawl heading west, through which a low" SOFT_NL
-             "rumbling noise is coming.",
+             "heat.  The only exit is a crawl heading west, through which is coming" SOFT_NL
+             "a low rumbling.",
              "You're in Chamber of Boulders.", 0);
     make_ins(W, R_WARM); ditto(OUT); ditto(CRAWL);
     make_ins(FORK, R_FORK);
@@ -1348,7 +1348,8 @@
     make_ins(S, remark(21));
     make_loc(q, R_CRYSTAL,
              "You are in the Crystal Palace.  An overhead vein of phosphorescent" SOFT_NL
-             "quartz casts a liminous glow which is reflected by countless chips of" SOFT_NL
+             /* Long has "liminous" */
+             "quartz casts a luminous glow which is reflected by countless chips of" SOFT_NL
              "mica embedded in both walls, which consist of some sort of highly" SOFT_NL
              "reflective glass, apparently of volcanic origin.  A winding path" SOFT_NL
              "of yellow sandstone leads west and rises steeply to the east.",
@@ -1555,7 +1556,8 @@
              "You are in a dimly lit passage behind Thunder Hole.  Etched into" SOFT_NL
              "the rock wall are the ominous words:\n"
              "*       \"You are approaching the River Styx.      *\n"
-             "*        Laciate Ogni Speranza Voi Ch'Entrate.\"   *",
+             /* Long has "Laciate". */
+             "*        Lasciate Ogni Speranza Voi Ch'Entrate.\"   *",
              "You are at approach to River Styx.", F_LIGHTED | F_OUTSIDE);
     make_ins(W, R_THUNDER); ditto(OUT); ditto(U);
     make_cond_ins(E, unless_prop(DOG, 0), R_WSTYX); ditto(IN); ditto(D);
