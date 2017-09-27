@@ -413,8 +413,7 @@ lin(92)
             /* We have one object already, which means each subsequent
              * object must be preceded by the word "AND". For example:
              * "GET LAMP AND AXE" is okay, but "GET LAMP AXE" is not. */
-            assert(wdx >= 2);  /* we must be processing at least word #2 */
-            if (words[wdx-2] == AND) {
+            if (wdx <= 1 || words[wdx-2] == AND) {
                 /* we're fine */
                 goto lin99;
             } else {
