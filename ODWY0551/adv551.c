@@ -995,10 +995,10 @@ void build_object_table(void)
     describe_obj(CLOVER, 0, "There is a four-leafed clover here!");
     describe_obj(CLOVER, 1, NULL);  /* being worn */
     new_obj(TREE, "Gold tree", 0, R_OUTER);
-    /* Long has "."; I've normalized it. */
+    /* McDonald has "."; I've normalized it. */
     describe_obj(TREE, 0, "There is a gold statue of a tree here!");
     new_obj(DROPLET, "Silver droplet", 0, R_INNER);
-    /* Long has "."; I've normalized it. */
+    /* McDonald has "."; I've normalized it. */
     describe_obj(DROPLET, 0, "There is a single droplet of silver on the ground here!");
     /* In Long's game, each liquid has two forms; this is so that
      * you can carry both water-in-bottle and water-in-cask at the
@@ -1828,7 +1828,7 @@ struct {
     { 0, false, 0, 10,
     "Hmmm, this looks like a clue, which means it'll cost you 10 points to" SOFT_NL
     "read it.  Should I go ahead and read it anyway?",
-    /* Long's hint is more to the point than Woods'. */
+    /* McDonald's hint is more to the point than Woods'. */
     "It says, \"Not all black rods are magic wands. Some are useful for" SOFT_NL
     "other cave construction purposes. There might be some around here." },
     { 0, false, 4, 2, "Are you trying to get into the cave?",
@@ -3240,8 +3240,8 @@ int attempt_look(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
                 int sloc = objs(SAPPHIRE).place;
                 if (is_lighted_in_absentia(sloc)) {
                     if (sloc == -SACK) {
-                        /* Here Long drops the ball (heh). If you put the
-                         * ball and the lamp both in the sack, Long's code
+                        /* Here McDonald drops the ball (heh). If you put the
+                         * ball and the lamp both in the sack, McDonald's code
                          * will print LTEXT(-SACK), which is garbage. I'm
                          * taking the liberty of fixing the bug. */
                         puts("You are in a sack.");
@@ -3266,7 +3266,7 @@ int attempt_look(Location loc, ObjectWord obj, PrepositionWord prep, ObjectWord 
                         }
                     }
                 } else if (river_has_sapphire) {
-                    /* Long doesn't have this Easter egg, but I figured what the heck. */
+                    /* McDonald doesn't have this Easter egg, but I figured what the heck. */
                     assert(sloc == R_LIMBO);
                     puts("You sense that you are in a dark place, murky greenish shadows" SOFT_NL
                          "swirling around you in the gloom. The only thing in sight appears" SOFT_NL
@@ -4836,7 +4836,7 @@ void history_of_adventure(void)
     /* Another descendant of Long's version available online, "Adventure 5.2/2",
      * contains a MUCH longer History of Adventure, including contact information
      * for David Long and teasers pertaining to LONG0751.
-     * TODO: perhaps copy that version here instead? */
+     * The "anonymous writer" mentioned here is Doug McDonald himself. */
     puts("-          *** THE HISTORY OF ADVENTURE (ABRIDGED) ***          -\n"
          "-                    ** By Ima Wimp **                          -\n"
          "ADVENTURE was originally developed by William Crowther, and later" SOFT_NL
@@ -4868,26 +4868,25 @@ void print_message(MessageWord msg)
             puts("Good try, but that is an old worn-out magic word.");
             break;
         case HELP:
-            puts("I know of places, actions, and things. Most of my vocabulary" SOFT_NL
-                 "describes places and is used to move you there. To move, try words" SOFT_NL
-                 "like forest, building, downstream, enter, east, west, north, south," SOFT_NL
-                 "up, or down. I know about a few special objects, like a black rod" SOFT_NL
-                 "hidden in the cave. These objects can be manipulated using some of" SOFT_NL
-                 "the action words that I know. Usually you will need to give both the" SOFT_NL
-                 "object and action words (in either order), but sometimes I can infer" SOFT_NL
-                 "the object from the verb alone. Some objects also imply verbs; in" SOFT_NL
-                 "particular, \"inventory\" implies \"take inventory\", which causes me to" SOFT_NL
-                 "give you a list of what you're carrying. The objects have side" SOFT_NL
-                 "effects; for instance, the rod scares the bird. Usually people having" SOFT_NL
-                 "trouble moving just need to try a few more words. Usually people" SOFT_NL
-                 "trying unsuccessfully to manipulate an object are attempting something" SOFT_NL
-                 "beyond their (or my!) capabilities and should try a completely" SOFT_NL
-                 "different tack. To speed the game you can sometimes move long" SOFT_NL
-                 "distances with a single word. For example, \"building\" usually gets" SOFT_NL
-                 "you to the building from anywhere above ground except when lost in the" SOFT_NL
-                 "forest. Also, note that cave passages turn a lot, and that leaving a" SOFT_NL
-                 "room to the north does not guarantee entering the next from the south." SOFT_NL
-                 "Good luck!");
+            puts("To move, try words like FOREST, BUILDING, DOWNSTREAM, IN, EAST, NORTH," SOFT_NL
+                 "UP, OR DOWN. Saying a place name may take you there, as may some" SOFT_NL
+                 "magic words. You can say TAKE LAMP or DROP LAMP or PUT LAMP IN SACK." SOFT_NL
+                 "Some objects have side effects; for instance, the rod scares the bird." SOFT_NL
+                 "You can take or drop multiple objects by saying TAKE BOOK AND LAMP," SOFT_NL
+                 "etc. To list what you are currently holding, say INVENTORY, or just I." SOFT_NL
+                 "To reprint the detailed description of where you are, say LOOK" SOFT_NL
+                 "or L. You can also LOOK IN or LOOK AT appropriate objects. Other" SOFT_NL
+                 "useful commands are HEALTH, QUIT, SCORE, BRIEF, TERSE, UNBRIEF," SOFT_NL
+                 "UNTERSE, SAVE, and RESTORE. The latter two save or restore your" SOFT_NL
+                 "current position. To get full credit for a treasure, you must have" SOFT_NL
+                 "left it **safely** in the building. Some non-treasure items are best" SOFT_NL
+                 "left near where you find them. There are clues for various problems" SOFT_NL
+                 "lying about the cave: look and listen. If you seem to have found" SOFT_NL
+                 "all the treasures, keep looking around a while, something else" SOFT_NL
+                 "may happen to you (for a bonus!)\n"
+                 "(The word \"give\" doesn't exist, but you can say FEED BONE TO DOG or" SOFT_NL
+                 "THROW BONE AT DOG. Also, you can use conveyances or animals(!)" SOFT_NL
+                 "by TAKEing and DROPing them.)");
             break;
         case TREES:
             puts("The trees of the forest are large hardwood oak and maple, with an" SOFT_NL
