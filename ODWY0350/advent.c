@@ -2450,10 +2450,10 @@ void quit(void)
     int rank;
     printf("You scored %d out of a possible %d, using %d turn%s.\n",
            s, MAX_SCORE, turns, (turns==1 ? "" : "s"));
-    for (rank = 0; class_score[rank] <= s; ++rank) ;
+    for (rank = 0; class_score[rank] < s; ++rank) ;
     printf("%s\nTo achieve the next higher rating", class_message[rank]);
     if (rank < HIGHEST_CLASS) {
-        int delta = class_score[rank] - s;
+        int delta = class_score[rank] + 1 - s;
         printf(", you need %d more point%s.\n",
                delta, (delta==1 ? "" : "s"));
     } else {
