@@ -1620,6 +1620,8 @@ void close_the_cave(void)
     move(ROD2, R_SWEND); objs(ROD2).prop = -1;
     move(PILLOW, R_SWEND); objs(PILLOW).prop = -1;
     move(MIRROR_, R_SWEND);
+    objs(WATER).place = R_LIMBO;
+    objs(OIL).place = R_LIMBO;
     for (int j = MIN_OBJ; j <= MAX_OBJ; ++j) {
         if (toting(j)) destroy(j);
     }
