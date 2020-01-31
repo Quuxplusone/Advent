@@ -375,7 +375,7 @@ new_word("cage",CAGE);
 new_word("rod",ROD);
 new_word("bird",BIRD);
 new_word("door",DOOR);
-new_word("pillo",PILLOW);
+new_word("pillo",PILLOW);new_word("velve",PILLOW);
 new_word("snake",SNAKE);
 new_word("fissu",CRYSTAL);
 new_word("table",TABLET);
@@ -2914,9 +2914,9 @@ mirrors and hate being awakened.
 
 @<Handle cases of transitive...@>=
 case BREAK:@+ if (obj==VASE && prop[VASE]==0) {
-   if (toting(VASE)) drop(VASE,loc); /* crash */
    printf("You have taken the vase and hurled it delicately to the ground.\n");
-smash: prop[VASE]=2;@+ base[VASE]=VASE; /* it's no longer movable */
+smash: if (toting(VASE)) drop(VASE,loc); /* crash */
+   prop[VASE]=2;@+ base[VASE]=VASE; /* it's no longer movable */
    continue;
  } else if (obj!=MIRROR) goto report_default;
  if (closed) {
