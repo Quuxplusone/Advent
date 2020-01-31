@@ -2708,8 +2708,9 @@ void attempt_drop(ObjectWord obj, Location loc)
         /* Special cases for dropping a liquid. */
         if (obj == WATER && objs(BOTTLE).prop == 0) obj = BOTTLE;
         if (obj == OIL && objs(BOTTLE).prop == 2) obj = BOTTLE;
-        if (obj == BOTTLE && bottle_contents() != NOTHING)
-            move(bottle_contents(), R_LIMBO);
+        if (obj == BOTTLE && bottle_contents() != NOTHING) {
+            objs(bottle_contents()).place = R_LIMBO;
+        }
 
         drop(obj, loc);
         puts(ok);
