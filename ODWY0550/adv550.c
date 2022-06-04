@@ -4196,9 +4196,9 @@ bool clock4(Location loc)
     } else if (closure == 1) {
         closure = 2;
         objs[GRATE].prop = 0;  /* lock the grate */
-        puts("\nA sepulchral voice reverberating through the cave, says, \"Cave closing" SOFT_NL
+        puts("\nA sepulchral voice reverberating through the cave says, \"Cave closing" SOFT_NL
              "soon.  All adventurers please report to the treasure room via the" SOFT_NL
-             "alternate entrance to claim your treasure.\n");
+             "alternate entrance to claim your treasure.\"\n");
         if (there(DWARF, loc)) {
             bool more_than_one = (objs[DWARF].prop > 1);
             printf("The dwar%s quickly scuttle%s off into the gloom.\n",

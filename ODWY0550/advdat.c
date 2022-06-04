@@ -4291,7 +4291,7 @@ struct ObjectData objs[] = {
     { XX, 0, "Glistening pearl", F_PORTABLE, in(R_LIMBO) },
     { XX, 0, "Persian rug", F_PORTABLE, in(R_LIMBO) },
     { XX, 0, "Rare spices", F_PORTABLE, in(R_CHAMBER) },
-    { XX, 0, "Ancient Indian turquoise beads.", F_PORTABLE|F_UNSTABLE, in(R_BALCONY) },
+    { XX, 0, "Ancient Indian turquoise beads", F_PORTABLE|F_UNSTABLE, in(R_BALCONY) },
     { XX, 1, "Golden chain", F_PORTABLE, in(R_BARR) },
     { XX, 0, "Mithril ring", F_PORTABLE, in(R_LIMBO) },
     { XX, 0, "Scrimshaw spyglass", F_PORTABLE, in(R_IN_JONAH) },
