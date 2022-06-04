@@ -1,0 +1,219 @@
+THIS FILE CONTAINS COMPLETE SPOILERS FOR LUPI0440!
+
+no
+in
+get lamp
+xyzzy
+e
+get cage
+pit
+on
+e
+get bird
+w d
+s get n n
+drop bird
+w get e
+s get n
+n
+get silver
+n
+off
+plugh
+drop cage
+drop gold
+drop silver
+drop coins
+drop jewels
+
+get bottle
+get food
+get keys
+plugh
+on
+s d bedquilt slab s d
+water plant
+u w u e u
+reservoir
+drink
+fill
+s s slab s d
+water plant
+u e d
+fill
+u w d
+climb w
+get eggs
+n
+oil door
+drop bottle
+n
+get trident
+w d sw u
+throw eggs
+cross
+barren in
+throw food
+unlock
+drop keys
+get chain
+get bear
+view
+s e get
+fork w w
+cross
+throw bear
+cross
+sw d se se e
+get pillow
+w ne e
+n
+open clam
+d d
+get pearl
+shell
+s u e u n
+off
+plugh
+drop chain
+drop pearl
+drop pillow
+drop spices
+drop trident
+
+fee
+fie
+foe
+foo
+drink
+plugh
+on
+s s secret w
+kill dragon
+yes
+get rug
+n slab s d
+climb w
+get eggs
+n n w d se se e
+se d s
+get orb
+drop eggs
+get eggs
+[YOU HAVE BEEN TELEPORTED TO A RANDOM LOCATION! THIS RECIPE WORKS FROM ANY OF THE SIX POSSIBLE LOCATIONS.]
+[IF YOU'RE IN THE MAZE: u w u. YOU ARE NOW IN THE HALL OF MISTS.]
+[IF YOU'RE IN THE HALL OF MISTS: w n e e n d bedquilt]
+[IF YOU'RE ABOVE A PASSAGE: d]
+[IF YOU'RE ABOVE A ROOM: slab n]
+[IF YOU'RE AT SECRET JUNCTION: se]
+[YOU ARE NOW IN BEDQUILT.]
+e e s climb
+get chalice
+d u n n n get s s s
+w w
+s e s
+off
+hoot
+get documents
+on
+w n
+get ruby
+n lift d
+off
+climb
+drop chalice
+drop crown
+drop orb
+drop ruby
+drop rug
+
+fee
+fie
+foe
+foo
+drink
+plugh
+on
+s d w d e
+ne w
+[THE TIMER IS NOW RUNNING! DON'T WASTE MOVES!]
+w get e d
+look look
+jump
+s sw in e
+[YOU ARE NOW IN EITHER BEDQUILT OR R_190.]
+[IF YOU ARE IN BEDQUILT: slab]
+[OTHERWISE: w d]
+[YOU ARE NOW IN THE SLAB ROOM.]
+s d
+climb w
+get eggs
+n n w d se
+n w
+drop axe
+drop eggs
+drop lamp
+drop tusk
+tunnel
+get emerald
+tunnel
+get axe
+get eggs
+get lamp
+get tusk
+nw s
+get vase
+se ne e
+u e u n
+off
+plugh
+drop eggs
+drop emerald
+drop tusk
+drop vase
+
+plugh
+plover
+ne
+get pyramid
+s
+plover
+plugh
+drop pyramid
+
+drink
+xyzzy
+get rod
+on
+pit d w
+wave rod
+drop rod
+w
+get diamonds
+w s
+e s s s
+n e e nw
+get chest
+[GET ANY OTHER TREASURES FROM THE PIRATE'S LAIR]
+se n d
+e e
+off
+xyzzy
+drop diamonds
+drop chest
+
+plugh
+on
+s d w d e
+get magazines
+e
+drop magazines
+[GO EAST OR WHATEVER UNTIL YOU GET OUT]
+[WAIT FOR THE BLINDING FLASH OF LIGHT]
+sw
+get rod
+ne
+drop rod
+sw
+blast
+[YOU WIN!]

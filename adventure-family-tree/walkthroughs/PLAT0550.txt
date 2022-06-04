@@ -1,0 +1,354 @@
+THIS FILE CONTAINS COMPLETE SPOILERS FOR PLAT0550!
+
+First trip:
+ large gold nugget
+ bars of silver
+ precious jewelry
+ rare coins
+ helmet
+ Persian rug
+
+no
+in
+get lamp
+xyzzy
+e
+get cage
+pit
+on
+e
+get bird
+debris
+get rod
+pit
+d
+s
+get
+n w
+wave rod
+e n
+release bird
+drop cage
+s get n
+w get e
+nw n get
+n e eat
+s s e e
+get sword
+w d
+ne get s
+secret w
+kill dragon
+yes
+get rug
+get teeth
+e e n
+get
+n
+off
+plugh
+drop coins
+drop gold
+drop helmet
+drop jewelry
+drop rug
+drop silver
+drop teeth
+
+Second trip:
+ Bag filled with pieces of eight
+ scrimshaw spyglass
+ casket of opals
+
+get bottle
+plugh
+on
+s d bedquilt slab s d
+water plant
+u w u
+reservoir
+fill bottle
+s s d s d
+water plant
+u e d
+get oil
+u w d
+climb
+w e n
+throw sword
+get ring
+n e e ne
+se
+throw vial
+s s get n n
+w sw n w
+se
+d
+nw w s w
+n nw w w
+s s get n n
+nw w s nw
+nw w w nw
+thurb
+nw n n w
+s s n
+oil door
+drop bottle
+n
+get trident
+w d bedquilt e
+shell
+open clam
+drop trident
+drop sculpture
+u u
+wave rod
+e n n sw
+d get u
+w nw e s
+get spyglass
+n w s
+wave rod
+w w d s
+u e u n
+off
+plugh
+drop opals
+drop bag
+drop spyglass
+
+Third trip:
+ iridium crown
+ jade bracelet
+ Ming vase
+ glistening pearl
+ jeweled trident
+ sapphire sceptre
+ ruby-covered toy yacht
+ rare spices
+ golden chain
+
+get keys
+get food
+get teeth
+plugh
+on
+s d bedquilt slab s d
+drop axe
+climb w
+get eggs
+n n w d
+sw u
+throw eggs
+cross
+barren
+in
+throw food
+unlock chain
+drop keys
+view
+wave rod
+drop rod
+cross
+n
+melenkurion
+ne n ne
+get flask
+s nw
+get jade
+e s nw
+throw teeth
+nw n
+off
+[GO IN THE DIRECTION OF THE LIGHT]
+d
+on
+get yacht
+n
+drop flask
+open flask
+open pentagram
+n u s s s
+n n n
+d d
+d get u
+n w s sw nw s d w nw n s n e e
+get sceptre
+[AND REMEMBER THE MAGIC WORD IT TELLS YOU!]
+w w sw e se ne e se d s n
+s u u n
+[SAY THE MAGIC WORD]
+in
+drop sceptre
+drop jade
+drop yacht
+drop plate
+out
+close safe
+s s s s s s s
+e get
+fork barren in
+get bear
+get chain
+fork w w
+cross
+release bear
+cross
+sw d
+se get
+se e get
+w ne e
+u e u n
+off
+plugh
+drop chain
+drop pillow
+drop spices
+drop vase
+
+plugh
+on
+s s d
+[SAY THE MAGIC WORD]
+in
+get crown
+get jade
+get sceptre
+get yacht
+out
+close safe
+u n n
+off
+plugh
+drop crown
+drop jade
+drop sceptre
+drop yacht
+
+Fourth trip:
+ turquoise beads
+ golden eggs
+ rock-crystal sculpture
+
+fee fie foe foo
+plugh
+on
+s s nw e
+get mushroom
+s s n d bedquilt slab s d
+drop ring
+climb w
+n n
+eat mushroom
+jump
+yes
+n ne get w s
+hit
+ride
+s s d s d
+get ring
+get axe
+climb w
+get eggs
+s e u
+w bedquilt e shell
+get sculpture
+get trident
+d d
+get pearl
+shell
+s u e u n
+off
+plugh
+drop beads
+drop eggs
+drop pearl
+drop sculpture
+drop trident
+
+Fifth trip:
+ egg-sized emerald
+ several diamonds
+ treasure chest
+
+plugh
+on
+s d bedquilt w
+orient n w
+drop axe
+drop lamp
+drop ring
+tunnel
+get emerald
+tunnel
+get axe
+get lamp
+get ring
+nw s se ne e
+u e u s u w w
+get diamonds
+w s
+e s s s
+n e e nw
+get chest
+se n d
+debris
+off
+xyzzy
+drop chest
+drop diamonds
+drop emerald
+
+Cleanup trip:
+  any treasures remaining in the pirate's lair
+
+xyzzy
+on
+pit d w w w s
+e s s s
+n e e nw
+[GET REMAINING TREASURES]
+se n d
+debris
+off
+xyzzy
+[DROP TREASURES]
+
+Final trip:
+ platinum pyramid
+ mithril ring
+
+plugh plover ne
+on
+get pyramid
+s plover plugh
+drop pyramid
+drop ring
+
+Wait for the cave to close:
+
+plugh
+s d w d e
+get magazines
+e
+drop magazines
+[GO EAST OR WHATEVER UNTIL YOU GET OUT]
+[WAIT FOR THE BLINDING FLASH OF LIGHT]
+zorton
+xyzzy
+thurb
+snoeze
+samoht
+plugh
+phuggg
+noside
+melenkurion
+knerl
+klaetu
+foo
+foe
+fie
+fee
+blerbi
+d d d
+[YOU WIN!]

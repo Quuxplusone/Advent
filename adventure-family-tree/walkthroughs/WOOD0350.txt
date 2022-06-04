@@ -1,0 +1,169 @@
+THIS FILE CONTAINS COMPLETE SPOILERS FOR WOOD0350!
+
+no
+in
+get lamp
+xyzzy
+e
+get cage
+pit
+on
+e
+get bird
+debris
+get rod
+pit
+d
+s
+get
+n
+w
+wave rod
+drop rod
+w
+get diamonds
+w w w n e
+get coins
+e
+drop bird
+drop cage
+s get n
+n
+get silver
+n
+off
+plugh
+drop gold
+drop silver
+drop coins
+drop jewels
+drop diamonds
+
+get bottle
+get food
+get keys
+plugh
+on
+s d bedquilt slab s d
+water plant
+u w u
+reservoir
+fill bottle
+s s d s d
+water plant
+u e d
+fill
+u w d
+climb w
+get eggs
+n
+oil door
+drop bottle
+n
+get trident
+w d sw u
+throw eggs
+cross
+barren in
+throw food
+unlock chain
+drop keys
+get chain
+get bear
+view
+s e get
+fork w w
+cross
+throw bear
+cross
+sw d se
+get vase
+se e
+get pillow
+w ne e
+drop chain
+n
+open clam
+d d
+get pearl
+shell
+s u e u n
+off
+plugh
+drop pearl
+drop pillow
+drop spices
+drop trident
+drop vase
+
+fee
+fie
+foe
+foo
+plugh
+on
+s s secret w
+kill dragon
+yes
+get rug
+n d s d
+climb w
+get eggs
+n n w d
+se n w
+drop axe
+drop eggs
+drop lamp
+drop rug
+tunnel
+get emerald
+tunnel
+get axe
+get eggs
+get lamp
+get rug
+nw s se ne e
+get chain
+u e u n
+off
+plugh
+drop chain
+drop eggs
+drop emerald
+drop rug
+xyzzy
+on
+pit
+d w w w s
+e s s s
+n e e nw
+get chest
+[GET ANY OTHER TREASURES FROM THE PIRATE'S LAIR]
+se n d
+debris
+xyzzy
+drop chest
+
+plugh
+plover
+ne
+get pyramid
+s
+plover
+plugh
+drop pyramid
+
+plugh
+s d w d e
+get magazines
+e
+drop magazines
+[GO EAST OR WHATEVER UNTIL YOU GET OUT]
+[WAIT FOR THE BLINDING FLASH OF LIGHT]
+sw
+get rod
+ne
+drop rod
+sw
+blast
+[YOU WIN!]
