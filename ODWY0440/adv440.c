@@ -502,7 +502,7 @@ typedef enum {
     R_160,
     R_161,
     R_162,
-    R_163,
+    R_DWARFQUARTERS,
     R_164,
     R_165,
     R_166,
@@ -518,7 +518,7 @@ typedef enum {
     R_177,
     R_178,
     R_179,
-    R_180,
+    R_GRILL,
     R_181,
     R_182,
     R_183,
@@ -526,7 +526,7 @@ typedef enum {
     R_185,
     R_186,
     R_187,
-    R_188,
+    R_DWARFPOCKET,
     R_189,
     R_190,
     R_191,
@@ -709,8 +709,8 @@ bool has_light(Location loc)
         case R_155: case R_156:
         case R_157: case R_158:
         case R_159: case R_160:
-        case R_161: case R_162: case R_163:
-        case R_180:
+        case R_161: case R_162: case R_DWARFQUARTERS:
+        case R_GRILL:
             return true;
         default:
             return false;
@@ -751,10 +751,10 @@ bool dwarves_wont_follow_into(Location loc)
 {
     switch (loc) {
         case R_176: case R_177: case R_178:
-        case R_179: case R_180: case R_181:
+        case R_179: case R_GRILL: case R_181:
         case R_182: case R_183: case R_184:
         case R_185: case R_186: case R_187:
-        case R_188:
+        case R_DWARFPOCKET:
             return true;
         default:
             return false;
@@ -768,7 +768,7 @@ bool forbidden_to_owl(Location loc)
         case R_FOREST: case R_FOREST2: case R_SLIT: case R_OUTSIDE:
         case R_INSIDE:
         case R_176: case R_177: case R_178:
-        case R_179: case R_180: case R_181:
+        case R_179: case R_GRILL: case R_181:
         case R_182: case R_183: case R_184:
         case R_185: case R_186: case R_187:
             return true;
@@ -1044,11 +1044,11 @@ void build_object_table(void)
     objs(DOCUMENTS).desc[1] = "There are some legal documents here.";
     /* Pike uses a global variable INSC1 to say whether we've read the spoon's inscription.
      * I use objs(SPOON).prop instead, since it's not used for anything else. */
-    new_obj(SPOON, "Tarnished spoon", 0, R_180);
-    const char* spoon_description = "A tarnished spoon lies here.";
+    new_obj(SPOON, "Tarnished spoon", 0, R_GRILL);
+    const char *spoon_description = "A tarnished spoon lies here.";
     objs(SPOON).desc[0] = spoon_description;
     objs(SPOON).desc[1] = spoon_description;
-    new_obj(HORN, "Little horn", 0, R_188);
+    new_obj(HORN, "Little horn", 0, R_DWARFPOCKET);
     objs(HORN).desc[0] = "There is a little horn here.";
     new_obj(RATS, 0, RATS, R_182);
     /* objs(RATS).prop ranges from 0 to 6; rat-related messages are given elsewhere */
@@ -1103,7 +1103,7 @@ void build_object_table(void)
     new_obj(CHALICE, "Inlaid chalice", 0, R_144);
     objs(CHALICE).desc[0] = "A magnificent inlaid chalice lies here!";
     objs(CHALICE).desc[1] = "A unicorn stands here pawing the ground.";
-    new_obj(RUBY, "Large ruby", 0, R_188);
+    new_obj(RUBY, "Large ruby", 0, R_DWARFPOCKET);
     objs(RUBY).desc[0] = "A very large ruby lies here!";
     new_obj(ORB, "Crystal orb", 0, R_CELLAR);
     objs(ORB).desc[0] = "A crystal orb lies here!";
@@ -1119,14 +1119,14 @@ void build_object_table(void)
      * R_PANTRY given enough time. */
     move(FOOD, R_HOUSE);
 
-    /* Contrariwise, the little horn starts out in the dwarves'
-     * quarters (inaccessible), and wants to move to R_188 (also
+    /* Contrariwise, the little horn starts out in R_DWARFQUARTERS
+     * (inaccessible), and wants to move to R_DWARFPOCKET (also
      * inaccessible). What this means is that it cannot be encountered
      * by normal means; but the first dwarf you kill will pick it up,
-     * and then carry it forever (since the dwarf will never reach R_188
+     * and then carry it forever (since the dwarf will never reach R_DWARFPOCKET
      * by wandering). When you kill that dwarf, it will drop the horn.
      */
-    move(HORN, R_163);
+    move(HORN, R_DWARFQUARTERS);
 }
 
 
@@ -1356,12 +1356,8 @@ void dwarves_tote_objects(Location loc)
         struct Dwarf *d = &dwarves[i];
         if (d->loc == R_LIMBO) {
             if (d->toted != NOTHING) {
-                /* Dead dwarf drops items in front of player.
-                 * TODO: is this codepath dead?
-                 * Certainly objs(d->toted).place should always be R_188! */
-                if (objs(d->toted).place == R_188) {
-                    move(d->toted, loc);
-                }
+                /* Dead dwarf drops items in front of player. */
+                move(d->toted, loc);
                 describe_object(d->toted, loc);
                 d->toted = NOTHING;
             }
@@ -1393,7 +1389,7 @@ void dwarves_tote_objects(Location loc)
             }
             /* Pick up the new object. */
             d->toted = candidate;
-            move(candidate, R_188);
+            move(candidate, R_DWARFPOCKET);
         }
     }
 }
@@ -1448,7 +1444,7 @@ bool move_dwarves_and_pirate(Location loc)
             if (d->loc == R_LIMBO) {
                 /* Pike allows dead dwarves to resurrect themselves! */
                 if (ran(400) == 0) {
-                    d->loc = R_163;
+                    d->loc = R_DWARFQUARTERS;
                 }
             } else {
                 Location ploc[19];  /* potential locations for the next random step */
@@ -1755,9 +1751,9 @@ int original_room_number(int loc, bool convert_backwards)
         R_VIEW, R_CHAMBER, R_LIME, R_FBARR, R_BARR,
         R_DIFF1, R_DIFF2, R_DIFF3, R_DIFF4, R_DIFF5, R_DIFF6, R_DIFF7, R_DIFF8, R_DIFF9, R_PONY,
         R_141, R_142, R_143, R_144, R_DUNGEON, R_146, R_147, R_148, R_149, R_150, R_151, R_152, R_153,
-        R_CELLAR, R_155, R_156, R_157, R_158, R_159, R_160, R_161, R_162, R_163, R_164, R_165,
+        R_CELLAR, R_155, R_156, R_157, R_158, R_159, R_160, R_161, R_162, R_DWARFQUARTERS, R_164, R_165,
         R_166, R_167, R_168, R_169, R_170, R_171, R_172, R_PANTRY, R_174, R_175, R_176, R_177,
-        R_178, R_179, R_180, R_181, R_182, R_183, R_184, R_185, R_186, R_187, R_188,
+        R_178, R_179, R_GRILL, R_181, R_182, R_183, R_184, R_185, R_186, R_187, R_DWARFPOCKET,
         R_189, R_190, R_191, R_192, R_193, R_194, R_195, R_196, R_197, R_198, R_199
     };
     assert(original_locations[16] == 0);  /* pseudo-rooms that I've turned into remarks */
@@ -1921,7 +1917,7 @@ Location announce_tides(Location loc)
                 return R_179;
             }
             break;
-        case R_180: case R_181: case R_182:
+        case R_GRILL: case R_181: case R_182:
             if (loc == R_182) {
                 /* The rats get hungrier the longer you stay in their location. */
                 objs(RATS).prop = (objs(RATS).prop + 1) % 7;
@@ -2280,7 +2276,7 @@ const char *death_wishes[2*MAX_DEATHS] = {
 void kill_the_player(Location last_safe_place)
 {
     if (has_sewage(last_safe_place)) {
-        last_safe_place = R_180;
+        last_safe_place = R_GRILL;
     }
 
     death_count++;
@@ -2419,7 +2415,7 @@ line_30530:
     if (toting(FOOD)) {
         puts("The giant grabs your food and bellows \"A MISERABLE MORSEL!\"" SOFT_NL
              "but stuffs it in his mouth and swallows it whole.");
-        move(FOOD, R_163);
+        move(FOOD, R_DWARFQUARTERS);
         loc = R_PANTRY;
     }
     for (int kobj = MIN_OBJ; kobj <= MAX_OBJ; ++kobj) {
@@ -2484,7 +2480,7 @@ void attempt_eat(ObjectWord obj)  /* section 98 in Knuth */
 {
     switch (obj) {
         case FOOD:
-            move(FOOD, R_163);
+            move(FOOD, R_DWARFQUARTERS);
             puts("Thank you, it was delicious!");
             break;
         case BIRD: case SNAKE: case CLAM: case OYSTER:
@@ -2688,7 +2684,7 @@ Location attempt_drop(ObjectWord obj, Location loc)
             } else {
                 puts("It has disappeared in the sewage!");
             }
-            drop(obj, (obj == FOOD) ? R_163 : R_180);
+            drop(obj, (obj == FOOD) ? R_DWARFQUARTERS : R_GRILL);
             return loc;
         } else {
             puts(ok);
@@ -2722,7 +2718,7 @@ Location attempt_drop(ObjectWord obj, Location loc)
          * still in the mist even as the cage itself goes to the dwarves.
          * TODO: fix this original bug? */
         if (loc == R_195) {
-            move(obj, R_163);
+            move(obj, R_DWARFQUARTERS);
         } else if (loc == R_148) {
             if (here(SPIDER, R_148)) juggle(SPIDER);
             juggle(WEB);
@@ -2999,7 +2995,7 @@ void attempt_feed(ObjectWord obj, Location loc)  /* section 129 in Knuth */
             if (here(FOOD, loc)) {
                 puts("The food disappears into the sewage and the water thrashes" SOFT_NL
                      "with activity.  My, those rats *are* hungry!");
-                move(FOOD, R_163);
+                move(FOOD, R_DWARFQUARTERS);
                 objs(RATS).prop = 0;
             } else {
                 puts("There is nothing here to eat.");
@@ -3011,7 +3007,7 @@ void attempt_feed(ObjectWord obj, Location loc)  /* section 129 in Knuth */
             } else if (here(FOOD, loc)) {
                 puts("The unicorn eats the food and looks around for more. On finding none" SOFT_NL
                      "it raises its tail and presents you with a neat pile of dung.");
-                move(FOOD, R_163);
+                move(FOOD, R_DWARFQUARTERS);
                 objs(RATS).prop = 0;  /* Pike combines the RATS and CHALICE cases, producing this odd side-effect. */
             } else {
                 puts("There is nothing here to eat.");
@@ -4269,7 +4265,7 @@ void simulate_an_adventure(void)
                             default:
                                 break;
                         }
-                        drop(obj, (obj == FOOD) ? R_163 : R_180);
+                        drop(obj, (obj == FOOD) ? R_DWARFQUARTERS : R_GRILL);
                         throwc += ran(3) + 1;
                         if (throwc < 4 || objs(FAKE_ORB).prop != 0) {
                             puts("It lands near the round drain in the cellar, slides towards it and" SOFT_NL
@@ -4278,7 +4274,7 @@ void simulate_an_adventure(void)
                             puts("It strikes the globe a glancing blow and slides off into the drain." SOFT_NL
                                  "The globe rocks slightly, revealing a small cross attached to its" SOFT_NL
                                  "far side; then it rolls towards the drain and disappears also.");
-                            move(ORB, R_180);
+                            move(ORB, R_GRILL);
                             objs(FAKE_ORB).prop = 1;
                             destroy(FAKE_ORB); /* Pike doesn't actually destroy FAKE_ORB, but he should. */
                         }

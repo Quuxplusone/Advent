@@ -1020,7 +1020,7 @@
              NULL, 0);
     make_cond_ins(U, 50, R_161);
     make_cond_ins(U, 50, R_162);
-    make_ins(U, R_163); ditto(TOWER);
+    make_ins(U, R_DWARFQUARTERS); ditto(TOWER);
     make_ins(D, R_CELLAR); ditto(BEDCHAMBER);
     make_loc(q, R_161,
              "You are at a window halfway up a flight of steps. The view is" SOFT_NL
@@ -1028,7 +1028,7 @@
              "tumbling over rapids.",
              NULL, 0);
     make_cond_ins(U, 50, R_162);
-    make_ins(U, R_163); ditto(TOWER);
+    make_ins(U, R_DWARFQUARTERS); ditto(TOWER);
     make_cond_ins(D, 50, R_160);
     make_ins(D, R_CELLAR); ditto(BEDCHAMBER);
     make_loc(q, R_162,
@@ -1036,11 +1036,11 @@
              "quite beautiful: below you is a cliff, an enraged sea battering" SOFT_NL
              "at its base.",
              NULL, 0);
-    make_ins(U, R_163); ditto(TOWER);
+    make_ins(U, R_DWARFQUARTERS); ditto(TOWER);
     make_cond_ins(D, 50, R_161);
     make_cond_ins(D, 50, R_160);
     make_ins(D, R_CELLAR); ditto(BEDCHAMBER);  /* end TODO investigate these rooms */
-    make_loc(q, R_163, "", NULL, 0);  /* dwarves' quarters -- no access */
+    make_loc(q, R_DWARFQUARTERS, "", NULL, 0);  /* dwarves' quarters -- no access */
     make_ins(D, R_149);  /* dwarves reappear in the tangled web of passages */
     make_loc(q, R_164, "", NULL, 0);  /* unused? TODO remove this room */
     make_loc(q, R_165,
@@ -1157,7 +1157,7 @@
              "You're on the inclined shaft above a N/S culvert.", 0);
     make_ins(U, R_176);
     make_ins(JUMP, R_181); ditto(D);
-    make_loc(q, R_180,
+    make_loc(q, R_GRILL,
              "The sea can be seen through a strong metal grill which spans the" SOFT_NL
              "tunnel.  A quantity of debris is stacked against the grill and pieces" SOFT_NL
              "of debris are caught in the grill nearly to the roof.  High on the" SOFT_NL
@@ -1170,7 +1170,7 @@
              "The brick culvert goes north and south. It seems to narrow to the" SOFT_NL
              "south.",
              NULL, 0);
-    make_ins(N, R_180);
+    make_ins(N, R_GRILL);
     make_ins(S, R_182);
     make_loc(q, R_182,
              "Sewage pours into the culvert from a large number of sewage pipes" SOFT_NL
@@ -1210,8 +1210,8 @@
     make_cond_ins(E, 60, R_BEDQUILT); ditto(W); ditto(N); ditto(S); ditto(U);
     make_ins(E, R_190); ditto(W); ditto(N); ditto(S); ditto(U);  /* TODO: dittoes are unneeded, right? */
     make_ins(DOWNSTREAM, R_187); ditto(D);
-    make_loc(q, R_188, "", NULL, 0);  /* Dwarves' store (no access) */
-    make_ins(OUT, R_163);
+    make_loc(q, R_DWARFPOCKET, "", NULL, 0);  /* Dwarves' store (no access) */
+    make_ins(OUT, R_DWARFQUARTERS);
     make_loc(q, R_189,
              "You are at the west end of a very large and long tunnel. To the west" SOFT_NL
              "the way is almost blocked by rock falls. Several very large" SOFT_NL
