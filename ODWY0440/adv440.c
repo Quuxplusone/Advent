@@ -1356,9 +1356,10 @@ void dwarves_tote_objects(Location loc)
         struct Dwarf *d = &dwarves[i];
         if (d->loc == R_LIMBO) {
             if (d->toted != NOTHING) {
-                /* Dead dwarf drops items in front of player. */
+                /* Dead dwarf drops items in front of player.
+                 * Pike calls describe_object here, but since we're
+                 * going to describe the room again anyway, let's not. */
                 move(d->toted, loc);
-                describe_object(d->toted, loc);
                 d->toted = NOTHING;
             }
             continue;
