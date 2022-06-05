@@ -1364,8 +1364,7 @@ void dwarves_tote_objects(Location loc)
             }
             continue;
         }
-        if (d->toted != NOTHING && objs(d->toted).original_place == d->loc)
-        {
+        if (d->toted != NOTHING && objs(d->toted).original_place == d->loc) {
             /* Drop the object in its rightful place. */
             move(d->toted, d->loc);
             d->toted = NOTHING;
@@ -3286,7 +3285,7 @@ void attempt_read(ObjectWord obj)  /* section 135 in Knuth */
             break;
         case SPOON:
             objs(SPOON).prop = 1;  /* we've seen the inscription */
-            puts("It says EPNS in flowery script.");
+            puts("It says \"EPNS\" in flowery script.");
             break;
         case OYSTER:
             if (closed && toting(OYSTER)) {
