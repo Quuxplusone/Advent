@@ -3179,6 +3179,30 @@ int attempt_hoot(Location loc)
     }
 }
 
+bool attempt_blow(ObjectWord obj, Location loc)
+{
+    if (obj == HORN && loc >= MIN_LOWER_LOC) {
+        puts("The little horn emits a surprisingly loud sonorous note.");
+        if (forbidden_to_pirate(loc) || there(OWL, loc)) {
+            // Nothing else happens.
+        } else {
+            puts("As the note dies away the sound of many hurrying footsteps becomes" SOFT_NL
+                 "apparent.");
+            int im = 3 + ran(3);
+            for (int i = 0; i < im; ++i) {
+                dwarves[i].loc = loc;
+                dwarves[i].oldloc = loc;
+            }
+            return true;  // immediately move the dwarves
+        }
+    } else if (obj == HORN) {
+        puts("The horn emits a loud squeak.");
+    } else {
+        puts("Don't be ridiculous!");
+    }
+    return false;
+}
+
 void attempt_ride(ObjectWord obj)
 {
     if (obj == CHALICE && objs(CHALICE).prop == 1)
@@ -4434,7 +4458,9 @@ void simulate_an_adventure(void)
                     puts("I don't understand that!");
                     continue;
                 case BLOW:
-                    puts("Nothing happens.");
+                    if (attempt_blow(obj, loc)) {
+                        goto label_move_dwarves;
+                    }
                     continue;
                 case RIDE:
                     attempt_ride(obj);
