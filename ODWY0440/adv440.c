@@ -1913,7 +1913,7 @@ Location announce_tides(Location loc)
         }
     }
 
-    static int tide = 3;
+    static int tide = 2;
     ++tide;
     if (tide == 15) tide = -15;
 
