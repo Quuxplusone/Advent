@@ -1637,7 +1637,9 @@ bool check_clocks_and_lamp(Location loc)
          * It's too much trouble to move the dragon, so we leave it.
          * From now on until clock2 runs out, you cannot unlock the grate,
          * move to any location outside the cave, or create the bridge.
-         * Nor can you be resurrected if you die. */
+         * Nor can you be resurrected if you die.
+         * However, notice that you can still BLOW HORN to summon dwarves,
+         * even after this point! */
         puts("A sepulchral voice, reverberating through the cave, says \"Cave" SOFT_NL
              "closing soon.  All adventurers exit immediately through main office.\"");
         clock1 = -1;
@@ -1646,6 +1648,17 @@ bool check_clocks_and_lamp(Location loc)
         for (int j=0; j <= 5; ++j) {
             dwarves[j].seen = false;
             dwarves[j].loc = R_LIMBO;
+            if (dwarves[j].toted != NOTHING) {
+                /* Pike (line 10010) omits this check; he simply sets DLOC(I)=0
+                 * and lets subroutine DTOT assume that the dwarf was killed by
+                 * the player. This means that all dwarf-toted items (usually
+                 * just the horn) suddenly appear in the player's room when
+                 * the cave closes. Which is fine, but confusing and unnecessary
+                 * (since even if they're treasures, the cave is already closed).
+                 * Instead, let's just destroy dwarf-toted items. */
+                destroy(dwarves[j].toted);
+                dwarves[j].toted = NOTHING;
+            }
         }
         destroy(TROLL); destroy(TROLL_);
         move(NO_TROLL, R_SWSIDE); move(NO_TROLL_, R_NESIDE);
