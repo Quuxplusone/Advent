@@ -48,6 +48,25 @@ The same as LONG0501, plus two uncompleted dead ends:
     inscription, 'Shamut'.  There is a dark tunnel to the south and an
     impossibly steep passage west._
 
+### SWEN0448
+
+- The brass lantern is located below grate, instead of in the well house.
+
+- The silver bars are located north of the west side of fissure:
+    _You are in a cramped chamber looking out over the fissure in the hall
+    of Mists.  A tight passage leads back down. There are bars of silver here!_
+
+- The Magician's Tower setpiece, west of the long hall:
+    _You are at the west end of a very long featureless hall.  The hall
+    joins up with a narrow north/south passage.  There is a narrow doorway
+    leading to the west._ Go through the door:
+    _You're on a spiral staircase lit by torches with an eastern door._
+    Past the Magician's Chamber (see below), you find mithril chain mail
+    and pass through three rooms of "dwarven mines." _You're in the
+    Lower Hall of the ancient dwarven mines. There are signs of ancient
+    battles all over and most of the passages out of the hall are blocked._
+
+- The last step to the pirate's lair is usually NW, but in SWEN0448 it's SW instead.
 
 ## By attribute
 
@@ -63,6 +82,18 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 - LONG0501 (MCDO0551, LONG0751): billboard, salt marsh, Thunder Hole
 
+### Broom puzzles
+
+- SWEN0448: _You are in a small dusty chamber which appears as though you're the
+    first person to enter it in years.  The only visible exit is to the north._
+    SWEEP. _As the dust is dislodged and shifts around the room a trap door
+    appears in the middle of the floor._ This leads to the tunnels under the
+    throne room, and a treasure.
+
+    Separately, SWEEP in the dusty rock room reveals a treasure:
+    _Your sweeping stirs up the dust and reveals a piece of paper on the
+    ground._
+
 ### Crystal balls
 
 - LIDI0366: _You are in the gazebo. The dust is deep here, indicating long disuse.
@@ -70,7 +101,7 @@ The same as LONG0501, plus two uncompleted dead ends:
    Another, more ancient inscription reads "PKIHMN". There is a palantir(orb) here._
    You can PEER ORB to get some useless messages.
 
-- LUPI0440: _A crystal orb lies here!_
+- LUPI0440: _A crystal orb lies here!_ (in the circular cellar SE of the Soft Room).
 
 - MCDO0551: _There is a polished sphere of pure quartz here!_ (in the Crystal Palace).
     LOOK BALL causes you to see whatever is in the room with the star sapphire.
@@ -152,6 +183,12 @@ The same as LONG0501, plus two uncompleted dead ends:
     the boulder!_
     GET SWORD succeeds, but a cave-in blocks the passage back out.
 
+- SWEN0448: _You are in a large chamber decorated like an ancient Druid temple
+    continuing to the west with passages leading off to the north and south.
+    A large stone dominates the center of the room.
+    The sword is firmly imbedded in the stone!_ WEAR CROWN; PULL SWORD.
+    _Voila!  The sword has slid effortlessly out of the stone._
+
 ## Treasure lists
 
 - ARNA0660: pieces of eight, iridium crown, large gold nugget, several diamonds,
@@ -184,6 +221,12 @@ The same as LONG0501, plus two uncompleted dead ends:
    (the Ruby Yacht of Omar Khayyam), platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
    mithril ring, scrimshaw spyglass, rock-crystal sculpture, jade bracelet, casket of opals
 
+- SWEN0448: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
+    treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
+    platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
+    MIT scholarship, crystal figure of a god, mithril chain mail, dull gold ring,
+    brilliant sword, elfin crown
+
 - WOOD0350: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
     platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain
@@ -200,6 +243,24 @@ The same as LONG0501, plus two uncompleted dead ends:
     _Through the portcullis steps a tall wizard clothed in grey. "Be Off!"
     he commands, raising an arm. As the scene fades his distant voice
     continues "And take your belongings with you!"._
+
+- SWEN0448: _You're in the Magician's Chamber,
+    a large pentagonal room with a spiral staircase leading up from the center of the room.
+    The magician's staff is leaning against the wall.
+    The Magician is here gesturing frantically in front of the elven door.
+    There is a massive stone Elven door set into the western wall.
+    The surface of the door is covered with indecipherable runes._
+    You must THROW DAGGER to kill the magician, then speak FRIEND to enter.
+
+    _You're in the magician's tower, a small cluttered room filled with
+    all manner of strange artifacts, the purpose of which cannot be
+    kenned immediately.  The walls of the chamber are themselves cloaked
+    in shadows which seem to move of their own accord.  There is one
+    small window in the wall but it is far over your head and lets in
+    a minimum of light.  Torches set in the wall across from the window
+    supplement the meager light but the entire room seems to disapprove
+    of light and gloom clings to all the corners.  In the center of the
+    room a spiral staircase descends into to the lower levels of the cave._
 
 - WOOD0350: The wizard appears only to terminate a "demo game" that has exceeded
     the maximum turn count. _A large cloud of green smoke appears in front of you.

@@ -1,0 +1,151 @@
+==TREASURES==
+nugget
+diamonds
+silver
+jewels
+coins
+chest
+vase
+emerald
+pyramid
+pearl
+rug
+spices
+chain
+eggs
+trident
+ring - located in magician's tower (need dagger, then staff), needed before escaping druid room (sword)
+crown - located in throne room, needed before getting sword
+sword - located in druid room (N from crossover)
+mithril - located in 155 "old guard's room"
+scholarship - located in 39 "large room full of dusty rocks" (need broom)
+crystal - located in 164, below trap door off of druid room (need broom)
+
+== TOWER MAP ==
+Up is 29; down is 30; east is 43.
+
+Long hall is room 61. West from there gets you to 147.
+147 is the entry level of the spiral staircase (rod room).
+- East goes to 61 (60%) or 19 (40%).
+- Down replaces the magician if PROP(STAFF) != 0, and then: 152 (60%) or 148 (15%) or 147 (25%).
+- Up goes to 148 (60%) or 147 (40%).
+- TESTM goes to Druid Temple Room.
+148 is the weird place on the spiral staircase (cage room).
+- East goes to 171 if TOTING(STAFF). (keeps you in the stairwell)
+- East goes to 170 if WEARING(CROWN).
+- East goes to 170 if WEARING(RING).
+- East goes to 143 if TOTING(SWORD).
+- East goes to 114 if TOTING(CHEST).
+- East goes to 157 if TOTING(MITHRIL).
+- East goes to 19 (60%) or 149 (30%) or 151 (10%).
+- Down goes to 147 (60%) or 149 (15%) or 148 (25%).
+- Up goes to 149 (60%) or 147 (15%) or 148 (25%).
+149 is higher on the spiral staircase.
+- East goes to 169, which is the dagger room!
+- Down goes to 148 (60%) or 151 (15%) or 149 (25%).
+- Up goes to 151 (60%) or 148 (15%) or 149 (25%).
+150 is the TOWER (ring and broom).
+- Down goes to 151 if TOTING(STAFF), or otherwise still 151.
+151 is spiral staircase.
+- East goes to 159, or, if too many dwarves are dead, it kills you instead.
+- Up goes to 149 (10%), or 150 if TOTING(STAFF), or 151.
+- Down goes to 149 (60%) or 151 (40%).
+152 is the CHAMBER (staff and door).
+- FRIEND goes through the door if PROP(MAGICN) != 0, or 147.
+- Up goes to 147.
+
+
+==BEGIN TRANSCRIPT==
+telnet its.pdp10.se 10003
+Ctrl-Z
+:login yourinitials
+:games;adv448
+no
+no
+in. xyzzy. e. get. e. get lamp. pit. on.
+e. get. pit. d.
+s. get nugget. n.
+n. drop bird.
+s. get jewels. n.
+w. get coins. e.
+n. get crown. wear.
+n. n. off. plugh.
+drop gold. drop jewels. drop coins.
+xyzzy. get rod. on. pit. d.
+w. wave rod. w. get diamonds.
+w. w. w. w.
+drop rod. u. (repeat "u" until you leave the rod room)
+drop cage. u. (repeat "u" until you leave the cage room)
+e. get. w.
+d. d. d. (repeat "d" until you arrive at the magician's chamber)
+throw dagger. get staff. friend.
+w. get mail. e.
+u. u. u. u. w.
+u. (repeat "u" until you arrive at the magician's tower)
+get broom. get ring. wear ring.
+d. d. (repeat "d" until you arrive at the rod room, or if you hit the magician's chamber first, then go "u" from there)
+testm. drop staff.
+s. sweep. d.
+w. n. n. se. get crystal. nw. s. s. e. u.
+n. pull.
+n. n. n. n. off. plugh.
+drop diamonds. drop sword. drop crown. drop ring. drop mail. drop crystal.
+plugh. on. s. d. w. sweep.
+bedquilt. drop broom.
+w. orient. n. w.
+drop lamp. drop axe.
+tunnel. get emerald. tunnel.
+get lamp. get axe.
+nw. s. get vase. se.
+e. get pillow. w.
+ne. e. u. get brown.
+e. u. n. off. plugh.
+drop pillow. drop vase. drop emerald. drop brown.
+get food. get keys. get water.
+plugh. on. s. d. bedquilt.
+slab. s. d. pour.
+climb. w. u. reservoir. fill.
+s. s. d. s. d. pour.
+u. e. d. fill.
+u. w. d. climb.
+w. get eggs.
+n. pour. drop bottle. n. w. d.
+sw. u. throw eggs.
+cross. barren. in. feed bear. unlock chain. drop keys.
+get chain. get bear.
+view. s. e. get spices.
+fork. w. w. cross. release bear.
+cross. sw. d. se. se.
+w. w. d. climb. w.
+fee. fie. foe. foo. get eggs.
+n. n. get trident. w. d.
+se. se. ne. e. shell. open clam.
+d. d. get pearl. shell. s.
+u. e. u. n. off. plugh.
+drop chain. drop eggs. drop spices. drop trident. drop pearl.
+xyzzy. on. pit. d.
+w. w. n. u. get silver.
+d. e. e. e.
+n. secret. w. kill. yes. get rug.
+e. e. u. u. debris. off. xyzzy.
+drop silver. drop rug.
+plugh. plover. dark. get pyramid.
+s. plover. plugh.
+drop pyramid.
+
+==BEGIN PIRATE RECOVERY==
+xyzzy. on. pit. d. w. w. w. s.
+e. s. s. s. n. e. e. sw.
+get chest. (and get other things)
+ne. n. d. debris. off. xyzzy.
+drop chest. (and drop other things)
+==END PIRATE RECOVERY==
+
+==LAST LOUSY POINT (WHILE WAITING FOR SEPULCHRAL VOICE)==
+plugh. on. s. d. w. d. e.
+get magazines. e. drop magazines. n. (repeat "n" until your lamp dies and you lose, or else you get out)
+
+sw. get rod.
+ne. drop rod.
+sw. blast.
+[YOU WIN!]
