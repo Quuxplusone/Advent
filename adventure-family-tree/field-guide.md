@@ -4,6 +4,59 @@ Spoilers galore ahead!
 
 ## By variant
 
+### ARNA0660
+
+A blend of PLAT0550 and LUPI0440.
+
+- As in LUPI0440, dwarves can tote objects (including the little horn).
+
+- The verb EXAMINE is supported, and all items have descriptions.
+
+- PLAT0550's ruby yacht is located at the reservoir.
+
+- LUPI0440's sparkling crown is replaced with an
+    _amethyst encrusted crucifix of white gold_ (to avoid conflicts with
+    PLAT0550's _iridium crown_).
+
+- The food is initially nowhere, but will eventually appear
+    in LUPI0440's pantry, SE and U from the Soft Room. (Food creation
+    shares logic with dwarf spawning: the player must have spent some time
+    "well into" the cave.)
+
+- Arnautov extends LUPI0440's description of the room above the chapel:
+    _You are in the chamber above the entrance to the chapel. A spiral
+    staircase leads down, openings lead to the north and west_ (here Arnautov adds:)
+    _and an arched door leads south. A rough red drawing of a fish
+    can be seen above the door._ This leads to a couple of rooms that
+    were implemented but inaccessible in LUPI0440:
+    _You are at a window part way up a flight of stone steps. The view is
+    quite beautiful - a lake with rolling green meadows beyond it, gradually
+    rising to large snow-capped mountains._
+
+- The snake blocks the SECRET exit from the Hall of the Mountain King, as well as blocking the SW exit.
+
+- The _Galloping Ghost_ Tortoise Express has become the _Gallop-a-Ghost_ Tortoise Express.
+
+- Going NW E from the Hall of the Mountain King leads to: _You  are in a small cubicle of red sandstone._
+    (This is different from PLAT0550's _You are in a small, dank cubicle of rock_, where PLAT0550's mushroom
+    was found.) UP from there leads to the chamber east of the Hall of Mists (where PLAT0550's singing sword
+    was found), containing a bronze plaque reading "UIJT TQBDF JOUFOUJPOBMMZ MFGU CMBOL," which is
+    Dwarvish (ROT-1) for "This space intentionally left blank." PLAT0550's mushroom has moved behind the
+    spider web in the maze; you must _CUT WEB_ first. PLAT0550's sword has moved to the swirling mist
+    (E N N N from the Soft Room, and then W or E with 33% chance).
+
+- In the Witt Company Tool Room, _A pile of old rags lies discarded in one corner._
+    (You must _RUB PLATE_ with these rags before passing PLAT0550's basilisk.)
+
+- LUPI0440's "wizard's cellar" setpiece doesn't always let you keep the item you drop.
+    _Through the portcullis steps a tall wizard clothed in gray.  "BE OFF!" he
+    commands, raising an arm. As the scene fades, you can hear his distant
+    voice adding "...DAMNED AMATEUR!..."_ Or: _"...AND TAKE YOUR JUNK WITH YOU!..."_
+
+### ARNA0770
+
+- Picnic table
+
 ### GIBI0375
 
 - There is a Medieval Room behind the tablet in the Dark Room.
@@ -25,6 +78,13 @@ The same as MCDO0551, except...
 ### LONG0751
 
 - Elephant Graveyard, Leprechaun Rock, orcs at helipad
+
+### LUPI0440
+
+- Dwarves can tote objects. The little horn (which is not a treasure)
+    is acquired only by killing the dwarf who is toting it.
+
+- The "giant's dungeon" setpiece.
 
 ### MCDO0551
 
@@ -72,9 +132,12 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 ### Above-ground features
 
-- ARNA0660: A path NW of the building leads through a ravine to a magnificent view,
-    the bottle has been moved there. The road west of the building leads to a
-    white tower. To the east of the building: _A small wooden bird table on a
+- ARNA0660: A path NW of the building leads through a ravine to a magnificent view.
+    The bottle has been moved there. Later the location is revealed to be the
+    Giant's picnic ground.
+
+- ARNA0770: The road west of the building leads to a white tower.
+    To the east of the building: _A small wooden bird table on a
     tall wooden leg stands sheltered by the wall of the house. A small pile of
     bird seed lies on the table._
 
@@ -82,7 +145,12 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 - LONG0501 (MCDO0551, LONG0751): billboard, salt marsh, Thunder Hole
 
-### Broom puzzles
+### Brooms
+
+- LONG0501 (MCDO0551, LONG0751): _You're at Tongue of Rock. There is a small whiskbroom here._
+    In the dusty rock room, SWEEP reveals the combination to the safe in the Well House:
+    _Brushing the dust from one of the larger rocks reveals some carved characters.
+    In the rock is carved the message "7-22-34"._
 
 - SWEN0448: _You are in a small dusty chamber which appears as though you're the
     first person to enter it in years.  The only visible exit is to the north._
@@ -101,7 +169,9 @@ The same as LONG0501, plus two uncompleted dead ends:
    Another, more ancient inscription reads "PKIHMN". There is a palantir(orb) here._
    You can PEER ORB to get some useless messages.
 
-- LUPI0440: _A crystal orb lies here!_ (in the circular cellar SE of the Soft Room).
+- LUPI0440 (ARNA0660, ARNA0770): _A crystal orb lies here!_ (in the circular cellar
+   SE of the Soft Room). In ARNA0660 and ARNA0770, you can EXAMINE ORB to receive
+   non-essential hints re various puzzles.
 
 - MCDO0551: _There is a polished sphere of pure quartz here!_ (in the Crystal Palace).
     LOOK BALL causes you to see whatever is in the room with the star sapphire.
@@ -112,12 +182,12 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 - GIBI0375: _There is an ancient dog-eared Dwarvish-English dictionary here._ (at Y2)
 
-- PLAT0550: _The dwarf staggers, slumps to the ground, gasps "Epo'u mfu uifn vtf fncbmnjoh
+- PLAT0550 (ARNA0660, ARNA0770): _The dwarf staggers, slumps to the ground, gasps "Epo'u mfu uifn vtf fncbmnjoh
     gmvje.  J xbou up cf tuvggfe xjui dsbc nfbu!" and then expires in a puff of oily black smoke._
     The gimmick here is that dwarves speak in ROT1: "Don't let them use embalming
     fluid. I want to be stuffed with crab meat!"
 
-- ARNA0660, ARNA0770: I've heard that the ability to decode ROT1 Dwarvish is used in at
+- ARNA0770: I've heard that the ability to decode ROT1 Dwarvish is used in at
     least one puzzle.
 
 ### Flying carpets
@@ -146,25 +216,68 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 ### Magic words
 
-- LIDI0366: PKIHMN
+- ARNA0660: Same set as PLAT0550.
+    The "skeleton key" that opens the safe is randomly one of BLERBI, KLAETU, KNERL, or SNOEZE.
+    The magic word ZORTON is no longer one of the possible "skeleton keys";
+    instead, it turns the singing sword into the mithril ring.
 
-- LONG0501 (MCDO0551, LONG0751): PHUCE
+- ARNA0770: PLAT0550, plus BASINGSTOKE
 
-- MCDO0551: SAINT-MICHEL
+- LIDI0366: WOOD0350, plus PKIHMN
 
-- PLAT0550: ZORTON, THURB, SNOEZE, NOSIDE SAMOHT, PHUGGG, MELENKURION, KNERL, KLAETU, BLERBI
+- LONG0501 (LONG0751): WOOD0350, plus PHUCE
 
-- WOOD0350: XYZZY, PLUGH, PLOVER, FEE FIE FOE FOO
+- MALM1000: WOOD0350, plus ZORTON, THURB, NOSIDE SAMOHT, PHUGGG, MELENKURION.
+    The "skeleton key" that opens the safe is always ZORTON.
+
+- MCDO0551: LONG0501, plus SAINT-MICHEL
+
+- PLAT0550: WOOD0350, plus ZORTON, THURB, SNOEZE, NOSIDE SAMOHT, PHUGGG, MELENKURION, KNERL, KLAETU, BLERBI.
+    The "skeleton key" that opens the safe is randomly one of BLERBI, KLAETU, KNERL, SNOEZE, or ZORTON.
+
+- WOOD0350 (LUPI0440): XYZZY, PLUGH, PLOVER, FEE FIE FOE FOO
+
+### Mazes
+
+- CROW0000: Twisty passages all alike
+
+- LUPI0440: WOOD0350, plus spider maze ("tangled web of intersecting passages"), sewer maze
+
+- MCDO0551: LONG0501, plus kaleidoscopic garden of the elves
+
+- PLAT0550: WOOD0350, plus fog room, enchanted catacombs, ice maze (_THURB_)
+
+- WOOD0350: CROW0000, plus twisty passages all different
 
 ### Musical instruments
 
-- LUPI0440: There is a _little horn_ toted by the dwarves, which they'll drop if killed.
+- LUPI0440 (ARNA0660): There is a _little horn_ toted by the dwarves, which they'll drop if killed.
     You can BLOW HORN to summon a random number of angry dwarves. It has no other effect.
 
 - LONG0501 (MCDO0551, LONG0751): The silver bars are replaced with a _delicate lyre_, which is a treasure.
     You must PLAY LYRE to get past the black dog at the Styx. The diamonds are replaced
     with a _silver horn_, which is also a treasure. You must PLAY HORN or BLOW HORN above
     the Shell Room to knock down a wall.
+
+### Safes
+
+- LONG0501 (MCDO0551, LONG0751): There is a wall safe in the Well House,
+    initially hidden behind a poster. Most treasures must be deposited in
+    the safe, rather than simply on the floor of the Well House.
+    It is opened with a combination.
+
+- MALM1000: In the Well House, _A huge steel safe has been installed
+    into the brick wall on the east wall._ Opening the safe reveals a
+    stairway connecting to the Programmer's Den and Computer Center.
+    It is opened with a combination (using the command TURN KNOB).
+    PLAT0550's _massive walk-in safe_ is also in this version.
+
+- PLAT0550 (ARNA0660, ARNA0770, MALM1000): Below the Hall of the Mountain King,
+    _A massive walk-in safe takes up one entire wall.  It is tightly
+    closed, and has no handle, lock, nor keyhole._ It has a twin in the
+    Peelgrunt Room on the far side of Volcano View, and is magic:
+    treasures dropped in either safe are accessible from the other.
+    It is opened with a magic word.
 
 ### Sword-in-stone puzzles
 
@@ -183,6 +296,15 @@ The same as LONG0501, plus two uncompleted dead ends:
     the boulder!_
     GET SWORD succeeds, but a cave-in blocks the passage back out.
 
+- PLAT0550 (MALM1000): _You are in a small chamber to the east of the Hall of Mists.
+    The walls are composed of rough red sandstone. There is a large,
+    cubical chunk of rock in the center of the room.
+    There is a sword here with its blade plunged deep into the block
+    of stone. The sword is singing quietly to itself._ You must EAT MUSHROOM
+    to acquire the strength to GET SWORD.
+    _The singing sword slides easily out of the rock._
+    ARNA0660 (ARNA0770) has the same puzzle with slightly altered geography.
+
 - SWEN0448: _You are in a large chamber decorated like an ancient Druid temple
     continuing to the west with passages leading off to the north and south.
     A large stone dominates the center of the room.
@@ -191,47 +313,58 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 ## Treasure lists
 
-- ARNA0660: pieces of eight, iridium crown, large gold nugget, several diamonds,
-    bars of silver, precious jewelry, rare coins, treasure chest, golden eggs,
-    jewel-encrusted trident, gem-encrusted visorless helmet, Ming vase,
-    egg-sized emerald, ruby yacht, platinum pyramid, glistening pearl,
-    Persian rug, rare spices, turquoise beads, golden chain, mithril ring,
-    scrimshaw spyglass, rock crystal sculpture, jade bracelet, casket of opals,
-    crystal orb, ivory tusk, inlaid chalice, large sapphire,
-    amethyst-encrusted crucifix of white gold, opalescent starstone,
-    bronze drachma
+- ARNA0660: 32: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
+    treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
+    platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
+    **amethyst crucifix**, ivory tusk, inlaid chalice, **large sapphire**, crystal orb,
+    bag filled with pieces of eight, iridium crown, encrusted helmet,
+    sapphire sceptre, ruby-covered toy yacht (the Ruby Yacht of Omar Khayyam),
+    mithril ring, scrimshaw spyglass, rock-crystal sculpture, jade bracelet, casket of opals,
+    turquoise beads, opalescent starstone
 
-- CROW0000: large gold nugget, diamonds, bars of silver, precious jewelry, coins
+- CROW0000: 5: large gold nugget, diamonds, bars of silver, precious jewelry, coins
 
-- LUPI0440: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
+- LUPI0440: 20: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
     platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
     sparkling crown, ivory tusk, inlaid chalice, large ruby, crystal orb
 
-- MCDO0551 (HALL0501): large gold nugget, several diamonds, **silver horn**, precious jewelry, rare coins,
+- MALM1000: 37: large gold nugget, several diamonds, silver bars, precious jewelry, rare coins,
+    treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
+    platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
+    gold bag (pieces of eight), iridium crown, visorless helmet,
+    sapphire sceptre, toy yacht (the Ruby Yacht of Omar Khayyam),
+    mithril ring, scrimshaw spyglass, ice sculpture, jade bracelet, casket opals,
+    turquoise beads, metal plate (PLAT0550's plate is now a treasure),
+    beautiful rose, red apple, jeweled urn, golden weathercock, silver cross,
+    jeweled cane, gold key, gold watch, rare stamps, floppy disk
+
+- MCDO0551 (HALL0501): 26: large gold nugget, several diamonds, **silver horn**, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
     platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
     gleaming sword, elfin crown, ruby slippers, delicate lyre, star sapphire,
     Holy Grail (chalice), cask of vintage wine, golden ring (small gold ring),
     four-leafed clover, gold tree, silver droplet
 
-- PLAT0550: Bag filled with pieces of eight, iridium crown, large gold nugget, several diamonds, bars of silver,
-   precious jewelry, rare coins, treasure chest, golden eggs, jeweled trident,
-   helmet, Ming vase, egg-sized emerald, sapphire sceptre, ruby-covered toy yacht
-   (the Ruby Yacht of Omar Khayyam), platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
-   mithril ring, scrimshaw spyglass, rock-crystal sculpture, jade bracelet, casket of opals
+- PLAT0550: 26: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
+    treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
+    platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
+    bag filled with pieces of eight, iridium crown, encrusted helmet,
+    sapphire sceptre, ruby-covered toy yacht (the Ruby Yacht of Omar Khayyam),
+    mithril ring, scrimshaw spyglass, rock-crystal sculpture, jade bracelet, casket of opals,
+    turquoise beads
 
-- SWEN0448: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
+- SWEN0448: 21: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
     platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
     MIT scholarship, crystal figure of a god, mithril chain mail, dull gold ring,
     brilliant sword, elfin crown
 
-- WOOD0350: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
+- WOOD0350: 15: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
     platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain
 
-- WOOD0430: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
+- WOOD0430: 20: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
     platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
     giant ruby, jade necklace, amber gemstone, star sapphire, ebony statuette

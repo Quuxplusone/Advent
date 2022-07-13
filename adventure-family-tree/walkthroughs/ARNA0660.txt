@@ -1,0 +1,500 @@
+THIS FILE CONTAINS COMPLETE SPOILERS FOR ARNA0660!
+
+You may have to use NOSIDE. SAMOHT. to recharge the lamp.
+If you do, then remember to DROP LAMP first.
+
+Notice that ARNA0660 has "non-simulated" dwarves in the same way
+as PLAT0550 and MALM1000; but also emulates LUPI0440's ability
+for dwarves to tote items. The way this works is, every turn
+there is a certain chance for any previously seen item anywhere
+in the cave to be apported to the dwarves' storeroom, as long
+as it is not in the player's location, a location forbidden to
+dwarves, or a maze; and is not on a whitelist of "big" objects.
+Treasures are preferred. Later, when a dwarf randomly appears,
+it has a certain chance of toting any one of the items currently
+in the storeroom.
+
+LUPI0440's dwarves are essentially "cleaning up the cave"; they
+won't pick up any item that's already in its proper location.
+ARNA0660's dwarves do not observe that restriction.
+
+The upshot of this mechanic is that walking past an item without
+picking it up may cause it to vanish before you can come
+back to it. This is particularly noticeable with the silver bars,
+since they're in an area the player visits often.
+
+The following "big" objects are safe from dwarvish pranks:
+pillow, vase, rug, yacht, eggs, trident,
+chest, casket, helmet, crown, sceptre, orb, chalice, tusk
+sword, plate. Also the axe and the food, via special-case logic.
+
+The food starts out nowhere, and appears in the pantry only
+as part of the dwarf-spawning logic, i.e. it won't appear until
+some random time after first entering the lower level of the cave.
+
+There are three legs of the journey where the pirate can steal
+a necessary treasure: trident-to-clam, eggs-to-troll, and
+eggs-to-giant. So we do those as late as possible. Once the pirate
+shows up for the first time, you should skip down to the
+"BONUS TRIP" immediately, to disable the pirate from then on.
+
+There are some hints here (Arthur DiBianca, 1997-09-12):
+https://www.gamesurge.com/pc/strategy/pc_wt/Adv660-hints.shtml
+
+
+FIRST TRIP:
+ large gold nugget
+ precious jewelry
+ silver bars
+
+no
+in
+get lamp
+xyzzy
+e
+get cage
+pit
+on
+e
+get bird
+debris
+get rod
+pit d
+s get n
+w
+wave rod
+e n
+drop bird
+s get n
+n get n
+plugh
+drop bars
+drop gold
+drop jewels
+[YOU SHOULD STILL BE HOLDING THE ROD AND THE CAGE]
+
+SECOND TRIP:
+ egg-sized emerald
+ crystal orb
+ pillow (for vase)
+
+plugh
+s d bedquilt w e
+se d in
+get orb
+drop cage
+[YOU HAVE BEEN TELEPORTED TO A RANDOM LOCATION! THIS RECIPE SHOULD WORK FROM ANY OF THE SIX(?) POSSIBLE LOCATIONS.]
+[IF YOU'RE AT DIVISION IN PASSAGE: s n d bedquilt]
+[IF YOU'RE AT THE PIRATE'S DEAD END: se n d pit d n n d bedquilt]
+[IF YOU'RE IN THE MAZE: u w u e e e. YOU ARE NOW IN THE HALL OF MISTS.]
+[IF YOU'RE IN THE HALL OF MISTS: n n d bedquilt]
+[IF YOU'RE ABOVE A PASSAGE: d]
+[IF YOU'RE ABOVE A ROOM: slab n]
+[IF YOU'RE AT SECRET JUNCTION: se]
+[YOU ARE NOW IN BEDQUILT.]
+w orient n w
+drop all
+tunnel
+get emerald
+tunnel
+get all
+nw s se e
+get pillow
+w ne e
+u e u n
+plugh
+drop pillow
+drop emerald
+drop orb
+
+THIRD TRIP:
+ ivory tusk
+ jeweled helmet
+ bag of pieces of eight
+ scrimshaw spyglass
+
+[YOU SHOULD STILL BE CARRYING THE ROD.]
+drink
+plugh
+s d w d e
+ne w w
+get tusk
+e d
+u d [IN LUPI0440 YOU COULD "LOOK LOOK" TO WASTE TIME, BUT IN ARNA0660 THAT DOESN'T WORK.]
+d s sw in
+wash
+u [KEEP GOING UP UNTIL YOU RANDOMLY GET OUT, INTO THE JUMBLE OF ROCK]
+u n ne
+get helmet
+s n d w
+d n u u
+wave rod
+cross
+n n sw
+d get u
+w nw e s
+get spyglass
+n w s
+wave rod
+cross
+w d s
+u e u n
+plugh
+drop bag
+drop helmet
+drop spyglass
+drop tusk
+drop rod
+
+FOURTH TRIP:
+ turquoise beads
+ ruby yacht
+ amethyst crucifix
+ inlaid chalice
+
+w view
+get bottle
+house e
+drink
+get water
+plugh
+s d bedquilt slab s d
+water plant
+u w u
+reservoir
+get water
+s s d s d
+water plant
+u e d
+get oil
+u w d
+drop axe [OTHERWISE IT WILL BE LOST IN THE WHIRLPOOL]
+climb w n
+oil door
+n
+[YOU SHOULD BE CARRYING LAMP AND BOTTLE. YOU'LL LOSE THE BOTTLE IN THE WHIRLPOOL.]
+jump
+yes
+n ne
+get beads
+reservoir
+hit gong
+ride
+get yacht
+s s d s d
+get axe
+u e e e
+se u
+get food
+ne n n
+get crucifix
+s s s d
+climb
+get chalice
+d n u
+u e u n
+plugh
+drop beads
+drop chalice
+drop crucifix
+drop yacht
+drop food
+
+FIFTH TRIP:
+ jeweled trident
+ glistening pearl
+ Persian rug
+ large sapphire
+ casket of opals
+ rock crystal sculpture
+
+plugh
+s s nw n
+get vial
+n s secret w
+kill dragon
+yes
+get teeth
+n d s d
+climb w
+get eggs
+n n
+get trident
+w d se se
+ne e n
+open clam
+d d
+get pearl
+shell s
+[IF YOU'VE LOST THE EGGS, GO GET THEM BEFORE THIS NEXT PART!]
+w w
+e se u
+w s u s
+off
+hoot [POSSIBLY SEVERAL TIMES]
+on
+cut web
+get documents
+s
+eat mushroom
+n n n n
+get sapphire
+n
+lift flag
+d
+climb
+drop pearl
+drop sapphire
+drop trident
+[NOW WE'LL GO GET THE SWORD, BEFORE THE MUSHROOM WEARS OFF!]
+plugh
+s d bedquilt w e
+e n n n
+e [GO EAST REPEATEDLY UNTIL YOU REACH THE SWORD]
+get sword
+w n [GO NORTH REPEATEDLY UNTIL YOU EXIT THE MIST]
+e e
+s s d s d
+climb w e n
+throw sword
+zorton
+wear ring
+n e e
+ne se
+throw vial
+s s get n n
+w sw n w
+se d
+nw w s w
+n nw w w
+s s get n n
+nw w s nw
+nw w w nw
+thurb
+nw n n w
+s s
+s e u w bedquilt
+e u e u n
+plugh
+drop sculpture
+drop opals
+
+SIXTH TRIP:
+ golden chain
+ rare spices
+ Ming vase
+ iridium crown
+ jade bracelet
+ sapphire sceptre
+ shimmering starstone
+
+get food
+get keys
+get rod
+[YOU SHOULD BE TOTING ALL OF THESE: FOOD, KEYS, ROD, RING (WORN), TEETH, LAMP, AXE.]
+fee
+fie
+foe
+foo
+drink
+plugh
+s s
+se n e
+get rags
+s s s
+n d bedquilt slab s d
+drop axe
+climb w
+get eggs
+n n w d sw u
+throw eggs
+cross
+barren
+in
+throw food
+unlock
+view
+wave rod
+cross
+n
+melenkurion
+ne n ne
+get flask
+s nw
+get jade
+e s nw
+throw teeth
+nw n
+off
+[GO IN THE DIRECTION OF THE LIGHT]
+d
+on
+n
+drop flask
+open flask
+open pentagram
+n u nw
+get starstone
+e s s s
+n n n
+d d
+d get u
+rub plate
+n w
+[YOU'RE IN THE CATACOMBS NOW.]
+    The trick with ARNA0660's catacombs, like PLAT0550's, is that there
+    are 19 rooms in a row. In each room, the "correct" direction will
+    take you forward to the next room, and every other direction will
+    take you backward to the previous room. In PLAT0550, the list of
+    "correct" directions is hard-coded as "s sw nw s d w nw n s n sw*
+    e se ne e se d s n". In ARNA0660, the "correct" direction is simply
+    whatever direction you leave the room by, the first time you enter
+    it. So for example you might type 18 "w"s in a row at this point
+    to return to the fake Y2 room, or 18 "n"s in a row, or any set of
+    18 directions. It is possible to get lost only *after* exiting the
+    catacombs for the first time.
+    However, after your tenth move, you must turn right (relative to the
+    "correct" direction) to enter the audience hall. So you actually
+    have to go through the catacombs twice: once to set the directions,
+    and once to find the audience hall.
+
+n n n n n
+n n n n n
+n n n n n
+n n n
+w
+n n n n n
+n n n n n
+e e e
+drop rags
+drop keys
+drop rod
+get sceptre
+[AND REMEMBER THE MAGIC WORD IT TELLS YOU!]
+w w
+n n n n n
+n n n
+s u u n
+[SAY THE MAGIC WORD]
+in
+drop sceptre
+drop jade
+out
+close
+s s s s s
+s s e get
+fork barren in
+get chain
+get bear
+fork w w
+cross
+drop bear
+cross
+sw d se
+get vase
+se ne e
+u e u n
+plugh
+drop chain
+drop spices
+drop vase
+w view
+drop starstone
+house e
+plugh
+s s d
+[SAY THE MAGIC WORD]
+in
+get all
+out
+close
+u n n
+plugh
+drop crown
+drop jade
+drop sceptre
+
+SEVENTH TRIP:
+ rare coins
+ Persian rug
+ golden eggs
+ platinum pyramid
+ mithril ring
+
+fee
+fie
+foe
+foo
+drink
+plugh
+s s w
+get coins
+e secret w
+roll rug
+get rug
+n d s d
+get axe
+climb w
+get eggs
+s e u w bedquilt
+e u e u n
+plover
+ne get s
+plover
+plugh
+drop coins
+drop eggs
+drop pyramid
+drop ring
+drop rug
+
+BONUS TRIP:
+ diamonds
+ treasure chest
+ any remaining (pirate-stolen) treasures
+
+xyzzy
+pit d w w
+get diamonds
+w s
+e s s s
+n e e nw
+get chest
+[GET REMAINING TREASURES]
+se n d
+debris
+xyzzy
+drop chest
+drop diamonds
+[DROP REMAINING TREASURES]
+
+[THE LAST LOUSY POINT IS AUTOMATICALLY GOTTEN, BECAUSE THE MAGAZINES START AT WITT'S END]
+plugh
+plover
+in s in s in s [... WAIT FOR THE BLINDING FLASH OF LIGHT]
+sw
+get rod
+ne
+drop rod
+sw
+blast
+ride unicorn
+zorton
+xyzzy
+thurb
+snoeze
+samoht
+plugh
+phuggg
+noside
+melenkurion
+knerl
+klaetu
+foo
+foe
+fie
+fee
+blerbi
+d d d
+[YOU WIN!]
+
