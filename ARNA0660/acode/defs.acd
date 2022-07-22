@@ -1,0 +1,370 @@
+*        Define vaious constants.
+*
+NOISE    AND,THE,A,IT,AN,THAT,THIS,TO,AT,WITH,THEM,ROOM
+*
+*        Bit flags set for the STATUS variable
+*
+FLAGS    VARIABLE
+         MOVED         {set by interpreter whenever we move}
+         QUICKIE       {BRIEF output mode in effect}
+         FASTMODE      {FAST output mode in effect}
+         FULLDISPLAY   {Display full place description}
+         DETAILDISPLAY {Display detailed place/object description}
+         PLS.CLARIFY   {Signals missing object or verb}
+         JUGGLED       {set by interpreter whenever we move an object}
+         TICKED        {The main clock (CLOCK4) has just ticked}
+*
+*        Next, the flag set for places
+*
+FLAGS    PLACE
+         LIT           {Place is self-illuminated}
+         BEEN.HERE     {We've been here at least once}
+         NO.DWARF      {Dwarves can't go here}
+         NO.BACK       {Can't use BACK to go to/from this place}
+         NOT.IN.CAVE   {This place is not in the cave}
+         HINTABLE      {There may be a hint for this place}
+         H20.HERE      {Water is available here}
+         IN.MAZE       {This room is in one of the mazes}
+         ONE.EXIT      {Only one exit out of room}
+         TRANSIT       {Objects thrown here generally wind up elsewhere}
+         IN.SEWER      {A sewer location}
+         SMARTASS      {He has refused spontaneous hint here}
+         DAMP          {the ground is damp here - either from oil or water}
+*
+*        Next, the objects flag set
+*
+FLAGS    OBJECT
+         PORTABLE       {Object can be carried}
+         SEEN           {We've seen the object}
+         VALUED         {It's a treasure - must be left in the building}
+         SCHIZOID       {It's schizoid - in 2 places at once}
+         UNSTABLE       {Unstable objects get kicked from state 0}
+*                       {into state 1 the first time they're picked
+*                       {up - applies only to objects that aren't
+*                       {special-cased anywhere in the code.}
+         MORTAL         {This is a killable entity}
+         OPENABLE       {Object can be opened/unlocked}
+         FEATURE        {Object is a feature of this location}
+         PLURAL         {Object should be referred to in plural}
+         FREEBIE        {Object is effectively weightless}
+         SPECIAL1       {Special control bit 1}
+         SPECIAL2       {Special control bit 2}
+         BIG            {Set for objects}
+         WEARABLE       {Object can be worn - in principle!}
+*
+*        The usage of SPECIAL1 and SPECIAL2 is currently as
+*        follows:
+*
+*        Dwarf       #1 set if the dwarf who just appeared hasn't
+*                    thrown his first knife (which always misses)
+*                    yet.  #2 set if the dwarf is angry (you tried
+*                    to feed him, threw food at him, or doused him
+*                    with water or oil).
+*
+*        Pirate      #1 set if the pirate is chasing you.
+*
+*        Djinn       #1 set if you released the djinn from the
+*                    pentagram (he's grateful).  #2 set if he has
+*                    given you a hint as a reward for doing so.
+*
+*        Safe        #1 set if you have successfully opened the safe
+*                    at least once and have not come to a sticky end
+*                    inside it.
+*
+*        Quicksand   #1 set if you have drowned in the quicksand at
+*                    least once.
+*
+*        Troll       #1 set if you have stolen the eggs back from the
+*                    troll.
+*
+*        Shadow      #1 set if player just waved; #2 set on next move
+*                    if shadow about to wave back.
+*
+*        Grate       #1 set if you tried to get out through the grate
+*                    during closure.
+*
+*        Eggs        #1 set if eggs in troll's possession.
+*                    #2 set if eggs gone for good.
+*
+*        Sword       #1 set on reading the pattern on the rock.
+*
+*        Chalice     #1 set if chalice full, #2 set if just filled.
+*
+*        Starstone   #1 set if failed to pick it up.
+*
+*        Fissure     #1 set if crossed once
+*
+*        Crown       #1 set if whispering crown just incremented.
+*                    #2 set if crown worn at least once.
+*
+*        Rats        #1 set if can go down into sewers.
+*                    #2 he can leave the stream maze
+*                    the FREEBIE flag is also used as a special, to
+*                        to avoid long message repetition.
+*
+*        Giant       #1 set if the HUNGRY.GIANT message printed
+*                    #2 if pushed player out of ravine at least once
+*
+*        All non-big objects  #2 used in dwarves choosing objects to pick up.
+*
+*        During the end-game all special bits are cleared, except for
+*        #1 being set for any objects 'piled up' in NE repository and
+*        #2 similarly indicating SW repository and the unicorn, whose special
+*        bits are used (but only after the blast!) to time the warning in
+*        the Dark Hole.
+*
+*        Define a flag set for the ADMIN variable
+*
+FLAGS    VARIABLE
+*         DEMO           {Demonstration game}
+         TICKER         {Call TICK label after each move, if set.}
+         CAMEO.TRIED    {We have tried to do a cameo}
+         NOMAGIC        {Magic words are being suppressed}
+         PANICKED       {He panicked during closure}
+         OLORIN         {He's a wizard}
+         RANOUT         {His lamp just died.}
+         NICHE.USED     {He had something valued by the niche}
+         QUIPPED        {Dwarf died in a strange manner}
+         EDISON         {He has just said NOSIDE}
+         CHALICE.GONE   {He has drank the pure waters}
+*
+*        Define bit flags for special hint processing. (Variable HINTS).
+*
+FLAGS    VARIABLE
+         SNAKE.PENDING   {The first snake hint delivered}
+         STATUE.PENDING  {The first Minotaur gorge hint delivered}
+         WITT.HELP       {He's just got the hint at Witt's end}
+         HELPED.HIM      {Gave him vanilla "HELP" message once}
+         SIMPLE.RULE     {Referred to 'simple rule' at Nowhere}
+         DEATH.IS.SIMPLE {Advised him how to die}
+         PICKING.UP.RUGS {Told him to ponder}
+         UNROLLING.RUGS  {Told him to drop it}
+*
+*        Define administrative control parameters
+*
+CONSTANT 10,  MIN.TIME    {# of minutes you must wait after SAVE}
+         20,  HINT.COST   {what each hint costs you}
+         5,   HASTE.COST  {cost of restoring game too soon}
+         1999,MAX.GAME    {maximum # of moves in real games}
+*
+*        Define bottle/flask states
+*
+STATE    IN.PENTAGRAM {flask only}
+         SEALED       {flask only}
+         EMPTIED
+         FULL.OF.WATER
+         FULL.OF.OIL
+*
+*        Define lamp states
+*
+STATE    SWITCHED.OFF
+         SWITCHED.ON
+*
+*        Define door/portcullis states
+*
+STATE    RUSTY
+         OILED
+*
+*        Define grate/chain/safe states.
+*
+STATE    LOCKED
+         UNLOCKED
+         LOCKED.EMPTY, FUSED
+*
+*        Define orb visions
+*
+CONSTANT VANILLA.VISION
+         PLANT.VISION
+         GIANT.VISION
+         SPIDER.VISION
+         SWORD.VISION
+         OGRE.VISION
+         RING.VISION
+         GORGE.VISION
+         STATUE.VISION
+         SKELETON.VISION
+         CROWN.VISION
+         OUT.OF.VISIONS
+*
+*        Define orc mutters
+*
+CONSTANT CHALICE.MUTTER
+         EGGS.MUTTER
+         LAVA.MUTTER
+         PENTAGRAM.MUTTER
+         ORB.MUTTER
+         NO.MUTTER
+         STARSTONE.MUTTER
+         CATACOMBS.MUTTER
+         NOSIDE.MUTTER
+         SWORD.MUTTER
+         KEYS.MUTTER
+         PLOVER.MUTTER
+         SEWERS.MUTTER
+*
+*        Define special mushroom states
+*
+STATE    2,  EATEN
+             DIGESTED
+*
+*        Define dragon states
+*
+STATE    ON.RUG
+         DEAD.BODY
+         ROTTING.CARCASS
+*
+*        Define basilisk states
+*
+STATE    SNORING
+         TWITCHING
+         PETRIFIED
+         PETRIFIED.TO.SOUTH
+*
+*        Define the 'shiny' state of the plate
+*
+STATE    2,  SHINY        {Plate "unstable" so can't use 1}
+*
+*        Define chasm states
+*
+STATE    BRIDGED
+         BRIDGE.WRECKED
+         BRIDGE.BURNED
+*
+*        Define troll states
+*
+STATE    WANTS.TREASURE
+         BOUGHT.OFF
+         WILL.BE.BACK
+         SCARED.OFF
+         GONE.FOR.GOOD
+*
+*        Define starstone states
+*
+STATE    1,  QUIESCENT
+             DARKENED
+             IRIDESCENT
+*
+*        Define battery states. (Note, state 2 MUST be dummy).
+*
+STATE    1,  FRESH
+         3,  WORNOUT
+*
+*        Define rags' "very dirty" state.
+*
+STATE    2,  VERY.DIRTY         {RAGS being "unstable", can't use 1!}
+*
+*        Define bird states.
+*
+STATE    FREED
+         CAGED
+*
+*        Define bear states.
+*
+STATE    CHAINED.FEROCIOUS
+         CHAINED.GENTLE
+         UNCHAINED
+*
+*        Define axe states.
+*
+STATE    AN.ZICH
+         BY.BEAR
+         BY.SPIDER
+*
+*        Define web states.
+*
+STATE    WITH.SPIDER
+         WITH.DOCUMENTS
+         IN.SHREDS
+*
+*        Define giant states.
+*
+STATE    RESTING
+         GETTING.READY
+         BLISSFUL
+         HURT
+         PICNICKING
+         STILL.PICNICKING
+*
+*        Define statue states.
+*
+STATE    SOLID.WALL
+         WALL.GONE
+*
+*        Define the sword 'in the stone' state.
+*
+STATE    IN.STONE
+*
+*        Define beanstalk states.
+*
+STATE    STUNTED
+         GROWN
+         GIGANTIC
+*
+*        Define spoon and notice states.
+*
+STATE    UNREAD
+         EXAMINED, EPNS.NOTED
+         BRILLIGED, EPNS.WORTHLESS
+*
+*        Define some of the crown states.
+*
+STATE    1,  DORMANT
+             ACTIVATED
+             WHISPERING
+         7,  INCOMPREHENSIBLE
+         9,  SPEAKING
+         12, CHANTING
+         17, ROARING
+         19, KILLING
+*
+*        Define rug states.
+*
+STATE    UNROLLED
+         ROLLED.UP
+*
+*        Define threshold for wearable objects. Note that this is set to
+*        take into account "unstable" objects. Hence on removing stable
+*        objects will give them state 1, which they mostly don't have.
+*        Not that it matters - the highest existing description will
+*        be printed in such a case.
+*
+STATE    1,  NOT.WORN
+             WORN
+*
+*        Define dwarf sentry states.
+*
+STATE    DOZING
+         WATCHFUL
+         WELCOMING.COMMETTEE
+*
+*        Define the states for STEPS at MISTS and PIT.
+*
+STATE    STEPS.PRESENT
+         STEPS.GONE
+*
+*        Define status values returned by IS.IT.DARK?
+*
+CONSTANT IT.IS.NOT.DARK
+         IT.IS.DARK
+*
+*        Define values passed by interpreter for "unrecognized word"
+*
+* CONSTANT 9998, AMBIGWORD
+*                BADWORD
+*
+*        The phases of cave closure are as follows:
+*
+CONSTANT STILL.OPEN          {Cave open and operating normally}
+         CLOSING.SOON        {All treasures are in well-house}
+         EXITS.BARRED        {Cave closing soon}
+         IN.REPOSITORY       {In repository}
+         MIDDLE.OF.NOWHERE   {At misty nowhere}
+         MIRROR.WORLD        {Back outside cave}
+         VICTORY!            {Wins game!}
+*
+CONSTANT 16, CLOSURE.CREDIT       {Points per stage of closure}
+*
+*        One special bit flag for the CLOSURE variable
+*
+FLAGS    VARIABLE
+         CONFUSION      {has got confused once in closure stage 5}

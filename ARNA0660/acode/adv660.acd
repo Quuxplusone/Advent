@@ -1,0 +1,18 @@
+NAME     Adv660
+VERSION  10.12
+DATE     10 Nov 2021
+AUTHOR   Mike Arnautov
+STYLE    A-code 10
+#
+INCLUDE  defs.acd
+INCLUDE  vars.acd
+INCLUDE  verbs.acd
+INCLUDE  text.acd
+INCLUDE  places.acd
+INCLUDE  objects.acd
+INCLUDE  procs.acd
+INCLUDE  at.acd
+INCLUDE  actions.acd
+INCLUDE  prog.acd
+#
+# That's it, folks!

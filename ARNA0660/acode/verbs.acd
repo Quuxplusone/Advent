@@ -1,0 +1,220 @@
+*        Time we defined some verbs. Start with specials, not requiring
+*        validation of ARG2.
+*
+VERB     -FIRST.SPECIAL        {Mark the first one}
+VERB     AGAIN, REPEAT
+VERB     SAVE, SUSPEND, PAUSE
+VERB     RESTORE, LOAD
+VERB     REST           {In case players type REST MYGAME}
+VERB     SORRY, THANKS
+VERB     SAY, CHANT, SING, UTTER, MUMBLE, SHOUT
+VERB     -LAST.SPECIAL         {Mark end of special verbs}
+*
+*        End of verbs not requiring validation of ARG2.
+*
+*        N.B. - the following magic words (ZORTON through BLERBI) *must*
+*        be defined in reverse alphabetical order!  If new magic words
+*        are added, place them in the proper sequence and modify the
+*        code in the "AT NOWHERE" area!  If you don't do this right, 
+*        people are going to have a hell of a time getting out of Nowhere
+*        during cave-closure. One extra complication... adding magic words
+*        can make the safe unresponsive to any of the 4 keys in saved
+*        games, in which the sceptre had been obtained by the player;
+*        alternatively, if the compatibility kludge in the RESTORE code
+*        is preserved, it may change the key to BLERBI (better than nothing, 
+*        anyway). Only magic words alphabetically lower than BLERBI are safe.
+*        Finally, note that the '!' prefixing magic words makes them
+*        non-abbreviable - the same would work for any other dictionary 
+*        word too.
+*
+VERB     -FIRST.MAGIC
+VERB     !ZORTON
+VERB     !XYZZY
+VERB     !THURB
+VERB     !SNOEZE
+VERB     !SAMOHT
+VERB     !PLUGH
+VERB     !PHUGGG
+VERB     !NOSIDE
+VERB     !MELENKURION
+VERB     !KNERL
+VERB     !KLAETU
+VERB     !FOO
+VERB     !FOE
+VERB     !FIE
+VERB     !FEE
+VERB     !BLERBI
+VERB     -LAST.MAGIC
+*
+*        Now define directions.
+*
+VERB     -FIRST.COMPASS.POINT
+VERB     NORTH, =N
+VERB     NORTHEAST, =NE
+VERB     EAST, =E
+VERB     SOUTHEAST, =SE
+VERB     SOUTH, =S
+VERB     SOUTHWEST, =SW
+VERB     WEST, =W
+VERB     NORTHWEST, =NW
+VERB     -LAST.COMPASS.POINT
+VERB     UP, =U, UPWARD, ABOVE, ASCEND
+VERB     DOWN, =D, DOWNWARDS, DESCEND
+VERB     IN, INWARD, INSIDE, ENTER
+VERB     OUT, OUTSIDE, OUTDOORS, EXIT, LEAVE
+VERB     GO, WALK, RUN, TRAVEL, PROCEED, EXPLORE, FOLLOW, TURN
+VERB     FORWARD, CONTINUE, ONWARD
+VERB     BACK, RETURN, RETREAT
+VERB     JUMP, LEAP
+VERB     CROSS, ACROSS, OVER
+*
+*        Now for general verbs which may require clarification
+*
+VERB     -FIRST.CLARIFY
+VERB     GET, =G, CARRY, TAKE, =T, KEEP, HOLD, CATCH, STEAL, CAPTURE, TOTE
+VERB     DROP, =DR, RELEASE, =R, FREE, DISCARD, DUMP
+VERB     OPEN
+VERB     UNLOCK                 {Mostly, but not always, same as OPEN}
+VERB     CLOSE, LOCK, SHUT
+VERB     WEAR
+VERB     REMOVE
+VERB     LISTEN, HEAR
+VERB     TRANSLATE, INTERPRET, DECODE
+VERB     WAKE, PROD, DISTURB
+VERB     CUT, CHOP
+VERB     LIGHT, ON
+VERB     EXTINGUISH, OFF
+VERB     WAVE, SHAKE, SWING
+VERB     PLACATE, CALM, TAME
+VERB     KILL, =K, ATTACK, FIGHT, SLAY
+VERB     HIT, STRIKE
+VERB     KICK
+VERB     BLOW, PLAY
+VERB     POUR
+VERB     EAT, DEVOUR
+VERB     DRINK, IMBIBE
+VERB     RUB, POLISH, CLEAN
+VERB     THROW, =TH, TOSS, HURL
+VERB     FIND, WHERE, DISCOVER, LOCATE    {Wizards can find remote things}
+VERB     FEED
+VERB     FILL
+VERB     LIFT                   {Mostly, but not always, same as GET}
+VERB     READ, PERUSE, SCAN
+VERB     REPLACE, CHANGE, EXCHANGE
+VERB     BREAK, SHATTER, SMASH
+VERB     RIDE, MOUNT
+VERB     FIX, REPAIR
+VERB     SOW
+VERB     EMPTY
+VERB     FLY, TELEPORT        {Wizards can fly to some locations}
+VERB     -LAST.CLARIFY        {Last clarifiable 'verb'}
+*
+*        Next lot does not require clarifications
+*
+VERB     LOOK, =L, EXAMINE, =X, DESCRIBE
+VERB     QUIT, =Q, STOP, FINISH, BYE, LOGOUT, =LO
+VERB     TERSE, FAST
+VERB     NORMAL, BRIEF
+VERB     VERBOSE, FULL
+VERB     HISTORY
+VERB     !SESAME, !OPENSESAME, !ABRA, !ABRACADABRA, !SHAZAM, !HOCUS, !POCUS, !CADABRA
+VERB     HELP, =?, HINT
+VERB     !FUM
+VERB     DIG, EXCAVATE
+VERB     LOST, CONFUSED
+VERB     MIST
+VERB     INFO, INFORMATION
+VERB     SWIM
+VERB     WIZARD
+VERB     SLEEP, DOZE, SNOOZE
+VERB     SCREAM
+VERB     FUCK, PISS, SCREW, SHIT, URINATE, WANK, BUGGER
+VERB     SWEAR
+VERB     HOOT
+VERB     SEARCH
+VERB     INVENTORY, =I, ITINERARY, ITINERY
+VERB     SCORE, =SC
+VERB     EPNS
+VERB     BLAST, EXPLODE
+VERB     CLIMB
+VERB     UPSTREAM
+VERB     DOWNSTREAM
+VERB     LEFT, RIGHT
+VERB     USE
+VERB     REFLECT
+VERB     SCRY, GAZE
+VERB     VOCABULARY, DICTIONARY
+VERB     YES, =Y, NO
+VERB     RUNOUT        {Wizards only. Invokes CLOCK4 immediately}.
+VERB     TANSTAAFL
+VERB     !FROBOZZ
+VERB     WASH
+VERB     DIE, SUICIDE
+VERB     ROLL, ROLLUP
+VERB     UNROLL, SPREAD
+*
+*        Now the potential travel options.
+*
+VERB     -FIRST.TRAVEL
+VERB     CRACK
+VERB     CAVE
+VERB     DOME
+VERB     VIEW
+VERB     SURFACE
+VERB     HOLE
+VERB     FOREST, WOODS
+VERB     ENTRANCE
+VERB     SECRET
+VERB     PASSAGE, TUNNEL
+VERB     STREAM
+VERB     CRAWL
+VERB     HALL
+VERB     -LAST.TRAVEL
+*
+*        Next come pseudo-verbs.
+*
+VERB     -FIRST.PSEUDO
+VERB     TOMBS
+VERB     MASK
+VERB     SHELF
+VERB     COUCH
+VERB     ASHES, FIRE
+VERB     HEELPRINT, INDENTATION
+VERB     NICHE
+VERB     WELL
+VERB     SPRING
+VERB     BED, STREAMBED
+VERB     WINDOW
+VERB     -FIRST.SCULPTURE.FAKE
+VERB     PIG
+VERB     EEL
+VERB     EMU 
+VERB     ELF 
+VERB     SQUIRREL 
+VERB     VULTURE 
+VERB     RABBIT 
+VERB     IBEX 
+VERB     FROG 
+VERB     TIGER 
+VERB     MULE 
+VERB     MOOSE 
+VERB     DOG
+VERB     PHOENIX
+VERB     NYMPH
+VERB     -LAST.SCULPTURE.FAKE
+*
+VERB     -FIRST.GENERAL
+VERB     ROCKS, STONES
+VERB     WALLS, BROKEN
+VERB     BUNDLE, !RODS, !OYSTERS, !BIRDS, !LAMPS, !CAGES, !PILLOWS, !BOTTLES, !SNAKES, !PLANTS
+VERB     -LAST.PSEUDO
+*
+*        Finally, the administrator mode sequence
+*
+VERB     -FIRST.WIZ
+VERB     !CURIOUS
+VERB     !GREEN
+VERB     !IDEAS
+VERB     !SLEPT
+VERB     !FURIOUSLY
+VERB     -LAST.WIZ

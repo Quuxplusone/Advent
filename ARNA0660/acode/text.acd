@@ -1,0 +1,3416 @@
+TEXT     SOK!
+TEXT     BLANK
+
+TEXT     OK!
+         Ok.
+FRAGMENT INSTRUCTIONS?
+
+         Would you like instructions?
+TEXT     HISTORY.DATA
+         The following is a brief history of this game.
+
+        =1. Original Adventure developed by Will Crowther.
+        =
+        =2. Greatly enhanced and expanded to the 360 pt version by Don Woods.
+        =
+        =3. Adventure 2 superset (440 pt) produced by Peter Luckett and
+        =   Jack Pike.
+        =
+        =4. Adventure 3 (550 pt) superset and game language developed by
+        =   Dave Platt.
+        =
+        =5. The two supersets combined (with extensions) by Mike Arnautov,
+        =   using DP's Adventure Language.
+
+         What? You mean you wanted to know WHEN did it all happen?! In
+         illo tempore, my friend, in "time before time"...
+TEXT     ORIENTAL.DRAWING
+         It's just ordinary ancient oriental cave drawings of no conceivable
+         interest to a mere adventurer like you.
+TEXT     INTRO
+         Somewhere nearby is Colossal Cave, where others have found fortunes in
+         treasure and gold, though it is rumoured that some who enter are never
+         seen again. Magic is said to work in the cave.
+
+         I will be your eyes and hands. My understanding of human language is
+         limited to very simple sentences, consisting essentially of just a
+         verb, followed, if appropriate, by a noun (type INFO for more
+         information). Most words I know can be abbreviated to the least
+         unambiguous length - in practice usually three or four characters.
+         Only magic words cannot be abbreviated at all, for obvious reasons.
+         To see a list of words I know, type VOCABULARY (or just VOC).
+
+         Should you get stuck, typing HELP may result in some obscure hints.
+         Other generally useful commands are LOOK, EXAMINE (e.g. EXAMINE LAMP),
+         SAVE, RESTORE and QUIT. For news, if any, type NEWS.
+
+         If you have already played an earlier version of Adventure, you may
+         want to know where the differences are to be found, so that you don't
+         waste your time looking for them.
+TEXT     DWARF.BLOCKS
+         A little dwarf with a big knife blocks your way.
+TEXT     FIRST.DWARF
+
+         A little dwarf just walked around a corner, saw you, threw a little axe
+         at you which missed, cursed, and ran away.
+
+         There is a little axe here.
+TEXT     KNIVES.THROWN
+
+         [/One/#] nasty sharp kni[/fe is/ves are] thrown at you!
+TEXT     KNIVES.MISS
+         [/It misses/They miss] you!
+TEXT     KNIVES.GOT.YOU
+         [/It/One of them] gets you!
+TEXT     FIRST.DEFLECTOR
+         Your magic ring shoots out a bolt of lightning that splinters
+         the [/knife/knives] into dust before [/it/they] can reach you!
+TEXT
+         A glowing disk of black fire jumps out of your magic ring and swallows
+         the hurtling [/knife/knives] before [/it/they] can harm you!
+TEXT
+         [/A ball/Balls] of searing flame burst[/s/] out of your magic ring,
+         rebound[/s/] off of the ground, and vaporize[/s/] the 
+         kni[/fe/ves] before [/it/they] can reach you.
+TEXT     LAST.DEFLECTOR
+         Your magic ring emits a blast of some strange magical energy that
+         knocks the kni[/fe/ves] aside!
+TEXT     HOLLOW.VOICE
+         A hollow voice says "Plugh".
+TEXT     NO.CAN.GO
+         I'm sorry, but there's no way you can go # from here.
+TEXT
+         There is no way for you to go #.
+TEXT
+         You cannot go #.
+TEXT
+         There's no exit # from here.
+TEXT
+         No exit # from here, I am afraid.
+TEXT     OG.NAC.ON
+         Going # is not possible from here. Sorry.
+TEXT     OOF!
+         You have run into a wall of rock and can go no further in this
+         direction.
+TEXT     NEED.A.DIRECTION
+         I am unsure which way you are facing, please specify a direction.
+TEXT     IN.FROM.OUT
+         I don't know in from out here. Use compass points or name something in
+         the general direction you want to go.
+TEXT     VIAL.SEALED
+         How? It is tightly sealed.
+TEXT     NATURALLY.NOTHING
+         Naturally enough, nothing happens.
+TEXT     I.AM.GAME
+         I'm game. Would you care to explain how?
+TEXT     ONE.AT.A.TIME
+         Hey, not so fast! I can only deal with one at a time - there is
+         only one of me, you know...
+TEXT     IT.IS.NOW.DARK
+         It is now pitch dark. If you proceed you will likely fall into a pit.
+FRAGMENT BIRD.HINT?
+         Are you trying to catch the bird?
+TEXT
+         For some reason the bird is frightened right now and won't let you
+         anywhere near it. This may not sound very unusual, but believe
+         me - it is usually quite friendly and tame. I am no bird
+         psychologist, but I'd say there must be some specific reason
+         for its behaviour.
+FRAGMENT GET.PAST.SNAKE?
+         Are you trying somehow to deal with the snake?
+TEXT
+         You can't kill the snake, or drive it away, or avoid or bribe it,
+         or anything like that. It is, however, entirely possible to get rid
+         of it.
+FRAGMENT NOGET.PAST.SNAKE?
+         Are you trying somehow to deal with the snake?
+TEXT
+         You can't kill the snake, or drive it away, or avoid or bribe it,
+         or anything like that. It is, of course, entirely possible to get rid
+         of it, but you have very carelessly blown your only chance to do so.
+TEXT     CRUNCH
+         You fell into a pit and broke every bone in your body!
+TEXT     YOU.HAVE.IT
+         You are already carrying the #!
+TEXT     BE.SERIOUS!
+         You can't be serious!
+TEXT     BIRD.IS.SCARED
+         The bird was unafraid when you entered, but as you approach it becomes
+         disturbed and you cannot catch it.
+TEXT     NEED.CAGE
+         You might be able to catch the bird, but you have no means of
+         carrying it.
+TEXT     YOU.ARENT.CARRYING
+         You aren't carrying the #!
+TEXT     I.DONT.SEE
+         I see no # here.
+TEXT     BIRD.V.SNAKE
+         The little bird attacks the green snake, and in an astounding flurry
+         drives the snake away.
+TEXT     NEED.KEYS
+         You have no keys!
+TEXT     NO.LOCK
+         It has no lock.
+TEXT     GRATE.NOW
+         [The grate/The grate/I am taking the liberty of assuming that 
+         you meant to unlock the grate first. It] [clicks itself/is
+         now] [locked/unlocked/unlocked and open].[/  Anticipating your
+         next wish, I've opened it for you as well./]
+TEXT     GRATE.STUCK
+         The lock seems to be stuck - the key refuses to turn!
+TEXT     NO.LIGHT.HERE
+         You have no source of light.
+TEXT     LAMP.NOW
+         The lamp is now o[ff/n].
+TEXT     LAMP.ALREADY
+         The lamp was [not/already] lit!
+TEXT     CANT.GET.PAST.BEAR
+         There is no way to get past the bear to unlock the chain, which is
+         probably just as well.
+TEXT     NOTHING
+         Nothing happens.
+TEXT     WHERE?
+         What, #? Where?
+TEXT     PACIFIST
+         There's nothing here to attack.
+TEXT     BIRD.IS.DEAD
+         The little bird is now dead. Its body disappears.
+TEXT     CANT.KILL.SNAKE
+         Attacking the snake both doesn't work and is very dangerous.
+TEXT     KILLED.DWARF
+         You killed a little dwarf.
+TEXT     DWARF.DODGES
+         You attack a little dwarf, but he dodges out of the way.
+TEXT     DWARF.STABS
+         You attack a little dwarf, but he dodges out of the way and stabs you
+         with his nasty sharp knife! I can't say I am really surprised; them
+         dwarves have quite a reputation for hand to hand fighting.
+FRAGMENT WITH.WHAT?
+         With your bare hands??
+TEXT     OLDFASHIONED.MAGIC
+         Good try, but that's a worn out, oldfashioned magic word.
+TEXT     HELP.DATA
+         Imagine that you are somewhere else (far, far away, in a strange land
+         of magic and wonder). As your guide, I will describe to you your
+         surroundings while you tell me what you want to do next. For example,
+         to move, try words like ENTER (and EXIT), EAST (or E for short), NORTH
+         (or N), SOUTHWEST (or SW), UP (or U) etc. (You don't have to say
+         GO EAST etc., just the direction will do). Words like DOWNSTREAM,
+         CLIMB, CROSS may also come handy. Some other useful commands
+         are INVENTORY (or I), LOOK (or L, or EXAMINE, or X), SCORE, INFO,
+         VOCABULARY etc.
+
+         In addition to the special abbreviations (like I for Inventory), all
+         words, other than magic ones, can be abbreviated to the shortest
+         unambiguous length. READ, for instance, can be shortened to REA but
+         not RE, since it would clash with REMOVE. Generally you will find that
+         most words abbreviate to three or four characters.
+
+         Objects can be manipulated using some of the verbs that I know.
+         Usually you have to give both the object and the verb (in either
+         order), but sometimes I can infer the object from the verb alone - e.g.
+         both LIGHT (or ON) and EXTINGUISH (or OFF) imply LAMP. Some objects
+         have side-effects; for instance, rods scare birds.
+TEXT     HELP.DATA.END
+         Remember that I only understand commands of one or two words. Novice
+         players often forget that, for example, THROW AXE AT DWARF is not
+         going to do anything different from what THROW AXE would achieve.
+         Usually people trying unsuccessfully to manipulate an object are
+         attempting something beyond their (or my) capabilities and should try
+         a completely different tack.
+
+         To speed up the game you can sometimes move long distances with a
+         single word. For example BUILDING usually gets you to the building
+         from most places above ground except when lost in the forest. Also,
+         note that cave passages turn a lot, and that leaving a room to the
+         north does not guarantee entering the next from the south.
+
+         Finally, it is worth remembering that I mostly mean just what I say.
+         On the other hand, do not assume that everything to be seen or found
+         in the Colossal Cave has any particular purpose, even though most
+         things and beings do have one (or more).
+
+        +                                             Good luck!
+TEXT     CANT.HELP.YOU
+         Well, you do seem to be having problems, don't you? Unfortunately, I'm
+         not allowed to help you out; you got yourself into this, and you'll
+         have to find a solution to your problems yourself.
+TEXT     NO.MORE.HELP
+         I'm afraid that I can't tell you anything more that would be useful;
+         you'll have to figure out what to do on your own.
+TEXT     NO.UNLOCK.KEYS
+         You can't unlock the keys.
+TEXT     STILL.WHERE.YOU.WERE
+         You have crawled around in some little holes and wound up back in the
+         main passage.
+TEXT     TRY.FOLLOWING.STREAM
+         I don't know where the cave is, but hereabouts no stream can run on the
+         surface for long. I would try the stream.
+TEXT     NEED.MORE.DETAIL
+         I need more detailed instructions to do that.
+TEXT     FIND.IT.YOURSELF
+         I can only tell you what you see as you move about and manipulate
+         things. I cannot tell you where remote things or places are.
+TEXT     NOCOMPRENDE
+         I trust you know how to "#", because I don't.
+TEXT
+         Embarassing though the admission is, I've never learned to "#".
+TEXT
+         Sorry to disappoint you, but I haven't got a clue how to "#".
+TEXT
+         I am afraid "#" is not a verb I understand.
+TEXT
+         I don't know how to "#". I guess it isn't really essential.
+TEXT     NOCOMPRENDE.OBJECT
+         Ahem... "#" is not in my dictionary. Would you care to re-phrase?
+TEXT
+         I trust you know what "#" might be, 'cause I don't.
+TEXT
+         What's this "#" dhoobrey? I wasn't briefed on it!...
+TEXT
+         'Fraid "#" is not something I've ever met. Is it edible?
+TEXT
+         And "#" to you too, whatever it means!
+TEXT     EDNERPMOCON
+         What, "#"? Never heard of it!
+TEXT     WHAT?
+         Huh??
+FRAGMENT CANT.GET.IN?
+         Are you trying to get into the cave?
+TEXT
+         The grate is very solid and has a hardened steel lock. You cannot
+         enter without a key, and there are no keys nearby. I would recommend
+         looking elsewhere for the keys.
+TEXT     IN.FOREST
+
+         The trees of the forest are large hardwood oak and maple, with an
+         occasional grove of pine or spruce. There is quite a bit of
+         undergrowth, largely birch and ash saplings as well as nondescript
+         bushes of various sorts. This time of year visibility is quite
+         restricted by all the leaves, but travel is quite easy if you
+         detour around the spruce and berry bushes.
+TEXT     HI.THERE
+         Welcome to Adventure4+ \[660 point MLA version 10.10 - 29 Jan 2009\]
+TEXT     NEED.SHOVEL
+         Digging without a shovel is quite impractical. Even with a shovel
+         progress is unlikely.
+TEXT     NEED.DYNAMITE
+         Blasting requires dynamite.
+TEXT     I.AM.CONFUSED
+         I'm as confused as you are.
+TEXT     THIS.IS.MIST
+         Mist is a white vapor, usually water, seen from time to time in
+         caverns. It can be found anywhere but is frequently a sign of a deep
+         pit leading down to water.
+TEXT     BLEAH
+         Yeetttch! I think I just lost my appetite.
+TEXT     URRP
+         Thank you, it was delicious!
+TEXT     SLURP
+         You have taken a drink from the stream. The water tastes strongly of
+         minerals, but is not unpleasant. It is extremely cold.
+TEXT     SALT.H20.BAD
+         I'm afraid that all that's available here is salt water, which isn't
+         good for anything much... you'd better try elsewhere.
+TEXT     BOTTLE.NOW.EMPTY
+         The bottle of water is now empty.
+TEXT     YOU.RUB.LAMP
+         Rubbing the electric # is not particularly rewarding. Anyway, nothing
+         exciting happens.
+TEXT     PECULIAR
+         Peculiar. Nothing unexpected happens.
+TEXT     REPULSIVE
+         What a repulsive idea!
+TEXT     POUR.LIQUID
+         The # pours out, making a wet patch on the ground.
+TEXT     GROUND.IS.DAMP
+         The ground here is damp.
+TEXT     CANT.POUR
+         You can't pour that.
+TEXT     FUCK.FIRST
+         Some manners...
+TEXT
+         If you must. Just pardon me if I look away.
+TEXT
+         Watch it!
+TEXT
+         Please, not in public!
+TEXT
+         Bad language will get you nowhere.
+TEXT
+         Look, if you want to be vulgar, at least try to be imaginative
+         about it.
+TEXT
+         Why is it that every bright spark has to demonstrate his superiority
+         over the computer by typing in swear words? I just don't get it...
+TEXT     FUCK.LAST
+         Do you think you could restrain yourself until the end of the game?
+TEXT     WHICH.WAY?
+         Which way should I #?
+FRAGMENT YOU.ARE.DEAD
+         Oh dear, you seem to have gotten yourself killed. I might be able to
+         help you out, but I've never really done this before. 
+
+         Do you want me to try to reincarnate you?
+TEXT
+         All right. But don't blame me if something goes wr......
+        =                     -- poof!! --
+         You are engulfed in a cloud of orange smoke. Coughing and gasping, you
+         emerge from the smoke and find....
+FRAGMENT
+         Tsk, tsk - you did it again! Remember - you're only human, and you
+         don't have as many lives as a cat! (at least, I don't think so...)
+         That's twice you've ended up dead. 
+
+         Want to try for three?
+TEXT
+         As you wish. Hang on for just a second while I fire up my thurible...
+         \>foof!\< An immense cloud of orange smoke fills the air. As it clears,
+         you find that once again....
+FRAGMENT
+         You clumsy oaf, you've done it again! I don't know how long I can keep
+         this up. 
+
+         Do you want me to try reincarnating you again?
+TEXT
+         Okay, now where did I put my orange smoke?.... \>poof!\< Everything
+         disappears in a dense cloud of orange smoke.
+FRAGMENT
+         Now you've really done it! I'm out of orange smoke! You don't expect
+         me to do a decent reincarnation without any orange smoke, do you?
+
+         Come on, own up... DO YOU???
+TEXT
+         Yes... well, that's the kind of blinkered, Philistine pig-ignorance
+         that I've come to expect from you mortals. You sit there on your
+         loathsome, spotty behind, squeezing blackheads and not caring a
+         thinker's damn about the struggling cave-sprite, you simpering,
+         whining, moldy-faced heap of parrot droppings! If you're so smart,
+         then you can just reincarnate yourself, because quite frankly I'm as
+         mad as hell and I'm not going to take this anymore - I'm leaving!!!!
+TEXT     SNIDELEY
+TEXT     CANT.GO.BACK
+         Sorry, but I no longer seem to remember how it was you got here.
+TEXT     ARMS.ARE.FULL
+         You can't carry anything more. You'll have to drop something first.
+TEXT     ARMS.ARE.EMPTY
+         You're not carrying anything.
+TEXT     CANT.PASS.GRATE
+         You can't go through a locked steel grate!
+TEXT     IT.IS.HERE.NOW
+         I believe what you want is right here with you.
+TEXT     SLIT.TOO.NARROW
+         You don't fit through a five-inch slit!
+TEXT     TRY.THE.BRIDGE
+         I respectfully suggest you go across the bridge instead of jumping.
+TEXT     NO.WAY.ACROSS
+         There is no way across the fissure.
+TEXT     YOU.CURRENTLY.HAVE
+         Your possessions currently consist of:
+TEXT     BIRD.NOT.HUNGRY
+         It's not hungry (it's merely pinin' for the fjords). Besides, you have
+         no bird seed.
+TEXT     SNAKE.EATS.BIRD
+         The snake has now devoured your bird.
+TEXT     IT.WONT.EAT
+         There's nothing here it wants to eat (except perhaps you).
+TEXT     FED.UP.DWARF
+         You fool, dwarves eat only coal! Now you've made him *really* mad!!
+TEXT     NO.WAY.TO.CARRY
+         You have nothing suitable for carrying #.
+TEXT     BOTTLE.ALREADY.FULL
+         Your bottle is already full.
+TEXT     NOTHING.TO.FILL
+         There is nothing here with which to fill the #.
+TEXT     BOTTLE.NOW.FULL
+         Your bottle is now full of #.
+TEXT     FLASK.NOW.FULL
+         Your flask is now full of #.
+TEXT     CANT.FILL.THAT
+         You can't fill that.
+TEXT     HAH!
+         Don't be ridiculous!
+TEXT     DOOR.NEEDS.OIL
+         The door is extremely rusty and refuses to open.
+TEXT     YOU.OIL.THE.PLANT
+         The plant indignantly shakes the oil off its leaves and asks, "Water?"
+TEXT     HINGES..RUST
+         The hinges are quite thoroughly rusted now and won't budge.
+TEXT     DOOR.NOW.OILED
+         The oil has freed up the hinges so that the door will now move,
+         although it requires some effort.
+TEXT     ROOTS.TOO.DEEP
+         The plant has exceptionally deep roots and cannot be pulled free.
+TEXT     KNIVES.GO.POOF
+         The dwarves' knives vanish as they strike the walls of the cave.
+TEXT     SOMETHING.DOESNT.FIT
+         Something you're carrying won't fit through the tunnel with you. You'd
+         best take inventory and drop something.
+TEXT     BIVALVE.TOO.BIG
+         You can't fit this five-foot # through that little passage!
+TEXT     TOO.MANY.STREAMS
+         There are little streams all over the place. I am not sure which one
+         you mean.
+TEXT     DROP.THE.BIVALVE
+         I advise you to put down the # before opening it. \>strain!\<
+TEXT     NO.OPEN.BIVALVE
+         You don't have anything strong enough to open the #.
+TEXT     CLAM.OPENED
+         A glistening pearl falls out of the clam and rolls away. Goodness,
+         this must really be an oyster. (I never was very good at identifying
+         bivalves.) Whatever it is, it has now snapped shut again.
+TEXT     OYSTER.OPENED
+         The oyster creaks open, revealing nothing but oyster inside. It
+         promptly snaps shut again.
+TEXT     CRAWL.CAVED.IN
+         You have crawled around in some little holes and found your way
+         blocked by a recent cave-in. You are now back in the main passage.
+TEXT     RUSTLING
+         There are faint rustling noises from the darkness behind you.
+TEXT     PIRATE.ROBS
+
+         Out from the shadows behind you pounces a bearded pirate! "Har, har,"
+         he chortles, "I'll just take all this booty and hide it away with me
+         chest deep in the maze!" He snatches your treasure and vanishes into
+         the gloom.
+TEXT     ROBBED.AGAIN!
+
+         Out from the darkness behind you leaps the pirate! "Har, har," he
+         chortles nastily, "I see you've found some more treasure for me!
+         Thanks, me hearty, you're doing just fine!" With that, he snatches
+         your treasure and slips away into the gloom, chuckling with glee.
+TEXT     CLOSING.NOW
+
+         A sepulchral voice reverberating through the cave, says, "Cave closing
+         soon. All adventurers please report to the treasure room via the
+         alternate entrance to claim your treasure."
+TEXT     EXIT.CLOSED
+
+         A mysterious recorded voice groans into life and announces:
+
+        =   "This exit is closed. Please report to the treasure room
+        =      via the alternate entrance to claim your treasure."
+TEXT     DEAD.&.CLOSED
+
+         It looks as though you're dead. Well, seeing as how it's so close to
+         closing time anyway, I think we'll just call it a day.
+TEXT     CAVE.NOW.CLOSED
+
+         The sepulchral voice intones, "The cave is now closed." As the echoes
+         fade, there is a blinding flash of light (and a small puff of orange
+         smoke).... As your eyes refocus, you look around and find...
+
+TEXT     DONT.KNOW.THE.WAY
+         I don't know how to get there from here.
+TEXT     YOU.ARE.THERE
+         That's where you are now!
+TEXT     BEAR.FOLLOWS
+         You are being followed by a very large, tame bear.
+TEXT     INFO.FIRST
+         This is the GLAXO UK 660 point version of the one and only
+         Adventure. (ADVENTURE4 - type HISTORY for a brief summary of its
+         development). The game now has well over 300 locations and an
+         untold treasure of snide remarks (over 200Kb of text altogether).
+
+         ADVENTURE4 accepts only simple verb/noun commands. It is,
+         however, possible to specify more than one object with a single
+         verb. For instance GET KEYS AND LAMP will pick up both, even
+         though it still counts as two turns. Commas can be used in place
+         of ANDs to save typing. If you are really lazy, GET ALL and DROP
+         ALL also work, again taking the appropriate number of turns.
+
+         Certain words (A, AN, THAT, THE, THIS and TO) are ignored by the
+         parser, making GET THE AXE a legal command. Some verbs (e.g.
+         GET) do not need a noun, provided only one object is present to
+         which the verb can be applied.
+
+         Commands can be chained together with full stops or with
+         semicolons (e.g. THROW AXE.GET AXE). The special verb AGAIN can
+         be used to repeat the previous command line, or, when embedded in
+         a longer command sequence, the previous command in the sequence.
+TEXT
+         All words can be abbreviated to the shortest unambiguous length.
+         In addition, the usual special abbreviations exist (E for EAST,
+         SE for SOUTHEAST, U for UP...). Some additional abbreviations
+         are G or T for GET (or TAKE), DR or R for DROP (or RELEASE), X
+         for EXAMINE (or LOOK), TH for THROW and I for INVENTORY.
+
+         If you want to end your adventure early, say Q (or QUIT). To
+         suspend your adventure such that you can continue later, say SAVE
+         \<name\> (or PAUSE or SUSPEND), where \<name\> is the name you wish
+         this particular save-image to be known by (it must be a single
+         word of between 1 and 12 characters). To re-start your game at a
+         later time, start up a new one and say RESTORE \<name\>. If you
+         forget to specify the name, the program will prompt you for it.
+
+         To see how well you're doing, say SCORE. To get full credit for
+         a treasure, you must have left it safely in the building, though
+         you get partial credit just for locating it. There are also
+         points based on your achievements; in particular, there is a
+         large bonus just for getting in (to distinguish the beginners
+         from the rest of the pack), and there are other ways to determine
+         whether you've been through some of the more harrowing sections.
+TEXT
+         You lose points for getting killed, or for quitting, though the
+         former costs you more.
+
+         If you think you've got all the treasures in the building, just
+         keep exploring the cave for a while. If nothing interesting
+         happens, you haven't collected them all yet. If something
+         interesting *does* happen, it means you're getting a bonus and
+         have an opportunity to garner many more points in the master's
+         section.
+
+         Do remember to examine things. It is not essential to do so, but
+         sometimes my responses may suggest particular properties or
+         limitations of objects you find in the cave. If you seem to be
+         having trouble, I may occasionally offer hints. If I do, I'll
+         warn you in advance how much it will affect your score.
+
+         Also remember that some descriptions contain details which are
+         mere windowdressing. You can usually tell if this is the case by
+         trying words I use in describing present features. If I don't
+         know the words or am obviously misunderstanding them, it is safe
+         to assume that such features cannot be in fact manipulated
+         and that you would be wasting your time trying to do so.
+TEXT     INFO.LAST
+         Finally, I will not normally repeat the full description of a
+         place after the first time unless you explicitly ask me to by
+         saying LOOK. You can instruct me always to give the full
+         description by typing VERBOSE. On the other hand, if you are an
+         experienced adventurer, you may wish to suppress long
+         descriptions altogether by specifying TERSE. In the TERSE mode I
+         will never under any circumstances give the full description of a
+         place. You can always revert to the normal mode of operation by
+         saying NORMAL.
+FRAGMENT MORE?
+
+         Would you like me to continue?
+FRAGMENT WANT.TO.QUIT?
+         Do you really wish to quit now?
+TEXT     NO.VASE.FILLER
+         There is nothing here with which to fill the vase.
+TEXT     VASE.SHATTERS
+         The sudden change in temperature has delicately shattered the vase.
+TEXT     NO.CAN.FIX
+         It is beyond your power to do that.
+TEXT     DUNNO.HOW
+         I don't know how.
+TEXT     TOO.FAR.UP
+         It is too far up for you to reach.
+TEXT     DWARF.POOF
+         You killed a little dwarf. The body vanishes in a cloud of greasy
+         black smoke.
+TEXT     DWARF.QUIP
+         You have mortally injured a little dwarf with your #. The dwarf
+         staggers, slumps to the ground, gasps "Epo'u mfu uifn vtf fncbmnjoh
+         gmvje. J xbou up cf tuvggfe xjui dsbc nfbu!" and then expires in a
+         puff of oily black smoke.
+TEXT     KILL.BIVALVE
+         The shell is very strong and is impervious to attack.
+TEXT     THROW.DOWNSTAIRS
+         You have hurled the # down the stairs.
+TEXT     NO.KILL.DRAGON
+         The # bounces harmlessly off the dragon's thick scales.
+TEXT     DRAGON.BLOCKS.WAY
+         The dragon looks rather nasty. You'd best not try to get by.
+TEXT     BIRD.V.DRAGON
+         The little bird attacks the green dragon, and in an astounding flurry
+         gets burnt to a cinder. The ashes blow away.
+TEXT     BIRD.V.TROLL
+         The little bird attacks the troll, who blithly ignores it. The bird
+         soon becomes discouraged, flies back to land at your feet, and begins
+         singing to itself.
+TEXT     BIRD.V.OGRE
+         The little bird attacks the ogre, and in an astounding flurry gets
+         caught and crushed. The mangled remains vanish into thin air.
+TEXT     BIRD.V.BEAR
+         The little bird attacks the ferocious cave bear, and in an astounding
+         flurry gets ripped to shreds. The bloody remains disappear.
+TEXT     BIRD.IGNORES.BEAR
+         The little bird flies over to the bear, circles curiously around its
+         head several times, and then flies back to land at your feet and begins
+         singing.
+TEXT     BIRD.V.BASILISK
+         The little bird attacks the basilisk, and in an astounding flurry
+         succeeds in awakening it. The basilisk glares at the bird, causing the
+         bird to explode into a cloud of fine sand, and then turns and stares
+         balefully at you, turning you into a pillar of fine marble suitable for
+         decorative lawn or garden use.
+TEXT     BIRD.V.DWARF
+         The little bird attacks the dwar[/f/ves], and in an astounding
+         flurry gets cut to shreds by [/his/their] nasty sharp kni[/fe/ves]!
+         The tattered remains fade from sight.
+TEXT     BIRD.V.SPIDER
+         The little bird attacks the spider and in an astounding flurry gets
+         very messily eaten. It was a horrible sight, a flurry of feathers,
+         hairy legs and blood.
+TEXT     NO.ENLIGHTENMENT
+         Sorry, there is nothing I can add on the subject.
+TEXT     BRIEF.OK
+         Okay, from now on I shall describe a place in full the first time you
+         come to it. To get the full description, say "LOOK".
+TEXT     TROLL.DATA
+         Trolls are close relatives with the rocks and have skin as tough as
+         that of a rhinoceros. The troll fends off your blows effortlessly.
+TEXT     EL.CHEAPO
+         The troll deftly catches the #, examines it carefully, and tosses it
+         back, declaring, "Good workmanship, but it's not valuable enough."
+TEXT     BOUGHT.HIM.OFF
+         The troll catches the # and scurries away out of sight.
+TEXT     TROLL.BLOCKS.WAY
+         The troll refuses to let you cross.
+TEXT     NO.BRIDGE
+         There is no longer any way across the chasm.
+TEXT     BEAR.WRECKS.BRIDGE
+         Just as you reach the other side, the bridge buckles beneath the weight
+         of the bear, which was still following you around. You scrabble
+         desperately for support, but as the bridge collapses you stumble back
+         and fall into the chasm.
+TEXT     BEAR.CHASES.TROLL
+         _It lumbers toward the troll, who lets out a startled shriek and
+         scurries away. The bear soon gives up the pursuit and wanders back.
+TEXT     AXE.NOW.BY.BEAR
+         The axe misses and lands near the bear where you can't get at it.
+TEXT     NO.KILL.BEAR
+         [With what? Your bare hands?? Against *his* bear hands??? Don't be
+         ridiculous - he'd tear you to shreds!/The bear is confused; he only
+         wants to be your friend.]
+TEXT     IT.IS.DEAD
+         For crying out loud, the poor thing is already dead!
+TEXT     BEAR.EATS
+         The bear eagerly wolfs down your food, after which he seems to calm
+         down considerably and even becomes rather friendly.
+TEXT     BEAR.IS.CHAINED
+         The bear is still chained to the wall.
+TEXT     CHAIN.LOCKED
+         The chain is still locked to the wall and you don't seem to be
+         able to pull it free.
+TEXT     CHAIN.NOW.UNLOCKED
+         The unlocked chain slithers to the floor with a soft rattle.
+TEXT     CHAIN.NOW.LOCKED
+         The chain is now locked to the wall.
+TEXT     BEAR.CHAINED
+         You chain the bear back to the wall. It doesn't seem to object.
+TEXT     NO.LOCK.CHAIN
+         There is nothing here to which the chain can be locked.
+TEXT     NO.FOOD
+         There is nothing here to eat.
+TEXT     ILL.GIVE.HINT
+         I can give you some advice that might help you solve your problem, but
+         I'll have to charge you # points for it. TANSTAAFL, y'know!
+FRAGMENT WANT.HINT?
+         Do you want the hint?
+FRAGMENT HINT.MAZE?
+         Do you need help getting out of here?
+TEXT
+         You can make the passages look less alike by dropping things. You
+         could then make a map that would let you find your way around.
+FRAGMENT HINT.PLOVER?
+         Are you trying to explore beyond the Plover room?
+TEXT
+         Well, you definitely will need some light to explore there. You have
+         obviously tried, and failed, to get the lamp to the Plover room.
+         (Incidentally, and in no particular connection with this particular
+         hint: why to Plover? Hm?... Oh, never mind... Just a bad pun...).
+         For all I know, you might find some other source of light. Not
+         that you have to...
+FRAGMENT HINT.WITTS?
+         Do you need help getting out of here?
+TEXT
+         Don't go west.
+TEXT     NO.FEED.TROLL
+         Gluttony is not one of the troll's vices. Avarice, however, is.
+TEXT     LAMP.IS.DIM
+         Your lamp is getting dim. You'd best start wrapping this up, unless
+         you can find some fresh batteries. I seem to recall there's a vending
+         machine in th[e/e other/is] maze. Bring some coins with you.
+
+TEXT     LAMP.IS.DEAD
+         Your lamp has run out of power.
+TEXT     CALL.IT.A.DAY
+
+         There's not much point in wandering around out here, and you can't
+         explore the cave without a lamp. So let's just call it a day.
+TEXT     PIRATE.RUNS
+
+         There are faint rustling noises from the darkness behind you. As you
+         turn toward them, the beam of your lamp falls across a bearded pirate.
+         He is carrying a large chest. "Shiver me timbers!" he cries, "I've
+         been spotted! I'd best hie meself off to the maze to hide me chest!"
+         With that, he vanishes into the gloom.
+TEXT     LAMP.BATTERIES
+         Your lamp is getting dim. You'd best go back for those batteries.
+
+TEXT     LAMP.REFUEL
+         Your lamp is getting dim. I'm taking the liberty of replacing the
+         batteries.
+
+TEXT     LAMP.GETTING.DIM
+         Your lamp is getting dim, and you're out of spare batteries. You'd
+         best start wrapping this up.
+
+TEXT     MAG.IN.DWARVISH
+         I'm afraid the magazine is written in a form of Dwarvish runes with
+         which I am not familiar.
+TEXT     IT.SAYS.CHEST.ELSEWHERE
+         "This is not the maze where the pirate leaves his treasure chest."
+TEXT     MACHINE.SIGN
+         It reads, "Drop coins here to receive fresh batteries."
+TEXT     NO.UNDERSTAND.FIRST
+         I'm afraid I don't understand.
+TEXT
+         Eh?
+TEXT
+         Either I am being dense, or you are really making no sense.
+TEXT
+         Er, would you care to rephrase that?
+TEXT     NO.UNDERSTAND.LAST
+         Sorry, I just don't seem to be able to work out what you mean.
+TEXT     DARK.ROOM
+         It says, "Congratulations on bringing light into the Dark room!"
+TEXT     THROW.VASE
+         You have taken the vase and hurled it delicately to the ground.
+FRAGMENT IS.THIS.OK?
+         Is this acceptable?
+*TEXT     NO.SUSPEND.DEMO
+*         There's no point in suspending a demonstration game.
+TEXT     BROKEN.NECK
+         You are at the bottom of the pit with a broken neck.
+TEXT     DOME.UNCLIMBABLE
+         The dome is unclimbable.
+TEXT     SNAKE.BLOCKS.WAYS
+         You can't get past the snake.
+TEXT     CRAWLED.BACK.TO.MISTS
+         You have crawled around in a little passage north of and parallel to
+         the Hall of Mists.
+TEXT     PLUMMET
+*
+*        The following statements define the text to be used when
+*        the player tries to jump over the chasm, jumps down the
+*        pit, etc. There should be one text message for every
+*        reincarnation that is allowed, plus 1 (i.e., one of these
+*        messages for each of the message pairs printed
+*        by CORONER.
+         Aaaaaaaaaiiiiiiiiiiieeeeeeeeee........
+        =                                                \>splat!\<
+
+         Hmmmm - I never saw a red flapjack before!
+TEXT
+         Aaaaaaaaaaaaaaaaaaahhhhhhhhhhhhhhhhhh........
+        =                                                    \>squish!\<
+
+         Yetch - what a mess!
+TEXT
+         Gaaaaaaaaaaaaaaaaaaaaaaaaaahhhhhh...........
+        =                                                 \>crunch!\<
+TEXT
+         Haaaaaaaaaaaaaalllllllllllllllllpppppp...........
+        =                                                   \>smash!\<
+TEXT     NOTHING.TO.CLIMB
+         There's nothing climbable here.
+TEXT     DO.WHAT?
+         What do you want me to do with the #?
+TEXT     CRACK.TOO.SMALL
+         The crack is far too small for you to enter.
+TEXT     CRACK.INFO
+         It's just a crack in the wall, quite manifestly too small
+         for you to stuff yourself into.
+TEXT     PIPE.TOO.NARROW
+         The stream flows out through a pair of 1 foot diameter sewer pipes. It
+         would be advisable to leave via the exit.
+TEXT     YOU.DONT.HAVE
+         You have no #!
+TEXT     PLANT.NOT.CLIMBABLE
+         There's nothing to climb here. Say "UP" or "OUT" to leave the pit.
+TEXT     PLANT.TOO.SHORT
+         You have climbed up the plant and out of the pit.
+TEXT     UP.THE.PLANT.YOU.GO
+         You scurry up the plant and into the hole in the wall.
+TEXT     BEAR.GUARDS.AXE
+         As you approach the bear, it snarls threateningly; you are forced to
+         retreat without the #.
+TEXT     DRAGON.GUARDS.RUG
+         I think it would be prudent to deal with the dragon first.
+FRAGMENT YOU.SCORED
+
+
+         You have scored #
+FRAGMENT SHOULD.YOU.QUIT
+         If you were to quit now, you would score a total of # points,
+FRAGMENT MAXIMAL.SCORE
+         _of a possible maximum of # points
+TEXT     MOVE.COUNT
+         , using [/one/#] turn[//s].
+TEXT     NOWHERE.TO.JUMP
+         There is nowhere for me to jump to.
+TEXT     COULD.YOU.CLARIFY?
+         What do you want me to #?
+TEXT     DWARF.QUITS
+         The dwar[/f/ves] quickly scuttle[/s/] off into the gloom.
+TEXT     SAID
+         Ok - "#".
+TEXT     AMATEUR
+         You are obviously a rank amateur. Better luck next time.
+TEXT     NOVICE
+         Your score qualifies you as a Novice Adventurer.
+TEXT     APPRENTICE
+         You are now an Apprentice Adventurer.
+TEXT     EXPERIENCED
+         You have achieved the rating of Experienced Adventurer.
+TEXT     SEASONED
+         You may now consider yourself a Seasoned Adventurer.
+TEXT     JUNIOR.MASTER
+         You have reached the Junior Master status.
+TEXT     MASTER.ADVENTURER
+         Your score puts you in the Master Adventurer class.
+TEXT     SENIOR.MASTER
+         You are now a Senior Master Adventurer.
+TEXT     GRANDMASTER
+         All of Adventuredom gives tribute to you, Adventurer Grandmaster!
+TEXT     CHEATER
+         You have worked your way up to the elevated rank of a Cheater.
+         To achieve the next higher rating would be a neat trick!!
+TEXT     ONLY.NEED.ONE.POINT
+         You only need one more point to reach the next level of expertise!
+TEXT     POINTS.NEEDED
+         To reach the next qualification level you need # more points.
+TEXT     NEW.BATTERIES
+         The old batteries in your lamp were pretty well shot - I've taken the
+         the liberty of putting in the new ones.
+TEXT     CANT.READ.DOCUMENTS
+         How? I don't even recognise the language the documents are in!
+         I suppose it's likely to be Giantish, but that does not exactly help.
+FRAGMENT MUST.WAIT
+         If you suspend your Adventure now, you will have to wait at least #
+         minutes before restoring it
+TEXT     OR.ITLL.COST
+         , or accept a penalty of # points for restoring it too soon.
+
+TEXT     CANT.SAVE
+         I'm sorry, but I can't save your game at the moment; something seems
+         to be wrong with the save file.
+TEXT     NO.IMAGE
+         I can't find any such saved game for you to restore.
+FRAGMENT EXPLOSION
+
+         Um... looks like the cave got extensively renovated since you dumped
+         that game. 'Fraid it's no good any more.
+
+         Shall I get rid of it?
+FRAGMENT SAVE.THE.IMAGE
+         Do you want me to keep the save-image?
+FRAGMENT CONTINUE.NOW?
+         Saved.
+
+         Do you wish to continue with the game immediately?
+FRAGMENT TOO.SOON
+         This game was saved less that # minutes ago
+TEXT     IT.COSTS.YOU
+         , so I have to charge you # points for restoring it.
+
+TEXT     WELL.MEET.AGAIN
+         Off you go then! Be sure not to get into any trouble without me!
+TEXT
+         See you around then.
+TEXT
+         Well good-bye and do come again!
+TEXT
+         See you again soon, I hope.
+TEXT  
+         Ok, but remember: to be tired of Adventure is to be tired of life.
+TEXT     NIAGA.TEEM.LLEW
+         We'll meet again, don't know when, don't know wheeeere... or
+         actually probably right here. 'Till then!
+TEXT     IF.NOT.NOT
+         If not, not.
+TEXT     ITS.GONE
+         OK, it's gone.
+TEXT
+         Right, I've binned it.
+TEXT
+         Easy come, easy go, I suppose...
+TEXT     ENOG.STI
+         Done. Too late to change your mind now.
+*TEXT     TOO.SOON
+*         I'm sorry - only a wizard can restart a game in less than # minutes.
+TEXT     DOUSED.DWARF
+         The # flies through the air and thoroughly drenches the dwarf. He
+         shakes himself off and curses violently; he *REALLY* looks angry!
+TEXT     DOUSED.DWARVES
+         The # flies through the air and thoroughly drenches the dwarves. They
+         shake themselves off and curse violently; they *REALLY* look angry!
+TEXT     NOTHING.TO.DRINK
+         There is nothing here that I can drink!
+TEXT     CANT.READ.OYSTER
+         There's nothing written on the oyster.
+TEXT     OYSTER.IS.BARE
+         There is nothing written on the top of the oyster.
+TEXT     CANT.YOU.READ?
+         What's the matter, can't you read? Now you'll have to start all
+         over again...
+TEXT     BIT.POINTLESS
+         A bit pointless, under the circumstances, wasn't it?
+TEXT     WIZARD.ENDS
+
+         A large cloud of green smoke appears in front of you. It clears away
+         to reveal a tall wizard, clothed in grey. He fixes you with a steely
+         glare and declares, "This adventure has lasted too long." With that he
+         makes a single pass over you with his hands, and everything around you
+         fades away into a grey nothingness.
+TEXT     TOO.DARK.TO.FIGHT
+         You are not asking much, are you? It is pitch dark around here! How
+         am I supposed to fight anybody if I can't see to the tip of my nose?
+TEXT     DROP.TO.DARKNESS
+         _disappear[s/] in the darkness below.
+FRAGMENT R.U.A.WIZARD?
+         Are you actually a wizard?
+FRAGMENT PROVE.IT
+         Prove it - say the magic word!
+TEXT     OH.POOH
+         Oh, pooh - you are nothing but a charlatan! That little piece of
+         deception is going to cost you 10 points!!
+TEXT     NOTHING.OBVIOUS
+         Nothing obvious happens.
+TEXT     SCHLURP
+         Hmmmm... This sand is rather soft, and you're sinking in a little...
+         In fact you're sinking in a lot! Oh, no - it's QUICKSAND!! HELP!!
+         HELP!! HELP!!!
+        =               \>glub\<
+        =                        \>glub\<
+        =                                   \>glub\<
+        =                                                 \>blurp\<
+
+TEXT     ANOTHER.SCHLURP
+         You know, I've heard of people who really fell in for the soft sell,
+         but
+        =     \>glub\<
+        =             this
+        =                  \>glub\<
+        =                          is
+        =                              \>glub\<
+        =                                       ridiculous!
+        =
+                                                                  \>blop!\<
+
+TEXT     SLIMED
+         As you enter into the passage, you are forced to brush up against some
+         of the green slime. Instantly it flows down and covers your body, and
+         rapidly digests away all of your flesh.
+TEXT     FZAP
+         With a sharp sizzling sound, a large spark of electricity jumps out of
+         thin air and strikes your lamp. The immense electrical charge flows to
+         ground through your body and fries you to a crisp.
+TEXT     LAMP.GOES.POOF
+         With a loud "zap" a bolt of lightning springs out of midair and strikes
+         your lamp, which immediately and violently explodes. You narrowly miss
+         being torn to shreds by the flying metal.
+TEXT     LAMP.EXPLODES
+         In a loud crackle of electricity, a bolt of lightning jumps out of
+         nowhere and strikes your lamp. The lamp instantly explodes like a
+         grenade, and you are mown down by a cloud of shrapnel.
+TEXT     LAMP.RECHARGED
+         The air fills with tension, and there is a subdued crackling sound. A
+         blue aura forms about your lantern, and small sparks jump from the
+         lantern to the ground. The aura fades away after several seconds, and
+         your lamp is once again shining brightly.
+TEXT     GOT.THE.SWORD
+         The singing sword slides easily out of the rock.
+TEXT     SWORD.IS.STUCK
+         The sword is firmly embedded in the stone, and you aren't strong enough
+         to pull it out.
+TEXT     VIAL.EXPLODES
+         The vial strikes the ground and explodes with a violent \>FOOM!\<, neatly
+         severing your foot. You bleed to death quickly and messily.
+TEXT     VIAL.BANG
+         The vial explodes into splinters and disintegrates, releasing an oily
+         liquid which rapidly sublimes into a large mushroom-shaped cloud
+TEXT     FIRST.FUME
+         of pale puce vapor smelling like sequoia sap and ozone.
+TEXT
+         of bright green vapor smelling like pine needles and sea water.
+TEXT
+         of thick yellow vapor smelling like cheddar cheese and bananas.
+TEXT
+         of choking green vapor smelling like chlorine and apples.
+TEXT
+         of misty white vapor with no scent.
+TEXT
+         of nearly-invisible vapor with a strong odor of walnuts and onions.
+TEXT     LAST.FUME
+         of ominously glowing vapor smelling of hot iron.
+TEXT     TROLLS.REVENGE
+         As you reach the middle of the bridge, the troll appears from out of
+         the tunnel behind you, wearing a large backpack. "So, Mister
+         Magician," he shouts, "you like to use magic to steal back my
+         hard-earned toll? Let's see how you like a little of MY magic!!" With
+         that, he aims a tube running from the backpack directly at the bear and
+         pulls a trigger. A spout of magical fire roars out and singes the
+         bear's fur; the bear bellows in pain and dashes onto the bridge to
+         escape. The bridge shudders, groans, and collapses under the weight,
+         and you and the bear plunge down into the chasm.
+TEXT     TROLLS.REVENGE.2
+         As you reach the middle of the bridge, the troll appears from out of
+         the tunnel behind you, wearing a large backpack. "So, Mister
+         Magician," he shouts, "you like to use magic to steal back my
+         hard-earned toll? Let's see how you like a little of MY magic!!" With
+         that, he aims a tube running from the backpack directly at the bridge
+         and pulls a trigger. A spout of magical fire roars out and incinerates
+         the bridge supports, causing the bridge to sway giddily and collapse
+         into the chasm. You plunge down to your death.
+TEXT     SWORD.MISSES
+         The sword misses the bear, bounces off of the wall, and lands at your
+         feet.
+TEXT     BEAR.MISSES
+         The bear dodges away from your attack, growls, and swipes at you with
+         his claws. Fortunately, he misses.
+TEXT     BEAR.GETS.YOU
+         The bear snarls, ducks away from your attack and slashes you to death
+         with his claws.
+TEXT     FOOF.FIRST
+         \>\>Foof!\<\<
+TEXT
+         \>\>Foom!\<\<
+TEXT
+         \>\>Poof!\<\<
+TEXT
+         A thick cloud of orange smoke appears from thin air and blocks your
+         view. When it vanishes, you find:
+TEXT
+         There is a brilliant flash of light and a sudden fanfare of trumpets!
+         When your eyes recover from the flash, you find that:
+TEXT     FOOF.LAST
+         \>\>Whoooosh!\<\<
+TEXT     FOOF.ODD
+         \>sputter\<
+        =           \>spark\<
+        =\>\>\>\>\>\>phut\<
+        =              \>hsssssssssss
+        =                           ssssss
+        =                                 sss
+        =                                    s
+        =                                     s
+        =                                      s
+        =                                       .
+        =                                        .
+        =                                         .
+
+         Oh, blast. Excuse me for a moment, please......
+
+        =                         ______________________\{KICK!\}
+
+         \>\>Foof!\<\<
+TEXT     OOF
+         Wheeeeeeeeeeeeeeeee..........
+
+        =                                          \>oof!\<
+
+TEXT     SLIDE.SLIPPERY
+         The icy slide is far too steep and slippery to climb.
+TEXT     OGRE.BLOCKS.WAY
+         The ogre growls at you and refuses to let you pass.
+TEXT     OGRE.CHOPS.YOU
+         The ogre contemptuously catches the # in mid-swing, rips it out of
+         your hands, and uses it to chop off your head. This might have worked
+         with dwarves, but as should be obvious even to a hedgehog, ogrish
+         arms are somewhat longer and stronger.
+TEXT     OGRE.HALVES.YOU
+         The ogre casually catches the # in mid-air, braces his feet, winds up
+         and throws the # straight back at you with incredible force. You are
+         unable to dodge it and it chops you in half.
+TEXT     OGRE.KILLED
+         The sword halts in mid-air, twirls like a dervish, and chants several
+         bars of "Dies Irae" in a rough tenor voice. It then begins to spin like
+         a rip-saw blade and flies directly at the ogre, who attempts to catch
+         it without success; it strikes him full on the chest. There is a
+         brilliant flash of light, a deafening roar and a cloud of oily grey
+         smoke; when the smoke clears (and your eyes begin working properly
+         again) you see that the ogre has vanished. The sword is lying on the
+         ground moaning softly to itself.
+TEXT     OGRE.TOO.TOUGH
+         You attack the ogre, but he fends off your attack easily and comes very
+         close to crushing your skull with *his* bare (but extremely strong)
+         hands. You are forced to retreat in disgrace.
+TEXT     OGRE.RIPS.HEAD.OFF
+         You attack the ogre - a brave but foolish action. He quickly grabs you
+         and with a heave of his mighty arms rips your body limb from limb.
+TEXT     NO.ARCH
+         I'm afraid I can't go that way - walking on red-hot lava is contrary to
+         union regulations (and is bad for your health anyhow).
+TEXT     FUMES.BURN
+         As you approach the center of the archway, hot vapors saturated with
+         brimstone drift up from the lava in the gorge beneath your feet. You
+         are swiftly overcome by the foul gasses and, with your lungs burned
+         out, fall off of the bridge and into the gorge.
+TEXT     FUMES.MISS
+         As you approach the center of the archway, hot vapors saturated with
+         brimstone drift up from the lava in the gorge beneath your feet. The
+         mithril ring on your finger quivers and glows, and the fumes eddy away
+         from the bridge without harming you.
+
+TEXT     BURN.BOTH
+         As you approach the center of the archway, hot vapors saturated with
+         brimstone drift up from the lava in the gorge beneath your feet. You
+         and the bear are both overcome by the noxious gasses and, with your
+         lungs burned out, slip off of the bridge and plummet into the gorge.
+TEXT     BURN.BEAR
+         As you approach the center of the archway, hot vapors saturated with
+         brimstone drift up from the lava in the gorge beneath your feet. The
+         mithril ring on your finger quivers and glows, and a swirling vortex
+         of white vapor encircles you and protects you from the fumes. The bear
+         is not so lucky, though, since the vortex is rather small; the noxious
+         gasses choke it and it staggers off of the side of the arch and
+         plummets into the gorge below.
+
+TEXT     GHOST.BANG
+         As you reach the center of the bridge, a ghostly figure appears in
+         front of you. He (?) stands at least eight feet tall, and has the
+         lower body of an enormous snake, six arms, and an angry expression on
+         his face. "You'll not have my sceptre that easily!" he cries, and
+         makes a complex magical gesture with his lower right arm. There is a
+         brilliant flash of light and a vicious \>crack\<, and the bridge cracks
+         and plummets into the gorge.
+TEXT     NO.KEYHOLE
+         The door to the safe has no keyhole, dial, or handle - I can't figure
+         out how to open it!
+TEXT     ALREADY.OPEN
+         The # is already open!
+TEXT     IT.IS.MELTED
+         The door to the safe seems to be fused shut - I can't open it.
+TEXT     ALREADY.SHUT
+         The # is already locked!
+TEXT     SAFE.SHUTS
+         \>screeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeech\<
+        =                                              \>ker-CHUNK!\<
+
+         The safe is now closed.
+TEXT     SAFE.OPENS
+         \>ker-THUNK\<
+        =               \>screeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeech\<
+
+         The (somewhat rusty) safe is now open.
+TEXT     WHISPER
+         You pluck the sceptre from the skeleton's bony hand. As you do, the
+         skeleton raises its head and whispers "Remember - #!" in a foreboding
+         tone; it then sags to the ground and crumbles into dust which drifts
+         away into the still air of the cave.
+TEXT     BLEW.SAFE
+         As you pluck the sceptre from the skeleton's grasp, it raises its head
+         and whispers, "You blew it...". It then shivers and collapses into a
+         pile of fine dust which quickly vanishes.
+TEXT     SAFE.FUSES
+        =    \>bong\<           The very air quivers with sound as though
+        =      \>bong\<         someone, somewhere in the distance, has struck
+        =   \>bong\<            three powerful blows on an immense brass gong.
+
+         Smoke trickles out from around the edges of the safe's door, and the
+         door itself glows red with heat for a moment.
+
+         A hollow voice says, "This is a Class 1 security alarm. All cave
+         security forces go to Orange Alert. I repeat - Orange Alert."
+TEXT     SAFE.BLOCKS
+         The safe's door is blocking the exit passage - you'll have to close the
+         safe to get out of here.
+TEXT     SIZZLE
+         EEEEEEEEEAAAAAAAAAAAaaaaaahhhhhhhhhhhhh..........
+
+        =                                                      \>sizzle\<
+TEXT     SLICE.BLOB
+         The # cuts through the blob's body (?) without harming it.
+TEXT     BLOB.RUBBERY
+         You attack the strange blob, but bounce harmlessly off of its strong
+         but very rubbery skin.
+TEXT     STATUE.CRUMBLES
+         Rock silently crumbles off of the wall in front of you, revealing dark
+         passages leading northwest, north, and northeast.
+FRAGMENT FOG.HINT?
+         Having problems?
+TEXT
+         Ok - what you need to do is apply a little philosophy. To wit: there
+         is a question that you need to ask whenever you explore a new room in
+         this cave. In most places, the answer to the question is "yes". In
+         some other places, it's "no" for an obvious reason. Right here, the
+         answer is "no" but the reason isn't so obvious. If you can figure out
+         what the question is, you can get out of here easily.
+TEXT     BASILISK.GRUMBLES
+         The basilisk stirs restlessly and grumbles in its sleep as you pass,
+         but it does not awaken.
+TEXT     BASILISK.STONED
+         The basilisk stirs grumpily and awakens, peering sleepily about. It
+         sees its reflection in the metal plate that you are carrying, shudders,
+         and turns into solid granite.
+TEXT     PETRIFY.ME
+         The basilisk stirs grumpily and awakens, peering sleepily about. It
+         spies you, growls, and stares you straight in the eye. Your body is
+         instantly petrified.
+TEXT     HIT.BASILISK
+         You attack the basilisk mightily. It instantly awakens and looks you
+         dead in the eye, and your body turns to solid rock.
+TEXT     AXE.BASILISK
+         The # rebounds harmlessly from the basilisk's tough scales. The
+         basilisk awakens, grunting in shock, and glares at you. You are
+         instantly turned into a solid rock statue (and not a particularly
+         impressive one, at that).
+TEXT     REBOUND
+         The # rebounds harmlessly from the pentagram's magic force field. It's
+         just as well - the djinn doesn't seem dangerous.
+TEXT     KILL.A.FEW
+         You kill several of the gooseberry goblins with your #, but the others
+         swarm at you, force you to the ground, and rip out your throat.
+TEXT     TOUGH.DJINN
+         That's not a wise thing to try - djinni are essentially immortal and
+         thus are pretty hard to hurt. Besides, this one seems rather friendly
+         - why don't you just try releasing him?
+TEXT     GOBLINS.EAT.YOU
+         Goblins live exclusively on human flesh, and you can't spare any of
+         your own to placate them. On the other hand, I suspect that they're
+         going to eat you pretty soon whether you like it or not - you'd better
+         find some way of killing them or driving them away!
+TEXT     DRAGON.WARRIORS
+
+         As each tooth strikes the ground, a fully-armed human skeleton springs
+         up from where it struck and leaps to your defense! The skeletal warriors
+         attack the vicious gooseberry goblins and drive them away in screaming
+         panic; they then salute you with their ancient and rusty swords, and
+         fade silently into nothingness.
+TEXT     POLITE.DJINN
+         The wax seal breaks away easily. A cloud of dark smoke pours up from
+         the mouth of the flask and condenses into the form of a twelve-foot
+         Djinn standing in the pentagram. He pushes experimentally at the
+         magical wall of the pentagram (which holds), and nods politely to you.
+         "MY THANKS, OH MORTAL," he says in an incredibly deep bass voice. "IT
+         HAS BEEN THREE THOUSAND YEARS SINCE SOLOMON SEALED ME INTO THAT BOTTLE,
+         AND I AM GRATEFUL THAT YOU HAVE RELEASED ME. IF YOU WILL OPEN THIS
+         PENTAGRAM AND LET ME GO FREE, I WILL GIVE YOU SOME ADVICE THAT YOU MAY
+         ONE DAY WISH TO POSSESS."
+TEXT     RUDE.DJINN
+         The flask's wax seal crumbles at your touch. A large cloud of black
+         smoke pours out, solidifying into the form of a twelve-foot Djinn. "AT
+         LAST!" he says in an earth-shaking voice, "I KNEW THAT SOMEDAY SOMEONE
+         WOULD RELEASE ME! I WOULD REWARD YOU FOR THIS, MORTAL, BUT IT HAS BEEN
+         THREE THOUSAND YEARS SINCE I HAD A SOLID MEAL, AND I'M NOT GOING TO
+         STAND HERE CHATTERING WHEN I COULD BE OUT EATING A SIX-INCH SIRLOIN
+         STEAK. FAREWELL." With that, he somewhat rudely explodes back into
+         smoke and drifts quickly out of sight.
+TEXT     DJINN.ADVICE
+         The pentagram's magical barrier sparks fitfully and goes down. The
+         Djinn stretches gratefully and smiles at you. "AGAIN, MY THANKS," he
+         says. "MY ADVICE TO YOU WILL TAKE THE FORM OF A HISTORY LESSON. WHEN
+         RALPH WITT, THE ARCHITECT AND CONSTRUCTOR OF THIS CAVE, WAS VERY YOUNG,
+         HE BECAME VERY INCENSED THAT HIS NAME WAS AT THE END OF THE ALPHABET.
+         HE FELT (FOR SOME REASON) THAT THE LETTER W BELONGED NEAR THE BEGINNING
+         OF THE ALPHABET, AND THAT ALL OF THOSE "UPSTART LETTERS WHICH UNFAIRLY
+         USURPED THE BEST PLACES" SHOULD BE FORCED INTO EXILE AT THE END OF THE
+         ALPHABET. HIS INSTINCT FOR MATTERS MAGICAL AND MYSTICAL LED HIM TO
+         APPLY THIS STRANGE BELIEF INTO THE CAVE'S STRUCTURE WHEN HE EXCAVATED
+         IT. YOU HAVEN'T YET BEEN AFFECTED BY HIS STRANGE HABITS, BUT YOU
+         SHOULD REMEMBER THIS. FAREWELL, AND GOOD LUCK." With that, the Djinn
+         evaporates into a cloud of smoke and drifts rapidly away.
+TEXT     KILL.GOBLINS
+         You attack the goblins and manage to squash a few, but the others
+         overwhelm you, forcing you to the ground and ripping out your throat.
+TEXT     PENTAGRAM.EMPTY
+         The pentagram is empty - there's nothing to let out!
+TEXT     GOBLIN.CHASE
+         You are being pursued by a horde of little gooseberry goblins!
+TEXT     FALL.&.STARVE
+         You have jumped into a bottomless pit. You continue to fall for a very
+         long time. First, your lamp runs out of power and goes dead. Later,
+         you die of hunger and thirst.
+TEXT     FALL.&.STARVED
+         You have jumped into a bottomless pit. Eventually, you die of thirst.
+TEXT     CANT.ENTER.SAFE
+         The safe's door is closed, and you can't get in!
+TEXT     NO.HANDLE
+         There is no handle on the inside of the safe door, nor any other way to
+         get a grip on it. You'll have to leave the safe before shutting it.
+TEXT     CANT.SWIM
+         I can't swim, or walk on water. You'll have to find some other way to
+         get across, or get someone to assist you.
+TEXT     TURTLE.BACK
+         You step gently on Darwin the Tortoise's back, and he carries you
+         smoothly over to the southern side of the reservoir. He then blows a
+         couple of bubbles at you and sinks back out of sight.
+TEXT     GONG.RINGS
+         \>BONNNNGGGGGGGGGG\<
+
+         Darwin the Tortoise blinks in surprise at the noise, but does nothing.
+TEXT     GONG.FETCH
+         \>BONNNNNGGGGGGGGG\<
+
+         A hollow voice says, "The Gallop-a-Ghost Tortoise Express is now at
+         your service!"
+
+         With a swoosh and a swirl of water, a large tortoise rises to the
+         surface of the reservoir and paddles over to the shore near you. The
+         message, "I'm Darwin - ride me!" is inscribed on his back in ornate
+         letters.
+FRAGMENT WHIRLPOOL?
+         What, into the whirlpool?!?
+FRAGMENT INTO.THE.WHIRLPOOL
+         You plunge into the water and are sucked down by the whirlpool
+         [ into pitch darkness/].
+TEXT     STRONG.CURRENT
+         _The current is incredibly strong, and [everything
+         you were carrying is ripped/you barely manage to hold
+         onto your lamp; everything else is pulled] from your grasp and
+         is lost in the swirling waters.
+TEXT     OUT.OF.THE.WHIRLPOOL
+
+         The swirling waters deposit you, fairly gently, on solid ground.
+TEXT     PHUGGG.DATA
+
+         A large phosphorescent cloud of smoke drifts into view, and a large
+         mouth and two dark eyes take shape on the side. One of the eyes winks
+         at you, and the djinn's deep voice says "GREETINGS AGAIN, MORTAL. I
+         HAVE REMEMBERED A PIECE OF ANCIENT LORE THAT I LEARNED FROM MY AUNT, AN
+         AFREET OF GREAT KNOWLEDGE. THERE IS ANOTHER MAGIC WORD THAT YOU MIGHT
+         FIND OF USE IF YOU SHOULD EVER FIND YOURSELF BEING ATTACKED BY THOSE
+         PESTIFEROUS DWARVES. YOU SHOULD USE IT ONLY AS A LAST RESORT, THOUGH,
+         SINCE IT IS A MOST POTENT WORD AND IS PRONE TO BACKFIRE FOR NO OBVIOUS
+         REASON; ALSO, IT SHOULD NEVER BE USED NEAR WATER OR NEAR ANY SHARP
+         WEAPON OR THE RESULTS MAY BE MOST UNFORTUNATE. THE WORD IS 'phuggg'",
+         whispers the djinn, "AND IT MUST BE PRONOUNCED CAREFULLY IF IT IS TO
+         HAVE THE PROPER EFFECT. FAREWELL AGAIN, AND GOOD LUCK!" With that,
+         the djinn-cloud drifts away out of sight.
+TEXT     JELLYFISH
+         \>splurch!\<
+
+         Oh, no! You've turned yourself into a jellyfish, and fallen to the
+         ground and been splattered far and wide! Well, that certainly wasn't
+         very smart!!! You were warned not to use that word near water!
+TEXT     CAVE.DESTROYED
+         The ground begins to shudder ominously, and the very cave walls around
+         you begin to creak and groan! A sulphurious stench fills the air! With
+         an incredible lurch, the ground begins to dance and ripple as though
+         it were liquid! You are thrown off of your feet and tossed violently
+         up and down! The cave walls begin to crumble and split from the stress!
+         There is a terrible ROAR of rending rock!! The cave ceiling splits, and
+         rocks plunge down and smash your lower body to a gooey paste.
+
+         There is a violent blast in the distance! Steam and smoke drift into
+         view through the rents in the walls, and furiously-bubbling red-hot
+         lava flows in and surrounds you. The cave ceiling disintegrates in an
+         incredible orgy of grinding destruction, and the cave walls fall and
+         are pounded into fine dust.
+
+         You are lying, badly mangled, on a small rock island in a sea of molten
+         lava. Above you, the sky is faintly visible through a thick pall of
+         smoke and steam. A short distance to the north, the remains of a
+         well-house are sinking slowly into the bubbling ooze.
+
+FRAGMENT MORE.BAD.NEWS?
+         Shall I continue with the bad news?
+TEXT     CAVE.2.DESTROYED
+         There is a distant, sourceless screech of incredible anguish! With a
+         sharp \>poof\< and a small puff of orange smoke, a bent and bearded elf
+         appears. He is dressed in working clothes, and has a name-tag marked
+         "Ralph" on his shirt. "You blithering idiot!" he storms. "You were
+         warned quite clearly not to use that word near water!! I hadn't gotten
+         all of the bugs out of it yet, and now your incredible incompetence has
+         totally destroyed Colossal Cave!! Do you have the faintest scintilla
+         of an iota of an understanding of how much work I'm going to have to do
+         to get the cave rebuilt?!? I'll have to go all the way to Peking for
+         another dragon, and I'll have to convince the Goblin's Union to send me
+         another team of gooseberry goblins; I'll have to sub-contract the
+         building of the volcano out to the local totrugs, and worst of all I'll
+         have to go through eight months of paperwork and red tape to file a new
+         Environmental Impact statement!! All because you couldn't follow
+         directions, you purblind and meatbrained moron! I'm rescinding all of
+         your game points and throwing you out! Out! OUT! GET OUT!*!!!&!"
+
+TEXT     ZOT.AXE
+         Your axe glows bright orange and fades into nothingness.
+TEXT     ZOT.SWORD
+         Your sword jumps into the air, chants several bars of the "Volga
+         Boatman", shoots off several fitful blue sparks, and disintegrates.
+TEXT     IT.WORKED
+         A clear, liquid chime sounds in midair. A large, four-clawed hand
+         reaches out of the ground, grabs the dwarf, and pulls it down into
+         nothingness.
+TEXT
+         A clear, liquid chime sounds in midair. A long green tentacle covered
+         with sucker disks reaches out from nowhere, grabs the dwarves, and
+         pulls them back to wherever it came from.
+TEXT
+         There is a sharp sizzling sound. The dwarf explodes into flame and
+         vanishes.
+TEXT
+         There is a sharp sizzling sound. The dwarves are engulfed in a wave of
+         fire that appears from nowhere, and are completely incinerated; the
+         flames then vanish into nothingness again.
+TEXT
+         There is a sharp whistling sound from nowhere. The dwarf shudders and
+         turns into a moth, which then flies away.
+TEXT
+         There is a sharp whistling sound from nowhere. The dwarves stiffen,
+         shudder, and melt down into a large puddle of soggy goo that quickly
+         soaks into the ground and vanishes.
+TEXT     IT.DIDNT.WORK
+         A clear, liquid chime sounds in midair. A large, four-clawed foot
+         appears in midair and stomps violently downward, missing the dwarf but
+         thoroughly squashing you.
+TEXT
+         A clear, liquid chime sounds in midair. A large and very toothy mouth
+         appears in midair and chomps ferociously. The dwarves manage to evade
+         it, but it bites you in half.
+TEXT
+         There is a sharp sizzling sound. A ball of fire roars out of nowhere,
+         misses the dwarf, bounces off of a wall, and incinerates you.
+TEXT
+         There is a sharp sizzling sound. A ball of fire appears from nowhere,
+         bounces off of the ground, and explodes violently, incinerating both
+         you and the dwarves.
+TEXT
+         There is a sharp crackling sound from the air above you. The dwarf
+         shudders and turns into a saber-toothed tiger, which attacks and kills
+         you in short order.
+TEXT
+         There is a sharp crackling sound from the air above you. The dwarves
+         stiffen, fall to the ground, and melt into a large puddle of soggy goo.
+         The goo twitches a few times and then flows at you with incredible
+         speed; it attacks and strangles you with little difficulty.
+TEXT     SET.FLASK.DOWN
+         You have set the flask down in the center of the pentagram.
+TEXT     CAMEO
+         From somewhere in the distance, there comes a musical skirl of light,
+         elvish laughter and the sounds of merriment.
+TEXT
+         From somewhere nearby, there suddenly comes a sound of something
+         mechanical in motion. As you turn towards it, an incredible figure
+         rolls into the light of your lamp. It stands about five feet high on a
+         wheeled metal pedestal, and has a globular light-filled head,
+         accordion-pleated metal arms, and a cylindrical body the size of an oil
+         drum with a plastic panel on the front. It rolls past without taking
+         any notice of you, all the while waving its arms, flashing a light
+         behind its front panel and bellowing "WARNING! WARNING! DANGER!" at
+         the top of its not inconsiderable voice. It rolls on out of sight, and
+         moments later there is an immense flash of light and a tremendous blast
+         of sparks and smoke. When the air clears, you find that no trace
+         remains of the strange apparition.
+TEXT
+         With a sudden gust of air, a large cave bat flutters into view, flies
+         around your head several times, squeaks with disgust, and flutters on
+         out of sight.
+TEXT
+         Suddenly, the ground quivers underfoot; a dull rumbling sound resounds
+         from the rock around you, and in the distance you can hear the crash of
+         falling rock. The earth tremor subsides after a few seconds without
+         causing any major damage.
+TEXT
+         From the darkness nearby comes the sound of shuffling feet. As you
+         turn towards the sound, a nine-foot cyclops ambles into the light of
+         your lamp. The cyclops is dressed in a three-piece suit of worsted
+         wool, and is wearing a black silk top-hat and cowboy boots and is
+         carrying an ebony walking-stick. It catches sight of you and stops,
+         seeming frozen in its tracks, with its bloodshot eye bulging in
+         amazement and its fang-filled jaw drooping with shock. After staring
+         at you in incredulous disbelief for a few moments, it reaches into the
+         pocket of its vest and pulls out a small plastic bag filled with a
+         leafy green substance, and examines it carefully. "It must be worth
+         eighty pazools an ounce after all" mumbles the cyclops, who casts one
+         final look at you, shudders, and staggers away out of sight.
+TEXT
+         From somewhere in the distance comes a heart-wrenching scream of mortal
+         terror! "NO! DON'T! NO! NO! HELP!!!!" cries the voice, and then
+         lets out a wail of agony that is cut off abruptly. Subdued crunching
+         and slurping sounds can be heard for a minute or so, and then silence
+         falls.
+TEXT
+         All of the sudden, into the light of your lamp walks a procession of
+         little men in green suits and green top hats. In front of the
+         procession, six of them carry a tiny coffin. Sombre chords of a
+         funeral march seem to be hovering in the air on the verge of
+         audibility, but as you strain your ears, the only sound you can hear is
+         the shuffling of little feet. The procession passes by you, without in
+         any way acknowledging your presence, and disappears round a corner.
+TEXT
+         A sepulchral voice suddenly reverberates through the cave:
+
+         "Ralph Witt to the Main Office please! Ralph Witt to the Main Office!"
+TEXT
+         A sepulchral voice coming from nowhere in particular mournfully announces
+
+        =         "THIS IS A FIRE ALARM TEST. THIS IS A FIRE ALARM TEST.
+        =
+        =                        !              !              !
+        =                       t               t              t
+        =                     ee              ee            ee
+        =                 Huee            Huee          Huee
+        =
+        =           FIRE ALARM TEST COMPLETE. FIRE ALARM TEST COMPLETE."
+TEXT     LAST.CAMEO
+         From somewhere nearby come the sounds of sliding, stumbling feet. As
+         you turn towards them, the beam of your lamp falls upon a tall,
+         shambling figure approaching you out of the darkness. Standing no more
+         than five feet tall, it cannot possibly weigh more than fifty pounds
+         including the shroud and bandages in which it is wrapped; a musty reek
+         like the scent of old, dead earth seeps from it and fills the air. As
+         you cower back in disgust and horror, the figure halts, examines you
+         through eyes resembling wet pebbles, and whispers "Peace, man!" in a
+         voice like wind rustling through dead trees. It then turns and
+         shambles away into the darkness.
+TEXT     THROW.CLIFF
+         You have thoughtlessly tossed the # over the edge of the cliff.
+TEXT     THROW.PIT
+         You have tossed the # down into the pit.
+TEXT     THROW.FISSURE
+         You have thrown the # down into the fissure.
+TEXT     THROW.HOLE
+         You have tossed the # down into the hole in the floor.
+TEXT     THROW.ROOM
+         You have tossed the # down into the room below you.
+TEXT     THROW.CANYON
+         You have tossed the # down into the canyon beneath your feet.
+TEXT     THROW.WHIRLPOOL
+         You have hurled the # into the middle of the whirlpool.
+TEXT     THROW.CAVERN
+         You have thrown the # down into the mist filling the cavern.
+TEXT     THROW.CHASM
+         You have hurled the # down into the misty bottom of the chasm.
+TEXT     THROW.GORGE
+         You have hurled the # down into the boiling lava at the bottom of the
+         volcanic gorge.
+TEXT     THROW.CHIMNEY
+         You have tossed the # down the chimney.
+TEXT     THROW.TUBE
+         You have tossed the # down into the lava tube and out of sight.
+TEXT     THROW.STEPS
+         You have thrown the # down the steps and out of view.
+TEXT     THROW.SLIDE
+         You have tossed the # down the icy slide and out of sight.
+TEXT     THROW.BEACH
+         You have carelessly thrown the # down onto the beach.
+TEXT     THROW.RESERVOIR
+         You have negligently tossed the # into the center of the reservoir.
+TEXT     SHATTERED.IT
+         I hope you are not too surprised to hear the unmistakable sound
+         of a delicate crash.
+FRAGMENT ICE.HINT?
+         Are you having problems getting out of the ice tunnels?
+TEXT
+         To get out of here, you'll first have to get your bearings so that you
+         know where you are. I suggest that you draw a careful, accurate map of
+         the tunnel system; for clarity's sake, keep your lines as straight as
+         is feasible and draw in all of the dead ends and such. The old Yoga
+         trick of standing on your head might also come in handy.
+TEXT     CANT.SEE.ANYTHING
+         It's pitch dark in here - I can't tell whether there's anything here
+         that I can pick up!
+TEXT     GROPE.FALL
+         Hmmph - you're not asking for much, are you - it's pitch dark in here!
+         Well, I'll grope around and try to find the #.....
+
+        = \{hunt}
+        =          \{hunt}
+        =                   \{rummage}
+        =                              \{trip!}
+        =                                      Aaaiiii
+        =                                             iie
+        =                                                ee
+        =                                                  e
+        =                                                   e
+        =
+        =                                                    e
+        =
+        =                                                     e
+        =                                                      \>SPLAT!\<
+
+         You stumbled into a pit and broke your back!
+TEXT     GROPE.MISS
+         Hmmph - you're not asking for much, are you - it's pitch dark in here,
+         and I'll have to grope around to try to find the #.
+         Well, if I must, I must.....
+
+        =                               \{hunt}
+        =                                        \{search}
+        =                                                   \{hunt}
+        =                   \{rummage}
+        =          \{peer}
+        =                   \{touch}
+        =              \{hunt}
+        =                                  \>scrape\<
+        =                                          Youch! \{curse}
+        =                   \{hunt}
+        =                               \{seek}
+
+         No luck - I can't find the #! If you could get me some light in here,
+         maybe I'd be able to do better. Sorry....
+TEXT     USE.A.WEAPON
+         That may be just as well. If you do insist upon trying to #
+TEXT     KILL.THE.WHATEVER
+         the #, you might be well advised to use a weapon of some sort.
+TEXT     NOT.ME
+         I do beg your pardon for not making the description clearer.
+
+         A PROFUSION OF VICIOUS LOOKING BRAMBLES AND NETTLES MAKE ANY CLIMBING
+         QUITE IMPOSSIBLE.
+
+         Better?
+TEXT     ROUGH.STEPS
+         Rough stone steps lead down the pit.
+TEXT     PORTCULLIS.RUSTY
+         If you are trying to open the rusty portcullis, you are wasting your
+         time.
+TEXT     ORB.OUT.OF.REACH
+         The globe lies out of reach on the cellar floor.
+TEXT     DOWN.THE.DRAIN
+         _land[s/] near the round drain in the cellar, slide[s/] towards it and
+         drop[s/] in!
+TEXT     HIT.ORB
+         _strike[s/] the orb a glancing blow and slide[s/] off into the drain.
+         The orb rocks slightly and then slowly rolls towards the drain and
+         disappears also.
+FRAGMENT BE.OFF
+
+         Through the portcullis steps a tall wizard clothed in gray. "BE OFF!"
+         he commands raising an arm. As the scene fades, you can hear his
+         distant voice adding "...
+TEXT     DAMN.AMATEUR
+         DAMNED AMATEUR!..."
+
+TEXT     TAKE.YOUR.JUNK
+         AND TAKE YOUR JUNK WITH YOU!..."
+
+TEXT     SLAB.SHUTS
+         The slab swings quietly shut behind you.
+TEXT     COMFORT
+         Curtains improve the comfort without blocking passages.
+TEXT     FLAGSTONE.LIFTS
+         The flagstone lifts suddenly and you topple headlong into the darkness
+         below.
+
+TEXT     WELL.CLIMB
+         You clamber up the sides of the well and upon reaching the top find a
+         stone slab blocking your ascent. You give the slab a push and it
+         opens. You clamber through into daylight and look around just in time
+         to see the slab fall perfectly into the floor, so perfectly, you cannot
+         see the join.
+
+TEXT     TIDE.DESCRIPTION
+         Sewage laps about your legs.
+TEXT
+         Sewage laps about your knees.
+TEXT
+         The sewage comes above your knees.
+TEXT
+         The sewage comes nearly up to your waist. This is not at all pleasant!
+TEXT
+         You are up to your waist in sewage. Lets leave!
+TEXT
+         The sewage comes nearly up to your chest! Lets get out of here!
+TEXT
+         You are nearly up to your neck in sewage. Help!!!
+TEXT
+         The pipe has completely filled with sewage......
+TEXT     GLUG.GLUG.GLUG...
+        =Glug...
+        =           Glug...
+        =                      (glug...)
+
+         You have drowned horribly in a mixture of sea-water and sewage.
+TEXT     WHEEE...SPLASH
+         Wheeeeeeeeeeeeeeeee..........
+
+        =                                    \>splash!\<
+
+TEXT     ON.STREAMBED
+         As you start climbing down the steep slope, a stone suddenly gives way
+         under your foot...
+
+        =      EEEEEeeeeeee!!...
+        =                             Wham!!!..
+        =                                            \>Rumble... rumble...\<
+
+         You are at the bottom of the streambed and all your bones are broken.
+TEXT     SOLID.ROCK
+         There is solid rock behind the curtain.
+TEXT     SENTRY
+         You are on a landing at the top of the steps. There is a massive dark
+         door here and a notice 'DWARVES QUARTERS - NO ACCESS'. The door is
+         partly open and behind it you can see a party of dwarves playing
+         pinochle on a large oblong table amidst a chaos of dirty dishes, pewter
+         mugs and sizable earthenware jugs. A large nasty looking dwarf is
+         snoring on a stool by the door, resting his unshaven chin on the shaft
+         of a long sharp axe. As you clear the last step, the dwarf suddenly
+         opens his eyes, blinks in surprise, jumps up and with a single neat
+         swing of the axe takes your head off.
+TEXT
+         As the top landing comes into view, you can see on it two large nasty
+         looking dwarves with wickedly gleaming axes. As they spot you, one of
+         them growles to the other: "Uif qftlz upvsjtut bsf hfuujoh up cf b
+         cmppnjoh ovjtbodf uijt tfbtpo!" and....
+FRAGMENT
+         Hm... Are you sure it is wise?
+TEXT
+         Well, if you insist... Ah! Just as I thought... There is a whole
+         reception commettee waiting for you here!...
+TEXT     JUST.AS.WELL
+         Amen, brother.
+TEXT     NO.OPEN.GATE
+         Try as I might, I can see no way to open the blessed thing.
+         You may think this eccentric, but I don't think it is 
+         actually meant to open. Perhaps the owner installed it here
+         simply as a symbolic gesture.
+TEXT     SPOON.QUIP
+         It says EPNS in flowery script.
+TEXT     E.P.N.S.
+         Electro-plated nickel silver. It's nearly worthless.
+TEXT     BONES.UGH
+         Bones UGH! I've got a thing about bones, I will have nothing to do
+         with them.
+TEXT     THE.SCREAM
+         Ok..................AAAAAAAAAARRRRRRRRRGGGGGGHHHHHHHHH!!!!!!!!!!!!
+TEXT     NO.REST
+         Rest? Rest?! You don't have time to rest!
+TEXT     NO.SLEEP
+         It is *far* too dangerous to sleep around here!
+TEXT     TINY.MOUSE
+
+         A tiny mouse appears from a small hole, sees you and hastily retreats.
+TEXT     HELPFUL.MOUSE
+
+         A tiny mouse appears from beneath a flagstone, sees you and hastily
+         retreats.
+TEXT     DOWN.THE.SHAFT
+         _reside[s/] momentarily on the slippery surface, then slide[s/] down
+         the shaft and disappear[s/].
+FRAGMENT FORBIDDING.NOTICE
+         Eh... that notice about trespassers looks awfully forbidding... 
+
+         Are you sure you want to ignore it?
+TEXT     YOU.HAD.IT.COMING
+         Ok, but don't blame me if you get arrested, or something...
+
+         Anyway, you have climbed over the gate. The road dips down here,
+         concealing both the fortress and the mountains. To the south, through
+         the dense undergrowth, you can just make out a...
+
+        =                 Uh, uh!... Here comes trouble...
+
+         A tall wizard in grey strides up the road, measures you with a steely
+         glance and with a single sharp, though incomprehensible, word turns you
+         into a toad!
+
+         Well, it serves you right, I say! It's the incompetent, bungling
+         amateurs like you, too full of themselves to know their proper place,
+         that get a poor guide like me into trouble. You did have to barge in
+         like that, didn't you, you nincompoop?! I don't know, why I am
+         standing here talking to you... as far as I am concerned, you can stay
+         a toad for the rest of your days!!
+
+         Goodbye, toady! Happy sploshing in a pond!
+TEXT     CRACK.TOO.NARROW
+         You may just get your lamp through that awkward slit, but most hard
+         objects will not fit.
+TEXT     TUSK.QUIP
+         Hm.... #.... #.... #.... That's not on the list! I suppose
+         it must be valuable..... Ok, we'll give you the benefit of the doubt.
+TEXT     CANT.SCOOP
+         The water is trickling down the wall in a corner and you cannot get
+         the chalice to it.
+TEXT     CHALICE.LEAKING
+         You have scooped some water with the chalice but it is rapidly leaking
+         out through some cracks in the bottom.
+TEXT     IS.EMPTY
+         I am sorry, but it is already quite empty.
+TEXT     CHALICE.MAGIC
+         A glowing figure of a beautiful woman appears. In a distant voice she
+         says, "You have drunk pure water from the sacred chalice, my brave
+         adventurer. I come to you as the spirit of goodness, but my power is
+         weak, for the wicked dwarves have stolen the Ring of Orion and have
+         hidden it deep in the Land of Mists, where I cannot go. Return the
+         ring to me and together we shall drive the evil from the caves....."
+
+         A distant roll of thunder drowns the voice, and as the woman fades from
+         a cloud of smoke steps a horned creature with a pointed tail. "If you
+         have anything more to do with that wisp," he says "you will find
+         yourself in infernal hot water. Just you stick to pilfering a few
+         treasures and you won't come to much harm!" With that he points to the
+         chalice and it crumbles to dust, then with a flick of his tail he
+         disappears.
+FRAGMENT WILL.YOU.HELP.ME?
+
+         A ringing in your ears seems to say "Will you help me, adventurer?".
+
+         What do you reckon - will you?
+TEXT     HOLLOW.LAUGH
+
+         The ringing is replaced by a distant laugh.
+TEXT     RIDE.TO.HELL
+         With you aboard, the unicorn gallops off at a furious pace. The tunnel
+         walls flash past dimly illuminated by an etherial glow. Suddenly
+         tunnel walls, unicorn and everything disappear and you fly on in pitch
+         blackness. Far below you a door opens, revealing a dull red glow, and
+         grotesque figures pour forth and dance and sway as you fall towards the
+         aperture. Your descent is impeded, slowly at first and then more
+         firmly, by a web of gossamer threads, on which you can clearly see
+         stamped at intervals "Made in Fairyland." Below you the creatures
+         leap, but try as they might they cannot reach you until there appears
+         our horned fiend. "You chose the losing side my friend!" he says and
+         slashes through the supporting threads. As you fall you hear his evil
+         laugh and him shout "Welcome to Hell!".
+
+         Now you really are in a mess. People like you didn't ought to be
+         allowed in the cave, poking your nose into things you can't handle.
+         You'll always lose if you tangle with *him* and there is no way of
+         helping the princess that I know of. I don't think I can stand any
+         more of your bungling! I am going!...
+TEXT     ORION.QUIP
+         Orion?... That's all mythology. You'd better stick to reality.
+TEXT     GOSH.UNICORN!
+
+         A swirl of mist rises from the floor. Gosh! It's turned into a unicorn!
+TEXT     NO.KILL.UNICORN
+         Not a chance! I would not touch a thing of such pure beauty! And
+         anyway, unicorns are a protected species, you know.
+TEXT     NO.FOOD.FOR.IT
+         You have nothing to feed it with.
+TEXT     UNICORN.EATS
+         The unicorn eats the food and looks around for more. On finding none
+         it raises its tail and presents you with a neat pile of dung.
+TEXT     FIRST.MUTTER
+         Out of the gloom jumps a little figure. He looks about and says in a
+         surprisingly deep voice "Chalice, chalice... Now where did I put that
+         chalice? Strange powers it has..." With that he scurries back into
+         the gloom.
+TEXT
+         A deep voice behind you says "Where do the eggs come from? There is no
+         goose around and the owl can't have done it....". You turn round in
+         time to see a small figure disappear muttering "Must be magic!..".
+TEXT
+         Suddenly, as if from nowhere, appears a little figure. He looks at you
+         quizzically and than says in a deep voice: "I'll tell you a secret.
+         You can't fly or jump across the lava, but you might get across by
+         using magic.". Then he hops from foot to foot chuckling to himself and
+         disappears into the gloom just as suddenly as he came.
+TEXT
+         Suddenly, you become aware of a little figure standing quite still
+         in the shadows just outside the reach of your lamp. He is studying you
+         intently and after a moment turns away and disappears muttering to
+         himself "Don't they teach them ANYTHING about pentagrams nowadays?..."
+TEXT
+         Without any warning a deep voice says behind you "Consider the Orb,
+         my friend, consider the Orb...". Startled, you turn around only
+         to glimpse a small figure disappearing into the darkness.
+TEXT
+         Without any warning a little figure steps into the light of your lamp.
+         He considers you thoughtfully, opens his mouth, shuts it again, shakes
+         his head and scurries off into the gloom.
+TEXT
+         A little figure suddenly jumps out of the shadows. He pirouettes on
+         one foot and says in an unexpectedly deep voice: "Starstones are
+         both useful and valuable if used with care, though how they manage
+         that little trick of theirs, I really don't know...". Than he suddenly
+         points behind you and shouts "Ha!". Startled you turn around but can
+         see nothing unusual. When you look back, the little man is gone without
+         a trace.
+TEXT
+         Without a warning a little figure pops up in front of you. "I'll tell
+         you a secret", he chuckles, "Them catacombs are quite simple really,
+         if you don't go and mess them up!". He winks at you merrily and darts
+         away into the gloom.
+TEXT
+         Suddenly you become aware of a deep voice muttering somewhere nearby.
+         All you can make out is "... dark ... mutter ... Thomas Alva ...
+         ... mutter ... and lo! there ... mutter ...". Before you can manage
+         to track down the source, the sound dies away.
+TEXT
+         A little figure suddenly steps out of the gloom in front of you.
+         "The sword will be yours, my friend", he says thoughtfully, "but
+         the time is not yet...". Then he is gone, just as suddenly as he
+         appeared.
+TEXT
+         A little figure suddenly steps out of the shadows. He lifts a finger
+         to his lips and whispers in a deep voice: "Shhhh.... Don't tell
+         anybody, but of the keys, there are... er... ah....". He snaps his
+         fingers, pulls his ear thoughtfully and then with a rueful shake of
+         head and a sigh of "...damn memory..." quickly shuffles off.
+TEXT
+         A small figure suddenly pops out of the gloom in front of you. He
+         grins from ear to ear and says "But why to Plover?". Then he is
+         gone again, his merry chuckles dying off somewhere in the distance.
+TEXT
+         A little figure appears unexpectedly by your side and says in a deep
+         voice "Been to the sewers yet? Not a healthy place...". He nods to
+         himself thoughtfully and then slips back out of the light as quickly
+         and quietly as he appeared.
+TEXT     FOOD.DISAPPEARS
+         It disappears into the sewage and the surface thrashes with activity.
+TEXT     RATS.HUNGRY
+         My, those rats *are* hungry!
+TEXT     INTO.SEWAGE
+         _[has/have] disappeared in the sewage!
+TEXT     GRILL.SOLID
+         If you are trying to get through a solid metal grill, you're wasting
+         your time.
+TEXT     DISTURBED.OWL
+         Your light disturbes an enormous owl which flies off with a flurry of
+         wingbeats (and a loud "HOOT").
+TEXT     OWL.BOUNCES
+         With a flurry of wingbeats (and a loud "HOOT") an enormous owl appears.
+         Disturbed by the light he flies off again.
+TEXT     DISTANT.OWL
+         A distant owl calls "hoot".
+TEXT     OWL.ARRIVES
+         You hear a flurry of wingbeats and a loud "HOOT".
+TEXT     OWL.KILLS
+         You hear a flurry of wingbeats and sounds of a tremendous battle...
+         (rustle .. rustle .. hisss .. HOOT! .. scrape .. GULP! .. 
+         hoot?)
+TEXT     NEARBY.OWL
+         Nearby an owl cries "HOOT".
+TEXT     NO.KILL.OWL
+         Owls are very shy creatures. I don't think it will let you anywhere
+         near it. Besides, you cannot see exactly where it is.
+TEXT     NO.KILL.SPIDER
+         I am not going anywhere near that horrible hairy thing!!
+FRAGMENT GIANT.PICKS.UP
+
+         Suddenly a giant hand descends from above[ and/,] picks
+         you up[. / and shakes you, scattering your possessions across
+         the floor. ]
+TEXT     MY.DEEDS!
+
+         "MY DEEDS!"  the giant shouts, "FOR THOSE YOU SHALL BE REWARDED!"  and
+         tosses a large sapphire in your direction as he takes the documents.
+         He rapidly flicks through the last few pages, gives out a triumphant
+         bellow and rushes out, leaving you alone, your ears ringing.
+TEXT     NOW.HOW?
+
+         Well, OK, you've got yourself a sapphire, but I am now somewhat
+         looking forward to your attempts to do as the notice at
+         the view suggests.
+TEXT     EGG.FOO
+         "AH....EGG FOO.....YUM YUM" the giant drawls and grabs the eggs,
+         leaving you shaken but unharmed.
+TEXT     MISERABLE.MORSEL
+         The giant grabs your food and bellows "A MISERABLE MORSEL!"  but
+         stuffs it into his mouth and swallows it whole.
+
+        =             "FEE FIE FOE FOO - FIN FOO OR I'LL EAT YOU!"
+
+         the giant thunders, and as you cast about for your possessions you are
+         pushed back into the pantry.
+
+TEXT     STAY.IN.THERE
+         "STAY IN THERE UNTIL I AM READY TO EAT YOU!!"  the giant bellows and
+         throws you into his dungeon.
+
+TEXT     GIANT.EATS.YOU
+         The giant is now wearing a bib which is even more soiled than his
+         shirt. He opens his mouth wide, revealing great rows of black teeth.
+         The stench of his breath mercifully renders you unconscious as he
+         bites into your leg and pulls..............
+TEXT     GRAB.MISS
+
+         The giant's hand enters the dungeon and makes a grab but misses!
+TEXT     GOT.YOU
+
+         The giant's hand enters the dungeon and grabs you.
+TEXT     ENRAGED.GIANT
+         The # hits the giant, who lets out a roar of pain and rage, raises one
+         foot high in the air ...... and brings it down ..... *SPLAT*.
+TEXT     HUNGRY.GIANT
+
+         "FEE FIE FOE FOO!"  the giant thunders and at the thought of foo'
+         great slivers of saliva issue from the giant's mouth and futher soil
+         his already filthy shirt front.
+TEXT     DOCUMENTS.FUNNY
+         The documents seem to be a set of deeds with some associated plans,
+         but the language is odd and the plans look incomprehensible.
+TEXT     VERY.FUNNY
+         Yeah.... very funny. Which of his toes do I start with?
+FRAGMENT RESERVOIR.HINT?
+         Are you having problems getting across the lake?
+TEXT
+         If I were you, I would try to work out where does all that water in
+         the stream yonder come from.
+FRAGMENT CATACOMBS.HINT?
+         Are you thoroughly confused?
+TEXT
+         It's hard to be sure, but I would hazard a guess that your problems are
+         essentially of your own making. In any case, I suggest you map, map
+         and map again. There's more to them catacombs than a casual visitor is
+         in a position to discover.
+TEXT     CHALICE.NOW.EMPTY
+         The chalice is now quite empty... it only had a few drops in it
+         anyway.
+TEXT     CUT.WEB
+         With your axe you chop the web to shreds freeing the documents which
+         fall to the ground with a heavy thud.
+
+         Well, what do you know!... There is a large circular opening behind
+         the web!
+TEXT     SPIDER.DODGES
+         The spider dodges your axe, briefly exposing a bundle of papers stuck
+         to the web. Hm... that axe is now quite out of reach...
+TEXT     ONLY.WIZARDS
+         You flap your arms for a bit, but nothing very much happens. Most
+         normal people would not be unduly surprised by this.
+TEXT     NOTHING.TO.CUT.WITH
+         You have no instrument that could be sensibly used for cutting.
+TEXT     ROPE.TOO.TOUGH
+         The rope is very tough and hard as you try, you can't make any
+         impression on it.
+TEXT     VANDAL!
+         I will commit no such act of gross vandalism!
+TEXT     IT.IS.IN.SHREDS
+         There is hardly any point in that - it is already in shreds.
+TEXT     NASTY.WEB
+         I'd rather not. It wouldn't be very smart to get entangled in that
+         nasty sticky web.
+TEXT     DOCUMENTS.STUCK
+         Sorry, the documents seem to be firmly stuck to the web.
+TEXT     ZORTON.INFO
+         Hm... It's a flowing sort of script... Could be Elvish, I suppose...
+         Now, let's see if I still remember any of it...
+
+         (Kzan, Oma... Phret... eh... Tres, Oma again... hum... 
+         Noot perhaps?)
+
+         OK, I think it transliterates as Z O R T O N... Doesn't seem to make
+         much sense, does it?
+TEXT     NO.MORE.SENSE
+         I am afraid it makes no more sense than before.
+TEXT     SWORD.TRAN.1
+         The sound of the word shocks through the sword, knocking it right out
+         of your hand. It clatters to the ground flaming and sparkling and
+         begins to emit a high pitch feedback whistle. Before your eyes it
+         softens and melts, writhes as if in pain and shrinks rapidly, its
+         whistle fading through ever ascending frequencies, until all that is
+         left is a small silvery ring which cools rapidly.
+TEXT     SWORD.TRAN.2
+         The sound of the word shocks through the sword, making it to clatter on
+         the ground. It begins to sparkle and flame, emitting a high pitched
+         feedback whistle. Before your eyes it softens and melts, writhes as
+         if in pain and shrinks rapidly, the whistle fading through ever
+         ascending frequencies, until all that is left is a small silvery ring
+         which cools rapidly.
+TEXT     ROCK.INSCRIPTION
+         Funny... some of that pattern looks almost like an inscription...
+TEXT     DONT.BELIEVE
+
+         How strange... I wonder, could *that* be the fabled Ring of Orion?
+
+         No, I just don't believe it! It's simply too pat! Besides, there
+         never was any Orion.
+TEXT     BULGING.COAT
+         He is clutching his bulging coat and muttering angrily.
+TEXT     LOUD.SQUEAK
+         The horn emits a loud squeak.
+TEXT     DWARVES.COME
+         The little horn emits a surprisingly loud sonorous note. As the note
+         dies away, the sound of[// many] hurrying footsteps becomes apparent.
+TEXT     MELLOW.NOTE
+         The horn emits a surprisingly full and mellow note.
+TEXT     THIRSTY.WORK
+
+         Exploring is a thirsty work. You must soon take a drink or lighten your
+         load.
+TEXT     IAM.THIRSTY!
+
+         I cannot go much further without a drink.
+TEXT     YOUVE.COLLAPSED
+
+         You have collapsed and died of thirst!
+TEXT     PLAQUE.INFO
+         It says
+        =                    *****************
+        =                    *  UIJT  TQBDF  *
+        =                    * JOUFOUJPOBMMZ *
+        =                    *  MFGU  CMBOL  *
+        =                    *****************
+TEXT     NO.TIMBER
+         May I politely remind you that you are here to seek treasure and glory,
+         not to make timber.
+TEXT     DULL.VIEW
+         You clamber up a tree, but there is nothing to be seen except more
+         trees. Disappointed, you climb down again.
+TEXT     NO.CLIMBING
+         No trees around here look easily climbable. If you do insist on
+         displaying your physical prowess, I suggest you find some place more
+         suited for the purpose.
+TEXT     ALIEN.LANDSCAPE
+         _The scene is illuminated by the light of three small moons shining
+         through the shimmering glow of an aurora that fills the entire sky with
+         golden splendour. A light breeze, with a strange and heady tang to it,
+         brings the sound of unhurried ocean waves breaking on the beach. The
+         dark mouth of a lava tube leads east.
+TEXT
+         _Two suns, one deep orange and the other white-blue, pour their combined
+         light from the indigo sky. The silver ocean, stretching to the west as
+         far as the eye can see, sparkles with green reflections as it ponderously
+         crashes its waves on the beach. The air is very still and you can see
+         the sheet of hot air shimmering along the surface of the cliff. The
+         dark mouth of a lava tube leads east.
+TEXT
+         _A huge orange sun is setting beyond the ocean, flooding the eerie
+         landscape with a blood-red glow. A chill wind is whistling past,
+         tugging at your clothes and swirling in the dark opening of the lava
+         tube leading east. White topped rollers break on the beach with a
+         hypnotic rhythm of a whoOOSH and a murmur. The whole stretch of the
+         ocean is alive with orange reflections. A small moon hangs almost
+         directly overhead, where the indigo sky darkens into near blackness.
+TEXT     LAST.LANDSCAPE
+         _The dark green sky is filled with a delicate tracery of feathery
+         silver clouds tinged with green. The silver ocean, stretching all the
+         way to the west horizon, is mirror-smooth. There is a sharp chill in
+         the still air. Your breath condenses into clouds of mist which slowly
+         drift up along the face of the cliff. The dark mouth of a lava tube
+         leads east.
+TEXT     GOT.STARSTONE
+         Well, I'll try, but it may not be actually here, you know. Starstones
+         are funny things...
+
+         Ok, I've got it! It really was here after all.
+TEXT     NO.GET.STARSTONE
+         Hum... it's eluding my grasp. Let's try again... No! I am afraid it's
+         no good, I don't think it is really here any more.
+TEXT     STILL.NO.GOOD
+         If you insist... no, I am sorry, it only appears to be here.
+TEXT     STARSTONE.FALLS
+         As it falls, the starstone emits a short flash of blue light and for
+         a brief moment becomes curiously unfocused.
+TEXT     DARK.STARSTONE
+         As it falls, the starstone emits a brief flash of blue light.
+TEXT     DRACHMA.DROPS
+         The machine shudders violently and after much clanking and clicking
+         spits out a small bronze coin; a drachma, by the looks of it.
+TEXT     NO.SPARES
+         You're out of spare batteries.
+TEXT     SWAPPED.EM
+         Hang on... OK, I've swapped them.
+TEXT     OH.NO.YOU.DONT!
+         As you lift the chalice to your lips, there is a sharp plop and a horned
+         creature with a pointed tail hurriedly steps out of an evil smelling
+         cloud of smoke. "Oh no you don't!..." he says and points at the chalice
+         which crumples to dust in your hands. The creature gives you a sardonic
+         salute, screws its tail into a tight spiral and disappears in a dazzling
+         shower of multicoloured sparks.
+TEXT     BUZZ.OFF
+
+         "OI!" says the giant, "YOU'VE HAD YOUR REWARD. BUZZ OFF!". With these
+         words he pushes you, not ungently, back into the ravine.
+
+TEXT     POLISH.PLATE
+         It is a hard work, but as you # the plate its surface gradually
+         gets smooth and shiny.
+TEXT     DWARVES.UPSET
+         The horn emits a surprisingly full and mellow note. Inspite of its
+         undeniable musical qualities, the sound seems to further aggravate
+         the already agitated dwar[/f/ves].
+TEXT     DRAIN.TOO.SMALL
+         Would you perhaps care to explain how you propose to squeeze through
+         a ten inch drain? Be serious!
+TEXT     CHASE.GIANT
+         "OI!..." begins the giant in an unfriendly tone of voice, but before
+         he can get any further, a large pinkish cloud condenses nearby.
+         A mouth and a pair of dark eyes shape themselves in the cloud and
+         the familiar deep voice booms out: "IT COMES TO ME, OH MORTAL,
+         THAT I HAD FORGOTTEN TO MENTION ONE PROPERTY OF THE MAGIC WORD OF
+         MY AUNT'S. SHE USED TO CLAIM, ALWAYS WITH A CHUCKLE, THAT IT SHOULD
+         HAVE A MOST INTERESTING EFFECT UPON GIANTS..."
+
+         At these words the giant visibly blanches and hurriedly begins to
+         collect his possessions, muttering anxiously "OUKAY... OUKAY...
+         NO NEE' TO GEE' NASTY... ALL I WANTS IS A BIT O' PEACE FOR ME
+         CALLIBRATION...". Having collected the lot into a large untidy
+         bundle he sticks the crate of champagne under his arm and, with a
+         nasty glance in the djinn's direction, climbs (I would not have
+         believed it possible!) over the edge of the enclosure and disappears
+         from the view. The cloud gives you a merry wink, and with a loud
+         belch leasurly dissipates into thin air.
+TEXT     NOT.ENOUGH
+         Your flask is now empty, but I don't think that trickle of water is
+         going to do anything much.
+TEXT     FLASK.EMPTY
+         Your flask is now empty.
+TEXT     FLASK.AND.BOTTLE.FULL
+         Both the flask and the bottle are already full.
+TEXT     FLASK.WAS.FULL
+         The flask is already full.
+TEXT     FLASK.SEALED
+         You can't fill a sealed flask!
+TEXT     BREAK.MIRROR
+         You strike the mirror a resounding blow, whereupon it shatters into
+         a myriad fragments. Viciosly sharp pieces of glass rain everywhere.
+         You try to dodge, but are cut down by the flying debris.
+TEXT     DWARVES.WAKE
+         The resulting ruckus has awakened the dwarves. There are now several
+         very angry little dwarves in here with you. Most of them throw knives
+         at you! All of them hit you!!
+TEXT     DWARF.WAKES
+         You prod the nearest dwarf, who wakes up grumpily, takes one look at
+         you, curses and grabs for his axe, and... Exit one more would be
+         adventurer grandmaster!
+TEXT     YOU.EXPLODE
+         There is a loud explosion. Being foolishly near its epicentre, you
+         suddenly find yourself splashed across the walls of the cave.
+TEXT     LAVA.FLOWS
+         There is a loud explosion at the other end of the repository and
+         the far wall collapses, burying the snakes in the rubble. A river
+         of molten lava pours in through the hole, destroying everything in
+         its path, including you. (Not even cinders remain!).
+TEXT     KABOOM
+         There is a loud explosion at the other end of the repository and
+         a section of the far wall collapses, burying the dwarves in the
+         rubble. The settling dust reveals a dark hole leading northeast.
+         When the air is finally clear, a snow-white golden-horned unicorn
+         walks out of the hole and, gracefully picking its way through the
+         heaps of rubble, calmly approaches you.
+TEXT     NO.FUTURE.IN.DEBRIS
+         Plenty of it about, but somehow I don't think there is much future
+         in it.
+TEXT     ALREADY.HAD.ONE
+         You already had one! I really don't think you need another #.
+TEXT     OUT.OF.REACH
+         It is too high for you to reach.
+TEXT     THROUGH.THE.MIRROR
+         The unicorn neighs indignantly, rears up and suddenly leaps straight
+         into the mirror. As you pass through the surface of the mirror,
+         which curiously enough fails to shatter, you experience a sickening
+         twisting sensation as if you were being turned inside out. Everything
+         swims in front of your eyes, your arms weaken and you feel yourself
+         slipping from the unicorn's back and falling... falling... falling...
+
+         When you finally recover your senses, you find....
+TEXT     OTHER.DWARVES.WAKE
+         You kill the nearest dwarf. Unfortunately the ruckus has awakened
+         other dwarves. There are now several bloodthirsty little dwarves in
+         here with you. All of them throw knives at you. All of them get you.
+TEXT     IS.DUTCH
+         There Ain't No Such Thing As A Free Lunch - I couldn't agree more!
+         You'd be amazed, though, how many adventuring slobs think otherwise.
+TEXT     CHEST.LOCKED
+         Unfortunately, the chest has a combination lock on it. Still, it is
+         obviously full of goodies, so I think we'll allow you the points
+         for just leaving it in the building.
+TEXT     BIRD.V.SNAKES
+         The little bird hops out of the cage and in an astounding flurry
+         drives the snakes away.
+
+TEXT     DRACHMA.NO.GOOD
+         After a series of clinks and clanks the drachma reappears from the
+         reject slot.
+TEXT     OYSTER.WRITING
+         Interesting. There seems to be something written on the underside of
+         the oyster.
+TEXT     OYSTER.IS.HINT
+         Hmmm... this looks like a clue. I would have to charge you # points
+         for reading it.
+FRAGMENT READ.OYSTER?
+         Should I go ahead and read it anyway?
+TEXT     OYSTER.MEMO
+         It says "There is something strange about this place which makes
+         a word you have used before to have a second meaning."
+TEXT     TREASURE.1
+         You plunge into the stream and are carried down into total blackness.
+         Deeper
+        =       and deeper
+        =                  you go
+        =                         down into
+        =                     the
+        =                very
+        =                     bowels of
+        =                              the earth,
+        =                        until
+        =                              your lungs
+        =                                         are aching
+        =                                                    with
+        =                                           the need
+        =                                                    for fresh
+        =Suddenly,                                      air.
+        =             with a violent
+        =                                \>SPLASH!\<
+
+         you find yourself sitting on the edge of a pool of water in a vast
+         chamber lit by dozens of flaring torches.
+
+FRAGMENT MORE.GOOD.NEWS?
+         Shall I continue with the good news?
+TEXT     TREASURE.2
+
+         The floor is covered with thick layers of precious Persian rugs!
+
+         Rare coins, bars of silver, and lumps of gold and platinum are strewn
+         carelessly about!
+
+         There are diamonds, rubies, sapphires, emeralds, opals, pearls, and
+         fabulous sculptures and ornaments carved out of jade and imperishable
+         crystal resting on display shelves, along with rare Ming vases and
+         ancient Indian turquoise beads!
+
+         A flotilla of ruby-encrusted toy boats is floating in the pool of water
+         beside you!
+
+         A network of golden chains supports a fantastic Iridium crown!
+         There is a display case on the wall filled with a mind-boggling
+         collection of magical swords, which are singing "Hail to the Chief"
+         in perfect multivoice harmony.
+
+TEXT     TREASURE.3
+
+         A multitude of friendly elves raise from tables prepared for a
+         feast and greet you with a heart-warming cheer.
+
+         Well, I suppose I'll leave you to all this merry-making. I have
+         another nutcase to guide around the cave. Boy, the problems I have!...
+
+         Anyway...
+TEXT     TREASURE.4
+
+         A multitude of elves raise from tables laden with a mouth-watering
+         selection of delicacies and with great joy proclaim you to be an
+         all conquering adventurer grandmaster.
+
+         It is time for this your humble servant to take leave of you in your
+         moment of glory. It has been a pleasure and a privilege to be your
+         guide and if any harsh words have been spoken between us, let there
+         be no hard feelings.
+
+        =                   Hail and ferwell,
+        =                         oh indomitable one!
+
+TEXT     BACK.TO.REALITY
+         The syllables of the word seem to reverberate through the vastness
+         of this strange place. As the sound dies away, a sudden gust of air
+         brings with it a skirl of merry elvish laughter. Slowly to begin
+         with, the grayness about you begins to coalesce into new (or is it
+         old?) shapes and meanings. Finally you find...
+
+TEXT     ROD.FIDDLING
+         Fooling about with rods does not appear to be amazingly productive.
+TEXT     SAME.AS.BEFORE
+         It says the same thing as it did before.
+TEXT     AS.YOU.WISH
+         As you wish.
+TEXT     LEAVE.BIRD
+         Oh, leave the poor thing alone.
+TEXT     HERESOMEWHERE
+         I daresay whatever you want is around here somewhere.
+TEXT     ENOUGH!
+         I think enough is enough.
+TEXT     EYE.STRAIN
+         As you consider the orb, it appears to expand, quickly filling your
+         entire field of vision. Vague shapes seem to stir within its shadowy
+         depth. Straining your eyes after the uncertain forms you begin to see
+TEXT     ORB.VISIONS
+         spiraling showers of pale yet fiery multicoloured sparks.
+TEXT
+         a pattern of green patches, which slowly clarifies itself into a small
+         plant growing at the bottom of a dark pit.
+TEXT
+         billowing clouds of pale colours, which gradually resolve into a giant
+         hungrily chewing his dirty fingernails.
+TEXT
+         a storm of jet-black snowflakes, which gradually dissolves into a most
+         terrifying giant spider crouching in the corner of a huge web. The
+         darkness above the web is pulsing in a motion suggestive of the beat of
+         a pair of enormous wings.
+TEXT
+         a swirl of white mists. Through it, uncertain at first but gradually
+         getting clearer, comes the image of a gleaming sword firmly embedded
+         in a slab of rock.
+TEXT
+         a pair of unfriendly eyes staring at you from darkness. Very slowly the
+         image gets brighter, and gradually the ugly face of an ogre comes into
+         full view.
+TEXT
+         a swirling shower of gold and silver sparks. As you watch, mesmerised
+         by the intricate patterns of their dance, the sparks gather into a
+         circular band of light, which slowly contracts into a gleaming mithril
+         ring.
+TEXT
+         an intense red glow filled with clouds of dark smoke. Far below, an
+         incandescent river of fire can be glimpsed through breaks in the billowing
+         smoke.
+TEXT
+         the head of a minotaur thoughtfully staring back at you.
+TEXT
+         a swirl of darkness. Gradually a core of light develops in its centre,
+         revealing the unearthly vision of a snake-like skeleton entwined with
+         a peculiar metal contraption. Strangly, the image suggest hollow,
+         chambering echoes, as if from a complex network of passages surrounding
+         the place.
+TEXT
+         a rose-coloured glow, which slowly contracts into the image of a huge
+         crown floating in mid-air.
+TEXT     END.VISION
+
+         After a few moments the vision fades, leaving you somewhat giddy and
+         none the wiser for the experience.
+TEXT     NO.SCRYING
+         It is *much* too dark for scrying!
+TEXT     NEED.ORB
+         There's nothing here suitable for scrying.
+TEXT     BAD.FIT
+         Don't even bother to try, the helmet quite clearly won't fit.
+TEXT     YER.WEARING
+         You are already wearing the #!
+TEXT     YER.NOT.WEARING.IT
+         You can't remove something you are not wearing!
+TEXT     DOOR.NOT.FOR.BREAKING
+         The door is not only locked but appears to have been reinforced
+         by some exceptionally strong magic. I would say you are wasting
+         your time, and mine too.
+TEXT     THIS.IS.NOT.OIL
+         I hope you are not taking the contents of the vial for a vulgar lubricant!
+TEXT     NO.DRINK.VIAL
+         The liquid does not look particularly wholesome to me. In any case,
+         the vial is tightly sealed and if you do insist on sampling that
+         alchemical brew, you'll have to figure out how to get at it first.
+TEXT     SUCH.VANITY
+         Very fetching, dearie, but I think we'd better take it off again.
+         It might give the dwarves some strange notions, you know.
+TEXT     WEAR.RING.PERHAPS?
+
+         (Perhaps you should have worn some sort of protection before taking
+         that nonchalant stroll).
+TEXT     FEEL.FOOLISH
+         Feeling, I hope, rather foolish, you carefully lower the crown on
+         your head. It feels strange. Lighter than one might expect too.
+TEXT     SNAKE.MISSES
+         The snake attempts to block your way, but its movements are sluggish
+         and you manage to slip past. The snake, now fully awake, hisses
+         angrily after you.
+
+TEXT     USE.TOO.VAGUE
+         Use, use... I really detest this way some of you humans use the vaguest
+         sort of instructions and expect the details to take care of themselves!
+         You'll have to be more specific than that.
+TEXT     FIGURE.WAVES
+
+         The shadowy figure seems to be trying to attract your attention.
+TEXT     VAIN.REFLECTION
+         Right now, reflecting on your problems will do you no good.
+TEXT     PRETTY.REFLECTION
+         You reflect very prettily.
+FRAGMENT SHADOW.HINT
+         Are you suitably perplexed?
+TEXT
+         This may be the time and the place to reflect on your problems.
+TEXT     NO.SPEAK.DWARVISH
+         Sorry, my knowledge of Dwarvish is limited to a few useful expletives.
+TEXT     TRANSLATE.WHAT?
+         There is nothing here one could possibly #.
+TEXT     RED.HERRING
+         It's just an ordinary drawing of a fish. Clupea Harengus by the looks
+         of it.
+FRAGMENT GORGE.HINT?
+         Are you stuck?
+TEXT
+         Well, you will definitely need more magic than a wave of a wand
+         to cross that gorge.
+FRAGMENT STATUE.HINT?
+         You are not stuck again, are you?
+TEXT
+         For what it's worth, it is written:
+         "Stand where the statue gazes, and make use of the proper tool".
+TEXT     SUCKER.HINT
+         (Fancy the sucker paying for a hint freely available elsewhere!)
+FRAGMENT OGRE.HINT?
+         Are you trying to do something about the ogre?
+TEXT
+         Well, whatever weapon you eventually use against that meanie, I
+         would suggest you do not get TOO close using it.
+FRAGMENT SAFE.HINT?
+         Are you trying to work out how to open that safe?
+TEXT
+         Well, as an honest, hard working sprite I naturally would not know
+         much about such things, but a friend of mine works in another game
+         for Frobozz Magical Safe Company and he reckons that, given the right
+         skeleton key, no safe is ever really safe, keyhole or no keyhole.
+TEXT     E.P.N.S.TO.YOU.TOO
+         And electro-plated nickel silver to you too!
+TEXT     DRAGON.VANQUISHED
+         Congratulations! You have just vanquished a dragon with your bare
+         hands! (Unbelievable, isn't it?)
+TEXT     TROLL.WANTS.MORE
+         The troll steps out from beneath the bridge and blocks your way.
+TEXT     FUNNY.NOT.CLEVER
+         From beneath the bridge there sounds a muffled bellow of frustrated
+         avarice. The troll stomps out, resumes his position by the end of
+         the bridge, and glowers fiercely in your direction. "Very funny,"
+         you hear him mutter, "but not very smart - you'll pay for that!"
+TEXT     FOOL.ME.ONCE
+         The troll nimbly steps to one side and grins nastily as the nest of
+         golden eggs flies past him and plummets into the chasm. "Fool me
+         once, shame on you;  fool me twice, shame on me!" he sneers. "I want
+         something a touch more substantial this time!"
+TEXT     BAD.ORDER
+         What's the matter, can't you follow a simple rule? Now you'll have to
+         start all over again...
+TEXT     LOOKS.GREASY
+         Well, what can I say? Looks greasy. Pretty low quality, but you
+         would not expect to find grade "A" stuff oozing out of a rock?
+         Would you? Oh, all right, I should have known...
+FRAGMENT PENTAGRAM.TROUBLE?
+         What?! You mean to say you are baffled by a mere pentagram?
+TEXT
+         In the olden days, practitioners of the Black Arts used pentagrams
+         for confinement of demons and sundry nether spirits. And don't bother
+         to ask me what a demon is - there are limits!
+TEXT     STARSTONE.IGNITES!
+         As it falls, the starstone is suddenly engulfed in a blinding
+         conflagration of cold blue fire! The incandescence gradually subsides
+         and when your eyes begin to function properly once again, you see the
+         starstone on the ground, shining brightly with shimmering blue light.
+TEXT     STARSTONE.LIGHTS.UP
+         As it falls, the starstone suddenly lights up with iridescent blue glow!
+TEXT     HELP.WILL.COST.YOU!
+         Yeah, well, I really can't see what you hoped to achieve by getting
+         yourself lost in the forest. I can get you out, but it will cost
+         you # points.
+FRAGMENT WANT.OUT?
+         Do you really want help that badly?
+TEXT     NO.DOOR
+         The building may have had a proper door once, but if so, it is long
+         gone. If you want to get #, why not just go #?
+TEXT     NOTHING.MORE.TO.READ
+         There is nothing more on it to read.
+TEXT     TELL.ME.MORE
+         I can't work out what you mean by "#". If it's meant to be an
+         abbreviation, it is too short to be unambiguous.
+TEXT
+         There are at least two words in my vocabulary starting with "#" and
+         not being a mind reader, I cannot guess which of them you mean.
+TEXT
+         What, "#"? You speak ambiguously.
+TEXT     MORE.ME.TELL
+         Sorry, I know at least two words beginning with "#". Could you be a bit
+         more specific, perhaps?
+TEXT     NO.OPEN.BAG
+         Whatever for? If you are thinking of the vending machine, I should
+         advise you that pieces of eight do not constitute a legal coinage.
+TEXT     BOTTLE.NO.STOPPER
+         How? It has no stopper and you are out of corks.
+TEXT     CANT.SEARCH
+         No such luck! It's you who'll be doing the searching in this game.
+TEXT     OWL.V.DRAGON
+         You hear a flurry of wingbeats and sounds of a brief battle...
+         (rustle .. HOOT! .. hisss .. WHOOSH .. hoot? ... Chomp, 
+         Chomp...)
+TEXT     ABSOLUTELY.NOTHING
+         With a deafening silence absolutely nothing happens.
+TEXT     JONAH.DEAD.END
+         If you are trying to get beyond the stalactites, I think you are
+         wasting your time. Nobody has managed it yet.
+TEXT     PEA.SOUPER
+         A real pea-souper. Dead easy to get lost in.
+TEXT     VOCAB.FIRST
+         Here's a list of words I know. With the exception of magic formulae,
+         it contains (but is not limited to) all words you need for the ultimate
+         success. Some synonyms are given here and there in brackets, though
+         here too the list is by no means exhaustive. Needless to say, I know
+         quite a few other more or less useful words - some of them for use by
+         wizards and none of your business.
+
+         First, the verbs. I've included here some words which are not verbs in
+         the strict grammatical meaning of the word, but which are nonetheless
+         acted upon as such (e.g. 'terse').
+
+         Verbs: 
+        /       blast, break, brief, change, climb, close (lock), cross, cut,
+        /       dig, drink, drop (DR, free), eat, enter (in), exit (out),
+        /       extinguish (off), feed, fill, go (walk, run), get (G, take, T),
+        /       help (?), history, hit, hoot, info, inventory (I), jump, kill,
+        /       lift, light (on), listen, look (L, examine, X), news, open
+        /       (unlock), play, pour, quit (Q), read, reflect, remove, rest,
+        /       restore, retreat (back), ride, rub (polish), save, say, score
+        /       (SC), scry, tame (placate), terse, throw (TH), translate,
+        /       verbose, vocabulary, wash, wave (swing), wear.
+TEXT
+         Next come nouns. These describe things and beings you can sensibly
+         refer to and may (or may not) be able to manipulate.
+
+         Nouns: 
+        /       axe, bag, basilisk, batteries, beads, bear, bird, bones,
+        /       bottle, bracelet, cage, chain, chalice, chasm, chest
+        /       (treasure), clam, coins, crown, crucifix, curtains, diamonds,
+        /       dinghy, djinn, documents, door, drachma, dragon, drain,
+        /       drawings, dung, dwarf (dwarves), eggs (nest), emerald, fish,
+        /       flask, fog, food, gate, giant, goblins, gold (nugget), gong,
+        /       grate, grill, helmet, horn, inscription, jewelry, keys, lamp,
+        /       machine (vending), magazine (Spelunker), mirror, mist,
+        /       mushroom, notice, ogre, oil, opals (casket), orb (globe), owl,
+        /       pearl, pillow, pirate, plant (beanstalk), plaque, plate,
+        /       portcullis, pottery (shards), pyramid, rags, rat, ring, rod,
+        /       rope, rug, safe, sapphire, sceptre, sculpture, silver (bars),
+        /       skeleton, slime, snake, spices, spider, spoon, spyglass,
+        /       stalactite, starstone, statue, steps, sword, tablet, teeth,
+        /       throne, tortoise, tree, trident, troll, tusk, unicorn, vase,
+        /       vial, water, web, yacht.
+TEXT     VOCAB.LAST
+         Finally, the directions and some travel options.
+
+         Directions: 
+        /            north (N), northeast (NE), east (E), southeast (SE),
+        /            south (S), southwest (SW), west (W), northwest (NW),
+        /            up (U) and down (D), downstream, upstream.
+
+         Travel options are special words, like BUILDING, which allow you
+         to travel some distance in one move. Naturally, they only work in
+         a few restricted places. Just where, you will have to discover for
+         yourself.
+
+         Travel options: 
+        /                barren, bedquilt, building, depression, fork, pit,
+        /                secret, view, ...
+
+         I am myself unsure of the complete list. There may be others.
+TEXT     WEAKLING
+         There's no helping it! You just aren't strong enough to pull the
+         sword out of the stone.
+TEXT     HELLO.SAILOR
+         Hello, sailor! What are you doing in THIS game?!
+TEXT     IVE.CROSSED
+         Ok. Things don't look any different from this side. Can't think why
+         you bothered - it's only a little brook.
+TEXT     HEAR.NOTHING
+         Can't hear anything unusual. Can you?
+TEXT     HEAR.MUSIC
+         I dare say such expressions of artistic sensitivity do you credit,
+         but passing your time listening to the # does not actually score
+         any points.
+TEXT     EERIE.AINT.IT?
+         Eerie, isn't it?
+TEXT     NOT.IN.THIS.NOISE!
+         In this noise?! You jest.
+TEXT     NO.LISTENING
+         This is no time to listen! Better start contemplating your life
+         expectancy while you still have any.
+TEXT     BIRDIES.SING
+         Birds sing, wind sighs, insects buzz - what else do you expect on
+         a sunny day like this?
+FRAGMENT BAD.ALL.1
+         What, #
+TEXT     BAD.ALL.2
+         _#, just like that? That's a pretty cavalier way of doing
+         things! How about trying to be a bit less wholesale?
+TEXT     FANCY.THAT
+         Really? Well, fancy that!
+TEXT     CRYSTAL.BRIDGE
+         A [mournful/joyous] chord reverberates through the air
+         as [the/a] crystal bridge [spanning/materialises over] the
+         fissure[ fades away./!]
+TEXT     IT.PLAYS.A.TUNE!
+         Each of your steps over the crystal bridge calls forth a cluster of
+         glass-like tones, marking your progress with a disharmoneous, yet
+         strangly beautiful cascade of sound.
+
+TEXT     MORE.TUNES
+         You tinkle your way across the crystal bridge.
+
+FRAGMENT YOU.DO
+         You #
+TEXT     IT.IS
+         _the #.
+FRAGMENT IT.IS...
+         _the #.
+TEXT     YOU.FREE
+         You free the #.
+TEXT     IT.POURS.OUT
+         _The # pours out.
+TEXT     BOUGHT.BATTERIES
+         You drop the coins into the coin slot. The machine comes to life
+         and after some clicking and clanking reluctantly disgorges some
+         fresh batteries.
+TEXT     YOU.CATCH.BIRD
+         You catch the bird and put it into the cage.
+TEXT     RATS.HERE
+         There is some *thing* swimming in the sewage!
+TEXT
+         You feel a vicious bite on the ankle from something in the sewage!
+TEXT
+         A large black sewer rat eyes you hungrily from the edge of the sewage,
+         then slips below the surface.............
+TEXT
+         There are sewer rats all around you, their eyes glinting in the
+         lamp light.
+TEXT     RATS.FEAST
+         You feel several bites on your legs. You try to protect them, but more
+         rats sink their teeth into your arms, then one leaps from the sewage
+         and hangs onto your ear, weighing you down, now they are at your
+         throat.............
+TEXT     EASY.TO.SAY
+         Easier said than done!
+TEXT     RATS.MIGHT.EAT.YOU
+         Philanthropy is thoroughly out of place here! If you are not jolly
+         careful, feeding rats is exactly what you'll be doing pretty soon.
+TEXT     WHAT.ABOUT.IT
+         Yeah? What about it?
+FRAGMENT DUNNO.HAO
+         I don't know how to #
+TEXT     SUCH.A.THING
+         _a thing like #.
+TEXT     IS.THAT.SO?
+         Oh.
+TEXT     WELL.THERE.IT.IS
+         I should have known.
+TEXT     I.SEE
+         I see.
+TEXT     WEST.WILL.DO
+         By the way, you don't have to keep saying "# west" and such like.
+         Just "west" (or "w"), "northwest" (or "nw") etc. will do.
+
+         Now then, where were we...
+TEXT     SCATTER.TEETH
+         You scatter the dragon's teeth on the ground.
+TEXT     PENTAGRAM.INFO
+         A bit worn by generations of adventurers, but I guess still quite usable.
+FRAGMENT STATUE.2.HINT?
+         Baffled as to what the 'proper tool' might be?
+TEXT
+         Oh, all right!... Consider, in what other context does the word 'tool'
+         occur in the cave. I really can't be more explicit than that.
+TEXT     CAGE.WITH.BIRD
+         _the cage with the bird in it.
+TEXT     NO.PLURAL.PLEASE
+         Now, let's not get too ambitious - one at a time, please.
+TEXT     PARDON?
+         Pardon?
+FRAGMENT BASILISK.HINT
+         Unsure how to avoid getting stoned?
+TEXT
+         Salvation may lie in hard work.
+TEXT     DONT.MENTION.IT
+         That's ok, don't mention it...
+TEXT     YOU.HOOT
+         Your hoot echoes in the distance, but otherwise nothing happens.
+TEXT     BLOB.CHASES
+TEXT
+         From somewhere in the distance comes an ominous bubbling sound.
+
+TEXT
+         The bubbling sound grows louder.
+
+TEXT
+         The bubbling sound ends with a loud \>splash\<.
+
+TEXT
+         A hollow, echoing \>ROAR\< sounds in the distance.
+
+TEXT
+TEXT
+         A strange throbbing sound can be heard in the distance.
+
+TEXT
+TEXT
+         The throbbing sound is growing louder.
+
+TEXT
+TEXT
+         The source of the throbbing sound is approaching quickly. Another
+         hollow \>ROAR\< echoes through the cave.
+
+TEXT
+TEXT
+         There is a loud \>ROAR\< only a short distance away!!
+
+TEXT
+TEXT
+         Into view there bounces a horrible creature!! Six feet across, it
+         resembles a large blob of translucent white jelly;  although it looks
+         massive, it is bouncing lightly up and down as though it were as light
+         as a feather. It is emitting a constant throbbing sound, and it
+         \>ROAR\<s loudly as it sees you.
+
+TEXT
+         There is an immense and unfriendly-looking blob in the room with you!
+
+TEXT
+         The blob \>ROAR\<s triumphantly and bounces straight at you with amazing
+         speed, crushing you to the ground and cutting off your air supply
+         with its body. You quickly suffocate.
+TEXT     DELICATE.STRUCTURE
+         An excuisitely delicate structure. Looks like Bohemian crystal, but you
+         never know nowadays, it might be plastic. I dare say it is safe enough,
+         just don't stomp too hard.
+TEXT     RICKETY.AFFAIR
+         A rickety conrtaption, quite likely to collapse one of these days.
+         I guess the troll is just too mean to have it fixed.
+TEXT     BRIDGE.IS.GONE
+         Whatever's left of the bridge is at the bottom of the chasm. I am not
+         climbing down there just to satisfy your curiosity.
+TEXT     NOTHING.SPECIAL
+         There is nothing special about the #.
+TEXT     SEWAGE.H20.BAD
+         I'm afraid that all that's available here is sewage... you'd better
+         try elsewhere.
+TEXT     INDIGNANT.BIRD
+         The thump from [below/above] is followed by a loud and highly
+         indignant series of chirps. I suspect it's just as well that
+         I don't understand any of it!
+FRAGMENT THE.IT
+         The #
+TEXT     MELODRAMATIC
+         A bit melodramatic, perhaps. One of my creators thought things were
+         getting a bit dull, so he put the mask into the description. It has
+         no other existence, so you can't do anything to it.
+TEXT     JUST.A.FIXTURE
+         The #? It's just a fixture of no particular significance.
+TEXT     COLD.ASHES
+         The ashes are quite cold. Except for that curious indentation, there
+         is nothing remarkable about them.
+TEXT     NEED.RAGS
+         You have nothing suitable for #ing the plate.
+TEXT     FRAGILE.ARCH
+         It arches gracefully over the lava gorge, which bubbles and spits
+         below. The near section looks a bit fragile, but probably solid enough
+         to support your weight. As for the rest of it... who knows? The
+         top of the arch is shrouded in fumes and the further end is too
+         distorted by the intervening mass of hot air to be able to make out
+         any details.
+TEXT     DISTANT.STREAMBED
+         The bottom of the streambed is shrouded in darkness and the way down
+         looks very treacherous indeed.
+TEXT     CLIMBING.OUT.RISKY
+         Climbing out of windows can be very dangerous. In this game it is also
+         quite pointless.
+TEXT     RUG.NOT.FOR.FLYING
+         The rug is a very fine one, but there is nothing magical about it, so
+         you can forget any notions of using it for effortless whizzing about.
+TEXT     FOREST.TOO.DENSE
+         The forest in that direction is too dense to fight your way through.
+TEXT     EXPANSIONS.START
+         Ok, here are the expansion areas grouped (and repeated) according to
+         the version of Adventure you may have encountered. Not all expansions
+         are important (though most definitely are) and some may be less than
+         immediately obvious. You will also find other changes and additions here
+         and there, but this lot should be quite sufficient to get you going.
+
+         If you only know the original Adventure, you should explore around the
+         Antechamber, the Reservoir, the South Side Chamber, the Breathtaking
+         View, the Giant Room, the Hall of the Mountain King, the Arched Hall
+         and around the building.
+
+         Adventure II devotees should visit the Breathtaking View, the Giant
+         Room, the Hall of the Mountain King, the Arched Hall and Above Chapel.
+         Exploring above ground is also recommended.
+TEXT     EXPANSIONS.END
+         Adventure 550 (or Adventure3) players will find changes in the South
+         Side Chamber, the Anteroom, the Reservoir, the Lava Tube and above
+         ground. There are also noteworthy changes (though no actual expansion)
+         in the Toolroom and in the Catacombs.
+
+         All players should read carefully through the text provided by INFO and
+         the 'vanilla flavoured' HELP. Both have been substantially modified.
+
+         Now go forth and enjoy yourself!...
+FRAGMENT INTERESTED?
+
+         Are you interested?
+TEXT     YOU.REST
+         You settle yourself down for a bit of rest, but soon realize that
+         this is getting you nowhere, and get up again.
+TEXT     NOT.QUITE
+         For a brief moment you have a feeling that something might happen,
+         but then, nothing does.
+TEXT     WAS.VALUABLE
+
+        =                   "THE OBJECT WAS VALUABLE"
+TEXT     WAS.NOT.VALUABLE
+
+        =                 "THE OBJECT WAS NOT VALUABLE"
+TEXT     JUST.ABOUT.VALUABLE
+
+        =             "THE OBJECT WAS JUST ABOUT VALUABLE"
+TEXT     HAD.BEEN.VALUABLE
+
+        =                "THE OBJECT HAD BEEN VALUABLE"
+TEXT     NOT.SURE.IF.VALUABLE
+
+        =            "MMMM... NOT SURE... GOT ANOTHER ONE?"
+TEXT     PUT.IN.NICHE
+         You drop the # into the niche.
+TEXT     TUSK.IN.NICHE
+         With a bit of a strugle you manage to stuff the tusk into the niche.
+TEXT     CAGED.BIRD.IN.NICHE
+         You drop the cage, and the bird in it, into the niche.
+TEXT     NO.VALUE.BIRD
+         You take the bird out of the cage and put it into the niche. The bird
+         promptly flies out, lands on the floor and begins to sing.
+TEXT     VASE.IN.NICHE
+         You carefully drop the vase into the niche and it delicately shatters
+         into tiny fragments.
+TEXT     STARSTONE.IN.NICHE
+         As you drop the starstone into the niche, it emits a short flash of
+         blue light and for a brief moment becomes curiously unfocused.
+TEXT     STARSTONE2.IN.NICHE
+         As you drop the starstone into the niche, it suddenly lights up with
+         iridescent blue glow.
+FRAGMENT VALUATION.IN.PROGRESS
+
+         As you step back, a dark shiny cover slides noislessly out of the wall
+         and closes the niche off. From behind it you can hear intermittent
+         buzzing, hissing and whirring noises, occasionally accompanied by
+         showers of sparks, dimly visible through the somewhat transparent
+         cover. After a while the sounds stop and the cover snaps open releasing
+         a strong smell of ozone and revealing the inside of the niche. A
+FRAGMENT ANOTHER.VALUATION
+
+         The cover slides out of the wall and the niche goes through its buzzing,
+         hissing and whirring routine. When the cover finally snaps open, a
+TEXT     VALUATION.END
+         _large sign lights up briefly on the wall above, saying
+FRAGMENT RUFFLED.BIRD
+         _ruffled little bird hops out and flies off, chirping angrily.
+         A
+TEXT     NO.VALUE.SELF
+         You are too big to fit in. In any case, don't you know your own
+         worth?
+TEXT     DEEP.NICHE
+         The niche is lit in some manner, although you cannot determine how.
+         It is looks large enough to take any objects you might wish to drop
+         in there. Curiously enough, while there is plenty of dust all around,
+         none has accumulated in the niche itself.
+TEXT     WELL.NO.CLIMB
+         You clamber up the sides of the well and upon reaching the top find a
+         stone slab blocking your ascent. You give the slab a push and it
+         refuses to budge. You push some more, but it is no use. Swearing through
+         your teeth you climb down again.
+
+         You didn't *really* think this would work, now did you?
+TEXT     BACK.TO.DUNGEON
+         You push against the ceiling where you reckon the loose flagstone ought
+         to be and it duly opens. You climb out through the opening, letting the
+         flagstone drop back into place.
+
+FRAGMENT SNAKE.HINT.2?
+         Are you still trying to get past the snake?
+TEXT
+         Well, it may be just a matter of emphasis. I said "You can't drive the
+         snake away...", remember? You probably assumed I meant "You CAN'T".
+         Suppose it was "YOU can't"? Does it not suggest an alternative line
+         of thought? It doesn't? Oh, don't tell me, let me guess - you've
+         never met a thought before and are really just an expert Klingon
+         basher! Well, I suppose it takes all kinds...
+TEXT     SOMETHING.DROPS
+         You have the strange sensation of something quietly wriggling out
+         of your hand...
+
+TEXT     BUMP.NOSE
+         You bump your nose against a wall.
+TEXT     STOP.PISSING.ABOUT
+
+         All this exploring of dark places is doubtless very romantic, but that
+         unicorn won't wait forever, you know.
+TEXT     UNICORN.DEPARTS
+         You bump your nose against a wall... again. As you rub it, swearing
+         under your breath, you suddenly hear a quick staccatto of hoofs
+         somewhere in the distance. The sound quickly dies away, leaving
+         you with an uneasy feeling that you've just blown your chances of
+         becoming an Adventurer Grandmaster.
+
+         Well, don't tell me I didn't warn you.
+TEXT     WELLHOUSE.YOU.DUMMY
+         No, no... a misunderstanding. "Well house" does not imply a "well".
+         It just means that the spring wells out within the house. There is no
+         well to be seen here. I hope I am making myself clear enough for you.
+TEXT     SPRING.IS.WATER
+         I really don't know what you are getting at. The spring is a source
+         of water. Nothing more to it. If you want to get into the cave, I
+         suggest you look elsewhere.
+TEXT     NOT.GOING.ANYWHERE
+         The # is not going anywhere.
+TEXT     WATER.IS.FOR.DRINKING
+         Water in this dungeon is provided primarily for quenching thirst.
+         It does, of course, have other points, e.g. in its decorative
+         value or as a natural obstacle to bar your progress in
+         strategically chosen places.
+FRAGMENT WANT.SEE.REST?
+         ... Do you want me to list the rest of the pile?
+TEXT     ITS.A.BEANSTALK
+         Looks like a [stunted/pretty common/gigantic] fairy beanstalk.
+TEXT     PLANT..WATER
+         The plant spurts into furious growth for a few seconds.
+TEXT
+         The plant grows explosively, almost filling the bottom of the pit.
+TEXT
+         You've over-watered the plant! It's shriveling up! It's, it's...
+TEXT     SNEAKY.CRUNCH
+         As you creep about in the dark, you incatiously stumble over a rock
+         outcrop and with an almighty
+        =                              \>\>\>\>\>CRUNCH\<\<\<\<\<
+         split your head on a conveniently positioned sharp stone.
+TEXT     NOWHERE.MIST
+         Well, not mist, really. Just a thin, pearly sort of gauze. It's only
+         here to make the description a bit more atmospheric.
+TEXT     CURTAINED.WALLS
+         You can't see the walls - they are covered by the curtains.
+TEXT     CURTAINS.FIXED
+         The curtains are fixed near the ceiling and cannot be opened, but
+         passage through may be possible, if there are any openings behind.
+TEXT     NO.OPEN.CURTAINS
+         The curtains are fixed somewhere above the other side of the opening,
+         but will, probably, permit passage.
+TEXT     NO.WALLS
+         As could be plainly inferred from the description by anybody with
+         even a very modest amount of intelligence, this strange place has
+         no such conventional features as walls. Before you ask, no, it
+         has no floor, ceiling, doors or windows either. I hope, the
+         fact does not come as a surprise.
+TEXT     SEALED.FLASK.INFO
+         It is a small earthenware flask, sealed with red wax. The seal is worn
+         with time, but if you look carefully, you can still make out the shape
+         of the Solomon's Seal imprinted into it. Or rather, you could if you
+         knew what a Solomon's Seal was, which, in the circumstances, might be
+         advisable.
+TEXT     DOWN.THE.DSHAFT
+         _reside[s/] momentarily on the sloping surface, then slide[s/] down
+         the drain and disappear[s/].
+TEXT     NO.CAP
+         How? The seal is broken and you have no cap to fit.
+TEXT     INSAFE.INFO
+         The inside of the safe is completely featureless. Look as you might,
+         you are not going to discover anything of interest.
+TEXT     STORE.DOOR
+         The door is made of solid oak, darkened with age, and reinforced with
+         iron strips. It is firmly locked and bound into place by a powerful
+         spell for good measure. The notice obviosly means just what it says.
+TEXT     DOOR.NOTICE
+         It still says       "DWARVES STORES - NO ACCESS".
+TEXT     REMOVE.IT.FIRST
+         You'd have to remove the # first.
+TEXT     WHISPERS.STOP
+         You take the crown off.... and the whispering sound fades away.
+TEXT     VOICES.STOP
+         You remove the crown and the voices stop.
+TEXT     CHANTING.STOPS
+         You remove the crown and are greatly relieved to find that the
+         chanting stops.
+TEXT     ROAR.STOPS
+         You snatch the crown off your head. Your ears still ring for a
+         while with the echo of the roar, but the sound itself is gone.
+TEXT     JUST.IN.TIME
+         You tear the crown off your head - none too soon I would say - and
+         spend a while just sitting on the floor, fighting nausea and trying
+         to forget the frightening impact of the roaring chant. Finally you
+         get up, a bit shakily perhaps, ready to continue your explorations.
+TEXT     CROWN.SOFT
+         You strain your ears...
+TEXT     CROWN.LOUD
+         You pause and listen...
+TEXT     DEBRIS.NOTE
+         It still says "Magic word XYZZY". What did you expect?
+TEXT     NUGGET.ROOM.NOTE
+         It says the same as before: "[You/Ok, YOU] won't get[ it/] up
+         the steps[/!]". Too true, if you ask me.
+TEXT     VALUERS.NOTE
+         It still reads "Drop your objects here for a free valuation".
+TEXT     FLAGSTONE.INFO
+         The large flagstones covering the floor look old and pretty solid.
+         They fit tightly together, but one seems to rock a bit under your
+         probing hand.
+TEXT     VOICES
+
+         You suddenly realise that the voices are gone.
+TEXT
+
+         You can hear a soft whispering sound somewhere nearby.
+TEXT
+
+         A whispering sound wafts around you.
+TEXT
+
+         A sound like that of several whispering voices seems to be lingering
+         in the air.
+TEXT
+
+         Soft voices seem to whisper something quietly into your ears.
+TEXT
+
+         Whispering voices swirl about you. If you listen carefully, you could
+         almost make out some words...
+TEXT
+
+         You are surrounded by the sound of murmuring voices. All you can
+         make out is "... the keys......... the keys......... the keys....".
+TEXT
+
+         A chorus of soft voices murmurs into your ears
+        =              "... four....... four....... four....... four..."
+TEXT
+
+         A soft voice startles you by saying very clearly and distinctly
+
+        =              "Of the keys, there are FOUR..."
+TEXT
+
+         One of the voices begins to chant
+
+        =              "Blerbi, Blerbi, Blerbi...."
+TEXT
+
+         The first voice gets gradually louder and is soon joined by another,
+         chanting
+
+        =              "Klaetu, Klaetu, Klaetu..."
+TEXT
+
+         Now three ghostly voices clamour in your ears chanting:
+
+        =         Blerbi                KNERL        KNERL
+        =   Klaetu        KNERL    Blerbi      Blerbi     Klaetu
+        =       KNERL           Klaetu     Blerbi      Klaetu      KNERL
+        =               Blerbi                    KNERL
+
+         Strangely enough, your hearing is not at all affected by the ghostly
+         din.
+TEXT
+
+         As the chanting becomes louder and louder, a fourth voice can be heard
+         in the chaotic chant:
+
+        =                         SNOEZE          SNOEZE...
+        =                                 SNOEZE
+TEXT
+
+         You are surrounded by a chaos of disembodied voices chanting
+        =
+        =     KNERL          SNOEZE     BLERBI          KNERL
+        =         KLAETU               SNOEZE      BLERBI       BLERBI
+        = KNERL      SNOEZE      BLERBI                KLAETU
+        =        BLERBI                     KNERL              SNOEZE
+        =                 KLAETU    KLAETU         SNOEZE             BLERBI
+        =     KLAETU           SNOEZE                      KNERL
+TEXT
+
+         The chant is swiftly turning into a disturbingly loud roar and it
+         is beginning to be difficult to distinguish the individual words.
+         You try to block your ears, but it is no good, the sound is really
+         in your mind.
+TEXT
+
+         The ghostly chanting is rapidly becoming intolerably loud. It is no
+         longer possible to distinguish in it any words, but its shifting
+         rythm beats against your mind with the ferocity of a hurricane.
+TEXT
+
+         You feel surrounded by a roaring sea of sounds, rippling with crossbeats
+         and crescendoes of the chant. The volume is increasing steadily and you
+         can feel your sanity wavering under the assault of the sound.
+TEXT
+
+         The roar of voices in your head raises to an impossible crescendo.
+         In the last flash of sanity, you attempt to claw the crown off your
+         head, but it is too late - the darkness envelops you as your mind
+         is torn to shreds by the triumphant voices, swirling in for the kill.
+TEXT     ITS.A.WINDOW
+         It's a window - a hole in the wall, if you pardon such a vulgar, though
+         apt, description. No glazing. Civilization has not reached this far yet.
+TEXT     NO.GLASS
+         The window is just a hole in the wall. There is nothing in it to #.
+TEXT     SPLASHING.NOISES
+         You pause for a while and listen to the splashing sounds.
+TEXT     HOUSE.INFO
+         It's no architectural miracle - just a simple brick structure with no
+         windows, serving as a well house for a large spring.
+TEXT     SLAB.INFO
+         A massive hunk of stone. Nothing particularly special about it.
+TEXT     HEELPRINT.INFO
+         You examine the heelprint-like indentation and find nothing of interest.
+TEXT     YOU.HIT.NOTHING
+         You flail about wildly with your #, but hit nothing.
+FRAGMENT YOU.WAVE
+         You wave your hand in the air.
+TEXT     NO.ONE.WAVES.BACK
+         _Nobody waves back. Amazing, isn't it?
+TEXT     THIS.WAY.OUT
+         There is no "#" here. Just insubstantial glowing letters
+         hanging in mid-air. They spell "This way out", just as they did
+         the last time you looked.
+TEXT     NO.KILL.DARWIN
+         Darwin blinks in surprise, but being used to all sorts of customers
+         simply blows a few bubbles and sinks back into the depths of the lake.
+TEXT     MAZE.HELP.OFFER
+         Well, this is strictly against the rules, but if you are really desperate
+         I can get you out of here. It'll cost you, of course. The standard charge
+         is # points anyway, but on top of that you'd have to leave here any
+         valuables you happen to carry.
+
+TEXT     MAZE.HELP.NO.OFFER
+         Sorry, you are an experienced enough player to be able to find your own
+         way round mazes.
+TEXT     CLEAN.NOW
+         You splosh some water on your face and discover that it is not really
+         all that cold. Somewhat encouraged, you strip off and climb into the
+         stream. (Don't worry, I am not looking - I know this bit by heart).
+         Curiously enough, the water now feels quite warm and a bit soapy. You
+         scrub yourself and give your posessions a proper rinse. As you climb out
+         again, a hot breeze springs out of nowhere in particular and quickly
+         dries you off. You put on your clothes, also quite dry by now, and feel
+         cleaner than you have been for ages. Magic, ain't it?
+TEXT     IN.THIS.MUCK?
+         In case you haven't noticed, you are wading through some pretty mucky
+         sewage. If you are trying to catch cholera, I can assure you there are
+         much quicker ways of commiting suicide around here.
+TEXT     CLEAN.ENOUGH
+         You splosh some water on your face, but it is bitterly cold and you
+         quickly decide that you are quite clean enough as you are.
+TEXT     NO.WASTE.WATER
+         Personal hygiene is all very well, but only a B-movie adventurer would be
+         daft enough to waste his meagre water supply for the sake of appearances.
+TEXT     NOTHING.TO.WASH.WITH
+         There is nothing here suitable for washing in.
+FRAGMENT STREAM.OFFER
+         Bored with wandering around here?
+TEXT
+         Well, I do confess I have been leading you round in circles. For
+         your own protection, really, or the dwarves might object rather
+         strongly, as you must realise. They have been known to take some
+         pretty drastic measures on past occasions.
+TEXT     WHATEVER.FOR?
+         Whatever for? There's no profit in it.
+TEXT     RAGS.DIRTY
+         Don't bother. Nothing in the world is going to make those tatty things
+         look any better - short of a Fairy Godmother that is, and hardened
+         adventurers aren't supposed to believe in fairies.
+TEXT     WASH.YOURSELF
+         Half-measures won't get you anywhere, flower.
+TEXT     DRAIN.OUT.OF.REACH
+         The drain is on the other side of the portcullis, too far from here.
+TEXT     NO.CLIMB.PORTCULLIS
+         Climb the portcullis? You'd only get rusty all over. There is no way
+         to get to the other side up there either.
+TEXT     SOMETHING.STRANGE
+         Oh... something strange here. Don't think this is where we
+         were supposed to wind up.
+
+TEXT     CONFUSED.AGAIN
+         Sorry, somehow I think I got confused again...
+
+TEXT     CLEAN.AGAIN
+         You wash yourself and your posessions in the stream.
+TEXT     D.IS.FOR.DOWN
+         'D' means 'DOWN', not 'DROP'... remember? Try again.
+TEXT     UNICORN.WONT.MOVE
+         The unicorn digs in its hoofs and refuses to move.
+TEXT     SWEAR.WORDS.FIRST
+         Frob this frigging game!
+TEXT     
+         Kurnik shofa, aleluia!
+TEXT
+         Kruci puci mordygol!!
+TEXT
+         Do prkenny vohrady!
+TEXT
+         Do paroma uparchum!
+TEXT
+         Oioioi Ulan-Bator!!
+TEXT     SWEAR.WORDS.LAST
+         Sakramenta sastafta!
+TEXT     FEELING.BETTER?
+
+         There, feeling better now?
+TEXT     YOU.ARE.NOT.THERE
+         That's not where you are, in case you haven't noticed.
+TEXT     PLENTY.OF.TREES
+         Plenty of # around here. Do you have any particular direction
+         in mind?
+TEXT     NOT.AROUND.HERE
+         No # around here!
+TEXT     GOOD
+         Good!
+FRAGMENT UP.THE.DOME
+         The # sails through the air and lands in the passage on the top
+         of the dome._
+FRAGMENT
+         The # sail through the air and land in the passage on the top
+         of the dome.
+TEXT     NO.FOOL.STEPS
+         However, the only other effect of this crafty manouvre is a
+         gentle  \>\> ping \<\< from the south. The dome itself remains
+         stubbornly unclimbable.
+TEXT     SUICIDE.SILLY
+         Oh, come, come! Things aren't really that bad. Try to think
+         positively! You know, the "Every day in every way I feel
+         better and better!" routine. And if that doesn't help, you can
+         always quit. Wouldn't it be nice if all life's problems could
+         be solved so easily? Come on, buck up.
+FRAGMENT REALLY.SUICIDE?
+         Oh!... Are you REALLY that desperate?
+TEXT     WALK.WITHOUT.LIGHT
+         Well, I don't know.... Somehow I don't think the Powers That Be
+         would approve. A violent death or two, or an accident here and
+         there, that's one thing, but suicide is something else. Could
+         be altogether bad for the business. You know what? Why don't
+         you just try walking about without a light? Just don't tell
+         anybody it was my idea, there's a good fellow!
+TEXT     FAKE.AN.ACCIDENT
+         Oh, come on! I don't have to tell you again how to fake an
+         accident, do I? One can't help noticing that your intellectual
+         capacity is nothing to brag about, but even that pea-size
+         brainlet of yours should be able to retain sound advice a bit
+         longer than that!
+TEXT     THINGS.COULD.BE.WORSE
+         That's the spirit! Things could be considerably worse, so
+         there's no need to despair just yet.
+TEXT     RUG.ALREADY.IS
+         The rug is already [unrolled/rolled up].
+TEXT     RUG.IS.NOW
+         You [spread/roll] the rug [on the ground/up into a neat tube].
+TEXT     DROP.RUG.FIRST
+         Even an adventurer of little brain should realise that if a rug
+         is too large to be picked up unrolled, then it may be a good idea
+         to drop it before unrolling it again. Let's see how your brain
+         measures up.
+TEXT     I.SAY.DROP.RUG.FIRST
+         I say, drop the rug first, Oh Adventurer of Little Brain.
+TEXT     RUG.TOO.LARGE
+         The rug is too large to be picked up like that. [Yawn.../
+         Perhaps you could exercise your little grey cells in pondering
+         this little problem as a warming up for the challenges yet to
+         come.]
+TEXT     PORTCULLIS.NOW.OILY
+         Well, all right. The portcullis is now oily as well as rusty. I
+         wouldn't call it a great achievement. It's still firmly stuck.
+TEXT     SPOON.STILL.TARNISHED
+         You rub the spoon, and it becomes marginally cleaner, but not
+         any less tarnished. Ravages of age cannot be undone with a rub or two,
+         as you will doubtless discover with years to come...[//  Besides
+         why this compulsive interest in worthless cutlery?]
+TEXT     CHALICE.NOW.DRUNK
+         You drain the remnants of water from the chalice and briefly feel
+         somewhat lightheaded, but that's the only effect there is.
+TEXT     GOT.BEAR
+         Trying to pick up fully grown bears can be detrimental to one's
+         state of health. Fortunately, this one appears to have got the
+         message and is now following your every step.
+TEXT     ALREADY.GOT.BEAR
+         It is not necessary to carry bears in this game. You'll have
+         to be content with the fact that it is following you around.
+FRAGMENT FREED.BEAR
+         You politely indicate to the bear that you no longer desire its
+         permanent company. The bear seems to understand.
+TEXT     GRATE.LOCKED
+         The grate is LOCKED. As should be obvious even to a hedgehog,
+         that means that it cannot be #ed until it is UNlocked! 
+TEXT     PICK.IT.UP
+         You'll have to pick up the # first, lazybones!
+TEXT     CANT.DRINK.EMPTY
+         No matter how I examine the #, it appears to be quite empty. That
+         being so, I am unclear how you propose to drink from it.
+TEXT     NO.DRINK.OIL
+         I am most dreadfully sorry, but I have this quite unreasoned
+         prejudice against drinking oil.
+TEXT     OPEN.FLASK.FIRST
+         I can understand the sight of the flask clouding your wits, but
+         in order to sample its contents, it just might be useful to
+         open the flask first.
+TEXT     NO.OIL.SWORD
+         Such care of your weapon is commendable and would be doubtless
+         suitably rewarded by a dilligent AD&D Dungeon Master, but this 
+         is not an RPG and due to its magical nature, the sword does not
+         require your ministrations.
+TEXT     
+         Don't even bother! If pulling swords out of stones were that
+         easy, once and future kings would be a drachma a dozen.
+#
+FRAGMENT assigned .SPARE.TEXT.1
+#
+FRAGMENT assigned .SPARE.TEXT.2
+#
+TEXT     .OF
+         Value is #.

@@ -1,9 +1,12 @@
 This directory contains the results of the following procedure:
 
-    wget https://www.ifarchive.org/if-archive/games/source/adv660.tar.Z
-    tar zxvf adv660.tar.Z
-    mv adv4_src c
-    mv c/ADVENTURE4.dat .
-    rm adv660.tar.Z
+    wget https://www.mipmip.org/adv660/adv660-10.12-src.tgz
+    tar zxvf adv660-10.12-src.tgz
+    mkdir acode
+    mv adv660-10.12/*.acd acode/
+    cp adv660-10.12/LICENCE acode/
+    mv adv660-10.12/C c
+    cp adv660-10.12/LICENCE c/
+    rm -rf adv660-10.12 adv660-10.12-src.tgz
 
 plus a Makefile to build `adv660` from the C source code.

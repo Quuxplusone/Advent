@@ -1,0 +1,3166 @@
+*        The following acode procedures are associated with
+*        individual places.
+*
+AT       ROAD
+         IFKEY LOOK
+            IFKEY BUILDING
+               QUIP HOUSE.INFO
+            FIN
+            PROCEED
+         FIN
+         MOVE ROAD, WEST, UP, HILL
+         MOVE ENTER, BUILDING, EAST, BUILDING
+         MOVE DOWNSTREAM, STREAM, SOUTH, DOWN, VALLEY
+         MOVE NORTH, FOREST, FOREST.4
+         MOVE NE, NORTH.OF.BUILDING
+         MOVE SE, SOUTH.OF.BUILDING
+         MOVE SW, FOREST.14
+         MOVE NW, PATH, PATH
+         MOVE RAVINE, RAVINE
+         IFKEY DEPRESSION
+            OR
+         IFKEY VIEW
+            LDA LAST.ONE, DARK.FOREST
+            IFKEY DEPRESSION
+               LDA NEXT.ONE, DEPRESSION
+            ELSE
+               LDA NEXT.ONE, STUPENDOUS.VIEW
+            FIN
+            CALL AM.I.CONFUSED?
+         FIN
+         IFKEY DOOR
+            QUIP NO.DOOR, IN
+         FIN
+AT       HILL
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE ROAD, BUILDING, EAST, ROAD
+         MOVE NORTH, PATH
+         MOVE NE, FOREST, FOREST.4
+         MOVE SE, VALLEY
+         MOVE SOUTH, FOREST.14
+         MOVE SW, DARK.FOREST
+         MOVE NW, FOREST.2
+         ANYOF WEST, FORWARD, CLIMB
+            QUERY FORBIDDING.NOTICE
+               SAY YOU.HAD.IT.COMING
+               STOP
+            FIN
+            QUIP JUST.AS.WELL
+AT       HILL
+         CALL FAKE.NOTE
+         KEYWORD CLOSE, GATE
+            QUIP ALREADY.SHUT, ARG2
+AT       BUILDING
+         IFKEY DOOR
+            QUIP NO.DOOR, OUT
+         FIN
+         IFKEY SPRING
+            QUIP SPRING.IS.WATER
+         FIN
+         IFKEY WELL
+            QUIP WELLHOUSE.YOU.DUMMY
+         FIN
+         KEYWORD LOOK, BUILDING
+            QUIP HOUSE.INFO
+AT       BUILDING
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE ROAD, OUT, WEST, ROAD
+         IFLT  CLOSURE, EXITS.BARRED      {Is the cave open?}
+            SMOVE XYZZY, DEBRIS, FOOF
+            SMOVE PLUGH, Y2, FOOF
+         FIN
+         ANYOF STREAM, DOWNSTREAM
+            QUIP PIPE.TOO.NARROW
+AT       VALLEY
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE UPSTREAM, NORTH, NE, NW, ROAD
+         MOVE EAST, SOUTH.OF.BUILDING
+         MOVE SE, FOREST.18
+         MOVE SW, FOREST.15
+         MOVE WEST, FOREST, FOREST.14
+         IFKEY UP
+            CHANCE 50
+               MOVE FOREST.14
+            FIN
+            MOVE SOUTH.OF.BUILDING
+         FIN
+         IFKEY BUILDING
+            LDA LAST.ONE, SLIT
+            LDA NEXT.ONE, ROAD
+            CALL AM.I.CONFUSED?
+         FIN
+         IFKEY DEPRESSION
+            LDA LAST.ONE, FOREST.4
+            LDA NEXT.ONE, DEPRESSION
+            CALL AM.I.CONFUSED?
+         FIN
+         KEYWORD WALK, STREAM
+            LDA NEXT.ONE, ROAD
+            LDA LAST.ONE, SLIT
+            CALL FOLLOW.IT
+AT       VALLEY
+         ANYOF SOUTH, DOWN, DOWNSTREAM
+            MOVE SLIT
+AT       SLIT
+         IFKEY LOOK
+            PROCEED
+         FIN
+         IFGT SLIT, 0
+            IFKEY BUILDING
+               LDA LAST.ONE, END.OF.VALLEY
+               LDA NEXT.ONE, ROAD
+               CALL AM.I.CONFUSED?
+            FIN
+            IFKEY DEPRESSION
+               LDA LAST.ONE, VALLEY
+               LDA NEXT.ONE, DEPRESSION
+               CALL AM.I.CONFUSED?
+            FIN
+         ELSE
+            MOVE BUILDING, ROAD
+            MOVE DEPRESSION, DEPRESSION
+         FIN
+         MOVE UPSTREAM, NORTH, VALLEY
+         MOVE DOWNSTREAM, BED, SOUTH, DEPRESSION, DEPRESSION
+         MOVE NE, SOUTH.OF.BUILDING
+         MOVE EAST, FOREST.18
+         MOVE SE, FOREST.19
+         MOVE SW, FOREST.16
+         MOVE WEST, FOREST, FOREST.15
+         MOVE NW, FOREST.14
+         IFKEY UP
+            CHANCE 50
+               MOVE FOREST.15
+            FIN
+            MOVE FOREST.18
+         FIN
+         ANYOF SLIT, STREAM, DOWN, ENTER
+            IFEQ SLIT,0
+               QUIP SLIT.TOO.NARROW
+            FIN
+            SET CLOSURE, VICTORY!      {victory!}
+            CALL GET.SCORE
+            SAY TREASURE.1   {describe the booty}
+            QUERY MORE.GOOD.NEWS?
+               SAY TREASURE.2
+               QUERY MORE.GOOD.NEWS?
+                  IFGT SCOREX, 658
+                     SAY TREASURE.4
+                  ELSE
+                     SAY TREASURE.3
+                  FIN
+               FIN
+            FIN
+            SET QUITTING, 0
+            CALL FINIS          {End the game in triumph}
+AT       DEPRESSION
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NE, FOREST.18
+         MOVE EAST, FOREST.19
+         MOVE SE, FOREST.20
+         MOVE SOUTH, END.OF.VALLEY
+         MOVE SW, FOREST.17
+         MOVE WEST, FOREST, FOREST.16
+         MOVE NW, FOREST.15
+         IFKEY BUILDING
+            LDA LAST.ONE, END.OF.VALLEY
+            LDA NEXT.ONE, ROAD
+            CALL AM.I.CONFUSED?
+         FIN
+         IFKEY UP
+            CHANCE 50
+               MOVE FOREST.19
+            FIN
+            MOVE FOREST.16
+         FIN
+         MOVE UPSTREAM, NORTH, SLIT, SLIT
+         ANYOF IN, DOWN, ENTER
+            IFEQ GRATE, UNLOCKED
+               MOVE IN.CAVE
+            FIN
+            QUIP CANT.PASS.GRATE
+AT       IN.CAVE
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE CRAWL, COBBLES, INWARD, WEST, COBBLES
+         MOVE PIT, PIT
+         MOVE DEBRIS, DEBRIS
+         ANYOF UP, OUT, LEAVE, SURFACE
+            IFEQ GRATE, UNLOCKED
+               MOVE DEPRESSION
+            FIN
+            QUIP CANT.PASS.GRATE
+AT       COBBLES
+         MOVE OUT, SURFACE, ENTRANCE, EAST, IN.CAVE
+         MOVE INWARD, DARK, WEST, DEBRIS, DEBRIS
+         MOVE PIT, PIT
+AT       DEBRIS
+         MOVE ENTRANCE, IN.CAVE
+         MOVE CRAWL, COBBLES, PASSAGE, LOW, EAST, COBBLES
+         MOVE CANYON, INWARD, UP, WEST, CANYON
+         MOVE PIT, PIT
+         IFEQ GRATE, UNLOCKED
+            MOVE DEPRESSION, DEPRESSION
+         ELSE
+            SMOVE DEPRESSION, IN.CAVE, CANT.PASS.GRATE
+         FIN
+         IFKEY XYZZY
+            IFGT CLOSURE, CLOSING.SOON
+               OR
+            BIT ADMIN, NOMAGIC
+               BIS ADMIN, PANICKED
+               QUIP EXIT.CLOSED
+            FIN
+            SMOVE BUILDING, FOOF
+         FIN
+         KEYWORD NOTE
+            IFKEY LOOK
+               OR
+            IFKEY READ
+               QUIP DEBRIS.NOTE
+            FIN
+            QUIP HAH!
+AT       CANYON
+         MOVE ENTRANCE, IN.CAVE
+         MOVE DOWN, EAST, DEBRIS, DEBRIS
+         MOVE INWARD, UP, WEST, BIRD.CHAMBER
+         MOVE PIT, PIT
+         IFEQ GRATE, UNLOCKED
+            MOVE DEPRESSION, DEPRESSION
+         ELSE
+            SMOVE DEPRESSION, IN.CAVE, CANT.PASS.GRATE
+         FIN
+AT       BIRD.CHAMBER
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE ENTRANCE, IN.CAVE
+         MOVE DEBRIS, DEBRIS
+         MOVE CANYON, EAST, CANYON
+         MOVE PASSAGE, PIT, WEST, PIT
+         IFEQ GRATE, UNLOCKED
+            MOVE DEPRESSION, DEPRESSION
+         ELSE
+            SMOVE DEPRESSION, IN.CAVE, CANT.PASS.GRATE
+         FIN
+AT       PIT
+         IFEQ NUGGET.ROOM, 0
+            IFHAVE NUGGET
+               APPORT STEPS, LIMBO
+            ELSE
+               APPORT STEPS, PIT
+            FIN
+         FIN
+         IFKEY LOOK
+             PROCEED
+         FIN
+         MOVE ENTRANCE, IN.CAVE
+         MOVE DEBRIS, DEBRIS
+         MOVE PASSAGE, EAST, BIRD.CHAMBER
+         MOVE DOWN, MISTS
+         IFEQ GRATE, UNLOCKED
+            MOVE DEPRESSION, DEPRESSION
+         ELSE
+            SMOVE DEPRESSION, IN.CAVE, CANT.PASS.GRATE
+         FIN
+         ANYOF DOWN, PIT, STEPS
+            IFHERE STEPS
+               MOVE MISTS
+            FIN
+            SAY BROKEN.NECK
+            GOTO MISTS
+            CALL CORONER
+AT       PIT
+         ANYOF WEST, CRACK
+            IFKEY LOOK
+               QUIP CRACK.INFO
+            FIN
+            QUIP CRACK.TOO.SMALL
+AT       PIT
+         KEYWORD JUMP
+            GOTO MISTS
+            CALL SPLATTER
+AT       MISTS
+         IFEQ NUGGET.ROOM, 0         {He hasn't been clever}
+            IFHAVE NUGGET
+               APPORT STEPS, LIMBO
+               SET MISTS, STEPS.GONE
+            ELSE
+               APPORT STEPS, PIT
+               SET MISTS, STEPS.PRESENT
+            FIN
+         FIN
+         IFKEY LOOK
+             PROCEED
+         FIN
+         MOVE SOUTH, NUGGET.ROOM
+         MOVE EAST, SANDSTONE
+         MOVE FORWARD, HALL, WEST, EAST.OF.FISSURE
+         MOVE DOWN, NORTH, MTKING
+         MOVE Y2, JUMBLE
+         ANYOF CLIMB, UP, PIT, DOME, PASSAGE, STEPS
+            IFHERE STEPS
+               MOVE PIT
+            FIN
+            QUIP DOME.UNCLIMBABLE
+AT       EAST.OF.FISSURE
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE EAST, HALL, MISTS
+         ANYOF FORWARD, CROSS, WEST
+            IFEQ FISSURE, 0
+               QUIP NO.WAY.ACROSS
+            FIN
+            CALL PLAY.TUNE
+            MOVE WEST.OF.FISSURE
+AT       EAST.OF.FISSURE
+         IFKEY JUMP
+            IFEQ FISSURE, 1
+               QUIP TRY.THE.BRIDGE
+            FIN
+            GOTO CAVERN
+            CALL SPLATTER
+         FIN
+         IFKEY BRIDGE
+            AND
+         IFEQ FISSURE, 1
+            APPORT BRIDGE, HERE
+         FIN
+AT       NUGGET.ROOM
+         MOVE NORTH, OUT, HALL, MISTS
+         KEYWORD NOTE
+            IFKEY LOOK
+               OR
+            IFKEY READ
+               QUIP NUGGET.ROOM.NOTE, NUGGET.ROOM
+            FIN
+            QUIP HAH!
+AT       MTKING
+         SET PTR.PLACE, 0
+         IFKEY LOOK
+            PROCEED
+         FIN
+         ANYOF STEPS, UP, EAST
+            LDA PTR.PLACE, MISTS
+AT       MTKING
+         IFKEY NORTH
+            LDA PTR.PLACE, LOW.N/S.PASSAGE
+         ELSE
+            IFKEY SW
+               OR
+            IFKEY SECRET
+               LDA PTR.PLACE, SECRET.E/W.CANYON
+            ELSE
+               IFKEY SOUTH
+                  LDA PTR.PLACE, SOUTH.SIDE.CHAMBER
+               ELSE
+                  IFKEY WEST
+                     LDA PTR.PLACE, WEST.SIDE.CHAMBER
+                  ELSE
+                     IFKEY DOWN
+                        LDA PTR.PLACE, VAULT
+                     ELSE
+                        IFKEY NE
+                           LDA PTR.PLACE, MORION
+                        ELSE
+                           IFKEY NW
+                              LDA PTR.PLACE, DIVISION.IN.PASSAGE
+                           ELSE
+                              IFKEY SE
+                                 LDA PTR.PLACE, WIDE.N/S.CORRIDOR
+                              FIN
+                           FIN
+                        FIN
+                     FIN
+                  FIN
+               FIN
+            FIN
+         FIN
+         IFEQ PTR.PLACE, 0
+            PROCEED
+         FIN
+         IFNEAR SNAKE
+            AND
+            NOT
+         IFEQ PTR.PLACE, SNAKE.EXIT
+            CALL SNEAKS.DIE
+            IFEQ SNAKE, 1      {if snake sleepy (in a demo game)}
+               SAY SNAKE.MISSES
+               SET SNAKE, 0    {wake it up}
+            ELSE
+               QUIP SNAKE.BLOCKS.WAYS
+            FIN
+         FIN
+         IFKEY SW
+            AND
+         CHANCE 66
+            SET SNAKE.EXIT, PTR.PLACE
+            QUIP STILL.WHERE.YOU.WERE
+         FIN
+         MOVE PTR.PLACE
+AT       WEST.PIT.END
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE EAST, CROSS, EAST.PIT.END
+         MOVE WEST, SLAB, SLAB
+         MOVE DOWN, PIT, WEST.PIT
+         KEYWORD  HOLE
+            QUIP TOO.FAR.UP
+AT       EAST.PIT
+         MOVE UP, OUT, EAST.PIT.END
+AT       WEST.PIT
+         MOVE UP, OUT, WEST.PIT.END
+         IFKEY CLIMB
+            IFEQ PLANT, STUNTED
+               QUIP PLANT.NOT.CLIMBABLE
+            FIN
+            IFEQ PLANT, GROWN
+               SMOVE WEST.PIT.END, PLANT.TOO.SHORT
+            FIN
+            BIT NARROW.CORRIDOR, BEEN.HERE
+            ELSE
+               SET NEXT.VISION, GIANT.VISION
+            FIN
+            SMOVE NARROW.CORRIDOR, UP.THE.PLANT.YOU.GO
+         FIN
+         KEYWORD GET, PLANT
+            QUIP ROOTS.TOO.DEEP
+AT       WEST.OF.FISSURE
+         MOVE WEST, WEST.END.OF.MISTS
+         IFKEY JUMP
+            IFEQ FISSURE, 1
+               QUIP TRY.THE.BRIDGE
+            FIN
+            GOTO CAVERN
+            CALL SPLATTER
+         FIN
+         IFKEY NORTH
+            SMOVE WEST.END.OF.MISTS, CRAWLED.BACK.TO.MISTS
+         FIN
+         IFKEY BRIDGE
+            AND
+         IFEQ FISSURE, 1
+            APPORT BRIDGE, HERE
+         FIN
+         ANYOF FORWARD, CROSS, EAST
+            IFEQ FISSURE, 0
+               QUIP NO.WAY.ACROSS
+            FIN
+            CALL PLAY.TUNE
+            MOVE EAST.OF.FISSURE
+AT       LOW.N/S.PASSAGE
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE SOUTH, OUT, HALL, MTKING
+         MOVE NORTH, Y2, Y2
+         MOVE DOWN, HOLE, DIRTY
+         MOVE HOLE, DIRTY
+AT       SOUTH.SIDE.CHAMBER
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NORTH, OUT, HALL, MTKING
+         MOVE DOWN, STEPS, HALF.STAIRS
+         CALL FAKE.STEPS
+AT       WEST.SIDE.CHAMBER
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE EAST, OUT, HALL, MTKING
+         MOVE WEST, UP, CROSSOVER
+AT       Y2
+         MOVE SOUTH, LOW.N/S.PASSAGE
+         MOVE EAST, JUMBLE, JUMBLE
+         MOVE WEST, EAST.WINDOW
+         ANYOF PLUGH, PLOVER
+            IFEQ STATUS, 2
+               AND
+               NOT
+            IFKEY SAY
+               PROCEED
+            FIN
+            IFKEY PLOVER
+               BIC PLOVER, HINTABLE
+               BIC ALCOVE, HINTABLE
+               BIC DARK, HINTABLE
+               MOVE PLOVER
+            FIN
+            IFGT CLOSURE, CLOSING.SOON
+               OR
+            BIT ADMIN, NOMAGIC
+               BIS ADMIN, PANICKED
+               QUIP EXIT.CLOSED
+            FIN
+            SMOVE BUILDING, FOOF
+AT       JUMBLE
+         MOVE DOWN, Y2, Y2
+         MOVE UP, MISTS
+AT       EAST.WINDOW
+         MOVE EAST, Y2, Y2
+         CALL FAKE.WINDOW
+         KEYWORD JUMP
+            SAY BROKEN.NECK
+            GOTO MIRROR.CANYON
+            CALL CORONER
+AT       DIRTY
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE EAST, CRAWL, BRINK
+         MOVE UP, HOLE, LOW.N/S.PASSAGE
+         MOVE WEST, DUSTY
+         MOVE BEDQUILT, BEDQUILT
+AT       BRINK
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE WEST, CRAWL, DIRTY
+         MOVE DOWN, CLIMB, PIT, STREAMPIT
+AT       STREAMPIT
+         MOVE UP, OUT, CLIMB, BRINK
+         ANYOF SLIT, STREAM, DOWN, UPSTREAM, DOWNSTREAM
+            QUIP SLIT.TOO.NARROW
+AT       DUSTY
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE EAST, PASSAGE, DIRTY
+         MOVE DOWN, HOLE, COMPLEX
+         MOVE BEDQUILT, BEDQUILT
+AT       WEST.END.OF.MISTS
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE SOUTH, UP, PASSAGE, CLIMB, MAZEA.42
+         MOVE EAST, WEST.OF.FISSURE
+         MOVE WEST, CRAWL, LONG.HALL.EAST
+         KEYWORD NORTH
+            SMOVE WEST.OF.FISSURE, CRAWLED.BACK.TO.MISTS
+AT       MAZEA.42
+         MOVE UP, WEST.END.OF.MISTS
+         MOVE NORTH, MAZEA.42
+         MOVE EAST, MAZEA.43
+         MOVE SOUTH, MAZEA.45
+         MOVE WEST, MAZEA.80
+AT       MAZEA.43
+         MOVE WEST, MAZEA.42
+         MOVE SOUTH, MAZEA.44
+         MOVE EAST, MAZEA.45
+AT       MAZEA.44
+         MOVE EAST, MAZEA.43
+         MOVE DOWN, MAZEA.48
+         MOVE SOUTH, MAZEA.50
+         MOVE NORTH, MAZEA.82
+AT       MAZEA.45
+         MOVE WEST, MAZEA.42
+         MOVE NORTH, MAZEA.43
+         MOVE EAST, MAZEA.46
+         MOVE SOUTH, MAZEA.47
+         MOVE UP, DOWN, MAZEA.87
+         MOVE DOWN, MAZEA.87
+AT       MAZEA.46
+         MOVE OUT, WEST, MAZEA.45
+AT       MAZEA.47
+         MOVE OUT, EAST, MAZEA.45
+AT       MAZEA.48
+         MOVE OUT, UP, MAZEA.44
+AT       MAZEA.49
+         MOVE EAST, MAZEA.50
+         MOVE WEST, MAZEA.51
+AT       MAZEA.50
+         MOVE EAST, MAZEA.44
+         MOVE WEST, MAZEA.49
+         MOVE DOWN, MAZEA.51
+         MOVE SOUTH, MAZEA.52
+AT       MAZEA.51
+         MOVE WEST, MAZEA.49
+         MOVE UP, MAZEA.50
+         MOVE EAST, MAZEA.52
+         MOVE SOUTH, MAZEA.53
+AT       MAZEA.52
+         MOVE WEST, MAZEA.50
+         MOVE EAST, MAZEA.51
+         MOVE SOUTH, MAZEA.52
+         MOVE UP, MAZEA.53
+         MOVE NORTH, MAZEA.55
+         MOVE DOWN, MAZEA.86
+AT       MAZEA.53
+         MOVE WEST, MAZEA.51
+         MOVE NORTH, MAZEA.52
+         MOVE SOUTH, MAZEA.54
+AT       MAZEA.54
+         MOVE OUT, WEST, MAZEA.53
+AT       MAZEA.55
+         MOVE WEST, MAZEA.52
+         MOVE NORTH, MAZEA.55
+         MOVE DOWN, MAZEA.56
+         MOVE EAST, MAZEA.BY.PIT
+AT       MAZEA.56
+         MOVE OUT, UP, MAZEA.55
+AT       MAZEA.BY.PIT
+         MOVE DOWN, CLIMB, BIRD.CHAMBER
+         MOVE WEST, MAZEA.55
+         MOVE SOUTH, MAZEA.58
+         MOVE NORTH, MAZEA.83
+         MOVE EAST, MAZEA.84
+AT       MAZEA.58
+         MOVE OUT, EAST, MAZEA.BY.PIT
+AT       LONG.HALL.EAST
+         MOVE EAST, UP, CRAWL, WEST.END.OF.MISTS
+         MOVE WEST, LONG.HALL.WEST
+         MOVE NORTH, DOWN, HOLE, CROSSOVER
+AT       LONG.HALL.WEST
+         MOVE EAST, LONG.HALL.EAST
+         MOVE NORTH, CROSSOVER
+         MOVE SOUTH, MAZED.107
+AT       CROSSOVER
+         MOVE WEST, LONG.HALL.EAST
+         MOVE NORTH, DEAD.END.1
+         MOVE EAST, WEST.SIDE.CHAMBER
+         MOVE SOUTH, LONG.HALL.WEST
+AT       DEAD.END.1
+         MOVE OUT, SOUTH, CROSSOVER
+AT       COMPLEX
+         MOVE UP, CLIMB, DUSTY
+         MOVE WEST, BEDQUILT, BEDQUILT
+         MOVE NORTH, SHELL, SHELL
+         MOVE EAST, ANTEROOM
+AT       BEDQUILT
+         MOVE EAST, COMPLEX
+         MOVE WEST, SWISS
+         MOVE SLAB, SLAB
+         IFKEY NW
+            CHANCE 50
+               QUIP STILL.WHERE.YOU.WERE
+            FIN
+            MOVE ORIENTAL
+         FIN
+         ANYOF NORTH, SOUTH, UP, DOWN
+            CHANCE    65
+               QUIP CRAWL.CAVED.IN
+            FIN
+            MOVE DOWN, ANTEROOM
+            CHANCE 75
+               MOVE NORTH, LOW
+               MOVE UP, DUSTY
+               MOVE SOUTH, SLAB
+            ELSE
+               MOVE NORTH, SECRET.JUNCTION
+               MOVE UP, SECRET.N/S.CANYON.2
+               MOVE SOUTH, TALL.E/W.CANYON
+            FIN
+AT       SWISS
+         MOVE NE, BEDQUILT
+         MOVE WEST, EAST.PIT.END
+         MOVE CANYON, TALL.E/W.CANYON
+         MOVE EAST, SOFT, SOFT
+         MOVE ORIENTAL, ORIENTAL
+         ANYOF NW, SOUTH
+            CHANCE 33
+               MOVE SOUTH, TALL.E/W.CANYON
+               MOVE NW, ORIENTAL
+            ELSE
+               QUIP STILL.WHERE.YOU.WERE
+            FIN
+AT       EAST.PIT.END
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE EAST, SWISS
+         MOVE WEST, CROSS, WEST.PIT.END
+         MOVE DOWN, PIT, EAST.PIT
+AT       SLAB
+         MOVE SOUTH, WEST.PIT.END
+         MOVE UP, CLIMB, SECRET.N/S.CANYON.1
+         MOVE NORTH, BEDQUILT, BEDQUILT
+         MOVE BEDQUILT, BEDQUILT
+         CALL FAKE.SLAB
+AT       SECRET.N/S.CANYON.1
+         MOVE DOWN, SLAB, SLAB
+         MOVE NORTH, MIRROR, MIRROR.CANYON
+         MOVE RESERVOIR, RESERVOIR
+         MOVE SOUTH, SECRET.N/E.CANYON.1
+AT       SECRET.N/S.CANYON.2
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NORTH, SECRET.JUNCTION
+         MOVE DOWN, PASSAGE, BEDQUILT
+         MOVE SOUTH, TOP.OF.STALACTITE
+AT       SECRET.JUNCTION
+         MOVE SE, BEDQUILT
+         MOVE SOUTH, SECRET.N/S.CANYON.2
+         MOVE NORTH, WEST.WINDOW
+AT       LOW
+         MOVE BEDQUILT, BEDQUILT
+         MOVE SW, SLOPING
+         MOVE NORTH, DEAD.END.2
+         MOVE SE, ORIENTAL, ORIENTAL
+AT       DEAD.END.2
+         MOVE SOUTH, OUT, CRAWL, LOW
+AT       SECRET.E/W.CANYON
+         MOVE EAST, MTKING
+         MOVE DOWN, WIDE.N/S.CANYON
+         KEYWORD  WEST
+            IFEQ DRAGON, ON.RUG      {If it's alive...}
+               MOVE SECRET.N/E.CANYON.2
+            FIN
+            MOVE SECRET.N/E.CANYON.1
+AT       WIDE.N/S.CANYON
+         MOVE SOUTH, TIGHT.DEAD.END
+         MOVE NORTH, TALL.E/W.CANYON
+AT       TIGHT.DEAD.END
+         MOVE NORTH, WIDE.N/S.CANYON
+AT       TALL.E/W.CANYON
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE EAST, WIDE.N/S.CANYON
+         MOVE WEST, DEAD.END.3
+         MOVE NORTH, CRAWL, SWISS
+         MOVE SOUTH, IN, VALUERS
+AT       VALUERS
+         IFKEY NOTE
+            IFKEY LOOK
+               OR
+            IFKEY READ
+               QUIP VALUERS.NOTE
+            FIN
+            QUIP HAH!
+         FIN
+         MOVE NORTH, OUT, TALL.E/W.CANYON
+         IFKEY IN
+            QUIP NO.VALUE.SELF
+         FIN
+         IFKEY DROP
+            AND
+         IFEQ STATUS, 2
+            IFHAVE ARG2
+            ELSE
+               QUIP YOU.DONT.HAVE, ARG2
+            FIN
+            IFKEY TUSK
+               SAY TUSK.IN.NICHE
+            ELSE
+               IFKEY CAGE
+                  AND
+               IFHAVE BIRD
+                  SAY CAGED.BIRD.IN.NICHE
+               ELSE
+                  IFKEY BIRD
+                     DROP BIRD
+                     SET BIRD, FREED
+                     QUIP NO.VALUE.BIRD
+                  FIN
+                  IFKEY STARSTONE
+                     IFEQ STARSTONE, QUIESCENT
+                        SAY STARSTONE.IN.NICHE
+                     ELSE
+                        SAY STARSTONE2.IN.NICHE
+                     FIN
+                  ELSE
+                     IFKEY VASE
+                        SAY VASE.IN.NICHE
+                     ELSE
+                        SAY PUT.IN.NICHE, ARG2
+                     FIN
+                  FIN
+               FIN
+            FIN
+            BIT ADMIN, NICHE.USED
+               SAY ANOTHER.VALUATION
+            ELSE
+               SAY VALUATION.IN.PROGRESS
+               BIS ADMIN, NICHE.USED
+            FIN
+            IFKEY CAGE
+               AND
+            IFHAVE BIRD
+               SAY RUFFLED.BIRD
+               APPORT BIRD, BIRD.CHAMBER
+               SET BIRD, FREED
+            FIN
+            SAY VALUATION.END
+            IFKEY TUSK
+               BIS TUSK, VALUED
+            FIN
+            IFKEY DRACHMA
+               OR
+            IFKEY MAGAZINES
+               SAY JUST.ABOUT.VALUABLE
+            ELSE
+               IFKEY STARSTONE
+                  SAY NOT.SURE.IF.VALUABLE
+               ELSE
+                  IFKEY VASE
+                     SAY HAD.BEEN.VALUABLE
+                  ELSE
+                     BIT ARG2, VALUED
+                        SAY WAS.VALUABLE
+                     ELSE
+                        SAY WAS.NOT.VALUABLE
+                     FIN
+                  FIN
+               FIN
+            FIN
+            APPORT ARG2, YLEM     {Destroy the object}
+            IFKEY BOTTLE
+               SET BOTTLE, EMPTIED
+            FIN
+            IFKEY FLASK,
+               SET FLASK, EMPTIED
+            FIN
+            QUIT
+         FIN
+         IFKEY NICHE
+            IFKEY LOOK
+               QUIP DEEP.NICHE
+            FIN
+            QUIP HAH!
+         FIN
+AT       DEAD.END.3
+         MOVE SOUTH, TALL.E/W.CANYON
+AT       MAZEA.80
+         MOVE NORTH, MAZEA.42
+         MOVE WEST, SOUTH, MAZEA.80
+         MOVE EAST, MAZEA.81
+AT       MAZEA.81
+         MOVE WEST, OUT, MAZEA.80
+AT       MAZEA.82
+         MOVE OUT, SOUTH, MAZEA.44
+AT       MAZEA.83
+         MOVE SOUTH, MAZEA.BY.PIT
+         MOVE EAST, MAZEA.84
+         MOVE WEST, MAZEA.85
+AT       MAZEA.84
+         MOVE NORTH, MAZEA.BY.PIT
+         MOVE WEST, MAZEA.83
+         MOVE NW, MAZEA.114
+AT       MAZEA.85
+         MOVE OUT, EAST, MAZEA.83
+AT       MAZEA.86
+         MOVE OUT, UP, MAZEA.52
+AT       MAZEA.87
+         MOVE UP, DOWN, MAZEA.45
+AT       NARROW.CORRIDOR
+         MOVE EAST, DOWN, CLIMB, WEST.PIT
+         MOVE WEST, GIANT.ROOM
+AT       NARROW.CORRIDOR
+         KEYWORD JUMP
+            GOTO WEST.PIT
+            CALL SPLATTER
+AT       INCLINE
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NORTH, CAVERN, PASSAGE, CAVERN
+         SMOVE DOWN, CLIMB, LOW, OOF
+AT       GIANT.ROOM
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE SOUTH, CORRIDOR, NARROW.CORRIDOR
+         MOVE EAST, IRREGULAR.TUNNEL
+         MOVE NORTH, IMMENSE.N/S.PASSAGES
+AT       IMMENSE.N/S.PASSAGES
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE SOUTH, PASSAGE, GIANT.ROOM
+         MOVE PASSAGE, GIANT.ROOM
+         ANYOF NORTH, ENTER, CAVERN
+            IFEQ DOOR, RUSTY
+               QUIP DOOR.NEEDS.OIL
+            FIN
+            MOVE CAVERN
+AT       CAVERN
+         MOVE SOUTH, OUT, IMMENSE.N/S.PASSAGES
+         MOVE WEST, INCLINE, INCLINE
+         ANYOF DOWN, JUMP      {jumping into whirlpool}
+            QUERY WHIRLPOOL?
+               BIC RESERVOIR, HINTABLE
+               SET K, 0
+               IFHAVE BIRD
+                  APPORT BIRD, YLEM
+               FIN
+               ITOBJ PTR.OBJ
+                  IFHAVE PTR.OBJ
+                     AND
+                     NOT
+                  BIT PTR.OBJ, FREEBIE
+                     AND
+                     NOT
+                  IFIS  PTR.OBJ, LAMP
+                     APPORT PTR.OBJ, YLEM
+                     ADD K, 1
+                  FIN
+               EOI
+               IFHAVE LAMP
+                  SET INVCT, 1
+                  SET K, 1
+               ELSE
+                  SET INVCT, 0
+               FIN
+               SAY INTO.THE.WHIRLPOOL, INVCT
+               IFGT K, 0
+                  SAY STRONG.CURRENT, INVCT
+               ELSE
+                  SAY BLANK
+               FIN
+               SMOVE RESERVOIR.NORTH, OUT.OF.THE.WHIRLPOOL
+            FIN
+            QUIP OK
+AT       SOFT
+         MOVE EAST, BARE.CAVERN
+         MOVE SE, CURTAIN.ENTRANCE
+         MOVE WEST, OUT, SWISS, SWISS
+         ANYOF NORTH, SOUTH, SW, NW, NE
+            QUIP SOLID.ROCK
+AT       SOFT
+         IFKEY LOOK
+            IFKEY WALLS
+               QUIP CURTAINED.WALLS
+            FIN
+            IFKEY MOSS
+               QUIP JUST.A.FIXTURE, ARG2
+            FIN
+         FIN
+AT       ORIENTAL
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE SE, SWISS
+         MOVE WEST, CRAWL, LOW
+         MOVE CRAWL, LOW
+         MOVE NORTH, UP, CAVERN, MISTY
+AT       MISTY
+         MOVE SOUTH, ORIENTAL, ORIENTAL
+         MOVE WEST, ALCOVE
+         KEYWORD JUMP
+            GOTO CAVERN
+            CALL SPLATTER
+AT       ALCOVE
+         MOVE NW, CAVERN, MISTY
+         ANYOF EAST, PASSAGE, PLOVER
+            SET  IV, INVCT
+            IFHAVE EMERALD
+               SUB IV, 1
+            FIN
+            IFHAVE PYRAMID
+               SUB IV, 1
+            FIN
+            IFEQ IV, 0
+               MOVE PLOVER
+            FIN
+            ITOBJ PTR.OBJ
+               IFHAVE PTR.OBJ
+                  AND
+                  NOT
+               BIT PTR.OBJ, FREEBIE
+                  QUIP SOMETHING.DOESNT.FIT
+               FIN
+            EOI
+            MOVE PLOVER
+AT       PLOVER
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NE, DARK, IN, DARK
+         IFKEY PLOVER
+            IFHAVE EMERALD
+               DROP  EMERALD
+               SAY SOMETHING.DROPS
+            FIN
+            MOVE Y2
+         FIN
+         ANYOF WEST, PASSAGE, ALCOVE
+            SET  IV, INVCT
+            IFHAVE EMERALD
+               SUB IV, 1
+            FIN
+            IFHAVE PYRAMID
+               SUB IV, 1
+            FIN
+            IFEQ IV, 0
+               MOVE ALCOVE
+            FIN
+            ITOBJ PTR.OBJ
+               IFHAVE PTR.OBJ
+                  AND
+                  NOT
+               BIT PTR.OBJ, FREEBIE
+                  QUIP SOMETHING.DOESNT.FIT
+               FIN
+            EOI
+            MOVE ALCOVE
+AT       DARK
+         MOVE SOUTH, OUT, PLOVER, PLOVER
+         KEYWORD TABLET
+            IFKEY READ
+               OR
+            IFKEY LOOK
+               QUIP DARK.ROOM
+            FIN
+            QUIP JUST.A.FIXTURE, TABLET
+AT       ARCHED
+         MOVE DOWN, SHELL, SHELL
+         MOVE EAST, UP, ARCHED.CORRIDOR.1
+AT       SHELL
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE UP, WEST, HALL, ARCHED
+         MOVE DOWN, CORRIDOR, RAGGED.CORRIDOR
+         ANYOF SOUTH, COMPLEX
+            IFHAVE CLAM
+               QUIP BIVALVE.TOO.BIG, CLAM
+            FIN
+            IFHAVE OYSTER
+               QUIP BIVALVE.TOO.BIG, OYSTER
+            FIN
+            MOVE COMPLEX
+AT       RAGGED.CORRIDOR
+         MOVE UP, SHELL, SHELL
+         MOVE DOWN, CULDESAC
+AT       CULDESAC
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE UP, OUT, CORRIDOR, RAGGED.CORRIDOR
+         MOVE SHELL, SHELL
+AT       ANTEROOM
+         MOVE NE, UNSAFE
+         MOVE SOUTH, CHAPEL
+         MOVE UP, COMPLEX
+         MOVE WEST, BEDQUILT
+         IFKEY EAST
+            BIC HINTS, WITT.HELP
+            MOVE WITTS.END
+         FIN
+         CALL FAKE.NOTE
+AT       MAZED.107
+         MOVE SOUTH, MAZED.131
+         MOVE SW, MAZED.132
+         MOVE NE, MAZED.133
+         MOVE SE, MAZED.134
+         MOVE UP, MAZED.135
+         MOVE NW, MAZED.136
+         MOVE EAST, MAZED.137
+         MOVE WEST, MAZED.138
+         MOVE NORTH, MAZED.139
+         MOVE DOWN, LONG.HALL.WEST
+AT       WITTS.END
+         IFKEY  WEST
+            BIC HINTS, WITT.HELP
+            MOVE WITTS.END
+         FIN
+         ANYOF NORTH, SOUTH, EAST, UP, DOWN, NE, NW, SE, SW
+            BIT HINTS, WITT.HELP
+               SET J, 50
+            ELSE
+               SET J, 95
+            FIN
+            CHANCE J
+               MOVE WITTS.END
+            FIN
+            MOVE ANTEROOM
+AT       MIRROR.CANYON
+         MOVE SOUTH, SECRET.N/S.CANYON.1
+         MOVE NORTH, RESERVOIR, RESERVOIR
+         ANYOF MIRROR, WINDOW
+            QUIP TOO.FAR.UP
+AT       WEST.WINDOW
+         MOVE WEST, SECRET.JUNCTION
+         CALL FAKE.WINDOW
+         KEYWORD JUMP
+            SAY BROKEN.NECK
+            GOTO MIRROR.CANYON
+            CALL CORONER
+AT       TOP.OF.STALACTITE
+         MOVE NORTH, SECRET.N/S.CANYON.2
+         IFKEY     DOWN
+            AND
+         CHANCE 67
+            CHANCE    50
+               MOVE MAZEA.53
+            FIN
+            MOVE MAZEA.45
+         FIN
+         ANYOF JUMP, CLIMB, DOWN
+            MOVE  MAZEA.50
+AT       MAZED.112
+         MOVE SW, MAZED.131
+         MOVE NORTH, MAZED.132
+         MOVE EAST, MAZED.133
+         MOVE NW, MAZED.134
+         MOVE SE, MAZED.135
+         MOVE NE, MAZED.136
+         MOVE WEST, MAZED.137
+         MOVE DOWN, MAZED.138
+         MOVE UP, MAZED.139
+         MOVE SOUTH, MAZED.140
+AT       RESERVOIR
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE SOUTH, MIRROR, MIRROR.CANYON
+         MOVE WEST, CAUSEWAY.EAST
+         ANYOF NORTH, CROSS
+            QUIP CANT.SWIM
+AT       RESERVOIR.NORTH
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NORTH, WARM, PASSAGE, WARM
+         MOVE BALCONY, BALCONY
+         ANYOF SOUTH, CROSS
+            IFNEAR TURTLE
+               APPORT TURTLE, LIMBO
+               SMOVE RESERVOIR, TURTLE.BACK
+            FIN
+            QUIP CANT.SWIM
+AT       WARM
+         MOVE SOUTH, RESERVOIR, RESERVOIR.NORTH
+         MOVE NORTHEAST, BALCONY, BALCONY
+AT       BALCONY
+         MOVE WEST, OUT, WARM, WARM
+         MOVE RESERVOIR, RESERVOIR.NORTH
+         KEYWORD JUMP
+            GOTO YLEM
+            CALL SPLATTER
+AT       MAZEA.114
+         MOVE SE, MAZEA.84
+AT       SW.OF.CHASM
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE SW, DOWN, SLOPING, CORRIDOR, SLOPING
+         IFKEY THROW
+            IFEQ STATUS, 1
+               OR
+            IFNEAR TROLL2
+               PROCEED
+            FIN
+            IFKEY AXE
+               OR
+            IFKEY SWORD
+               IFHAVE ARG2
+                  DROP ARG2
+                  QUIP EL.CHEAPO, ARG2
+               FIN
+               PROCEED
+            FIN
+            BIT ARG2, OBJECT
+               BIT ARG2, VALUED
+                  IFHAVE ARG2
+                     IFKEY NEST
+                        BIT TROLL, SPECIAL1
+                           SET TROLL, WANTS.TREASURE
+                           APPORT NEST, YLEM  {destroy eggs}
+                           BIS NEST, SPECIAL2 {they won't come back!}
+                           QUIP FOOL.ME.ONCE
+                        FIN
+                        BIS NEST, SPECIAL1    {note that troll's got them}
+                     FIN
+                     SET TROLL, BOUGHT.OFF
+                     APPORT TROLL, LIMBO
+                     APPORT TROLL2, SW.OF.CHASM
+                     APPORT ARG2, YLEM
+                     QUIP BOUGHT.HIM.OFF, ARG2
+                  FIN
+               FIN
+            FIN
+         FIN
+         IFKEY JUMP
+            IFEQ CHASM, BRIDGED
+               QUIP TRY.THE.BRIDGE
+            FIN
+            GOTO YLEM
+            CALL SPLATTER
+         FIN
+         IFKEY BRIDGE
+            APPORT BRIDGE, HERE
+         FIN
+         IFKEY NOTICE
+            IFKEY READ
+               OR
+            IFKEY LOOK
+               QUIP SAME.AS.BEFORE
+            FIN
+            QUIP HAH!
+         FIN
+         ANYOF CROSS, NE
+            IFGT CHASM, BRIDGED
+               QUIP NO.BRIDGE
+            FIN
+            IFEQ TROLL, WANTS.TREASURE
+               QUIP TROLL.BLOCKS.WAY
+            FIN
+            IFEQ TROLL, WILL.BE.BACK
+               SET TROLL, WANTS.TREASURE
+               APPORT  TROLL, SW.OF.CHASM
+               APPORT TROLL2, LIMBO
+               QUIP TROLL.WANTS.MORE
+            FIN
+            IFEQ TROLL, BOUGHT.OFF
+               SET TROLL, WILL.BE.BACK
+            FIN
+            MOVE NE.OF.CHASM
+AT       SLOPING
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE DOWN, SW, OUT, LOW, LOW
+         MOVE UP, NE, CHASM, SW.OF.CHASM
+AT       SECRET.N/E.CANYON.1
+         MOVE NORTH, OUT, SECRET.N/S.CANYON.1
+         IFKEY RUG
+            IFEQ DRAGON, ON.RUG
+               QUIP DRAGON.GUARDS.RUG
+            FIN
+         FIN
+         ANYOF FORWARD, EAST
+            IFEQ DRAGON, ON.RUG
+               CALL SNEAKS.DIE
+               QUIP DRAGON.BLOCKS.WAY
+            FIN
+            MOVE SECRET.E/W.CANYON
+AT       SECRET.N/E.CANYON.2
+         MOVE EAST, OUT, SECRET.E/W.CANYON
+         IFKEY RUG
+            IFEQ DRAGON, ON.RUG
+               QUIP DRAGON.GUARDS.RUG
+            FIN
+         FIN
+         ANYOF FORWARD, NORTH
+            IFEQ DRAGON, ON.RUG
+               CALL SNEAKS.DIE
+               QUIP DRAGON.BLOCKS.WAY
+            FIN
+            MOVE SECRET.N/S.CANYON.1
+AT       NE.OF.CHASM
+         IFKEY DROP
+            OR
+         IFKEY THROW
+            AND
+         IFKEY BEAR
+            IFHAVE BEAR
+               AND
+            IFNEAR TROLL
+               SET TROLL, SCARED.OFF
+               APPORT TROLL, YLEM
+               APPORT TROLL2, SW.OF.CHASM
+               DROP BEAR
+               SAY FREED.BEAR
+               QUIP BEAR.CHASES.TROLL
+            FIN
+         FIN
+         IFKEY THROW
+            IFEQ STATUS, 1
+               OR
+            IFNEAR TROLL2
+               PROCEED
+            FIN
+            IFKEY AXE
+               OR
+            IFKEY SWORD
+               IFHAVE ARG2
+                  DROP ARG2
+                  QUIP EL.CHEAPO, ARG2
+               FIN
+               PROCEED
+            FIN
+            BIT ARG2, OBJECT
+               BIT ARG2, VALUED
+                  IFHAVE ARG2
+                     IFKEY NEST
+                        BIT TROLL, SPECIAL1
+                           SET TROLL, WANTS.TREASURE
+                           APPORT NEST, YLEM  {destroy eggs}
+                           BIS NEST, SPECIAL2 {they won't come back}
+                           QUIP FOOL.ME.ONCE
+                        FIN
+                        BIS NEST, SPECIAL1    {note that troll's got them}
+                     FIN
+                     SET TROLL, BOUGHT.OFF
+                     APPORT TROLL, LIMBO
+                     APPORT TROLL2, SW.OF.CHASM
+                     APPORT ARG2, YLEM
+                     QUIP BOUGHT.HIM.OFF, ARG2
+                  FIN
+               FIN
+            FIN
+         FIN
+         IFKEY JUMP
+            IFEQ CHASM, BRIDGED
+               QUIP TRY.THE.BRIDGE
+            FIN
+            GOTO YLEM
+            CALL SPLATTER
+         FIN
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NE, CORRIDOR, CORRIDOR
+         MOVE FORK, FORK
+         MOVE VIEW, BREATHTAKER
+         MOVE BARREN, BARREN
+         IFKEY BRIDGE
+            APPORT BRIDGE, HERE
+         FIN
+         ANYOF CROSS, SW
+            IFGT CHASM, BRIDGED
+               QUIP NO.BRIDGE
+            FIN
+            IFEQ TROLL, WANTS.TREASURE
+               QUIP TROLL.BLOCKS.WAY
+            FIN
+            IFEQ TROLL, WILL.BE.BACK
+               SET TROLL, WANTS.TREASURE
+               APPORT  TROLL, SW.OF.CHASM
+               APPORT TROLL2, LIMBO
+               QUIP TROLL.WANTS.MORE
+            FIN
+            IFEQ TROLL, BOUGHT.OFF
+               SET TROLL, WILL.BE.BACK
+            FIN
+            IFHAVE BEAR
+               SAY BEAR.WRECKS.BRIDGE
+               SET CHASM, BRIDGE.WRECKED
+               APPORT TROLL2, LIMBO
+               GOTO YLEM
+               CALL CORONER
+            FIN
+            IFEQ TROLL, SCARED.OFF
+               AND
+            BIT TROLL, SPECIAL1 {already stole eggs back?}
+               IFNEAR BEAR
+                  GET BEAR
+                  SET CHASM, BRIDGE.WRECKED
+                  SAY TROLLS.REVENGE
+               ELSE
+                  SET CHASM, BRIDGE.BURNED
+                  SAY TROLLS.REVENGE.2
+               FIN
+               APPORT TROLL2, LIMBO
+               GOTO YLEM
+               CALL CORONER
+            FIN
+            MOVE SW.OF.CHASM
+AT       CORRIDOR
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE WEST, CHASM, NE.OF.CHASM
+         MOVE EAST, FORK, FORK
+         MOVE VIEW, BREATHTAKER
+         MOVE BARREN, BARREN
+AT       FORK
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE CHASM, NE.OF.CHASM
+         MOVE WEST, CORRIDOR, CORRIDOR
+         MOVE NE, WARMJUNCTN
+         MOVE SE, DOWN, LIMESTONE
+         MOVE VIEW, BREATHTAKER
+         MOVE BARREN, BARREN
+AT       WARMJUNCTN
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE SOUTH, FORK, FORK
+         MOVE NORTH, VIEW, BREATHTAKER
+         MOVE EAST, CRAWL, BOULDERS
+AT       BREATHTAKER
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE SOUTH, OUT, PASSAGE, WARMJUNCTN
+         MOVE FORK, FORK
+         IFKEY JUMP
+            GOTO YLEM
+            CALL SPLATTER            {let him plummet to a painful death}
+         FIN
+         IFKEY BRIDGE
+            AND
+         IFEQ VOLCANO, 2
+            APPORT BRIDGE, HERE
+         FIN
+         ANYOF VALLEY, CROSS, NORTH
+            IFEQ GORGE, 0
+               QUIP NO.ARCH
+            FIN
+            IFHAVE RING, WORN
+               IFHAVE BEAR
+                  SAY BURN.BEAR
+                  APPORT BEAR, YLEM
+               ELSE
+                  NOT
+                  BIT FACES, BEEN.HERE
+                     BIC BREATHTAKER, HINTABLE
+                     SAY FUMES.MISS
+                  FIN
+               FIN
+               BIT FACES, BEEN.HERE
+               ELSE
+                  SET NEXT.VISION, STATUE.VISION
+               FIN
+               MOVE FACES
+            FIN
+            IFHAVE BEAR
+               SAY BURN.BOTH
+            ELSE
+               SAY FUMES.BURN
+            FIN
+            IFHAVE RING
+               SAY WEAR.RING.PERHAPS?
+            FIN
+            GOTO YLEM
+            CALL CORONER
+AT       BOULDERS
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE WEST, OUT, CRAWL, WARMJUNCTN
+         MOVE FORK, FORK
+         MOVE VIEW, BREATHTAKER
+AT       LIMESTONE
+         MOVE NORTH, UP, FORK, FORK
+         MOVE SOUTH, DOWN, BARREN, BARREN
+         MOVE VIEW, BREATHTAKER
+AT       BARREN
+         MOVE WEST, UP, LIMESTONE
+         MOVE FORK, FORK
+         MOVE EAST, INWARD, BARREN, BEAR.ROOM
+         MOVE VIEW, BREATHTAKER
+         CALL FAKE.NOTE
+AT       BEAR.ROOM
+         MOVE WEST, OUT, BARREN
+         MOVE FORK, FORK
+         MOVE VIEW, BREATHTAKER
+         KEYWORD GET, AXE
+         NEAR AXE
+            IFHAVE AXE
+               OR
+            IFEQ AXE, AN.ZICH
+            ELSE
+               QUIP BEAR.GUARDS.AXE, ARG2
+            FIN
+AT       MAZED.131
+         MOVE WEST, MAZED.107
+         MOVE SE, MAZED.132
+         MOVE NW, MAZED.133
+         MOVE SW, MAZED.134
+         MOVE NE, MAZED.135
+         MOVE UP, MAZED.136
+         MOVE DOWN, MAZED.137
+         MOVE NORTH, MAZED.138
+         MOVE SOUTH, MAZED.139
+         MOVE EAST, MAZED.112
+AT       MAZED.132
+         MOVE NW, MAZED.107
+         MOVE UP, MAZED.131
+         MOVE NORTH, MAZED.133
+         MOVE SOUTH, MAZED.134
+         MOVE WEST, MAZED.135
+         MOVE SW, MAZED.136
+         MOVE NE, MAZED.137
+         MOVE EAST, MAZED.138
+         MOVE DOWN, MAZED.139
+         MOVE SE, MAZED.112
+AT       MAZED.133
+         MOVE UP, MAZED.107
+         MOVE DOWN, MAZED.131
+         MOVE WEST, MAZED.132
+         MOVE NE, MAZED.134
+         MOVE SW, MAZED.135
+         MOVE EAST, MAZED.136
+         MOVE NORTH, MAZED.137
+         MOVE NW, MAZED.138
+         MOVE SE, MAZED.139
+         MOVE SOUTH, MAZED.112
+AT       MAZED.134
+         MOVE NE, MAZED.107
+         MOVE NORTH, MAZED.131
+         MOVE NW, MAZED.132
+         MOVE SE, MAZED.133
+         MOVE EAST, MAZED.135
+         MOVE DOWN, MAZED.136
+         MOVE SOUTH, MAZED.137
+         MOVE UP, MAZED.138
+         MOVE WEST, MAZED.139
+         MOVE SW, MAZED.112
+AT       MAZED.135
+         MOVE NORTH, MAZED.107
+         MOVE SE, MAZED.131
+         MOVE DOWN, MAZED.132
+         MOVE SOUTH, MAZED.133
+         MOVE EAST, MAZED.134
+         MOVE WEST, MAZED.136
+         MOVE SW, MAZED.137
+         MOVE NE, MAZED.138
+         MOVE NW, MAZED.139
+         MOVE UP, MAZED.112
+AT       MAZED.136
+         MOVE EAST, MAZED.107
+         MOVE WEST, MAZED.131
+         MOVE UP, MAZED.132
+         MOVE SW, MAZED.133
+         MOVE DOWN, MAZED.134
+         MOVE SOUTH, MAZED.135
+         MOVE NW, MAZED.137
+         MOVE SE, MAZED.138
+         MOVE NE, MAZED.139
+         MOVE NORTH, MAZED.112
+AT       MAZED.137
+         MOVE SE, MAZED.107
+         MOVE NE, MAZED.131
+         MOVE SOUTH, MAZED.132
+         MOVE DOWN, MAZED.133
+         MOVE UP, MAZED.134
+         MOVE NW, MAZED.135
+         MOVE NORTH, MAZED.136
+         MOVE SW, MAZED.138
+         MOVE EAST, MAZED.139
+         MOVE WEST, MAZED.112
+AT       MAZED.138
+         MOVE DOWN, MAZED.107
+         MOVE EAST, MAZED.131
+         MOVE NE, MAZED.132
+         MOVE UP, MAZED.133
+         MOVE WEST, MAZED.134
+         MOVE NORTH, MAZED.135
+         MOVE SOUTH, MAZED.136
+         MOVE SE, MAZED.137
+         MOVE SW, MAZED.139
+         MOVE NW, MAZED.112
+AT       MAZED.139
+         MOVE SW, MAZED.107
+         MOVE NW, MAZED.131
+         MOVE EAST, MAZED.132
+         MOVE WEST, MAZED.133
+         MOVE NORTH, MAZED.134
+         MOVE DOWN, MAZED.135
+         MOVE SE, MAZED.136
+         MOVE UP, MAZED.137
+         MOVE SOUTH, MAZED.138
+         MOVE NE, MAZED.112
+AT       MAZED.140
+         MOVE NORTH, OUT, MAZED.112
+         KEYWORD DROP, COINS
+         HAVE  COINS
+            APPORT COINS, YLEM
+            APPORT BATTERIES, HERE
+            BIS BATTERIES, SEEN
+            SET MACHINE, 1
+            QUIP BOUGHT.BATTERIES
+AT       LIMBO
+         MOVE OUT, BUILDING {kludge to get out of here if needed}
+AT       SANDSTONE
+         MOVE DOWN, CUBICLE
+         CALL FAKE.STEPS
+         MOVE WEST, OUT, MISTS, MISTS
+AT       MORION
+         MOVE SOUTH, OUT, MTKING
+AT       VAULT
+         IFKEY IN
+            IFEQ SAFE, UNLOCKED
+               SET SAFEEXIT, HERE
+               MOVE INSAFE
+            FIN
+            QUIP CANT.ENTER.SAFE
+         FIN
+         ANYOF UP, OUT, NORTH
+            IFEQ SAFE, UNLOCKED
+               QUIP SAFE.BLOCKS
+            FIN
+            MOVE MTKING
+AT       INSAFE   {inside the safe - strange stuff happens here!}
+         MOVE OUT, SAFEEXIT {way out was set when you came in}
+         KEYWORD SAFE
+            IFEQ STATUS, 1
+               BIS STATUS, PLS.CLARIFY
+               QUIP DO.WHAT?, SAFE
+            FIN
+            IFKEY CLOSE
+               QUIP NO.HANDLE
+            FIN
+            IFKEY OPEN
+               QUIP ALREADY.OPEN, ARG2
+            FIN
+            IFKEY LOOK
+               QUIP INSAFE.INFO
+            FIN
+            QUIP HAH!
+AT       WIDE.N/S.CORRIDOR
+         MOVE SOUTH, MTKING
+         MOVE NORTH, WIDE.E/W.CORRIDOR
+AT       WIDE.E/W.CORRIDOR
+         MOVE SOUTH, NW, WEST, WIDE.N/S.CORRIDOR
+         MOVE NORTH, NE, EAST, TOOLROOM
+         MOVE EAST, TOOLROOM
+AT       TOOLROOM
+         MOVE OUT, SOUTH, WIDE.E/W.CORRIDOR
+AT       DIVISION.IN.PASSAGE
+         MOVE SOUTH, MTKING
+         MOVE NORTH, SPHERICAL
+         MOVE EAST, CUBICLE
+AT       CUBICLE
+         MOVE UP, EAST, SANDSTONE
+         CALL FAKE.STEPS
+         MOVE SOUTH, CORRIDOR, OUT, DIVISION.IN.PASSAGE
+AT       SPHERICAL
+         MOVE OUT, NORTH, CORRIDOR, DIVISION.IN.PASSAGE
+AT       IRREGULAR.TUNNEL
+         MOVE SOUTH, GIANT.ROOM
+         MOVE NORTH, GLASSY
+AT       GLASSY
+         MOVE SOUTH, IRREGULAR.TUNNEL
+         ANYOF NORTH, LAIR
+            IFNEAR OGRE
+               CALL SNEAKS.DIE
+               QUIP OGRE.BLOCKS.WAY
+            FIN
+            MOVE LAIR
+AT       LAIR
+         MOVE EAST, BOTTOMLESS.BRINK
+         MOVE WEST, GLASSY
+AT       BOTTOMLESS.BRINK
+         MOVE NORTH, LAIR
+         MOVE WEST, BOTTOMLESS.BRINK.SOUTH
+         MOVE EAST, BOTTOMLESS.BRINK.EAST
+         MOVE NORTH, LAIR
+         KEYWORD JUMP
+            CALL PLUNGE
+AT       BOTTOMLESS.BRINK.SOUTH
+         MOVE NORTH, BOTTOMLESS.BRINK
+         MOVE SOUTHEAST, ICE
+         KEYWORD JUMP
+            CALL PLUNGE
+AT       ICE
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NORTHWEST, BOTTOMLESS.BRINK.SOUTH
+         SMOVE DOWN, EAST, SLIDE, SLIDE, OOF
+AT       SLIDE
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE SOUTH, ICE.CAVE.2A
+         MOVE NORTHWEST, ICE.CAVE.4
+         ANYOF SLIDE, UP, NORTH, CLIMB
+            QUIP SLIDE.SLIPPERY
+AT       ICE.CAVE.1
+         MOVE WEST, ICE.CAVE.2
+         MOVE NORTH, ICE.CAVE.1A
+AT       ICE.CAVE.1A
+         MOVE SOUTH, ICE.CAVE.1
+AT       ICE.CAVE.2
+         MOVE EAST, ICE.CAVE.1
+         MOVE WEST, ICE.CAVE.3
+         MOVE NORTH, ICE.CAVE.2A
+AT       ICE.CAVE.2A
+         MOVE NORTH, SLIDE
+         MOVE SOUTH, ICE.CAVE.2
+AT       ICE.CAVE.3
+         MOVE EAST, ICE.CAVE.2
+         MOVE NORTH, ICE.CAVE.3A
+AT       ICE.CAVE.3A
+         MOVE SOUTH, ICE.CAVE.3
+AT       ICE.CAVE.4
+         MOVE EAST, SLIDE
+         MOVE WEST, ICE.CAVE.5
+AT       ICE.CAVE.5
+         MOVE NORTHEAST, ICE.CAVE.4
+         MOVE SOUTH, ICE.CAVE.6
+AT       ICE.CAVE.6
+         MOVE NORTH, ICE.CAVE.5
+         MOVE SOUTH, ICE.CAVE.7
+         MOVE WEST, ICE.CAVE.9
+AT       ICE.CAVE.7
+         MOVE NORTH, ICE.CAVE.6
+AT       ICE.CAVE.8
+         MOVE NORTH, ICE.CAVE.9
+AT       ICE.CAVE.9
+         MOVE EAST, ICE.CAVE.6
+         MOVE SOUTH, ICE.CAVE.8
+         MOVE NORTH, ICE.CAVE.10
+AT       ICE.CAVE.10
+         MOVE SOUTH, ICE.CAVE.9
+         MOVE NORTHWEST, ICE.CAVE.11
+AT       ICE.CAVE.11
+         MOVE EAST, ICE.CAVE.10
+         MOVE WEST, ICE.CAVE.12
+AT       ICE.CAVE.12
+         MOVE NORTHEAST, ICE.CAVE.11
+         MOVE SOUTH, ICE.CAVE.12A
+         MOVE WEST, ICE.CAVE.15
+AT       ICE.CAVE.12A
+         MOVE NORTH, ICE.CAVE.12
+         MOVE SOUTH, ICE.CAVE.13
+AT       ICE.CAVE.13
+         MOVE NORTH, ICE.CAVE.12A
+AT       ICE.CAVE.14
+         MOVE NORTH, ICE.CAVE.15A
+AT       ICE.CAVE.15
+         MOVE EAST, ICE.CAVE.12
+         MOVE SOUTH, ICE.CAVE.15A
+         MOVE NORTHWEST, ICE.CAVE.16
+AT       ICE.CAVE.15A
+         MOVE SOUTH, ICE.CAVE.14
+         MOVE NORTH, ICE.CAVE.15
+AT       ICE.CAVE.16
+         MOVE EAST, ICE.CAVE.15
+         MOVE WEST, ICE.CAVE.17
+AT       ICE.CAVE.17
+         MOVE NORTHEAST, ICE.CAVE.16
+         MOVE SOUTH, ICE.CAVE.18
+AT       ICE.CAVE.18
+         MOVE NORTH, ICE.CAVE.17
+         MOVE SOUTH, ICE.CAVE.19
+         MOVE WEST, ICE.CAVE.21
+         MOVE NORTHWEST, ICE.CAVE.22
+AT       ICE.CAVE.19
+         MOVE NORTH, ICE.CAVE.18
+         MOVE WEST, ICE.CAVE.20
+AT       ICE.CAVE.20
+         MOVE EAST, ICE.CAVE.19
+         MOVE NORTH, ICE.CAVE.21
+AT       ICE.CAVE.21
+         MOVE EAST, ICE.CAVE.18
+         MOVE SOUTH, ICE.CAVE.20
+AT       ICE.CAVE.22
+         MOVE SOUTHEAST, ICE.CAVE.18
+         MOVE NORTHWEST, ICE.CAVE.23
+AT       ICE.CAVE.23
+         MOVE EAST, ICE.CAVE.22
+         MOVE WEST, ICE.CAVE.24
+AT       ICE.CAVE.24
+         MOVE NORTHEAST, ICE.CAVE.23
+         MOVE SOUTH, ICE.CAVE.25
+         MOVE WEST, ICE.CAVE.29
+AT       ICE.CAVE.25
+         MOVE NORTH, ICE.CAVE.24
+         MOVE SOUTH, ICE.CAVE.26
+         MOVE WEST, ICE.CAVE.28
+         MOVE NORTHWEST, ICE.CAVE.28A
+AT       ICE.CAVE.26
+         MOVE NORTH, ICE.CAVE.25
+         MOVE NORTHWEST, ICE.CAVE.27
+AT       ICE.CAVE.27
+         MOVE SOUTHEAST, ICE.CAVE.26
+         MOVE NORTH, ICE.CAVE.28
+AT       ICE.CAVE.28
+         MOVE EAST, ICE.CAVE.25
+         MOVE SOUTH, ICE.CAVE.27
+AT       ICE.CAVE.28A
+         MOVE SOUTHEAST, ICE.CAVE.25
+         MOVE NORTH, ICE.CAVE.29
+AT       ICE.CAVE.29
+         MOVE EAST, ICE.CAVE.24
+         MOVE SOUTH, ICE.CAVE.28A
+         MOVE NORTHWEST, ICE.CAVE.30
+AT       ICE.CAVE.30
+         MOVE EAST, ICE.CAVE.29
+         SMOVE THURB, ICE, FOOF
+         IFKEY SIGN
+            QUIP THIS.WAY.OUT, ARG2
+         FIN
+AT       BOTTOMLESS.BRINK.EAST
+         MOVE NORTH, BOTTOMLESS.BRINK
+         MOVE NORTHEAST, CRACK, CRACK.ENTRY
+         KEYWORD JUMP
+            CALL PLUNGE
+AT       CRACK.ENTRY
+         MOVE SOUTHWEST, BOTTOMLESS.BRINK.EAST
+         MOVE SOUTHEAST, CRACK.NORTH
+AT       CRACK.NORTH
+         MOVE WEST, CRACK.ENTRY
+         KEYWORD SOUTH
+            IFNEAR SLIME
+               SAY SLIMED
+               CALL CORONER
+            FIN
+            MOVE CRACK.SOUTH
+AT       CRACK.SOUTH
+         MOVE NORTH, CRACK.NORTH
+         MOVE SOUTH, CRAWL, SMALL.CHAMBER
+AT       SMALL.CHAMBER
+         MOVE NORTH, OUT, CRAWL, CRACK.SOUTH
+AT       ARCHED.CORRIDOR.1
+         MOVE WEST, ARCHED
+         ANYOF EAST, CROSS
+            IFEQ QUICKSAND, 0
+               OR
+            IFHAVE CLAM
+               OR
+            IFHAVE OYSTER
+               SET QUICKSAND, 0
+               BIT QUICKSAND, SPECIAL1
+                  SAY ANOTHER.SCHLURP
+               ELSE
+                  SAY SCHLURP
+                  BIS QUICKSAND, SPECIAL1
+               FIN
+               GOTO YLEM
+               CALL CORONER
+            FIN
+            SET QUICKSAND, 0
+            MOVE ARCHED.CORRIDOR.2
+AT       ARCHED.CORRIDOR.2
+         MOVE NORTH, ARCHED.FORK
+         ANYOF WEST, CROSS
+            IFEQ QUICKSAND, 0
+               BIT QUICKSAND, SPECIAL1
+                  SAY ANOTHER.SCHLURP
+               ELSE
+                  SAY SCHLURP
+                  BIS QUICKSAND, SPECIAL1
+               FIN
+               GOTO YLEM
+               CALL CORONER
+            FIN
+            SET QUICKSAND, 0
+            MOVE ARCHED.CORRIDOR.1
+AT       ARCHED.FORK
+         MOVE SOUTH, ARCHED.CORRIDOR.2
+         MOVE NORTH, FOURIER, FOURIER
+         MOVE EAST, JONAH, JONAH
+AT       FOURIER
+         MOVE NORTHWEST, ARCHED.FORK
+         MOVE SOUTHWEST, ROCK.SHELF
+AT       ROCK.SHELF
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE WEST, FOURIER
+         MOVE DOWN, STEPS, BEACH
+         CALL FAKE.STEPS
+AT       BEACH
+         SET DINGHY, 1       {Don't repeat the long descripton}
+         ANYOF UP, ROCK.SHELF, STEPS, WEST
+            MOVE ROCK.SHELF
+AT       BEACH
+         CALL FAKE.STEPS
+         ANYOF WATER, FILL, DRINK
+            IFKEY WATER
+               OR
+            IFKEY DRINK
+               IFHAVE FLASK, FULL.OF.WATER
+                  OR
+               IFHAVE BOTTLE, FULL.OF.WATER
+                  PROCEED
+               FIN
+            FIN
+            QUIP SALT.H20.BAD
+AT       JONAH 
+         MOVE SOUTH, IN.JONAH
+         MOVE WEST, ARCHED.FORK
+AT       IN.JONAH
+         MOVE NORTH, OUT, JONAH
+         IFKEY STALACTITES
+            QUIP JONAH.DEAD.END
+         FIN
+AT       FACES
+         MOVE NORTH, BY.FIGURE
+         IFKEY BRIDGE
+            AND
+         IFEQ VOLCANO, 2
+            APPORT BRIDGE, HERE
+         FIN
+         ANYOF CROSS, GORGE, SOUTH
+            IFEQ GORGE, 0
+               QUIP NO.ARCH
+            FIN
+            IFHAVE RING
+               IFHAVE SCEPTRE
+                  SAY GHOST.BANG
+                  GOTO YLEM
+                  SET GORGE, 0
+                  CALL CORONER
+               FIN
+               MOVE BREATHTAKER
+            FIN
+            SAY FUMES.BURN
+            GOTO YLEM
+            CALL CORONER
+AT       BY.FIGURE
+         IFEQ STATUE, WALL.GONE
+            MOVE NORTHWEST, PLAIN.1
+            MOVE NORTH, NORTH.OF.BASILISK
+            MOVE NORTHEAST, LOOPY.PASSAGE
+         FIN
+         MOVE SOUTH, FACES
+AT       PLAIN.1
+         MOVE SOUTH, BY.FIGURE
+         KEYWORD NORTH
+            SET FOG, 0
+            APPORT FOG, PLAIN.2
+            MOVE PLAIN.2
+AT       PLAIN.2
+         ANYOF NORTH, EAST, SOUTH, WEST, NE, NW, SE, SW
+            LDA   PTR.PLACE, YLEM
+            CALL SCAVANGE
+            LDA   IV, NORTH
+            ADD IV, GLOW
+            IFEQ IV, ARG2
+               AND
+            IFEQ STATUS, 2
+               OR
+            IFEQ IV, ARG1
+               AND
+            IFNEAR GLOW     {by luck? or did he know for sure?}
+               SET FOG, 8    {so it's not obvious}
+               CHOOSE ALIEN.VIEW, ALIEN.LANDSCAPE, LAST.LANDSCAPE
+               MOVE PLAIN.3
+            FIN
+            MOVE PLAIN.2  {bad moves - stumble back here!}
+AT       PLAIN.3
+         IFKEY DOWN
+            APPORT FOG, PLAIN.1
+            MOVE NONDESCRIPT
+         FIN
+         ANYOF NORTH, EAST, SOUTH, WEST, NE, NW, SE, SW
+            SET FOG, 0    {so it starts changing again}
+            MOVE PLAIN.2
+AT       NONDESCRIPT
+         MOVE NORTH, PENTAGRAM, PENTAGRAM
+         ANYOF UP, SOUTH
+            APPORT FOG, PLAIN.2
+            MOVE PLAIN.3
+AT       PENTAGRAM
+         KEYWORD DROP, FLASK
+         HAVE  FLASK
+            IFEQ FLASK, SEALED
+               DROP  FLASK
+               SET FLASK, IN.PENTAGRAM
+               QUIP SET.FLASK.DOWN
+            FIN
+AT       PENTAGRAM
+         MOVE WEST, OUT, NONDESCRIPT, NONDESCRIPT
+         MOVE NORTH, CRACK, CHIMNEY, CHIMNEY
+         KEYWORD LOOK, PENTAGRAM
+            QUIP PENTAGRAM.INFO
+AT       CHIMNEY
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE UP, CLIMB, TUBE, TUBE
+         MOVE SOUTH, CRACK, PENTAGRAM, PENTAGRAM
+AT       TUBE
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE DOWN, CLIMB, CHIMNEY, CHIMNEY
+         MOVE SOUTH, SLIDE, TUBE, TUBE.SLIDE
+         MOVE NW, BASALT.SHELF
+AT       TUBE.SLIDE
+         IFKEY LOOK
+            PROCEED
+         FIN
+         SMOVE SOUTH, DOWN, SLIDE, PLAIN.1, OOF
+         MOVE NORTH, TUBE
+         MOVE CHIMNEY, TUBE, CHIMNEY
+AT       NORTH.OF.BASILISK
+         MOVE SOUTH, BY.FIGURE
+         IFKEY NORTH
+            ADD BASILISK, 1
+            IFEQ BASILISK, TWITCHING
+               SAY BASILISK.GRUMBLES
+            FIN
+            MOVE BASILISK.DEN
+         FIN
+AT       BASILISK.DEN
+         MOVE NORTH, SOUTH.OF.BASILISK
+         IFKEY SOUTH
+            SUB BASILISK, 1
+            IFEQ BASILISK, SNORING
+               CALL SNEAKS.DIE
+               IFHAVE PLATE, SHINY
+                  SAY BASILISK.STONED
+                  SET BASILISK, PETRIFIED
+                  BIC BASILISK.DEN, HINTABLE
+               ELSE
+                  SAY PETRIFY.ME
+                  CALL CORONER
+               FIN
+            FIN
+            MOVE NORTH.OF.BASILISK
+         FIN
+AT       SOUTH.OF.BASILISK
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NORTH, PEELGRUNT, PEELGRUNT
+         MOVE SOUTH, BASILISK.DEN
+         MOVE DOWN, STEPS, ON.STEPS
+         CALL FAKE.STEPS
+AT       PEELGRUNT
+         IFKEY IN
+            IFEQ SAFE, UNLOCKED
+               SET SAFEEXIT, HERE
+               MOVE INSAFE
+            FIN
+            QUIP CANT.ENTER.SAFE
+         FIN
+         ANYOF SOUTH, OUT, FORK
+            IFEQ SAFE, UNLOCKED
+               QUIP SAFE.BLOCKS
+            FIN
+            MOVE SOUTH.OF.BASILISK
+AT       ON.STEPS
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE UP, SOUTH.OF.BASILISK
+         MOVE DOWN, STEPS, STEPS.EXIT
+         CALL FAKE.STEPS
+AT       STEPS.EXIT
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE UP, ON.STEPS
+         MOVE DOWN, STEPS, STORAGE
+         MOVE NORTH, OUT, FAKE.Y2
+         CALL FAKE.STEPS
+AT       STORAGE
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE UP, STEPS, STEPS.EXIT
+         CALL FAKE.STEPS
+AT       FAKE.Y2
+         MOVE SOUTH, STEPS.EXIT
+         MOVE WEST, CATACOMBS.1
+         MOVE EAST, FAKE.JUMBLE
+         ANYOF PLUGH, PLOVER
+            BIT ADMIN, NOMAGIC
+               QUIP NOTHING
+            FIN
+            SMOVE PLATFORM, FOOF
+AT       FAKE.JUMBLE
+         MOVE WEST, DOWN, FAKE.Y2
+         MOVE UP, CATACOMBS.1
+AT       AUDIENCE
+         MOVE EAST, AUDIENCE.EAST
+         MOVE WEST, CATACOMBS.11
+AT       AUDIENCE.EAST
+         MOVE WEST, AUDIENCE
+AT       LOOPY.PASSAGE
+         MOVE NORTHWEST, BY.FIGURE
+         MOVE NORTH, GOLDEN.CHAMBER
+AT       GOLDEN.CHAMBER
+         MOVE NE, ARABESQUE, ARABESQUE
+         MOVE NW, TRANSLUCENT, TRANSLUCENT
+         MOVE SOUTH, LOOPY.PASSAGE
+AT       ARABESQUE
+         MOVE SOUTH, OUT, GOLDEN.CHAMBER
+AT       TRANSLUCENT
+         ANYOF OUT, EAST, BACK
+            IFLOC GOBLINS, LIMBO
+               APPORT GOBLINS, HERE
+               SET GOBLINS, 0
+            FIN
+            MOVE GOLDEN.CHAMBER
+AT       PLATFORM
+         SMOVE PLUGH, PLOVER, FAKE.Y2, FOOF
+         ANYOF DOWN, CLIMB, NORTH, SOUTH, EAST, WEST, NORTHEAST
+         ANYOF NORTHWEST, SOUTHEAST, SOUTHWEST, JUMP
+            SAY SIZZLE
+            GOTO YLEM
+            CALL CORONER
+AT       NOWHERE
+         IFKEY WALLS
+            QUIP NO.WALLS
+         FIN
+         MOVE NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN, NOWHERE
+         ANYOF ZORTON, XYZZY, THURB, SNOEZE, SAMOHT, PLUGH, PHUGGG, NOSIDE,
+         ANYOF MELENKURION, KNERL, KLAETU, FOO, FOE, FIE, FEE, BLERBI
+            IFKEY SAY
+               SET IV, ARG2
+            ELSE
+               IFEQ STATUS, 1    {only 1 magic word?}
+                  SET IV, ARG1      {use it}
+               ELSE              {otherwise}
+                  QUIP ONE.AT.A.TIME
+               FIN
+            FIN
+            SET K, IV
+            LDA J, FIRST.MAGIC
+            ADD J, 1
+            SUB K, J
+            IFEQ K, ESCAPE
+               LDA J, LAST.MAGIC
+               SUB J, 1
+               IFEQ IV, J
+                  SET CLOSURE, MIRROR.WORLD
+                  IFLOC STARSTONE, STUPENDOUS.VIEW
+                     APPORT STARSTONE, NOWHERE
+                  ELSE
+                     APPORT STARSTONE, YLEM
+                  FIN
+                  BIC STARSTONE, PORTABLE
+                  ITOBJ PTR.OBJ
+                     BIT PTR.OBJ, PORTABLE
+                        IFLOC PTR.OBJ, BUILDING
+                           APPORT PTR.OBJ, NOWHERE
+                        ELSE
+                           APPORT PTR.OBJ, YLEM
+                        FIN
+                     FIN
+                  EOI
+                  SMOVE ROAD, BACK.TO.REALITY
+               ELSE
+                  SAY OK!
+                  ADD ESCAPE, 1
+               FIN
+            ELSE
+               SUB K, 1
+               IFEQ K, ESCAPE
+                  SAY NOT.QUITE
+               ELSE
+                  IFGT ESCAPE, 2
+                     CHANCE 20
+                        OR
+                        NOT
+                     BIT HINTS, SIMPLE.RULE
+                        SAY BAD.ORDER
+                        BIS HINTS, SIMPLE.RULE
+                     ELSE
+                        SAY NATURALLY.NOTHING
+                     FIN
+                  ELSE
+                     SAY NOTHING
+                  FIN
+               FIN
+               SET ESCAPE, 0
+            FIN
+            QUIT
+AT       CATACOMBS.1
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C1
+            LDA NEXT.ONE, CATACOMBS.2
+            LDA LAST.ONE, CATACOMBS.1
+            CALL CATACOMBS
+            SET C1, LV
+            QUIT
+AT       CATACOMBS.2
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C2
+            LDA NEXT.ONE, CATACOMBS.3
+            LDA LAST.ONE, CATACOMBS.1
+            CALL CATACOMBS
+            SET C2, LV
+            QUIT
+AT       CATACOMBS.3
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C3
+            LDA NEXT.ONE, CATACOMBS.4
+            LDA LAST.ONE, CATACOMBS.2
+            CALL CATACOMBS
+            SET C3, LV
+            QUIT
+AT       CATACOMBS.4
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C4
+            LDA NEXT.ONE, CATACOMBS.5
+            LDA LAST.ONE, CATACOMBS.3
+            CALL CATACOMBS
+            SET C4, LV
+            QUIT
+AT       CATACOMBS.5
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C5
+            LDA NEXT.ONE, CATACOMBS.6
+            LDA LAST.ONE, CATACOMBS.4
+            CALL CATACOMBS
+            SET C5, LV
+            QUIT
+AT       CATACOMBS.6
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C6
+            LDA NEXT.ONE, CATACOMBS.7
+            LDA LAST.ONE, CATACOMBS.5
+            CALL CATACOMBS
+            SET C6, LV
+            QUIT
+AT       CATACOMBS.7
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C7
+            LDA NEXT.ONE, CATACOMBS.8
+            LDA LAST.ONE, CATACOMBS.6
+            CALL CATACOMBS
+            SET C7, LV
+            QUIT
+AT       CATACOMBS.8
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C8
+            LDA NEXT.ONE, CATACOMBS.9
+            LDA LAST.ONE, CATACOMBS.7
+            CALL CATACOMBS
+            SET C8, LV
+            QUIT
+AT       CATACOMBS.9
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C9
+            LDA NEXT.ONE, CATACOMBS.10
+            LDA LAST.ONE, CATACOMBS.8
+            CALL CATACOMBS
+            SET C9, LV
+            QUIT
+AT       CATACOMBS.10
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C10
+            LDA NEXT.ONE, CATACOMBS.11
+            LDA LAST.ONE, CATACOMBS.9
+            CALL CATACOMBS
+            SET C10, LV
+            QUIT
+AT       CATACOMBS.11
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C11
+            LDA NEXT.ONE, CATACOMBS.12
+            LDA LAST.ONE, CATACOMBS.PORTAL
+            CALL CATACOMBS
+            SET C11, LV
+            QUIT
+AT       CATACOMBS.12
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C12
+            LDA NEXT.ONE, CATACOMBS.13
+            LDA LAST.ONE, CATACOMBS.11
+            CALL CATACOMBS
+            SET C12, LV
+            QUIT
+AT       CATACOMBS.13
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C13
+            LDA NEXT.ONE, CATACOMBS.14
+            LDA LAST.ONE, CATACOMBS.12
+            CALL CATACOMBS
+            SET C13, LV
+            QUIT
+AT       CATACOMBS.14
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C14
+            LDA NEXT.ONE, CATACOMBS.15
+            LDA LAST.ONE, CATACOMBS.13
+            CALL CATACOMBS
+            SET C14, LV
+            QUIT
+AT       CATACOMBS.15
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C15
+            LDA NEXT.ONE, CATACOMBS.16
+            LDA LAST.ONE, CATACOMBS.14
+            CALL CATACOMBS
+            SET C15, LV
+            QUIT
+AT       CATACOMBS.16
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C16
+            LDA NEXT.ONE, CATACOMBS.17
+            LDA LAST.ONE, CATACOMBS.15
+            CALL CATACOMBS
+            SET C16, LV
+            QUIT
+AT       CATACOMBS.17
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C17
+            LDA NEXT.ONE, CATACOMBS.18
+            LDA LAST.ONE, CATACOMBS.17
+            CALL CATACOMBS
+            SET C17, LV
+            QUIT
+AT       CATACOMBS.18
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C18
+            LDA NEXT.ONE, FAKE.Y2
+            LDA LAST.ONE, CATACOMBS.17
+            CALL CATACOMBS
+            SET C18, LV
+            QUIT
+AT       CATACOMBS.PORTAL
+         IFKEY EAST
+            BIT AUDIENCE, BEEN.HERE
+            ELSE
+               SET NEXT.VISION, CROWN.VISION
+            FIN
+            MOVE AUDIENCE
+         FIN
+         ANYOF NORTH, NE, SE, SOUTH, SW, WEST, NW, UP, DOWN
+            SET K, C19
+            LDA NEXT.ONE, CATACOMBS.10
+            LDA LAST.ONE, CATACOMBS.11
+            CALL CATACOMBS
+            SET C19, LV
+            QUIT
+AT       HALF.STAIRS
+         MOVE UP, SOUTH.SIDE.CHAMBER
+         MOVE DOWN, CELLAR.VIEW
+         CALL FAKE.STEPS
+AT       CELLAR.VIEW
+         IFKEY CLIMB
+            QUIP NO.CLIMB.PORTCULLIS
+         FIN
+         IFKEY DRAIN
+            QUIP DRAIN.OUT.OF.REACH
+         FIN
+         IFKEY ORB
+            OR
+         IFKEY SCRY
+            AND
+         IFLOC ORB, CELLAR
+            QUIP ORB.OUT.OF.REACH
+         FIN
+         IFKEY PORTCULLIS
+            IFKEY OIL
+               OR
+            IFKEY LOOK
+            ELSE
+               QUIP PORTCULLIS.RUSTY
+            FIN
+         FIN
+         MOVE UP, STEPS, HALF.STAIRS
+         CALL FAKE.STEPS
+AT       CHAPEL
+         MOVE CLIMB, BEAMS
+         MOVE NORTH, ANTEROOM
+         MOVE WEST, VESTRY
+         MOVE UP, TOP.OF.CHAPEL
+         MOVE DOWN, CRYPT
+         CALL FAKE.STEPS
+AT       VESTRY
+         MOVE EAST, OUT, CHAPEL
+AT       QUARTERS
+         MOVE NORTH, DUNGEON
+         MOVE SOUTH, WEB.MAZE.1
+         MOVE EAST, PANTRY
+         KEYWORD COUCH
+            QUIP JUST.A.FIXTURE, COUCH
+AT       BEAMS
+         MOVE OUT, DOWN, CHAPEL
+AT       DUNGEON
+         MOVE SOUTH, QUARTERS
+         IFKEY FLAGSTONES
+            IFKEY LIFT
+               SET THERE, 0
+               SMOVE DUNGEON.EXIT, FLAGSTONE.LIFTS
+            FIN
+            IFKEY LOOK
+               QUIP FLAGSTONE.INFO
+            FIN
+            QUIP HAH!
+         FIN
+AT       WEB.MAZE.1
+         MOVE PANTRY, PANTRY
+         MOVE EAST, WEB.MAZE.2
+         MOVE WEST, WEB.MAZE.5
+         MOVE UP, WEB.MAZE.6
+         MOVE DOWN, WEB.MAZE.3
+         MOVE NORTH, QUARTERS
+AT       WEB.MAZE.2
+         MOVE NORTH, WEB.MAZE.1
+         MOVE EAST, DOWN, WEB.MAZE.2
+         MOVE WEST, WEB.MAZE.5
+         MOVE SOUTH, WEB.MAZE.3
+         MOVE UP, WEB.MAZE.4
+AT       WEB.MAZE.3
+         MOVE NORTH, WEB.MAZE.2
+         MOVE EAST, DOWN, WEB.MAZE.3
+         MOVE WEST, WEB.MAZE.1
+         MOVE SOUTH, WEB.MAZE.4
+         MOVE UP, WEB.MAZE.5
+AT       WEB.MAZE.4
+         KEYWORD THROW, AXE
+         HAVE AXE
+         NEAR SPIDER
+            SET AXE, BY.SPIDER
+            DROP AXE
+            QUIP SPIDER.DODGES
+AT       WEB.MAZE.4
+         IFKEY GET
+            DEFAULT PORTABLE
+            IFKEY AXE
+               AND
+            IFEQ AXE, BY.SPIDER
+               QUIP NO.KILL.SPIDER
+            FIN
+         FIN
+         IFKEY DOCUMENTS
+            AND
+         IFEQ WEB, WITH.DOCUMENTS
+            QUIP DOCUMENTS.STUCK
+         FIN
+         MOVE NORTH, WEB.MAZE.2
+         MOVE WEST, WEB.MAZE.6
+         MOVE EAST, WEB.MAZE.3
+         MOVE UP, WEB.MAZE.5
+         IFKEY SOUTH
+            CALL SNEAKS.DIE
+            IFEQ WEB, WITH.SPIDER
+               QUIP NO.KILL.SPIDER
+            FIN
+            IFEQ WEB, WITH.DOCUMENTS
+               QUIP NASTY.WEB
+            FIN
+            MOVE DANK.CAVE
+         FIN
+         IFKEY IN
+            AND
+         IFEQ WEB, IN.SHREDS
+            MOVE DANK.CAVE
+         FIN
+AT       WEB.MAZE.5
+         MOVE NORTH, WEB.MAZE.6
+         MOVE EAST, WEB.MAZE.1
+         MOVE WEST, UP, WEB.MAZE.5
+         MOVE SOUTH, WEB.MAZE.4
+         MOVE DOWN, WEB.MAZE.3
+AT       WEB.MAZE.6
+         MOVE WEST, NORTH, WEB.MAZE.5
+         MOVE EAST, WEB.MAZE.1
+         MOVE SOUTH, WEB.MAZE.4
+         MOVE UP, WEB.MAZE.5
+         MOVE DOWN, WEB.MAZE.2
+AT       BASEMENT
+         MOVE UP, STEPS, CURTAIN.ENTRANCE
+         CALL FAKE.NOTE
+         CALL FAKE.SLAB
+         CALL FAKE.STEPS
+         SMOVE IN, SOUTH, CELLAR, SLAB.SHUTS
+AT       CELLAR
+         IFKEY PORTCULLIS
+            IFKEY OIL
+               OR
+            IFKEY LOOK
+            ELSE
+               QUIP PORTCULLIS.RUSTY
+            FIN
+         FIN
+         CALL FAKE.SLAB
+         CALL FAKE.STEPS
+         IFKEY DRAIN
+            AND
+         IFKEY GO
+            OR
+         IFKEY DOWN
+            QUIP DRAIN.TOO.SMALL
+         FIN
+AT       CURTAIN.ENTRANCE
+         MOVE DOWN, BASEMENT
+         MOVE UP, PANTRY
+         CALL FAKE.STEPS
+         MOVE NW, IN, SOFT, SOFT
+AT       CAUSEWAY.WEST
+         MOVE EAST, CROSS, CAUSEWAY.EAST
+         MOVE WEST, NORTH, SOUTH, NW, SW, SWIRLING.MIST
+         IFKEY DOWN
+            SAY ON.STREAMBED
+            GOTO YLEM
+            CALL CORONER
+         FIN
+         IFKEY STREAMBED
+            QUIP DISTANT.STREAMBED
+         FIN
+AT       CAUSEWAY.EAST
+         MOVE WEST, CROSS, CAUSEWAY.WEST
+         MOVE SOUTH, SE, EAST, RESERVOIR, RESERVOIR
+         IFKEY DOWN
+            SAY ON.STREAMBED
+            GOTO YLEM
+            CALL CORONER
+         FIN
+         IFKEY STREAMBED
+            QUIP DISTANT.STREAMBED
+         FIN
+AT       TOWER.BASE
+         MOVE NORTH, OUT, TOP.OF.CHAPEL
+         MOVE UP, CLIMB, TOWER.STEPS
+         CALL FAKE.STEPS
+AT       TOWER.STEPS
+         MOVE DOWN, TOWER.BASE
+         MOVE UP, CLIMB, TOWER.LOWER.WINDOW
+         CALL FAKE.STEPS
+AT       TOWER.LOWER.WINDOW
+         MOVE DOWN, TOWER.STEPS
+         MOVE UP, CLIMB, TOWER.LOWER.LANDING
+         CALL FAKE.WINDOW
+         CALL FAKE.STEPS
+AT       TOWER.LOWER.LANDING
+         IFKEY DOWN
+            CHANCE 80
+               MOVE TOWER.UPPER.WINDOW
+            FIN
+            MOVE TOWER.LOWER.WINDOW
+         FIN
+         CALL FAKE.STEPS
+         ANYOF UP, CLIMB
+            CHANCE 80
+               MOVE TOWER.LOWER.WINDOW
+            FIN
+            MOVE TOWER.UPPER.WINDOW
+AT       TOWER.UPPER.WINDOW
+         MOVE UP, CLIMB, TOWER.UPPER.LANDING
+         MOVE DOWN, TOWER.LOWER.LANDING
+         CALL FAKE.WINDOW
+         CALL FAKE.STEPS
+AT       TOWER.UPPER.LANDING
+         MOVE UP, CLIMB, TOWER.TOP
+         MOVE DOWN, TOWER.UPPER.WINDOW
+         CALL FAKE.NOTE
+         IFKEY DOOR
+            IFKEY OPEN
+               OR
+            IFKEY BREAK
+               QUIP DOOR.NOT.FOR.BREAKING
+            FIN
+            IFKEY CLOSE
+               QUIP ALREADY.SHUT, ARG2
+            FIN
+            IFKEY OIL
+               IFHAVE FLASK, FULL.OF.OIL
+                  OR
+               IFHAVE BOTTLE, FULL.OF.OIL
+                  IFHAVE BOTTLE, FULL.OF.OIL
+                     SET BOTTLE, EMPTIED
+                  ELSE
+                     SET FLASK, EMPTIED
+                  FIN
+                  SAY YOU.DO, OIL
+                  QUIP IT.IS, DOOR
+               FIN
+               QUIP YOU.DONT.HAVE, ARG1
+            FIN
+            IFKEY LOOK
+               QUIP STORE.DOOR
+            FIN
+            QUIP HAH!
+         FIN
+         IFKEY NOTICE
+            IFKEY READ
+               OR
+            IFKEY LOOK
+               QUIP DOOR.NOTICE
+            FIN
+            QUIP HAH!
+         FIN
+         CALL FAKE.STEPS
+AT       TOWER.TOP
+         MOVE DOWN, TOWER.UPPER.LANDING
+         CALL FAKE.WINDOW
+         CALL FAKE.STEPS
+         ANYOF UP, CLIMB
+            LDA PTR.TEXT, SENTRY
+            ADD PTR.TEXT, DWARF.SENTRY
+            IFEQ DWARF.SENTRY, WELCOMING.COMMETTEE
+               QUERY PTR.TEXT
+                  ADD PTR.TEXT, 1
+               ELSE
+                  QUIP JUST.AS.WELL
+               FIN
+            ELSE
+               ADD DWARF.SENTRY, 1
+            FIN
+            SAY PTR.TEXT
+            IFHAVE LAMP
+               DROP LAMP
+            FIN
+            ITOBJ PTR.OBJ
+               IFHAVE PTR.OBJ
+                  APPORT PTR.OBJ, YLEM
+               FIN
+            EOI
+            CALL CORONER
+AT       DUNGEON.EXIT
+         MOVE DOWN, SOUTH, WELL.BOTTOM
+         IFKEY UP
+            SET THERE, 0
+            SMOVE DUNGEON, BACK.TO.DUNGEON
+         FIN
+AT       WELL.BOTTOM
+         MOVE NORTH, UP, DUNGEON.EXIT
+         IFKEY CLIMB
+            IFLT CLOSURE, EXITS.BARRED
+               SET THERE, 0
+               SMOVE BUILDING, WELL.CLIMB
+            FIN
+            QUIP WELL.NO.CLIMB
+         FIN
+         KEYWORD WELL
+            QUIP YOU.ARE.THERE
+AT       CRYPT
+         MOVE UP, OUT, STEPS, CHAPEL
+         CALL FAKE.STEPS
+         KEYWORD TOMBS
+            QUIP JUST.A.FIXTURE, TOMBS
+AT       TOP.OF.CHAPEL
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE DOWN, STEPS, CHAPEL
+         MOVE NORTH, SOUTH.ATTIC
+         MOVE SOUTH, TOWER.BASE
+         MOVE WEST, PANTRY, PANTRY
+         IFKEY DRAWINGS
+            QUIP OUT.OF.REACH
+         FIN
+         CALL FAKE.STEPS
+AT       SOUTH.ATTIC
+         MOVE SOUTH, TOP.OF.CHAPEL
+         MOVE NORTH, NORTH.ATTIC
+         MOVE SW, PANTRY, PANTRY
+AT       NORTH.ATTIC
+         MOVE SOUTH, SOUTH.ATTIC
+         MOVE NORTH, INWARD, DEN
+AT       DEN
+         MOVE SOUTH, NORTH.ATTIC
+         MOVE OUT, SOUTH.ATTIC
+         IFKEY MASK
+            QUIP MELODRAMATIC
+         FIN
+         KEYWORD SHELF
+            QUIP JUST.A.FIXTURE, SHELF
+AT       PANTRY
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE EAST, TOP.OF.CHAPEL
+         MOVE NE, SOUTH.ATTIC
+         MOVE NORTH, DOWN, STEPS, CURTAIN.ENTRANCE
+         MOVE WEST, QUARTERS
+AT       UNSAFE
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE SOUTH, ANTEROOM
+         MOVE NORTH, VERY.UNSAFE
+         ANYOF WEST, CRACK, HOLE, SLIT
+            CALL NOTHING.BIG
+            MOVE LOW.ROOM
+AT       VERY.UNSAFE
+         MOVE SOUTH, UNSAFE
+AT       LOW.ROOM
+         MOVE WEST, BONES.ROOM
+         MOVE UPSTREAM, BONES.ROOM
+         IFKEY DOWN
+            BIT RATS, SPECIAL1
+               MOVE SHAFT
+            FIN
+            MOVE PHONEY.SHAFT
+         FIN
+         ANYOF UP, EAST, CRACK, HOLE, SLIT
+            CALL NOTHING.BIG
+            MOVE UNSAFE
+AT       BONES.ROOM
+         IFKEY BONES
+            QUIP BONES.UGH
+         FIN
+         MOVE EAST, DOWN, OUT, LOW.ROOM
+AT       PHONEY.SHAFT
+         ANYOF UP, OUT, BACK
+            BIS RATS, SPECIAL1
+            SET RATS, 0
+            RANDOM TIDE, 4
+            MOVE LOW.ROOM
+AT       PHONEY.SHAFT
+         ANYOF DOWN, JUMP
+            SAY WHEEE...SPLASH
+            SAY GLUG.GLUG.GLUG...
+            GOTO SEA.VIEW
+            CALL CORONER
+AT       SHAFT
+         MOVE UP, OUT, LOW.ROOM
+         ANYOF JUMP, DOWN
+            BIC RATS, SPECIAL1
+            BIS RATS, SPECIAL2
+            SMOVE CULVERT, WHEEE...SPLASH
+AT       CULVERT
+         MOVE NORTH, SEA.VIEW
+         MOVE SOUTH, CULVERT.SOUTH
+AT       SEA.VIEW
+         MOVE SOUTH, OUT, CULVERT
+         IFKEY GRILL
+            QUIP GRILL.SOLID
+         FIN
+AT       CULVERT.SOUTH
+         IFKEY RATS
+            AND
+         IFGT STATUS, 1
+            CALL RATS.STUFF
+         FIN
+         MOVE NORTH, CULVERT
+         MOVE SW, SEWER.4
+         MOVE WEST, NW, SEWER.5
+         MOVE EAST, SOUTH, SE, SEWER.1
+AT       SEWER.1
+         MOVE NORTH, CULVERT.SOUTH
+         MOVE SE, SW, SEWER.2
+AT       SEWER.2
+         MOVE NORTH, SEWER.1
+         MOVE SOUTH, SE, SEWER.3
+AT       SEWER.3
+         MOVE NORTH, OUT, SEWER.2
+AT       SEWER.4
+         MOVE NE, CULVERT.SOUTH
+         ANYOF UP, IN, CRAWL
+            SET HINT.TIME, 1
+            MOVE STREAM.MAZE.ENTRANCE
+AT       SEWER.5
+         MOVE EAST, OUT, CULVERT.SOUTH
+AT       STREAM.MAZE.ENTRANCE
+         ANYOF DOWN, DOWNSTREAM
+            BIS RATS, SPECIAL2
+            MOVE SEWER.4
+AT       STREAM.MAZE.ENTRANCE
+         MOVE DOWN, DOWNSTREAM, SEWER.4
+         IFKEY STREAM
+            QUIP TOO.MANY.STREAMS
+         FIN
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, UPSTREAM
+            SET S.MAZE.COUNT, 0
+            MOVE STREAM.MAZE
+AT       STREAM.MAZE
+         IFKEY UP
+            AND
+            NOT
+         BIT RATS, SPECIAL2
+            IFLT S.MAZE.COUNT, 2
+               LDA PTR.PLACE, SEA.VIEW
+               CALL SCAVANGE
+               ADD S.MAZE.COUNT, 1
+               MOVE STREAM.MAZE
+            FIN
+            SET S.MAZE.COUNT, 0
+            BIC RATS, SPECIAL2
+            MOVE JUMBLE
+         FIN
+         IFKEY STREAM
+            QUIP TOO.MANY.STREAMS
+         FIN
+         ANYOF DOWN, DOWNSTREAM
+            CHANCE 10
+               MOVE STREAM.MAZE.ENTRANCE
+            FIN
+AT       STREAM.MAZE
+         ANYOF NORTH, SOUTH, EAST, WEST, NE, SE, NW, SW, UPSTREAM, DOWN, DOWNSTREAM, UP
+            LDA PTR.PLACE, SEA.VIEW
+            CALL SCAVANGE
+            ADD S.MAZE.COUNT, 1
+            MOVE STREAM.MAZE
+AT       BARE.CAVERN
+         MOVE WEST, SOFT
+         MOVE NORTH, LOW.PASSAGE
+AT       LOW.PASSAGE
+         MOVE SOUTH, BARE.CAVERN
+         MOVE NORTH, LARGE.CAVERN
+AT       LARGE.CAVERN
+         MOVE SW, LOW.PASSAGE
+         MOVE NORTH, SWIRLING.MIST
+AT       SWIRLING.MIST
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW
+            LDA PTR.PLACE, YLEM
+            CALL SCAVANGE
+AT       SWIRLING.MIST
+         ANYOF EAST, WEST
+            CALL LOST.IN.MIST
+            QUIT
+AT       SWIRLING.MIST
+         ANYOF SOUTH, SE, SW
+            CHANCE 33
+               MOVE LARGE.CAVERN
+            FIN
+            CALL LOST.IN.MIST
+AT       SWIRLING.MIST
+         ANYOF NORTH, NE, NW
+            CHANCE 33
+               MOVE CAUSEWAY.WEST
+            FIN
+            CALL LOST.IN.MIST
+AT       DANK.CAVE
+         ANYOF NORTH, BACK, OUT
+            MOVE WEB.MAZE.4
+AT       SWORD.PLACE
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, BACK
+            MOVE SWIRLING.MIST
+AT       STOREROOM
+         MOVE OUT, TOWER.UPPER.LANDING
+AT       STUPENDOUS.VIEW
+         MOVE RAVINE, PATH, OUT, SE, RAVINE.WEST
+         IFKEY BUILDING
+            LDA LAST.ONE, RAVINE.WEST
+            LDA NEXT.ONE, ROAD
+            CALL AM.I.CONFUSED?
+         FIN
+         IFKEY JUMP
+            GOTO YLEM
+            CALL SPLATTER
+         FIN
+         ANYOF ASHES, HEELPRINT
+            IFKEY LOOK
+               IFKEY ASHES
+                  QUIP COLD.ASHES
+               FIN
+               QUIP HEELPRINT.INFO
+            FIN
+            IFKEY ASHES
+               QUIP JUST.A.FIXTURE, ASHES
+            FIN
+            QUIP HAH!
+AT       RAVINE
+         MOVE WEST, RAVINE.WEST
+         MOVE SE, PATH
+         IFKEY BUILDING
+            LDA LAST.ONE, STUPENDOUS.VIEW
+            LDA NEXT.ONE, ROAD
+            CALL AM.I.CONFUSED?
+         FIN
+         KEYWORD WALK, PATH
+            LDA NEXT.ONE, RAVINE.WEST
+            LDA LAST.ONE, PATH
+            CALL FOLLOW.IT
+AT       RAVINE.WEST
+         MOVE EAST, RAVINE
+         MOVE NW, STUPENDOUS.VIEW
+         IFKEY BUILDING
+            LDA LAST.ONE, STUPENDOUS.VIEW
+            LDA NEXT.ONE, ROAD
+            CALL AM.I.CONFUSED?
+         FIN
+         KEYWORD WALK, PATH
+            LDA NEXT.ONE, RAVINE
+            LDA LAST.ONE, STUPENDOUS.VIEW
+            CALL FOLLOW.IT
+AT       PATH
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NW, RAVINE, RAVINE
+         MOVE NORTH, FOREST, FOREST.1
+         MOVE NE, FOREST.5
+         MOVE EAST, FOREST.4
+         MOVE SE, ROAD
+         MOVE SOUTH, HILL
+         MOVE SW, WEST, FOREST.2
+         IFKEY BUILDING
+            LDA LAST.ONE, STUPENDOUS.VIEW
+            LDA NEXT.ONE, ROAD
+            CALL AM.I.CONFUSED?
+         FIN
+         KEYWORD WALK, PATH
+            LDA NEXT.ONE, ROAD
+            LDA LAST.ONE, RAVINE
+            CALL FOLLOW.IT
+AT       NORTH.OF.BUILDING
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NORTH, FOREST, FOREST.6
+         MOVE NE, FOREST.7
+         MOVE EAST, FOREST.8
+         MOVE SE, EAST.OF.BUILDING
+         MOVE SW, BUILDING, ROAD
+         MOVE WEST, FOREST.4
+         MOVE NW, FOREST.5
+         IFKEY SOUTH
+            CHANCE 50
+               MOVE EAST.OF.BUILDING
+            FIN
+            MOVE ROAD
+         FIN
+AT       EAST.OF.BUILDING
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NORTH, FOREST.8
+         MOVE NE, FOREST.9
+         MOVE EAST, FOREST, FOREST.10
+         MOVE SE, FOREST.12
+         MOVE SOUTH, FOREST.11
+         MOVE SW, SOUTH.OF.BUILDING
+         MOVE NW, NORTH.OF.BUILDING
+         MOVE BUILDING, ROAD
+         IFKEY WEST
+            CHANCE 50
+               MOVE NORTH.OF.BUILDING
+            FIN
+            MOVE SOUTH.OF.BUILDING
+         FIN
+AT       SOUTH.OF.BUILDING
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NE, EAST.OF.BUILDING
+         MOVE EAST, FOREST.11
+         MOVE SE, FOREST.13
+         MOVE SOUTH, FOREST, FOREST.18
+         MOVE SW, SLIT
+         MOVE WEST, DOWN, VALLEY
+         MOVE NW, BUILDING, ROAD
+         IFKEY NORTH
+            CHANCE 50
+               MOVE EAST.OF.BUILDING
+            FIN
+            MOVE ROAD
+         FIN
+AT       END.OF.VALLEY
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NORTH, DEPRESSION, DEPRESSION
+         MOVE BUILDING, ROAD
+         MOVE SLIT, SLIT
+         MOVE VALLEY, VALLEY
+         MOVE NE, FOREST.19
+         MOVE EAST, FOREST.20
+         MOVE WEST, FOREST, FOREST.17
+         MOVE NW, FOREST.16
+         IFKEY CLIMB
+            QUIP NOT.ME
+         FIN
+AT       FOREST.1
+         MOVE NORTH, NE, WEST, NW, DARK.FOREST
+         MOVE EAST, FOREST.5
+         MOVE SE, FOREST.4
+         MOVE SOUTH, SW, PATH
+AT       FOREST.2
+         MOVE NE, EAST, PATH
+         MOVE SE, HILL
+         MOVE SOUTH, SW, WEST, DARK.FOREST
+         MOVE NW, FOREST.3
+AT       FOREST.3
+         MOVE NORTH, SE, SOUTH, SW, WEST, NW, DARK.FOREST
+         MOVE NE, EAST, FOREST.2
+AT       FOREST.4
+         MOVE NORTH, FOREST.5
+         MOVE NE, FOREST.6
+         MOVE EAST, NORTH.OF.BUILDING
+         MOVE SE, SOUTH, SW, BUILDING, ROAD
+         MOVE WEST, PATH
+         MOVE NW, FOREST.1
+AT       FOREST.5
+         MOVE NORTH, NE, NW, DARK.FOREST
+         MOVE EAST, FOREST.6
+         MOVE SE, NORTH.OF.BUILDING
+         MOVE SOUTH, FOREST.4
+         MOVE SW, PATH
+         MOVE WEST, FOREST.1
+AT       FOREST.6
+         MOVE NORTH, NE, NW, DARK.FOREST
+         MOVE EAST, FOREST.7
+         MOVE SE, FOREST.8
+         MOVE SOUTH, NORTH.OF.BUILDING
+         MOVE SW, FOREST.4
+         MOVE WEST, FOREST.5
+AT       FOREST.7
+         MOVE NORTH, NE, EAST, NW, DARK.FOREST
+         MOVE SE, FOREST.9
+         MOVE SOUTH, FOREST.8
+         MOVE SW, NORTH.OF.BUILDING
+         MOVE WEST, FOREST.6
+AT       FOREST.8
+         MOVE NORTH, FOREST.7
+         MOVE NE, DARK.FOREST
+         MOVE EAST, FOREST.9
+         MOVE SE, FOREST.10
+         MOVE SOUTH, EAST.OF.BUILDING
+         MOVE WEST, NORTH.OF.BUILDING
+         MOVE NW, FOREST.6
+         IFKEY SW
+            CHANCE 50
+               MOVE NORTH.OF.BUILDING
+            FIN
+            MOVE EAST.OF.BUILDING
+         FIN
+AT       FOREST.9
+         MOVE NORTH, NE, EAST, SE, DARK.FOREST
+         MOVE SOUTH, FOREST.10
+         MOVE SW, EAST.OF.BUILDING
+         MOVE WEST, FOREST.8
+         MOVE NW, FOREST.7
+AT       FOREST.10
+         MOVE NORTH, FOREST.9
+         MOVE NE, EAST, SE, DARK.FOREST
+         MOVE SOUTH, FOREST.12
+         MOVE SW, FOREST.11
+         MOVE WEST, EAST.OF.BUILDING
+         MOVE NW, FOREST.8
+AT       FOREST.11
+         MOVE NORTH, EAST.OF.BUILDING
+         MOVE NE, FOREST.10
+         MOVE EAST, FOREST.12
+         MOVE SE, DARK.FOREST
+         MOVE SOUTH, FOREST.13
+         MOVE SW, FOREST.18
+         MOVE WEST, SOUTH.OF.BUILDING
+         IFKEY NW
+            CHANCE 50
+               MOVE EAST.OF.BUILDING
+            FIN
+            MOVE SOUTH.OF.BUILDING
+         FIN
+AT       FOREST.12
+         MOVE NORTH, FOREST.10
+         MOVE NE, EAST, SE, SOUTH, DARK.FOREST
+         MOVE SW, FOREST.13
+         MOVE WEST, FOREST.11
+         MOVE NW, EAST.OF.BUILDING
+AT       FOREST.13
+         MOVE NORTH, FOREST.11
+         MOVE NE, FOREST.12
+         MOVE EAST, SE, SOUTH, DARK.FOREST
+         MOVE SW, FOREST.19
+         MOVE WEST, FOREST.18
+         MOVE NW, SOUTH.OF.BUILDING
+AT       FOREST.14
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NORTH, NE, ROAD
+         MOVE DOWN, EAST, VALLEY, VALLEY
+         MOVE SE, SLIT
+         MOVE SOUTH, FOREST.15
+         MOVE SW, WEST, NW, DARK.FOREST
+AT       FOREST.15
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NORTH, FOREST.14
+         MOVE NE, VALLEY
+         MOVE EAST, DOWN, VALLEY, SLIT
+         MOVE SE, DEPRESSION
+         MOVE SOUTH, FOREST.16
+         MOVE SW, WEST, NW, DARK.FOREST
+AT       FOREST.16
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NORTH, FOREST.15
+         MOVE NE, SLIT
+         MOVE EAST, DOWN, VALLEY, DEPRESSION
+         MOVE SE, END.OF.VALLEY
+         MOVE SOUTH, FOREST.17
+         MOVE SW, WEST, NW, DARK.FOREST
+AT       FOREST.17
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NORTH, FOREST.16
+         MOVE NE, DEPRESSION
+         MOVE EAST, DOWN, VALLEY, END.OF.VALLEY
+         MOVE SE, SOUTH, SW, WEST, NW, DARK.FOREST
+AT       FOREST.18
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NORTH, SOUTH.OF.BUILDING
+         MOVE NE, FOREST.11
+         MOVE EAST, FOREST.13
+         MOVE SE, DARK.FOREST
+         MOVE SOUTH, FOREST.19
+         MOVE SW, DEPRESSION
+         MOVE WEST, DOWN, VALLEY, SLIT
+         MOVE NW, VALLEY
+AT       FOREST.19
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NORTH, FOREST.18
+         MOVE NE, FOREST.13
+         MOVE EAST, SE, DARK.FOREST
+         MOVE SOUTH, FOREST.20
+         MOVE SW, END.OF.VALLEY
+         MOVE WEST, DOWN, VALLEY, DEPRESSION
+         MOVE NW, SLIT
+AT       FOREST.20
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE NORTH, FOREST.19
+         MOVE NE, EAST, SE, SOUTH, SW, DARK.FOREST
+         MOVE WEST, DOWN, VALLEY, END.OF.VALLEY
+         MOVE NW, DEPRESSION
+AT       DARK.FOREST
+         ANYOF NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW
+            LDA J, EAST
+            SET IV, ARG1
+            IFGT STATUS, 1
+               SET IV, ARG2
+            FIN
+            SUB IV, J
+            IFLT FOREST.BLOCK, 0
+               AND
+            CHANCE 20
+               SET FOREST.BLOCK, IV
+            FIN
+            IFEQ FOREST.BLOCK, IV
+               QUIP FOREST.TOO.DENSE
+            FIN
+            LDA PTR.PLACE, YLEM
+            CALL SCAVANGE
+            SET FOREST.BLOCK, -1
+            SET IV, FOREST.TRAP
+            IFGT IV, 100
+               SET IV, 100
+            FIN
+            CHANCE IV
+               SUB FOREST.TRAP, 10
+               IFLT FOREST.TRAP, 1
+                  SET FOREST.TRAP, 1
+               FIN
+               MOVE DARK.FOREST
+            FIN
+            CHOOSE FOREST.TRAP, 120, 160
+            CHOOSE PTR.PLACE, FOREST.1, FOREST.20
+            MOVE PTR.PLACE
+AT       BASALT.SHELF
+         IFKEY LOOK
+            PROCEED
+         FIN
+         MOVE EAST, TUBE, TUBE
+         KEYWORD JUMP
+            GOTO YLEM
+            CALL SPLATTER
+AT       NE.REPOSITORY
+         MOVE SW, SW.REPOSITORY
+         CALL FAKE.NOTE
+         KEYWORD GET, PLANT
+            QUIP ROOTS.TOO.DEEP
+AT       BLASTED.REPOSITORY
+         MOVE SW, SW.REPOSITORY
+         MOVE NE, DARK.HOLE
+AT       SW.REPOSITORY
+         IFKEY NE
+            BIT DARK.HOLE, BEEN.HERE
+               MOVE BLASTED.REPOSITORY
+            FIN
+            MOVE NE.REPOSITORY
+         FIN
+AT       DARK.HOLE
+         MOVE SW, BLASTED.REPOSITORY
+         MOVE NE, UP, SOUTH, WEST, NORTH, DARK.HOLE.2
+         ANYOF E, SE, D, NW
+            CALL UNICORN.STUFF
+AT       DARK.HOLE.2
+         ANYOF N, NE, E, SE, S, SW, W, NW, UP, DOWN
+            CHANCE 25
+               MOVE DARK.HOLE
+            FIN
+            CHANCE 40
+               MOVE DARK.HOLE.2
+            FIN
+            CALL UNICORN.STUFF

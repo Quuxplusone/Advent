@@ -1,0 +1,747 @@
+*        Here follow the object definitions.
+*
+OBJECT   ALL, EVERYTHING        {Dummy for ALL processing}
+OBJECT   GRATE, GRATING
+        %The grate is [locked/open].
+        &Both the hinges and the lock which hold it in place are set in
+         concrete and look very solid. [T/When it is shut, t]here are
+         probably only two ways of getting through: unlock it with a
+         suitable key or dynamite the whole thing.
+OBJECT   STEPS,STAIRS
+        &Thoroughly worn by countless novice adventurers ferrying their
+         hard-won treasure out of the cave. Amazingly enough some of the
+         suckers never get the hint.
+OBJECT   DOOR,DOORS
+        %The way north [is barred by/leads through] a massive, rusty, iron door.
+        &The massive door is constructed out of a number of iron plates, joined
+         by rows of enormous rivets. Rust has been eating into it for some time
+         now, but has only succeeded in inflicting a fairly superficial damage.
+OBJECT   SNAKE
+        %A huge green[ fierce snake bars the way!/, sleepy looking snake
+         is coiled on the floor.]
+        &Scaly, green and huge enough to eat you for breakfast. I really
+         don't know what else you might want to know about it.
+OBJECT   FISSURE
+        %[>$</A crystal bridge spans the fissure.]
+        &The bottom of the fissure is obscured by a mass of writhing and coiling
+         mists - a fascinating but not very informative spectacle.
+OBJECT   BRIDGE,ARCH             {Doubles for all bridges!}
+OBJECT   MIRROR
+        &The huge mirror faithfully reflects you and your surroundings.
+         Did you expect anything else? Sorry...
+OBJECT   PLANT,BEANSTALK
+        %[There is a tiny little plant in the pit, murmuring
+         "Water, water, ..."/There is a 12-foot-tall beanstalk
+         stretching up out of the pit, bellowing "WATER!! WATER!!"/
+         A gigantic beanstalk stretches all the way up to the hole above.]
+OBJECT   -PLANT2   {Phony plant (seen in Twopit room only when tall enough)}
+        %[>$</
+         The top of a 12-foot-tall beanstalk is poking out of the west pit./
+         There is a huge beanstalk growing out of the west pit up to
+         the hole.]
+OBJECT   STALACTITES,STALAGMITES
+OBJECT   FOG
+        %[/////////>$<]You are [standing, badly befuddled, in a pale purple/
+         wandering around in the middle of a bright red/
+         lost in the midst of a thick, pea-green/
+         trying to find your way through a dense coal-black/
+         lost in the heart of a strange yellow/
+         standing, badly bedazzled, in a day-glow orange/
+         hunting your way through a shimmering magenta/
+         somewhere in the center of a weird, pearly pink] fog.
+OBJECT   GLOW    {Glow of light in the midst of the fog}
+* N.B. - the directions listed here MUST be the same as (and
+* in the same order as) the first 8 directions listed in the
+* VERBS file - it they aren't, incredible confusion (that is, more
+* incredible than what we're trying to create) will result.
+        %A [glow of light is visible through the fog to the north/
+         flickering light is visible through the fog in the northeast/
+         faint glow of light is visible through the fog to the east/
+         dim light is visible in the southeast/
+         faint shimmer of light is visible to the south/
+         dim glow of light is visible in the southwest/
+         glimmer of light is visible through the fog in the west/
+         dim flickering light is visible through the fog in the northwest].
+OBJECT   SHADOW, FIGURE
+        &It is too far away to make out any details, but looks vaguely familiar.
+OBJECT   BLOB    {Rover, to all you "The Prisoner" fans}
+        &Oh for goodness' sake! What a time to indulge your curiosity! Remember
+         what it did to the proverbial cat?
+OBJECT   DRAWINGS,FISH   {A kludge for the drawing of a red herring}
+OBJECT   PIRATE          {Pirate - he never stays to visit, but runs away}
+OBJECT   DRAGON
+        %[A huge green fierce dragon bars the way!
+         The dragon is sprawled out on a Persian rug!!/
+         The body of a huge green dead dragon is lying off to one side./
+         The rotting carcass of a dead dragon is lying off to one side.]
+        &[Never seen a dragon before? Well, enjoy it while you can - it is
+         an awesome and beautiful sight!/
+         Don't worry. It is well and truly dead. Still a magnificent sight,
+         but dead. I hope you are ashamed of yourself./
+         Not a pretty sight. I hope you did not expect a detailed description
+         of that rotting pile of dragon meat, because if you were, you
+         are going to be sadly disappointed.]
+OBJECT   CHASM
+        %[A rickety wooden bridge extends across the chasm, vanishing into
+         the mist. A sign posted on the bridge reads, "STOP! Pay troll!"/
+         The wreckage of a bridge (and a dead bear) can be seen at the bottom
+         of the chasm./
+         The charred remains of a wooden bridge can be seen at the bottom
+         of the chasm.]
+        &Ever heard of a "yawning chasm"? Well, have a look. Just mind you
+         don't fall in.
+OBJECT   TROLL
+        %A burly troll stands by the bridge and insists you throw him a
+          treasure before you may cross.
+        &Very ugly, very strong and very determined not to let anybody past
+         without a payment.
+OBJECT   -TROLL2
+        %The troll is nowhere to be seen.
+OBJECT   OGRE
+        %There is a large, nasty-looking ogre blocking your path!
+        &Even by ogrish standards, this one is a particularly nasty specimen!
+OBJECT   BASILISK
+        %[There is a basilisk lying in the corridor to the north, snoring
+         quietly./
+         There is a basilisk lying in the corridor to the south. It is
+         asleep, but is twitching and grumbling as if restless./
+         There is a petrified basilisk in the corridor to the north./
+         There is a petrified basilisk in the corridor to the south.]
+        &[Even allowing for it being a basilisk, this one is a remarkably
+         ugly individual./I know it's hard to credit, but it looks even
+         uglier from this side. The sight itself is nearly enough to
+         petrify one with fright!/Stoned to the eyeballs. Oh, all right...
+         not very funny. Anyway, he's turned himself into a very
+         life-like (and very ugly) but quite harmless granite statue.]
+OBJECT   GONG
+        %There is a large bronze gong fastened to the wall here.
+        &A large bronze affair ornamented with exotic patterns. Looks vaguely
+         Oriental, in an uncommital sort of way.
+OBJECT   DJINN,DJANN,GENIE
+        %There is a twelve-foot djinn standing in the center of the pentagram,
+         glowering at you.
+        &No, this is really *too* much!! Go and read Arabian Nights if you don't
+         know what a djinn looks like!
+OBJECT   TURTLE,TORTOISE,DARWIN
+        %Darwin the tortoise is swimming in the reservoir nearby.
+        &As his kind goes, Darwin is not very large. You can trust him, though.
+         In all these years he hasn't yet ducked a single adventurer.
+         Considering what riff-raff we occasionally get here, that's as
+         near to sainthood as you can get this side of life.
+OBJECT   MESSAGE        {Message in second maze}
+        %There is a message scrawled in the dust in a flowery script, reading:
+        =  "This is not the maze where the pirate leaves his treasure chest."
+OBJECT   VOLCANO, GEYSER, GORGE
+        %[>$</
+         The earth begins to shudder violently, and smoke flows up from the
+         gorge beneath your feet. With a violent \>GLOP!\<, the volcano
+         belches out an immense blast of molten lava which flies into the
+         air above the gorge and suddenly solidifies into a fragile-looking arch
+         of wheat-colored stone that bridges the gorge./
+         There is a wheat-colored stone bridge arching over the gorge./
+         The earth shudders violently, and steam blasts upwards from the
+         geyser. The wheat-stone bridge cracks and splits, and the
+         fragments fall into the gorge.]
+        &Look, you don't expect me to improve on the description of the
+         volcano in the breathtaking view spiel, do you? Just how much
+         purple prose do you want? Sightseeing is all very well, but
+         let's not get distracted too much.
+OBJECT   STATUE, MINOTAUR
+        %[>$</Dark tunnels lead northeast, north, and northwest.]
+        &A magnificent work of art! Dwarvish sculpture at its absolute best!
+OBJECT   QUICKSAND
+OBJECT   SLIME
+        %The passage to the south is swathed with sheets of evil-looking
+         green slime, which twitches and flows as if aware of your presence.
+        &It looks horrible! Except that it has no eyes, I would be inclined
+         to say that it is eyeing you in a positively hungry manner!
+OBJECT   MACHINE, =VENDING
+        %[There is a massive vending machine here. The instructions on it read:
+        =               "Drop coins here to receive fresh batteries."/
+         There is a massive vending machine here.]
+        &A classic fifties' artefact! All chrome and heavy plastic and
+         rounded corners. It has a coin slot and a goods tray. A separate
+         little tray is provided for reject coins and, conceivably, change
+         if it ever gives any.
+OBJECT   SAFE
+        %A massive walk-in safe takes up one entire wall. It[ is tightly
+         closed, and has no handle, lock, nor keyhole/s door has been
+         swung open and blocks the exit passage/ is closed, and
+         there are signs of melting around the edges of its door].
+        &[There isn't much to be said about it. It's a walk-in safe with no
+         handle, lock or keyhole. No inspection is going to reveal anything
+         more, I can tell you that for free./
+         There isn't much to tell - it is a massive walk-in safe with its
+         door swung wide open and, incidentally, blocking the only exit
+         from the room./
+         It is a massive walk-in safe, taking most of one of the walls. It is
+         quite featureless, except for signs of melting round the door edges.]
+OBJECT   THRONE
+        &A mind-boggling contraption. For once, words fail me.
+OBJECT   SKELETON
+        %Resting on the throne ("sitting" isn't really the right word) is an
+         incredible skeleton. It is fairly humanoid from the waist up (except
+         for its incredible size and four extra arms);  below that, it resembles
+         the body of a giant python, and is wrapped in and around the bars and
+         rods of the throne. Clutched in one bony hand is a long sceptre,
+         ornately encrusted with sapphires!!
+OBJECT   BEAR
+        %There is a [ferocious/gentle/contented-looking] cave bear [eying
+         you from the far end of the room!/sitting placidly in
+         one corner./wondering about nearby.]
+        &A huge shaggy beast, [snarling most ferociously!/as cuddly as
+         they come.]
+OBJECT   BATTERIES,BATTERY
+         [/Fresh//Worn-out] batteries
+        %[There is a pair of brand-new batteries in the goods tray./
+         There are fresh batteries here./>$</
+         Some worn-out batteries have been discarded nearby.]
+        &The two batteries are just the right size and shape for the lamp.
+         Both are marked as "[BRAND-NEW/FRESH//WORN-OUT]" in
+         chunky [green/red//blue] letters.
+OBJECT   CARPET,MOSS        {Carpet and/or moss}
+OBJECT   DINGHY
+        %[Lying upon the beach are the shattered remains of what must once have
+         been a dinghy. The remains consist of little more than a few broken
+         boards, upon one of which may be seen a crude sketch of a skull and two
+         crossed thighbones (perhaps this dinghy was once owned by a cook?)./
+         The shattered remains of a dinghy lie forlornly on the beach.]
+        &It's a wreck. Not a hope of it ever taking to water again.
+OBJECT   BAG, =PIECES, =EIGHT
+         Bag filled with pieces of eight
+        %There is a bag [(obviously/] filled with pieces of
+         eight[)/] [in the dinghy/lying off to one side]!
+        &An old (and heavy!) leather bag, chinking most enticingly.
+OBJECT   CROWN
+         Iridium crown[// (worn)]
+        %There is a massive [crown made of solid iridium floating in midair!/
+         iridium crown here!]
+        &Undoubtedly very valuable. There is, however something strange about it.
+         A vague air of malevolent alienness, or something...
+OBJECT   NUGGET, =GOLD
+         Large gold nugget
+        %There is a large sparkling nugget of gold here!
+        &Gold is gold... ductile, malleable and soluble in aqua regia.
+         Heavy, too.
+OBJECT   DIAMONDS
+         Several diamonds
+        %There are diamonds here!
+        &They sparkle and shine in the light as only large stones of the first
+         water can do!
+OBJECT   BARS, =SILVER
+         Bars of silver
+        %There are bars of silver here!
+        &Each bar has a small assay mark on a side - must be valuable!
+OBJECT   JEWELRY,JEWELS,JEWELLERY
+         Precious jewelry
+        %There is precious jewelry here!
+        &Rather tasteless, to my mind, but probably valuable nonetheless.
+OBJECT   COINS
+         Rare coins
+        %There are many coins here!
+        &Looks like a special issue of some sort. Each bears a dignified male
+         profile and the initials R.W. I think coin collectors would be cutting
+         each other's throats just for the right to bid for them.
+OBJECT   CHEST,BOX
+         Treasure chest
+        %The pirate's treasure chest is here[, half-hidden behind a rock/]!
+        &Very solidly built of oak and bound with iron. Probably full of
+         fabulous treasure!
+OBJECT   NEST, =EGGS
+         Golden eggs
+        %[There is a large nest here, full of golden eggs!/
+         The nest of golden eggs has vanished!/Done!]
+        &The nest holding the eggs is lined with some sort bird down - might
+         be goose, but I am not sure. The eggs themselves gleam dully in the
+         light with the unmistakable gleam of pure gold.
+OBJECT   TRIDENT
+         Jeweled trident
+        %There is a jewel-encrusted trident here!
+        &Too over-ornamented to be functional as a weapon, but very strong. The
+         sort of thing you might see in old paintings, being wielded by Neptune.
+OBJECT   HELMET
+         Encrusted helmet
+        %There is a gem-encrusted visorless helmet sitting on the floor!
+        &Too fancy to be of any practical use. In any case it is clearly
+         too small for your big head.
+OBJECT   VASE, =MING
+         Ming vase
+        %[There is a delicate, precious, Ming vase here!/
+         The vase is now resting, delicately, on a velvet pillow./
+         The Ming vase drops with a delicate crash.]
+        &Utterly beautiful! A real collector's item. The sort of thing a
+         Rothschild might use as a table lamp.
+OBJECT   POTTERY, SHARDS
+         Worthless shards of pottery
+        %The floor is covered with worthless shards of pottery.
+        &It's the remnants of a smashed Ming vase. Sadly the damage is so great
+         that there is no possibility of putting them together again.
+OBJECT   EMERALD
+         Egg-sized emerald
+        %There is an emerald here the size of a plover's egg!
+        &A stone of remarkable quality! Not priceless, but definitely *very*
+         expensive.
+OBJECT   SCEPTRE   {Sceptre's 0-mode description is part of "SKELETON"}
+         Sapphire sceptre
+        %[>$</
+         A sapphire-encrusted sceptre is lying on the ground!]
+        &A strange, unearthly object of great value. Obviously a symbol of
+         kingship, but I doubt if any human king ever wielded its like.
+OBJECT   YACHT, RUBY, RUBAIYAT
+         Ruby-covered toy yacht
+        %[There is a small toy yacht sitting on the floor. It is totally
+         covered with rubies, and has the words "Omar Khayyam" engraved
+         on the side!!/
+         The ruby yacht of Omar Khayyam is sitting on the floor!]
+        &One of Faberge's wilder flights of fancy. An intricately expensive, but
+         utterly useless toy.
+OBJECT   PYRAMID, =PLATINUM
+         Platinum pyramid
+        %There is a platinum pyramid here, 2 inches on a side!
+        &Valuable, yes, but otherwise very unremarkable. Who would want a plain
+         platinum pyramid? Is it Cheops's scale model, perhaps? Sorry, just
+         joking. It's only good for scoring points.
+OBJECT   PEARL
+         Glistening pearl
+        %Off to one side lies a glistening pearl!
+        &A perfect milky sphere suffused with a soft glow. You don't see its
+         likes very often.
+OBJECT   RUG, =PERSIAN
+         Rolled up persian rug
+        %There is a [/rolled up ]Persian rug [spread out/lying] on the floor!
+        &[Despite its prolonged close proximity to the dragon, the rug is in
+         an excellent condition. It would be guaranteed to fetch a high price
+         on any bazaar. Not that we run a bazaar around here, but you
+         know what I mean./The rug is rolled up, so there isn't much to
+         be seen. It does, however, appear to be in a good condition.]
+OBJECT   SPICES
+         Rare spices
+        %There are rare spices here!
+        &Nothing much to look at, they exude strange, enticing, elusive, exotic
+         odours. With such a collection of adjectives, who would doubt their
+         high market value?
+OBJECT   BEADS, =INDIAN, =STRING, =TURQUOISE
+         Turquoise beads[// (worn)]
+        %There is a string of ancient Indian turquoise beads [draped casually
+         over the edge of the balcony/here]!
+        &Looks like Navajo work to me. Around 1820 perhaps? Might be a bit later.
+         What? Yes, of course I said 'ancient'! You deaf, or something?
+OBJECT   CHAIN
+         Golden chain
+        %[The bear is locked to the wall with a golden chain!/
+         There is a golden chain lying in a heap on the floor!/
+         There is a golden chain locked to the wall!]
+        &Very expensive. Not a thing you would expect a bear to wear!
+OBJECT   RING,=MITHRIL
+         Mithril ring[// (worn)]
+        %There is a shiny ring (crafted of the finest mithril) lying here!
+        &A flawless mithril band. It has a faint aura of magic about it, but
+         I can assure you that heating it up would reveal no writing on the
+         inside. It is not the One Ring, if that's what you were wondering
+         about.
+OBJECT   SPYGLASS, =SCRIMSHAW
+         Scrimshaw spyglass
+        %There is a small spyglass carved out of whale baleen sitting here!
+        &A valuable trifle of no utilitarian value. You certainly couldn't see
+         much through it.
+OBJECT   SCULPTURE, =CRYSTALLINE
+         Rock-crystal sculpture of a[/ pig/n eel/n emu/n 
+         elf/ squirrel/ vulture/ rabbit/n 
+         ibex/ frog/ tiger/ mule/ moose/ dog/ phoenix/ nymph]
+        %[A finely-carved crystalline sculpture of a pig is resting in a
+         niche melted out of the icy wall of the tunnel!/
+         There is a fine crystalline sculpture of a][/ pig/n eel/n emu/n
+         elf/ squirrel/ vulture/ rabbit/n 
+         ibex/ frog/ tiger/ mule/ moose/ dog/ very
+         bedraggled phoenix/ beautiful nymph][/ here!]
+* Must allow %ditto% or something, to restore the following
+*        %There is a crude sculpture of a very bedraggled phoenix here!
+        &It is a somewhat stylised representation of a
+         [ pig/ pig/n eel/n emu/n elf/ squirrel/ vulture/ rabbit/n 
+         ibex/ frog/ tiger/ mule/ moose/ dog/ very bedraggled 
+         phoenix/ beautiful nymph].
+         A very fine dwarvish work, probably only a few thousand years
+         old, but valuable nontheless. It is carved out of metamorphic
+         crystal - a mineral, I am told, geologically unique to this area.
+OBJECT   BRACELET, =JADE
+         Jade bracelet[// (worn)]
+        %There is an ancient Chinese jade bracelet here!
+        &Intricately carved from a single piece of green jade.
+         Superb workmanship!
+OBJECT   CASKET, =OPALS
+         Casket of black opals
+        %There is a casket full of rare black opals [sitting on a shelf/here]!
+        &Black opals are exceedingly rare and these are a particularly fine lot.
+         Truly, like "limpid pools of darkness".
+OBJECT   ORION                           {Just a myth}
+OBJECT   PLAQUE                          {The plaque in the sandstone room}
+OBJECT   INSCRIPTION, PATTERN, DESIGN    {Inscription on the sword-stone}
+OBJECT   PORTCULLIS      {Intercepted in AT.ACD, so doesn't need description}
+        &A standard issue adventure portcullis, made of solid metal
+         bars set far too close to each other for adventurers to squeeze
+         through. It is very rusty[/, rather greasy] and very firmly stuck.
+OBJECT   CURTAINS        {Curtains in the Soft Room and at Curtain Entrance}
+OBJECT   FLAGSTONES      {Flagstone in the Dungeon}
+OBJECT   ROPE
+        &The rope, as thick as your arm, is woven from some rough and extremely
+         strong natural fibre. Its top end is securely fastened to one of the
+         beams, while the other is hanging a few inches above the floor.
+OBJECT   GRILL           {Grill at Sea View}
+OBJECT   DRAIN
+        &The drain is about ten inches in diameter and bends out of sight
+         after a couple of feet. It smells faintly of sewage and sea water.
+OBJECT   ORB, GLOBE
+         Crystal orb
+        %A crystal orb lies here!
+OBJECT   -FAKE.ORB          {The orb as seen through the portcullis}
+        %A glistening globe lies in a small depression on the sloping cellar floor.
+OBJECT   TUSK, =IVORY
+         Ivory tusk
+        %A large ivory tusk lies here!
+        &Large and yellow with age. Elephant's, I think - nothing exotic.
+OBJECT   CHALICE, =INLAID
+         Inlaid chalice
+        %A magnificent inlaid chalice lies here!
+        &Obviously of great antiquarian value, even though it is
+         somewhat spoiled by a crack in the cup.
+OBJECT   UNICORN
+        %A unicorn stands here pawing the ground.
+        &A beautiful creature. Snow white with a long flowing mane, delicate
+         silver hoofs and a long, narrow, viciously sharp, twisted golden horn.
+         It's hard to be sure with unicorns, but there seems to be a secret
+         laughter lurking in the unfathomable depths of its purple eyes.
+OBJECT   SAPPHIRE
+         Large sapphire
+        %A very large sapphire lies here.
+        &A stone of remarkable quality! Not priceless, but definitely *very*
+         expensive.
+OBJECT   DUNG, TURDS
+        %There is a pile of unicorn dung on the floor here.
+        &This is getting beyond the bounds of decency!
+OBJECT   OWL        {The owl never actually stays unless it is dark}
+OBJECT   WEB
+        %[A large untidy spider web covers the south corner of the cave./
+         A large untidy spider web covers the south corner of the cave. Some
+         official-looking documents are stuck to the web where the
+         spider was./
+         Shreds of a huge spider web hang in the southern corner partly
+         covering a large circular opening in the wall.]
+        &The web is made of thick, very sticky threads. If it was intended for
+         trapping flies, I'd rather not encouter a prospective victim!
+OBJECT   SPIDER        {The spider in the Web Maze}
+        %A huge black hairy spider crouches in one corner of the web.
+        &A revolting huge monster. Hope you forgive me if I refrain from
+         a more detailed description - spiders give me the shivers. I
+         really wish Ralph Witt didn't insist on putting one in,
+         but who gives a damn for a poor cave sprite's arachnophobia?
+         Just use your imagination, if it's all right with you...
+OBJECT   DOCUMENTS,=LEGAL,PAPERS,DEEDS,PLANS
+         Legal documents
+        %There are some legal documents here.
+OBJECT   SPOON,=TARNISHED
+         Tarnished spoon
+        %A tarnished spoon lies here.
+        &[Oh! There appears to be an inscription on the spoon./
+         It's a tarnished old teaspoon with some writing on it./
+         It's a tarnished old teaspoon of no value whatever. Beats me why you
+         are so interested in it.]
+OBJECT   HORN,=LITTLE
+         Little horn
+        %There is a little horn here.
+        &Looks like a small hunting horn. Nothing particularly special
+         about it.
+OBJECT   RATS,RAT
+        &[I see no rats here./I see no rats here./
+         Lean, mean and hungry. You'd better get out of here with no
+         undue delay!]
+OBJECT   CRUCIFIX,=AMETHYST
+         Amethyst crucifix
+        %An amethyst encrusted crucifix of white gold lies on the shelf!
+        %There is an amethyst encrusted crucifix of white gold here.
+        &Quite small but intricately worked. Around here, it is unlikely to
+         have much in the way of spiritual power. Do hang on to it,
+         though - it's expensive!
+OBJECT   GATE        {Gate on the hill}
+        &The gate looks like an ordinary, rather worn, low wooden farm
+         gate, but a closer examination reveals a startling anomaly.
+         Where you would expect the conventional arrangement of hinges
+         on one side and some sort of a latch or lock on the other,
+         this one is firmly hinged to its posts on *both* sides.
+         The wood itself appears to be quite solid, so the only
+         conclusion one can reasonably draw is that this gate is not
+         meant to be opened - ever.
+OBJECT   BONES       {Bones in the Bones Room}
+OBJECT   STARSTONE
+         [/Shimmering/Dark] starstone
+        %[An opalescent starstone lies just inside the lava tube entrance./
+         A shimmering starstone lies here./
+         A dark starstone lies here./
+         A bright starstone lies here, shining with shimmering blue light.]
+        &Don't you know what starstones look like?! It is is a large icosahedral
+         mono-crystal with some rather strange spatial properties. [This
+         one is particularly big. It is shimmering with an opalescent
+         internal light, too weak to illuminate its surroundings/Very
+         unusaually, this one is quite dark/Very unusually, this one is
+         shining brightly with shimmering blue light].
+OBJECT   MOUSE         {Mouse? What mouse?}
+OBJECT   DRACHMA
+         Worn drachma
+        %A small bronze drachma lies [in the coin tray of the machine/on
+         the ground].
+        &A very small Roman coin. Probably a relic of the days when the Roman
+         empire extended well into the Faerie realms... I doubt if it is worth
+         much, anyway.
+OBJECT   KEYS, =SET
+         Set of keys
+        %There are some keys on the ground here.
+        &It is a bunch of several mildly rusty keys of various sizes. Nothing
+         particularly special about any of them.
+OBJECT   LAMP, LANTERN
+         [Shiny b/B]rass lantern [/shining brightly]
+        %There is a[ shiny/] brass lamp[/ shining] nearby.
+        &While pretending to be a fancy safety lamp, it is in fact battery
+         powered. A discreet little switch is marked "on/off" in elaborate
+         lettering.
+OBJECT   CAGE,=WICKER
+         Wicker cage
+        %There is a small wicker cage[ discarded/] nearby.
+        &It is just an ordinary small wicker cage. I know I am not being very
+         informative, but YOU try saying something interesting about a small
+         wicker cage with no particular identification marks!
+OBJECT   BIRD
+         Little bird in cage
+        %[A cheerful little bird is sitting here singing./
+         There is a little bird in the cage.]
+        &A song-bird of some sorts. I am no expert. Does it really matter?
+OBJECT   ROD, WAND
+         Black rod
+        %A three foot black rod with a rusty star on an end lies nearby.
+        &On closer inspection, the rod appears to be surrounded by a faint
+         aura of power!
+OBJECT   PLATE
+         [/Grimy/Polished] metal plate
+        %A[n old/n old/ highly polished] metal plate [is leaning against
+         the wall/lies nearby].
+        &[The plate is roughly rectangular in shape and looks quite
+         heavy./The plate's rectangular surface is covered with grime,
+         but seems to be relatively free of rust./You can see a dim
+         reflection of yourself staring back at you.]
+OBJECT   DYNAMITE
+         Black rod
+        %A three foot black rod with a rusty mark on an end lies nearby.
+        &On closer inspection, the rod appears to be surrounded by a faint
+         aura of dormant power!
+OBJECT   PILLOW, VELVET
+         Velvet pillow
+        %A small velvet pillow lies on the floor.
+        &The pillow has seen better days. Its fine embroidery is coming apart
+         and the velvet, once perhaps lime-green, looks distinctly moth-eaten
+         in places.
+OBJECT   CLAM
+         Giant clam  \>grunt!\<
+        %There is an enormous clam here with its shell tightly closed.
+        &It's a whopper! Captain Nemo would have been proud of it! They'll
+         never believe you back home, you know...
+OBJECT   OYSTER
+         Giant oyster  \>groan!\<
+        %There is an enormous oyster here with its shell tightly closed.
+        &It's a whopper! Captain Nemo would have been proud of it! They'll
+         never believe you back home, you know...
+OBJECT   MAGAZINES, MAGS, SPELUNKER
+         "Spelunker Today"
+        %There are a few recent issues of "Spelunker Today" magazine here.
+OBJECT   KNIFE
+OBJECT   FOOD,RATIONS
+         Tasty food
+        %There is food here.
+        &Standard adventure-style rations - compact and not much to look at,
+         but tasty and nourishing to most species, including adventurers.
+OBJECT   BOTTLE,JAR   {State 1 is dummy for flask compatibility}
+         [//Empty/Small] bottle[/// full of water/ full of oil]
+        %[An empty bottle lies discarded under a bush./
+         >$</
+         There is an empty bottle here.]
+        &It is a fairly small bottle without a stopper, made of cheap
+         green glass. It is [empty//empty/full of ][///water/oil].
+OBJECT   WATER         {Only described as part of containers}
+OBJECT   OIL           {Only described as part of containers}
+OBJECT   FLASK
+         [/Sealed e/Empty e/E]arthenware flask[/// full of water/ full of oil]
+        %There is a [sealed earthenware flask sitting in the center of the
+         pentagram./small, tightly-sealed earthenware flask on the ground
+         here. It has the words, "London Dry" written on the side./ small,
+         empty earthenware flask here.]
+        &It's a small earthenware flask with traces of red wax rounds its
+         slim open neck and the words "London Dry" written on the side. It
+         is[// quite empty./, however, full of ][///water./oil.]
+OBJECT   AXE
+         Dwarf's axe
+        %There is a little axe [here/lying beside the bear/lying just
+         under the spider].
+        &It is a small, hefty weapon, marvellously balanced for throwing. Good
+         workmanship, but of no monetary value - there are just too many of
+         them about.
+OBJECT   SWORD, =SINGING, THROWER
+         Singing sword
+        %[There is a sword here with its blade plunged deep into the rock.
+         The sword is singing quietly to itself./
+         There is a magic sword here, chiming out the bell-like tones of
+         "Khumbu Ice-fall" by ringing its blade against the ground./
+         There is a sword here, singing "A Day in the Life" in a quiet,
+         introspective voice./
+         There is a magic sword here, singing "Cold Blue Steel and Sweet
+         Fire" to itself in a plaintive, hopeless voice./
+         There is a sharp and obviously magical sword here. It is
+         quietly humming excerpts from Prokofiev's "Romeo and Juliet"
+         ballet to itself./
+         There is a sword lying on the ground, jauntily whistling the
+         March from Tchaikovsky's "Nutcracker Suite"./
+         There is a sharp sword lying here. It is (somehow) singing
+         Tchaikovsky's "1812 Overture" in twelve parts, by itself!/
+         The stirring strains of Rossini's "William Tell" overture fill
+         the room, coming from a singing sword lying on the ground./
+         There is a singing sword lying on the ground. From it resound the
+         massed voices of a two-hundred-singer choir, filling the air with
+         the stirring sound of the Hallelujah Chorus from Handel's "Messiah"./
+         There is a sharp and shiny sword here. It is somehow managing to
+         sing Harry Partch's "Daphne of the Dunes" without destroying its
+         singing organs (whatever they happen to be...)/
+         There is a sword here, singing "Witchi-Tai-To" in two-part harmony
+         with itself./
+         A singing sword lies here, merrily humming the Radecky March to
+         itself./
+         There is an obviously enchanted sword here, improvising darkly on
+         the Valkyrie theme from Wagner's Ring./
+         There is a very strange singing sword here - it is glowing and
+         vibrating, and the eerie electronic notes of Charles Wuorinen's
+         "Time's Encomium" issue from its blade and fill the air.]
+        &A plain and deadly utilitarian object. Strange... There is absolutely
+         no indication how it manages to do its singing. Oh, it has "THROWER"
+         inlaid on the pommel! I wonder if that's its name.
+OBJECT   TEETH
+         Several dragon's teeth
+        %There are several dragon's teeth [scattered haphazardly about/in
+         a pile on the floor].
+        &Rather worn and, considering their original owner, surprisingly small.
+OBJECT   VIAL, PHIAL
+         Vial of oily liquid
+        %[On the ground lies a small glass vial filled with an oily liquid./
+         The dwarf catches a lungful of the cloud, gags audibly and stumbles
+         out of the room retching, sneezing, and cursing up a storm./
+         The dwarves blanch in horror and dash away as fast as their brief
+         and misshapen legs can carry them./
+         The troll calmly waves the vapor away./
+         The bear inhales some of the vapor and snarls angrily./
+         The bear inhales some of the vapor and moans appreciatively./
+         The snake completely ignores the vapor./
+         The bird breathes in a miniscule amount of the vapor and immediately
+         sings a twenty-second segment of Morton Subotnik's "Sidewinder"./
+         The slime filling the passage to the south blackens and shrivels
+         away into nothingness./
+         The dragon sniffs the air, rumbles deep in his chest, and shoots out
+         a small puff of flame that ignites and incinerates the vapor./
+         The djinn takes a deep sniff of the vapor and comments, "AH! A
+         TRULY FINE ARABIAN PERFUME! I HAVEN'T SMELLED ANYTHING LIKE THAT
+         FOR YEARS!"/
+         The basilisk doesn't wake up./
+         The gooseberry goblins sniff the vapor, screech in terror, and dash off
+         into the distance./
+         The spider twitches uneasily, but stands her ground./
+         With a contemptuous growl the ogre waves the vapor aside.]
+        &The glass vial is hermetically sealed. The oily liquid inside
+         is transparent and nearly colourless, except for a pinky-bluish
+         opalescence near its surface.
+OBJECT   MUSHROOM
+         Purple mushroom
+        %[There is a small purple mushroom growing on the wall./
+         There is a small purple mushroom lying on the floor./
+         As you swallow the mushroom your mouth becomes numb, and everything
+         seems to swirl around you. The effect quickly passes, and you find
+         that your muscles have bulged unbelievably./
+
+         A strange malaise suddenly afflicts you. You shiver with chill,
+         and your muscles seem to turn to putty;  everything around you becomes
+         grey and unreal. The fit quickly passes, and you find that your body
+         has degenerated back to what it was like before you ate the
+         mushroom.]
+        &I don't really know much about mushrooms. It's small, it's purple -
+         that's a bit unusual, isn't it? Otherwise... I don't know. It's a
+         mushroom! Oh yes, it smells of mushrooms too.
+OBJECT   NOTICE, SIGN
+        %Remnants of a weather-beaten wooden notice stand near the entrance
+         to the ravine.
+        &[It would seem that the notice was erected long ago by some master
+         adventurer, wishing to pass on to others some especially obscure
+         piece of magic lore. Unfortunately, the notice has badly suffered
+         in the passing years and by now the words carved into its wooden
+         board are hardly legible. In addition, the right bottom corner is
+         missing altogether - probably broken off by some adventuring 
+         vandals./]
+  ^         \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+  ^         |_____________________|
+  ^         | _[TO ..OSE WHO CO../=/TW.. BRI.LIG, A..]_ |
+  ^         | _[AFT.. ME: THIS ./=/THE .LITHY TOVE.]|--|
+  ^         | _[THE .LACE TO/=/DID .YRE AND] |--|
+  ^         | _[THE S./=/IN TH.]|------|
+  ^         |\_\_\_\_\_\_\_\_|
+OBJECT   GOBLINS, =GOOSBERRY
+         [Suddenly and without warning, there appears from within the very
+         cave walls around you a horde of vicious little goblins! Each one
+         stands about eight inches high on a pair of spindly black legs, has
+         a globular, spine-covered body resembling a giant gooseberry, a
+         wide mouth filled with sharp teeth, and a pair of glittering little
+         green eyes! They swarm around you and try to block your way./
+         You are surrounded by a horde of silent little gooseberry goblins!/
+         One of the gooseberry goblins begins to giggle in a high-pitched
+         voice. Another takes up the giggling, then another.... soon all
+         of them are giggling insanely and jumping up and down with glee!/
+         You are surrounded by a giggling horde of little gooseberry goblins!/
+         The goblins are jumping up and down frantically, and are working
+         themselves into a real slavering frenzy!!/
+         You are surrounded by a slavering horde of gooseberry goblins!/
+         With a shrill cry, the gooseberry goblins hurl themselves upon you,
+         tickling you mercilessly. You crush and hurl away several of them,
+         but are soon borne down to the ground by the endless attack. The
+         goblins then gleefully rip out your throat, and you sink into
+         unconsciousness.]
+        &A nightmarish sight! The sort of thing a Victorian illustrator might
+         dream up and deem very suitable for a nursery tale.
+OBJECT   TREES
+        &Oh, I am not an elf! A tree is a tree is a tree... Lots of them about.
+         Why this sudden arboreal interest?
+OBJECT   RAGS
+         Some [/fairly clean/dirty] old rags
+        %[A pile of/Some fairly clean/There are some dirty] old
+         rags [lies /lie /][discraded in one corner/on the floor here].
+        &Old[ and/ and/,] tatty[, but fairly clean/, but fairly
+         clean/ and dirty].
+OBJECT   TABLET
+OBJECT   NOTE
+OBJECT   -.SPAREO2
+OBJECT   -.SPAREO3
+OBJECT   -.SPAREO4
+OBJECT   -.SPAREO5
+OBJECT   -.SPAREO6
+OBJECT   -.SPAREO7
+OBJECT   -.SPAREO8
+OBJECT   -.SPAREO9
+OBJECT   DWARF, DWARVES
+        %[>$</
+        /]There [/is/are] [/a threatening/two bloodthirsty/three nasty/
+         four hostile/five threatening/six bloodthirsty/seven nasty/
+         eight angry/nine hostile and nasty/ten very angry] little
+         dwar[/f/ves] in the room with you!
+        &Oh for goodness' sake! What a time to indulge your
+         curiosity! Remember what it did to the proverbial cat?
+OBJECT   GIANT        {GIANT *must* be the last object defined!}
+        %[>$</>$</
+        /The giant reclines on the couch munching eggs with a blissful
+         expression on his face./
+        /The giant is sitting on the couch examining his empty hands with a
+         hurt expression on his face./
+        /By the edge of the cliff the giant is having a grand picnic. To his
+         right is a vast heap of sandwiches, to his left a barrelful of caviar
+         and a whole pile of other goodies. A crate of champagne is carefully
+         positioned in the shadow of a bush./
+        /The giant is here having his picnic.]
+        &Big, clumsy and uncouth. Giants are not my favourite species.
