@@ -1,0 +1,10 @@
+This directory contains the results of the following procedure:
+
+    wget https://www.ifarchive.org/if-archive/games/source/adv660.tar.Z
+    tar zxvf adv660.tar.Z
+    mv adv4_src c
+    mv c/ADVENTURE4.dat .
+    rm adv660.tar.Z
+
+plus a Makefile to build `adv660` from the C source code.
+It does not actually link, because `c/advcust.c` needs to be customized.
