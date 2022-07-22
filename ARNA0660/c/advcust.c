@@ -61,51 +61,11 @@ void adv_save_path (save_name, save_path)
 char *save_name;
 char *save_path;
 {
-#define SAVE_DIR ""         /* Could be "/usr/games/lib/" or whatever */
-
-#ifndef MSD
-   char lognam [32];                     /* Player's ASCII login name */
-#endif /* MSD */
-#ifdef GETLOGIN
-   char *getlogin ();
-#endif /* GETLOGIN */
-   char *save_nm;                 /* Discardable pointer to save_name */
-
-   save_nm = save_name;
-   while (*save_nm)
-   {
-      if (*save_nm == '\n')
-      {
-         *save_nm = '\0';            /* Strip off trailing \n, if any */
-         break;
-      }
-#ifdef MSD
-      if (*save_nm == '.')
-         *save_nm = '-';     /* DOMESTOS doesn't like double suffixes */
-#endif /* MSD */
-      save_nm++;
-   }
-
-#ifdef MSD
-   *(save_name + 8) = '\0';
-   (void) sprintf (save_path, "%s%s.asv", SAVE_DIR, save_name);
-#else /* !MSD */
-#ifdef GETLOGIN
-   (void) strncpy (lognam, getlogin (), 32);
-#else /* !GETLOGIN */
-   (void) cuserid (lognam);              /* Get login name            */
-#endif /* GETLOGIN */
-#if defined (__50SERIES) || defined (vms)
-   lognam [10] = '\0';                   /* Truncate id to 10 chars   */
-   *(save_name + 16) = '\0';             /* Chop given name at 16     */
-   (void) sprintf (save_path, "%s%s_%s.ASV", SAVE_DIR, lognam, save_name);
-#else /* !__50SERIES && !vms */
-   lognam [3] = '\0';                    /* Ensure it's <= 3 chars!   */
-   *(save_name + 10) = '\0';             /* Ensure name <= 10 chars   */
-   (void) sprintf (save_path, "%sA%s%s", SAVE_DIR, lognam, save_name);
-#endif /* __50SERIES, vms */
-#endif /* MSD */
-   return;
+   while (isspace(save_name)) ++save_name;
+   strcpy(save_path, save_name);
+   char *p = strchr(save_path, '\0');
+   while (p != save_path && isspace(p[-1])) --p;
+   *p = '\0';
 }
 
 /*.............................. adv_news ..............................

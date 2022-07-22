@@ -7,4 +7,3 @@ This directory contains the results of the following procedure:
     rm adv660.tar.Z
 
 plus a Makefile to build `adv660` from the C source code.
-It does not actually link, because `c/advcust.c` needs to be customized.

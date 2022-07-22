@@ -287,7 +287,7 @@ g0)) != NULL) { if (p4 == 2) goto p6; (void) fclose (u5); (void) k0 ("There's al
 (void) k0 ("Do you really mean to overwrite it?\n"); if (!y10 (-1)) { e7
 = -1; goto m3; } (void) k0 ("As you wish...\n"); } if (p4 == 2) { e0 [c14]
 = 1; return (0); } if ((u5 = fopen (i12, h0)) == NULL) { e0 [c14] = 1; return
-(1); } (void) time (&g8); (void) fprintf (u5, "%s\n", TITLE); (void) fwrite
+(1); } g8 = 0; (void) fprintf (u5, "%s\n", TITLE); (void) fwrite
 (&g8, sizeof (long), 1, u5); e7 = r0; (void) fwrite (&e7, sizeof (int),
 1, u5); e7 = n1; (void) fwrite (&e7, sizeof (int), 1, u5); e7 = q0; (void)
 fwrite (&e7, sizeof (int), 1, u5); e7 = w7; (void) fwrite (&e7, sizeof (int),
