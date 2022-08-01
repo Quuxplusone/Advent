@@ -339,12 +339,13 @@ The same as LONG0501, plus two uncompleted dead ends:
     beautiful rose, red apple, jeweled urn, golden weathercock, silver cross,
     jeweled cane, gold key, gold watch, rare stamps, floppy disk
 
-- MCDO0551 (HALL0501): 26: large gold nugget, several diamonds, **silver horn**, precious jewelry, rare coins,
+- MCDO0551 (HALL0501): 30: large gold nugget, several diamonds, **silver horn**, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
     platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
-    gleaming sword, elfin crown, ruby slippers, delicate lyre, star sapphire,
-    Holy Grail (chalice), cask of vintage wine, golden ring (small gold ring),
-    four-leafed clover, gold tree, silver droplet
+    silken cloak, gleaming sword, elfin crown, ruby slippers, delicate lyre,
+    star sapphire, Holy Grail (chalice), cask of vintage wine, golden ring (small gold ring),
+    four-leafed clover, rare book, glowing stone (radium), quartz sphere,
+    golden tree, silver droplet
 
 - PLAT0550: 26: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,

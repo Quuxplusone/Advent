@@ -1,0 +1,302 @@
+THIS FILE CONTAINS COMPLETE SPOILERS FOR MCDO0551!
+
+Originally based on the walkthrough from https://forums.delphiforums.com/xyzzy/messages?msg=469.1
+
+FIRST TRIP:
+  precious jewels
+  rare coins
+  silver horn
+  Holy Grail
+  silken cloak
+  several diamonds
+  quartz sphere
+
+no
+in
+get lamp,poster
+7
+22
+34
+xyzzy
+light lamp
+e
+get cage
+pit
+e
+get bird
+debris
+get rod
+pit d w
+wave rod
+w
+get horn
+w w s
+[IF YOU ARE IN A DEAD-END CRACK: n s. REPEAT UNTIL YOU CAN GO SOUTH.]
+s
+yank cloak
+nw n d e e e
+wave rod
+wave rod [RESTORE THE BRIDGE]
+e d
+open cage
+drop bird,cage,rod,poster
+w get e
+s get n
+n d w d n u
+blow horn
+n w d d s
+e e get w w
+s
+wear slippers
+n n
+pray
+put horn,jewels,coins,grail in safe
+click
+w n
+get cask
+turn off lamp
+s w
+get ball
+w d
+wear cloak
+light lamp
+d
+get diamonds
+u u
+sw d
+get radium
+u u
+turn off lamp
+s e e
+light lamp
+click
+n n
+turn off lamp
+pray
+drop radium
+put cloak,diamonds,ball in safe
+
+SECOND TRIP:
+  four-leafed clover
+  silver droplet
+  golden tree
+
+w knoll
+get clover
+w n u
+get flowers
+s s s
+saint-michel
+d
+get tree
+w sw n w n sw w
+get droplet
+e se ne e u
+saint-michel
+n house
+put clover,droplet,tree in safe
+
+THIRD TRIP:
+  vintage wine
+  star sapphire
+
+[YOU SHOULD BE CARRYING LAMP, AXE, CASK, FLOWERS, SLIPPERS]
+w knoll n
+get pole
+grotto
+get boat
+s
+drop boat
+light lamp
+e e
+throw flowers
+get honey
+w w
+get boat
+ne
+put trident in boat
+drop boat
+u u u u e
+get sapphire
+w w w d d
+get boat
+w n
+drop boat
+ne u u
+get wine
+d d sw
+put cask in boat
+get boat
+get cask
+get trident
+s ne
+drop boat,pole
+u u
+turn off lamp
+s e e
+light lamp
+click n n pray
+drop cask
+put sapphire in safe
+
+FOURTH TRIP:
+  delicate lyre
+  glistening pearl
+  jeweled trident
+
+[YOU SHOULD BE CARRYING: LAMP, AXE, TRIDENT, HONEY, SLIPPERS]
+plugh
+s d w d n
+open
+d d
+get pearl
+shell
+s u e u
+get lyre
+n
+plugh
+put lyre,pearl in safe
+drop trident
+
+FIFTH TRIP:
+  golden chain
+  golden ring
+  ruby slippers
+  rare spices
+
+in
+get keys,bottle
+out
+[YOU SHOULD BE CARRYING: LAMP, AXE, KEYS, HONEY, SLIPPERS]
+click
+e n n w
+get ring
+u e e
+barren
+in
+throw honey
+unlock chain
+get chain,bear
+view
+s e
+get spices
+fork w w
+drop bear
+cross
+sw d sw se
+e
+get pillow
+w w w d
+open bottle
+water plant
+u w n
+e u e u n
+plugh
+drop pillow,keys
+put chain,ring,slippers,spices in safe
+
+SIXTH TRIP:
+  Persian rug
+  elfin crown
+  gleaming sword
+  Ming vase
+
+plugh
+s s
+ne [REPEAT "ne" UNTIL YOU GET INTO THE THRONE ROOM]
+e
+wear crown
+w w secret w
+kill
+yes
+get rug
+n d n w
+orient
+n
+chimney
+yank sword [YOU MUST BE WEARING THE CROWN!]
+chimney
+d s
+get vase
+se ne
+e u e u n
+plugh
+drop rug,vase
+put crown,sword in safe
+
+SEVENTH TRIP:
+  golden eggs
+  egg-sized emerald
+  platinum pyramid
+  radium
+
+fill bottle
+plugh
+s d bedquilt w
+orient n w
+drop all
+tunnel
+get emerald
+tunnel
+get all
+nw s se
+w w d
+water plant
+climb
+w
+get eggs
+s d u w n
+u [IF YOU ARE NOT IN THE "SECRET N/S CANYON ABOVE A SIZEABLE PASSAGE", TYPE bedquilt. u. UNTIL YOU ARE]
+n n
+get canister
+w se
+e u e u n
+plover
+ne
+drop bottle
+get pyramid
+s
+plover
+plugh
+open canister
+put radium in canister
+put eggs,pyramid,canister in safe
+plugh
+get emerald
+plugh
+put emerald in safe
+
+BONUS TRIP:
+  large gold nugget
+  treasure chest
+  any remaining (pirate-stolen) treasures
+
+xyzzy
+pit d
+s get n
+w w w s
+e s s s
+n e e nw
+get all
+se n d
+debris
+xyzzy
+drop chest
+put nugget in chest
+[DROP REMAINING TREASURES]
+
+put cask,trident in chest
+plugh
+s d w d e
+get magazines
+e
+drop magazines
+[GO EAST OR WHATEVER UNTIL YOU GET OUT]
+[WAIT FOR THE BLINDING FLASH OF LIGHT]
+sw
+get rod
+ne n
+drop rod
+s sw
+blast
+[YOU WIN!]
