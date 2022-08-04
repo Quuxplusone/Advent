@@ -345,9 +345,10 @@ int burden(ObjectWord t)
         return result;
     } else {
         /* Compute the weight of this one object and its contents.
-         * The boat is a special case; we don't count its contents. */
+         * Long (line 200) special-cases the boat, but that's only because
+         * Long's TAKE BOAT (line 20120) cares about burden(BOAT).
+         * Mine never cares about burden(BOAT). */
         int result = weight(t);
-        if (t == BOAT) return result;
         /* Long doesn't recurse here, due to Fortran's lack of recursion. */
         for (ObjectWord p = objs(t).contents; p != NOTHING; p = objs(p).link) {
             result += burden(p);
