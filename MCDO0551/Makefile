@@ -1,7 +1,7 @@
 ifneq (, $(shell which f77))
 FORTRAN:=f77
 else ifneq (, $(shell which gfortran))
-FORTRAN:=gfortran -std=legacy
+FORTRAN:=gfortran -std=legacy -fno-automatic
 else
 $(error I couldn't find any way to compile Fortran on your system!)
 endif
