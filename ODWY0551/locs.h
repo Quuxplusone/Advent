@@ -26,9 +26,9 @@
              "down the other side of the hill.  There is a building in the distance.",
              "You're at hill in road.", F_LIGHTED | F_OUTSIDE);
     make_ins(ROAD, R_ROAD); ditto(HOUSE); ditto(FORWARD); ditto(E); ditto(N); ditto(D);
-    make_cond_ins(FOREST, 30, R_KNOLL);
-    make_ins(FOREST, R_FOREST); ditto(S);
-    make_ins(W, R_KNOLL);
+    make_cond_ins(FOREST, 30, R_DENSE);
+    make_ins(FOREST, R_FOREST); ditto(N); ditto(S);
+    make_ins(W, R_DENSE);
     make_loc(q, R_HOUSE,
              "You are inside a building, a well house for a large spring.  Off" SOFT_NL
              "to one side is a small pantry.",
@@ -1240,7 +1240,7 @@
              "whence continues an upward crawl.",
              "You're at Tongue of Rock.", 0);
     make_ins(W, R_BATCAVE);
-    make_ins(U, R_STAR); ditto(CLIMB);
+    make_ins(U, R_UPPER); ditto(CLIMB);
     make_ins(E, R_ELEVEL);
     make_loc(q, R_UPPER,
              "You're in the Upper Passage, a long level E/W tunnel.",

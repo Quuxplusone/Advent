@@ -535,7 +535,7 @@ typedef struct {
     Location dest;
 } Instruction;
 
-Instruction travels[1199];
+Instruction travels[1200];
 Instruction *start[MAX_LOC+2];
 struct Place places[MAX_LOC+1];
 
