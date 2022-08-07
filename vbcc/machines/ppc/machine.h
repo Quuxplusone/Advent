@@ -31,6 +31,8 @@ struct AddressingMode{
 /*  pointer.                                                        */
 #define MAXADDI2P LONG
 
+#define HAVE_INT_SIZET 1
+
 /*  If the bytes of an integer are ordered most significant byte    */
 /*  byte first and then decreasing set BIGENDIAN to 1.              */
 #define BIGENDIAN 1

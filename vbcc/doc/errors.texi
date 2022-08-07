@@ -907,7 +907,7 @@
 
         A variable is assigned a value that is never used or gets
         overwritten before it is used. If this occurs in real code then
-        there is either an errror or an unnecessary assignment.
+        there is either an error or an unnecessary assignment.
 
         This is detected only in optimizing compilation.
 
@@ -919,7 +919,7 @@
         can be reached, but if it is reached it will cause undefined
         behaviour. So it is most probably an error either way (see 170).
 
-        However not all unitialized usages can be found.
+        However not all uninitialized usages can be found.
 
         Also note that the compiler may choose convenient values for
         uninitialized variables. Example:
@@ -935,7 +935,7 @@
         then only generate a return(0);
         It can also happen that you get different values if you read an
         uninitialized variable twice although it was not assigned a value
-        inbetween.
+        in between.
 
         This is only detected in optimizing compilation.
 
@@ -1192,7 +1192,7 @@
 @item "be careful with priorities of <</>> vs. +/-" (Warning)
 
 
-@item "adress of auto variable returned" (Warning)
+@item "address of auto variable returned" (Warning)
 
 
 @item "void function returns a void expression" (Warning)

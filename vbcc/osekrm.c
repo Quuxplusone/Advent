@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define BSIZE 4196
 char buf[BSIZE];
 
-main()
+int main()
 {
   int nest=0;
   while(fgets(buf,BSIZE,stdin)){
@@ -27,5 +28,6 @@ main()
 	puts("/* removed */");
     }
   }
+  return 0;
 }
 

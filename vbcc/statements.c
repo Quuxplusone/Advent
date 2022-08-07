@@ -1,4 +1,4 @@
-/*  $VER: vbcc (statements.c) V0.8  */
+/*  $VER: vbcc (statements.c)  $Revision: 1.29 $  */
 
 #include "vbcc_cpp.h"
 #include "vbc.h"
@@ -6,46 +6,46 @@
 static char FILE_[]=__FILE__;
 
 int cont_label=0;
-int test_assignment(struct Typ *,np);
+int test_assignment(type *,np);
 
 static int switchbreak;
 
 #ifdef HAVE_MISRA
-static int misra_switch_statement = 0;
-static int misra_innerst_switch;
-
-static int misra_global_break_counter = 0;
-
-enum Misra_Loop_Typ { FOR, WHILE, DO };
-
-static void misra_loop(np p, enum Misra_Loop_Typ loop_type)
-{
-  if(ISFLOAT(p->ntyp->flags))
-    if (loop_type==FOR) {
-      misra_neu(65,13,4,0);
-    } else {
-      misra_neu(65,0,0,0);
-    }
-  else if(p->flags>=EQUAL&&p->flags<=24){
-    if(ISFLOAT(p->left->ntyp->flags)||ISFLOAT(p->right->ntyp->flags))
-      if (loop_type==FOR) {
-	misra_neu(65,13,4,0);
-      } else {
-	misra_neu(65,0,0,0);
-      }
-  }
-}
-
-void misra_cond(np p)
-{
-  if(p->left) misra_cond(p->left);
-  if(p->right) misra_cond(p->right);
-  if ((p->flags==ASSIGN)||(p->flags==ASSIGNOP)) misra_neu(35,13,1,0);
-}
-
-extern int misra_return_count;
-extern int misra_statement_after_return;
-
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
 #endif
 
 #define cr()
@@ -61,16 +61,16 @@ void cr(void)
 
 
 #ifdef HAVE_MISRA
-static enum MisraBreak { NOBREAK=0, CASE, STATEMENT } misra_needs_break = NOBREAK;
-static int misra_last_break = 0;
+/* removed */
+/* removed */
 #endif
 
 void statement(void)
 /*  bearbeitet ein statement                                    */
 {
-  struct token mtok;
+  token mtok;
 #ifdef HAVE_MISRA
-	if (misra_return_count) misra_neu(82,14,7,0);
+/* removed */
 #endif
   cr();
   killsp();
@@ -83,17 +83,17 @@ void statement(void)
   }
   if(ctok->type==NAME){
 #ifdef HAVE_MISRA
-    if(!strcmp("if",ctok->name)){next_token(); if (misra_needs_break==CASE) misra_needs_break=STATEMENT; if_statement(); misra_last_break=0; return;}
-    if(!strcmp("switch",ctok->name)){next_token(); if (misra_needs_break==CASE)  misra_needs_break=STATEMENT; switch_statement(); misra_last_break = 0; return;}
-    if(!strcmp("for",ctok->name)){next_token();  if (misra_needs_break==CASE) misra_needs_break=STATEMENT; for_statement(); misra_last_break = 0;  return;}
-    if(!strcmp("while",ctok->name)){next_token();  if (misra_needs_break==CASE) misra_needs_break=STATEMENT; while_statement();  misra_last_break = 0; return;}
-    if(!strcmp("do",ctok->name)){next_token();  if (misra_needs_break==CASE) misra_needs_break=STATEMENT; do_statement();  misra_last_break = 0; return;}
-    if(!strcmp("goto",ctok->name)){next_token();  if (misra_needs_break==CASE) misra_needs_break=STATEMENT; goto_statement();  misra_last_break = 0; return;}
-    if(!strcmp("continue",ctok->name)){next_token();  if (misra_needs_break==CASE) misra_needs_break=STATEMENT; continue_statement();  misra_last_break = 0; return;}
-    if(!strcmp("break",ctok->name)){next_token();break_statement();   misra_last_break = 1; return;}
-    if(!strcmp("return",ctok->name)){next_token();  if (misra_needs_break==CASE) misra_needs_break=STATEMENT; return_statement();  misra_last_break = 0; return;}
-    if(!strcmp("case",ctok->name)){next_token(); labeled_statement();  misra_last_break = 0; return;}
-    if(!strcmp("default",ctok->name)){cpbez(buff,0);next_token(); labeled_statement(); return;}
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
 #endif
 #ifndef HAVE_MISRA
     if(!strcmp("if",ctok->name)){next_token();if_statement(); return;}
@@ -120,7 +120,7 @@ void statement(void)
 void labeled_statement(void)
 /*  bearbeitet labeled_statement                                */
 {
-  struct llist *lp;int def=0;
+  llist *lp;int def=0;
   nocode=0;
   if(ctok->type==T_COLON){
     next_token();
@@ -141,31 +141,31 @@ void labeled_statement(void)
     lp->switch_count=0;
     if(def){
 #ifdef HAVE_MISRA
-      if ((misra_needs_break==STATEMENT) && (!misra_last_break)) {
-	misra_neu(61,15,2,0);
-      }
+/* removed */
+/* removed */
+/* removed */
 #endif
       if(switch_act==0) error(150);
       lp->flags|=LABELDEFAULT;
       lp->switch_count=switch_act;
     }else {
 #ifdef HAVE_MISRA
-      misra_neu(55,0,0,0);
+/* removed */
 #endif
 		}
     gen_label(lp->label);
     afterlabel=0;
   }else{
     /*  case    */
-    np tree;struct llist *lp;
+    np tree;llist *lp;
 #ifdef HAVE_MISRA
-    if ((misra_needs_break==STATEMENT) && (!misra_last_break)) {
-      misra_neu(61,15,2,0);
-      misra_needs_break=CASE;
-    } else {
-      misra_needs_break=CASE;
-    }
-    if (nesting != (misra_innerst_switch+1)) misra_neu(61,15,1,0);
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
 #endif
     tree=expression();
     killsp();
@@ -176,7 +176,7 @@ void labeled_statement(void)
     if(!switch_count){
       error(132);
     } else {
-      if(!tree||!type_expression(tree))
+      if(!tree||!type_expression(tree,0))
 	{
 	} else {
 	if(tree->flags!=CEXPR||tree->sidefx){
@@ -205,7 +205,7 @@ void if_statement(void)
 /*  bearbeitet if_statement                                     */
 {
   int ltrue,lfalse,lout,cexpr=0,cm,tm,merk_elseneed;
-  np tree;struct IC *new;
+  np tree;IC *new;
   static int elseneed;
   merk_elseneed=elseneed;
   elseneed=0;
@@ -217,10 +217,10 @@ void if_statement(void)
     error(135);
   }else{
 #ifdef HAVE_MISRA
-    if(misracheck) misra_cond(tree);
+/* removed */
 #endif
     ltrue=++label;lfalse=++label;
-    if(type_expression(tree)){
+    if(type_expression(tree,0)){
       tree=makepointer(tree);
       if(!ISARITH(tree->ntyp->flags)&&!ISPOINTER(tree->ntyp->flags)){
 	error(136);
@@ -263,13 +263,13 @@ void if_statement(void)
   if(cexpr==2) nocode=1;
   if(!cexpr&&!tm) gen_label(ltrue);
 #ifdef HAVE_MISRA
-  if(ctok->type!=LBRA) misra_neu(59,14,9,0);
+/* removed */
 #endif
   statement();
   killsp();
   if(ctok->type!=NAME||strcmp("else",ctok->name)){
 #ifdef HAVE_MISRA
-    if(merk_elseneed) misra_neu(60,14,10,0);
+/* removed */
 #endif
     nocode=cm;
     if(cexpr!=1) gen_label(lfalse);
@@ -289,7 +289,7 @@ void if_statement(void)
   if(ctok->type!=LBRA){
 	  if(ctok->type!=NAME||strcmp("if",ctok->name)) {
 #ifdef HAVE_MISRA
-      misra_neu(59,14,9,0);
+/* removed */
 #endif
 	  }
     else
@@ -307,15 +307,15 @@ void switch_statement(void)
 /*  bearbeitet switch_statement                                 */
 {
   np tree;int merk_typ,merk_count,merk_break,num_cases;
-	struct IC *merk_fic,*merk_lic,*new;struct llist *lp,*l1,*l2;
+	IC *merk_fic,*merk_lic,*new;llist *lp,*l1,*l2;
 #ifdef HAVE_MISRA
-  int merk_switch_statement, merk_needs_break, merk_innerst_switch;
-	merk_switch_statement = misra_switch_statement;
-	misra_switch_statement = 1;
-	merk_needs_break = misra_needs_break;
-	misra_needs_break = NOBREAK;
-	merk_innerst_switch=misra_innerst_switch;
-	misra_innerst_switch = nesting;
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
 #endif
   nocode=0;
   killsp();
@@ -330,17 +330,17 @@ void switch_statement(void)
   if(!tree){
     error(137);
   } else {
-    if(!type_expression(tree)){
+    if(!type_expression(tree,0)){
     }else{
       if(!ISINT(tree->ntyp->flags)){
 	error(138);
       } else {
-	int m1,m2,m3,def=0,rm,minflag;
+	int m1,m2,m3,def=0,rm,rm1,rm2,minflag;
 	zmax l,ml,s;zumax ul,mul,us;
 	if(tree->flags==ASSIGN&&tree->right->flags!=CALL) error(164);
 #ifdef HAVE_MISRA
-	if((tree->flags>=EQUAL&&tree->flags<=GREATEREQ)||tree->flags==NEGATION||tree->flags==LAND||tree->flags==LOR)
-	  misra_neu(63,15,4,0);
+/* removed */
+/* removed */
 #endif 
 	m3=break_label=++label;m1=switch_act=++switch_count;
 	m2=switch_typ=tree->ntyp->flags&NU;
@@ -364,6 +364,12 @@ void switch_statement(void)
 	  int r=tree->o.reg;
 	  rm=regs[r];
 	  regs[r]=regsa[r];
+	  if(reg_pair(r,&rp)){
+	    rm1=regs[rp.r1];
+	    rm2=regs[rp.r2];
+	    regs[rp.r1]=regsa[rp.r1];
+	    regs[rp.r2]=regsa[rp.r2];
+	  }
 	}
 	merk_fic=first_ic;merk_lic=last_ic;
 	
@@ -375,16 +381,23 @@ void switch_statement(void)
 	  switchbreak=merk_sb;
 	}
 	
-	if((tree->o.flags&(SCRATCH|REG))==(SCRATCH|REG)) regs[tree->o.reg]=rm;
+	if((tree->o.flags&(SCRATCH|REG))==(SCRATCH|REG)){
+	  int r=tree->o.reg;
+	  regs[r]=rm;
+	  if(reg_pair(r,&rp)){
+	    regs[rp.r1]=rm1;
+	    regs[rp.r2]=rm2;
+	  }
+	}
 	minflag=0;s=l2zm(0L);us=ul2zum(0UL);
 	num_cases=0;
 #ifdef HAVE_MISRA
-	if(misracheck){
-	  int cs=0;
-	  for(l1=first_llist;l1;l1=l1->next)
-	    if(l1->switch_count==m1&&!(l1->flags&LABELDEFAULT)) cs=1;
-	  if(!cs) misra_neu(64,15,5,0);
-	}
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
 #endif
 	for(l1=first_llist;l1;l1=l1->next)
 	  if(l1->switch_count==m1) num_cases++;
@@ -503,6 +516,7 @@ void switch_statement(void)
 	  if(merk_lic) merk_lic->next=new; else merk_fic=new;
 	  merk_lic=new;
 	  regs[tree->o.reg]=regsa[tree->o.reg];
+	  if(reg_pair(tree->o.reg,&rp)){ regs[rp.r1]=regsa[rp.r1];regs[rp.r2]=regsa[rp.r2];}
 	}
 	new=new_IC();
 	new->line=0;
@@ -510,7 +524,7 @@ void switch_statement(void)
 	new->code=BRA;
 	if(def) new->typf=def; else {
 #ifdef HAVE_MISRA
-	  misra_neu(62,15,3,0);
+/* removed */
 #endif
 	  new->typf=m3;
 	}
@@ -534,9 +548,9 @@ void switch_statement(void)
   if(tree) free_expression(tree);
   cr();
 #ifdef HAVE_MISRA
-  misra_switch_statement = merk_switch_statement;
-  misra_needs_break = merk_needs_break;
-  misra_innerst_switch = merk_innerst_switch;
+/* removed */
+/* removed */
+/* removed */
 #endif
 }
 void repair_tree(np p)
@@ -548,7 +562,7 @@ void repair_tree(np p)
   if(p->flags==IDENTIFIER||p->flags==(IDENTIFIER|256))
     p->o.v=find_var(p->identifier,0);
   if(p->flags==CALL){
-    struct argument_list *al=p->alist;
+    argument_list *al=p->alist;
     while(al){
       repair_tree(al->arg);
       al=al->next;
@@ -559,15 +573,15 @@ void while_statement(void)
 /*  bearbeitet while_statement                                  */
 {
   np tree;int lloop,lin,lout,cm,cexpr,contm,breakm;
-  struct IC *new,*mic; int line,tvalid;char *file;
+  IC *new,*mic; int line,tvalid;char *file;
   killsp();
   if(ctok->type==LPAR) {next_token();killsp();} else error(151);
   tree=expression();
   cexpr=0;
   if(tree){
-    if(tvalid=type_expression(tree)){
+    if(tvalid=type_expression(tree,0)){
 #ifdef HAVE_MISRA
-      if(misracheck) {misra_cond(tree);misra_loop(tree,WHILE);}
+/* removed */
 #endif
       tree=makepointer(tree);
       if(!ISARITH(tree->ntyp->flags)&&!ISPOINTER(tree->ntyp->flags)){
@@ -633,23 +647,25 @@ void while_statement(void)
   {
     int merk_sb=switchbreak;
 #ifdef HAVE_MISRA
-		int misra_break_counter;
+/* removed */
 #endif
     switchbreak=0;
 #ifdef HAVE_MISRA
-    if(ctok->type!=LBRA) misra_neu(59,14,8,0);
-		misra_break_counter = misra_global_break_counter;
+/* removed */
+/* removed */
 #endif
     statement();
 #ifdef HAVE_MISRA
-		if (misra_global_break_counter>1) misra_neu(0,14,6,0);
-		misra_global_break_counter=misra_break_counter;
+/* removed */
+/* removed */
 #endif
     switchbreak=merk_sb;
   }
   mic=last_ic;
   nocode=cm;cont_label=contm;break_label=breakm;
   if(!cexpr||tree->sidefx) gen_label(lin);
+  /* correct if mic was a branch to label lin and eliminated */
+  if(last_ic->prev!=mic) mic=last_ic;
   if(tree&&cexpr>=0){
     if(cexpr!=1||tree->sidefx){
       gen_IC(tree,lloop,lout);
@@ -689,11 +705,11 @@ void for_statement(void)
 /*  bearbeitet for_statement                                    */
 {
   np tree1=0,tree2=0,tree3=0;int lloop,lin,lout,cm,cexpr=0,contm,breakm,with_decl,tvalid;
-  struct IC *new,*mic;int line;char *file;
+  IC *new,*mic;int line;char *file;
   killsp();
   if(ctok->type==LPAR) {next_token();killsp();} else error(59);
 #ifdef HAVE_MISRA
-  misracomma=1;
+/* removed */
 #endif
   if(c99&&declaration(0)){
     with_decl=1;
@@ -708,13 +724,13 @@ void for_statement(void)
     if(tree1){
       if(tree1->flags==POSTINC) tree1->flags=PREINC;
       if(tree1->flags==POSTDEC) tree1->flags=PREDEC;
-      if(type_expression(tree1)){
+      if(type_expression(tree1,0)){
 	if(tree1->sidefx){
 	  gen_IC(tree1,0,0);
 	  if(tree1&&(tree1->o.flags&(SCRATCH|REG))==(SCRATCH|REG)) free_reg(tree1->o.reg);
 	}else{
 #ifdef HAVE_MISRA
-		misra_neu(53,14,2,0);
+/* removed */
 #endif
 		error(153);
 	}
@@ -730,18 +746,18 @@ void for_statement(void)
   killsp();
   if(ctok->type==RPAR) {next_token();killsp();} else error(59);
 #ifdef HAVE_MISRA
-  misracomma=0;
+/* removed */
 #endif
   if(tree3){
-    if(!type_expression(tree3)){
+    if(!type_expression(tree3,0)){
       free_expression(tree3);
       tree3=0;
     }
   }
   if(tree2){
-    if(tvalid=type_expression(tree2)){
+    if(tvalid=type_expression(tree2,0)){
 #ifdef HAVE_MISRA
-      if(misracheck) {misra_cond(tree2);misra_loop(tree2,FOR);}
+/* removed */
 #endif
       tree2=makepointer(tree2);
       if(!ISARITH(tree2->ntyp->flags)&&!ISPOINTER(tree2->ntyp->flags)){
@@ -805,18 +821,18 @@ void for_statement(void)
   {
     int merk_sb=switchbreak;
 #ifdef HAVE_MISRA
-		int misra_break_counter;
+/* removed */
 #endif
     switchbreak=0;
 #ifdef HAVE_MISRA
-    if(ctok->type!=LBRA) misra_neu(59,14,8,0);
-		misra_break_counter = misra_global_break_counter;
-		misra_global_break_counter = 0;
+/* removed */
+/* removed */
+/* removed */
 #endif
     statement();
 #ifdef HAVE_MISRA
-		if ((misra_global_break_counter) > 1) misra_neu(0,14,6,0);
-		misra_global_break_counter = misra_break_counter;
+/* removed */
+/* removed */
 #endif
     switchbreak=merk_sb;
   }
@@ -832,7 +848,7 @@ void for_statement(void)
       if(tree3&&(tree3->o.flags&(SCRATCH|REG))==(SCRATCH|REG)) free_reg(tree3->o.reg);
     }else{
 #ifdef HAVE_MISRA
-		misra_neu(53,14,2,0);
+/* removed */
 #endif
 		error(153);}
     free_expression(tree3);
@@ -885,26 +901,26 @@ void do_statement(void)
 /*  bearbeitet do_statement                                     */
 {
   np tree;int lloop,lout,contm,breakm;
-  struct IC *new;
+  IC *new;
   lloop=++label;lout=++label;currentpri*=looppri;
   gen_label(lloop);
   breakm=break_label;contm=cont_label;cont_label=++label;break_label=lout;
   {
     int merk_sb=switchbreak;
 #ifdef HAVE_MISRA
-		int misra_break_counter;
+/* removed */
 #endif
     switchbreak=0;
 #ifdef HAVE_MISRA
-    if(ctok->type!=LBRA) misra_neu(59,14,8,0);
-		misra_break_counter = misra_global_break_counter;
-		misra_global_break_counter = 0;
+/* removed */
+/* removed */
+/* removed */
 #endif
     statement();
 
 #ifdef HAVE_MISRA
-		if (misra_global_break_counter>1) misra_neu(0,14,6,0);
-		misra_global_break_counter = misra_break_counter;
+/* removed */
+/* removed */
 #endif
     switchbreak=merk_sb;
   }
@@ -915,9 +931,9 @@ void do_statement(void)
   if(ctok->type==LPAR) {next_token();killsp();} else error(151);
   tree=expression();
   if(tree){
-    if(type_expression(tree)){
+    if(type_expression(tree,0)){
 #ifdef HAVE_MISRA
-      if(misracheck) {misra_cond(tree);misra_loop(tree,DO);}
+/* removed */
 #endif
       tree=makepointer(tree);
       if(ISARITH(tree->ntyp->flags)||ISPOINTER(tree->ntyp->flags)){
@@ -963,10 +979,10 @@ void do_statement(void)
 void goto_statement(void)
 /*  bearbeitet goto_statement                                   */
 {
-  struct llist *lp;
-  struct IC *new;
+  llist *lp;
+  IC *new;
 #ifdef HAVE_MISRA
-  misra_neu(56,14,4,0);
+/* removed */
 #endif
   killsp();
   if(ctok->type!=NAME){
@@ -994,12 +1010,12 @@ void goto_statement(void)
 void continue_statement(void)
 /*  bearbeitet continue_statement                               */
 {
-  struct IC *new;
+  IC *new;
 #ifdef HAVE_MISRA
-  misra_neu(57,14,5,0);
+/* removed */
 #endif
   if(cont_label==0){error(145);return;}
-  if(block_vla[nesting]) freevl();
+  //if(block_vla[nesting]) freevl();
   new=new_IC();
   new->code=BRA;
   new->typf=cont_label;
@@ -1011,13 +1027,13 @@ void continue_statement(void)
 void break_statement(void)
 /*  bearbeitet break_statement                                  */
 {
-  struct IC *new;
+  IC *new;
 #ifdef HAVE_MISRA
-  if(!switchbreak) misra_neu(58,0,0,0);
-	misra_global_break_counter++;
+/* removed */
+/* removed */
 #endif
   if(break_label==0){error(146);return;}
-  if(block_vla[nesting]) freevl();
+  //if(block_vla[nesting]) freevl();
   new=new_IC();
   new->code=BRA;
   new->typf=break_label;
@@ -1030,7 +1046,7 @@ static void check_auto_return(np tree)
 /*  Testet, ob Knoten Adresse einer automatischen Variable ist. */
 {
   if((tree->flags==ADDRESS||tree->flags==ADDRESSS||tree->flags==ADDRESSA)&&tree->left->flags==IDENTIFIER){
-    struct Var *v;
+    Var *v;
     if(v=find_var(tree->left->identifier,0)){
       if(v->storage_class==AUTO) error(224);
     }
@@ -1038,38 +1054,38 @@ static void check_auto_return(np tree)
 }
 extern int has_return;
 #ifdef HAVE_MISRA
-int misra_return_statement = 0;
+/* removed */
 #endif
 void return_statement(void)
 /*  bearbeitet return_statement                                 */
 /*  SETRETURN hat Groesse in q2.reg und z.reg==ffreturn(rtyp)    */
 {
   np tree;
-  struct IC *new;
+  IC *new;
 #ifdef HAVE_MISRA
-	misra_return_count++;
-	misra_return_statement = 1;
+/* removed */
+/* removed */
 #endif
   has_return=1;
   killsp();
   if(ctok->type!=SEMIC){
     if(tree=expression()){
       if(!return_typ){
-	if(type_expression(tree)){
+	if(type_expression(tree,0)){
 	  tree=makepointer(tree);
 	  if((tree->ntyp->flags&NQ)!=VOID)
 	    error(155);
 	  else{
 	    error(225);
 #ifdef HAVE_MISRA
-	    misra_neu(79,0,0,0);
+/* removed */
 #endif
 	  }
 	  gen_IC(tree,0,0);
 	  if((tree->o.flags&(SCRATCH|REG))==(SCRATCH|REG)) free_reg(tree->o.reg);
 	}
       }else{
-	if(type_expression(tree)){
+	if(type_expression(tree,return_typ)){
 	  tree=makepointer(tree);
 	  if(tree->flags==ADD||(tree->flags==SUB&&ISPOINTER(tree->ntyp->flags))){
 	    check_auto_return(tree->left);
@@ -1091,7 +1107,7 @@ void return_statement(void)
 	    new->z.flags=SCRATCH|REG;
 	    new->z.reg=ffreturn(return_typ);
 	    if(!regs[new->z.reg]){
-	      struct IC *alloc=new_IC();
+	      IC *alloc=new_IC();
 	      alloc->code=ALLOCREG;
 	      alloc->q1.flags=REG;
 	      alloc->q2.flags=alloc->z.flags=0;
@@ -1116,6 +1132,7 @@ void return_statement(void)
 	    new->z.dtyp=POINTER_TYPE(return_typ);
 	    new->z.val.vmax=l2zm(0L);
 	    new->z.v=return_var;
+	    new->z.reg=0;
 	  }else{
 	    new->code=SETRETURN;
 	    new->z.reg=ffreturn(return_typ);
@@ -1146,7 +1163,7 @@ void return_statement(void)
   add_IC(new);
   cr();
 #ifdef HAVE_MISRA
-	misra_return_statement =  0;
+/* removed */
 #endif
 }
 
@@ -1159,18 +1176,18 @@ void expression_statement(void)
     int oline=ctok->line;
     next_token();
 #ifdef HAVE_MISRA
-    if(ctok->line==oline) misra_neu(54,14,3,0);
+/* removed */
 #endif
     return;
   }
   if(tree=expression()){
 #ifdef HAVE_MISRA
-		if (misra_needs_break==CASE) misra_needs_break=STATEMENT; 
-		misra_last_break = 0;
+/* removed */
+/* removed */
 #endif
     if(tree->flags==POSTINC) tree->flags=PREINC;
     if(tree->flags==POSTDEC) tree->flags=PREDEC;
-    if(type_expression(tree)){
+    if(type_expression(tree,0)){
       if(DEBUG&2){
 	pre(stdout,tree);
 	printf("\n");
@@ -1181,7 +1198,7 @@ void expression_statement(void)
 	if(tree&&(tree->o.flags&(SCRATCH|REG))==(SCRATCH|REG)) free_reg(tree->o.reg);
       }else{
 #ifdef HAVE_MISRA
-	misra_neu(53,14,2,0);
+/* removed */
 #endif
 	error(153);
 	if(DEBUG&2) prd(stdout,tree->ntyp);
@@ -1220,15 +1237,15 @@ void compound_statement(void)
   }
   next_token();/*killsp();*/
 }
-struct llist *add_label(char *identifier)
+llist *add_label(char *identifier)
 /*  Fuegt label in Liste                                        */
 {
-  struct llist *new;
+  llist *new;
 #ifdef HAVE_MISRA
-  if(misracheck){
-    if(find_var(identifier,0)||find_struct(identifier,0))
-      misra(12,identifier);
-  }
+/* removed */
+/* removed */
+/* removed */
+/* removed */
 #endif
   new=mymalloc(LSIZE);
   new->next=0;new->label=++label;new->flags=0;
@@ -1241,10 +1258,10 @@ struct llist *add_label(char *identifier)
   }
   return last_llist; /* return(new) sollte aequiv. sein */
 }
-struct llist *find_label(char *identifier)
+llist *find_label(char *identifier)
 /*  Sucht Label, gibt Zeiger auf llist oder 0 bei Fehler zurueck    */
 {
-  struct llist *p;
+  llist *p;
   p=first_llist;
   while(p){
     if(!strcmp(p->identifier,identifier)) return p;
@@ -1252,11 +1269,11 @@ struct llist *find_label(char *identifier)
   }
   return 0;
 }
-void free_llist(struct llist *p)
+void free_llist(llist *p)
 /*  Gibt llist frei                                             */
 
 {
-  struct llist *merk;
+  llist *merk;
   while(p){
     merk=p->next;
     if(!(p->flags&LABELDEFINED)) error(147,p->identifier);

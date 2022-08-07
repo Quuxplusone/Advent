@@ -1,24 +1,29 @@
-/*  $VER: vbcc (vars.c) V0.8    */
+/*  $VER: vbcc (vars.c) $Revision: 1.40 $   */
 #include "vbc.h"
 #ifdef AMIGA
-static const char *__ver="$VER: vbcc 0.9e (07.02.2016)\r\n";
+static const char *__ver="$VER: vbcc 0.9h (12.02.2022)\r\n";
 long __stack=65536;
 #endif
 char *s,*ident;
 char number[MAXI],buff[MAXI];
-struct tunit *first_tunit,*last_tunit;
-struct struct_declaration *first_sd[MAXN],*last_sd[MAXN],*merk_sdf,*merk_sdl;
-struct struct_identifier *first_si[MAXN],*last_si[MAXN],*merk_sif,*merk_sil;
-struct identifier_list *first_ilist[MAXN],*last_ilist[MAXN],*merk_ilistf,*merk_ilistl;
-struct llist *first_llist,*last_llist;
+tunit *first_tunit,*last_tunit;
+struct_declaration *first_sd[MAXN],*last_sd[MAXN],*merk_sdf,*merk_sdl;
+struct_identifier *first_si[MAXN],*last_si[MAXN],*merk_sif,*merk_sil;
+identifier_list *first_ilist[MAXN],*last_ilist[MAXN],*merk_ilistf,*merk_ilistl;
+llist *first_llist,*last_llist;
 int nesting;
-struct Var *first_var[MAXN],*last_var[MAXN],*merk_varf,*merk_varl,*first_ext,*last_ext;
-struct Var *block_vla[MAXN];
-struct llist *vladeflabels[MAXN],*vlajmplabels[MAXN];
-struct vlaadjust_list *vlaadjusts[MAXN];
-struct rpair rp;
+hashtable *hash_ext;
+Var *first_var[MAXN],*last_var[MAXN],*merk_varf,*merk_varl,*first_ext,*last_ext;
+Var *block_vla[MAXN];
+llist *vladeflabels[MAXN],*vlajmplabels[MAXN];
+vlaadjust_list *vlaadjusts[MAXN];
+rpair rp;
 FILE *out,*ic1,*ic2,*ppout,*cmdfile;
-int c99;
+int c99=1;
+int force_statics,prefer_statics;
+int range_opt;
+int merge_strings;
+int sec_per_obj;
 int opencl;
 int disallow_statics;
 int header_cnt;
@@ -31,8 +36,8 @@ int return_value,break_label,switch_typ,switch_count,switch_act;
 int pointer_call;
 int softfloat;
 int ecpp;
-struct Typ *return_typ;
-struct Var *return_var;
+type *return_typ;
+Var *return_var;
 zmax local_offset[MAXN];
 int c_flags[MAXCF]={
     VALFLAG,STRINGFLAG,0,0,
@@ -46,7 +51,10 @@ int c_flags[MAXCF]={
     VALFLAG,VALFLAG,0,VALFLAG,0,
     FUNCFLAG,FUNCFLAG,FUNCFLAG,0,
     0,0,0,0,
-    0,0
+    0,0,0,VALFLAG,
+    0,
+    VALFLAG,VALFLAG,VALFLAG,VALFLAG,
+    STRINGFLAG
 };
 char *c_flags_name[MAXCF]={
     "O","o","ic1","ic2",
@@ -60,31 +68,36 @@ char *c_flags_name[MAXCF]={
     "misra","coloring","dmalloc","disable","soft-float",
     "misrawarn","misradontwarn","reserve-reg","ecpp",
     "short-push","unsigned-char","opencl","no-include-stack",
-    "deps","deps-for-libs"
+    "deps","deps-for-libs","no-cpp-warn","hash-size",
+    "warnings-as-errors",
+    "clist-copy-stack","clist-copy-static","clist-copy-pointer","inline-memcpy",
+    "depobj","c89","force-statics","prefer-statics","range-opt","merge-strings",
+    "sec-per-obj","no-eff-ics","early-eff-ics"
 };
 union ppi c_flags_val[MAXCF];
 char *inname;
 char **target_macros;
-struct Var *regsbuf[MAXR+1];
+Var *regsbuf[MAXR+1];
 int regbnesting[MAXR+1];
-struct const_list *first_clist,*last_clist;
+const_list *first_clist,*last_clist;
 int afterlabel;
-struct err_out err_out[]={
+terr_out err_out[]={
 #include "errors.h"
 "",0
 };
-int err_num=sizeof(err_out)/sizeof(struct err_out)-1;
+int err_num=sizeof(err_out)/sizeof(err_out[0])-1;
 
-struct misra_err_out misra_err_out[]={
+tmisra_err_out misra_err_out[]={
 #include "misra_errors.h"
 0,0,"",0
 };
 
 #ifdef HAVE_ECPP
-struct struct_declaration *current_class=0;
-struct Typ *current_func=0;
-struct ecpp_dtor_list *ecpp_dlist[MAXN];
+struct_declaration *current_class=0;
+type *current_func=0;
+ecpp_dtor_list *ecpp_dlist[MAXN];
 #endif
 
 char *cur_func="shouldn't happen!";
-char *copyright="vbcc V0.9e (c) in 1995-2016 by Volker Barthelmann";
+Var *cur_funcv;
+char *copyright="vbcc V0.9h (c) in 1995-2022 by Volker Barthelmann";

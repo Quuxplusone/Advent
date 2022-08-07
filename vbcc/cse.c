@@ -1,4 +1,4 @@
-/*  $VER: vbcc (cse.c) V0.8     */
+/*  $VER: vbcc (cse.c) $Revision: 1.11 $    */
 /*  verfuegbare Ausdruecke und common subexpression elimination */
 
 #include "opt.h"
@@ -6,7 +6,7 @@
 static char FILE_[]=__FILE__;
 
 /*  fuer verfuegbare Ausdruecke */
-struct IC **elist;
+IC **elist;
 unsigned int ecount;
 size_t esize;
 bvtype *ae_globals,*ae_statics,*ae_address,*ae_drefs;
@@ -14,10 +14,10 @@ bvtype **ae_kills;
 
 static bvtype *cse_matrix;
 
-void available_expressions(struct flowgraph *fg)
+void available_expressions(flowgraph *fg)
 /*  berechnet die verfuegbaren Ausdruecke fuer jeden Block      */
 {
-    struct flowgraph *g;struct IC *p;bvtype *tmp;
+    flowgraph *g;IC *p;bvtype *tmp;
     int changed,pass,i,j;
     unsigned long heapsize=0;
     /*  ae_gen und ae_kill fuer jeden Block berechnen   */
@@ -71,7 +71,7 @@ void available_expressions(struct flowgraph *fg)
         changed=0;
         g=fg->normalout;    /*  in B0 aendert sich nichts   */
         while(g){
-            struct flowlist *lp;
+            flowlist *lp;
             /*  in(B)=Schnitt out(P) mit P Vorgaenger von B */
             lp=g->in;
             i=0;    /*  Flag fuer ersten Vorgaenger */
@@ -99,8 +99,7 @@ void available_expressions(struct flowgraph *fg)
     free(tmp);
 }
 
-
-int compare_objs(struct obj *o1,struct obj *o2,int t)
+int compare_objs(obj *o1,obj *o2,int t)
 /*  Vergleicht die beiden Objekte; liefert 0, wenn sie gleich sind, sonst   */
 /*  1 oder -1, um eine Ordnung darauf zu definieren                         */
 {
@@ -130,13 +129,13 @@ int compare_objs(struct obj *o1,struct obj *o2,int t)
 int compare_exp(const void *a1,const void *a2)
 /*  Stub fuer compare_objs, damit als Vergleichsfunktion fuer qsort geht */
 {
-    struct IC *p1,*p2;int i1,i2;
-    p1=*((struct IC **)a1);p2=*((struct IC **)a2);
+    IC *p1,*p2;int i1,i2;
+    p1=*((IC **)a1);p2=*((IC **)a2);
     if(!p1||!p2) ierror(0);
     i1=p1->code; i2=p2->code;
     if(i1<i2) return -1;
     if(i1>i2) return 1;
-    i1=p1->typf; i2=p2->typf;
+    i1=p1->typf&(NU|VOLATILE|SIGNED_CHARACTER); i2=p2->typf&(NU|VOLATILE|SIGNED_CHARACTER);
     if(i1<i2) return -1;
     if(i1>i2) return 1;
     i1=compare_objs(&p1->q1,&p2->q1,q1typ(p1));
@@ -144,6 +143,7 @@ int compare_exp(const void *a1,const void *a2)
     i1=compare_objs(&p1->q2,&p2->q2,q2typ(p1));
     return i1;
 }
+
 void print_ae(bvtype *exp)
 {
     int i;
@@ -156,7 +156,7 @@ void num_exp(void)
 /*  numeriert die Ausdruecke so, dass gleiche Ausdruecke die gleiche    */
 /*  nummer erhalten                                                     */
 {
-    struct IC *p;int c,i;
+    IC *p;int c,i;
     bvtype *bp;
     unsigned long heapsize=0;
     if(DEBUG&1024) printf("numerating expressions\n");
@@ -168,14 +168,14 @@ void num_exp(void)
             p->expindex=ecount++;
             if(c==ADD||c==MULT||(c>=OR&&c<=AND)){
                 if(p->q2.flags&&compare_objs(&p->q1,&p->q2,p->typf)<0&&(USEQ2ASZ||compare_objs(&p->q1,&p->z,p->typf))){
-                    struct obj o;
+                    obj o;
                     o=p->q1;p->q1=p->q2;p->q2=o;
                 }
             }
         }else p->expindex=-1;
     }
-    elist=mymalloc(ecount*sizeof(struct IC *));
-    heapsize+=ecount*sizeof(struct IC *);
+    elist=mymalloc(ecount*sizeof(IC *));
+    heapsize+=ecount*sizeof(IC *);
     if(DEBUG&1024){ printf("num_exp loop2\n");}
     for(p=first_ic;p;p=p->next){
         if(p->expindex>=0){
@@ -185,7 +185,7 @@ void num_exp(void)
     /*esize=(ecount+CHAR_BIT-1)/CHAR_BIT;*/
     esize=BVSIZE(ecount);
     if(DEBUG&(16384|1024)){ printf("%lu expressions, esize=%lu\nsorting expressions\n",(unsigned long)ecount,(unsigned long)esize);}
-    if(ecount>1) vqsort(elist,ecount,sizeof(struct IC *),compare_exp);
+    if(ecount>1) vqsort(elist,ecount,sizeof(IC *),compare_exp);
     if(DEBUG&1024){ printf("renumbering expressions\nnum_exp loop3\n");}
     if(ecount>0){   /*  Aufpassen, da ecount unsigned!  */
         for(c=0;c<ecount-1;c++){
@@ -218,7 +218,7 @@ void num_exp(void)
     }
     if(DEBUG&1024){ printf("num_exp loop5\n");}
     for(c=0;c<ecount;c++){
-        struct Var *v;
+        Var *v;
 /*        if(c<ecount-1&&elist[c]==elist[c+1]) continue;*/  /*  gleiche ueberspringen   */
         p=elist[c];
         if(p->code==ADDRESS) continue;
@@ -243,10 +243,10 @@ void num_exp(void)
     }
     if(DEBUG&16384) printf("num_exp heapsize=%lu\n",heapsize);
 }
-void cse_replace(struct flowgraph *g,struct IC *p,struct IC *o,struct Var *v)
+void cse_replace(flowgraph *g,IC *p,IC *o,Var *v)
 /*  ersetzt die cse bei o zu p mit Variable v   */
 {
-    struct IC *n;
+    IC *n;
     /*  Kopieranweisung erzeugen    */
     if(DEBUG&1024) printf("cse_replace\n");
     n=new_IC();
@@ -254,13 +254,14 @@ void cse_replace(struct flowgraph *g,struct IC *p,struct IC *o,struct Var *v)
     n->file=o->file;
     n->code=ASSIGN;
     n->typf=p->typf;
-    n->expindex=n->defindex=-1;
+    n->expindex=n->defindex=-1;    
+    n->q2.flags=0;
+    n->q2.val.vmax=szof(v->vtyp);
     n->q1.flags=VAR;
     n->q1.v=v;
     n->q1.val.vmax=l2zm(0L);
-    n->q2.flags=0;
-    n->q2.val.vmax=szof(v->vtyp);
     n->z=o->z;
+
     /*  Die Kopieranweisung benutzt hoechstens, was die urspruengliche  */
     /*  Operation benutzt hat+die Hilfsvariable und aendert nur, was    */
     /*  die urspruengliche vorher geaendert hat.                        */
@@ -286,13 +287,13 @@ void cse_replace(struct flowgraph *g,struct IC *p,struct IC *o,struct Var *v)
         o->change_list=mymalloc(VLS);
         o->change_list[0].v=v;
         o->change_list[0].flags=0;
-    }
+    }	 
 }
-void cse_search(struct flowgraph *g,struct IC *p,struct IC *o,struct Var *v,int global,bvtype *bmk)
+void cse_search(flowgraph *g,IC *p,IC *o,Var *v,int global,bvtype *bmk)
 /*  sucht die Quelle(n) fuer common subexpression und ersetzt sie   */
 /*  bmk ist Buffer, um zu merken, welche Bloecke schon besucht sind */
 {
-    struct flowlist *lp;
+    flowlist *lp;
     /*  Letzte Berechnung des Ausdrucks suchen, beginnend bei o */
     /*  bei global kann o auch 0 sein!                          */
 /*    if(DEBUG&1024) printf("cse_search\n");*/
@@ -324,30 +325,36 @@ void cse_search(struct flowgraph *g,struct IC *p,struct IC *o,struct Var *v,int 
     }
 }
 
-int cse(struct flowgraph *fg,int global)
+int cse(flowgraph *fg,int global)
 /*  common-subexpression-elimination; wenn global==0 werden nur einzelne    */
 /*  Bloecke betrachtet                                                      */
 {
-    struct flowgraph *g;struct IC *p,*o;int changed,i,j;
-    bvtype *ae;struct Var *v;struct Typ *new;
+    flowgraph *g;IC *p,*o;int changed,i,j;
+    bvtype *ae,*done;Var *v;type *new;
     if(DEBUG&1024) printf("common-subexpression-elimination\n");
     changed=0;
     ae=mymalloc(esize);
+    if(global){
+      done=mymalloc(esize);
+      memset(done,0,esize);
+    }else
+      done=0;
     for(g=fg;g;g=g->normalout){
         if(!global) memset(ae,0,esize); else memcpy(ae,g->ae_in,esize);
         p=g->start;
         while(p){
             i=p->expindex;
-            if(i>=0&&!is_volatile_ic(p)){
+	    /* TODO: correctly handle KONST|DREFOBJ in change_list and enable KONST|DREFOBJ */
+            if(i>=0&&!is_volatile_ic(p)&&(p->q1.flags&(KONST|DREFOBJ))!=(KONST|DREFOBJ)&&(p->q2.flags&(KONST|DREFOBJ))!=(KONST|DREFOBJ)){
+	      if(!global||!BTST(done,i)){
+	        int t=ztyp(p);
                 if(i>=ecount) ierror(0);
-                if(BTST(ae,i)){
+		if(p->code==ASSIGN&&!zmeqto(p->q2.val.vmax,sizetab[t&NQ])) t=ARRAY; /* no memcpy ICs */
+                if(BTST(ae,i)&&ISSCALAR(t)&&!(elist[i]->flags&EFF_IC)){
                     if(DEBUG&1024){ printf("can eliminate common subexpression:\n");pric2(stdout,p);}
                     /*  Hilfsvariable erzeugen  */
                     new=new_typ();
-                    if(p->code==ADDRESS||p->code==ADDI2P||p->code==SUBIFP) 
-		      new->flags=p->typf2;
-		    else 
-		      new->flags=p->typf;
+		    new->flags=t;
                     if(p->code==COMPARE||p->code==TEST) new->flags=0;
                     if(ISPOINTER(new->flags)){
                         new->next=new_typ();
@@ -371,11 +378,13 @@ int cse(struct flowgraph *fg,int global)
                         memset(bmk,0,bsize);
                         cse_search(g,p,0,v,global,bmk);
                         free(bmk);
+			BSET(done,i);
                     }else
 		      cse_search(g,p,p->prev,v,global,0);
                     changed=1;
                     gchanged|=1;
                 }else BSET(ae,i);
+	      }
             }
             for(j=0;j<p->change_cnt;j++){
                 i=p->change_list[j].v->index;
@@ -388,6 +397,7 @@ int cse(struct flowgraph *fg,int global)
         }
     }
 
+    free(done);
     free(ae);
     free(cse_matrix);
     free(ae_kills);

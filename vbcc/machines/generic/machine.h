@@ -146,3 +146,6 @@ struct reg_handle{
 
 /* do not create CONVERT_ICs from unsigned integers to floats */
 #define AVOID_UNSIGNED_TO_FLOAT 1
+
+/* convert multiplications/division by powers of two to shifts */
+#define HAVE_POF2OPT 1

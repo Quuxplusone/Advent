@@ -1,0 +1,277 @@
+PROGRAMS = bin/vc$(HOSTID) bin/vprof$(HOSTID) bin/vbcc$(TARGET)$(HOSTID)
+
+ifeq ($(TARGET),6502)
+PROGRAMS += bin/vcpr$(TARGET)$(HOSTID)
+else ifeq ($(TARGET),alpha)
+PROGRAMS += bin/vsc$(TARGET)$(HOSTID)
+else ifeq ($(TARGET),ppc)
+PROGRAMS += bin/vsc$(TARGET)$(HOSTID)
+endif
+
+TRGDIR = machines/$(TARGET)
+OBJDIR = objects/$(TARGET)$(HOSTID)
+
+all: $(OBJDIR) $(PROGRAMS)
+
+$(OBJDIR):
+	-$(MD) objects
+	$(MD) $(OBJDIR)
+
+clean:
+	$(RM) $(PROGRAMS) $(OBJDIR)/*.o
+
+distclean: clean
+	$(RM) $(OBJDIR)/dt.c $(OBJDIR)/dt.h bin/dtgen$(HOSTID) \
+              bin/osekrm
+
+bin/vc$(HOSTID): frontend/vc.c
+	$(CC) frontend/vc.c -o bin/vc$(HOSTID) $(LDFLAGS)
+
+bin/vprof$(HOSTID): vprof/vprof.c
+	$(CC) vprof/vprof.c -o bin/vprof$(HOSTID) $(LDFLAGS)
+
+doc/vbcc.pdf:
+	texi2pdf --pdf doc/vbcc.texi
+	$(RM) vbcc.cp vbcc.fn vbcc.vr vbcc.tp vbcc.ky vbcc.pg vbcc.toc \
+	      vbcc.aux vbcc.log
+
+doc/vbcc.html:
+	(cd doc;texi2html -split=chapter -nosec_nav -frames vbcc.texi)
+	sed -e s/vbcc_13/vbcc_1/ <doc/vbcc_frame.html >doc/vbcc.html
+
+_vbcc.tar.gz:
+	-(cd ..;tar zcvf vbcc.tar.gz --exclude=*/dt.c --exclude=*/dt.h vbcc/Makefile vbcc/Makefile.aos vbcc/make.rules vbcc/bin/.dummy vbcc/*.[ch] vbcc/datatypes/*.[ch] vbcc/doc/*.texi vbcc/frontend/vc.c vbcc/machines/*/*.[ch] vbcc/machines/*/machine.dt vbcc/machines/*/schedule.[ch] vbcc/machines/*/compress.[ch] vbcc/ucpp/*.[ch] vbcc/ucpp/README vbcc/vprof/vprof.c vbcc/vsc/vsc.[ch] vbcc/vcpr/vcpr.[ch])
+
+bin/osekrm: osekrm.c
+	$(NCC) osekrm.c -o bin/osekrm
+
+dist: bin/osekrm
+	$(MV) supp.h t1
+	$(MV) supp.c t2
+	$(MV) main.c t3
+	$(MV) machines/ppc/machine.c t4
+	$(MV) declaration.c t5
+	$(MV) flow.c t6
+	$(MV) ic.c t7
+	$(MV) parse_expr.c t8
+	$(MV) statements.c t9
+	$(MV) rd.c t10
+	$(MV) type_expr.c t11
+	bin/osekrm <t1 >supp.h
+	bin/osekrm <t2 >supp.c
+	bin/osekrm <t3 >main.c
+	bin/osekrm <t4 >machines/ppc/machine.c
+	bin/osekrm <t5 >declaration.c
+	bin/osekrm <t6 >flow.c
+	bin/osekrm <t7 >ic.c
+	bin/osekrm <t8 >parse_expr.c
+	bin/osekrm <t9 >statements.c
+	bin/osekrm <t10 >rd.c
+	bin/osekrm <t11 >type_expr.c
+	$(MAKE) _vbcc.tar.gz
+	$(MV) t1 supp.h
+	$(MV) t2 supp.c
+	$(MV) t3 main.c
+	$(MV) t4 machines/ppc/machine.c
+	$(MV) t5 declaration.c
+	$(MV) t6 flow.c
+	$(MV) t7 ic.c
+	$(MV) t8 parse_expr.c
+	$(MV) t9 statements.c
+	$(MV) t10 rd.c
+	$(MV) t11 type_expr.c
+
+bobjects = $(OBJDIR)/main.o $(OBJDIR)/vars.o $(OBJDIR)/declaration.o \
+	   $(OBJDIR)/parse_expr.o $(OBJDIR)/type_expr.o $(OBJDIR)/ic.o \
+	   $(OBJDIR)/machine.o $(OBJDIR)/statements.o \
+	   $(OBJDIR)/supp.o $(OBJDIR)/dt.o \
+           $(OBJDIR)/assert.o $(OBJDIR)/cpp.o $(OBJDIR)/hash.o \
+           $(OBJDIR)/lexer.o $(OBJDIR)/macro.o $(OBJDIR)/mem.o \
+           $(OBJDIR)/eval.o
+
+fobjects = $(OBJDIR)/opt.o $(OBJDIR)/av.o $(OBJDIR)/rd.o $(OBJDIR)/regs.o \
+	   $(OBJDIR)/flow.o $(OBJDIR)/cse.o $(OBJDIR)/cp.o $(OBJDIR)/loop.o \
+	   $(OBJDIR)/alias.o $(bobjects)
+
+sobjects = $(OBJDIR)/opts.o $(OBJDIR)/regss.o $(bobjects)
+
+tasm	 = $(OBJDIR)/supp.o $(OBJDIR)/tasm.o $(OBJDIR)/dt.o \
+	   $(OBJDIR)/opt.o $(OBJDIR)/av.o $(OBJDIR)/rd.o $(OBJDIR)/regs.o \
+	   $(OBJDIR)/flow.o $(OBJDIR)/cse.o $(OBJDIR)/cp.o $(OBJDIR)/loop.o \
+	   $(OBJDIR)/alias.o $(OBJDIR)/machine.o
+
+mbasic	 = $(OBJDIR)/supp.o $(OBJDIR)/mbasic.o $(OBJDIR)/dt.o \
+	   $(OBJDIR)/opt.o $(OBJDIR)/av.o $(OBJDIR)/rd.o $(OBJDIR)/regs.o \
+	   $(OBJDIR)/flow.o $(OBJDIR)/cse.o $(OBJDIR)/cp.o $(OBJDIR)/loop.o \
+	   $(OBJDIR)/alias.o $(OBJDIR)/machine.o
+
+minicomp = $(OBJDIR)/supp.o $(OBJDIR)/minicompg.tab.o $(OBJDIR)/minicomp.o $(OBJDIR)/dt.o \
+	   $(OBJDIR)/opt.o $(OBJDIR)/av.o $(OBJDIR)/rd.o $(OBJDIR)/regs.o \
+	   $(OBJDIR)/flow.o $(OBJDIR)/cse.o $(OBJDIR)/cp.o $(OBJDIR)/loop.o \
+	   $(OBJDIR)/alias.o $(OBJDIR)/machine.o
+
+vscobjects = $(OBJDIR)/vsc.o $(OBJDIR)/schedule.o
+
+vcprobjects = $(TRGDIR)/vcpr.o $(TRGDIR)/compress.o
+
+bin/vbcc$(TARGET)$(HOSTID): $(fobjects)
+	$(CC) $(LDFLAGS) $(fobjects) -o bin/vbcc$(TARGET)$(HOSTID)
+
+bin/vbccs$(TARGET)$(HOSTID): $(sobjects)
+	$(CC) $(LDFLAGS) $(sobjects) -o bin/vbccs$(TARGET)$(HOSTID)
+
+bin/vsc$(TARGET)$(HOSTID): $(vscobjects)
+	-$(CC) $(LDFLAGS) $(vscobjects) -o bin/vsc$(TARGET)$(HOSTID)
+
+bin/vcpr$(TARGET): $(vcprobjects)
+	$(CC) $(LDFLAGS) $(vcprobjects) -o bin/vcpr$(TARGET)
+
+bin/tasm$(TARGET)$(HOSTID): $(tasm)
+	$(CC) $(LDFLAGS) $(tasm) -o bin/tasm$(TARGET)$(HOSTID)
+
+bin/mbasic$(TARGET)$(HOSTID): $(mbasic)
+	$(CC) $(LDFLAGS) $(mbasic) -o bin/mbasic$(TARGET)$(HOSTID)
+
+bin/minicomp$(TARGET)$(HOSTID): $(minicomp)
+	$(CC) $(LDFLAGS) $(minicomp) -o bin/minicomp$(TARGET)$(HOSTID)
+
+bin/dtgen$(HOSTID): datatypes/dtgen.c datatypes/datatypes.h datatypes/dtconv.h
+	$(NCC) datatypes/dtgen.c -o bin/dtgen$(HOSTID) -Idatatypes $(NLDFLAGS)
+
+$(OBJDIR)/dt.h: bin/dtgen$(HOSTID) $(TRGDIR)/machine.dt
+	$(EMUL) bin/dtgen$(HOSTID) $(TRGDIR)/machine.dt $(OBJDIR)/dt.h $(OBJDIR)/dt.c
+
+$(OBJDIR)/dt.c: bin/dtgen$(HOSTID) $(TRGDIR)/machine.dt
+	$(EMUL) bin/dtgen$(HOSTID) $(TRGDIR)/machine.dt $(OBJDIR)/dt.h $(OBJDIR)/dt.c
+
+$(OBJDIR)/dt.o: $(OBJDIR)/dt.h $(OBJDIR)/dt.c
+	$(CC) -c $(OBJDIR)/dt.c -o $(OBJDIR)/dt.o -I$(OBJDIR) -Idatatypes
+
+$(OBJDIR)/tasm.o: tasm.c supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c tasm.c -o $(OBJDIR)/tasm.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/mbasic.o: mbasic.c supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c mbasic.c -o $(OBJDIR)/mbasic.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/minicomp.o: minicomp.c minicomp.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c minicomp.c -o $(OBJDIR)/minicomp.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/minicompg.tab.o: minicompg.y minicomplexer.c minicomp.h supp.h
+	bison minicompg.y
+	$(CC) -c minicompg.tab.c -o $(OBJDIR)/minicompg.tab.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/supp.o: supp.c supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c supp.c -o $(OBJDIR)/supp.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/main.o: main.c vbc.h supp.h vbcc_cpp.h ucpp/cpp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c main.c -o $(OBJDIR)/main.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/vars.o: vars.c vbc.h supp.h $(TRGDIR)/machine.h errors.h $(OBJDIR)/dt.h
+	$(CC) -c vars.c -o $(OBJDIR)/vars.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/declaration.o: declaration.c vbc.h supp.h vbcc_cpp.h ucpp/cpp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c declaration.c -o $(OBJDIR)/declaration.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/parse_expr.o: parse_expr.c vbc.h supp.h vbcc_cpp.h ucpp/cpp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c parse_expr.c -o $(OBJDIR)/parse_expr.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/type_expr.o: type_expr.c vbc.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c type_expr.c -o $(OBJDIR)/type_expr.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/ic.o: ic.c vbc.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c ic.c -o $(OBJDIR)/ic.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/statements.o: statements.c vbc.h supp.h vbcc_cpp.h ucpp/cpp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c statements.c -o $(OBJDIR)/statements.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/opt.o: opt.c opt.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c opt.c -o $(OBJDIR)/opt.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/av.o: av.c opt.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c av.c -o $(OBJDIR)/av.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/rd.o: rd.c opt.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c rd.c -o $(OBJDIR)/rd.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/regs.o: regs.c opt.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c regs.c -o $(OBJDIR)/regs.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/flow.o: flow.c opt.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c flow.c -o $(OBJDIR)/flow.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/cse.o: cse.c opt.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c cse.c -o $(OBJDIR)/cse.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/cp.o: cp.c opt.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c cp.c -o $(OBJDIR)/cp.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/loop.o: loop.c opt.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c loop.c -o $(OBJDIR)/loop.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/alias.o: alias.c opt.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c alias.c -o $(OBJDIR)/alias.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/preproc.o: preproc.c vbpp.h supp.h vbc.h $(OBJDIR)/dt.h
+	$(CC) -c preproc.c -o $(OBJDIR)/preproc.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/assert.o: ucpp/assert.c ucpp/cpp.h ucpp/mem.h ucpp/hash.h ucpp/tune.h $(OBJDIR)/dt.h
+	$(CC) -DNO_UCPP_ERROR_FUNCTIONS -c ucpp/assert.c -o $(OBJDIR)/assert.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/cpp.o: ucpp/cpp.c ucpp/cpp.h ucpp/mem.h ucpp/hash.h ucpp/tune.h $(OBJDIR)/dt.h
+	$(CC) -DNO_UCPP_ERROR_FUNCTIONS -c ucpp/cpp.c -o $(OBJDIR)/cpp.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/hash.o: ucpp/hash.c ucpp/cpp.h ucpp/mem.h ucpp/hash.h ucpp/tune.h $(OBJDIR)/dt.h
+	$(CC) -DNO_UCPP_ERROR_FUNCTIONS -c ucpp/hash.c -o $(OBJDIR)/hash.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/lexer.o: ucpp/lexer.c ucpp/cpp.h ucpp/mem.h ucpp/hash.h ucpp/tune.h $(OBJDIR)/dt.h
+	$(CC) -DNO_UCPP_ERROR_FUNCTIONS -c ucpp/lexer.c -o $(OBJDIR)/lexer.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/macro.o: ucpp/macro.c ucpp/cpp.h ucpp/mem.h ucpp/hash.h ucpp/tune.h $(OBJDIR)/dt.h
+	$(CC) -DNO_UCPP_ERROR_FUNCTIONS -c ucpp/macro.c -o $(OBJDIR)/macro.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/mem.o: ucpp/mem.c ucpp/cpp.h ucpp/mem.h ucpp/hash.h ucpp/tune.h $(OBJDIR)/dt.h
+	$(CC) -DNO_UCPP_ERROR_FUNCTIONS -c ucpp/mem.c -o $(OBJDIR)/mem.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/eval.o: ucpp/eval.c ucpp/cpp.h ucpp/mem.h ucpp/tune.h $(OBJDIR)/dt.h
+	$(CC) -DNO_UCPP_ERROR_FUNCTIONS -c ucpp/eval.c -o $(OBJDIR)/eval.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/machine.o: $(TRGDIR)/machine.c supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h dwarf2.c
+	$(CC) -c $(TRGDIR)/machine.c -o $(OBJDIR)/machine.o -I$(TRGDIR) -I$(OBJDIR) -I.
+
+$(OBJDIR)/opts.o: opt.c opt.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c -DNO_OPTIMIZER opt.c -o $(OBJDIR)/opts.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/regss.o: regs.c opt.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c -DNO_OPTIMIZER regs.c -o $(OBJDIR)/regss.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/vsc.o: vsc/vsc.h vsc/vsc.c $(TRGDIR)/schedule.h
+	-$(CC) -c vsc/vsc.c -o $(OBJDIR)/vsc.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/schedule.o: vsc/vsc.h $(TRGDIR)/schedule.h $(TRGDIR)/schedule.c
+	-$(CC) -c $(TRGDIR)/schedule.c -o $(OBJDIR)/schedule.o -I$(TRGDIR) -I$(OBJDIR) -Ivsc
+
+$(TRGDIR)/vcpr.o: vcpr/vcpr.h vcpr/vcpr.c
+	$(CC) -c vcpr/vcpr.c -o $(TRGDIR)/vcpr.o -I$(TRGDIR) -I$(OBJDIR)
+
+$(TRGDIR)/compress.o: vcpr/vcpr.h $(TRGDIR)/compress.c
+	$(CC) -c $(TRGDIR)/compress.c -o $(TRGDIR)/compress.o -I$(TRGDIR) -I$(OBJDIR) -Ivcpr
+
+
+# Graph coloring register allocator by Alex
+$(OBJDIR)/AdjList.o: GCRegAlloc/AdjList.c opt.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c GCRegAlloc/AdjList.c -o $(OBJDIR)/AdjList.o -I. -IGCRegAlloc -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/DUChain.o: GCRegAlloc/DUChain.c opt.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c GCRegAlloc/DUChain.c -o $(OBJDIR)/DUChain.o -I. -IGCRegAlloc -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/ICodeInsertion.o: GCRegAlloc/ICodeInsertion.c opt.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c GCRegAlloc/ICodeInsertion.c -o $(OBJDIR)/ICodeInsertion.o -I. -IGCRegAlloc -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/NodeList.o: GCRegAlloc/NodeList.c opt.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c GCRegAlloc/NodeList.c -o $(OBJDIR)/NodeList.o -I. -IGCRegAlloc -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/RAllocMain.o: GCRegAlloc/RAllocMain.c opt.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c GCRegAlloc/RAllocMain.c -o $(OBJDIR)/RAllocMain.o -I. -IGCRegAlloc -I$(TRGDIR) -I$(OBJDIR)
+
+$(OBJDIR)/Web.o: GCRegAlloc/Web.c opt.h supp.h $(TRGDIR)/machine.h $(OBJDIR)/dt.h
+	$(CC) -c GCRegAlloc/Web.c -o $(OBJDIR)/Web.o -I. -IGCRegAlloc -I$(TRGDIR) -I$(OBJDIR)

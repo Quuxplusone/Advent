@@ -1,7 +1,7 @@
 
 INTRODUCTION
 
-    vprof is a portable utility to visualize the profiling informations,
+    vprof is a portable utility to visualize the profiling information,
     which are usually stored in the file "mon.out".
     It shows the percentage of total time spent in a function, the
     total time in seconds, the number of function calls and the time

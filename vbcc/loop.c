@@ -1,4 +1,4 @@
-/*  $VER: vbcc (loop.c) V0.8     */
+/*  $VER: vbcc (loop.c) $Revision: 1.19 $    */
 /*  schleifenorientierte Optimierungen  */
 
 #include "opt.h"
@@ -10,16 +10,18 @@ static char FILE_[]=__FILE__;
 
 /*  Liste, in die ICs eingetragen werden, die aus Schleifen */
 /*  gezogen werden sollen.                                  */
-struct movlist{
+typedef struct movlist{
   struct movlist *next;
-  struct IC *IC;
-  struct flowgraph *target_fg;
+  IC *IC;
+  flowgraph *target_fg;
   int flags;
-};
+} movlist;
 
-struct movlist *first_mov,*last_mov;
+movlist *first_mov,*last_mov;
 
 int report_weird_code,report_suspicious_loops;
+
+static int only_shorten;
 
 /*  Bitvektoren fuer schleifeninvariante ICs    */
 bvtype *invariant,*inloop,*moved,*moved_completely;
@@ -30,41 +32,44 @@ size_t bsize;
 
 /*  Liste, in die ICs fuer strength-reduction eingetragen   */
 /*  werden.                                                 */
-struct srlist{
+typedef struct srlist{
   struct srlist *next;
-  struct IC *ind_var;
-  struct IC *IC;
-  struct flowgraph *target_fg;
+  IC *ind_var;
+  IC *IC;
+  flowgraph *target_fg;
   /*  Hilfsvariable, falls eine aequivalente Operation schon reduziert    */
   /*  wurde.                                                              */
-  struct Var *hv;
-};
+  Var *hv;
+} srlist ;
 
-struct srlist *first_sr,*last_sr;
+srlist *first_sr,*last_sr;
 
 /*  Liste, in die Daten fuer loop-unrolling eingetragen werden. */
-struct urlist{
+typedef struct urlist{
   int flags;
   long total,unroll;
-  struct IC *cmp,*branch,*ind;
-  struct flowgraph *start,*head;
+  IC *cmp,*branch,*ind;
+  flowgraph *start,*head;
   struct urlist *next;
-} *first_ur;
+} urlist;
+
+urlist *first_ur;
 
 #define UNROLL_COMPLETELY 1
 #define UNROLL_MODULO 2
 #define UNROLL_INVARIANT 4
 #define UNROLL_REVERSE 8
-#define IND_ONLY_COUNTS 16
-#define MULTIPLE_EXITS 32
+#define UNROLL_SHORTEN 16
+#define IND_ONLY_COUNTS 32
+#define MULTIPLE_EXITS 64
 
 /*  Hier werden Induktionsvariablen vermerkt    */
-struct IC **ind_vars;
+IC **ind_vars;
 
-static struct flowgraph *first_fg;
+static flowgraph *first_fg;
 
 #ifdef ALEX_REG
-void IncrementLoopDepth(struct flowgraph* fg,int start,int end)
+void IncrementLoopDepth(flowgraph* fg,int start,int end)
      /* erhoeht loop_depth in den Bloecken [start,end] */
 {
   if ( (fg->index >= start) && (fg->index <= end) )
@@ -76,11 +81,20 @@ void IncrementLoopDepth(struct flowgraph* fg,int start,int end)
 }
 #endif
 
-int loops(struct flowgraph *fg,int footers)
+#if !HAVE_DECIDE_REVERSE
+int decide_reverse(zmax v)
+{
+  if(optspeed||zmeqto(v,l2zm(1L)))
+    return 1;
+  return 0;
+}
+#endif
+
+int loops(flowgraph *fg,int footers)
 /*  kennzeichnet Schleifen im Flussgraph; wenn footers!=0 werden darf eine  */
 /*  Schleife nur einen gemeinsamen Austrittspunkt haben                     */
 {
-  int i,start,end,c=0;struct flowlist *lp;struct flowgraph *g,*loopend;
+  int i,start,end,c=0;flowlist *lp;flowgraph *g,*loopend;
   if(DEBUG&1024) printf("searching loops\n");
   g=fg;
   while(g){
@@ -95,7 +109,7 @@ int loops(struct flowgraph *fg,int footers)
     }
     if(end>=0){
       /*  Schleife oder etwas aehnliches  */
-      struct flowgraph *p=g;
+      flowgraph *p=g;
       if(DEBUG&1024) printf("found possible loop from blocks %d to %d\n",start,end);
       if(1/*goto_used*/){
 	if(DEBUG&1024) printf("have to check...\n");
@@ -160,21 +174,21 @@ int loops(struct flowgraph *fg,int footers)
   return c;
 }
 
-struct flowgraph *create_loop_headers(struct flowgraph *fg,int av)
+flowgraph *create_loop_headers(flowgraph *fg,int av)
 /*  Fuegt vor jede Schleife einen Kopf-Block ein, wenn noetig.  */
 /*  Wenn av!=0 werden aktive Variablen korrekt uebertragen und  */
 /*  diverse Registerlisten uebernommen und index=-1 gesetzt.    */
 /*  Kann einen Block mehrmals in der ->in Liste eintragen       */
 {
-  struct flowgraph *g,*last,*new,*rg=fg;
-  struct IC *lic,*lastic;
+  flowgraph *g,*last,*new,*rg=fg;
+  IC *lic,*lastic;
   if(DEBUG&1024) printf("creating loop-headers\n");
   g=fg;last=0;lastic=0;
   while(g){
     new=0;
     if(g->loopend){
       if(!last){
-	struct flowlist *lp;
+	flowlist *lp;
 	new=new_flowgraph();
 	rg=new;
 	new->in=0;
@@ -188,12 +202,12 @@ struct flowgraph *create_loop_headers(struct flowgraph *fg,int av)
 	lic->prev=0;
 	first_ic->prev=lic;
 	first_ic=lic;
-	lp=mymalloc(sizeof(struct flowlist));
+	lp=mymalloc(sizeof(flowlist));
 	lp->graph=new;
 	lp->next=g->in;
 	g->in=lp;
       }else{
-	struct flowlist *lp,*nl,**ls;
+	flowlist *lp,*nl,**ls;
 	new=new_flowgraph();
 	last->normalout=new;
 	lic=new_IC();
@@ -211,13 +225,13 @@ struct flowgraph *create_loop_headers(struct flowgraph *fg,int av)
 	while(lp){
 	  if(lp->graph&&lp->graph->index<g->index){
 	    /*  Eintritt von oben soll in den Kopf  */
-	    nl=mymalloc(sizeof(struct flowlist));
+	    nl=mymalloc(sizeof(flowlist));
 	    nl->graph=lp->graph;
 	    nl->next=0;
 	    (*ls)=nl;
 	    ls=&nl->next;
 	    if(lp->graph->branchout==g){
-	      struct IC *p=lp->graph->end;
+	      IC *p=lp->graph->end;
 	      if(DEBUG&1024) printf("changing branch\n");
 	      while(p&&p->code==FREEREG) p=p->prev;
 	      if(!p||p->code<BEQ||p->code>BRA) ierror(0);
@@ -266,20 +280,20 @@ struct flowgraph *create_loop_headers(struct flowgraph *fg,int av)
   }
   return rg;
 }
-struct flowgraph *create_loop_footers(struct flowgraph *fg,int av)
+flowgraph *create_loop_footers(flowgraph *fg,int av)
 /*  Fuegt hinter jede Schleife einen Fuss-Block ein, wenn noetig.   */
 /*  Wenn av!=0 werden aktive Variablen korrekt uebertragen und      */
 /*  diverse Registerlisten uebernommen und index auf -2 gesetzt.    */
 {
-  struct flowgraph *g,*loopend,*out,*new;
-  struct IC *lic;
+  flowgraph *g,*loopend,*out,*new;
+  IC *lic;
   if(DEBUG&1024) printf("creating loop-footers\n");
   g=fg;
   while(g){
     new=0;
     loopend=g->loopend;
     if(loopend){
-      struct flowlist *lp,*nl,**ls;
+      flowlist *lp,*nl,**ls;
       out=loopend->normalout;
       new=new_flowgraph();
       new->normalout=out;
@@ -299,13 +313,13 @@ struct flowgraph *create_loop_footers(struct flowgraph *fg,int av)
       while(lp){
 	if(lp->graph&&lp->graph->index<=loopend->index&&lp->graph->index>=g->index){
 	  /*  Austritt aus Schleife soll in den Fuss  */
-	  nl=mymalloc(sizeof(struct flowlist));
+	  nl=mymalloc(sizeof(flowlist));
 	  nl->graph=lp->graph;
 	  nl->next=0;
 	  (*ls)=nl;
 	  ls=&nl->next;
 	  if(lp->graph->branchout==out){
-	    struct IC *p=lp->graph->end;
+	    IC *p=lp->graph->end;
 	    if(DEBUG&1024) printf("changing branch\n");
 	    while(p&&p->code==FREEREG) p=p->prev;
 	    if(!p||p->code<BEQ||p->code>BRA) ierror(0);
@@ -357,11 +371,11 @@ struct flowgraph *create_loop_footers(struct flowgraph *fg,int av)
   }
   return fg;
 }
-void add_movable(struct IC *p,struct flowgraph *fg,int flags)
+void add_movable(IC *p,flowgraph *fg,int flags)
 /*  Fuegt IC p, das aus der Schleife in Block fg mit Flags flags    */
 /*  verschoben werden darf in eine Liste.                           */
 {
-  struct movlist *new=mymalloc(sizeof(*new));
+  movlist *new=mymalloc(sizeof(*new));
   new->IC=p;
   new->target_fg=fg;
   new->flags=flags;
@@ -383,8 +397,8 @@ int move_to_head(void)
 /*  wurden und Bit 2, falls eine Berechnung mit Hilfsvariable vor   */
 /*  die Schleife gezogen wurde.                                     */
 {
-  struct IC **fglist; /* Letztes IC vor jedem Block   */
-  struct flowgraph *g;struct IC *p;struct movlist *m;
+  IC **fglist; /* Letztes IC vor jedem Block   */
+  flowgraph *g;IC *p;movlist *m;
   int changed=0;
 
   if(!first_mov) return 0;
@@ -410,9 +424,9 @@ int move_to_head(void)
       fglist[g->index]=p;
       changed|=1;
     }else if(1){
-      struct Typ *t=new_typ();
-      struct IC *new=new_IC();
-      struct Var *v;
+      type *t=new_typ();
+      IC *new=new_IC();
+      Var *v;
       if(DEBUG&1024) {printf("moving computation out of loop:\n");pric2(stdout,p);}
       t->flags=ztyp(p);
       if(p->code==COMPARE||p->code==TEST) t->flags=0;
@@ -467,14 +481,14 @@ int move_to_head(void)
   free(fglist);
   return changed;
 }
-void calc_movable(struct flowgraph *start,struct flowgraph *end)
+void calc_movable(flowgraph *start,flowgraph *end)
 /*  Berechnet, welche Definitionen nicht aus der Schleife start-end     */
 /*  verschoben werden duerfen. Eine Def. p von z darf nur verschoben    */
 /*  werden, wenn keine andere Def. von p existiert und alle             */
 /*  Verwendungen von z nur von p erreicht werden.                       */
 /*  Benutzt rd_defs.                                                    */
 {
-  struct flowgraph *g;struct IC *p;
+  flowgraph *g;IC *p;
   int i,j,k,d;
   bvtype *changed_vars;
   if(DEBUG&1024) printf("calculating not_movable for blocks %d to %d\n",start->index,end->index);
@@ -532,9 +546,9 @@ void calc_movable(struct flowgraph *start,struct flowgraph *end)
 }
 /*  Testet, ob Variable nur in der Schleife benutzt wird.               */
 /* could be improved */
-int used_in_loop_only(struct flowgraph *start,struct flowgraph *end,struct obj *o)
+int used_in_loop_only(flowgraph *start,flowgraph *end,obj *o)
 {
-  struct Var *v;struct flowgraph *g;struct IC *p;
+  Var *v;flowgraph *g;IC *p;
   if((o->flags&(VAR|DREFOBJ))!=VAR) return 0;
   v=o->v;
   if((v->flags&USEDASADR)||v->nesting==0||v->storage_class==EXTERN||v->storage_class==STATIC)
@@ -558,10 +572,10 @@ int used_in_loop_only(struct flowgraph *start,struct flowgraph *end,struct obj *
 /*  zu z fuehren. Das ganze fuer die Schleife start-end.                */
 /*  Wenn ignorecall!=0 ist, wird angenommen, dass jeder CALL            */
 /*  zurueckkehrt (das ist nuetzlich fuer loop-unrolling).               */
-int always_reached(struct flowgraph *start,struct flowgraph *end,struct flowgraph *fg,struct IC *z,int ignorecall)
+int always_reached(flowgraph *start,flowgraph *end,flowgraph *fg,IC *z,int ignorecall)
 {
   bvtype *bmk=fg_tmp;
-  struct IC *p;struct flowgraph *g;
+  IC *p;flowgraph *g;
   int changed;
   
   for(p=z;p;p=p->prev){
@@ -578,8 +592,8 @@ int always_reached(struct flowgraph *start,struct flowgraph *end,struct flowgrap
     changed=0;
     for(g=start;g;g=g->normalout){
       if(!BTST(bmk,g->index)){
-	struct flowgraph *n=g->normalout;
-	struct flowgraph *b=g->branchout;
+	flowgraph *n=g->normalout;
+	flowgraph *b=g->branchout;
 	if(n||b){
 	  if((!b||BTST(bmk,b->index))&&
 	     (!n||(g->end&&g->end->code==BRA)||BTST(bmk,n->index))){
@@ -647,7 +661,7 @@ int def_invariant(int vindex,int ignore)
   }else{
     for(j=1;j<=dcount;j++){
       if(j!=ignore&&BTST(rd_defs,j)&&BTST(inloop,j)){
-	struct IC *p=dlist[j];
+	IC *p=dlist[j];
 	for(k=0;k<p->change_cnt;k++){
 	  i=p->change_list[k].v->index;
 	  if(p->change_list[k].flags&DREFOBJ) i+=vcount-rcount;
@@ -666,11 +680,11 @@ int def_invariant(int vindex,int ignore)
 #endif
 }
 
-void frequency_reduction(struct flowgraph *start,struct flowgraph *end,struct flowgraph *head)
+void frequency_reduction(flowgraph *start,flowgraph *end,flowgraph *head)
 /*  Schleifeninvariante ICs finden und in eine Liste eintragen, falls   */
 /*  sie vor die Schleife gezogen werden koennen.                        */
 {
-  struct IC *p;struct flowgraph *g;
+  IC *p;flowgraph *g;
   int i,changed;
 
   if(head&&start->loopend){
@@ -716,7 +730,7 @@ void frequency_reduction(struct flowgraph *start,struct flowgraph *end,struct fl
 		i=p->q1.v->index;
 		if(p->q1.flags&DREFOBJ){
 		  i+=vcount-rcount;
-		  if(p->q1.dtyp&VOLATILE)
+		  if(p->q1.dtyp&(VOLATILE|PVOLATILE))
 		    k1=0;
 		  else
 		    k1=def_invariant(i,-1);
@@ -734,7 +748,7 @@ void frequency_reduction(struct flowgraph *start,struct flowgraph *end,struct fl
 		  i=p->q2.v->index;
 		  if(p->q2.flags&DREFOBJ){
 		    i+=vcount-rcount;
-		    if(p->q2.dtyp&VOLATILE)
+		    if(p->q2.dtyp&(VOLATILE|PVOLATILE))
 		      k2=0;
 		    else
 		      k2=def_invariant(i,-1);
@@ -791,7 +805,7 @@ void frequency_reduction(struct flowgraph *start,struct flowgraph *end,struct fl
   }
   return;
 }
-void add_sr(struct IC *p,struct flowgraph *fg,int i_var)
+void add_sr(IC *p,flowgraph *fg,int i_var)
 /*  Fuegt IC p, das aus der Schleife in Block fg lineare Fkt. der   */
 /*  Induktionsvariable i_var ist, in Liste ein.                     */
 /*  Funktioniert als Stack. Da mit aeusseren Schleifen angefangen   */
@@ -800,7 +814,7 @@ void add_sr(struct IC *p,struct flowgraph *fg,int i_var)
 /*  ICs, das potentiell in mehreren Schleifen reduziert werden      */
 /*  koennte, geloest werden.                                        */
 {
-  struct srlist *new=mymalloc(sizeof(*new));
+  srlist *new=mymalloc(sizeof(*new));
   if(DEBUG&1024) printf("all:%p\n",(void*)new);
   new->IC=p;
   new->target_fg=fg;
@@ -817,16 +831,16 @@ void add_sr(struct IC *p,struct flowgraph *fg,int i_var)
   }
 #endif
 }
-int do_sr(void)
+int do_sr(int donothing)
 /*  Durchlaufe die Liste aller strength-reduction-Kandidaten und    */
 /*  ersetze sie durch neue Induktionsvariablen. Dabei aufpassen,    */
 /*  falls ein IC schon von frequency-reduction bearbeitet wurde.    */
 /*  Ausserdem wird die Liste freigegeben.                           */
 {
-  struct IC **fglist; /* Letztes IC vor jedem Block   */
-  struct IC *p;
-  struct flowgraph *g;
-  struct srlist *mf;
+  IC **fglist; /* Letztes IC vor jedem Block   */
+  IC *p;
+  flowgraph *g;
+  srlist *mf;
   int changed=0;
 
   if(!first_sr) return 0;
@@ -842,14 +856,14 @@ int do_sr(void)
   }
 
   while(first_sr){
-    struct Var *niv,*nstep;
-    struct Typ *t1,*t2;
-    struct IC *iv_ic,*new,*m;
+    Var *niv,*nstep;
+    type *t1,*t2;
+    IC *iv_ic,*new,*m;
     int i,c;
     p=first_sr->IC;
     i=p->defindex;
     /*  Falls IC noch nicht verschoben und noch nicht reduziert wurde.  */
-    if(!BTST(moved,i)&&p->code!=ASSIGN){
+    if(!donothing&&!BTST(moved,i)&&p->code!=ASSIGN){
       if(first_sr->hv){
 	/*  Es wurde schon eine aequivalente Operation reduziert, wir   */
 	/*  koennen also dieselbe Hilfsvariable benutzen.               */
@@ -871,7 +885,7 @@ int do_sr(void)
 	  p->use_list[0].flags=0;
 	}
       }else{
-	int minus=0;
+	int minus=0,q1t,q2t;
 	if(DEBUG&1024){ printf("performing strength-reduction on IC:\n");pric2(stdout,p);}
 	c=p->code;
 	g=first_sr->target_fg;
@@ -889,12 +903,13 @@ int do_sr(void)
 	niv=add_tmp_var(t1);
 	/*  Suchen, ob es noch aequivalente Operationen gibt.   */
 	/*  Noch sehr ineffizient...                            */
+	q1t=q1typ(p);q2t=q2typ(p);
 	for(mf=first_sr->next;mf;mf=mf->next){
 	  if(mf->target_fg==g&&mf->ind_var==iv_ic){
 	    m=mf->IC;
 	    if(c==m->code&&p->typf==m->typf&&
-	       !compare_objs(&p->q1,&m->q1,p->typf)&&
-	       !compare_objs(&p->q2,&m->q2,p->typf)){
+	       !compare_objs(&p->q1,&m->q1,q1t)&&
+	       !compare_objs(&p->q2,&m->q2,q2t)){
 	      if(mf->hv) ierror(0);
 	      mf->hv=niv;
 	      if(DEBUG&1024){ printf("equivalent operation\n");pric2(stdout,m);}
@@ -936,7 +951,8 @@ int do_sr(void)
 	  p->use_list[0].flags=0;
 	}
 	/*  Berechnen der Schrittweite fuer Hilfsvariable   */
-	if(c==MULT){
+	if(c==MULT||c==LSHIFT){
+	  int styp;
 	  t2=new_typ();
 	  t2->flags=iv_ic->typf;
 	  nstep=add_tmp_var(t2);
@@ -948,10 +964,22 @@ int do_sr(void)
 	  new->z.flags=VAR;
 	  new->z.v=nstep;
 	  new->z.val.vmax=l2zm(0L);
-	  if(!compare_objs(&m->q1,&iv_ic->z,iv_ic->typf)) new->q1=m->q2;
-	  else new->q1=m->q1;
+	  if(!compare_objs(&m->q1,&iv_ic->z,iv_ic->typf)){
+	    new->q1=m->q2;
+	    styp=q2typ(m);
+	  }else{
+	    new->q1=m->q1;
+	    styp=m->typf;
+	  }
 	  if(!compare_objs(&iv_ic->q1,&iv_ic->z,iv_ic->typf)) new->q2=iv_ic->q2;
 	  else new->q2=iv_ic->q1;
+	  if(c==LSHIFT){
+	    if((new->q1.flags&(KONST|DREFOBJ))!=KONST) ierror(0);
+	    eval_const(&new->q1.val,styp);
+	    gval.vmax=zmlshift(Z1,vmax);
+	    eval_const(&gval,MAXINT);
+	    insert_const(&new->q1.val,new->typf);
+	  }
 	  /*  Benutzt dasselbe wie iv_ic und m.   */
 	  if(have_alias){
 	    new->use_cnt=iv_ic->use_cnt+m->use_cnt;
@@ -991,7 +1019,7 @@ int do_sr(void)
 	new->typf2=niv->vtyp->flags;
 	new->q1.val.vmax=l2zm(0L);
 	new->z=new->q1;
-	if(c==MULT){
+	if(c==MULT||c==LSHIFT){
 	  new->q2=m->z;
 	}else{
 	  if(!compare_objs(&iv_ic->q1,&iv_ic->z,iv_ic->typf)) new->q2=iv_ic->q2;
@@ -1020,12 +1048,12 @@ int do_sr(void)
   free(fglist);
   return changed;
 }
-void strength_reduction(struct flowgraph *start,struct flowgraph *end,struct flowgraph *head)
+void strength_reduction(flowgraph *start,flowgraph *end,flowgraph *head)
 /*  Ersetzen von Operationen mit einer Induktionsvariablen und einem    */
 /*  schleifeninvarianten Operanden durch eine zusaetzliche              */
 /*  Hilfsinduktionsvariable.                                            */
 {
-  struct flowgraph *g;struct IC *p;
+  flowgraph *g;IC *p;
   int i;
   if(DEBUG&1024) printf("performing strength_reduction on blocks %d to %d\n",start->index,end->index);
   for(i=0;i<vcount;i++) ind_vars[i]=0;
@@ -1042,7 +1070,7 @@ void strength_reduction(struct flowgraph *start,struct flowgraph *end,struct flo
 	    i=p->q2.v->index;
 	    if(p->q2.flags&DREFOBJ) i+=vcount-rcount;
 	  }
-	  if((p->q2.flags&(VAR|VARADR))!=VAR||def_invariant(i,-1)){
+	  if((p->z.flags&VAR)&&((p->q2.flags&(VAR|VARADR))!=VAR||def_invariant(i,-1))){
 	    i=p->z.v->index;
 	    if(p->z.flags&DREFOBJ) i+=vcount-rcount;
 	    if(def_invariant(i,p->defindex)){
@@ -1082,7 +1110,7 @@ void strength_reduction(struct flowgraph *start,struct flowgraph *end,struct flo
   for(g=start;g;g=g->normalout){
     memcpy(rd_defs,g->rd_in,dsize);
     for(p=g->start;p;p=p->next){
-      if((p->code==MULT||((p->code==ADD||p->code==SUB||p->code==ADDI2P||p->code==SUBIFP)&&!(disable&512)))&&
+      if(((p->code==MULT||p->code==LSHIFT)||((p->code==ADD||p->code==SUB||p->code==ADDI2P||p->code==SUBIFP)&&!(disable&512)))&&
 	 ((!ISFLOAT(p->typf))||fp_assoc)&&!(p->flags&EFF_IC) ){
 	int k1,k2,iv;
 	if((p->q1.flags&(VAR|VARADR))==VAR){
@@ -1107,6 +1135,8 @@ void strength_reduction(struct flowgraph *start,struct flowgraph *end,struct flo
 	    k2=0;
 	}else
 	  k2=2;
+	if(p->code==LSHIFT&&(p->q2.flags&(KONST|DREFOBJ))!=KONST)
+	  k2=0;
 	if(p->z.flags&VAR){
 	  /*  Aufpassen, dass eine Induktion nicht selbst reduziert   */
 	  /*  wird.                                                   */
@@ -1127,14 +1157,14 @@ void strength_reduction(struct flowgraph *start,struct flowgraph *end,struct flo
     if(g==end) break;
   }
 }
-void copy_code(struct IC *start,struct IC *end,struct IC *dest,int n,struct IC *ignore)
+void copy_code(IC *start,IC *end,IC *dest,int n,IC *ignore)
 /*  Kopiert Code von start bis end n-mal hinter dest. Generiert         */
 /*  entsprechend neue Labels. Allerdings wird der Flussgraph und        */
 /*  aliasing-info nicht angepasst und muss danach neu generiert werden. */
 /*  IC ignore wird nicht kopiert.                                       */
 {
   int firstl=0,lastl=0,*larray,i,j;
-  struct IC *p,*new,*current;
+  IC *p,*new,*current;
   if(DEBUG&1024) printf("copy_code %d times\n",n);
   /*  Feststellen, welche Labels in der Schleife definiert werden.    */
   for(p=start;p;p=p->next){
@@ -1186,10 +1216,10 @@ void copy_code(struct IC *start,struct IC *end,struct IC *dest,int n,struct IC *
   }
   free(larray);
 }
-void add_ur(int flags,long total,long unroll,struct flowgraph *start,struct flowgraph *head,struct IC *cmp,struct IC *branch,struct IC *ind)
+void add_ur(int flags,long total,long unroll,flowgraph *start,flowgraph *head,IC *cmp,IC *branch,IC *ind)
 /*  Fuegt Daten fuer loop-unrolling in Stack ein.                       */
 {
-  struct urlist *new=mymalloc(sizeof(struct urlist));
+  urlist *new=mymalloc(sizeof(urlist));
   if(DEBUG&1024) printf("add_ur, flags=%d\n",flags);
   new->flags=flags;
   new->total=total;
@@ -1202,17 +1232,110 @@ void add_ur(int flags,long total,long unroll,struct flowgraph *start,struct flow
   new->next=first_ur;
   first_ur=new;
 }
+
+static int decide_shorten(int t,flowgraph *start,IC *ind,IC *cmp)
+{
+  IC *p;
+  Var *oiv=ind->z.v;
+  int cnt=0;
+  for(p=start->start;p;p=p->next){
+    if(p==ind) continue;
+    if(p==cmp) break;
+    if((p->q1.flags&VAR)&&p->q1.v==oiv){
+      if(!(p->code==CONVERT&&!compare_objs(&p->q1,&ind->q1,p->typf)&&(p->typf&NQ)==(t&NQ)))
+	cnt++;
+    }
+    if((p->q2.flags&VAR)&&p->q2.v==oiv){
+      if(!((p->code==ADDI2P||p->code==SUBIFP)&&!compare_objs(&p->q2,&ind->q1,p->typf)&&(p->typf&NQ)>=MINADDI2P))
+	cnt++;
+    }
+    if((p->z.flags&VAR)&&p->z.v==oiv) cnt++;
+  }
+  return cnt==0;
+}
+
+static int do_shorten()
+{
+  int changed=0; urlist *m;
+  for(m=first_ur;m;m=m->next){
+    if(m->flags&UNROLL_SHORTEN){
+      /* use shorter induction variable */
+      type st={CHAR};
+      int cnt=0;
+      Var *niv,*oiv;IC *new,*p,*cmp=m->cmp,*ind=m->ind;
+      if(DEBUG&1024) printf("shorten induction variable to %s %s\n",(m->total&UNSIGNED)?"unsigned":"signed",typname[m->total&NQ]);
+      st.flags=m->total;
+      niv=add_tmp_var(clone_typ(&st));
+      new=new_IC();
+      new->code=CONVERT;
+      new->q1=ind->z;
+      new->z.flags=VAR;
+      new->z.val.vmax=Z0;
+      new->z.v=niv;
+      new->typf2=ind->typf;
+      new->typf=st.flags;
+      insert_IC(m->head->end,new);
+      ind->q1=new->z;
+      ind->z=new->z;
+      ind->typf=st.flags;
+      cmp->q1=new->z;
+      eval_const(&cmp->q2.val,cmp->typf);
+      cmp->typf=st.flags;
+      insert_const(&cmp->q2.val,cmp->typf);
+      oiv=new->q1.v;
+      /* replace uses of the old induction variable that do not need conversions */
+      for(p=m->start->start;p;p=p->next){
+	if(p==cmp) break;
+	if((p->code==ADDI2P||p->code==SUBIFP)&&!compare_objs(&p->q2,&new->q1,p->typf)&&(p->typf&NQ)>=MINADDI2P){
+	  if(DEBUG&1024){
+	    printf("replace use of large induction variable (ADDI2P):\n");
+	    pric2(stdout,p);
+	  }
+	  p->q2=new->z;
+	  p->typf=new->typf;
+	}
+	if(p->code==CONVERT&&!compare_objs(&p->q1,&new->q1,p->typf)&&(p->typf&NQ)==(new->typf&NQ)){
+	  if(DEBUG&1024){
+	    printf("replace use of large induction variable (CONVERT):\n");
+	    pric2(stdout,p);
+	  }
+	  p->q1=new->z;
+	  p->code=ASSIGN;
+	  p->q2.val.vmax=sizetab[p->typf&NQ];
+	}
+	if((p->q1.flags&VAR)&&p->q1.v==oiv) cnt++;
+	if((p->q2.flags&VAR)&&p->q2.v==oiv) cnt++;
+	if((p->z.flags&VAR)&&p->z.v==oiv) cnt++;
+      }
+      p=new_IC();
+      p->code=CONVERT;
+      p->q1=new->z;
+      p->z=new->q1;
+      p->typf=new->typf2;
+      p->typf2=new->typf;
+      if(cnt||(m->flags&MULTIPLE_EXITS))
+	insert_IC(ind,p);
+      else
+	insert_IC(m->branch,p);
+
+      m->flags=0;
+      changed|=2;
+    }
+  }
+  return changed;
+}
+
 int do_unroll(int donothing)
 /*  Fuehrt loop-unrolling durch. Wenn donothing!=0, wird die Liste nur  */
 /*  freigegeben.                                                        */
 {
-  int changed=0; struct urlist *m;
-  struct IC *div;
+  int changed=0; urlist *m;
+  IC *div;
   while(m=first_ur){
     int flags=m->flags;
     long total=m->total,unroll=m->unroll;
-    struct flowgraph *start=m->start,*head=m->head;
-    struct IC *cmp=m->cmp,*branch=m->branch,*ind=m->ind;
+    flowgraph *start=m->start,*head=m->head;
+    IC *cmp=m->cmp,*branch=m->branch,*ind=m->ind;
     if(donothing) flags=0;
     if(flags&UNROLL_COMPLETELY){
       /*  Schleife komplett ausrollen.    */
@@ -1226,12 +1349,13 @@ int do_unroll(int donothing)
       }
       changed|=1;
     }
+
     if(flags&UNROLL_MODULO){
       /*  Schleife teilweise ausrollen.   */
       if(DEBUG&1024) printf("unroll loop partially, n=%ld,r=%ld\n",unroll,total%unroll);
       if(unroll>1){
 	if((flags&(IND_ONLY_COUNTS|MULTIPLE_EXITS))==IND_ONLY_COUNTS){
-	  struct IC *new=new_IC();
+	  IC *new=new_IC();
 	  copy_code(start->start->next,cmp->prev,head->start,total%unroll,ind);
 	  *new=*ind;
 	  new->use_cnt=new->change_cnt=0;
@@ -1266,8 +1390,9 @@ int do_unroll(int donothing)
       }
     }
     if(flags&UNROLL_INVARIANT){
-      struct IC *new,*mc,*mn; struct Var *v; int out=++label,code;
-      long i; struct Typ *t;static struct Typ tptrdiff={0};
+      IC *new,*mc,*mn; Var *v; int out=++label,code;
+      long i; type *t;static type tptrdiff={0};
+      IC tmp;
       if(DEBUG&1024) printf("unrolling non-constant loop\n");
       if(ISPOINTER(cmp->typf)){
 	tptrdiff.flags=PTRDIFF_T(cmp->typf);
@@ -1383,8 +1508,10 @@ int do_unroll(int donothing)
       new->q1=head->start->next->z;
       new->z=new->q1;
       insert_IC(head->start,new);
+      tmp=*new;
+      fix_shortop(head,new);
       new=new_IC();
-      *new=*head->start->next;
+      *new=tmp;
       new->change_cnt=new->use_cnt=0;
       new->change_list=new->use_list=0;
       new->code=ADD;
@@ -1403,7 +1530,7 @@ int do_unroll(int donothing)
 	insert_IC(head->start,new);
       }
       new=new_IC();
-      *new=*head->start->next;
+      *new=tmp;
       new->change_cnt=new->use_cnt=0;
       new->change_list=new->use_list=0;
       new->code=SUB;
@@ -1425,7 +1552,7 @@ int do_unroll(int donothing)
       }
 #if 0
       if(ind->code==SUB){
-	struct obj o;
+	obj o;
 	o=new->q1;new->q1=new->q2;new->q2=o;
       }
 #endif
@@ -1475,8 +1602,9 @@ int do_unroll(int donothing)
       div->typf|=UNSIGNED;
     }
     if(flags&UNROLL_REVERSE){
-      struct IC *new,*mc; struct Var *v; int out=++label,code;
-      long i; struct Typ *t;static struct Typ tptrdiff={0};
+      IC *new,*mc; Var *v; int out=++label,code;
+      long i; type *t;static type tptrdiff={0};
+      IC tmp;
       if(DEBUG&1024) printf("reversing loop\n");
       if(ISPOINTER(cmp->typf)){
 	tptrdiff.flags=PTRDIFF_T(cmp->typf);
@@ -1521,8 +1649,10 @@ int do_unroll(int donothing)
       new->q1.val.vmax=l2zm(0L);
       new->z=new->q1;
       insert_IC(head->start,new);
+      tmp=*new;
+      fix_shortop(head,new);
       new=new_IC();
-      *new=*head->start->next;
+      *new=tmp;
       new->change_cnt=new->use_cnt=0;
       new->change_list=new->use_list=0;
       new->code=ADD;
@@ -1530,14 +1660,14 @@ int do_unroll(int donothing)
       new->change_cnt=new->use_cnt=0;
       new->change_list=new->use_list=0;
       if(code==BLT||code==BGT||code==BNE){
-	struct IC *a=head->start->next;
+	IC *a=head->start->next;
 	gval.vmax=l2zm(1L);
 	eval_const(&gval,MAXINT);
 	insert_const(&gval,a->typf);
 	calc(SUB,a->typf,&a->q2.val,&gval,&a->q2.val,0);
       }
       new=new_IC();
-      *new=*head->start->next;
+      *new=tmp;
       new->change_cnt=new->use_cnt=0;
       new->change_list=new->use_list=0;
       new->code=SUB;
@@ -1559,7 +1689,7 @@ int do_unroll(int donothing)
       }
 #if 0
       if(ind->code==SUB){
-	struct obj o;
+	obj o;
 	o=new->q1;new->q1=new->q2;new->q2=o;
       }
 #endif
@@ -1579,13 +1709,13 @@ int do_unroll(int donothing)
   return changed;
 }
 
-void unroll(struct flowgraph *start,struct flowgraph *head)
+void unroll(flowgraph *start,flowgraph *head)
 /*  Versucht loop-unrolling.                                            */
 {
-  struct flowlist *lp;struct flowgraph *end,*g;struct IC *p,*m,*branch,*cmp;
-  struct obj *o,*e,*cc; union atyps init_val,end_val,step_val;
+  flowlist *lp;flowgraph *end,*g;IC *p,*m,*branch,*cmp;
+  obj *o,*e,*cc; union atyps init_val,end_val,step_val;
   bvtype *tmp;
-  long dist,step,ic_cnt,n;
+  long dist,step,ic_cnt,n,small_type;
   int bflag=0,t=0,i,flags=0; /* 1: sub, 2: init_val gefunden  */
   int ind_only_counts,multiple_exits,cfl;
   end=start->loopend;
@@ -1655,6 +1785,7 @@ void unroll(struct flowgraph *start,struct flowgraph *head)
       if(m==end->end) ierror(0);
     }
   }
+  if((o->flags&(VAR|DREFOBJ))!=VAR) return;
   p=ind_vars[o->v->index];
   if(!p) return;
   if(compare_objs(o,&p->z,t)) return;
@@ -1699,21 +1830,16 @@ void unroll(struct flowgraph *start,struct flowgraph *head)
 	 ||((flags&1)&&(bc==BGT||bc==BGE))
 	 ||(bc==BNE&&zmeqto(vmax,l2zm(1L))&&zumeqto(vumax,ul2zum(1UL)))){
 	if((t&UNSIGNED)||zmleq(l2zm(0L),vmax)){
-	  if(optspeed){
+	  if(decide_reverse(vmax)){
 	    add_ur(UNROLL_REVERSE|ind_only_counts|multiple_exits,0,1,start,head,cmp,branch,p);
 	    return;
-	  }else{
-	    if(zmeqto(vmax,l2zm(1L))&&zumeqto(vumax,ul2zum(1UL))&&zldeqto(vldouble,d2zld(1.0))){
-	      add_ur(UNROLL_REVERSE|ind_only_counts|multiple_exits,0,1,start,head,cmp,branch,p);
-	      return;
-	    }
 	  }
 	}
       }
     }
   }
   if(!e||(e->flags&KONST)){
-    struct IC tmpic;
+    IC tmpic;
     i=p->z.v->index;
     if(p->z.flags&DREFOBJ) i+=vcount-rcount;
     memcpy(rd_defs,head->rd_out,dsize);
@@ -1792,7 +1918,33 @@ void unroll(struct flowgraph *start,struct flowgraph *head)
     if(dist/step<0) ierror(0);
     if(DEBUG&1024) printf("loop is executed %ld times\n",dist/step+1);
     if(start->start->code!=LABEL) ierror(0);
-    if(dist/step+1==1||ic_cnt*(dist/step+1)<=unroll_size){
+
+    /* determine smallest type for induction variable */
+    small_type=(UNSIGNED|CHAR);
+    eval_const(&init_val,t);
+    if(!(t&UNSIGNED)&&!zmleq(Z0,vmax)){
+      small_type&=~UNSIGNED;
+      while((small_type&NQ)<(t&NQ)&&(!zmleq(t_min(small_type),vmax)||!shortcut(ADD,small_type)||!shortcut(COMPARE,small_type)))
+	small_type++;
+    }else{
+      while((small_type&NQ)<(t&NQ)&&(!zumleq(vumax,t_max(small_type))||!shortcut(ADD,small_type)||!shortcut(COMPARE,small_type)))
+	small_type++;
+    }
+    eval_const(&end_val,t);
+    if(!(t&UNSIGNED)&&!zmleq(Z0,vmax)){
+      small_type&=~UNSIGNED;
+      while((small_type&NQ)<(t&NQ)&&(!zmleq(t_min(small_type),vmax)||!shortcut(ADD,small_type)||!shortcut(COMPARE,small_type)))
+	small_type++;
+    }else{
+      while((small_type&NQ)<(t&NQ)&&(!zumleq(vumax,t_max(small_type))||!shortcut(ADD,small_type)||!shortcut(COMPARE,small_type)))
+	small_type++;
+    }
+    if(zmleq(sizetab[t&NQ],sizetab[small_type&NQ]))
+      small_type=0;
+    if(small_type&&(DEBUG&1024)) printf("induction variable can be done in %s %s\n",(small_type&UNSIGNED)?"unsigned":"signed",typname[small_type&NQ]);
+    if(range_opt&&small_type&&decide_shorten(small_type,start,p,cmp)){
+      add_ur(UNROLL_SHORTEN|ind_only_counts|multiple_exits,small_type,small_type,start,head,cmp,branch,p);
+    }else if(dist/step+1==1||ic_cnt*(dist/step+1)<=unroll_size){
       /*  Schleife komplett ausrollen.    */
       add_ur(UNROLL_COMPLETELY|ind_only_counts|multiple_exits,dist/step+1,dist/step+1,start,head,cmp,branch,p);
     }else{
@@ -1850,11 +2002,11 @@ void unroll(struct flowgraph *start,struct flowgraph *head)
   }
 }
 
-int loop_optimizations(struct flowgraph *fg)
+int loop_optimizations(flowgraph *fg)
 /*  steuert Optimierungen in Schleifen  */
 {
   int changed=0,i;
-  struct flowgraph *g,*last;
+  flowgraph *g,*last;
   if(DEBUG&1024) print_flowgraph(fg);
   if(loops(fg,0)==0) return 0;
   if(DEBUG&1024) print_flowgraph(fg);
@@ -1899,7 +2051,9 @@ int loop_optimizations(struct flowgraph *fg)
   free(inloop);
   changed|=move_to_head();
   if(DEBUG&1024) puts("done");
-  changed|=do_sr();
+  if(range_opt)
+    changed|=do_shorten();
+  changed|=do_sr(changed);
   if(DEBUG&1024) puts("done");
   changed|=do_unroll(changed);
   if(DEBUG&1024) puts("done");

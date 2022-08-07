@@ -1,3 +1,5 @@
+/*  $VER: vbcc (dwarf2.c) $Revision: 1.5 $     */
+
 enum dwarf_tag
 {
   DW_TAG_padding = 0x00,
@@ -475,8 +477,8 @@ enum dwarf_macinfo_record_type
 #define HAVE_LOCATION_LISTS 0
 
 /* provided by the code generator */
-static void dwarf2_print_frame_location(FILE *,struct Var *);
-static zmax dwarf2_fboffset(struct Var *);
+static void dwarf2_print_frame_location(FILE *,Var *);
+static zmax dwarf2_fboffset(Var *);
 static int dwarf2_regnumber(int);
 
 static int abbrev_label,info_start,info_end,line_start,line_end;
@@ -487,8 +489,8 @@ static int addr_form;
 static char **names;
 static int namecount;
 
-extern struct Var *merk_varf,*first_var[],*first_ext; /*FIXME: not nice */
-extern struct struct_declaration *first_sd[];
+extern Var *merk_varf,*first_var[],*first_ext; /*FIXME: not nice */
+extern struct_declaration *first_sd[];
 
 #define COMP_UNIT 1UL
 #define SUBPROGRAM 2UL
@@ -511,17 +513,17 @@ extern struct struct_declaration *first_sd[];
 #define VOIDFUNCTYPE 19UL
 #define PARMTYPE 20UL
 
-struct dwarf2_line_info {
+typedef struct dwarf2_line_info {
   struct dwarf2_line_info *next;
   char *id;
   int file,line,label;
-};
+} tdwarf2_line_info;
 
-static struct dwarf2_line_info *dwarf2_first_li,*dwarf2_last_li;
+static tdwarf2_line_info *dwarf2_first_li,*dwarf2_last_li;
 
 static void dwarf2_add_line(int file,int line,int label,char *id)
 {
-  struct dwarf2_line_info *new,*p,*lp;
+  tdwarf2_line_info *new,*p,*lp;
   new=mymalloc(sizeof(*new));
   new->file=file;
   new->line=line;
@@ -628,7 +630,7 @@ static void dwarf2_print_sleb128(FILE *f,zmax value)
     }
   }while(more);
 }
-static void dwarf2_print_location(FILE *f,struct obj *o)
+static void dwarf2_print_location(FILE *f,obj *o)
 {
   if(o->flags&(KONST|DREFOBJ)) ierror(0);
   if(!(o->flags&(VAR|REG))) ierror(0);
@@ -675,7 +677,7 @@ static int dwarf2_file(const char *p)
   strcpy(names[namecount-1],p);
   return namecount;
 }
-static int dwarf2_type(FILE *f,struct Typ *t)
+static int dwarf2_type(FILE *f,type *t)
 {
   int l,lo;char *p;
   if(ISPOINTER(t->flags)){
@@ -722,7 +724,7 @@ static int dwarf2_type(FILE *f,struct Typ *t)
       l=t->exact->label;
     }else{
       int i,*tl;zmax offset=l2zm(0L),al;
-      struct Typ *tp;
+      type *tp;
       l=++label;
       t->exact->label=l;
       tl=mymalloc(t->exact->count*sizeof(*tl));
@@ -804,7 +806,7 @@ static int dwarf2_type(FILE *f,struct Typ *t)
   }
   return l;
 }
-static void dwarf2_var(FILE *f,struct Var *v)
+static void dwarf2_var(FILE *f,Var *v)
 {
   char *p;int l;
   if(!(v->flags&(DEFINED|TENTATIVE))) return;
@@ -835,7 +837,7 @@ static void dwarf2_var(FILE *f,struct Var *v)
       dwarf2_print_uleb128(f,ul2zum((unsigned long)v->line));
     }
     {  /*FIXME!*/
-      struct obj o;
+      obj o;
       o.flags=VAR;
       o.val.vmax=l2zm(0L);
       o.v=v;
@@ -1121,9 +1123,9 @@ static void dwarf2_print_comp_unit_header(FILE *f)
 static void dwarf2_cleanup(FILE *f)
 {
   int i,line,file,label,length;char *p;
-  struct dwarf2_line_info *li,*m;
-  struct Var *vl;
-  struct struct_declaration *sd;
+  tdwarf2_line_info *li,*m;
+  Var *vl;
+  struct_declaration *sd;
   emit(f,"\t%s\t\".debug_line\"\n",dsec);
   /* line info */
   emit(f,"%s%d:\n",lp,line_start);
@@ -1193,7 +1195,7 @@ static void dwarf2_cleanup(FILE *f)
   emit(f,"\t%s\t\".debug_info\"\n",dsec);
   for(sd=first_sd[0];sd;sd=sd->next){
     if(sd->identifier){
-      static struct Typ styp;
+      static type styp;
       styp.flags=sd->typ;
       styp.exact=sd;
       sd->label=0;
@@ -1210,10 +1212,10 @@ static void dwarf2_cleanup(FILE *f)
   free(names);
 }
 /* generate line info for IC p, return 0 if nothing had to be generated */
-static void dwarf2_line_info(FILE *f,struct IC *p)
+static void dwarf2_line_info(FILE *f,IC *p)
 {
   static int line,file,n;
-  struct dwarf2_line_info *new;
+  tdwarf2_line_info *new;
   if(!f) return;
   if(p->line==0) return;
   if(!p->file) ierror(0);
@@ -1226,9 +1228,9 @@ static void dwarf2_line_info(FILE *f,struct IC *p)
   }
 }
 
-static void dwarf2_function(FILE *f,struct Var *v,int endlabel)
+static void dwarf2_function(FILE *f,Var *v,int endlabel)
 {
-  char *p;int l;struct Var *vl;
+  char *p;int l;Var *vl;
   struct struct_identifier *si;
   /* subprogram */
   if(!f) return;

@@ -1,15 +1,27 @@
 diff --git a/vbcc/Makefile b/vbcc/Makefile
-index 5ff828d..ce5a260 100644
+index 1c700ba..00dcc2b 100644
 --- a/vbcc/Makefile
 +++ b/vbcc/Makefile
-@@ -1,6 +1,6 @@
+@@ -4,7 +4,7 @@
+ HOSTID =
  
- # used to create vbcc, vc and ucpp
--CC = gcc -std=c9x -g -DHAVE_AOS4 #-DHAVE_ECPP -DHAVE_MISRA
-+CC = gcc -std=c9x -g -DHAVE_AOS4 $(CFLAGS) #-DHAVE_ECPP -DHAVE_MISRA
+ # used to compile vbcc, vc, ucpp, etc. for the selected host
+-CC = gcc -std=c9x -g -DHAVE_AOS4 #-fsanitize=address #-DHAVE_ECPP -DHAVE_MISRA
++CC = gcc -std=c9x -g -DHAVE_AOS4 $(CFLAGS) #-fsanitize=address #-DHAVE_ECPP -DHAVE_MISRA
  LDFLAGS = -lm
  
- # native version; used to create dtgen
+ # used to compile dtgen and osekrm natively
+diff --git a/vbcc/config/ppc b/vbcc/config/ppc
+new file mode 100644
+index 0000000..59e2927
+--- /dev/null
++++ b/vbcc/config/ppc
+@@ -0,0 +1,5 @@
++-cc=$VBCC/bin/vbccppc -quiet %s -o=%s %s -O=%ld
++-ccv=$VBCC/bin/vbccppc %s -o=%s %s -O=%ld
++-as=cp %s %s
++-ld=echo "Don't know how to link PowerPC code" 1>&2; exit 0
++-rm=rm %s
 diff --git a/vbcc/config/z b/vbcc/config/z
 new file mode 100644
 index 0000000..fdd0f32
@@ -22,7 +34,7 @@ index 0000000..fdd0f32
 +-ld=echo "Don't know how to link Z-machine code" 1>&2; exit 0
 +-rm=rm %s
 diff --git a/vbcc/cse.c b/vbcc/cse.c
-index 6a355b8..9b4baf1 100644
+index e180d3d..cfb0f1a 100644
 --- a/vbcc/cse.c
 +++ b/vbcc/cse.c
 @@ -164,7 +164,7 @@ void num_exp(void)
@@ -35,10 +47,10 @@ index 6a355b8..9b4baf1 100644
              if(c==ADD||c==MULT||(c>=OR&&c<=AND)){
                  if(p->q2.flags&&compare_objs(&p->q1,&p->q2,p->typf)<0&&(USEQ2ASZ||compare_objs(&p->q1,&p->z,p->typf))){
 diff --git a/vbcc/declaration.c b/vbcc/declaration.c
-index 070853b..20bb496 100644
+index e039d89..81fbb3b 100644
 --- a/vbcc/declaration.c
 +++ b/vbcc/declaration.c
-@@ -992,6 +992,10 @@ struct Typ *declaration_specifiers(void)
+@@ -1019,6 +1019,10 @@ type *declaration_specifiers(void)
    if(type_qualifiers&(XSIGNED|UNSIGNED))
      if(!ISINT(typ))
        error(58);
@@ -49,65 +61,23 @@ index 070853b..20bb496 100644
    new->flags=typ|type_qualifiers;
    new->attr=attr;
    return new;
-@@ -3084,14 +3088,14 @@ void gen_vars(struct Var *v)
-             /*  und dann der Rest   */
-             if(mode==2&&p->clist) continue;
-             if(!(p->flags&(TENTATIVE|DEFINED))){
--              if(!((p->vtyp->flags&NQ)==FUNKT)||!p->fi||!p->fi->inline_asm)
-+              if(((p->vtyp->flags&NQ)!=FUNKT)||!p->fi||!p->fi->inline_asm)
-                 gen_var_head(out,p);
-               if(p->storage_class==STATIC&&(!p->fi||!p->fi->inline_asm)) error(127,p->identifier);
-               continue;
-             }else{
-               /*gen_align(out,falign(p->vtyp));*/
-             }
--            if(!(p->vtyp->flags&NQ)==FUNKT||!p->fi||!p->fi->inline_asm)
-+            if(((p->vtyp->flags&NQ)!=FUNKT)||!p->fi||!p->fi->inline_asm)
-               gen_var_head(out,p);
-             if(!p->clist){
-               if(type_uncomplete(p->vtyp)) error(202,p->identifier);
 diff --git a/vbcc/ic.c b/vbcc/ic.c
-index ea785bb..5685c66 100644
+index 4e76920..8503109 100644
 --- a/vbcc/ic.c
 +++ b/vbcc/ic.c
 @@ -1,5 +1,6 @@
- /*  $VER: vbcc (ic.c) V0.8  */
+ /*  $VER: vbcc (ic.c) $Revision: 1.65 $  */
  
 +#include <assert.h>
  #include "vbc.h"
  #include "opt.h"
  
-@@ -181,13 +182,14 @@ void insert_bitfield(struct obj *dest,struct obj *src,struct obj *val,int bfs,in
-   val->flags=vmerk;
- }
- 
--void inline_memcpy(np z,np q,zmax size)
-+int inline_memcpy(np z,np q,zmax size)
- /*  fuegt ein ASSIGN-IC ein, das memcpy(z,q,size) entspricht    */
- {
--    struct IC *new=new_IC();
--    if(!ISPOINTER(z->ntyp->flags)) ierror(0);
--    if(!ISPOINTER(q->ntyp->flags)) ierror(0);
-+    struct IC *new;
-+    if(!ISPOINTER(z->ntyp->flags)) return 0;
-+    if(!ISPOINTER(q->ntyp->flags)) return 0;
- 
-+    new=new_IC();
-     if(z->flags==ADDRESS||z->flags==ADDRESSA||z->flags==ADDRESSS){
-       gen_IC(z,0,0);
-       new->z=z->left->o;
-@@ -254,6 +256,7 @@ void inline_memcpy(np z,np q,zmax size)
-     new->q2.flags=0;
-     new->q2.val.vmax=size;
-     add_IC(new);
-+    return 1;  // success
- }
- 
- void add_IC(struct IC *new)
-@@ -524,6 +527,193 @@ np gen_libcall(char *fname,np arg1,struct Typ *t1,np arg2,struct Typ *t2)
+@@ -583,6 +584,199 @@ np gen_libcall(char *fname,np arg1,type *t1,np arg2,type *t2)
    return new;
  }
  
++#if INLINE_PUTS_ON_Z_MACHINE
++
 +/* This function serves a dual purpose: it turns the const_list into a nice
 + * C string, but it also checks to see if it's null-terminated, and if
 + * it's not, we simply return NULL. Our caller is responsible for doing the
@@ -251,9 +221,13 @@ index ea785bb..5685c66 100644
 +            } else {
 +                ierror(0);  /* unsupported or invalid UTF-8 encoding */
 +            }
-+            strcpy(inline_asm+len, "\");\n"); len += 3;
-+            sprintf(inline_asm+len, "\t@print_unicode $%04X;\n"
++            sprintf(inline_asm+len, "\");\n"
++                                    "\t@print_unicode $%04X;\n"
 +                                    "\t%s(\"", w, z_optimize_puts_name);
++            len = strlen(inline_asm);
++        } else if (text[i] == '^' || text[i] == '~') {
++            sprintf(inline_asm+len, "@@%d\");\n"
++                                    "\t%s(\"", text[i], z_optimize_puts_name);
 +            len = strlen(inline_asm);
 +        } else {
 +            switch (text[i]) {
@@ -262,8 +236,6 @@ index ea785bb..5685c66 100644
 +                case '"': inline_asm[len++] = '~'; break;
 +                case '@': strcpy(inline_asm+len, "@{40}"); len += 5; break;
 +                case '\\': strcpy(inline_asm+len, "@{5c}"); len += 5; break;
-+                case '~': strcpy(inline_asm+len, "@{7e}"); len += 5; break;
-+                case '^': strcpy(inline_asm+len, "@@94\",\""); len += 7; break;
 +                default:
 +                    /* This should have been assured by const_list_to_string(). */
 +                    assert(32 <= text[i] && text[i] <= 126);
@@ -295,13 +267,17 @@ index ea785bb..5685c66 100644
 +    p->left->left->o.v = saved_v;
 +    p->alist = saved_alist;
 +}
++
++#endif /* INLINE_PUTS_ON_Z_MACHINE */
  
  void gen_IC(np p,int ltrue,int lfalse)
  /*  Erzeugt eine IC-Liste aus einer expression      */
-@@ -1011,6 +1201,129 @@ void gen_IC(np p,int ltrue,int lfalse)
-         struct IC *merk_fp,*lp;
+@@ -1116,6 +1310,132 @@ void gen_IC(np p,int ltrue,int lfalse)
+         IC *merk_fp,*lp;
  	unsigned int merk_opushed=opushed;
  #endif
++
++#if INLINE_PUTS_ON_Z_MACHINE
 +	/* [ajo] The following code optimizes puts("hello") into a single
 +	 * Z-machine opcode: print "hello". This cuts down a little bit on
 +	 * code size, but greatly on static data size, because (as far as I
@@ -424,52 +400,20 @@ index ea785bb..5685c66 100644
 +		free(fmt);
 +	    }
 +        }
++#endif /* INLINE_PUTS_ON_Z_MACHINE */
 +
          if(p->left->flags==ADDRESS&&p->left->left->flags==IDENTIFIER){
-             struct Var *v;
+             Var *v;
              gen_IC(p->left,0,0); r=1;
-@@ -1187,8 +1500,7 @@ void gen_IC(np p,int ltrue,int lfalse)
-                                 if(zmeqto(zc2zm(cl->other->val.vchar),l2zm(0L))) break;
-                                 cl=cl->next;
-                             }
--                            if(zmleq(len,l2zm((long)INLINEMEMCPY))){
--                                inline_memcpy(p->alist->arg,n,len);
-+                            if(zmleq(len,l2zm((long)INLINEMEMCPY)) && inline_memcpy(p->alist->arg,n,len)){
-                                 p->o=p->alist->arg->o;
-                                 return;
-                             }
-@@ -1199,8 +1511,7 @@ void gen_IC(np p,int ltrue,int lfalse)
-                            &&p->alist->next->next->arg
-                            &&p->alist->next->next->arg->flags==CEXPR){
-                             eval_constn(p->alist->next->next->arg);
--                            if(zmleq(vmax,l2zm((long)INLINEMEMCPY))){
--                                inline_memcpy(p->alist->arg,p->alist->next->arg,vmax);
-+                            if(zmleq(vmax,l2zm((long)INLINEMEMCPY)) && inline_memcpy(p->alist->arg,p->alist->next->arg,vmax)){
-                                 p->o=p->alist->arg->o;
-                                 return;
-                             }
-@@ -2568,4 +2879,3 @@ void savescratch(int code,struct IC *p,int dontsave,struct obj *o)
-     }
-   }
- }
--
 diff --git a/vbcc/loop.c b/vbcc/loop.c
-index f3cd29a..72eec0a 100644
+index b0190c6..8a01c4d 100644
 --- a/vbcc/loop.c
 +++ b/vbcc/loop.c
-@@ -1268,6 +1268,7 @@ int do_unroll(int donothing)
-     if(flags&UNROLL_INVARIANT){
-       struct IC *new,*mc,*mn; struct Var *v; int out=++label,code;
-       long i; struct Typ *t;static struct Typ tptrdiff={0};
-+      ierror(0);  // [ajo] if this is hit, try to trigger the bug below
-       if(DEBUG&1024) printf("unrolling non-constant loop\n");
-       if(ISPOINTER(cmp->typf)){
- 	tptrdiff.flags=PTRDIFF_T(cmp->typf);
-@@ -1477,15 +1478,17 @@ int do_unroll(int donothing)
-     if(flags&UNROLL_REVERSE){
-       struct IC *new,*mc; struct Var *v; int out=++label,code;
-       long i; struct Typ *t;static struct Typ tptrdiff={0};
-+      static struct Typ totherwise={0};
+@@ -1605,15 +1605,17 @@ int do_unroll(int donothing)
+       IC *new,*mc; Var *v; int out=++label,code;
+       long i; type *t;static type tptrdiff={0};
+       IC tmp;
++      static type totherwise={0};
        if(DEBUG&1024) printf("reversing loop\n");
        if(ISPOINTER(cmp->typf)){
  	tptrdiff.flags=PTRDIFF_T(cmp->typf);
@@ -485,13 +429,8 @@ index f3cd29a..72eec0a 100644
        }
        v=add_tmp_var(clone_typ(t));
        new=new_IC();
-@@ -1920,4 +1923,3 @@ int loop_optimizations(struct flowgraph *fg)
- 
-   return changed;
- }
--
 diff --git a/vbcc/machines/z/machine.c b/vbcc/machines/z/machine.c
-index a242fff..add4f5a 100644
+index a242fff..a2e3f1d 100644
 --- a/vbcc/machines/z/machine.c
 +++ b/vbcc/machines/z/machine.c
 @@ -68,7 +68,9 @@ int g_flags[MAXGF] = {
@@ -720,6 +659,15 @@ index a242fff..add4f5a 100644
  }
  
  /* Returns zero if the code for converting type p->ntyp to type typ is a noop.
+@@ -738,7 +747,7 @@ void gen_var_head(FILE* fp, struct Var* var)
+ 			fprintf(fp, "Array _%s ->\n",
+ 				var->identifier);
+ 			currentvar.type = EXTERN;
+-			currentvar.val.identifier = strdup(var->identifier);
++			currentvar.val.identifier = mystrdup(var->identifier);
+ 			currentvar.offset = 0;
+ 			break;
+ 			
 @@ -757,7 +766,13 @@ void gen_var_head(FILE* fp, struct Var* var)
  
  void gen_ds(FILE *fp, zmax size, struct Typ *typ)
@@ -735,6 +683,15 @@ index a242fff..add4f5a 100644
  	currentvar.offset += size;
  }
  
+@@ -805,7 +820,7 @@ void gen_dc(FILE *fp, int typf, struct const_list *p)
+ 				{
+ 					case EXTERN:
+ 						fixup->value.type = EXTERN;
+-						fixup->value.val.identifier = strdup(obj->v->identifier);
++						fixup->value.val.identifier = mystrdup(obj->v->identifier);
+ 						break;
+ 
+ 					case STATIC:
 @@ -852,8 +867,8 @@ static int find_varargs(void)
  	int offset = 0;
  	struct reg_handle rh = empty_reg_handle;
@@ -851,7 +808,14 @@ index a242fff..add4f5a 100644
  	/* Is this a memory dereference? */
  
  	if (flags & DREFOBJ)
-@@ -1096,7 +1096,7 @@ static void read_reg(FILE* fp, struct obj* obj, int typf, int reg)
+@@ -1090,13 +1090,13 @@ static void read_reg(FILE* fp, struct obj* obj, int typf, int reg)
+ 		struct zop r;
+ 		c.type = ZOP_CONSTANT;
+ 		//fprintf(fp, "\t@add ");
+-		switch (typf & NQ)
++		switch (typf & NU)
+ 		{
+ 			case CHAR:		c.val.constant = obj->val.vchar;	break;
  			case UNSIGNED|CHAR:	c.val.constant = obj->val.vuchar;	break;
  			case SHORT:		c.val.constant = obj->val.vshort;	break;
  			case UNSIGNED|SHORT:	c.val.constant = obj->val.vushort;	break;
@@ -1281,7 +1245,15 @@ index a242fff..add4f5a 100644
  					default:
  						ierror(typf);
  				}
-@@ -2323,6 +2358,7 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+@@ -2264,6 +2299,7 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+ 					case CHAR:
+ 					case SHORT:
+ 					case INT:
++					case POINTER:
+ 						push_value(fp, &ic->q1, INT, &q1);
+ 						pop_value(fp, &ic->z, typf, &z);
+ 						if ((z.type != ZOP_STACK) || (q1.type != ZOP_STACK))
+@@ -2323,6 +2359,7 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
  
  					case SHORT:
  					case INT:
@@ -1289,7 +1261,7 @@ index a242fff..add4f5a 100644
  						push_addrof(fp, &ic->q1, LONG, &q1);
  						pop_value(fp, &ic->z, typf, &z);
  						fprintf(fp, "\t@loadw ");
-@@ -2333,6 +2369,16 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+@@ -2333,6 +2370,16 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
  						fin_zop(fp, &ic->z, typf, &z);
  						break;
  					
@@ -1306,7 +1278,7 @@ index a242fff..add4f5a 100644
  					default:
  						ierror(typf & NQ);
  				}
-@@ -2359,7 +2405,6 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+@@ -2359,7 +2406,6 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
  					case CHAR:
  					case SHORT:
  					case INT:
@@ -1314,7 +1286,7 @@ index a242fff..add4f5a 100644
  						/* Second parameter first! */
  						push_value(fp, &ic->q2, typf, &compare2);
  						push_value(fp, &ic->q1, typf, &compare1);
-@@ -2368,6 +2413,7 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+@@ -2368,6 +2414,7 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
  					case UNSIGNED|CHAR:
  					case UNSIGNED|SHORT:
  					case UNSIGNED|INT:
@@ -1322,7 +1294,7 @@ index a242fff..add4f5a 100644
  						/* Because the Z-machine only
  						 * has signed comparisons, we
  						 * need a dodgy algorithm to
-@@ -2451,7 +2497,7 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+@@ -2451,7 +2498,7 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
  						q2.type = ZOP_CONSTANTADDR;
  						q2.val.constant = addconstant(0);
  						emit_zop(fp, &q2);
@@ -1331,7 +1303,7 @@ index a242fff..add4f5a 100644
  						compare1.type = ZOP_STACK;
  						compare2.type = ZOP_CONSTANT;
  						compare2.val.constant = 0;
-@@ -2545,12 +2591,10 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
+@@ -2545,12 +2592,10 @@ void gen_code(FILE* fp, struct IC *ic, struct Var* func, zmax stackframe)
  				/* If any parameters have been pushed, adjust
  				 * the stack to pop them. */
  
@@ -1348,7 +1320,7 @@ index a242fff..add4f5a 100644
  				}
  				continue;
  			}
-@@ -2622,9 +2666,9 @@ void cleanup_cg(FILE *fp)
+@@ -2622,9 +2667,9 @@ void cleanup_cg(FILE *fp)
  
  		while (constant)
  		{
@@ -1360,7 +1332,7 @@ index a242fff..add4f5a 100644
  				xword(constant->value, 1),
  				xword(constant->value, 0));
  			constant = constant->next;
-@@ -2639,12 +2683,12 @@ void cleanup_cg(FILE *fp)
+@@ -2639,12 +2684,12 @@ void cleanup_cg(FILE *fp)
  		fprintf(fp, "[ __init_vars_%s;\n", modulename);
  		while (fixup)
  		{
@@ -1375,7 +1347,7 @@ index a242fff..add4f5a 100644
  						modulename, fixup->value.val.number);
  					break;
  
-@@ -2660,15 +2704,15 @@ void cleanup_cg(FILE *fp)
+@@ -2660,15 +2705,15 @@ void cleanup_cg(FILE *fp)
  			switch (fixup->identifier.type)
  			{
  				case STATIC:
@@ -1395,7 +1367,7 @@ index a242fff..add4f5a 100644
  					break;
  
  				default:
-@@ -2685,18 +2729,17 @@ void cleanup_cg(FILE *fp)
+@@ -2685,18 +2730,17 @@ void cleanup_cg(FILE *fp)
  
  int reg_parm(struct reg_handle *rh, struct Typ *typ, int vararg, struct Typ *ft)
  {
@@ -1418,7 +1390,7 @@ index a242fff..add4f5a 100644
  		return 0;
  
 diff --git a/vbcc/machines/z/machine.h b/vbcc/machines/z/machine.h
-index 6f43fc8..e8f4b5e 100644
+index 6f43fc8..3eb7864 100644
 --- a/vbcc/machines/z/machine.h
 +++ b/vbcc/machines/z/machine.h
 @@ -18,7 +18,7 @@ struct AddressingMode{
@@ -1430,34 +1402,44 @@ index 6f43fc8..e8f4b5e 100644
  
  /* If this is set to zero vbcc will not generate ICs where the target operand
   * is the same as the 2nd source operand. This can sometimes simplify the
-diff --git a/vbcc/opt.c b/vbcc/opt.c
-index 724c34d..36528d8 100644
---- a/vbcc/opt.c
-+++ b/vbcc/opt.c
-@@ -1014,7 +1014,7 @@ static int to_be_inlined(struct Var *v)
-   if(c>inline_size) return 0;
-   /* we assume that inlining saves size if the number of arguments
-      is larger than the number of ICs + CALL +SETRETURN  */
--  if(optsize&&c-2>(c=v->vtyp->exact->count)) return 0;
-+  if(optsize&&c-2>(v->vtyp->exact->count)) return 0;
-   return 1;
- }
+@@ -57,6 +57,10 @@ struct AddressingMode{
  
+ #define INLINEMEMCPY 65536
+ 
++/* Do we want to inline calls to puts() and printf()? */
++
++#define INLINE_PUTS_ON_Z_MACHINE 1
++
+ /* Do we want to pass parameters to functions in registers? */
+ 
+ #define HAVE_REGPARMS 1
+diff --git a/vbcc/preproc.c b/vbcc/preproc.c
+index 54f6701..d835333 100644
+--- a/vbcc/preproc.c
++++ b/vbcc/preproc.c
+@@ -429,6 +429,7 @@ struct strnode *AllocSpace()
+             newnode->flags = newnode->number = 0;
+             return (newnode);
+         }
++        free(newstr);
+     }
+     return (NULL);
+ }
 diff --git a/vbcc/regs.c b/vbcc/regs.c
-index f020493..a8f6d36 100644
+index 24f9157..7162a87 100644
 --- a/vbcc/regs.c
 +++ b/vbcc/regs.c
-@@ -1279,7 +1279,7 @@ int find_best_local_reg(struct IC *fp,struct Var *v,int preferred)
+@@ -1361,7 +1361,7 @@ int find_best_local_reg(IC *fp,Var *v,int preferred)
      }
  
      /* check for register arguments */
 -    if((p->z.flags&(VAR|DREFOBJ))==VAR&&!*p->z.v->identifier&&p->z.v->reg){
 +    if(p!=fp&&(p->z.flags&(VAR|DREFOBJ))==VAR&&!*p->z.v->identifier&&p->z.v->reg){
-       savings[abs(p->z.v->reg)]=INT_MIN;
-       if(reg_pair(abs(p->z.v->reg),&rp)){
- 	savings[rp.r1]=INT_MIN;
+       if(p->code==ASSIGN&&(p->q1.flags&(VAR|DREFOBJ))==VAR&&p->q1.v==v){
+ 	savings[abs(p->z.v->reg)]++;
+       }else{
 diff --git a/vbcc/statements.c b/vbcc/statements.c
-index cfd08a6..c520e97 100644
+index 4b8e352..e9c26e9 100644
 --- a/vbcc/statements.c
 +++ b/vbcc/statements.c
 @@ -278,14 +278,15 @@ void if_statement(void)
@@ -1479,18 +1461,19 @@ index cfd08a6..c520e97 100644
  	  if(ctok->type!=NAME||strcmp("if",ctok->name)) {
  #ifdef HAVE_MISRA
 diff --git a/vbcc/type_expr.c b/vbcc/type_expr.c
-index f0b7d22..ac00481 100644
+index ee81ec9..112e294 100644
 --- a/vbcc/type_expr.c
 +++ b/vbcc/type_expr.c
-@@ -6,7 +6,6 @@ static char FILE_[]=__FILE__;
+@@ -791,7 +791,7 @@ int type_expression2(np p,type *ttyp)
+       p->ntyp->flags=CONST|INT;
+     }
+     p->o.v=v;
+-	if (p->ntyp->flags&VOLATILE) p->sidefx=1; /* Touching a volatile may have side effects */
++	if (f==IDENTIFIER&&(p->ntyp->flags&VOLATILE)) p->sidefx=1; /* Touching a volatile may have side effects */
+     return 1;
+   }
  
- int alg_opt(np,struct Typ *),type_expression2(np,struct Typ *);
- int test_assignment(struct Typ *,np);
--void make_cexpr(np);
- 
- int dontopt;
- int no_cast_free;
-@@ -742,9 +741,7 @@ int type_expression2(np p,struct Typ *ttyp)
+@@ -802,9 +802,7 @@ int type_expression2(np p,type *ttyp)
      return 1;
    }
  
@@ -1501,16 +1484,34 @@ index f0b7d22..ac00481 100644
      p->lvalue=1;
      return 1;
    }
-@@ -2110,7 +2107,7 @@ int alg_opt(np p,struct Typ *ttyp)
+@@ -923,7 +921,7 @@ int type_expression2(np p,type *ttyp)
+     if(ISVECTOR(p->right->ntyp->flags)){
+       p->ntyp=new_typ();
+       if(ISFLOAT(VECTYPE(p->right->ntyp->flags)))
+-	p->ntyp->flags=mkvec(INT,VECDIM(p->left->ntyp->flags));
++	p->ntyp->flags=mkvec(INT,VECDIM(p->right->ntyp->flags));
+       else
+ 	p->ntyp->flags=p->right->ntyp->flags&NQ;
+       return ok;
+@@ -2208,7 +2206,7 @@ int alg_opt(np p,type *ttyp)
+     }
+     if(c==2){
+         /*  a+0=a-0=a^0=a>>0=a<<0=a*1=a/1=a   */
+-        if(((eins2==1&&(f==MULT||f==PMULT||f==DIV))||(null2&&(f==ADD||f==SUB||f==OR||f==XOR||f==LSHIFT||f==RSHIFT)))&&!p->right->sidefx){
++        if(((eins2==1&&(f==MULT||f==PMULT||f==DIV))||(null2&&(f==ADD||f==SUB||f==OR||f==XOR||f==LSHIFT||f==RSHIFT)))&&!p->right->sidefx&&(p->left->ntyp->flags==p->ntyp->flags)){
+             if(DEBUG&1){if(f==MULT||f==PMULT||f==DIV) printf("a*/1->a\n"); else printf("a+-^0->a\n");}
+             free_expression(p->right);
+             merk=p->left;
+@@ -2219,7 +2217,7 @@ int alg_opt(np p,type *ttyp)
              return type_expression2(p,ttyp);
          }
          /*  a*0=0   */
 -        if(null2&&(f==MULT||f==PMULT||f==AND||f==DIV||f==MOD)){
-+        if(null2&&(f==MULT||f==PMULT||f==AND||f==DIV||f==MOD)&&!p->sidefx){
++        if(null2&&(f==MULT||f==PMULT||f==AND||f==DIV||f==MOD)&&!p->sidefx&&(p->left->ntyp->flags==p->ntyp->flags)){
              if(DEBUG&1) printf("a*&/%%0->0\n");
              if(null2&&(f==DIV||f==MOD)) error(84);
              if(p->flags==PMULT) p->flags=PCEXPR; else p->flags=CEXPR;
-@@ -2118,8 +2115,8 @@ int alg_opt(np p,struct Typ *ttyp)
+@@ -2227,13 +2225,13 @@ int alg_opt(np p,type *ttyp)
  	    eval_const(&gval,INT);
              /*  hier nur int,long,float,double moeglich, hoffe ich  */
              insert_constn(p);
@@ -1518,10 +1519,16 @@ index f0b7d22..ac00481 100644
 -            if(!p->right->sidefx){free_expression(p->right);p->right=0;} else make_cexpr(p->right);
 +            free_expression(p->left);p->left=0;
 +            free_expression(p->right);p->right=0;
+ 
  /*            return(type_expression2(p,ttyp));   */
              return 1;
          }
-@@ -2144,33 +2141,20 @@ int alg_opt(np p,struct Typ *ttyp)
+-        if(eins2==-1&&(f==MULT||f==PMULT||f==DIV)&&!p->right->sidefx){
++        if(eins2==-1&&(f==MULT||f==PMULT||f==DIV)&&!p->right->sidefx&&(p->left->ntyp->flags==p->ntyp->flags)){
+             if(DEBUG&1) printf("a*/(-1)->-a\n");
+             free_expression(p->right);
+             p->right=0;
+@@ -2296,33 +2294,20 @@ int alg_opt(np p,type *ttyp)
              return type_expression2(p,ttyp);
          }
          /*  0/a=0   */
@@ -1549,12 +1556,12 @@ index f0b7d22..ac00481 100644
 -/*  Fuehrt rekursiven Abstieg durch. Ist das so korrekt?                */
 -{
 -    int f=p->flags;
--    if(f!=ASSIGN&&f!=ASSIGNOP&&f!=CALL&&f!=POSTINC&&f!=POSTDEC&&f!=PREINC&&f!=PREDEC){
+-    if(f!=ASSIGN&&f!=ASSIGNOP&&f!=CALL&&f!=POSTINC&&f!=POSTDEC&&f!=PREINC&&f!=PREDEC&&f!=LAND&&f!=LOR){
 -        p->flags=PCEXPR;
 -        if(p->left) make_cexpr(p->left);
 -        if(p->right) make_cexpr(p->right);
 -    }
 -}
- int test_assignment(struct Typ *zt,np q)
+ int test_assignment(type *zt,np q)
  /*  testet, ob q an Typ z zugewiesen werden darf    */
  {

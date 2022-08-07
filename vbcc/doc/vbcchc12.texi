@@ -1,6 +1,4 @@
-This chapter documents the Backend for the 68hc12 microcontroller family.
-
-Note that this backend is not done!
+This chapter documents the Backend for the 68hc12 and 6809/6309 microcontroller families.
 
 @section Additional options for this version
 
@@ -11,7 +9,7 @@ This backend provides the following additional options:
     @item -merge-constants
                 Place identical floating point constants at the same
                 memory location. This can reduce program size and increase
-                compilation time.
+                compilation time. (No fp support yet.)
 
     @item -const-in-data
                 By default constant data will be placed in a read-only
@@ -35,30 +33,56 @@ This backend provides the following additional options:
                 reuse them. Due to the small register-set of the hc12
                 this is disabled by default as it increases register-
                 pressure and tends to spill to the stack.
+
+    @item -cpu=<n>
+                Specify the processor family. Currently supported values are:
+@itemize
+@item 6812: Generate code for the Motorola 68hc12 series (default).
+
+@item 6809: Generate code for the Motorola 6809 series.
+
+@item 6309: Generate code for the Hitachi 6309 series (currently identical to 6809).
+@end itemize
+
+
+     @item -acc-glob
+                Make the accumulator available for global register allocation.
+                By default, the accumulator will only be used for register allocation
+                within basic blocks. In many cases, global allocation will result in
+                worse code, because the accumulator has to be pushed/popped many times.
+
+     @item -pcrel
+                Generate PC-relative code. May not fully work with 68hc12.
+
+     @item -drel
+                Generate code that accesses data relative to register @code{u}. Does not
+                work with 68hc12.
+
 @end table
 
 @section ABI
 
-    The current version generates assembly output for use with the GNU
+    The current version generates assembly output for use with vasm6809_std or the GNU
     assembler using the non-banked model.
 
         This backend supports the following registers:
 
         @itemize @minus
-        @item @code{d}  for the accumulator (also used for byte, i.e. @code{a})
+        @item @code{d}  for the accumulator (also used for byte, i.e. @code{b})
         @item @code{x}  for index register x
         @item @code{y}  for index register y
+        @item @code{u}  for index register u (not on 68hc12)
         @item @code{sp} for the stack-pointer
         @end itemize
 
-    All registers are scratch (i.e. caller-save).
+    The accumulator and @code{x} are caller-save. The @code{y} register is callee-save.
+    The @code{u} register is used as data-page pointer with @code{-drel}.
 
-    The first function arguments which has integer or pointer types
-    is passed in the accumulator @code{d} or the register pair @code{d/x}.
-       The
-    remaining arguments are passed on the stack.
+    The first function argument which has integer or pointer type up to 16 bits
+    is passed in the accumulator @code{d}.
+    The remaining arguments are passed on the stack.
 
-    Integers and pointers are returned in @code{d} or @code{d/x}.
+    Integers and pointers are returned in @code{d} or @code{d/x} (@code{x} contains the higher bits).
     All other types are returned by passing the function the address
     of the result as a hidden argument - so when you call such a function
     without a proper declaration in scope you can expect a crash.
@@ -68,28 +92,33 @@ This backend provides the following additional options:
     type        size in bits        alignment in bytes
 
     char                8                       1
-    short              16                       2
-    int                16                       2
-    long                 currently not supported
-    near pointers      16                       2
-    far pointers         currently not supported
-    huge pointers        currently not supported
-    float                currently not supported
-    double               currently not supported
+    short              16                       1
+    int                16                       1
+    long               32                       1 
+    near pointers      16                       1
+    far pointers       24                       1 (not yet)
+    huge pointers      24                       1 (not yet)
+    float              32                       1 (not yet)
+    double             64                       1 (not yet)
+    long double        64                       1 (not yet)
 @end example
 
 
 @section Target-specific variable-attributes
  
-    The hc12-backend offers the following variable attributes:
+    The 6809/hc12-backend offers the following variable attributes:
 
 @table @code 
     @item __interrupt
-         Return with @code{rfi} rather than @code{blr}.
+         Return with @code{rti} rather than @code{rts}.
 
     @item __section("name","attr")
                  Place this function/object in section "section"
                  with attributes "attr".
+
+    @item __dpage
+          Place the variable in section @code{.dpage} and use direct addressing.
+
 @end table
 
 @section Predefined Macros
@@ -97,8 +126,15 @@ This backend provides the following additional options:
         This backend defines the following macros:
 
 @table @code
-        @item __HC12__
-        
+    @item __HC12__
+                If code for 68hc12 is generated.
+
+    @item __6809__
+                If code for 6809 is generated.
+
+    @item __6309__
+                If code for 6309 is generated.
+@        
 @end table
 
 @section Stack
@@ -111,13 +147,17 @@ This backend provides the following additional options:
 
 @section Stdarg
 
-    To be written...
-
+	Stdarg is supported by the provided include.
 
 @section Known Problems
 
 @itemize @minus
-    @item this backend is far from done...
+    @item Support for floating point and long long is still missing.
+    @item U register is not really used yet.
+    @item No support for 6309 extensions yet.
+    @item Many optimizations still missing.
+    @item Some code generation bugs to be fixed.
+
 @end itemize
 
 

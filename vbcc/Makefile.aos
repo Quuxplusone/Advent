@@ -1,0 +1,12 @@
+# Cross-compiled for AmigaOS/68k
+HOSTID = _os3
+CC = vc +aos68k -rmcfg-amiga-softfloat -O1 -cpu=68020 -DAMIGA -DHAVE_AOS4 -Iucpp
+LDFLAGS = -lmsoft -lamiga
+NCC = $(CC)
+NLDFLAGS = $(LDFLAGS)
+EMUL = vamos -S -C 68020 -H disable -m 65536 --
+
+RM = rm -f
+MD = mkdir
+MV = mv
+include make.rules

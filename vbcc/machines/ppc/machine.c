@@ -10,7 +10,7 @@ static char FILE_[]=__FILE__;
 /*  Public data that MUST be there.                             */
 
 /* Name and copyright. */
-char cg_copyright[]="vbcc code-generator for PPC V0.6c (c) in 1997-2008 by Volker Barthelmann";
+char cg_copyright[]="vbcc code-generator for PPC V0.7 (c) in 1997-2022 by Volker Barthelmann";
 
 /*  Commandline-flags the code-generator accepts                */
 int g_flags[MAXGF]={STRINGFLAG,STRINGFLAG,0,0,0,0,
@@ -164,8 +164,8 @@ static int bp32mos=14;             /*  baserel32 pointer for MorphOS       */
 #define SPECIAL 8
 
 #if HAVE_OSEK
-static bvtype usedsysregs[RSIZE/sizeof(bvtype)];
-static int sysstack;
+/* removed */
+/* removed */
 #endif
 
 static long stack;
@@ -3318,19 +3318,19 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
 	    stack_valid=0;
 	  }
 #if HAVE_OSEK
-	  if(p->call_list[i].v->fi)
-	    v->fi->osflags|=p->call_list[i].v->fi->osflags;
-	  if(p->call_list[i].v->vattr&&strstr(p->call_list[i].v->vattr,"obtainsemaphore;"))
-	    v->fi->osflags|=DOES_BLOCK;
-	  if(p->call_list[i].v->vattr&&strstr(p->call_list[i].v->vattr,"scheduler;"))
-	    v->fi->osflags|=CALLS_SCHED;
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
 #endif
 	}
       }
       if(!calc_regs(p,f!=0)&&v->fi) all_regs=0;
 #if HAVE_OSEK
-      bvunite(v->fi->preempt_regs,task_preempt_regs,RSIZE);
-      bvunite(v->fi->schedule_regs,task_schedule_regs,RSIZE);
+/* removed */
+/* removed */
 #endif
       if((p->q1.flags&(VAR|DREFOBJ))==VAR&&p->q1.v->fi&&p->q1.v->fi->inline_asm){
         emit_inline_asm(f,p->q1.v->fi->inline_asm);
@@ -3568,7 +3568,7 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
   free(once);free(twice);
   function_bottom(f,v,of);
 #if HAVE_OSEK
-  if(v->tattr&SYSCALL) bvunite(usedsysregs,regs_modified,RSIZE);
+/* removed */
 #endif
   if(stack_valid){
     if(!v->fi) v->fi=new_fi();
@@ -3576,9 +3576,9 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
       if(v->fi->stack1!=stack&&!(v->tattr&SAVEALL))
 	if(f) error(319,"",stack,v->fi->stack1);
 #if HAVE_OSEK
-      /*FIXME: stimmt nicht wirklich */
-      if((v->tattr&SYSCALL)&&stack>sysstack)
-	sysstack=stack;
+/* removed */
+/* removed */
+/* removed */
 #endif
     }else{
       v->fi->flags|=ALL_STACK;
@@ -3822,191 +3822,191 @@ char *use_libcall(int c,int t,int t2)
 
 
 #if HAVE_OSEK
-
-/* helper functions for stack optimization */
-
-int *cost,*slot_size,*slot,*slot_start,next_slot;
-bvtype *preempts;
-
-static int fits_slot(int s,int node,int tcnt)
-{
-  int i;
-  for(i=0;i<tcnt;i++)
-    if(slot[i]==s&&(BTST(preempts,node+i*tcnt)||BTST(preempts,i+node*tcnt)))
-      return 0;
-  return 1;
-}
-
-static void put_node(int node,int tcnt)
-{
-  int i;
-  for(i=0;i<next_slot;i++){
-    if(fits_slot(i,node,tcnt)){
-      slot[node]=i;
-      return;
-    }
-  }
-  slot[node]=next_slot;
-  slot_size[next_slot]=cost[node];
-  next_slot++;
-}
-
-/* special operating system support */
-void emit_os(FILE *f,tasklist *tasks,int tcnt)
-{
-  int i,j,t,r,mw,size,node,msize;
-  if(!f) return;
-
-  /* needed for interference graph */
-  cost=mymalloc(tcnt*sizeof(*cost));
-  preempts=mymalloc(BVSIZE(tcnt*tcnt));
-
-  /* emit load/save routines for system context */
-
-  if(section!=CODE){emit(f,codename);section=CODE;}
-
-  sysstack+=16; /*FIXME: 8 wegen lr + 8 misstrauen */
-
-  /* emit load/save routines for each task */
-
-  for(t=0;t<tcnt;t++){
-    emit(f,"%s__save%s:\n",idprefix,tasks[t].v->identifier);
-    size=0;
-    for(mw=0,r=32;r>=1;r--){
-      if(BTST(tasks[t].unsaved_context,r)&&BTST(usedsysregs,r))
-	BSET(tasks[t].context,r);
-      if((!regsa[r]||r==t3)&&BTST(tasks[t].context,r)){
-	if(mw!=0)
-	  emit(f,"\tstwu\t%s,-4(%s)\n",mregnames[r],mregnames[sp]);
-	size+=4;
-      }else{
-	if(mw==0){
-	  mw=1;
-	  if(r!=32){
-	    /*FIXME: could be improved*/
-	    emit(f,"\taddi\t%s,%s,%d\n",mregnames[sp],mregnames[sp],-4*(32-r));
-	    emit(f,"\tstmw\t%s,0(%s)\n",mregnames[r+1],mregnames[sp]);
-	  }
-	}
-      }
-    }
-    for(r=33;r<=64;r++){
-      if(BTST(tasks[t].context,r)||((tasks[t].flags&DOES_BLOCK)&&BTST(tasks[t].preempt_context,r))){
-	emit(f,"\tstfdu\t%s,-8(%s)\n",mregnames[r],mregnames[sp]);
-	size+=8;
-      }
-    }
-    cost[tasks[t].taskid]=size+28; /* 28 = r11,ip,msr,lr,r12,cr,xer */
-
-    if(t==0) emit(f,"%s_nothing:\n",idprefix);
-    emit(f,"\tblr\n");
-    emit(f,"%s__load%s:\n",idprefix,tasks[t].v->identifier);
-    msize=size;
-    for(mw=0,r=32;r>=1;r--){
-      if((!regsa[r]||r==t3)&&(BTST(tasks[t].context,r)||((tasks[t].flags&DOES_BLOCK)&&BTST(tasks[t].preempt_context,r)))){
-	size-=4;
-	if(mw!=0)
-	  emit(f,"\tlwz\t%s,%d(%s)\n",mregnames[r],size,mregnames[sp]);
-      }else{
-	if(mw==0){
-	  mw=1;
-	  if(r!=32)
-	    emit(f,"\tlmw\t%s,%d(%s)\n",mregnames[r+1],size,mregnames[sp]);
-	}
-      }
-    }
-    for(r=33;r<=64;r++){
-      if(BTST(tasks[t].context,r)||((tasks[t].flags&DOES_BLOCK)&&BTST(tasks[t].preempt_context,r))){
-	size-=8;
-	emit(f,"\tlfd\t%s,%d(%s)\n",mregnames[r],size,mregnames[sp]);
-      }
-    }
-    if(msize) emit(f,"\taddi\t%s,%s,%d\n",mregnames[sp],mregnames[sp],msize);
-    emit(f,"\tblr\n");
-  }
-
-  /* emit the function pointer tables */
-  if(section!=RODATA){emit(f,rodataname);section=RODATA;}
-  emit(f,"%s__loadctxt:\n",idprefix);
-  for(t=0;t<tcnt;t++)
-    for(r=0;r<tcnt;r++)
-      if(tasks[r].taskid==t)
-	emit(f,"\t.long\t%s__load%s\n",idprefix,tasks[r].v->identifier);
-  emit(f,"\t.long\t%s__nothing\n",idprefix);
-  emit(f,"%s__savectxt:\n",idprefix);
-  for(t=0;t<tcnt;t++)
-    for(r=0;r<tcnt;r++)
-      if(tasks[r].taskid==t)
-	emit(f,"\t.long\t%s__save%s\n",idprefix,tasks[r].v->identifier);
-  emit(f,"\t.long\t%s__nothing\n",idprefix);
-
-  /* create interference graph for stack optimization */
-
-  for(i=0;i<tcnt;i++){
-    if(!tasks[i].v->fi) ierror(0);
-    if(!(tasks[i].v->fi->flags&ALL_STACK)) ierror(0);
-    cost[tasks[i].taskid]+=tasks[i].v->fi->stack1;
-  }
-
-  for(i=0;i<tcnt;i++){
-    for(j=0;j<tcnt;j++){
-      if(strstr(tasks[i].v->vattr,"isr;")&&!strstr(tasks[j].v->vattr,"isr;"))
-	BSET(preempts,tasks[i].taskid+tasks[j].taskid*tcnt);
-      else if(tasks[j].flags&DOES_BLOCK)
-	BSET(preempts,tasks[i].taskid+tasks[j].taskid*tcnt);
-      else if(tasks[j].prio>=tasks[i].prio)
-	BCLR(preempts,tasks[i].taskid+tasks[j].taskid*tcnt);
-      else if((tasks[j].flags&(NON_PREEMPTIVE|CALLS_SCHED))==NON_PREEMPTIVE)
-	BCLR(preempts,tasks[i].taskid+tasks[j].taskid*tcnt);
-      else
-	BSET(preempts,tasks[i].taskid+tasks[j].taskid*tcnt);
-    }
-  }
-
-  /* compute optimized stack assignment */
-  slot_size=mymalloc(tcnt*sizeof(*slot_size));
-  slot=mymalloc(tcnt*sizeof(*slot));
-
-  for(i=0;i<tcnt;i++) slot[i]=slot_size[i]=-1;
-  next_slot=0;
-  while(1){
-    node=-1;
-    for(i=0;i<tcnt;i++){
-      if(slot[i]==-1&&(node==-1||cost[i]>=cost[node]))
-	node=i;
-    }
-    if(node==-1){
-      /* now we have n=next_slot slots of slot_size[0..ns] */
-      break;
-    }
-    put_node(node,tcnt);
-  }
-
-  slot_start=mymalloc(next_slot*sizeof(*slot_start));
-  
-  for(size=0,i=0;i<next_slot;i++){
-    size+=slot_size[i];
-    slot_start[i]=size;
-  }
-
-  emit(f,"\t.global\t%s__stack\n",idprefix);
-  emit(f,"\t.global\t%s__sys_stack\n",idprefix);
-  emit(f,"\t.set\t%s__sys_stack,%sOSEKOSstacks+%d\n",idprefix,idprefix,size+sysstack);
-  emit(f,"\t.set\t%s__stack,%sOSEKOSstacks+%d\n",idprefix,idprefix,size+sysstack);
-
-
-  emit(f,"\t.global\t%sOSEKOStaskStack\n",idprefix);
-  emit(f,"%sOSEKOStaskStack:\n",idprefix);
-  for(i=0;i<tcnt;i++)
-    emit(f,"\t.long\t%sOSEKOSstacks+%d\n",idprefix,slot_start[slot[i]]);
-  emit(f,"\t.global\t%sOSEKOStaskRbIndex\n",idprefix);
-  emit(f,"%sOSEKOStaskRbIndex:\n",idprefix);
-  for(i=0;i<tcnt;i++)
-    emit(f,"\t.byte\t%d\n",slot[i]);
-  emit(f,"\t.global\t%sOSEKOSstacks\n",idprefix);
-  emit(f,"\t.lcomm\t%sOSEKOSstacks,%d\n",idprefix,size+sysstack);
-  emit(f,"\t.lcomm\t%sOSEKOSrbliste,%d\n",idprefix,tcnt*4);
- 
-}
-
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
 #endif

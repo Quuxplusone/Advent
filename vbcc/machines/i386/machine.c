@@ -113,10 +113,10 @@ static char *logicals[]={"or","xor","and"};
 static char *arithmetics[]={"sal","sar","add","sub","imul","div","mod"};
 static char *farithmetics[]={"f?","f?","fadd","fsub","fmul","fdiv","fsubr","fdivr"};
 static char *dct[]={"","byte","short","short","long","long",
-		    "long","long","quad","quad","long","long","long","long",
+		    "long","long","long","long","long","long","long","long",
 		    "long","long","long","long","long","long"};
 
-static pushedsize,pushorder=2;
+static int pushedsize,pushorder=2;
 static int fst[8];
 static int cxl,dil,sil;
 static char *idprefix="",*labprefix="l";
@@ -292,7 +292,7 @@ static void dwarf2_print_frame_location(FILE *f,struct Var *v)
 }
 static int dwarf2_regnumber(int r)
 {
-  static dwarf_regs[17]={-1,0,1,2,3,6,7,5,4,16,17,18,19,20,21,22,23};
+  static int dwarf_regs[17]={-1,0,1,2,3,6,7,5,4,16,17,18,19,20,21,22,23};
   return dwarf_regs[r];
 }
 static zmax dwarf2_fboffset(struct Var *v)
@@ -371,7 +371,7 @@ static void prfst(FILE *f,char *s)
 {
     int i;
     if(DEBUG==0) return;
-    emit(f,"*\t%s\t",s);
+    emit(f,"#\t%s\t",s);
     for(i=0;i<8;i++){
         if(fst[i]>=0){
             if(fst[i]==0) emit(f,"+++ ");
@@ -515,7 +515,9 @@ static int get_reg(FILE *f,struct IC *p,int type)
     if(regs[i]<2&&regok(i,type,0)
        &&(!(p->q1.flags&REG)||p->q1.reg!=i)
        &&(!(p->q2.flags&REG)||p->q2.reg!=i)
-       &&(!(p->z.flags&REG)||p->z.reg!=i) ){
+       &&(!(p->z.flags&REG)||p->z.reg!=i)
+       &&(p->code!=SETRETURN||p->z.reg!=i)
+       &&(p->code!=GETRETURN||p->q1.reg!=i) ){
       
       if(p->code==PUSH||p->code==CALL){
 	emit(f,"\tmovl\t%s,%ld(%s)\n",regnames[i],loff-4-stackoffset,regnames[sp]);
@@ -683,6 +685,7 @@ int init_cg(void)
   declare_builtin("__orll",LLONG,LLONG,0,LLONG,0,1,0);
   declare_builtin("__eorll",LLONG,LLONG,0,LLONG,0,1,0);
   declare_builtin("__negll",LLONG,LLONG,0,0,0,1,0);
+  declare_builtin("__notll",LLONG,LLONG,0,0,0,1,0);
   declare_builtin("__lslll",LLONG,LLONG,0,INT,0,1,0);
 
   declare_builtin("__divll",LLONG,LLONG,0,LLONG,0,1,0);
@@ -951,7 +954,7 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
       }
     }
     title(f);
-    loff=((zm2l(offset)+1)/2)*2;
+    loff=((zm2l(offset)+3)/4)*4;
     for(m=p;m;m=m->next){
       /* do we need another stack-slot? */
       /* could do a more precise check */
@@ -1166,16 +1169,16 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
 		  }
 		}else{
 		  move(f,0,reg,&p->z,0,INT);
-		  p->z.val.vmax=zmadd(p->z.val.vmax,l2zm(4L));
 		  if(to&UNSIGNED){
 		    emit(f,"\tmovl\t$0,");
-		    emit_obj(f,&p->z,t);
+		    emit_hword(f,&p->z);
 		    emit(f,"\n");
 		  }else{
 		    emit(f,"\tsarl\t$31,%s\n",regnames[reg]);
-		    move(f,0,reg,&p->z,0,INT);
+		    emit(f,"\tmovl\t%s,",regnames[reg]);
+		    emit_hword(f,&p->z);
+		    emit(f,"\n");
 		  }
-		  p->z.val.vmax=zmsub(p->z.val.vmax,l2zm(4L));
 		}
 	      }else
 		move(f,0,reg,&p->z,0,t);
@@ -1534,11 +1537,9 @@ pric2(stdout,p);
 		  emit(f,"\torl\t%s,%s\n",regnames[rp.r2],regnames[reg]);
 		}else{
 		  move(f,&p->q1,0,0,reg,INT);
-		  p->q1.val.vmax=zmadd(p->q1.val.vmax,l2zm(4L));
 		  emit(f,"\torl\t");
-		  emit_obj(f,&p->q1,INT);
+		  emit_hword(f,&p->q1);
 		  emit(f,",%s\n",regnames[reg]);
-		  p->q1.val.vmax=zmadd(p->q1.val.vmax,l2zm(4L));
 		}
 		continue;
 	      }
@@ -1660,6 +1661,11 @@ pric2(stdout,p);
 		push(4);
 		m|=1;
             }
+            if(isreg(q2)&&p->q2.reg==ax){
+                emit(f,"\tpushl\t%s\n",regnames[ax]);
+		push(4);
+		m|=16;
+            }
             if(regs[dx]&&(!isreg(z)||p->z.reg!=dx)){
                 emit(f,"\tpushl\t%s\n",regnames[dx]);
 		push(4);
@@ -1681,12 +1687,17 @@ pric2(stdout,p);
 		push(4);
 		m|=4;
             }
+	    if(isreg(q2)&&p->q2.reg==dx){
+	      emit(f,"\tpushl\t%s\n",regnames[dx]);
+	      push(4);
+	      m|=4;
+	    }
             if(t&UNSIGNED) emit(f,"\txorl\t%s,%s\n\tdivl\t",regnames[dx],regnames[dx]);
                 else       emit(f,"\tcltd\n\tidivl\t");
             if((m&12)||(isreg(q2)&&p->q2.reg==dx)){
                 emit(f,"(%s)",regnames[sp]);
             }else if(isreg(q2)&&p->q2.reg==ax){
-                emit(f,"%s(%s)",(m&2)?"4":"",regnames[sp]);
+                emit(f,"%s(%s)",(m&10)?"4":"",regnames[sp]);
             }else{
                 emit_obj(f,&p->q2,t);
             }
@@ -1697,6 +1708,7 @@ pric2(stdout,p);
             if(m&8){ emit(f,"\tpopl\t%s\n",regnames[dx]);pop(4);}
             if(m&2){ emit(f,"\tpopl\t%s\n",regnames[dx]);pop(4);}
             if(m&1){ emit(f,"\tpopl\t%s\n",regnames[ax]);pop(4);}
+            if(m&16){ emit(f,"\taddl\t$%ld,%s\n",zm2l(sizetab[t&NQ]),regnames[sp]);pop(4);}
             continue;
         }
         if(!isconst(q2)&&(c==LSHIFT||c==RSHIFT)){

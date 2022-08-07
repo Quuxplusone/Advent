@@ -1,3 +1,6 @@
+/*  $VER: vbcc (vbcc_cpp.h) $Revision: 1.2 $     */
+
+
 /* fix some name clashes between vbcc and ucpp and include cpp.h */
 /* has to be include prior to other vbcc includes                */
 
@@ -15,8 +18,12 @@
 #define NO_UCPP_ERROR_FUNCTIONS 1
 #include "ucpp/cpp.h"
 
-extern struct token *ctok;
-extern struct lexer_state ls;
+typedef struct token token;
+typedef struct lexer_state lexer_state;
+typedef struct stack_context stack_context;
+
+extern token *ctok;
+extern lexer_state ls;
 
 #undef STRING
 #undef CHAR

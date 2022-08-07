@@ -33,7 +33,7 @@ is not necessary in all cases, it may affect the quality of the generated
 code.
 
 The library implements the functions specified by ISO9899:1989 as well
-as a small number of the new functions from ISO9899:1999.
+as a part of the new functions from ISO9899:1999.
 
 @section Legal
 
@@ -56,6 +56,7 @@ from Sun's free math library:
  * ====================================================
 @end example
 
+@node SoftfloatHauser
 The softfloat functions, used by some targets, are derived from John
 Hauser's IEC/IEEE Floating-point Artithmetic Package:
 
@@ -84,6 +85,26 @@ Derivative works are acceptable, even for commercial purposes, so long as
 include prominent notice akin to these three paragraphs for those parts of
 this code that are retained.
 @end example
+
+
+@section Global Variables
+
+@subsection timezone
+
+On some host operating systems vclib might be unable to determine the
+current time zone, which is required for functions like
+@code{mktime()} or @code{localtime()} to work. Here you can overwrite
+the following variables:
+
+@table @code
+@item long __gmtoffset
+  Offset in minutes, west of Greenwich Mean Time (GMT).
+@item int __dstflag
+  Set to non-zero, when Daylight Saving Time is active.
+@end table
+
+Targets which can determine their current time zone, will do so by
+initializing these variables on startup.
 
 
 @section Embedded Systems
@@ -163,15 +184,26 @@ int __open(const char *name,const char *mode);
 void __close(int h);
 size_t __read(int h,char *p,size_t l);
 size_t __write(int h,const char *p,size_t l);
+off_t __seek(int h,off_t offset,int origin);
 @end example
 
 The @code{__open()} function receives a name and a mode string (as in the C
 @code{fopen()} function) as arguments and has to return a file-descriptor if
 it is possible to open this file. The other functions are equivalent to the
-corresponding POSIX functions.
+corresponding POSIX functions. @code{__seek} can be implemented to return 
+@code{-1} if the functionality is not needed.
 
 Also, @code{stdin, stdout} and @code{stderr} can be used with the standard
 descriptors.
+
+@subsection CTRL-C Handling
+
+Some targets implement handlers to terminate the program on ctrl-c or a
+similar signal. This usually has the same effect as calling
+@code{exit(20)}.
+
+If you want to change or disable the ctrl-c handling, you can overwrite
+the function @code{void _chkabort(void)}.
 
 @subsection Floating Point
 
@@ -217,17 +249,35 @@ suitable for different chips, it may serve as a starting point.
 
 @section AmigaOS/68k
 
-This section describes specifics of the C library for AmigaOS/68k.
-The relevant files are @file{startup.o}, @file{minstart.o},
+This section describes specifics of the C library for AmigaOS/68k
+provided by the target @file{m68k-amigaos}.
+The relevant files are @file{startup.o}, @file{minstart.o}, @file{minres.o},
 @file{vc.lib}, @file{vcs.lib}, @file{mieee.lib}, @file{mieees.lib},
-@file{m881.lib}, @file{m881s.lib}, @file{m040.lib}, @file{m040s.lib}
-@file{amiga.lib}, @file{amigas.lib}, @file{auto.lib} and @file{autos.lib}.
+@file{m881.lib}, @file{m881s.lib}, @file{m040.lib}, @file{m040s.lib},
+@file{m060.lib}, @file{m060s.lib}, @file{msoft.lib}, @file{msofts.lib},
+@file{amiga.lib}, @file{amigas.lib}, @file{auto.lib} and @file{autos.lib},
+@file{reaction.lib}, @file{reactions.lib}.
 
 Note that @file{extra.lib} is no longer part of the vbcc distribution.
 It was replaced by 'PosixLib', available on Aminet
 @file{dev/c/vbcc_PosixLib.lha}, which has a much more comprehensive
 support for POSIX and Unix functions.
 
+The following config files are available:
+@table @code
+@item aos68k
+  Standard startup code (@file{startup.o}) with command line parsing
+  and optional Workbench startup (@xref{Standard Startup}).
+@item aos68km
+  Minimal startup code (@file{minstart.o}) without command line
+  parsing. You have to open all libraries yourself (@xref{Minimal Startup}).
+@item aos68kr
+  Minimal startup code (@file{minres.o}) for resident programs.
+  Always compiles in small data mode and links with @file{vcs.lib}
+  (@xref{Minimal Resident}).
+@end table
+
+@node Standard Startup
 @subsection Startup
 
     The startup code currently consists of a slightly modified standard
@@ -238,13 +288,14 @@ support for POSIX and Unix functions.
     from there if necessary.
 
 
+@node Floating point
 @subsection Floating point
 
     Note that you have to link with a math library if you want to use
     floating point. All math functions, special startup code and
     printf/scanf functions which support floating point are contained in
     the math libraries only.
-    At the moment there are three math libraries:
+    At the moment there are five math libraries:
  
 @table @file
 @item mieee.lib
@@ -256,26 +307,51 @@ support for POSIX and Unix functions.
                     A 68000 is sufficient to use this library.
                     You must not specify @option{-fpu=...}
                     when you use this library.
+   By default all floating point routines are provided via stub functions in
+   @file{mieee.lib}. With the option @option{-amiga-softfloat} you can tell
+   @command{vbccm68k} to generate inline code for calling the
+   MathIeee libraries directly.
  
+@item msoft.lib
+    This one is based on John Hauser's IEC/IEEE Floating-point Arithmetic
+    Package (@xref{SoftfloatHauser}) and doesn't need any system libraries for
+    FP emulation. May be slower than the ROM libraries, though.
+    Otherwise everything mentioned for @file{mieee.lib} applies here
+    as well.
+    Note that you have to call the @command{vc} frontend with the
+    @option{-rmcfg-amiga-softfloat} option, when your config file contains
+    @option{-amiga-softfloat} (which is the case for @file{aos68k}
+    since vbcc V0.9h).
+
 @item m881.lib
     This one uses direct FPU instructions and function
                     return values are passed in fp0. You must have a
                     68020 or higher and an FPU to use this library. You
-                    also have to specify @option{-fpu=68881}.
+                    also have to specify @option{-fpu=68881} or
+                    @option{-fpu=68882}.
                     Several FPU instructions that have to be emulated on
                     040/060 may be used.
  
 @item m040.lib
     This one uses only direct FPU instructions that do not
-                    have to be emulated on a 040/060. Other functions use
+                    have to be emulated on a 68040. Other functions use
                     the Motorola emulation routines modified by
-                    Aki M Laukkanen.
-                    It should be used for programs compiled for 040 or 060
+                    Aki M Laukkanen and Matthew Hey.
+                    It should be used for programs compiled for 68040
+                    with FPU.
+                    Return values are passed in fp0.
+
+@item m060.lib
+    This one uses only direct FPU instructions that do not
+                    have to be emulated on a 68060. Other functions use
+                    the Motorola emulation routines modified by
+                    Aki M Laukkanen and Matthew Hey.
+                    It should be used for programs compiled for 68060
                     with FPU.
                     Return values are passed in fp0.
 @end table
 
-Depending on the CPU/FPU selected, #including @file{math.h} will
+Depending on the CPU/FPU selected, including @file{math.h} will
 cause inline-code generated for certain math functions.
 
 @node amiga-stack
@@ -317,6 +393,7 @@ main()
 Like above, the stack used by functions not compiled using
 @option{-stack-check} or OS functions is ignored.
 
+@node amigasmalldata
 @subsection Small data model
 
 When using the small data model of the 68k series CPUs, you also have
@@ -349,19 +426,16 @@ obtain the time used by the calling process.
 
 @end table
 
-@node Minimal startup
-@subsection Minimal startup 
+@node Minimal Startup
+@subsection Minimal Startup 
 
 If you want to write programs that use only Amiga functions and none from
 vc.lib you can use @file{minstart.o} instead of @file{startup.o} and
-produce smaller executables.
- 
-This is only useful for people who know enough about the Amiga shared
-libraries, the stubs in amiga.lib etc. If you do not know enough about
-those things better forget minstart at all.
- 
-This startup code does not set up all the things needed by vc.lib, so you
-must not use most of those functions (string and ctype funtions are ok,
+produce smaller executables. You can also achieve that by simply using
+the @file{aos68km} config file instead.
+
+This startup code does not set up everything needed by vc.lib, so you
+must not use most of these functions (string and ctype functions are ok,
 but most other functions - especially I/O and memory handling - must not
 be used).
 @code{exit()} is supplied by minstart and can be used.
@@ -371,9 +445,10 @@ string,
 so you can declare main as
 @code{int main(char *command)} or @code{int main(void)}.
  
-Also no Amiga libraries are opened (but @code{SysBase} ist set up), so you
+Also no Amiga libraries are opened (but @code{SysBase} is set up), so you
 have to define and open @code{DOSBase} yourself if you need it.
-If you want to use floating point with the IEEE libraries you have to
+If you want to use floating point with the IEEE libraries
+or @option{-amiga-softfloat} you have to
 define and open MathIeeeSingBas.library, MathIeeeDoubBas.library and
 MathIeeeDoubTrans.library (in this order!) and link with mieee.lib (if
 compiled for FPU this is not needed).
@@ -386,7 +461,7 @@ A hello world using minstart could look like this:
  
 struct DosLibrary *DOSBase;
  
-main()
+int main()
 @{
     if(DOSBase=(struct DosLibrary *)OpenLibrary("dos.library",0))@{
         Write(Output(),"Hello, world!\n",14);
@@ -397,35 +472,92 @@ main()
 
 @end example
 
-This can yield an executable of under 300 bytes when compiled with
-@option{-sc -sd -O2} and linked with @file{minstart.o} and @code{amigas.lib}
+This can yield an executable of under 256 bytes when compiled with
+@option{-sc -sd} and linked with @file{minstart.o} and @code{amigas.lib}
 (using @command{vlink} - may not work with other linkers).
 
+@node Minimal Resident
+@subsection Minimal Startup for resident programs
+
+AmigaOS can keep special "pure" programs resident in RAM, and restart them
+from there without having to load them again from disk. To make it easy to
+create such reentrant programs, even with static data, you can link with the
+special startup code @file{minres.o}, which is a minimal startup code for
+resident programs. Or simply use the config file @file{aos68kr} instead.
+Everything mentioned for @file{minstart.o} in the previous section is also
+valid for @file{minres.o}.
+
+To create real resident programs you have to follow the following rules:
+@itemize @minus
+
+@item Compile all your code for the small data model (@option{-sd} option).
+
+@item Avoid absolute references to small data symbols.
+      Usually these are constant pointers to static data.
+      The following example creates such an illegal relocation:
+@example
+int x;
+int const *p = &x;
+@end example
+@command{vlink} warns about all potential problems.
+
+@item Link with the @file{minres.o} startup code,
+      and use the small data
+      versions of linker libraries (@file{vcs.lib}, @file{amigas.lib}, etc.).
+
+@item Set the Pure flag in the file attributes.
+      Load the program into RAM
+      with the AmigaDOS @command{resident} command.
+
+@end itemize
+
+
+@node amigalib
 @subsection amiga.lib
 
-To write programs accessing AmigaOS (rather than standard C functions
+To write programs using AmigaOS (rather than standard C functions
 only), a replacement for the original (copyrighted) @file{amiga.lib}
 is provided with @command{vbcc}. This replacement is adapted to vbcc,
 does not cause collisions with some functions (e.g. @code{sprintf})
-provided by the original @file{amiga.lib} and is available in
-small data. It is recommended to always use this library rather than
-the original version.
+provided by the original @file{amiga.lib} and is available for the
+small data mode as well. It is recommended to always use this library
+rather than the original version.
 
 Additionally, there are header files (in the @file{proto}- and
 @file{inline}-subdirectories) which cause inlined calls to Amiga
 library functions.
 
+Besides some support functions @file{amiga.lib} contains stub routines
+to call functions from all common AmigaOS libraries with stack arguments.
+By including the library's proto header file you make sure that AmigaOS
+functions are called directly by inline code, unless @code{_NO_INLINE}
+is defined.
+
+Preprocessor defines to control the behaviour of vbcc's proto headers:
+@table @code
+@item __NOLIBBASE__
+  Do not declare the library base symbol.
+@item _NO_INLINE
+  Do not use optimized inline code for library function calls.
+@end table
+
+Note that the OS-call inlines have been generated using the NDK3.2 clib
+header files, while trying to keep compatibility to NDK3.9, so it is
+advised to use one of the two NDKs for development.
+Otherwise you will get warnings about missing @code{CONST} typedefs and
+similar.
+
 Specify @option{-lamiga} to link with @file{amiga.lib}.
 
-@node auto.lib
+@node autolib
 @subsection auto.lib
 
     To link with @file{auto.lib} (or the small data version
     @file{autos.lib}) specify
     the @option{-lauto} or @option{-lautos} option to @command{vc}.
  
-    When you are calling a standard Amiga library function and do not
-    have defined the corresponding library base then the library base
+    When you are calling a standard Amiga library function without
+    having defined the corresponding library base, then the library base
     as well as code to open/close it will be taken from @file{auto.lib}.
  
     By default, @file{auto.lib} will try to open any library version. If you
@@ -437,15 +569,179 @@ Specify @option{-lamiga} to link with @file{amiga.lib}.
 @end example
 
     Note that your program will abort before reaching @code{main()} if one
-    of the libraries cannot be opened. Also note that the dos.library
-    will be openened by the standard startup code, not by auto.lib.
-    This means you have to open dos.library yourself, when linking
-    with @file{minstart.o}. 
+    of the libraries cannot be opened. Also note that @file{auto.lib}
+    depends on constructor/destructor handling in vclib, which means it
+    cannot work when linking without vclib, without standard startup code,
+    or only with a minimal startup code, like @file{minstart.o}.
+
+@subsection reaction.lib
+
+The @file{reaction.lib} in @command{vbcc} is a port of Stephan Rupprecht's
+rewrite of the copyrighted linker library, extended and fixed by
+Olaf Barthel for the NDK 3.2 release. This version should work in
+combination with NDK 3.9 as well.
+
+To link with @file{reaction.lib} (or the small data version
+@file{reactions.lib}) specify the @option{-lreaction} or
+@option{-lreactions} option to @command{vc}.
+
+The library contains ReAction GUI class support functions and their
+autoinitialization code. Refer to @file{reaction_lib.doc} from your
+NDK Autodocs for more information. As documented there, the version
+used to automatically open the classes can be defined by the variable
+@code{__reactionversion} with external linkage. Otherwise a default
+of version 0 is used.
+
+
+@section Kickstart1.x/68k
+
+This section describes specifics of the C library for Amiga Kickstart 1.2
+and 1.3 provided by the target @file{m68k-kick13}.
+The relevant files are @file{startup.o}, @file{minstart.o}, @file{minres.o},
+@file{startup16.o}, @file{minstart16.o}, @file{minres16.o},
+@file{vc.lib}, @file{vcs.lib}, @file{m13.lib}, @file{m13s.lib},
+@file{msoft.lib}, @file{msofts.lib}, @file{m881.lib}, @file{m881s.lib},
+@file{amiga.lib}, @file{amigas.lib}, @file{auto.lib} and @file{autos.lib},
+@file{vc16.lib}, @file{vc16s.lib}, @file{m1316.lib}, @file{m1316s.lib},
+@file{msoft16.lib}, @file{msoft16s.lib}, @file{m88116.lib}, @file{m88116s.lib},
+@file{amiga16.lib}, @file{amiga16s.lib}, @file{auto16.lib} and
+@file{auto16s.lib}.
+
+This target makes it possible to develop programs targeted for these older
+versions of the Amiga operating system, using the original Commodore
+Kickstart 1.3 header files. Note that there are also libraries and
+config files for using a 16-bit int ABI, which was common at that time,
+and may have some advantages on 16-bit CPUs, like the 68000 or 68010.
+
+The following config files are available:
+@table @code
+@item kick13
+  Standard startup code (@file{startup.o}) with command line parsing
+  and optional Workbench startup (@xref{Startup13}) using 32-bit int.
+@item kick13m
+  Minimal startup code (@file{minstart.o}) without command line
+  parsing. You have to open all libraries yourself (@xref{Minimal Startup})
+  using 32-bit int.
+@item kick13r
+  Minimal startup code (@file{minres.o}) for resident programs.
+  Always compiles in small data mode and links with @file{vcs.lib}
+  (@xref{Minimal Resident}) using 32-bit int.
+@item kick13s
+  Standard startup code (@file{startup.o}) with command line parsing
+  and optional Workbench startup (@xref{Startup13}) using 16-bit int.
+@item kick13sm
+  Minimal startup code (@file{minstart.o}) without command line
+  parsing. You have to open all libraries yourself (@xref{Minimal Startup})
+  using 16-bit int.
+@item kick13sr
+  Minimal startup code (@file{minres.o}) for resident programs.
+  Always compiles in small data mode and links with @file{vcs.lib}
+  (@xref{Minimal Resident}) using 16-bit int.
+@end table
+
+@node Startup13
+@subsection Startup
+
+    The startup code currently consists of a slightly modified standard
+    AmigaOS 1.3 startup (@file{startup.o}). The startup code sets up some
+    global variables and initializes stdin, stdout and stderr.
+    The exit code closes all open files and frees all memory.
+    If you link with a math library the startup/exit code will be taken
+    from there if necessary.
+
+
+@subsection Floating point
+
+    Note that you have to link with a math library if you want to use
+    floating point. All math functions, special startup code and
+    printf/scanf functions which support floating point are contained in
+    the math libraries only.
+    At the moment there are two math libraries:
+ 
+@table @file
+@item m13.lib
+   This one uses the C= math libraries present under Kickstart 1.2 and 1.3.
+   The startup code will always open mathffp.library,
+   MathIeeeDoubBas.library and MathIeeeDoubTrans.library.
+   Note that all single precision floating point calculations take place
+   in FFP format and have to be converted between FFP and IEEE by the
+   library.
+                    Float return values are passed in d0, double return
+                    values are passed in d0/d1.
+                    A 68000 is sufficient to use this library.
+                    You must not specify @option{-fpu=...}
+                    when you use this library.
+
+@item msoft.lib
+    This one is based on John Hauser's IEC/IEEE Floating-point Arithmetic
+    Package (@xref{SoftfloatHauser}) and doesn't need any system libraries for
+    FP emulation. May be slower than the ROM libraries, though.
+    Otherwise everything mentioned for @file{m13.lib} applies here
+    as well.
+ 
+@item m881.lib
+    This one uses direct FPU instructions and function
+                    return values are passed in fp0. You must have a
+                    68020 or higher and an FPU to use this library. You
+                    also have to specify @option{-fpu=68881}.
+                    Several FPU instructions that have to be emulated on
+                    040/060 may be used.
+@end table
+
+@subsection Stack
+
+Stack-checking is available similar to AmigaOS/68k (@xref{amiga-stack}).
+But there is no automatic stack-extension under Kickstart 1.3 and a
+@code{__stack} variable will be ignored.
+
+@subsection Small data model
+
+Small data is supported as described for AmigaOS/68k (@xref{amigasmalldata}).
+The startup code takes care of clearing the unititalized part of a
+small data section (which Kickstart 1.x fails to do).
+
+@subsection Restrictions
+
+The following list contains some restrictions of this version of the
+library:
+
+@table @code
+
+@item tmpfile()
+The @code{tmpfile()} function always returns an error.
+
+@item clock()
+The @code{clock()} function always returns -1. This is correct,
+according to the C standard, because on AmigaOS it is not possible to
+obtain the time used by the calling process.
+
+@end table
+
+@subsection amiga.lib
+
+@xref{amigalib}.
+
+This version of @file{amiga.lib} only supports the functionality present
+in Kickstart 1.2/1.3.
+
+@subsection auto.lib
+
+This library corresponds to the AmigaOS/68k version (@xref{autolib}), but
+only supports libraries of Kickstart 1.3.
+
+@subsection Minimal Startup 
+
+You can use @file{minstart.o} similar to AmigaOS/68k (@xref{Minimal Startup}).
+
+@subsection Minimal Startup for Resident Programs
+
+You can use @file{minres.o} similar to AmigaOS/68k (@xref{Minimal Resident}).
 
 
 @section PowerUp/PPC
 
-This section describes specifics of the C library for PowerUp/PPC.
+This section describes specifics of the C library for PowerUp/PPC
+provided by the target @file{ppc-powerup}.
 The relevant files are @file{startup.o}, @file{minstart.o},
 @file{libvc.a}, @file{libvcs.a}, @file{libm.a}, @file{libms.a}
 @file{libamiga.a}, @file{libamigas.a},
@@ -474,7 +770,7 @@ support for POSIX and Unix functions.
     The math library (@file{libm.a}) is linked against the floating point
     library libmoto by Motorola.
 
-Depending on the CPU/FPU selected, #including @file{math.h} will
+Depending on the CPU/FPU selected, including @file{math.h} will
 cause inline-code generated for certain math functions.
 
 @subsection Stack
@@ -516,10 +812,10 @@ obtain the time used by the calling process.
 
 @end table
 
-@subsection Minimal startup
+@subsection Minimal Startup
 
 The provided minimal startup code (@file{minstart.o}) is used
-similarly like the one for 68k (@xref{Minimal startup}). Only use
+similarly like the one for 68k (@xref{Minimal Startup}). Only use
 it if you know what you are doing.
 
 @subsection libamiga.a
@@ -537,11 +833,12 @@ Specify @option{-lamiga} to link with @file{libamiga.a}.
  
 @subsection libauto.a
  
-This library corresponds to the AmigaOS/68k version (@xref{auto.lib}).
+This library corresponds to the AmigaOS/68k version (@xref{autolib}).
 
 @section WarpOS/PPC
  
-This section describes specifics of the C library for WarpOS/PPC.
+This section describes specifics of the C library for WarpOS/PPC
+provided by the target @file{ppc-warpos}.
 The relevant files are @file{startup.o}, 
 @file{vc.lib}, @file{m.lib}, @file{amiga.lib} and @file{auto.lib}.
 
@@ -580,7 +877,7 @@ support for POSIX and Unix functions.
     
 
  
-Depending on the CPU/FPU selected, #including @file{math.h} will
+Depending on the CPU/FPU selected, including @file{math.h} will
 cause inline-code generated for certain math functions.
 
 @subsection Stack
@@ -620,12 +917,13 @@ Specify @option{-lamiga} to link with @file{amiga.lib}.
  
 @subsection auto.lib
  
-This library corresponds to the AmigaOS/68k version (@xref{auto.lib}).
+This library corresponds to the AmigaOS/68k version (@xref{autolib}).
  
 
 @section MorphOS/PPC
  
-This section describes specifics of the C library for MorphOS/PPC.
+This section describes specifics of the C library for MorphOS/PPC
+provided by the target @file{ppc-morphos}.
 The relevant files are @file{startup.o}, @file{minstart.o},
 @file{libvc.a}, @file{libvcs.a}, @file{libm.a}, @file{libms.a}
 @file{libamiga.a}, @file{libamigas.a},
@@ -654,7 +952,7 @@ support for POSIX and Unix functions.
     The math library (@file{libm.a}) is linked against the floating point
     library libmoto by Motorola.
  
-Depending on the CPU/FPU selected, #including @file{math.h} will
+Depending on the CPU/FPU selected, including @file{math.h} will
 cause inline-code generated for certain math functions.
 
 @subsection Stack
@@ -708,12 +1006,13 @@ Specify @option{-lamiga} to link with @file{libamiga.a}.
 
 @subsection libauto.a
  
-This library corresponds to the AmigaOS/68k version (@xref{auto.lib}).
+This library corresponds to the AmigaOS/68k version (@xref{autolib}).
  
 
 @section AmigaOS4/PPC
  
-This section describes specifics of the C library for AmigaOS4/PPC.
+This section describes specifics of the C library for AmigaOS4/PPC
+provided by the target @file{ppc-amigaos}.
 The relevant files are @file{startup.o}, @file{minstart.o},
 @file{libvc.a}, @file{libvcs.a}, @file{libm.a}, @file{libms.a}
 @file{libamiga.a}, @file{libamigas.a},
@@ -745,7 +1044,7 @@ the math libraries only.
 The math library (@file{libm.a}) is linked against the floating point
 library libmoto by Motorola.
  
-Depending on the CPU/FPU selected, #including @file{math.h} will
+Depending on the CPU/FPU selected, including @file{math.h} will
 cause inline-code generated for certain math functions.
 
 @subsection Stack
@@ -812,12 +1111,8 @@ Specify @option{-lamiga} to link with @file{libamiga.a}.
 
 @subsection libauto.a
 
-Auto-open -close functions for the following libraries are included:
-
-@code{Asl, CyberGfx, DataTypes, Dos, GadTools, Graphics, Icon, IFFParse,
-      Intuition, Locale, LowLevel, Picasso96, BSDSocket, Utility, Workbench}
-
-Note that gcc's @file{libauto.a} doesn't include CyberGfx.
+Include auto-open and -close functions for the most common OS libraries and
+interfaces. May also be used together with newlib (see below).
  
 
 @subsection newlib
@@ -837,8 +1132,9 @@ Note that gcc's @file{libauto.a} doesn't include CyberGfx.
     What are the main differences between vclib and newlib?
 
 @itemize @minus
-@item vclib contains (almost) only standard ANSI functions. If you want
-      to port Unix programs you will probably miss a lot of functions.
+@item vclib contains (almost) only standard ANSI-C and some ISO-C99
+      functions. If you want to port Unix programs you will probably
+      miss a lot of functions.
       Also newlib supports things like mapping Unix directory paths to
       Amiga paths or expanding wildcards in command lines automatically.
  
@@ -850,7 +1146,7 @@ Note that gcc's @file{libauto.a} doesn't include CyberGfx.
 
 @item Programs compiled for newlib will probably need more memory because
       the entire (rather large) @file{libc.so} will be loaded into memory.
-      With vclib only the functions your program uses will be in ram.
+      With vclib only the functions your program uses will be in RAM.
       However if you have several programs using newlib at the same
       time only one copy of @file{libc.so} should be loaded.
 @end itemize
@@ -867,8 +1163,63 @@ Note that gcc's @file{libauto.a} doesn't include CyberGfx.
 @item You _must_ use the newlib-includes from the SDK
       rather than the ones which are for vc.lib.
       The config-file @file{newlib} will usually take care of this.
+
+@item There may be vbcc-related bugs in the SDK-newlib. Patches are
+      automatically installed when using the Amiga Installer. When
+      installing the target manually, you also have to fix the SDK
+      manually. For a list of known SDK bugs at this point of time,
+      @xref{Known Newlib Bugs}.
 @end itemize
 
+@node Known Newlib Bugs
+@subsubsection Known Newlib Bugs
+
+@itemize @minus
+
+@item The @code{__asm_toupper()} and @code{__asm_tolower()} assembler inlines
+      in @file{newlib/include/ctype.h} are wrong, which makes
+      @code{toupper()} and @code{tolower()} fail when including
+      @file{ctype.h}. Fix:
+@example
+--- ctype.h.orig	2006-04-03 18:00:00.000000000 +0200
++++ ctype.h	2017-05-07 19:32:00.000000000 +0200
+@@@@ -64,8 +64,8 @@@@
+ #elif defined(__VBCC__)
+ int __asm_toupper(__reg("r3") int) =
+         "\t.extern\t__ctype_ptr\n"
+-        "\tlis\t11,(__ctype_ptr)@@ha\n"
+-        "\taddi\t11,11,(__ctype_ptr)@@l\n"
++        "\tlis\t11,__ctype_ptr@@ha\n"
++        "\tlwz\t11,11,__ctype_ptr@@l(11)\n"
+         "\tlbzx\t12,11,3\n"
+         "\tandi.\t12,12,2\n"
+         "\tbeq\t$+8\n"
+@@@@ -73,8 +73,8 @@@@
+         "#barrier";
+ int __asm_tolower(__reg("r3") int) =
+         "\t.extern\t__ctype_ptr\n"
+-        "\tlis\t11,(__ctype_ptr)@@ha\n"
+-        "\taddi\t11,11,(__ctype_ptr)@@l\n"
++        "\tlis\t11,__ctype_ptr@@ha\n"
++        "\tlwz\t11,11,__ctype_ptr@@l(11)\n"
+         "\tlbzx\t12,11,3\n"
+         "\tandi.\t12,12,1\n"
+         "\tbeq\t$+8\n"
+@end example
+Note: This should be fixed with the latest OS4 SDK, and the V0.9h
+installer will no longer install a patch!
+
+@item Newlib's @file{libauto.a} contains no working vbcc-style
+constructors or destructors for auto-opening or -closing of libraries.
+You can work-around it, by copying vclib's @file{libauto.a} to
+newlib's lib-directory. Rename it, if you don't want to overwrite
+the gcc-version of it.
+
+@item Some header files, like @file{sys/stat.h}, use the reserved vbcc
+attribute @code{__mask} as an argument name. The config file should
+take care of that, by redefining it as @code{___mask}.
+
+@end itemize
 
 @subsubsection Usage
 
@@ -897,16 +1248,24 @@ header files. Executables linked with this C library run on plain TOS as
 well as on MiNT, without modifications.
 
 The relevant files are @file{startup.o}, @file{minstart.o},
-@file{libvc.a}, @file{libvc16.a}, @file{libm.a}, @file{libm16.a}.
+@file{libvc.a}, @file{libm.a}, @file{libgem.a}. For the M68k target
+there are also math libs with FPU support (@file{libm881.a},
+@file{libm040.a} and @file{libm060.a}) and 16-bit integer versions
+of all libraries (@file{lib*16.a}).
 
 The following config files are available:
 @table @code
 @item tos
-  M68k 32-bit @code{int}
+  M68k 32-bit @code{int} for classic TOS machines.
 @item tos16
-  M68k 16-bit @code{int}
-@item toscf
-  ColdFire 32-bit @code{int}
+  M68k 16-bit @code{int} for classic TOS machines.
+@item mint
+  M68k 32-bit @code{int} for MiNT. Also works on classic machines,
+  but uses an embedded a.out header for MiNT, includes a changeable
+  @code{__stksize} and sets the FastLoad, FastRAM and FastAlloc flags
+  in the header.
+@item mintcf
+  ColdFire 32-bit @code{int}. Otherwise same as @file{mint}.
 @end table
 
 @subsection Startup
@@ -923,9 +1282,10 @@ floating point. All math functions, special startup code and
 printf/scanf functions which support floating point are contained in
 the math libraries only.
 
-At the moment (@file{libm.a}) is a soft-float library, which is compatible
-with all the Atari models without an FPU. There may be real FPU support
-in future updates.
+On the M68k target you have the option to enable FPU support with
+the @option{-fpu} option and choose the appropriate math library
+(@xref{Floating point}). Otherwise, there is a soft-float library,
+which is compatible with all the Atari models without an FPU.
 
 @subsection Stack
 
@@ -972,7 +1332,8 @@ is possible to obtain the time used by the calling process.
 
 @section VideoCore/Linux
 
-This section describes specifics of the C library for VideoCore under Linux.
+This section describes specifics of the C library for VideoCore under Linux
+provided by the target @file{vidcore-linux}.
 
 The relevant files are @code{vcload}, @file{startup.o},
 @file{libvc.a}, @file{libm.a}, @file{libms.a}.
@@ -1139,3 +1500,952 @@ library:
 
 
 @end itemize
+
+@section ATARI Jaguar/68k
+
+This section describes specifics of the C library for ATARI Jaguar
+provided by the target @file{m68k-jaguar}.
+
+The relevant files are @file{startup.o},
+@file{libvc.a}, @file{libm.a}, @file{libjag.a}.
+
+The config files @code{jaguar_unix} and @code{jaguar_windows} are part of the library.
+
+@subsection Startup
+ 
+The startup code @file{startup.o} sets up stack and heap.
+The startup process calls constructors to set up some
+global variables and initialize stdin, stdout and stderr.
+
+The ATARI Jaguar has no OS, so it is impossible to define how input, output and files
+can be handled. There are a few set of function you have to define if you want to use stdio.
+
+Alternatively you can use the @file{libjag.a}. This library initializes a console window with stdout
+support and uses optionally a SkunkBoard to redirect stderr and file I/O.
+
+@subsection Floating point
+
+Note that you have to link with a math library if you want to use
+floating point operations that are not natively implemented.
+All math functions, special startup code and
+printf/scanf functions which support floating point are contained in
+the math library only. Consider the ATARI Jaguar does not own a FPU so this library is pretty slow.
+
+@subsection Stack
+
+The library contains a default stack of 32KB. If another size is needed,
+you can add a global variable named __stack to your code:
+
+@example
+
+/* Set 64kB stack */
+unsigned long __stack = 65536;
+
+@end example
+
+@subsection Heap
+
+Currently the free RAM is used as global heapsize for malloc() etc.
+
+It is necessary to place a symbol named _BSS_END at the end of the BSS segment.
+The heap allocates the free RAM between _BSS_END and the bottom of the stack.
+
+If less size is needed feel free to manipulate the value of _BSS_END.
+
+All allocated heap objects can be used as internal JAGUAR objects, because they are qhrase aligned.
+
+@subsection stdio support
+
+The ATARI Jaguar lacks stdio support. So the @file{libvc.a} has just empty stub functions for
+open, close, read and write, which you may overwrite if you need stdio.
+Alternatively you can use @file{libjag.a} which has simple stdio
+and file I/O functionality.
+
+@example
+/**
+ * param name: name mentioned in fopen
+ * param mode: mode mentioned in fopen
+ * returns: > 0 a valid file handle
+ *          < 0 to indicate an error
+ *          the values 0,1,2 are used by stdin, stdout and stderr
+ *
+ * No need to handle stdin, stdout and stderr here
+ */
+int jagopen(const char *name,const char *mode)
+
+/**
+ * param handle: handle from jagopen
+ *
+ * No need to handle stdin, stdout and stderr here
+ */
+void jagclose(int handle)
+
+/**
+ * param handle: handle from jagopen
+ * param p: points to the char buffer to fill.
+ * param l: buffer size of p
+ * returns: >=0 number of read bytes
+            <0 indicate an error
+ *
+ * Handle stdin, stdout and stderr here
+ */
+size_t jagread(int handle,char *p,size_t l)
+
+/**
+ * param handle: handle from jagopen
+ * param p: points to the char buffer to write.
+ * param l: number of bytes of p
+ * returns: >=0 number of bytes written
+            <0 indicate an error
+ *
+ * Handle stdin, stdout and stderr here
+ */
+size_t jagwrite(int handle,const char *p, size_t l)
+
+/**
+ * param handle: handle from jagopen
+ * param offset: number of bytes to seek.
+ * param direction: see fseek direction
+ * returns: =0 successful seek
+            <>0 indicate an error
+            -1: seek not supported
+ *
+ * Handle stdin, stdout and stderr here
+ */
+long jagseek(int handle,long offset,int direction)
+@end example
+
+@subsection The jaglib
+
+The jaglib @file{libjag.a} provides simple functions to support your first
+steps in ATARI Jaguar programming. It initializes a simple console output window and comes with 
+an old ATARI character set.
+If a SkunkBoard is available I/O functionality can be redirected.
+
+Your first Jaguar program can look like this:
+
+@example
+
+#include <stdio.h>
+
+int main()
+@{
+    printf("Hello, world\n");
+@}
+
+@end example
+
+Keep in mind: Your JAGUAR will get a red background color to indicate @code{main()} has exited.
+
+The jaglib API documentation is available in a separate document. There is more demo code
+available in the @uref{https://github.com/toarnold/jaglib-demo, jaglib-demo} gibhub repository.
+
+@section 6502/C64
+
+This is a rushed port of vclib to the C64 with only few adaptations to the C64. It
+is currently not very efficient and is likely to increase code size pretty much.
+
+
+@subsection Startup and Memory
+
+Startup and memory layout is described in the following paragraphs.
+
+@subsubsection Startup
+
+The default linker file creates program files that are loaded to address
+0x801. A BASIC line is included so that the program can be started using @code{RUN}
+from BASIC. The startup code
+will turn off the BASIC ROM to allow usage of RAM until 0xD000 and most of the
+zero page without need for any special handling. The BSS segment will be cleared
+during startup.
+
+With the default configuration, after exiting the C program, an infinite loop will
+be entered. When using the @code{+c64r} config, the program will return to BASIC
+an can be started again.
+However, this needs additional memory as the init values for the data section have
+to be stored in RAM. Also, some register values and zero page contents have to be
+saved. The overhead depends on the amount of initialized variables.
+
+@subsubsection Command line
+
+Command line parameters are supported by using the convention/code submitted by
+Stefan Haubenthal. 
+
+Command-lines look like these lines:
+
+@example
+   run
+   run : rem
+   run:rem arg1 " arg 2 is quoted "  arg3 "" arg5
+@end example
+
+
+
+@subsubsection Zero Page
+
+@code{vbcc} uses a number of zero page locations for register variables, stack
+pointer etc. in section @code{zpage}. Also, variables can be mapped to zero page using
+the @code{__zpage} attribute. By default the area @code{0x02..0x8d}
+is used, but this can be changed in the linker file.
+
+@subsubsection Stack
+
+By default, the user stack is mapped from @code{0xC800..0xD000}. The size can be
+changed at the top of @code{vlink.cmd}.
+
+@subsubsection Heap
+
+Code and data/BSS are mapped starting after the BASIC init line.
+The heap is placed in the remaining space to stack start.
+
+@subsubsection Banking
+
+The following banking models are supported:
+
+@table @code
+@item -reuflat
+      This library supports a REU using a flat 16MB address space. The memory has to
+      be addressed through far-pointers. It is not possible to declare variables in
+      the REU nor to place code in the REU. The memory is addressed as 0x000000 to
+      0xFFFFFF. All accesses through far-pointers are addressing the REU. It is not
+      possible to address the C64 memory through a far-pointer.
+
+      Far-pointer arithmetic only works on the lower 16bits. It is not possible to
+      cross a bank boundary using far-pointers. Huge-pointers will support this, but
+      are not yet fully implemented. In the meantime it is possible to use long integers
+      and cast them to far-pointers.
+
+      Use @code{-lreuflat} to link with this library. Note that the library does
+      not check for the presence of a REU.
+
+@item -reubank
+      This configuration reserves a 16KB memory space within the C64 memory as window
+      for banking. As the bank number is stored as a single byte (with bank
+      255 denoting the unbanked memory), it is only possible to address up to
+      about 4MB of memory in the REU.
+
+      Variables and code can be mapped into the REU using the @code{__bank()} attribute
+      or @code{#pragma bank}. When calling a banked function, the corresponding bank
+      will be copied from the REU into the C64 memory window.
+
+      Use the @code{+c64reu} configuration to use this mechanism. Currently the
+      linker file provides 8 banks resulting in a 128K REU image. More banks can
+      be added for larger expansions.
+
+      The configuration will create a usually C64 prg file containing the unbanked
+      code and data as well as a REU image with extension @code{.b0}. It must
+      be loaded (e.g. with an emulator or the TurboChameleon) before the prg file
+      can is executed.
+@end table
+
+
+@subsection Runtime
+
+Apart from standard C library functions, @code{libvc.a} also provides a few
+runtime support functions needed by the compiler. Apart from the math and
+floating point functions mentioned in the documentation of the 6502 backend,
+it includes functions for saving/restoring registers.
+
+@subsection @code{stdio}
+
+At the moment, stdio only supports @code{stdout}, @code{stderr} (both using the
+screen) and @code{stdin} (keyboard). Both are unbuffered by default.
+
+@code{printf/scanf} functions which support floating point are contained in
+the math library only.
+
+
+@subsection Floating Point / wozfp
+
+When using floating point, the math library @code{libm.a} must be linked using
+the @code{-lm} option. It contains the floating routines as well as versions of
+the @code{printf/scanf} family that support floating point.
+
+The floating point routines are based on Steve Wozniaks routines from the 70s,
+somewhat adapted to the ABI of @code{vbcc}. These functions are small and
+reasonably usable, but they do not fully satisfy the requirements of C99.
+
+Only a part of the C library functions for floating point is implemented. The
+list currently includes:
+
+@itemize
+@item @code{exp()}
+@item @code{pow()}
+@item @code{log()}
+@item @code{log10()}
+@end itemize
+
+@subsection Floating Point / IEEE
+
+When using IEEE floating point, @code{-ieee} must be specified and the math library
+@code{libmieee.a} must be linked using
+the @code{-lmieee} option. It contains the floating routines as well as versions of
+the @code{printf/scanf} family that support floating point.
+
+The floating point routines are based on SANE,
+somewhat adapted to the ABI of @code{vbcc} using wrapper functions.
+These functions should be fully C and IEEE compliant and provide precise results for
+32 and 64bit floating point numbers (the library actually internally calculates
+all operation using 80bits, but vbcc currently only uses up to 64 bits).
+
+Currently, this library probably must be run from RAM.
+
+Most parts of the C library functions for floating point are implemented. The
+list currently includes:
+
+@itemize
+@item @code{exp(), expf(), expl()}
+@item @code{exp2(), exp2f(), exp2l()}
+@item @code{exp1m(), exp1mf(), exp1ml()}
+@item @code{pow(), powf(), powl()}
+@item @code{log(), logf(), logl()}
+@item @code{log1p(), log1pf(), log1pl()}
+@item @code{log2(), log2f(), log2l()}
+@item @code{log10(), log10f(), log10l()}
+@item @code{sqrt(), sqrtf(), sqrtl()}
+@item @code{sin(), sinf(), sinl()}
+@item @code{cos(), cosf(), cosl()}
+@item @code{tan(), tanf(), tanl()}
+@item @code{atan(), atanf(), atanl()}
+
+
+@end itemize
+
+@section 6502/NES
+
+This is a port of vclib to the NES with only few adaptations to the NES so far. It
+is currently not very efficient and is likely to increase code size pretty much.
+
+
+@subsection Startup and Memory
+
+Startup and memory layout is dependent on the ROM used. Currently two example configurations
+are provided. They can be selected with @code{+nrom256v} and @code{+unrom512v}. Have a
+look at the corresponding linker scripts in @code{vbcc/targets/6502-nes} for further
+details.
+
+The necessary library routines to support configurations with several ROM banks are
+included.
+
+@subsubsection Zero Page
+
+@code{vbcc} uses a number of zero page locations for register variables, stack
+pointer etc. in section @code{zpage}. Also, variables can be mapped to zero page using
+the @code{__zpage} attribute. The entire zero page can be used, but this can be changed
+in the linker file.
+
+@subsubsection Stack
+
+By default, the user stack starts from @code{0x0800} growing downwards.
+
+@subsubsection Heap
+
+By default, code and data/BSS are mapped starting after the system stack at @code{0x0200}.
+The heap is placed in the remaining space to stack start.
+
+@subsection Runtime
+
+Apart from standard C library functions, @code{libvc.a} also provides a few
+runtime support functions needed by the compiler. Apart from the math and
+floating point functions mentioned in the documentation of the 6502 backend,
+it includes functions for saving/restoring registers.
+
+@subsection @code{stdio}
+
+At the moment, stdio only supports @code{stdout}, @code{stderr} (both using the
+screen) and @code{stdin} (simple input via joypad).
+
+@code{printf/scanf} functions which support floating point are contained in
+the math library only.
+
+For input, up/down changes the current character, left/right moves the cursor,
+the B button deletes from the cursor position, and the A button confirms the input.
+You do not want to use this in real code.
+
+The library contains a default character set. To replace it, link an object that
+contains a character set mapped to section @code{chars} and defines the global symbol
+@code{___stdchr}.
+
+To replace stdio, the function @code{__read()} and @code{__write()} have to be
+implemented.
+
+@subsection Interrupts
+
+The library contains a default NMI implementation that is used for stdio handling
+and the @code{clock()}-function. It can be replaced by linking with an own
+implementation that starts at the global symbol @code{___nmi}. In this case the stdio and
+timing functions from vclib can not be used.
+
+@code{___irq} can be used to overwrite the other IRQ vector. The default implementation
+in the library immediately returns.
+
+@subsection Floating Point / wozfp
+
+When using floating point, the math library @code{libm.a} must be linked using
+the @code{-lm} option. It contains the floating routines as well as versions of
+the @code{printf/scanf} family that support floating point.
+
+The floating point routines are based on Steve Wozniaks routines from the 70s,
+somewhat adapted to the ABI of @code{vbcc}. These functions are small and
+reasonably usable, but they do not fully satisfy the requirements of C99.
+
+Only a part of the C library functions for floating point is implemented. The
+list currently includes:
+
+@itemize
+@item @code{exp()}
+@item @code{pow()}
+@item @code{log()}
+@item @code{log10()}
+@end itemize
+
+@subsection Floating Point / IEEE
+
+IEEE floating point is currently not available for this target.
+
+
+@section 6502/Atari
+
+This is a rushed port of vclib to Atari 8bit computers with only few adaptations 
+to the Atari. It is currently not very efficient and is likely to increase code
+size pretty much.
+
+@subsection Startup and Memory
+
+Startup and memory layout is described in the following paragraphs.
+
+@subsubsection Startup
+
+The default linker file creates program files that are loaded to address
+0x600. The memory area can be adapted by changing @code{MEMSTART} and
+@code{MEMEND} in @code{vlink.cmd}.
+
+With the default configuration, after exiting the C program, it will wait
+for pressing the return key before returning to DOS.
+
+@subsubsection Command line
+
+Command line parameters are not yet supported.
+
+@subsubsection Zero Page
+
+@code{vbcc} uses a number of zero page locations for register variables, stack
+pointer etc. in section @code{zpage}. Also, variables can be mapped to zero page using
+the @code{__zpage} attribute. By default the area @code{0x82..0xFF}
+is used, but this can be changed in the linker file.
+
+@subsubsection Stack
+
+By default, the startup code maps the user stack from
+@code{MEMTOP-STACKLEN..MEMTOP}.
+The size can be changed at the top of @code{vlink.cmd}.
+
+@subsubsection Heap
+
+Code and data/BSS are mapped starting at @code{MEMSTART}.
+The heap is placed in the remaining space to stack start.
+
+@subsubsection Banking
+
+Banking support for this target has not yet been implemented.
+
+@subsection Runtime
+
+Apart from standard C library functions, @code{libvc.a} also provides a few
+runtime support functions needed by the compiler. Apart from the math and
+floating point functions mentioned in the documentation of the 6502 backend,
+it includes functions for saving/restoring registers.
+
+@subsection @code{stdio}
+
+At the moment, stdio only supports @code{stdout}, @code{stderr} (both using the
+screen) and @code{stdin} (keyboard). Both are line-buffered by default.
+
+@code{printf/scanf} functions which support floating point are contained in
+the math library only.
+
+
+@subsection Floating Point / wozfp
+
+When using floating point, the math library @code{libm.a} must be linked using
+the @code{-lm} option. It contains the floating routines as well as versions of
+the @code{printf/scanf} family that support floating point.
+
+The floating point routines are based on Steve Wozniaks routines from the 70s,
+somewhat adapted to the ABI of @code{vbcc}. These functions are small and
+reasonably usable, but they do not fully satisfy the requirements of C99.
+
+Only a part of the C library functions for floating point is implemented. The
+list currently includes:
+
+@itemize
+@item @code{exp()}
+@item @code{pow()}
+@item @code{log()}
+@item @code{log10()}
+@end itemize
+
+@subsection Floating Point / IEEE
+
+When using IEEE floating point, @code{-ieee} must be specified and the math library
+@code{libmieee.a} must be linked using
+the @code{-lmieee} option. It contains the floating routines as well as versions of
+the @code{printf/scanf} family that support floating point.
+
+The floating point routines are based on SANE,
+somewhat adapted to the ABI of @code{vbcc} using wrapper functions.
+These functions should be fully C and IEEE compliant and provide precise results for
+32 and 64bit floating point numbers (the library actually internally calculates
+all operation using 80bits, but vbcc currently only uses up to 64 bits).
+
+Currently, this library probably must be run from RAM.
+
+Most parts of the C library functions for floating point are implemented. The
+list currently includes:
+
+@itemize
+@item @code{exp(), expf(), expl()}
+@item @code{exp2(), exp2f(), exp2l()}
+@item @code{exp1m(), exp1mf(), exp1ml()}
+@item @code{pow(), powf(), powl()}
+@item @code{log(), logf(), logl()}
+@item @code{log1p(), log1pf(), log1pl()}
+@item @code{log2(), log2f(), log2l()}
+@item @code{log10(), log10f(), log10l()}
+@item @code{sqrt(), sqrtf(), sqrtl()}
+@item @code{sin(), sinf(), sinl()}
+@item @code{cos(), cosf(), cosl()}
+@item @code{tan(), tanf(), tanl()}
+@item @code{atan(), atanf(), atanl()}
+
+
+@end itemize
+
+@section 6502/BBC Micro/Master
+
+This is a rushed port of vclib to BBC 8bit computers with only few adaptations 
+to the BBC. It is currently not very efficient and can increase code
+size pretty much.
+
+@subsection Startup and Memory
+
+Startup and memory layout is described in the following paragraphs.
+
+@subsubsection Startup
+
+The default linker file creates program files that are loaded to address
+0x1900 up to 0x7B00 with 256 bytes of software stack. The memory area can be adapted by
+changing @code{OSHWM}, @code{HIMEM} and @code{STACKSTART} in @code{vlink.cmd}. When
+using the @code{bbcmaster} config, memory starts at 0x0E00.
+
+With the default configuration, after exiting the C program, the code will wait for
+pressing return before returning to basic (does not yet work correctly).
+
+@subsubsection Command line
+
+Command line parameters are not yet supported.
+
+@subsubsection Zero Page
+
+@code{vbcc} uses a number of zero page locations for register variables, stack
+pointer etc. in section @code{zpage}. Also, variables can be mapped to zero page using
+the @code{__zpage} attribute. By default the area @code{0x00..0x90}
+is used, but this can be changed in the linker file.
+
+@subsubsection Stack
+
+By default, the startup code maps the user stack from
+@code{STACKSTART..HIMEM}.
+The size can be changed at the top of @code{vlink.cmd}.
+
+@subsubsection Heap
+
+Code and data/BSS are mapped starting at @code{OSHWM}.
+The heap is placed in the remaining space to stack start.
+
+@subsubsection Banking
+
+Banking support for this target has not yet been implemented.
+
+@subsection Runtime
+
+Apart from standard C library functions, @code{libvc.a} also provides a few
+runtime support functions needed by the compiler. Apart from the math and
+floating point functions mentioned in the documentation of the 6502 backend,
+it includes functions for saving/restoring registers.
+
+@subsection @code{stdio}
+
+At the moment, stdio only supports @code{stdout}, @code{stderr} (both using the
+screen) and @code{stdin} (keyboard). Both are line-buffered by default.
+
+@code{printf/scanf} functions which support floating point are contained in
+the math library only.
+
+
+@subsection Floating Point / wozfp
+
+When using floating point, the math library @code{libm.a} must be linked using
+the @code{-lm} option. It contains the floating routines as well as versions of
+the @code{printf/scanf} family that support floating point.
+
+The floating point routines are based on Steve Wozniaks routines from the 70s,
+somewhat adapted to the ABI of @code{vbcc}. These functions are small and
+reasonably usable, but they do not fully satisfy the requirements of C99.
+
+Only a part of the C library functions for floating point is implemented. The
+list currently includes:
+
+@itemize
+@item @code{exp()}
+@item @code{pow()}
+@item @code{log()}
+@item @code{log10()}
+@end itemize
+
+@subsection Floating Point / IEEE
+
+When using IEEE floating point, @code{-ieee} must be specified and the math library
+@code{libmieee.a} must be linked using
+the @code{-lmieee} option. It contains the floating routines as well as versions of
+the @code{printf/scanf} family that support floating point.
+
+The floating point routines are based on SANE,
+somewhat adapted to the ABI of @code{vbcc} using wrapper functions.
+These functions should be fully C and IEEE compliant and provide precise results for
+32 and 64bit floating point numbers (the library actually internally calculates
+all operation using 80bits, but vbcc currently only uses up to 64 bits).
+
+Currently, this library probably must be run from RAM.
+
+Most parts of the C library functions for floating point are implemented. The
+list currently includes:
+
+@itemize
+@item @code{exp(), expf(), expl()}
+@item @code{exp2(), exp2f(), exp2l()}
+@item @code{exp1m(), exp1mf(), exp1ml()}
+@item @code{pow(), powf(), powl()}
+@item @code{log(), logf(), logl()}
+@item @code{log1p(), log1pf(), log1pl()}
+@item @code{log2(), log2f(), log2l()}
+@item @code{log10(), log10f(), log10l()}
+@item @code{sqrt(), sqrtf(), sqrtl()}
+@item @code{sin(), sinf(), sinl()}
+@item @code{cos(), cosf(), cosl()}
+@item @code{tan(), tanf(), tanl()}
+@item @code{atan(), atanf(), atanl()}
+
+
+@end itemize
+
+
+
+@section 6502/MEGA65
+
+This is a rushed port of vclib to the MEGA65 with only few adaptations to the MEGA65. It
+is currently not very efficient and is likely to increase code size pretty much. This
+port is intended for the C65 mode with a C65 or compatible ROM. The C64 configuration can
+be used to create programs for the C64 mode.
+
+
+@subsection Startup and Memory
+
+Startup and memory layout is described in the following paragraphs.
+
+@subsubsection Startup
+
+The default linker file creates program files that are loaded to address
+0x2001. A BASIC line is included so that the program can be started using @code{RUN}
+from BASIC. The startup code
+will switch to VIC-IV mode, turn on full speed and change the mapping (TODO).
+The BSS segment will be cleared during startup.
+
+With the default configuration, after exiting the C program, an infinite loop will
+be entered. When using the @code{+m65r} config, the program will return to BASIC
+an can be started again.
+However, this needs additional memory as the init values for the data section have
+to be stored in RAM. Also, some register values and zero page contents have to be
+saved. The overhead depends on the amount of initialized variables.
+
+Caution: The current configuration does not yet include a code generator supporting
+the MEGA65 CPU. Therefore, as best intermediate solution, 65c02 code is used for this
+target at the moment. To work correctly, the Z register has to be 0 when C code is
+executed. The startup code will set it correctly and the compiler generated code will
+not touch it. However, when calling other code you may have to take care to set the
+Z register to 0 again.
+
+@subsubsection Command line
+
+Command line parameters are supported by using the convention/code submitted by
+Stefan Haubenthal. 
+
+Command-lines look like these lines:
+
+@example
+   run
+   run : rem
+   run:rem arg1 " arg 2 is quoted "  arg3 "" arg5
+@end example
+
+
+
+@subsubsection Zero Page
+
+@code{vbcc} uses a number of zero page locations for register variables, stack
+pointer etc. in section @code{zpage}. Also, variables can be mapped to zero page using
+the @code{__zpage} attribute. By default the area @code{0x02..0x8d}
+is used, but this can be changed in the linker file.
+
+@subsubsection Stack
+
+By default, the user stack is mapped from @code{0xB800..0xC000}. For the banked version,
+it is mapped from @code{0x7800..0x8000}.  The size can be
+changed at the top of @code{vlink.cmd} and @code{vlinkbank.cmd}.
+
+@subsubsection Heap
+
+Code and data/BSS are mapped starting after the BASIC init line.
+The heap is placed in the remaining space to stack start.
+
+@subsubsection Banking
+
+The following banking models are supported:
+
+@table @code
+@item m65bank
+      This configuration reserves the upper 32KB of memory space within the M65 memory as window
+      for banking. Each bank occupies 32KB. As the @code{map} command is used for banking,
+      a maximum of 32 banks, totalling 1MB can be addressed. Actual hardware may contain
+      less memory.
+
+      Variables and code can be mapped using the @code{__bank()} attribute
+      or @code{#pragma bank}. When calling a banked function, the corresponding bank
+      will be mapped into the C64 memory window.
+
+      Use the @code{+m65bank} configuration to use this mechanism. Currently the
+      linker file provides 16 banks resulting in a 512K space. More banks can
+      be added for larger expansions.
+
+      The configuration will create a C64 prg file containing the unbanked
+      code and data as well as an image with extension @code{.b0}, similar like when
+      compiling for C64 with REU expansion. It is yet unclear
+      how to load this file and this file may be unsuitable for the MEGA65.
+      Until this is fixed, uninitialized RAM-variables can be mapped and accessed
+      using the banking mechanism.
+
+@end table
+
+
+@subsection Runtime
+
+Apart from standard C library functions, @code{libvc.a} also provides a few
+runtime support functions needed by the compiler. Apart from the math and
+floating point functions mentioned in the documentation of the 6502 backend,
+it includes functions for saving/restoring registers.
+
+@subsection @code{stdio}
+
+At the moment, stdio only supports @code{stdout}, @code{stderr} (both using the
+screen) and @code{stdin} (keyboard). Both are unbuffered by default.
+
+TODO: Keyboard
+input is currently using hardware accesses rather than the kernel functions which
+may cause some problems.
+
+
+@code{printf/scanf} functions which support floating point are contained in
+the math library only.
+
+
+@subsection Floating Point / wozfp
+
+When using floating point, the math library @code{libm.a} must be linked using
+the @code{-lm} option. It contains the floating routines as well as versions of
+the @code{printf/scanf} family that support floating point.
+
+The floating point routines are based on Steve Wozniaks routines from the 70s,
+somewhat adapted to the ABI of @code{vbcc}. These functions are small and
+reasonably usable, but they do not fully satisfy the requirements of C99.
+
+Only a part of the C library functions for floating point is implemented. The
+list currently includes:
+
+@itemize
+@item @code{exp()}
+@item @code{pow()}
+@item @code{log()}
+@item @code{log10()}
+@end itemize
+
+@subsection Floating Point / IEEE
+
+When using IEEE floating point, @code{-ieee} must be specified and the math library
+@code{libmieee.a} must be linked using
+the @code{-lmieee} option. It contains the floating routines as well as versions of
+the @code{printf/scanf} family that support floating point.
+
+The floating point routines are based on SANE,
+somewhat adapted to the ABI of @code{vbcc} using wrapper functions.
+These functions should be fully C and IEEE compliant and provide precise results for
+32 and 64bit floating point numbers (the library actually internally calculates
+all operation using 80bits, but vbcc currently only uses up to 64 bits).
+
+Currently, this library probably must be run from RAM.
+
+Most parts of the C library functions for floating point are implemented. The
+list currently includes:
+
+@itemize
+@item @code{exp(), expf(), expl()}
+@item @code{exp2(), exp2f(), exp2l()}
+@item @code{exp1m(), exp1mf(), exp1ml()}
+@item @code{pow(), powf(), powl()}
+@item @code{log(), logf(), logl()}
+@item @code{log1p(), log1pf(), log1pl()}
+@item @code{log2(), log2f(), log2l()}
+@item @code{log10(), log10f(), log10l()}
+@item @code{sqrt(), sqrtf(), sqrtl()}
+@item @code{sin(), sinf(), sinl()}
+@item @code{cos(), cosf(), cosl()}
+@item @code{tan(), tanf(), tanl()}
+@item @code{atan(), atanf(), atanl()}
+
+
+@end itemize
+
+@section 6502/X16
+
+This is a rushed port of vclib to the Commander X16 with only few adaptations to the X16. It
+is currently not very efficient and is likely to increase code size pretty much.
+
+
+@subsection Startup and Memory
+
+Startup and memory layout is described in the following paragraphs.
+
+@subsubsection Startup
+
+The default linker file creates program files that are loaded to address
+0x801. A BASIC line is included so that the program can be started using @code{RUN}
+from BASIC. The startup code
+will turn off the BASIC ROM to allow usage of RAM until 0x9F00 and most of the
+zero page without need for any special handling. The BSS segment will be cleared
+during startup.
+
+With the default configuration, after exiting the C program, an infinite loop will
+be entered. When using the @code{+x16r} config, the program will return to BASIC
+an can be started again.
+However, this needs additional memory as the init values for the data section have
+to be stored in RAM. Also, some register values and zero page contents have to be
+saved. The overhead depends on the amount of initialized variables.
+
+@subsubsection Command line
+
+Command line parameters are supported by using the convention/code submitted by
+Stefan Haubenthal. 
+
+Command-lines look like these lines:
+
+@example
+   run
+   run : rem
+   run:rem arg1 " arg 2 is quoted "  arg3 "" arg5
+@end example
+
+
+
+@subsubsection Zero Page
+
+@code{vbcc} uses a number of zero page locations for register variables, stack
+pointer etc. in section @code{zpage}. Also, variables can be mapped to zero page using
+the @code{__zpage} attribute. By default the area @code{0x02..0x7e}
+is used, but this can be changed in the linker file.
+
+@subsubsection Stack
+
+By default, the user stack is mapped from @code{0x9700..0x9F00}. The size can be
+changed at the top of @code{vlink.cmd}.
+
+@subsubsection Heap
+
+Code and data/BSS are mapped starting after the BASIC init line.
+The heap is placed in the remaining space to stack start.
+
+@subsubsection Banking
+
+Banking support for this target is not yet implemented.
+
+
+@subsection Runtime
+
+Apart from standard C library functions, @code{libvc.a} also provides a few
+runtime support functions needed by the compiler. Apart from the math and
+floating point functions mentioned in the documentation of the 6502 backend,
+it includes functions for saving/restoring registers.
+
+@subsection @code{stdio}
+
+At the moment, stdio only supports @code{stdout}, @code{stderr} (both using the
+screen) and @code{stdin} (keyboard). Both are unbuffered by default.
+
+@code{printf/scanf} functions which support floating point are contained in
+the math library only.
+
+
+@subsection Floating Point / wozfp
+
+When using floating point, the math library @code{libm.a} must be linked using
+the @code{-lm} option. It contains the floating routines as well as versions of
+the @code{printf/scanf} family that support floating point.
+
+The floating point routines are based on Steve Wozniaks routines from the 70s,
+somewhat adapted to the ABI of @code{vbcc}. These functions are small and
+reasonably usable, but they do not fully satisfy the requirements of C99.
+
+Only a part of the C library functions for floating point is implemented. The
+list currently includes:
+
+@itemize
+@item @code{exp()}
+@item @code{pow()}
+@item @code{log()}
+@item @code{log10()}
+@end itemize
+
+@subsection Floating Point / IEEE
+
+When using IEEE floating point, @code{-ieee} must be specified and the math library
+@code{libmieee.a} must be linked using
+the @code{-lmieee} option. It contains the floating routines as well as versions of
+the @code{printf/scanf} family that support floating point.
+
+The floating point routines are based on SANE,
+somewhat adapted to the ABI of @code{vbcc} using wrapper functions.
+These functions should be fully C and IEEE compliant and provide precise results for
+32 and 64bit floating point numbers (the library actually internally calculates
+all operation using 80bits, but vbcc currently only uses up to 64 bits).
+
+Currently, this library probably must be run from RAM.
+
+Most parts of the C library functions for floating point are implemented. The
+list currently includes:
+
+@itemize
+@item @code{exp(), expf(), expl()}
+@item @code{exp2(), exp2f(), exp2l()}
+@item @code{exp1m(), exp1mf(), exp1ml()}
+@item @code{pow(), powf(), powl()}
+@item @code{log(), logf(), logl()}
+@item @code{log1p(), log1pf(), log1pl()}
+@item @code{log2(), log2f(), log2l()}
+@item @code{log10(), log10f(), log10l()}
+@item @code{sqrt(), sqrtf(), sqrtl()}
+@item @code{sin(), sinf(), sinl()}
+@item @code{cos(), cosf(), cosl()}
+@item @code{tan(), tanf(), tanl()}
+@item @code{atan(), atanf(), atanl()}
+
+
+@end itemize
+

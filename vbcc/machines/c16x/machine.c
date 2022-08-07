@@ -373,7 +373,7 @@ static void emit_obj(FILE *f,struct obj *p,int t)
       emit(f,"[%s+]",regnames[base]);
       return;
     }else if(p->am->flags==PRE_DEC){
-      emit(f,"[%s+]",regnames[base]);
+      emit(f,"[-%s]",regnames[base]);
       return;
     }else{
       emit(f,"[%s+#%ld",regnames[base],p->am->offset);
@@ -1912,7 +1912,7 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
     idone=1;
   }
   for(p2=p;p2;p2=p2->next) clear_ext_ic(&p2->ext);
-  if(!g_flags[5]&USEDFLAG){
+  if(!(g_flags[5]&USEDFLAG)){
     peephole(p);
     if(!frame_used) offset=l2zm(0L);
   }
@@ -2903,7 +2903,7 @@ pric2(stdout,p);
 	    emit(f,"\tmov\t%s,%s\n",regnames[ti],regnames[p->q1.reg]);
 	    rq=ti;
 	  }
-	}else if(ISSTATIC(p->q1.v)){
+	}else if((p->q1.flags&VAR)&&ISSTATIC(p->q1.v)){
 	  int m=p->q1.flags;
 	  rq=ti;
 	  BSET(regs_modified,ti);

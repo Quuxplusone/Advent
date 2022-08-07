@@ -1,20 +1,21 @@
+/*  $VER: vbcc (m68k/machine.h) $Revision: 1.13 $     */
 
 #include "dt.h"
 
 /*  This struct can be used to implement machine-specific           */
 /*  addressing-modes.                                               */
-struct AddressingMode{
+typedef struct AddressingMode{
     int basereg;
     long dist;
     int skal;
     int dreg;
-};
+} AddressingMode;
 
 /*  The number of registers of the target machine.                  */
 #define MAXR 28
 
 /*  Number of commandline-options the code-generator accepts.       */
-#define MAXGF 30
+#define MAXGF 35
 
 /*  If this is set to zero vbcc will not generate ICs where the     */
 /*  target operand is the same as the 2nd source operand.           */
@@ -25,6 +26,11 @@ struct AddressingMode{
 /*  This specifies the smallest integer type that can be added to a */
 /*  pointer.                                                        */
 extern int MINADDI2P;
+
+/*  This specifies the smallest unsigned type that can be added to a */
+/*  pointer.                                                        */
+#define MINADDUI2P (UNSIGNED|INT)
+
 
 /*  This specifies the biggest integer type that can be added to a  */
 /*  pointer.                                                        */
@@ -89,7 +95,7 @@ struct reg_handle {
 
 /* support for variable-length arrays */
 #define ALLOCVLA_REG 9
-#define ALLOCVLA_INLINEASM "\tsub.l\td0,a7\n\tmove.l\ta7,d0"
+#define ALLOCVLA_INLINEASM "\taddq.l\t#3,d0\n\tand.b\t#252,d0\n\tsub.l\td0,a7\n\tmove.l\ta7,d0"
 #define FREEVLA_REG 0
 /* TODO: find a better solution some time */
 #define FREEVLA_INLINEASM "\tmove.l\t(a7),a7\n\tsubq.l\t#4,a7"
@@ -98,3 +104,15 @@ struct reg_handle {
 
 /* We use builtin libcalls for some operations */
 #define HAVE_LIBCALLS 1
+
+/* We have target-specific pragmas */
+#define HAVE_TARGET_PRAGMAS
+
+/* We have a target-specific add_var hook */
+#define HAVE_TARGET_VARHOOK_PRE
+
+#define HAVE_POF2OPT 1
+
+#ifndef M68K_16BIT_INT
+#define HAVE_INT_SIZET 1
+#endif

@@ -8,18 +8,20 @@
 @setfilename index.texi
 @settitle vbcc manual
 @setchapternewpage odd
+@set UPDATED February 2022
 
 @ifinfo
 
 This is the manual for the vbcc compiler system.
 
-Copyright 1995-2011 Volker Barthelmann
+Copyright 1995-2022 Volker Barthelmann
 
 @end ifinfo
 
 @titlepage
 @title vbcc compiler system
 @author Volker Barthelmann
+@subtitle @value{UPDATED}
 
 @page
 
@@ -74,15 +76,18 @@ Copyright 1995-2011 Volker Barthelmann
 
 @section Legal
 
-    vbcc is copyright in 1995-2011 by Volker Barthelmann.
+    vbcc is copyright in 1995-2022 by Volker Barthelmann.
 
     This archive may be redistributed without modifications and used
     for non-commercial purposes.
 
-    Distributing modified versions and commercial usage needs my written
-    consent.
+    An exception for commercial usage is granted, provided that the target
+    CPU is M68k and the target OS is AmigaOS. Resulting binaries may be
+    distributed commercially without further licensing.
 
-    This copyright applies to vc, vbcc and vsc.
+    In all other cases you need my written consent.
+
+    This copyright applies to vc, vbcc, vsc and vcpr.
 
     This archive may contain other tools (e.g. assemblers or linkers)
     which do not fall under this license. Please consult the corresponding
@@ -199,14 +204,14 @@ The vbcc directory tree looks as follows:
 
 @subsection Installing for AmigaOS
 
-    Since @command{vbcc 0.8g} there is an Amiga Installer, which lets
+    There is an Amiga Installer, which lets
     you install the binary and target archives with a simple mouse click.
     @command{vbcc} for AmigaOS/MorphOS is divided into the following
     packages:
 
     @table @file
     @item vbcc_bin_amigaos68k
-	Binaries for AmigaOS 2.x/3.x (680x0).
+	Binaries for AmigaOS 2.x/3.x (68020+).
     @item vbcc_bin_amigaosppc
 	Binaries for AmigaOS 4.x (PowerPC).
     @item vbcc_bin_morphos
@@ -217,8 +222,10 @@ The vbcc directory tree looks as follows:
     @item vbcc_bin_warpos
 	Additional PPC-native binaries using the WarpOS kernel for
 	AmigaOS 3.x.
+    @item vbcc_target_m68k-kick13
+	Header files and libraries for AmigaOS 1.x/M68k.
     @item vbcc_target_m68k-amigaos
-	Header files and libraries for AmigaOS/M68k.
+	Header files and libraries for AmigaOS 2.x/3.x/M68k.
     @item vbcc_target_ppc-amigaos
 	Header files and libraries for AmigaOS 4.x.
     @item vbcc_target_ppc-morphos
@@ -240,6 +247,10 @@ The vbcc directory tree looks as follows:
 assign >NIL: vbcc: <path to vbcc directory>
 assign >NIL: C: vbcc:bin add
  
+assign >NIL: vincludeos1: vbcc:targets/m68k-kick13/include
+assign >NIL: vincludeos1: <path to your Kickstart 1.x header files> ADD
+assign >NIL: vlibos1: vbcc:targets/m68k-kick13/lib
+
 assign >NIL: vincludeos3: vbcc:targets/m68k-amigaos/include
 assign >NIL: vincludeos3: <path to your AmigaOS3 header files> ADD
 assign >NIL: vlibos3: vbcc:targets/m68k-amigaos/lib
@@ -253,10 +264,12 @@ assign >NIL: vincludemos: <path to your MorphOS header files> ADD
 assign >NIL: vlibmos: vbcc:targets/ppc-morphos/lib
 
 assign >NIL: vincludepup: vbcc:targets/ppc-powerup/include
+assign >NIL: vincludepup: <path to your PowerUp header files> ADD
 assign >NIL: vincludepup: <path to your AmigaOS3 header files> ADD
 assign >NIL: vlibpup: vbcc:targets/ppc-powerup/lib
 
 assign >NIL: vincludewos: vbcc:target/ppc-warpos/include
+assign >NIL: vincludewos: <path to your WarpOS header files> ADD
 assign >NIL: vincludewos: <path to your AmigaOS3 header files> ADD
 assign >NIL: vlibwos: vbcc:target/ppc-warpos/lib
 
@@ -268,20 +281,43 @@ assign >NIL: vlibwos: vbcc:target/ppc-warpos/lib
     values might be necessary.
 
     For writing AmigaOS/MorphOS programs you will need the appropriate
-    system header files. Please use NDK 3.9 or later for AmigaOS/68k, as
+    system header files. Please use NDK 3.9 or later for AmigaOS 2.x/3.x, as
     the proto/inline headers have been created with it.
+
+    For AmigaOS 1.x you should use the old Kickstart 1.x headers from that
+    time. It makes sure that you don't use a feature of later OS releases.
 
     There are different configuration files provided in the
     @file{config}-subdirectory to choose different targets (i.e.
     the system you want to generate programs for) and hosts
     (i.e. the system you want the compiler an tools to run on).
-    The general naming-scheme for these files ist <target>_<host>.
+    The general naming-scheme for these files is <target>_<host>.
 
     Available config files, when all targets are installed, are
-    @file{aos68k} (AmigaOS on M68k), @file{aosppc} (AmigaOS4 on PPC using
-    vclib), @file{newlib} (AmigaOS4 on PPC using newlib), @file{morphos}
-    (PPC systems running MorphOS), @file{powerup} (PPC boards using the
-    PowerUp system), @file{warpos} (PPC boards using the WarpOS system).
+@table @file
+@item aos68k
+    AmigaOS 2.x/3.x.
+@item aos68km
+    AmigaOS 2.x/3.x with minimal startup code.
+@item aos68kr
+    AmigaOS 2.x/3.x for resident programs.
+@item kick13
+    AmigaOS 1.x.
+@item kick13m
+    AmigaOS 1.x with minimal startup code.
+@item kick13r
+    AmigaOS 1.x for resident programs.
+@item aosppc
+    AmigaOS 4.x on PPC using vclib.
+@item newlib
+    AmigaOS 4.x on PPC using newlib.
+@item morphos
+    PPC systems running MorphOS.
+@item powerup
+    PPC boards using the PowerUp system.
+@item warpos
+    PPC boards using the WarpOS system.
+@end table
 
     You can choose one of these systems using the @option{+}-option
     of @command{vc}, e.g.
@@ -303,8 +339,8 @@ assign >NIL: vlibwos: vbcc:target/ppc-warpos/lib
     @file{vc.config}. This configuration will be chosen by default if
     you do not specify anything.
 
-    By default, the target-only-specifications use 68k-native tools on
-    AmigaOS 2.x/3.x, e.g. @option{+warpos} will create code for WarpOS,
+    By default, the target-only-specifications use 68020-native tools on
+    AmigaOS 2.x/3.x - e.g. @option{+warpos} will create code for WarpOS,
     but the compiler and tools will run on the 68k. The default
     @file{vc.config} will then create code for 68k using tools running
     on 68k. Having installed the MorphOS-native binary archive instead,
@@ -320,9 +356,10 @@ assign >NIL: vlibwos: vbcc:target/ppc-warpos/lib
         vc hello.c
 @end example
  
-    The file @file{hello.c} will be compiled and linked to create
+    The file @file{hello.c} will be compiled and linked, using the
+    default configuration from @file{vc.config}, to create
     the executable a.out in the current directory.
- 
+
 @example
         vc hello.c -o hello
 @end example
@@ -345,10 +382,10 @@ assign >NIL: vlibwos: vbcc:target/ppc-warpos/lib
     If your program uses floating point, you may have to link with a
     math-library. The details are dependent on the target, but usually
     @option{-lm} will be suitable (for AmigaOS on m68k choose one of
-    @option{-lmieee}, @option{-lm881} or @option{-lm040}).
+    @option{-lmieee}, @option{-lm881}, @option{-lm040} or @option{-lm060}).
 
 @example 
-        vc calc.c -o calc -lmieee
+        vc calc.c -o calc -lm
 @end example
 
 
@@ -389,9 +426,18 @@ assign >NIL: vlibwos: vbcc:target/ppc-warpos/lib
 @chapter VideoCore IV Backend
 @include vbccvidcore.texi
 
+@node 6502 Backend
+@chapter 6502 Backend
+@include vbcc6502.texi
+
+
 @node Instruction Scheduler
 @chapter Instruction Scheduler
 @include vsc.texi
+
+@node Code Compressor
+@chapter Code Compressor
+@include vcpr.texi
 
 @node C Library
 @chapter C Library

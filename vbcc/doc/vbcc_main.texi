@@ -85,8 +85,10 @@ or additional options.
                 be specified using this command. This may be useful for
                 very long command lines.
 
+    @item -c89
     @item -c99
-                Switch to the 1999 ISO standard for C /ISO/IEC9899:1999).
+                Set the C standard to be used.
+                The default is the 1999 ISO C standard (ISO/IEC9899:1999).
                 Currently the following changes of C99 are handled:
 @itemize @minus
                 @item long long int (not supported by all backends)
@@ -220,6 +222,12 @@ or additional options.
                 Turn on warning number n; turn on all warnings if n<0.
                 @xref{Errors and Warnings}
 
+    @item -no-cpp-warn
+                Turn off all preprocessor warnings.
+
+    @item -warnings-as-errors
+                Treat all enabled warnings as errors.
+
     @item -strip-path
                 Strip the path of filenames from error messages.
                 Error messages may look more convenient that
@@ -248,6 +256,10 @@ or additional options.
                 included using the syntax @code{#include <...>}. Specify this option
                 to add those files as well.
 
+    @item -depobj=<file>
+                Use the specified filename as target in the generated dependency
+                file instead of basing it on the input file name.
+
     @item -reserve-reg=<register>
                 Reserve that register not to be used by the backend.
                 This option is dangerous and must only be used for registers
@@ -265,6 +277,48 @@ or additional options.
                 memory, though. This options tells @command{vbcc} to
                 keep as little of this data in memory as possible.
                 This has not yet been tested very well.
+
+    @item -prefer-statics
+                Assign auto variables to static memory rather than the stack if it
+                can be deduced that the function is not called recursively, i.e. the
+                behaviour is still C compliant. This may be more efficient on targets
+                that can access static data faster than stack. While stack-usage is
+                reduced, total memory consumption is usually increased.
+
+                Functions will not be re-entrant any more.
+
+                This option only has effect on higher optimization levels (@code{-O3}).
+
+    @item -force-statics
+                Like @code{-prefer-statics}, but assume all functions as non-recursive.
+                This will break C compliance.
+
+                This option only has effect on higher optimization levels (@code{-O}).
+
+    @item -range-opt
+                Perform additional optimizations based on value range analysis. This
+                option is under development and considered experimental. The following
+                optimizations are currently implemented:
+
+                @itemize @minus
+                @item Induction variables of some loops are transformed to smaller
+                      types if it can be determined that they will only get assigned
+                      values that fit into a smaller type.
+                @end itemize
+
+    @item -merge-strings
+                Overlay identical string-constants to save memory. Currently
+                only strings identical to string-constants on top-level are
+                recognized.
+
+    @item -sec-per-obj
+                Tells the backend to put every function/object into its own
+                separate section. This allows more fine-grained elimination
+                of unused functions/objects by the linker. On the other hand,
+                it may prevent some optimizations by the assembler.
+
+                This option only has effect if it is supported by the backend.
+
 
 @end table
 
@@ -1539,6 +1593,22 @@ using @option{-iso} or @option{-ansi}.
         The counterpart to @code{#pragma begin_header}. Marks the end
         of a system-header. Not for use in applications!
 
+      @item #pragma pack(n)
+        Set alignment of structure members to a multiple of @code{n} bytes.
+
+      @item #pragma pack()
+        Restores structure alignment to the target's default alignment,
+        which was in effect when the compilation started.
+
+      @item #pragma pack(push[,n])
+        Pushes the current structure alignment onto an internal stack and
+        optionally sets a new alignment to a multiple of @code{n} bytes.
+
+      @item #pragma pack(pop)
+        Restores the topmost structure alignment, saved by @code{pack(push)},
+        from an internal stack. Restores the default alignment, when the
+        stack is empty.
+
 @end table
 
 
@@ -1744,7 +1814,7 @@ external linkage
 which are modified by the function. @code{__varsused} is similar, but
 specifies the external variables read by the function. If a variable is
 read and written, both attributes have to be specified. The variable-list
-ist a list of identifiers, separated by slashes and enclosed in double
+is a list of identifiers, separated by slashes and enclosed in double
 quotes.
 
 The attribute @code{__writesmem(<type>)} is used to specify that the
@@ -1781,7 +1851,15 @@ a constructor with a priority of 1 is executed first while a destructor
 with a priority of 1 is executed last. @code{<name>} is an optional name,
 used to differentiate functions of the same level.
 
-@subsubsection Predefined macros
+@subsection @code{__noinline}
+
+@code{__noinline} will prevent inlining of a given function. The heuristic
+used for deciding whether a function should be inlined generally makes a good
+trade-off between code size and performance, but sometimes it can be useful to override
+this behaviour. Use-cases include keeping "cold" functions out-of line to reduce code
+size, or to allow safe use of inline assembly with labels.
+
+@subsection Predefined macros
 The following macros are defined by the compiler.
 @example
   #define __VBCC__
@@ -1796,6 +1874,7 @@ The following macros are defined by the compiler.
   #define __nosidefx __vattr("nosidefx()")
   #define __stack(x) __vattr(__str(stack1(x)))
   #define __stack2(x) __vattr(__str(stack2(x)))
+  #define __noinline __vattr("noinline()")
   #define __STDC_VERSION__ 199901L
 @end example
 @code{__STDC_VERSION__} is defined in C99-mode only.
@@ -1839,7 +1918,10 @@ The following macros are defined by the compiler.
     @item Joerg Plate
     @item Gilles Pirio
     @item Bartlomiej Pater
+    @item Elena Novaretti
     @item Gunther Nikl
+    @item Constantinos Nicolakakis
+    @item Timm S. Mueller
     @item Robert Claus Mueller
     @item Joern Maass
     @item Aki M Laukkanen
@@ -1849,11 +1931,13 @@ The following macros are defined by the compiler.
     @item Julian Kinraid
     @item Acereda Macia Jorge
     @item Dirk Holtwick
+    @item Matthew Hey
     @item Tim Hanson
     @item Kasper Graversen
     @item Jens Granseuer
     @item Volker Graf
     @item Marcus Geelnard
+    @item Franta Fulin
     @item Matthias Fleischer
     @item Alexander Fichtner
     @item Olivier Fabre

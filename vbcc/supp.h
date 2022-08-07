@@ -1,3 +1,6 @@
+/*  $VER: vbcc (supp.h) $Revision: 1.56 $     */
+
+
 #ifndef SUPP_H
 #define SUPP_H 1
 #include <stdlib.h>
@@ -62,18 +65,19 @@ typedef unsigned int bvtype;
 #define STRINGCONST (UNCOMPLETE<<1)
 #define BOOLEAN (STRINGCONST<<1)
 #define SIGNED_CHARACTER (BOOLEAN<<1)
+#define PVOLATILE (SIGNED_CHARACTER<<1)
 #ifdef HAVE_ECPP
-#define ECPP_VIRTUAL 1
-#define ECPP_STATIC 2
-#define ECPP_TV 4
-#define ECPP_CTOR 8
-#define ECPP_DTOR 16
-#define ECPP_POD 32
-#define ECPP_PRIVATE 64
-#define ECPP_PROTECTED 128
-#define ECPP_PUBLIC 256
-#define ECPP_NESTED_CLASS 512
-#define ECPP_FRIEND 1024
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
 #endif
 #define t_min(x) (((x)&UNSIGNED)?l2zm(0L):t_min[(x)&NQ])
 #define t_max(x) (((x)&UNSIGNED)?tu_max[(x)&NQ]:t_max[(x)&NQ])
@@ -84,6 +88,11 @@ typedef unsigned int bvtype;
 #define terror(x) error(324,x);
 /* this header is provided by the code generator */
 #include "machine.h"
+#define Z0 l2zm(0L)
+#define Z1 l2zm(1L)
+#define ZU0 ul2zum(0UL)
+#define ZU1 ul2zum(1UL)
+
 #ifndef HAVE_EXT_TYPES
 typedef zllong zmax;
 typedef zullong zumax;
@@ -136,6 +145,15 @@ typedef zullong zumax;
 #ifndef MAXADDI2P
 #define MAXADDI2P LLONG
 #endif
+#ifndef MINADDUI2P
+#define MINADDUI2P (MINADDI2P|UNSIGNED)
+#endif
+#ifndef MAXADDUI2P
+#define MAXADDUI2P (MAXADDI2P|UNSIGNED)
+#endif
+#ifndef BESTCOPYT
+#define BESTCOPYT INT
+#endif
 #define RSIZE BVSIZE(MAXR+1)
 #define ALL_CALLS 1
 #define ALL_REGS  2
@@ -148,12 +166,15 @@ typedef zullong zumax;
 #define WARNED_STACK 256
 #define WARNED_REGS 512
 #define USES_VLA 1024
-struct tunit{
+#define NO_INLINE 2048
+#define FULL_INLINE 4096
+typedef struct reg_handle treg_handle;
+typedef struct tunit{
   struct Var *statics;
   struct tunit *next;
-};
+} tunit;
 /*  additional information for functions; used by the optimizer  */
-struct function_info{
+typedef struct function_info{
   struct IC *first_ic;    /* inline copy of function starts here */
   struct IC *last_ic;     /*  "       "       "      ends here   */
   struct IC *opt_ic;      /* code after optimizing */
@@ -170,16 +191,22 @@ struct function_info{
   /* registers used and modified by that function */
   bvtype regs_modified[RSIZE/sizeof(bvtype)];
 #if HAVE_OSEK
-  bvtype preempt_regs[RSIZE/sizeof(bvtype)];
-  bvtype schedule_regs[RSIZE/sizeof(bvtype)];
-  int osflags;
+/* removed */
+/* removed */
+/* removed */
 #endif
   zumax stack1;
   zumax stack2;
-};
+  long inline_size;  /* size after inlining/optimizing for cross-module */
+  int inline_depth;  /* minimum depth for cross-module-inlining */
+} function_info;
+typedef int typfl;
+#if PVOLATILE >= INT_MAX
+#error "need host with larger int size"
+#endif
 /*  struct for types.    */
-struct Typ{
-  int flags;  /*  see above   */
+typedef struct Typ{
+  typfl flags;  /*  see above   */
   struct Typ *next;
   struct struct_declaration *exact;   /* used for STRUCT/UNION/FUNKT  */
   zmax size;     /*  used for ARRAY  */
@@ -187,12 +214,12 @@ struct Typ{
   char *attr;
   int reg;
 #ifdef HAVE_ECPP
-	int ecpp_flags;
+/* removed */
 #endif
-};
-#define TYPS sizeof(struct Typ)
+} type;
+#define TYPS sizeof(type)
 #ifndef HAVE_EXT_TYPES
-union atyps{
+typedef union atyps{
   zchar vchar;
   zuchar vuchar;
   zshort vshort;
@@ -208,17 +235,17 @@ union atyps{
   zfloat vfloat;
   zdouble vdouble;
   zldouble vldouble;
-};
+} atyps;
 #endif
 /* This struct represents objects in the intermediate code. */
-struct obj{
+typedef struct obj{
   int flags;      /* see below */
   int reg;        /* number of reg if flags&REG */
   int dtyp;       /* type of pointer for DREFOBJ */
   struct Var *v;
   struct AddressingMode *am;
   union atyps val;
-};
+} obj;
 /*  Available flags in struct obj.  */
                     /*  KONST muss immer am kleinsten sein, um beim Swappen */
                     /*  fuer available_expressions und Konstanten nach      */
@@ -233,7 +260,7 @@ struct obj{
 #define VARADR 128  /*  The object is the address of a static variable.     */
 #define DONTREGISTERIZE 256 /*  Do not put this object into a register.     */
 #define VKONST 512  /*  Variable containing a constant (for reg-alloc).     */
-struct Var{
+typedef struct Var{
   int storage_class;  /* see below    */
   int reg;            /* Var is assigned to this hard-reg */
   int priority;       /* Priority to be used in simple_regs() */
@@ -247,7 +274,7 @@ struct Var{
   char *filename;     /* filename of first declaration */
   int dline;          /* line number of definition */
   char *dfilename;    /* filename of definition */
-  struct Typ *vtyp;   /* type of the variable */
+  type *vtyp;   /* type of the variable */
   struct const_list *clist;   /* initialized? */
   struct Var *next;   /* pointer to next variable */
   struct function_info *fi;   /* used by the optimizer */
@@ -264,7 +291,7 @@ struct Var{
   int iRegCopyNr;
   int iRegCopyNrHc12V;
 #endif
-};
+} Var;
 /* available storage-classes */
 #define AUTO 1          /* var is allocated on the stack */
 #define REGISTER 2      /* basically the same as AUTO (C-only) */
@@ -290,29 +317,30 @@ struct Var{
 #define DBLPUSH 16384       /* parameter is also on the stack */
 #define NOTINTU 32768       /* variable not (yet) defined in this translation-unit */
 #define REFERENCED 65536    /* variable referenced */
-#define INLINEFUNC (REFERENCED*2)
+#define STATICAUTO 131072   /* auto variable converted to static */
+#define INLINEFUNC (STATICAUTO*2)
 #define INLINEEXT (INLINEFUNC*2)
 #define BUILTIN (INLINEFUNC*2)
 
 /* C-only */
-struct struct_list{
+typedef struct struct_list{
   char *identifier;   /* name of the struct/union-tag */
-  struct Typ *styp;   /* type of the member/parameter */
+  type *styp;   /* type of the member/parameter */
   zmax align;         /* alignment of struct-member */
   int bfoffset;       /* bitfield-offset */
   int bfsize;         /* bitfield-size */
   int storage_class;  /* storage-class of function-parameter */
   int reg;            /* register to pass function-parameter */
 #ifdef HAVE_ECPP
-	char *mangled_identifier;
+/* removed */
 #endif
-};
+} struct_list;
 
 #define SLSIZE 32   /* realloc struct_lists in those steps */
 /*  These structs are used to describe members of STRUCT/UNION or   */
 /*  parameters of FUNKT. Some of the entries in struct_list are not */
 /*  relevant for both alternatives.                                 */
-struct struct_declaration{
+typedef struct struct_declaration{
   int count;  /* number of members/parameters */
   int label; /* used for debug output */
   int typ;
@@ -321,20 +349,20 @@ struct struct_declaration{
   struct struct_list (*sl)[];
   char *identifier;
 #ifdef HAVE_ECPP
-  /* the class this declaration is nested in, i.e. if it's a class, the surrounding */
-  /* class, if it's a function, the class this function belongs to */
-  struct struct_declaration *higher_nesting;
-  struct struct_declaration *base_class;
-  int base_access;
-  int ecpp_flags;
-  char *mangled_identifier;
-  int num_friends;
-  struct struct_declaration **friends;
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
 #endif
-};
+} struct_declaration;
 
 /*  The quads in the intermediate code. */
-struct IC{
+typedef struct IC{
   struct IC *prev;    /* pointer to the next IC */
   struct IC *next;    /* pointer to the previous IC */
   int code;           /* see below */
@@ -357,7 +385,7 @@ struct IC{
   int arg_cnt;
   struct IC **arg_list; /* pointers to function argument ICs (only for code==CALL) */
   struct IC *copy;    /* for copying/inlining */
-  struct Typ *ityp;
+  type *ityp;
   long flags;
   struct Var *savedsp; /* only for branch instructions and vlas */
 #ifdef HAVE_EXT_IC
@@ -369,7 +397,7 @@ struct IC{
   int iQ2WebIndex; /* web for argument q2 */
   void *pFlow;           /* flowgraph reverse lookup */
 #endif
-};
+} IC;
 #define ICS sizeof(struct IC)
 /* flags for ICs */
 #define LOOP_COND_TRUE 1  /* loop condition is true at first iteration */
@@ -508,21 +536,24 @@ extern union atyps gval;
 extern int DEBUG;
 #endif
 #ifdef HAVE_MISRA
-int misra_check_use_warn(const char*);
+/* removed */
 #endif
 /*  used by the optimizer */
 /* for lists in ICs flags may be DREFOBJ to mark dereferences */
 /* for lists in function infos flags is the type of access */
-struct varlist{
+typedef struct varlist{
   struct Var *v;
   int flags;
-};
+} varlist;
 #define VLS sizeof(struct varlist)
 extern struct IC *first_ic,*last_ic;
+#define REGSA_NEVER 1
+#define REGSA_TEMPS 2
 extern int regs[MAXR+1],regsa[MAXR+1],regused[MAXR+1],simple_scratch[MAXR+1];
+extern int sregsa[MAXR+1];
 extern int reg_prio[MAXR+1],regscratch[MAXR+1];
 extern zmax regsize[MAXR+1];
-extern struct Typ *regtype[MAXR+1];
+extern type *regtype[MAXR+1];
 extern struct Var *regsv[MAXR+1];
 extern char *regnames[];
 extern bvtype regs_modified[RSIZE/sizeof(bvtype)];
@@ -543,18 +574,23 @@ extern zmax max_offset;
 extern int function_calls,vlas;
 extern int coloring;
 extern int dmalloc;
+extern int sec_per_obj;
 extern int disable;
 extern int misracheck,misraversion,misracomma,misratok;
 extern int pack_align;
 extern int short_push;
+extern int static_cse,dref_cse;
+extern int no_eff_ics,early_eff_ics;
+extern int force_statics,prefer_statics;
+extern int range_opt;
 extern int default_unsigned;
 
 /*  Das haette ich gern woanders    */
 extern struct struct_declaration *add_sd(struct struct_declaration *,int);
-struct node{
+typedef struct node{
   int flags,lvalue,sidefx;
   int bfs,bfo;
-  struct Typ *ntyp;
+  type *ntyp;
   struct node *left;
   struct node *right;
   struct argument_list *alist;
@@ -563,17 +599,17 @@ struct node{
   struct Var *dsize;
   union atyps val;
   struct obj o;
-};
-typedef struct node *np;
+} node;
+typedef node *np;
 #define NODES sizeof(struct node)
-struct const_list{
+typedef struct const_list{
   union atyps val;
   np tree;
   zmax idx;
   struct const_list *other,*next;
-};
+} const_list;
 #define CLS sizeof(struct const_list)
-struct case_table{
+typedef struct case_table{
   int num,typf;
   struct IC *next_ic;
   double density;
@@ -581,7 +617,7 @@ struct case_table{
   int *labels;
   union atyps min,max;
   zumax diff;
-};
+} case_table;
 extern zmax t_min[];
 extern zumax t_max[];
 extern zumax tu_max[];
@@ -596,10 +632,14 @@ extern int ic_count;
 extern int only_inline;
 extern int multiple_ccs;
 extern int float_used;
-extern struct IC *err_ic;
+extern IC *err_ic;
 extern long maxoptpasses,optflags,inline_size,unroll_size,inline_depth;
+extern long clist_copy_stack;
+extern long clist_copy_static;
+extern long clist_copy_pointer;
+extern long inline_memcpy_sz;
 extern int noaliasopt,fp_assoc,noitra;
-extern struct Var *vl0,*vl1,*vl2,*vl3;
+extern Var *vl0,*vl1,*vl2,*vl3;
 extern char *filename;
 extern char *emit_buffer[EMIT_BUF_DEPTH];
 extern char *emit_p;
@@ -607,26 +647,26 @@ extern int emit_f,emit_l;
 extern int no_inline_peephole;
 extern int ecpp;
 /* functions which must be provided by the frontend */
-extern void add_IC(struct IC *);
+extern void add_IC(IC *);
 extern void error(int,...);
 #ifdef HAVE_MISRA
-extern void misra(int,...);
-extern void misra_neu(int, int, int, int, ...);
+/* removed */
+/* removed */
 #endif
-extern struct Var *add_tmp_var(struct Typ *);
-extern void free_var(struct Var *);
+extern Var *add_tmp_var(type *);
+extern void free_var(Var *);
 extern void raus(void);
 /* functions provided by supp.c */
 #define printtype prd
 #define printobj probj
 #define printic pric2
 #define printiclist pric
-extern void free_IC(struct IC *);
-extern void insert_IC(struct IC *,struct IC *);
-extern void move_IC(struct IC *,struct IC *);
-extern void pric(FILE *,struct IC *);
-extern void pric2(FILE *,struct IC *);
-extern void probj(FILE *,struct obj *,int);
+extern void free_IC(IC *);
+extern void insert_IC(IC *,IC *);
+extern void move_IC(IC *,IC *);
+extern void pric(FILE *,IC *);
+extern void pric2(FILE *,IC *);
+extern void probj(FILE *,obj *,int);
 extern void emit(FILE *,const char *,...);
 extern void emit_char(FILE *,int);
 void emit_flush(FILE *);
@@ -645,41 +685,45 @@ extern void printzum(FILE *,zumax);
 extern void printzld(FILE *,zldouble);
 extern void printval(FILE *,union atyps *,int);
 extern void insert_const(union atyps *,int);
-extern void prd(FILE *,struct Typ *);
-extern void print_var(FILE *,struct Var *);
-extern void freetyp(struct Typ *);
-extern struct Typ *new_typ(void);
-extern struct Typ *clone_typ(struct Typ *);
+extern void prd(FILE *,type *);
+extern void print_var(FILE *,Var *);
+extern void freetyp(type *);
+extern type *new_typ(void);
+extern type *clone_typ(type *);
 #ifdef HAVE_EXT_TYPES
-extern void conv_typ(struct Typ *);
+extern void conv_typ(type *);
 #endif
 extern int VECTYPE(int);
 extern int mkvec(int,int);
-extern zmax szof(struct Typ *);
-extern int is_vlength(struct Typ *);
-extern struct Var *vlength_szof(struct Typ *);
-extern zmax struct_offset(struct struct_declaration *,const char *);
-extern zmax falign(struct Typ *);
-int get_first_base_type(struct Typ *);
+extern zmax szof(type *);
+extern int is_vlength(type *);
+extern Var *vlength_szof(type *);
+extern zmax struct_offset(struct_declaration *,const char *);
+extern zmax falign(type *);
+int get_first_base_type(type *);
+extern int objs_equal(obj *,obj *,int);
 extern void eval_const(union atyps *,int);
-extern struct function_info *new_fi(void);
-extern void free_fi(struct function_info *);
-extern void print_fi(FILE *,struct function_info *);
-extern void static_stack_check(struct Var *);
+extern int get_clist_byte(type *,const_list *, zmax, zuchar *);
+extern zumax get_clist_int(type *, const_list *, zmax, int, int *);
+extern function_info *new_fi(void);
+extern void free_fi(function_info *);
+extern void print_fi(FILE *,function_info *);
+extern void static_stack_check(Var *);
 #ifdef HAVE_REGPARMS
-extern zmax va_offset(struct Var *);
+extern zmax va_offset(Var *);
 #endif
-extern void print_varlist(FILE *f,struct varlist *,int);
-extern int switch_IC(struct IC *);
-extern int collides(struct obj *,struct obj *);
-extern int is_const(struct Typ *);
-extern int is_volatile_obj(struct obj *);
-extern int is_volatile_ic(struct IC *);
-extern struct case_table *calc_case_table(struct IC *,double);
-int calc_regs(struct IC *,int);
-struct Var *declare_builtin(char *name,int ztyp,int q1typ,int q1reg,int q2typ,int q2reg,int nosidefx,char *asm);
-extern void emit_jump_table(FILE *,struct case_table *,char *,char *,int);
-extern void optimize(long, struct Var *);
+extern void print_varlist(FILE *f,varlist *,int);
+extern void add_attr(char **,char *);
+extern int switch_IC(IC *);
+extern int collides(obj *,obj *);
+extern int is_const(type *);
+extern int is_volatile_obj(obj *);
+extern int is_volatile_ic(IC *);
+extern case_table *calc_case_table(IC *,double);
+int calc_regs(IC *,int);
+Var *declare_builtin(char *name,int ztyp,int q1typ,int q1reg,int q2typ,int q2reg,int nosidefx,char *asm);
+extern void emit_jump_table(FILE *,case_table *,char *,char *,int);
+extern void optimize(long, Var *);
 int bvcmp(bvtype *dest,bvtype *src,size_t len);
 int bvdointersect(bvtype *,bvtype *,size_t len);
 void bvunite(bvtype *dest,bvtype *src,size_t len);
@@ -689,11 +733,11 @@ void vqsort (void *,size_t,size_t,int (*)(const void *,const void *));
 #define bvcopy(dest,src,len) memcpy(dest,src,len)
 #define bvclear(dest,len) memset(dest,0,len)
 #define bvsetall(dest,len) memset(dest,-1,len)
-extern void remove_IC(struct IC *);
-extern struct IC *clone_ic(struct IC *);
-extern struct IC *new_IC(void);
-extern struct Var *new_var(void);
-extern void insert_bitfield(struct obj *,struct obj *,struct obj *,int,int,int,int);
+extern void remove_IC(IC *);
+extern IC *clone_ic(IC *);
+extern IC *new_IC(void);
+extern Var *new_var(void);
+extern void insert_bitfield(obj *,obj *,obj *,int,int,int,int);
 extern void *mymalloc(size_t);
 extern void *myrealloc(void *,size_t);
 extern void myfree(void *p);
@@ -703,35 +747,68 @@ extern void simple_regs(void);
 extern int bflayout(int,int,int);
 /*  functions provided by the code generator */
 extern int regok(int,int,int);
-struct rpair {int r1,r2;};
-int reg_pair(int,struct rpair *);
-extern struct rpair rp;
-extern int freturn(struct Typ *);
+typedef struct rpair {int r1,r2;} rpair;
+int reg_pair(int,rpair *);
+extern rpair rp;
+extern int freturn(type *);
 #define ffreturn(x) ((x)->reg?(x)->reg:freturn(x))
-extern void gen_code(FILE *,struct IC *,struct Var *,zmax);
+extern void gen_code(FILE *,IC *,Var *,zmax);
 extern int init_cg(void);
 extern void cleanup_cg(FILE *);
 extern void init_db(FILE *);
 void cleanup_db(FILE *);
-extern int dangerous_IC(struct IC *);
-extern void gen_dc(FILE *,int,struct const_list *);
-extern void gen_ds(FILE *,zmax,struct Typ *);
-extern void gen_var_head(FILE *,struct Var *);
+extern int dangerous_IC(IC *);
+extern void gen_dc(FILE *,int,const_list *);
+extern void gen_ds(FILE *,zmax,type *);
+extern void gen_var_head(FILE *,Var *);
 extern void gen_align(FILE *,zmax);
 extern int shortcut(int, int);
 extern int must_convert(int,int,int);
+long get_pof2(zumax);
+int is_varargs(type *);
+
+typedef void *hashdata;
+
+typedef struct hashentry {
+  char *name;
+  hashdata data;
+  struct hashentry *next;
+} hashentry;
+
+typedef struct hashtable {
+  hashentry **entries;
+  size_t size;
+  int collisions;
+} hashtable;
+
+hashtable *new_hashtable(size_t);
+size_t hashcode(char *);
+void add_hashentry(hashtable *,char *,hashdata);
+hashdata find_name(hashtable *,char *);
+
+
 #ifdef HAVE_TARGET_PRAGMAS
 extern int handle_pragma(const char *);
 #endif
 #ifdef HAVE_LIBCALLS
 extern char *use_libcall(int code,int t1,int t2);
+#ifndef LIBCALL_CMPTYPE
+#define LIBCALL_CMPTYPE INT
 #endif
-extern int cost_savings(struct IC *,int,struct obj *);
+#endif
+#ifdef HAVE_TARGET_VARHOOK_PRE
+extern void add_var_hook_pre(const char *,type *,int,const_list *);
+#endif
+#ifdef HAVE_TARGET_VARHOOK_POST
+extern void add_var_hook_post(Var *);
+#endif
+extern int cost_savings(IC *,int,obj *);
 /* additional declarations for targets which pass arguments in */
 /* registers by default.                                       */
 #ifdef HAVE_REGPARMS
-extern struct reg_handle empty_reg_handle;
-extern int reg_parm(struct reg_handle *, struct Typ *,int,struct Typ *);
+extern treg_handle empty_reg_handle;
+/* last parameter is function type or return type or pointer to function type */
+extern int reg_parm(treg_handle *, type *,int,type *);
 #endif
 #ifdef HAVE_TARGET_EFF_IC
 extern void mark_eff_ics(void);
@@ -774,19 +851,28 @@ extern void mark_eff_ics(void);
 #ifndef AVOID_UNSIGNED_TO_FLOAT
 #define AVOID_UNSIGNED_TO_FLOAT 0
 #endif
+#ifndef CHARCONV
+#define CHARCONV(x) (x)
+#define CHARBACK(x) (x)
+#define STRBACK(x)
+#else
+unsigned char CHARBACK(unsigned char);
+void STRBACK(unsigned char *);
+#endif
+
 #if HAVE_OSEK
-/* used for special operating system support */
-extern bvtype task_preempt_regs[],task_schedule_regs[];
-typedef struct tasklist {
-  struct Var *v;
-  int prio;
-  int taskid;
-  enum {NON_PREEMPTIVE=1,DOES_BLOCK=2,CALLS_SCHED=4,ISR=8} flags;
-  bvtype context[BVSIZE(MAXR+1)/sizeof(bvtype)];
-  bvtype preempt_context[BVSIZE(MAXR+1)/sizeof(bvtype)];
-  bvtype schedule_context[BVSIZE(MAXR+1)/sizeof(bvtype)];
-  bvtype unsaved_context[BVSIZE(MAXR+1)/sizeof(bvtype)];
-} tasklist;
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
 #endif
 
 

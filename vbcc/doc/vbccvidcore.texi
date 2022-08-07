@@ -3,7 +3,7 @@ This chapter documents the Backend for the VideoCore IV processor family.
 The backend is in a very early stage, it is not complete, and it can not
 yet be considered useful!
 
-Also note that it is based on freely available, inofficial, and possibly
+Also note that it is based on freely available, unofficial, and possibly
 incorrect information on the target processor.
 
 @section Additional options for this version

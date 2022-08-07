@@ -283,11 +283,14 @@ int main(int argc,char **argv)
   fprintf(cout,"#include \"dt.h\"\n\n");
   for(i=1;i<=TYPECNT;i++){
     if(cnv[i]>=0){
+      int bits;
+      sscanf(cnvs[cnv[i]].from,"S%dB",&bits);
       fprintf(hout,"typedef struct {char a[%d];} dt%df;\n",cnvs[cnv[i]].size,i);
       fprintf(hout,"typedef dt%df z%s;\n",i,typen[i]);
       fprintf(hout,"typedef %s dt%dt;\n",nt[i],i);
       fprintf(hout,"dt%dt dtcnv%df(dt%df);\n",i,i,i);
       fprintf(hout,"dt%df dtcnv%dt(dt%dt);\n",i,i,i);
+      fprintf(cout,"#undef BITSIZE\n#define BITSIZE %d\n",bits);
       fprintf(cout,"#undef DTTTYPE\n#define DTTTYPE dt%dt\n",i);
       fprintf(cout,"#undef DTFTYPE\n#define DTFTYPE dt%df\n",i);
       fprintf(cout,"dt%dt dtcnv%df(dt%df\n",i,i,i);

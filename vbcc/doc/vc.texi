@@ -108,6 +108,7 @@ Unix @command{cc}.
 
     @item -Ipath  
                 Add @file{path} to the include-search-path.
+                An empty @file{path} adds the current directory.
 
     @item -lulib  
                 Link with library @file{ulib}.
@@ -130,6 +131,9 @@ Unix @command{cc}.
 
     @item -schedule   
                 Invoke the instruction-scheduler, if available.
+
+    @item -rmcfg-<opt>
+                Ignore all lines from the config file starting with -<opt>.
 
     @item +file   
         Use @file{file} as config-file.

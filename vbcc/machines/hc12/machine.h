@@ -109,10 +109,10 @@ struct ext_ic {
 };
 
 /*  The number of registers of the target machine.                  */
-#define MAXR 4
+#define MAXR 6
 
 /*  Number of commandline-options the code-generator accepts.       */
-#define MAXGF 10
+#define MAXGF 20
 
 /*  If this is set to zero vbcc will not generate ICs where the     */
 /*  target operand is the same as the 2nd source operand.           */
@@ -122,7 +122,7 @@ struct ext_ic {
 
 /*  This specifies the smallest integer type that can be added to a */
 /*  pointer.                                                        */
-#define MINADDI2P CHAR
+extern int MINADDI2P;
 
 /*  If the bytes of an integer are ordered most significant byte    */
 /*  byte first and then decreasing set BIGENDIAN to 1.              */
@@ -137,7 +137,8 @@ struct ext_ic {
 /*  If switch-statements should be generated as a sequence of       */
 /*  SUB,TST,BEQ ICs rather than COMPARE,BEQ ICs set this to 1.      */
 /*  This can yield better code on some machines.                    */
-#define SWITCHSUBS 1
+extern int switchsubs;
+#define SWITCHSUBS switchsubs
 
 /*  In optimizing compilation certain library memcpy/strcpy-calls   */
 /*  with length known at compile-time will be inlined using an      */
@@ -156,7 +157,7 @@ struct reg_handle {
 #define HAVE_INT_SIZET 1
 
 /*  We have register pairs.                                         */
-#define HAVE_REGPAIRS 0
+#define HAVE_REGPAIRS 1
 
 /*  We keep track of all registers modified by a function.          */
 #define HAVE_REGS_MODIFIED 1
@@ -183,3 +184,8 @@ struct reg_handle {
 
 /* We prefer BNE rather than BGT. */
 #define HAVE_WANTBNE 1
+
+#define HAVE_POF2OPT 1
+
+/* Use char for return of comparison libcalls */
+#define LIBCALL_CMPTYPE CHAR

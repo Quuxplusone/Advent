@@ -1,4 +1,4 @@
-/*  $VER: vbcc (alias.c) V0.8   */
+/*  $VER: vbcc (alias.c) $Revision: 1.6 $  */
 /*  Listen benutzter/veraenderter Variablen und Behandlung von Decknamen.   */
 
 #include "opt.h"
@@ -28,7 +28,7 @@ void undef_pt(bvtype **pt,int i)
 
 /* walks through a clist and sets the corresponding bit in bv
    for every variable whose address is contained in the clist */
-void add_clist_refs(bvtype *bv,struct Typ *t,struct const_list *cl)
+void add_clist_refs(bvtype *bv,type *t,const_list *cl)
 {
   /*FIXME: bei Aufrufen auch auf locale, nicht USEDASDEST|USEDASADDR */
   int i;zmax sz;
@@ -44,7 +44,7 @@ void add_clist_refs(bvtype *bv,struct Typ *t,struct const_list *cl)
     return;
   }
   if(ISSTRUCT(t->flags)){
-    struct Typ *st;
+    type *st;
     for(i=0;i<t->exact->count&&cl;i++){
       if(!cl->other){ierror(0);return;}
       st=(*t->exact->sl)[i].styp;
@@ -78,8 +78,8 @@ void copy_pt(bvtype **pt,int to,int from)
       int i;bvtype *new;
       for(i=0;i<vcount;i++){
 	if(BTST(pt[from-(vcount-rcount)],i)){
-	  struct Var *v=vilist[i];
-	  if(!is_const(v->vtyp)||!v->clist)
+	  Var *v=vilist[i];
+	  if(!is_const(v->vtyp)||!v->clist||(v->storage_class!=STATIC&&v->storage_class!=EXTERN))
 	    break;
 	}
       }
@@ -200,8 +200,8 @@ void dref_pt(bvtype **pt,int i)
   memset(pt[d],0,vsize);
   for(j=0;j<vcount;j++){
     if(BTST(pt[i],j)){
-      struct Var *v=vilist[j];
-      if(v->clist&&is_const(v->vtyp)){
+      Var *v=vilist[j];
+      if(v->clist&&is_const(v->vtyp)&&(v->storage_class==STATIC||v->storage_class==EXTERN)){
 	add_clist_refs(pt[d],v->vtyp,v->clist);
       }else if(!pt[j]){
 	undef_pt(pt,d);
@@ -212,7 +212,7 @@ void dref_pt(bvtype **pt,int i)
   }
 }
 
-void trans_pt(bvtype **pt,struct IC *p)
+void trans_pt(bvtype **pt,IC *p)
 {
   int i,j,newset=-1,sv,cp;
   if((p->code==ADDI2P||p->code==SUBIFP)&&!compare_objs(&p->q1,&p->z,ztyp(p)))
@@ -334,11 +334,11 @@ int equal_pt(bvtype **pt1,bvtype **pt2)
   return 1;
 }
 #if 0
-void calc_pt(struct flowgraph *fg)
+void calc_pt(flowgraph *fg)
 {
-  struct flowgraph *g;
-  struct flowlist *in;
-  struct IC *p;
+  flowgraph *g;
+  flowlist *in;
+  IC *p;
   bvtype **pt,**ppt;
   int i,all_preds,changed;
 
@@ -393,11 +393,11 @@ void calc_pt(struct flowgraph *fg)
   }
 }
 #endif
-int p_typ(struct Var *v)
+int p_typ(Var *v)
 /*  Liefert den Typ, auf den Variable zeigen kann. Falls nicht eindeutig    */
 /*  wird CHAR zurueckgegeben, da ein char * auf alles zeigen kann.          */
 {
-    struct Typ *t=v->vtyp;int f;
+    type *t=v->vtyp;int f;
     /*  Kein Zeiger? Dann moeglicherweise Struktur, die verschiedene Zeiger */
     /*  enthalten koennte. Koennte man evtl. noch genauer pruefen.          */
     if(!ISPOINTER(t->flags)||!t->next||(v->flags&DNOTTYPESAFE)) return CHAR;
@@ -408,7 +408,7 @@ int p_typ(struct Var *v)
 
 /* propagates information if a variable whose address may have been taken
    is modified */
-static void propagate_pointers(bvtype *set,struct Var *v,int t,int i)
+static void propagate_pointers(bvtype *set,Var *v,int t,int i)
 {
   int j,t2;
   if(v->nesting==0||v->storage_class==EXTERN||(v->flags&USEDASADR)){
@@ -428,7 +428,7 @@ static void propagate_pointers(bvtype *set,struct Var *v,int t,int i)
 void alias_propagate(bvtype *set,int i,int t,int wr)
 {
   int j,t2;
-  struct Var *v;
+  Var *v;
   if(i<0||i>=vcount) ierror(0);
   t&=NQ;
   BSET(set,i);
@@ -446,7 +446,7 @@ void alias_propagate(bvtype *set,int i,int t,int wr)
 	  v=vilist[j];
 	  if(!v) ierror(0);
 	  if(v->nesting==0||v->storage_class==EXTERN||(v->flags&USEDASADR)){
-	    struct Typ *tp=v->vtyp;
+	    type *tp=v->vtyp;
 	    if(!v->vtyp) ierror(0);
 	    do{
 	      t2=tp->flags&NQ;
@@ -477,11 +477,11 @@ void alias_propagate(bvtype *set,int i,int t,int wr)
   }
 }
 
-void ic_changes(struct IC *p,bvtype *result)
+void ic_changes(IC *p,bvtype *result)
 /*  Initialisiert den Bitvektor result mit allen Variablen, die durch das   */
 /*  IC p geaendert werden koennten.                                         */
 {
-    int i,j,t,t2;struct Var *v;
+    int i,j,t,t2;Var *v;
     memset(result,0,vsize);
     t=(ztyp(p)&NQ);
     if(p->z.flags&VAR){
@@ -500,7 +500,7 @@ void ic_changes(struct IC *p,bvtype *result)
 	}
     }
     if(p->code==CALL){
-      struct function_info *fi;
+      function_info *fi;
       if((p->q1.flags&(VAR|DREFOBJ))==VAR&&(fi=p->q1.v->fi)&&(fi->flags&ALL_MODS)&&!(disable&65536)){
 	/*  we can get the set from the function_info */
 	for(i=0;i<fi->change_cnt;i++){
@@ -539,11 +539,11 @@ void ic_changes(struct IC *p,bvtype *result)
       bvunite(result,av_drefs,vsize);
     }
 }
-void ic_uses(struct IC *p,bvtype *result)
+void ic_uses(IC *p,bvtype *result)
 /*  Initialisiert den Bitvektor result mit allen Variablen, die durch das   */
 /*  IC p benutzt werden koennten.                                           */
 {
-    int i,j,t,t2,c;struct Var *v;struct Typ *tp;
+    int i,j,t,t2,c;Var *v;type *tp;
     memset(result,0,vsize);
     c=p->code;
     if(c!=ADDRESS){
@@ -578,7 +578,7 @@ void ic_uses(struct IC *p,bvtype *result)
 	alias_propagate(result,i,t,0);
     }
     if(p->code==CALL){
-      struct function_info *fi;
+      function_info *fi;
       if((p->q1.flags&(VAR|DREFOBJ))==VAR&&(fi=p->q1.v->fi)&&(fi->flags&ALL_USES)&&!(disable&65536)){
 	/*  we can get the set from the function_info */
 	for(i=0;i<fi->use_cnt;i++){
@@ -617,10 +617,10 @@ void ic_uses(struct IC *p,bvtype *result)
       bvunite(result,av_drefs,vsize);
     }
 }
-void free_alias(struct flowgraph *fg)
+void free_alias(flowgraph *fg)
 /*  Gibt alle use/change-Listen der ICs im Flussgraphen frei.               */
 {
-    struct IC *p;struct flowgraph *g;
+    IC *p;flowgraph *g;
     if(DEBUG&1024) printf("freeing alias info\n");
     for(g=fg;g;g=g->normalout){
         for(p=g->start;p;p=p->next){
@@ -632,14 +632,14 @@ void free_alias(struct flowgraph *fg)
     }
     have_alias=0;
 }
-void create_alias(struct flowgraph *fg)
+void create_alias(flowgraph *fg)
 /*  Initialisiert jedes IC mit einer Liste aller Variablen, die dadurch     */
 /*  benutzt und veraendert werden koennten. Z.Z. wird bis auf Typ-basierte  */
 /*  Optimierungen der worst-case angenommen.                                */
 {
   bvtype *vars=mymalloc(vsize);
-  struct IC *p;struct flowgraph *g;
-  struct flowlist *in;
+  IC *p;flowgraph *g;
+  flowlist *in;
   bvtype **ppt;
   int i,cnt,all_preds,changed;
   unsigned long heapsize;
@@ -686,6 +686,7 @@ void create_alias(struct flowgraph *fg)
 	gpt=0;
       }
       for(p=g->start;p;p=p->next){
+	int da; /* always consider a direct write, even if variable is const-qualified */
 	ic_uses(p,vars);
 	for(i=0,cnt=0;i<vcount;i++)
 	  if(BTST(vars,i)) cnt++;
@@ -705,8 +706,12 @@ void create_alias(struct flowgraph *fg)
 	  }
 	}
 	ic_changes(p,vars);
+	if((p->z.flags&(VAR|DREFOBJ))==VAR)
+	  da=p->z.v->index;
+	else
+	  da=0;
 	for(i=0,cnt=0;i<vcount;i++)
-	  if(BTST(vars,i)&&(i>=vcount-rcount||!is_const(vilist[i]->vtyp))) cnt++;
+	  if(BTST(vars,i)&&(i>=vcount-rcount||i==da||!is_const(vilist[i]->vtyp))) cnt++;
 	p->change_cnt=cnt;
 	if(cnt==0){
 	  p->change_list=0;
@@ -714,7 +719,7 @@ void create_alias(struct flowgraph *fg)
 	  p->change_list=mymalloc(cnt*VLS);
 	  heapsize+=cnt*VLS;
 	  for(cnt=0,i=0;i<vcount;i++){
-	    if(BTST(vars,i)&&(i>=vcount-rcount||!is_const(vilist[i]->vtyp))){
+	    if(BTST(vars,i)&&(i>=vcount-rcount||i==da||!is_const(vilist[i]->vtyp))){
 	      p->change_list[cnt].v=vilist[i];
 	      if(i>=vcount-rcount) p->change_list[cnt].flags=DREFOBJ;
 	      else         p->change_list[cnt].flags=0;
@@ -744,7 +749,8 @@ void create_alias(struct flowgraph *fg)
 		    cnt++;
 		  }
 		}
-		if(cnt==1){
+		if(cnt==1&&all_preds){
+		  if(DEBUG&1024) {printf("replacing indirect call by single target:\n");pric2(stdout,p);}
 		  p->q1.flags=VAR;
 		  p->q1.val.vmax=l2zm(0L);
 		  p->q1.v=p->call_list[0].v;
@@ -786,11 +792,11 @@ void create_alias(struct flowgraph *fg)
   free(vars);
 }
 #if 1
-void update_alias(struct Var *old,struct Var *new)
+void update_alias(Var *old,Var *new)
 /*  Aendert alle use/changes von (old) auf (new). Wird aufgerufen, wenn     */
 /*  copy-propagation eine Variable neu zu einem DREFOBJ macht.              */
 {
-    struct IC *p;int i;
+    IC *p;int i;
     if(DEBUG&1024) printf("update-alias\n");
     for(p=first_ic;p;p=p->next){
         for(i=0;i<p->use_cnt;i++){

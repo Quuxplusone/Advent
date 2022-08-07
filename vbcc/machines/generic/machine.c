@@ -308,6 +308,21 @@ static char *ccs[]={"eq","ne","lt","ge","le","gt",""};
 static char *logicals[]={"or","xor","and"};
 static char *arithmetics[]={"slw","srw","add","sub","mullw","divw","mod"};
 
+/* compare if two objects are the same */
+static int compare_objects(struct obj *o1,struct obj *o2)
+{
+  if((o1->flags&(REG|DREFOBJ))==REG&&(o2->flags&(REG|DREFOBJ))==REG&&o1->reg==o2->reg)
+    return 1;
+  if(o1->flags==o2->flags&&o1->am==o2->am){
+    if(!(o1->flags&VAR)||(o1->v==o2->v&&zmeqto(o1->val.vmax,o2->val.vmax))){
+      if(!(o1->flags&REG)||o1->reg==o2->reg){
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
+
 /* Does some pre-processing like fetching operands from memory to
    registers etc. */
 static struct IC *preload(FILE *f,struct IC *p)
@@ -324,7 +339,7 @@ static struct IC *preload(FILE *f,struct IC *p)
   else
     q2reg=0;
 
-  if(isreg(z)){
+  if(isreg(z)&&(THREE_ADDR||!compare_objects(&p->q2,&p->z))){
     zreg=p->z.reg;
   }else{
     if(ISFLOAT(ztyp(p)))
@@ -340,7 +355,9 @@ static struct IC *preload(FILE *f,struct IC *p)
     p->q1.flags|=(REG|DREFOBJ);
   }
   if(p->q1.flags&&LOAD_STORE&&!isreg(q1)){
-    if(ISFLOAT(q1typ(p)))
+    if(p->code==ASSIGN&&isreg(z))
+      q1reg=p->z.reg;
+    else if(ISFLOAT(q1typ(p)))
       q1reg=f1;
     else
       q1reg=t1;
@@ -953,6 +970,16 @@ void gen_code(FILE *f,struct IC *p,struct Var *v,zmax offset)
     if((c==ASSIGN||c==PUSH)&&((t&NQ)>POINTER||((t&NQ)==CHAR&&zm2l(p->q2.val.vmax)!=1))){
       ierror(0);
     }
+    /* switch commutative operands if suitable */
+    if(c==ADD||c==MULT||c==AND||c==XOR||c==OR){
+      if(compare_objects(&p->q2,&p->z)){
+	struct obj tmp;
+	tmp=p->q1;
+	p->q1=p->q2;
+	p->q2=tmp;
+      }
+    }
+
     p=preload(f,p);
     c=p->code;
     if(c==SUBPFP) c=SUB;

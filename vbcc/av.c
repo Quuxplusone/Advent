@@ -1,4 +1,4 @@
-/*  $VER: vbcc (av.c) V0.8     */
+/*  $VER: vbcc (av.c) $Revision: 1.9 $    */
 /*  aktive Variablen und Elimination unnoetiger Anweisungen */
 
 #include "opt.h"
@@ -6,7 +6,7 @@
 static char FILE_[]=__FILE__;
 
 /*  fuer aktive Variablen   */
-struct Var **vilist;
+Var **vilist;
 unsigned int vcount;    /*  0..vcount-rcount-1: vars, vcount-rcount..vcount: DREFOBJs */
 unsigned int rcount;
 size_t vsize;
@@ -30,13 +30,14 @@ static int clcnt;
    contained; if pass==-1, index is set to -1, if pass==0, index is set,
    otherwise vilist
    clcnt is used as index-counter in pass 0 */
-void num_clist_refs(int pass,struct Typ *t,struct const_list *cl)
+void num_clist_refs(int pass,type *t,const_list *cl)
 {
   /*FIXME: bei Aufrufen auch auf locale, nicht USEDASDEST|USEDASADDR */
   int i;zmax sz;
   if(ISARRAY(t->flags)){
     for(sz=l2zm(0L);!zmleq(t->size,sz)&&cl;sz=zmadd(sz,l2zm(1L)),cl=cl->next){
-      if(!cl->other){ierror(0);return;}
+      if(!cl->other) 
+	return;
       num_clist_refs(pass,t->next,cl->other);
     }
     return;
@@ -46,21 +47,20 @@ void num_clist_refs(int pass,struct Typ *t,struct const_list *cl)
     return;
   }
   if(ISSTRUCT(t->flags)&&!cl->tree){
-    struct Typ *st;
+    type *st;
     for(i=0;i<t->exact->count&&cl;i++){
       st=(*t->exact->sl)[i].styp;
       if(!(*t->exact->sl)[i].identifier) ierror(0);
       if((*t->exact->sl)[i].identifier[0]){
-        if(!cl->other)
-          ierror(0);
-        num_clist_refs(pass,st,cl->other);
+        if(cl->other)
+	  num_clist_refs(pass,st,cl->other);
         cl=cl->next;
       }
     }
     return;
   }
   if(cl->tree&&(cl->tree->o.flags&VARADR)){
-    struct Var *v=cl->tree->o.v;
+    Var *v=cl->tree->o.v;
     if(pass==-1){
       v->index=-1;
     }else if(pass==0){
@@ -78,7 +78,7 @@ int inr;
 void num_vars(void)
 /*  Numeriert Variablen und erzeugt Indexliste  */
 {
-    unsigned int i,j,done;struct IC *p;struct Var *v,*a[4],*vp;
+    unsigned int i,j,done;IC *p;Var *v,*a[4],*vp;
     unsigned long heapsize=0;
     if(DEBUG&1024) printf("numerating variables loop1\n");
     inr++;
@@ -102,7 +102,7 @@ void num_vars(void)
     /* variables that may be referenced in inter-proc. dflow-info */
     for(p=first_ic;p;p=p->next){
       if(p->code==CALL&&(p->q1.flags&VAR)&&p->q1.v->fi){
-	struct function_info *fi=p->q1.v->fi;
+	function_info *fi=p->q1.v->fi;
 	if(fi->flags&ALL_USES){
 	  for(i=0;i<fi->use_cnt;i++){
 	    if(v=fi->use_list[i].v) fi->use_list[i].v->index=-1;
@@ -209,8 +209,8 @@ void num_vars(void)
     }
     if(DEBUG&1024) printf("numerating variables loop4\n");
     vcount=i+rcount; /*  alle benutzten Variablen+Anzahl der DREFOBJs    */
-    vilist=mymalloc(vcount*sizeof(struct Var *));
-    heapsize+=vcount*sizeof(struct Var *);
+    vilist=mymalloc(vcount*sizeof(Var *));
+    heapsize+=vcount*sizeof(Var *);
 #if 0
     for(j=0;j<4;j++){
         int i;
@@ -240,7 +240,7 @@ void num_vars(void)
 #endif
 
     for(p=first_ic;p;p=p->next){
-      struct Var *v;
+      Var *v;
       if(p->q1.flags&VAR){
 	i=p->q1.v->index;
 	vilist[i]=v=p->q1.v;
@@ -301,7 +301,7 @@ void print_vi(void)
         printf("%3d: %s\n",i,vilist[i]->identifier);
     }
 }
-void av_change(struct IC *p,bvtype *use,bvtype *def)
+void av_change(IC *p,bvtype *use,bvtype *def)
 /*  Berechnet die Aenderungen, die sich durch IC p an use und def ergeben.  */
 {
     int i,j,n=-1;
@@ -337,12 +337,12 @@ void av_change(struct IC *p,bvtype *use,bvtype *def)
         if(!BTST(use,i)) BSET(def,i);
     }
 }
-void active_vars(struct flowgraph *fg)
+void active_vars(flowgraph *fg)
 /*  analysiert aktive Variablen im Flussgraphen, nomain==0, wenn zu     */
 /*  optimierende Funktion main() ist                                    */
 {
-    struct IC *p;
-    int changed,pass;struct flowgraph *g;
+    IC *p;
+    int changed,pass;flowgraph *g;
     unsigned long heapsize=0;
 
     if(DEBUG&1024){printf("analysing active variables\n");/*scanf("%d",&i);*/}
@@ -398,7 +398,7 @@ void active_vars(struct flowgraph *fg)
     free(tmp);
     if(DEBUG&16384) printf("av heapsize=%lu\n",heapsize);
 }
-void av_update(struct IC *p,bvtype *isused)
+void av_update(IC *p,bvtype *isused)
 {
   int i,j;
   if((p->z.flags&(VKONST|VAR))==VAR){
@@ -425,7 +425,7 @@ void av_update(struct IC *p,bvtype *isused)
   }  
 }
 /* tests, if IC p uses or modifies var v */
-static int var_conflicts(struct Var *v,struct IC *p)
+static int var_conflicts(Var *v,IC *p)
 {
   int i;
   for(i=0;i<p->use_cnt;i++)
@@ -436,11 +436,11 @@ static int var_conflicts(struct Var *v,struct IC *p)
       return 1;
   return 0;
 }
-int dead_assignments(struct flowgraph *fg)
+int dead_assignments(flowgraph *fg)
 /*  Findet Zuweisungen, die unnoetig sind, da die Variable nie mehr     */
 /*  benutzt werden kann.                                                */
 {
-    int changed=0;struct IC *p;bvtype *isused;
+    int changed=0;IC *p;bvtype *isused;
     int i,j;
     if(DEBUG&1024) printf("searching for dead assignments\n");
     isused=mymalloc(vsize);
@@ -454,14 +454,14 @@ int dead_assignments(struct flowgraph *fg)
 	  if(!BTST(isused,i)&&!is_volatile_ic(p)&&!(disable&1)){
 	    if(DEBUG&1024){printf("dead assignment deleted:\n");pric2(stdout,p);}
 	    if(*p->z.v->identifier&&p->code!=ASSIGN){ err_ic=p;error(170,i>=vcount-rcount?"*":"",p->z.v->identifier);err_ic=0;}
-	    if(p->code!=GETRETURN) changed=1;
+	    /*if(p->code!=GETRETURN)*/ changed=1;
 	    if(p==fg->start){remove_IC_fg(fg,p);break;}
 	    p=p->prev;remove_IC_fg(fg,p->next);
 	    continue;
 	  }
 	}
 	if(p->code!=SETRETURN&&p->code!=TEST&&p->code!=COMPARE&&(p->q1.flags&VAR)&&!BTST(isused,p->q1.v->index)&&(!(p->z.flags&VAR)||!p->z.v->reg||p->z.v->identifier)){
-          struct IC *m,*a;int f=p->q1.flags,dt=p->q1.dtyp;
+          IC *m,*a;int f=p->q1.flags,dt=p->q1.dtyp;
 	  p->q1.flags&=~DREFOBJ;
 	  a=p->prev;if(a) m=a->prev; else m=0;
 	  if(m&&a&&m->code==ASSIGN&&(a->q1.flags&(VAR|DREFOBJ))==VAR&&!compare_objs(&p->q1,&m->z,0)&&!compare_objs(&a->q1,&a->z,0)&&!compare_objs(&m->q1,&a->z,0)&&(a->q2.flags&KONST)&&!var_conflicts(a->q1.v,p)){
@@ -489,7 +489,7 @@ int dead_assignments(struct flowgraph *fg)
 	  p->q1.dtyp=dt;
 	}
 	if(p->code!=TEST&&p->code!=COMPARE&&(p->q2.flags&VAR)&&!BTST(isused,p->q2.v->index)&&(!(p->z.flags&VAR)||!p->z.v->reg||p->z.v->identifier)){
-          struct IC *m,*a;int f=p->q2.flags,dt=p->q2.dtyp;
+          IC *m,*a;int f=p->q2.flags,dt=p->q2.dtyp;
 	  p->q2.flags&=~DREFOBJ;
 	  a=p->prev;if(a) m=a->prev; else m=0;
 	  if(m&&a&&m->code==ASSIGN&&(a->q1.flags&(VAR|DREFOBJ))==VAR&&!compare_objs(&p->q2,&m->z,0)&&!compare_objs(&a->q1,&a->z,0)&&!compare_objs(&m->q1,&a->z,0)&&(a->q2.flags&KONST)&&!var_conflicts(a->q1.v,p)){
@@ -517,7 +517,7 @@ int dead_assignments(struct flowgraph *fg)
 	  p->q2.dtyp=dt;
 	}
 	if(p->code!=TEST&&p->code!=COMPARE&&(p->z.flags&(VAR|DREFOBJ))==(VAR|DREFOBJ)&&!BTST(isused,p->z.v->index)){
-          struct IC *m,*a;int f=p->z.flags,dt=p->z.dtyp;
+          IC *m,*a;int f=p->z.flags,dt=p->z.dtyp;
 	  p->z.flags&=~DREFOBJ;
 	  a=p->prev;if(a) m=a->prev; else m=0;
 	  if(m&&a&&m->code==ASSIGN&&(a->q1.flags&(VAR|DREFOBJ))==VAR&&!compare_objs(&p->z,&m->z,0)&&!compare_objs(&a->q1,&a->z,0)&&!compare_objs(&m->q1,&a->z,0)&&(a->q2.flags&KONST)&&!var_conflicts(a->q1.v,p)){

@@ -1,4 +1,4 @@
-/*  $VER: vbcc (cp.c) V0.8     */
+/*  $VER: vbcc (cp.c) $Revision: 1.5 $     */
 /*  verfuegbare Kopien und copy propagation */
 
 #include "opt.h"
@@ -8,7 +8,7 @@ static char FILE_[]=__FILE__;
 /*  fuer verfuegbare Kopien */
 unsigned int ccount;
 size_t csize;
-struct IC **clist;
+IC **clist;
 
 /*  alle Assignments, globaler oder Adr. fuer propagation etc.         */
 bvtype *cp_globals,*cp_address,*cp_statics,*cp_drefs,*cp_act,*cp_dest;
@@ -17,10 +17,10 @@ bvtype **copies;
 
 static bvtype *cp_matrix;
 
-void available_copies(struct flowgraph *fg)
+void available_copies(flowgraph *fg)
 /*  berechnet die verfuegbaren Kopien fuer jeden Block      */
 {
-    struct flowgraph *g;struct IC *p;bvtype *tmp;
+    flowgraph *g;IC *p;bvtype *tmp;
     int changed,pass,i,j;
     unsigned heapsize=0;
     /*  cp_gen und cp_kill fuer jeden Block berechnen   */
@@ -69,7 +69,7 @@ void available_copies(struct flowgraph *fg)
         changed=0;
         g=fg->normalout;    /*  in B0 aendert sich nichts   */
         while(g){
-            struct flowlist *lp;
+            flowlist *lp;
             /*  in(B)=Schnitt out(P) mit P Vorgaenger von B */
             lp=g->in;
             i=0;    /*  Flag fuer ersten Vorgaenger */
@@ -100,8 +100,8 @@ void available_copies(struct flowgraph *fg)
 int compare_cp(const void *a1,const void *a2)
 /*  Stub fuer compare_objs, damit als Vergleichsfunktion fuer qsort geht */
 {
-    struct IC *p1,*p2;int i1,i2;
-    p1=*((struct IC **)a1);p2=*((struct IC **)a2);
+    IC *p1,*p2;int i1,i2;
+    p1=*((IC **)a1);p2=*((IC **)a2);
     if(!p1||!p2) ierror(0);
     i1=p1->typf; i2=p2->typf;
     if(i1<i2) return -1;
@@ -115,7 +115,7 @@ int compare_cp(const void *a1,const void *a2)
 void num_copies(void)
 /*  numeriert alle einfachen Kopieranweisungen  */
 {
-    struct IC *p;struct Var *v;int i,n,c;
+    IC *p;Var *v;int i,n,c;
     bvtype *bp;
     unsigned long heapsize=0;
     if(DEBUG&1024) printf("numerating copies loop1\n");
@@ -127,8 +127,8 @@ void num_copies(void)
     /*csize=(ccount+CHAR_BIT-1)/CHAR_BIT;*/
     csize=BVSIZE(ccount);
     if(DEBUG&(16384|1024)) printf("ccount=%lu, csize=%lu\n",(unsigned long)ccount,(unsigned long)csize);
-    clist=mymalloc(ccount*sizeof(struct IC *));
-    heapsize+=ccount*sizeof(struct IC *);
+    clist=mymalloc(ccount*sizeof(IC *));
+    heapsize+=ccount*sizeof(IC *);
     cp_globals=mymalloc(csize);
     memset(cp_globals,0,csize);
     cp_statics=mymalloc(csize);
@@ -147,7 +147,7 @@ void num_copies(void)
         }
     }
     if(DEBUG&1024){ printf("sorting copies\n");}
-    if(ccount>1) vqsort(clist,ccount,sizeof(struct IC *),compare_cp);
+    if(ccount>1) vqsort(clist,ccount,sizeof(IC *),compare_cp);
     if(DEBUG&1024){ printf("renumbering copies\nnum_copies loop3\n");}
     if(ccount>0){   /*  Aufpassen, da ccount unsigned!  */
         for(c=0;c<ccount-1;c++){
@@ -212,10 +212,10 @@ void print_cp(bvtype *cp)
     for(i=0;i<ccount;i++)
         if(BTST(cp,i)){printf("%3d: ",i);pric2(stdout,clist[i]);}
 }
-int cprop(struct obj *o,int target,zmax size)
+int cprop(obj *o,int target,zmax size)
 /*  ersetzt gegebenenfalls  Kopien, noch aendern, so dass Pointer in DREFOBJS ersetzt werden wie bei target */
 {
-  struct IC *p,*f=0;int i;struct Var *old;
+  IC *p,*f=0;int i;Var *old;
   old=o->v;
   i=old->index;
   if(!target&&(o->flags&DREFOBJ)) i+=vcount-rcount;
@@ -233,6 +233,7 @@ int cprop(struct obj *o,int target,zmax size)
 	 &&p->q1.v!=o->v&&zmeqto(p->z.val.vmax,o->val.vmax)
 	 &&(ISSCALAR(o->v->vtyp->flags)||(p->typf&NQ)==(o->v->vtyp->flags&NQ))
 	 &&!must_convert(p->typf,o->v->vtyp->flags,0)
+	 &&!is_volatile_ic(p)
 	 ){
 	if(((o->flags&DREFOBJ)&&!(p->q1.flags&DREFOBJ))||!(p->q1.flags&DREFOBJ)&&(!static_cse||!((p->q1.flags&(VAR|VARADR))==VAR)||(p->q1.v->storage_class!=EXTERN&&p->q1.v->storage_class!=STATIC))){
 	  int mdtyp;
@@ -273,11 +274,11 @@ int cprop(struct obj *o,int target,zmax size)
   }
   return 0;
 }
-int copy_propagation(struct flowgraph *fg,int global)
+int copy_propagation(flowgraph *fg,int global)
 /*  gibt Kopien weiter  */
 {
-    struct flowgraph *g; struct obj old;int or;
-    struct IC *p;struct Var *v;int i,changed,r,j;
+    flowgraph *g; obj old;int or;
+    IC *p;Var *v;int i,changed,r,j;
     if(DEBUG&1024) printf("searching copies\n");
     cp_act=mymalloc(csize);
     cp_dest=mymalloc(csize);

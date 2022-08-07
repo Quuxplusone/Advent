@@ -1,57 +1,58 @@
-/*  $VER: vbcc (vbc.h) V0.8     */
+/*  $VER: vbcc (vbc.h) $Revision: 1.20 $    */
 
 #include "supp.h"
 
 #define eval_constn(a) eval_const(&a->val,a->ntyp->flags)
 
-struct identifier_list{
+typedef struct identifier_list{
     char *identifier;
     int length;
     struct identifier_list *next;
-};
-struct struct_identifier{
+} identifier_list;
+typedef struct struct_identifier{
 /*    int flags;*/
   char *identifier;
   struct struct_declaration *sd;
   struct struct_identifier *next;
-};
+} struct_identifier;
 
 #ifndef NODES
 #error wrong node
-struct node{
+typedef struct node{
     int flags,lvalue,sidefx;
-    struct Typ *ntyp;
+    type *ntyp;
     struct node *left;
     struct node *right;
     struct argument_list *alist;
     char *identifier;
     union atyps val;
     struct obj o;
-};
+} node;
 
-typedef struct node *np;
+typedef node *np;
 
-#define NODES sizeof(struct node)
+#define NODES sizeof(node)
 #endif
 
-struct argument_list{
+typedef struct argument_list{
   np  arg;
   struct argument_list *next;
   struct IC *pushic;
-};
+} argument_list;
 
 
 #define MAXI 512 /* maximale Laenge von Identifiers in Bytes    */
 #define MAXN 128 /* maximale Verschachtelung von Bloecken */
 
 extern struct tunit *first_tunit,*last_tunit;
-extern struct Typ *arith_typ(struct Typ*,struct Typ *);
+extern type *arith_typ(type*,type *);
 extern void insert_constn(np);
 extern int int_erw(int);
-extern int type_expression(np),compatible_types(struct Typ *,struct Typ *,int),
-    compare_sd(struct struct_declaration *,struct struct_declaration *);
+extern int type_expression(np,type *),
+  compatible_types(type *,type *,int),
+  compare_sd(struct struct_declaration *,struct struct_declaration *);
 #if HAVE_AOS4
-extern int aos4_attr(struct Typ *,char *);
+extern int aos4_attr(type *,char *);
 #endif
 extern np identifier_expression(void),constant_expression(void),string_expression(void),
    postfix_expression(void),unary_expression(void),cast_expression(void),
@@ -79,10 +80,10 @@ extern void add_sl(struct struct_declaration *,struct struct_list (*)[]);
 extern void free_sd(struct struct_declaration *);
 extern void prl(FILE *,struct struct_declaration *);
 extern char *add_identifier(char *,int);
-extern struct Typ *declarator(struct Typ *),*direct_declarator(struct Typ *),
-           *pointer(struct Typ *),*declaration_specifiers(void);
-extern int declaration(int),type_uncomplete(struct Typ *);
-extern struct const_list *initialization(struct Typ *,int,int,int,struct struct_declaration *,struct const_list *);
+extern type *declarator(type *),*direct_declarator(type *),
+           *pointer(type *),*declaration_specifiers(void);
+extern int declaration(int),type_uncomplete(type *);
+extern struct const_list *initialization(type *,int,int,int,struct struct_declaration *,struct const_list *);
 extern void init_local_compound(struct Var *);
 extern zmax init_dyn_sz,init_const_sz;
 extern int init_dyn_cnt,init_const_cnt;
@@ -96,6 +97,7 @@ extern struct struct_identifier *first_si[MAXN],*last_si[MAXN],*merk_sif,*merk_s
 extern struct identifier_list *first_ilist[MAXN],*last_ilist[MAXN],*merk_ilistf,*merk_ilistl;
 extern void free_ilist(struct identifier_list *);
 extern int nesting;
+extern hashtable *hash_ext;
 extern struct Var *first_var[MAXN],*last_var[MAXN],*merk_varf,*merk_varl,*first_ext,*last_ext;
 extern struct Var *block_vla[MAXN];
 extern struct llist *vladeflabels[MAXN],*vlajmplabels[MAXN];
@@ -108,13 +110,14 @@ extern int storage_class_specifiers(void);
 extern void enter_block(void),leave_block(void);
 extern struct Var *find_var(char *,int);
 extern struct Var *find_ext_var(char *);
-extern struct Var *add_var(char *,struct Typ *,int,struct const_list *);
+extern struct Var *add_var(char *,type *,int,struct const_list *);
 extern void fi_from_attr(struct Var *);
 
 extern int usz;
 
 extern int c99;
 extern int opencl;
+extern int merge_strings;
 extern int disallow_statics;
 extern int header_cnt;
 extern int softfloat;
@@ -125,14 +128,15 @@ extern FILE *input_wpo;
 extern void gen_IC(np,int,int),convert(np,int),gen_label(int);
 extern void gen_test(struct obj *,int,int,int);
 extern void savescratch(int,struct IC *,int,struct obj *);
-struct regargs_list{
+typedef struct regargs_list{
   struct regargs_list *next;
   struct argument_list *al;
   int reg;
   struct Var *v;
-};
+  int rsaved;
+} regargs_list;
 #ifdef HAVE_REGPARMS
-extern zmax push_args(struct argument_list *,struct struct_declaration *,int,struct regargs_list **,struct reg_handle *,struct obj *,struct Typ *,int,struct Typ *);
+extern zmax push_args(struct argument_list *,struct struct_declaration *,int,struct regargs_list **,struct reg_handle *,struct obj *,type *,int,type *);
 #else
 extern zmax push_args(struct argument_list *,struct struct_declaration *,int,struct regargs_list **);
 #endif
@@ -153,18 +157,18 @@ extern int no_cast_free;
 
 extern np makepointer(np);
 
-struct vlaadjust_list {
+typedef struct vlaadjust_list {
   struct IC *branch,*first;
   struct vlaadjust_list *next;
-};
+} vlaadjust_list;
 
 extern int switch_typ,switch_count,switch_act;
-struct llist{
+typedef struct llist{
     char *identifier;
     int label,flags,switch_count;
     struct llist *next;
     union atyps val;
-};
+} llist;
 #define LABELDEFINED 1
 #define LABELUSED 2
 #define LABELDEFAULT 4
@@ -176,14 +180,14 @@ extern void free_llist(struct llist *);
 extern int endok,return_label,return_value,break_label;
 extern int const_expr,for_decl;
 extern struct Var *return_var;
-extern struct Typ *return_typ;
+extern type *return_typ;
 extern zmax local_offset[MAXN];
 
-extern void scratch_var(struct obj *,int,struct Typ *);
-extern void get_scratch(struct obj *,int,int,struct Typ *);
+extern void scratch_var(struct obj *,int,type *);
+extern void get_scratch(struct obj *,int,int,type *);
 extern void gen_cond(struct obj *,int,int,int);
 
-#define MAXCF 60
+#define MAXCF 70
 extern int c_flags[MAXCF];
 extern char *c_flags_name[MAXCF];
 extern union ppi c_flags_val[MAXCF];
@@ -195,10 +199,10 @@ extern char *inname;
 extern void gen_vars(struct Var *);
 
 /*  Format der Tabelle fuer Fehlermeldungen */
-struct err_out{
+typedef struct err_out{
     char *text;
     int  flags;
-};
+} terr_out;
 
 
 /*  Flags fuer err_out.flags    */
@@ -218,12 +222,12 @@ struct err_out{
 extern struct err_out err_out[];
 extern int err_num;
 
-struct misra_err_out{
+typedef struct misra_err_out{
 		int chapter;
 		int rule;
 		char *text;
 		int flags;
-};
+} tmisra_err_out;
 
 extern struct misra_err_out misra_err_out[];
 
@@ -233,12 +237,12 @@ extern struct misra_err_out misra_err_out[];
 #define MISRA_1998					8
 
 #ifdef HAVE_ECPP
-struct ecpp_dtor_list {
+typedef struct ecpp_dtor_list {
   struct Var *var;
   struct ecpp_dtor_list *next;
-};
+} ecpp_dtor_list;
 extern struct struct_declaration *current_class;
-extern struct Typ *current_func;
+extern type *current_func;
 extern struct ecpp_dtor_list *ecpp_dlist[MAXN];
 struct Var *ecpp_find_ext_var(char *identifier);
 struct Var *ecpp_find_var(char *identifier);
@@ -254,6 +258,7 @@ extern int errors;
 
 extern int float_used;
 extern char *cur_func;
+extern Var *cur_funcv;
 extern int line;
 extern void free_clist(struct const_list *);
 extern struct const_list *first_clist,*last_clist;

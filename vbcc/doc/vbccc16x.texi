@@ -188,7 +188,7 @@ This backend provides the following additional options:
 
 @table @code
     @item __bit
-           A single bit in the bit-addressable inernal RAM-area.
+           A single bit in the bit-addressable internal RAM-area.
              Only static and external variables may use this type.
              It is not allowed for auto or register storage-class.
              Also, arrays of bits, pointers to bits or bits within

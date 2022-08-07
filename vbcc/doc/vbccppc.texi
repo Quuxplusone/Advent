@@ -6,10 +6,19 @@ This backend provides the following additional options:
 
 @table @option
 
-    @item -merge-constants
+    @item -amiga-align
 
-                Place identical floating point constants at the same
-                memory location. This can reduce program size.
+                Do not require any alignments greater than 2 bytes.
+                This is needed when accessing Amiga system-structures, but
+                can cause a performance penalty.
+
+    @item -baserel32mos
+
+                Use 32bit base-relative addressing as used by MorphOS.
+
+    @item -baserel32os4
+
+                Use 32bit base-relative addressing as used by AmigaOS 4.
 
     @item -const-in-data
 
@@ -19,6 +28,13 @@ This backend provides the following additional options:
                 Note that on operating systems with memory protection this
                 option will disable write-protection of constant data.
 
+    @item -eabi
+               Use the PowerPC Embedded ABI (eabi).
+
+    @item -elf
+
+                Do not prefix symbols with '_'. Prefix labels with '.'.
+
     @item -fsub-zero
 
                 Use fsub to load a floating-point-register with zero.
@@ -26,15 +42,46 @@ This backend provides the following additional options:
                 valid values (i.e. no NaNs etc.) which may not be the case
                 depending on startup-code, libraries etc.
 
-    @item -amiga-align
+    @item -gas
+                Create code suitable for the GNU assembler.
 
-                Do not require any alignments greater than 2 bytes.
-                This is needed when accessing Amiga system-structures, but
-                can cause a performance penalty.
+    @item -madd
+               Use the @code{fmadd/fmsub} instructions for combining
+                multiplication with addition/subtraction in one instruction.
+                As these instructions do not round between the operations,
+                they have increased precision over separate addition and
+                multiplication.
 
-    @item -elf
+                While this usually does no harm, it is not ISO conforming
+                and therefore not the default behaviour.
 
-                Do not prefix symbols with '_'. Prefix labels with '.'.
+    @item -merge-constants
+
+                Place identical floating point constants at the same
+                memory location. This can reduce program size.
+
+    @item -no-align-args
+
+                Do not align function arguments on the stack stricter
+                than 4 bytes. Default with @option{-poweropen}.
+
+    @item -no-peephole
+
+                Do not perform several peephole optimizations.
+                Currently includes:
+                @itemize @minus
+                 @item better use of d16(r) addressing
+                 @item use of indexed addressing modes
+                 @item use of update-flag
+                 @item use of record-flag
+                 @item use of condition-code-registers to avoid certain branches
+                @end itemize
+
+    @item -no-regnames
+
+                Do not use register names but only numbers in the assembly
+                output. This is necessary
+                to avoid name-conflicts when using @option{-elf}.
 
     @item -poweropen
 
@@ -46,11 +93,8 @@ This backend provides the following additional options:
                 Generate code for the modified PowerOpen ABI used in the
                 StormC compiler (aka WarpOS ABI).
 
-    @item -no-regnames
-
-                Do not use register names but only numbers in the assembly
-                output. This is necessary
-                to avoid name-conflicts when using @option{-elf}.
+    @item -sd
+                 Place all objects in small data-sections.
 
     @item -setccs
 
@@ -65,62 +109,16 @@ This backend provides the following additional options:
                 arguments.
                 @option{-setccs} will fix this problem.
 
-    @item -no-peephole
+    @item -use-commons
 
-                Do not perform several peephole optimizations.
-                Currently includes:
-                @itemize @minus
-                 @item better use of d16(r) addressing
-                 @item use of indexed addressing modes
-                 @item use of update-flag
-                 @item use of record-flag
-                 @item use of condition-code-registers to avoid certain branches
-                @end itemize
+                Use real common symbols instead of bss symbols for
+                non-initialized external variables.
 
     @item -use-lmw
 
                 Use @code{lmw/stmw}-instructions. This can significantly reduce
                 code-size. However these instructions may be slower on
                 certain PPCs.
-
-    @item -madd
-               Use the @code{fmadd/fmsub} instructions for combining
-                multiplication with addition/subtraction in one instruction.
-                As these instructions do not round between the operations,
-                they have increased precision over separate addition and
-                multiplication.
-
-                While this usually does no harm, it is not ISO conforming
-                and therefore not the default behaviour.
-
-    @item -eabi
-               Use the PowerPC Embedded ABI (eabi).
-
-    @item -sd
-                 Place all objects in small data-sections.
-
-    @item -gas
-                Create code suitable for the GNU assembler.
-
-    @item -no-align-args
-
-                Do not align function arguments on the stack stricter
-                than 4 bytes. Default with @option{-poweropen}.
-
-    @item -use-commons
-
-                Use real common symbols instead of bss symbols for
-                non-initialized external variables.
-
-    @item -baserel32os4
-
-                Use 32bit base-relative addressing as used by AmigaOS 4.
-
-    @item -baserel32mos
-
-                Use 32bit base-relative addressing as used by MorphOS.
-
-
 
 @end table
 
@@ -243,6 +241,9 @@ This backend provides the following additional options:
 @table @code
         @item __PPC__
         
+        @item __AMIGADATE__
+                This is set to current date as @code{"(DD.MM.YYYY)"},
+                useful with version strings.
 @end table
 
 @section Stack

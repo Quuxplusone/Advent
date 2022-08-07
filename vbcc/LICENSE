@@ -1,12 +1,12 @@
-Everything in the initial checkin of this directory, except for
-this LICENSE file itself, is (c) 2011 Volker Barthelmann.
+Everything in this vbcc/ directory, except for this LICENSE file itself,
+is (c) 1995-2022 Volker Barthelmann.
 
-The initial checkin of this vbcc/ directory contains the original
-source code of Volker Barthelmann's VBCC compiler, as downloaded
-on 2016-04-12 from http://server.owl.de/~frank/tags/vbcc0_9e.tar.gz.
+This vbcc/ directory contains the original source code of
+Volker Barthelmann's VBCC compiler, as downloaded
+on 2022-06-25 from http://server.owl.de/~frank/tags/vbcc0_9hP2.tar.gz.
 
 Barthelmann's license text is included in the TEXI documentation
-in this directory (doc/vbcc.texi), and also available online
+in this directory (vbcc/doc/vbcc.texi), and also available online
 at http://www.ibaug.de/vbcc/doc/vbcc.html, but here it is again:
 
 
