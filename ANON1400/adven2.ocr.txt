@@ -201,7 +201,7 @@ ADVEN2
 2930  IF R9<K2 THEN 2960
 2940  PRINT "Unable to load."
 2950  GOTO 1080
- 2960  MAT  READ #K3;O,K
+ 2960  MAT  READ #K3;O,M
 2970  READ #K3;A,B9,C8,C9,D2,L,L0,P0,R0,R1,R3,M9,S,T,Z9,D1,F9
 2980  PRINT "The game is now as it was when you saved it."
 2990  A=35
