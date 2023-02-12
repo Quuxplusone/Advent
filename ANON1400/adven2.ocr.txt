@@ -588,7 +588,7 @@ ADVEN2
 6410  GOTO 1080
 
 6420  GOTO Z9-K1 OF 6460
-6430  PRINT "The Zarka becomes enraged (but shiny)."
+6430  PRINT "The Zarka becomes enraged [but shiny]."
 6440  Z9=K2
 6450  GOTO 1080
 6460  PRINT "The Zarka is not very amused."
