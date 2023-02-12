@@ -99,7 +99,7 @@ ADVEN2
 1950  GOTO 1830
  1960  O[67,K1]=65
 1961  L0=L0-O[67,K2]
-1970  R1=R0
+ 1970  R1=R0
 1980  R0=65
 1990  PRINT "The gate swings open as you pass through into the train."'13'10"The card pops out onto the floor."
 2000  PRINT "Doong, doong!  Swoosh!  The doors close and the train immediatly starts to"
