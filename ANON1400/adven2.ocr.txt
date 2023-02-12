@@ -471,7 +471,7 @@ ADVEN2
 
 5250  O[19,K1]=K0
 5260  GOTO 1080
-5270  IF O[23,K1]#R0 THEN 3590
+ 5270  IF O[23,K1]#R0 THEN 3590
 5280  IF A$="SPRAY" THEN 4890
 5290  PRINT "As you thrust toward the beast, he grabs your arm, causing you"
 5300  PRINT "to release the knife.  He then proceeds to bend the knife in half."
