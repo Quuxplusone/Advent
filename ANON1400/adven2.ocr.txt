@@ -406,7 +406,7 @@ ADVEN2
  4600  PRINT "humming to himself."
 4610  GOTO 1080
  4620  IF  NOT R3 THEN 4520
-4630  PRINT "You hear a humming noise probably coming from the reactor."
+4630  PRINT "You hear a humming noise probobly coming from the reactor."
  4640  GOTO 1080
 4650  REM <<Kill/Attack>>
 
