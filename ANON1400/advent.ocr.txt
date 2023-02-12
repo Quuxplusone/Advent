@@ -32,7 +32,7 @@ ADVENT
 1210  CONVERT R0 TO A$
 1220  IF  NOT POS("5 :6 :7 :8 :9 :10:11:12:13:14:17:18:19:20:29:30:41:42:47:53:54:56",A$[K1,K2]) OR L THEN 1270
 1230  IF RND(K3)>.9 THEN 1260
-1240  PRINT "Oh no!!  Wild xeener bugs just ate your head!"
+1240  PRINT "Oh no!!!  Wild xeener bugs just ate your head!"
 1250  STOP
 1260  PRINT "Wild xeener bugs are approaching!"
 1270  GOTO B9 OF 1290,1350
