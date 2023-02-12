@@ -114,7 +114,6 @@ ADVEN2
  2080  O1$=UPS$(O$)
 2090  IF  NOT LEN(O$) THEN 1080
 2100  IF O1$[K1,K5]="ARGYL" THEN 2130
-
 2110  PRINT "Zowee!"
 2120  GOTO 1080
  2130  A=K4*K7
@@ -173,7 +172,6 @@ ADVEN2
 2660  NEXT A
  2670  PRINT "Thank you."
 2680  PRINT #K3;T$, END
-
 2690  GOTO 1080
 2700  PRINT "Bug file full."
 2710  GOTO 2670
@@ -232,7 +230,6 @@ ADVEN2
 3183  GOTO 1080
 3190  CONVERT O[A,K1] TO A$[K9-(O[A,K1]>K9),K9]
 3200  PRINT O$;A$
-
 3210  GOTO 1080
  3220  REM <<Have sex/Screw>>
 3230  GOSUB 6580
@@ -291,7 +288,6 @@ ADVEN2
  3730  O1$=UPS$(O$)
 3740  GOTO 3520
  3750  REM <<Spray>>
-
 3760  A$="SPRAY"
  3770  GOSUB 6580
 3780  IF  NOT LEN(O$) THEN 3830
@@ -350,7 +346,6 @@ ADVEN2
 4128  IF O[44,K1]=-K1 THEN 4131
 4129  PRINT "You don't have the water."
 4130  GOTO 1080
-
 4131  PRINT "Cool and delicious."
 4132  O[44,K1]=K0
  4133  S=S-O[44,K2]
@@ -409,7 +404,6 @@ ADVEN2
 4630  PRINT "You hear a humming noise probobly coming from the reactor."
  4640  GOTO 1080
 4650  REM <<Kill/Attack>>
-
  4660  GOSUB 6580
 4670  IF LEN(O$) THEN 4720
  4680  PRINT "Kill what?";
@@ -468,7 +462,6 @@ ADVEN2
 5220  GOTO 3590
 5230  PRINT "The slime quickly dehydrates and becomes a powder that falls"
 5240  PRINT "into the crevices in the floor."
-
 5250  O[19,K1]=K0
 5260  GOTO 1080
  5270  IF O[23,K1]#R0 THEN 3590
@@ -527,7 +520,6 @@ ADVEN2
 5800  STOP
 5810  REM <<Toss>>
  5820  GOSUB 6580
-
 5830  IF LEN(O$) THEN 5890
  5840  PRINT "Toss what?";
 5850  LINPUT O$
@@ -586,7 +578,6 @@ ADVEN2
 6390  IF O[25,K1]=-K1 THEN 6420
 6400  PRINT "You don't have the Zarka."
 6410  GOTO 1080
-
 6420  GOTO Z9-K1 OF 6460
 6430  PRINT "The Zarka becomes enraged [but shiny]."
 6440  Z9=K2
