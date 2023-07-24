@@ -1,0 +1,570 @@
+File: THINGS
+
+Battery-powered lamp
+Lamp
+
+Set of iron keys
+Keys
+
+Dusty oak chest
+Chest
+
+Sparkling diamond jewelry
+Jewelry
+
+Dazzling nugget of gold
+Gold
+
+Small structure in the tree
+Structure
+
+Wrinkly old witch
+Witch
+
+Black 6-inch lever embedded in the wall of the cubicle
+Lever
+
+Sexy young girl
+Girl
+
+Perfectly round pearl
+Pearl
+
+Obscure, wrinkled note
+Note
+
+Stradivarius cello
+Cello
+
+Finely-crafted Swiss timepiece
+Timepiece
+
+Ancient piece of parchment
+Parchment
+
+Delicate ming vase
+Vase
+
+Three-foot long staff
+Staff
+
+Set of very rare coins
+Coins
+
+Sharp butcher's knife
+Knife
+
+Threatening mass of slime on the floor
+Slime
+
+Soft,velvet foot stool
+Stool
+
+[UNREADABLE AT BOTTOM OF PAGE]
+[UNREADABLE AT TOP OF PAGE]
+
+Great number of little dirt hills
+Hills
+
+Huge gorrila-like beast
+Beast
+
+Gelatinous cube
+Cube
+
+Horrible Zarka
+Zarka
+
+Shining Platinum globe with readable coating
+Globe
+
+Hungry looking black snake
+Snake
+
+Wall of large rocks blocking your exit
+Rocks
+
+Large order of french fries
+Fries
+
+Burgerland dinner plate
+Plate
+
+Filet-o-fish sandwich
+Sandwich
+
+Odd clown with red hair and yellow overalls
+Clown
+
+Can of disinfectant spray
+Spray
+
+Generous slice of pizza
+Pizza
+
+King-size bed
+Bed
+
+Porcelain toilet
+Toilet
+
+Old-fashioned bathtub
+Bathtub
+
+Tiny yellow book with a broken binding
+Book
+
+Large machine
+Machine
+
+Small red knob [on the machine]
+Knob
+
+Tiny tan label [on the machine]
+Label
+
+Emerald wedding ring
+Ring
+
+[UNREADABLE AT TOP OF PAGE]
+Block
+
+Clear water [in waterfall]
+Water
+
+Stately wooden door
+Door
+
+Leather work glove
+Glove
+
+Silver disc with markings
+Disc
+
+Immense bulletin board
+Board
+
+Signpost partially covered with snow
+Signpost
+
+Beige button marked ~ HIGH VOLTAGE ~
+Button
+
+Strange contraption
+Contraption
+
+Dirty spade
+Spade
+
+Beautiful Jade statue
+Statue
+
+Ivory-handled comb
+Comb
+
+Wothless shards of pottery
+Shards
+
+Black six-inch lever embedded in the wall of the cubicle
+Lever
+
+Black six-inch lever embedded in the wall of the cubicle
+Lever
+
+Black six-inch lever embedded in the wall of the cubicle
+Lever
+
+Beige button marked ~ HIGH VOLTAGE ~
+Button
+
+Strange contraption
+Contraption
+
+Wall of rocks blocking the western exit
+Rocks
+
+
+File: DESCRIPT
+
+You're in a vast meadow that streaches endlessly in all directions.
+To the west is a large tree.
+Meadow
+
+You're in the meadow, underneath a large oak tree.  There are small
+carvings on the tree, and they seem to mean something.
+Meadow near Tree
+
+You're in a treehouse, barren of any furnishings except for a cubicle to
+the south, which is filled with a shimmering green light.
+Treehouse
+
+You're in a cubicle.  A green glow surrounds you on all sides,
+but it is impossible to see the source of it.
+Green Cubicle
+
+You are in a small, dark room with a passage to the north and a
+set of ascending stone stairs to the east.
+Small Room
+
+You are in a twisting maze of little passages, all alike.
+Maze
+
+You are in a little maze of twisty passages, all alike.
+Maze
+
+You are in a twisty maze of little passages, all alike.
+Maze
+
+You are in a very dusty room with a teakwood floor.  You may leave this
+room to the north and south.
+Chest Room
+
+You are in a very small room with oak walls, and it's a little cramped.
+Inside Chest
+
+You are in the Mystery Room, a very lovely room with exits to the
+east, west, and south.  The hole in the ceiling is too far up to use.
+Mystery Room
+
+You have entered the Hall of the Sea, a room filled with blue-green
+mists.  Mysterious shadows seem to dance upon the walls as your lamp
+sheds light through the eerie colored fog.  Exits are east and west.
+Hall of the Sea
+
+You're in a damp, somewhat musty chamber that appears to be an
+ancient catacomb.  There is a passage to the east.
+Catacomb
+
+You're in the Turkish Bath.  Soothing mist surrounds you.  You may
+go down stone stairs to the west, or up a metal ramp to the east.
+Turkish Bath
+
+You have entered a small garden.  The soil is very loose here.  To the west
+is a metal ramp that leads downward; to the north is a large glass building.
+Garden
+
+You're in an empty glass building that seems to have been used
+as a greenhouse.  To the north is a house; to the south is a
+garden; to the west is a store room.
+Greenhouse
+
+
+This is a very tiny store room that has a large hole in the floor
+on the western side of the room, and an exit to the east.
+Store Room
+
+You're in the Hall of Tones.  Pleasant tunes can be heard as you
+decide whether to go west, or up steep stairs to the east.
+Hall of Tones
+
+You are in a very beautiful room, the Chamber of Time.
+Exits are to the east and west.
+Chamber of Time
+
+This room's walls are covered with a mixture of blood
+and slimy ooze.  Exits: North and south.
+Slime Room
+
+You're in a library.  The only apparent exits to this room are:
+a passage to the south and an archway to the east.
+Library
+
+You're in a kitchen.  There are two exits, one to the west and
+one to the south.  The scent of food is in the air.
+Kitchen
+
+You are in the living room of the house.  Exits: North, south,
+east, and a very narrow passage to the west.
+Living Room
+
+You are in a small foyer, barren of any furnishings, except for a large
+glass cubicle to the south, which is filled with shimmering red light.
+Exits: East and west, and a northern exit leading upstairs.
+Foyer
+
+You are in a glass cubicle.  Surrounding you is a shimmering
+red glow, but it is impossible to see the source of it.
+Red Cubicle
+
+You're in a cool room with a towering waterfall filling up the eastern
+part of the room.  You're on a path that bends north and west, and there's
+a glass cubicle to the south, which is filled with shimmering blue light.
+Waterfall
+
+This room is only five feet high, and has exits to the south and east.
+Mine Field
+
+You are in a glass cubicle.  Surrounding you is a shimmering
+blue glow, but it is impossible to see the source of it.
+Blue Cubicle
+
+You are at the northern end of a very long sewer pipe.  To the north
+is a low room, and there are numerous holes in the floor of the pipe.
+Sewer Pipe
+
+This giant room is the home of the most valuable treasure in the cave.
+In the direct center of the room, a sphere of great beauty was placed
+many years ago.  The only exits to this room are the stairs above you.
+Treasure Room
+
+You're in a deep pit.  The only exit is straight up.
+Viper Pit
+
+You're in the front yard of the house.  To the west is a door, to the
+south a dark hole, and meadow everywhere else.
+Front Yard
+
+
+You're in a meadow, north of a house.  For to the north,
+a tiny oasis is visible.
+North of House
+
+You're in Burgerland!  A meadow surrounds this tiny oasis,
+which has no apparent entrance.
+Burgerland
+
+You're in a hallway.  There are various openings to the north and west,
+and two stairways: one leading up to the east and one down to the foyer.
+Hallway
+
+You're in the attic.  The only exit is a stairway leading downward.
+Attic
+
+You're in and old-fashioned bathroom, a very tidy place.
+Exits are to the north and east.
+Bathroom
+
+You're in a large room, probably the master bedroom.  There is
+an exit to the south, and one to the east.
+Bedroom
+
+You're in the sitting room.  Exits: west and south, and a cubicle to
+the east, filled with shimmering purple light.
+Sitting Room
+
+You're in a cubicle.  A purple glow surrounds you, but you
+cannot see the source of it.
+Purple Cubicle
+
+You're in a very tight east-west passageway.  There is also a small hole
+in the floor on the northern side of the passage.  A freezing wind blows
+out of the hole
+East-West Passage
+
+You're in an extremely cold room.  Icicles hang from the ceiling, and near
+a particularly large icicle in the southern part of the room, is a hole.
+Cold Room
+
+You're on a sandy shore.  To the west is some more sand, but it seems
+to be mixed with water.  There is a tight passage leading east.
+Sandy Shore
+
+You're in a pool of quicksand.  To the west you can see a path leading
+outside, and to the east, a shore.
+Quicksand
+
+The floor here is quite rocky, making your footing quite unsure.  You're
+on a path with a lighted passage to the south and a dark tunnel to the north.
+Rocky Path
+
+You're at the base of a mountain.  It is snowing lightly here,
+partially covering an assortment of heavy wires.  To the north
+is a cave leading underground.
+Base of Mountain
+
+You're in a room filled with cobwebs.  There appear to have been recent
+archaeological diggings in this area.  Passages exit to the north and south.
+Archaeology Room
+
+You're in a small, but elaborately decorated chapel.  There is a large
+machine in one corner of the room, and it is covered with dust.
+The only exit to the room is an archway to the south.
+Chapel
+
+
+You're at the summit of Mount Frobozz.  The eastern slope is impassable,
+but there are trails to the north and south.  An inviting, cozy lighted
+shack is to the west.  It is snowing quite heavily here.
+Summit of Mountain
+
+You're at the top of the Expert Slope, a sheet of ice plunging downward
+out of sight at an unpleasant angle.  A small snowy trail leads south.
+Expert Trail
+
+You are at the top of the Bunny Slope!  It seems as though a child would
+have no problem skiing down, although walking down is out of the question.
+A path leads away to the north.
+Bunny Slope
+
+You are in a comfortable ski shack, apparently a shelter from the cold
+weather outside.  There's a rickety staircase leading downward in here.
+Ski Shack
+
+You're in a dark cave with a rocky floor.  There is a stairway leading
+up and an eastern passage.
+Cave
+
+You're crawling over rocky cobbles is an east-west passage.  At the
+eastern end is a formidable wooden door, which is open.
+East-West Crawl
+
+You're in a very peculiar room with no apparent exits.  There is an unusual
+flashing light that fills the room, seemingly coming from far above.
+Strobe Room
+
+You are in a very long, north-south sewer pipe.  You can hear a strange,
+distant, echoing sound, apparently an animal humming to himself.
+Sewer Pipe
+
+
+File: MOVES
+
+ 56
+
+  1  1  1  2  0  0  0  0  0
+  1  1  1  1  3  0  0  0  0
+  0  4  0  0  0  2  4  0  0
+  3  0  0  0  0  0  0  3  0
+  9  0 14  0 14  0  0  0  0
+  0  0  6  7  6  6  0  0  0
+  7  8  7  0 55  7  0  0  0
+  7  8  0  8  8 11  0  0  0
+  6  5  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0
+  0 20 19 12  0  0  0  0  0
+  0  0 11 13  0  0  0  0  0
+  0  0 12  0  0  0  0  0  0
+  0  0 15  5 15  5  0  0  0
+ 16  0  0 14  0 14  0  0  0
+ 23 15  0 17  0  0  0  0  0
+  0  0 16 18  0 18  0  0  0
+  0  0 17 19 17  0  0  0  0
+  0  0 18 11  0  0  0  0  0
+ 11 26  0  0  0  0  0  0  0
+  0  6 22  0  0  0  0  0  0
+  0 23  0 21  0  0  0  0  0
+ 22 16 24  6  0  0  0  0  0
+ 35 25 32 23 35  0 25  0  0
+ 24  0  0  0  0  0  0 24  0
+ 20 28  0 27  0  0 28  0  0
+  0 29 26  0  0  0  0  0  0
+ 26  0  0  0  0  0  0 26  0
+ 27 56  0  0  0 30  0  0  0
+  0  0  0  0 29  0  0  0  0
+ 32  0  0  0 32  0  0 32  0
+ 33 31  1 24  0 31 24  0  0
+ 34 32  1  1  0  0  0  0  0
+  1 33  1  1  0  0  0  0  0
+ 39  0 36 37 36 24  0  0  0
+  0  0  0  0  0 35  0  0  0
+ 38  0 35  0  0  0  0  0  0
+  0 37 39  0  0  0  0  0  0
+  0 35 40 38  0  0 40  0  0
+  0  0  0 39  0  0  0 39  0
+ 42  0 30 43  0 42  0  0  0
+  0 41  0  0 41  0  0  0  0
+  0  0 41 44  0  0  0  0  0
+  0  0 43 45  0  0  0  0  0
+ 47 46 44  0  0  0  0  0  0
+ 45  0  0  0  0  0  0  0  0
+ 48 45  0  0  0  0  0  0  0
+  0 45  0  0  0  0  0  0  0
+ 50 51  0 52  0  0 52  0  0
+  0 49  0  0  0  0  0  0  0
+ 49  0  0  0  0  0  0  0  0
+  0  0 49  0  0 53  0 49  0
+  0  0 54  0 52  0  0  0  0
+  0  0 13 53  0  0  0  0  0
+  0  0  0  0  0  7  0  0  0
+ 29 56  0  0  0  0  0  0  0
+
+
+File: ITEMS
+
+ 61
+
+  3   0          0   6          0   0          9 999
+  0  53          0   0         10   0          0   2
+999   0         11 999          1   4        999   0
+  0   0          0  12          0   0         13   0
+  2  18          0   0         19   0          0  23
+  0   2         15   0          0  25          0   0
+ 30   0          0  22          0   0         20 999
+  1  17          0   0          0   0          0  27
+  0   0         29 999          1   0          0   0
+  0 999          0  30          0   0         31 999
+  1   0          0   0          0   0          0  34
+  0   0         34   0          0  34        999   1
+ 37   0          0  22          0   0         38 999
+  0  37        999   0         37 999          0  21
+  0   2         48 999          0  48        999   0
+ 48 999          0   0          0   0         42   0
+  0  26          0   0         54 999          0  36
+  0   0         52   0          0  49        999   0
+ 46 999          0  46        999   0         46 999
+  0  47          0   0          0   0          0  39
+  0   0          0   0          0  25        999   0
+ 28 999          0  40        999   0         49 999
+  0  49        999   0          0 999
+
+
+File: MESSAGES
+
+The carvings say:  ^^^ Morton's treehouse --- Six meters above ^^^
+
+
+The note says:  'Thou who hast desecrated the Hallowed Tomb
+               of Malak Fa'ar shall forever be plagued
+               by His deadly curse!!'
+At the bottom is scribbled the word:  ARGYLE
+
+
+                  Care and Feeding of Your Zarka
+                      Copyright (C) 1999 by
+
+                    FROBOZZ MAGIC BOOK COMPANY.
+                      All rights reserved.
+
+               Zarkas need a daily supply of water,
+               and eat very little.  But when they
+               are hungry, they are very picky.
+
+               Most zarkas will eat only pizza, and
+               this preference was probably estab-
+               listed by the unusual climate in which
+               they live.  Zarkas always enjoy a day
+               outside, Which helps to make their
+               reddish-purple fur shiny.  Because of
+               their size, they can be found anywhere
+               particularly near caves, usually in
+               enclosed places.  They love precious
+               metals.  Zarkas have a very unusual
+               way of reproducing: they find anoth...
+
+The printing has faded with age and becomes undecipherable here.
+
+
+The parchment contains words and sketches:
+
+               -----------------------
+               | Le Jardin       /   |
+               |                /    |
+               |               /     |
+               |  La Route -> /      |
+               |             /       |
+               |   ----------        |
+               |  /                  |
+               |_/          \ /      |
+               |             X <-ici |
+               |            / \      |
+               -----------------------
+
+
+               This Globe is protected internally by
+                  FROBOZZ MAGIC SECURITY SYSTEM
+               *************************************
+
+
+               This is the TRINITY/3000 Automatic Coupler
+                       Pull knob for directions...
+                 Mgfd. by FROBOZZ MAGIC COMPUTER COMPANY

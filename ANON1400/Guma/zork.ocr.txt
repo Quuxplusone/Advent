@@ -1,0 +1,666 @@
+ZORK
+
+100  COM A$[40],D$[30],F$[10],R[56,8],R0,N0,T0,C4,L1,L0,V6,G1,M3,A4,D3,L9,V1,E,X2,T
+200  COM H1,W,V,G,S,C0,L2,O,M2,Q2,L[56,2],B1$[56],O$[16],V$[14],K$[255],T$[4],B$[90
+201  COM F3,F4,F6,F7,F9,F0,B0
+202  IF A$#"" THEN 250
+203  CHAIN A,"Advent.X602"
+204  END
+250  FILES Matrix.X602,Descrp.Z999,Object.X602,Things.X602,Short.X602,*
+300  READ R0,N0,W,V,G,S,O,F3,F4,F6,F7,F9,F0,C0
+355  SYSTEM T$[V,F4],"TIM"
+356  T0=POS("X601X602A000",T$)
+360  C4=L1=L0=V6=G1=M3=A4=D3=Q2=M2=X2=T1=B0=O
+400  MAT  READ #V;R[R0,W]
+500  MAT  READ #F3;L[N0,S]
+505  B1$[V,R0]=""
+600  L9=V
+601  L2=R0*G
+700  DEF FNL(R)=R<G OR R>14 AND R<17 OR R>30 AND R<35 OR R=46 OR 4>48 AND R
+800  PRINT "Welcome to Adventure II!"'10'13"Do you want instructions? ";
+801  LINPUT A$[V,V]
+802  K$="HELP.LOOK"
+803  IF POS("Yy",A$[V,V]) THEN 900
+804  K$="LOOK"
+805  PRINT
+806  GOTO 900
+850  PRINT "> ";
+851  LINPUT K$
+852  D=BRK(V)
+853  K$=UPS$(K$)
+854  IF  NOT POS(K$," ALL") THEN 900
+855  K=POS(K$," ALL")+V
+856  IF  NOT POS(K$[K]," ALL") THEN 900
+857  PRINT "Only one 'all' per input.  Reenter."
+858  GOTO 850
+900  IF K$="" THEN 850
+901  L2=L2-L1
+902  T1=T1+V
+903  IF  NOT POS(K$,".") THEN 909
+904  A$=K$[V,POS(K$,".")-V MIN 26]
+905  K$=K$[POS(K$,".")+V]
+906  GOTO 1005
+909  A$=K$[V,LEN(K$) MIN 30]
+910  K$=""
+911  IF L2>R0 THEN 1005
+912  E$=CHR$(L2+G)
+913  GOTO POS('16'11'6'0,E$)+V OF 1005,914,914,916,919
+914  PRINT "Your lamp appears to be getting dimmer."
+915  GOTO 1005
+916  PRINT "Your lamp is dying.  I hope you can see in the dark!"
+917  GOTO 1005
+919  PRINT "Your lamp is dead."
+920  L1=O
+921  L2=-G
+930  GOTO 7465
+1005  READ #S,V
+1006  READ #F4,V
+1007  READ #G,V
+
+1008  ASSIGN "Acooky.Z999",F6,A
+1009  READ #F6;O0
+1010  IF O0 OR T0 THEN 1100
+1011  READ #F6;K$
+1012  PRINT '10'10K$
+1013  PRINT LIN(F3)"* Session aborted *"LIN(F3)
+1014  END
+1100  A$=UPS$(A$)
+1200  A$[LEN(A$)+V MIN 26]="   "
+1300  IF A$="   " THEN 900
+1301  IF A$[V,V]#" " THEN 1400
+1302  IF A$=" " THEN 900
+1303  A$=A$[S]
+1304  GOTO 1301
+1400  ASSIGN "Command.X602",F6,A
+1899  DATA 56,55,8,1,5,2,0,3,4,6,7,9,10,87
+1900  FOR E=V TO C0
+2000  READ #F6;B$
+2100  IF A$[V,LEN(B$)]=UPS$(B$) THEN 4600
+2200  NEXT E
+2300  F=POS("N S E W U D I O ",A$[V,S])
+2400  E=(F+V)/S
+2500  IF E=INT(E) THEN 3910
+2600  GOTO RND(G)*G OF 3300,3500,5063,5063
+3100  PRINT "I can't make any sense out of that!"
+3200  GOTO 900
+3300  PRINT "Hmm?"
+3400  GOTO 900
+3500  PRINT "I don't understand."
+3600  GOTO 900
+3900  E=E-12
+3910  IF L9#27 OR E#S OR L[22,V]=O THEN 3931
+3915  PRINT "As you cross the field of little hills, your feet crush"
+3920  PRINT "one of the mines.  It explodes, and you suddenly ";
+3930  GOTO 5140
+3931  IF R[L9,E]#38 OR L[F9,V]#-V OR M2 THEN 4000
+3932  PRINT "A mysterious force prevents your entering the bedroom."
+3934  GOTO 900
+4000  IF R[L9,E] OR L9#13 OR A4=O THEN 4025
+4001  PRINT "There are too many rocks in the way."
+4002  GOTO 900
+4025  IF R[L9,E]=O THEN 4100
+4050  IF M3=O THEN 4300
+4051  PRINT "You can't get by the "F$"!!!"
+4052  GOTO 4101
+4100  PRINT "You can't go that way."
+4101  K$=""
+4102  IF L9=44 THEN 8325
+4200  GOTO 900
+4300  IF L9#44 OR Q2>O THEN 4303
+4301  PRINT "You thrash about, but you cannot get anywhere."
+4302  GOTO 8325
+4303  IF L9#54 OR E#3 THEN 4310
+4304  PRINT "As you pass through the door, it slams noisily behind you."
+4305  PRINT "To further confound your attempt to leave, rocks fall from above"
+4306  PRINT "you, making the wooden door completely inaccessible."
+4310  L9=R[L9,E]
+4311  O$=""
+
+4400  GOTO 7450
+4500  E=E-12
+4600  IF E>12 AND E<21 THEN 3900
+4601  GOTO E-85 OF 5640,5650
+4700  GOTO E OF 5101,5204,5250,5254,5400,5405,5500,5414,5430,4913,4913,6000
+4800  GOTO E-20 OF 4913,6200,6300,4913,6400,6600,6700,6800,4913,7000,7100
+4850  GOTO E-31 OF 7350,7350,7199,7700,6550,6550,7150,7181,6450,6950,6950
+4851  GOTO E-42 OF 4949,6750,4910,5350,6150,5550,5550,5550,5550
+4900  GOTO 4913
+4910  A$=A$[G]
+4911  IF A$[V,G]="ARGYL" THEN 1005
+4912  GOTO 4953
+4913  CHAIN A,"ZORK2.X601"
+4914  GOTO 900
+4949  GOSUB 5000
+4950  IF V1=O THEN 5109
+4951  IF H1=O THEN 5215
+4952  IF L9=27 AND FNV(22) THEN 4962
+4953  PRINT "Nothing happens."
+4954  GOTO 900
+4962  PRINT "The little hills are gone!"
+4963  L[22,V]=O
+4964  GOTO 900
+5000  V$=B$
+5001  A$[LEN(A$)+V]="    "
+5003  A$=A$[LEN(V$)+V MIN LEN(A$)-G]
+5004  A$=A$[POS(A$," ")+V,POS(A$," ")+F6]
+5006  IF A$="IT    " THEN 5009
+5007  IF A$#"      " THEN 5028
+5009  IF A$#"" THEN 5022
+5012  PRINT V$;" what?"
+5015  LINPUT A$
+5018  A$=UPS$(A$[V,G+V])
+5021  GOTO 5006
+5022  A$=UPS$(O$)
+5023  GOSUB 8700
+5024  PRINT ": ";
+5025  GOTO 5032
+5028  IF A$[F6,F6]#'161 THEN 5032
+5029  A$=A$[V,G]
+5030  GOTO 5023
+5032  IF A$[1,5]#"CUBIC" THEN 5048
+5033  E$=CHR$(L9)
+5034  IF POS('3'4'24'25'26'28"('",E$) THEN 5042
+5036  PRINT "What cubicle??"
+5039  GOTO 900
+5042  PRINT "I don't know how to apply that to the cubicle."
+5045  GOTO 900
+5048  IF A$[1,G]="ALL  " THEN 8550
+5049  IF A$[1,4]#"ME  " THEN 5052
+5050  PRINT "How do you expect to "V$" yourself?"
+5051  GOTO 900
+5052  READ #F4,V
+5053  FOR E=V TO N0
+5054  READ #F4;B$
+5055  IF POS(B$,"@")=V THEN 5061
+5056  B$=B$[POS(B$,"/")+V]
+5057  IF A$[V,G]=UPS$(B$[V,G]) THEN 5080
+
+5059  GOTO 5055
+5061  NEXT E
+5062  IF V$="Turn" THEN 5100
+5063  PRINT "I don't know the word ";
+5066  GOSUB 8700
+5069  PRINT "."
+5070  K$=""
+5071  O$=""
+5072  GOTO 900
+5080  H1=FNH(E)
+5081  B$[POS(B$,"/")]=""
+5082  FOR K=LEN(B$) TO V STEP -V
+5083  IF B$[K,K]#" " THEN 5090
+5084  B$[K]=""
+5085  NEXT K
+5090  V1=FNV(E)
+5091  O$=B$[V,16]
+510
+
+LIS-5091,P
+
+ZORK
+
+5091  O$=B$[V,16]
+5100  RETURN
+5101  GOSUB 5000
+5103  IF H1=O THEN 5108
+5104  PRINT "You already have the "B$"!"
+5107  GOTO 900
+5108  IF V1 THEN 5114
+5109  PRINT "I see no "B$" here!"
+5113  GOTO 900
+5114  IF L[E,S]#500 THEN 5127
+5115  B$="A valiant attempt.  What a concept!     An interesting idea.Close, but
+5116  PRINT B$[20*(T1-INT(T1/F4)*F4)+V,20*(T1-INT(T1/F4)*F4+20]
+5117  GOTO 900
+5127  IF L[E,S]#-V THEN 5132
+5128  PRINT "Not only is trying to take the "B$" impossible, but it's also very d
+5131  GOTO 900
+5132  IF E#11 OR A4 THEN 5138
+5133  PRINT "Avalanche!"'7"   Huge boulders!  Aaaaaaaaaaah!"
+5134  R[13,F3]=R[12,F4]=O
+5136  A4=V
+5137  L[28,V]=13
+5138  IF E#22 THEN 5142
+5139  PRINT "As your hand brushes the top of one of the mines, you suddenly"
+5140  PRINT "feel very dead."
+5141  GOTO 9005
+5142  IF FNV(32)=O OR E=18 THEN 5146
+5143  PRINT "The clown says, "'34"You can't have the "B$"!"'34
+5145  GOTO 900
+5146  IF E#26 OR L[25,V] THEN 5151
+5147  PRINT "As you reach for the globe, an alarm rings briefly, and a horrible"
+5148  PRINT "Zarka appears from inside to defend it!"
+5149  G1=V
+5150  GOTO 6541
+5151  IF E#43 OR FNH(46) THEN 5157
+5152  PRINT "Your hand feels VERY warm and the block begins to adhere to it."
+5153  PRINT "Luckily, you drop it just in time."
+5154  PRINT "Block: ";
+5155  E=43
+5156  GOTO 5217
+5157  IF E#44 OR FNV(21) THEN 5160
+
+5159  GOTO 900
+5160  IF E#47 OR B0=O THEN 5186
+5161  PRINT "There seems to be an adventurer on it."
+5162  GOTO 900
+5186  W0=L[E,S]
+5187  FOR K=1 TO N0
+5188  W0=W0+L[K,S]*FNH(K)
+5189  NEXT K
+5190  IF W0<150 THEN 5196
+5191  PRINT "Your load is too heavy.  You will have to leave something behind."
+5192  GOTO 900
+5196  L[E,V]=-V
+5198  PRINT "Taken."
+5201  GOTO 900
+5204  GOSUB 5000
+
+
+5207  IF V1 THEN 5214
+5210  PRINT "You have no "B$"!"
+5213  GOTO 900
+5214  IF H1 THEN 5217
+5215  PRINT "You aren't carrying the "B$"!"
+5216  GOTO 900
+5217  L[E,V]=L9
+5218  PRINT "Dropped."
+5219  IF L[22,V]#L9 THEN 5222
+5220  PRINT "As it hits the floor, one of the mines explodes and a small, but"
+5221  GOTO 6973
+5222  IF L9#44 OR E#43 THEN 5228
+5223  PRINT "As the block sinks, the quicksand instantly freezes over; it may be h
+5224  PRINT "enough to support your weight."
+5225  L[E,V]=O
+5226  Q2=F6
+5227  GOTO 900
+5228  IF E=46 AND FNH(43) THEN 5152
+5229  IF E#15 THEN 900
+5230  IF L[20,V]#L9 THEN 5233
+5231  PRINT "The vase gently lands on the soft stool."
+5232  GOTO 900
+5233  PRINT "Crunch! The vase drops to the ground and shatters into a million piece
+5234  L[15,V]=O
+5235  L[55,V]=L9
+5236  GOTO 900
+5250  V$=B$
+5251  A$=A$[G,F0]
+5252  GOSUB 5006
+5253  GOTO 5103
+5254  V$=B$
+5255  A$=A$[G,F0]
+5256  GOSUB 5006
+5257  IF H1=O THEN 5215
+5260  E$=CHR$(E)
+5261  IF POS('31'29"!"'34'11'9,E$) THEN 5279
+5273  IF RND(S)>.5 THEN 5276
+5274  PRINT "I don't think that would agree with you."
+5275  GOTO 900
+5276  PRINT "But there's no vitamin content."
+5277  GOTO 900
+5279  IF E#F9 THEN 5303
+
+5294  GOTO 900
+5303  PRINT "Eaten."
+5306  L[E,V]=O
+5307  IF L[E,S]=INT(L[E,S]) THEN 5330
+5308  PRINT "The "B$" has a poisonous coating on it!"
+5309  GOTO 9005
+5330  IF E=11 THEN 5338
+5332  IF E#33 THEN 900
+5334  PRINT "Fluorocarbon poisoning!"
+5336  GOTO 9005
+5338  PRINT "The note was written with India Ink.  You've been poisoned!"
+5340  GOTO 9005
+5350  A$=A$[F3]
+5351  GOTO 1005
+5400  GOSUB 5000
+
+
+5403  GOTO 5451
+5405  E=V
+5406  IF A$[F6,F7]="ON" THEN 5414
+5410  IF A$[F6,W]#"OFF" THEN 5430
+5413  B$="lamp "
+5414  IF FNV(E)=O THEN 5109
+5415  IF L1=O THEN 5419
+5416  PRINT "The lamp is now off."
+5417  L1=O
+5418  GOTO 900
+5419  PRINT "The lamp isn't on!"
+5420  GOTO 900
+5430  PRINT "I don't understand what you want to do with the lamp!"
+5440  GOTO 900
+5451  IF FNV(E)=O THEN 5109
+5452  IF E=V THEN 5460
+5453  PRINT "An electric "B$"?  I don't think so."
+5455  GOTO 900
+5460  IF L2<V THEN 5465
+5461  IF L1 THEN 5470
+5462  PRINT "Lighted."
+5463  L1=V
+5464  GOTO 6580
+5465  PRINT "The batteries are drained."
+5466  GOTO 900
+5470  PRINT "It's already lit!"
+5471  GOTO 900
+5500  PRINT "Ok, from now on, I'll print a long description any time you move."
+5502  D3=V
+5503  GOTO 6580
+5550  A$=A$[POS(A$," ")+V]
+5553  A$=A$[V,G]
+5556  IF A$#"     " THEN 5559
+5557  PRINT "Yes, but which direction?"
+5558  GOTO 900
+5559  IF POS("NSWEUD",A$[V,V])=O THEN 3500
+5562  A$[S]="   "
+5565  GOTO 2300
+5640  GOSUB 5000
+5641  IF E=V THEN 5430
+5642  GOTO 5453
+5650  GOSUB 5000
+
+5652  IF E=V THEN 6310
+5653  PRINT "I don't see how you want to turn the "B$"!"
+5654  GOTO 900
+6000  E=G
+6001  GOTO 4000
+6150  A$=A$[F9,14]
+6152  GOSUB 5006
+6153  GOTO 5103
+6200  PRINT "You are carrying:"
+6201  K=O
+6202  FOR U=V TO N0
+6203  READ #F4;B$
+6204  IF L[U,V]#-V THEN 6207
+6205  PRINT "  "B$[POS(B$,"@")+V]
+6206  K=V
+
+
+6207  NEXT U
+6208  IF K THEN 900
+6209  PRINT "  Nothing."
+6211  GOTO 900
+6300  GOSUB 5000
+6302  IF E=V THEN 6306
+6303  IF E#G THEN 5453
+6304  PRINT "Sly devil!"
+6306  IF FNV(E)=O THEN 5109
+6310  PRINT "On or off?"
+6311  LINPUT A$
+6312  GOTO 1005
+6400  GOSUB 5000
+6410  IF V1=O THEN 5109
+6411  IF E#F3 THEN 6437
+6412  IF C4=O THEN 6432
+6414  C4=R[F0,W]=F[F9,F7]=O
+6431  GOTO 6440
+6432  PRINT "It's not open!"
+6433  GOTO 900
+6437  IF E#26 THEN 6448
+6438  IF G1=O THEN 6432
+6439  G1=O
+6440  PRINT "Closed."
+6443  GOTO 900
+6448  PRINT "You can't close a "B$"!"
+6449  GOTO 900
+6450  GOSUB 5000
+6451  IF V1=O THEN 5109
+6452  IF E=12 THEN 6455
+6453  PRINT "Thunk, thunk.  The "B$" doesn't sound too musical."
+6454  GOTO 900
+6455  PRINT "Squeeeeeeeeeeeeeek!"
+                    THEN 900                     6456  IF L[23,V]#L
+                                                 6457  PRINT "The beast is calmed b
+                                                 6458  M3=O
+                                                 6459  L[23,V]=O
+                                                 6460  F$=""
+                                                 6461  GOTO 900
+                                                 6541  M3=V
+                                                 6542  L[25,V]=L9
+                                                 6543  GOTO 900
+
+                                                 6553  IF V1=O THEN 5109
+                                                 6555  E$=orm a wedding ceremony
+                                                 6627  PRINT "parties consent."8
+                                                 6629 RINT "But I sense that there
+                                                 STOP
+
+                                                 STOP
+LIS-6455,P
+
+ZORK
+
+6455  PRINT "Squeeeeeeeeeeeeeek!"
+6456  IF L[23,V]#L9 THEN 900
+6457  PRINT "The beast is calmed by your music and leaves."
+6458  M3=O
+6459  L[23,V]=O
+6460  F$=""
+6461  GOTO 900
+6541  M3=V
+6542  L[25,V]=L9
+6543  GOTO 900
+6550  GOSUB 5000
+6553  IF V1=O THEN 5109
+6555  E$=CHR$(E)
+6556  GOTO POS('8'22"(2",E$) OF 6574,5139,6625,6670
+6559  PRINT UPS$(V$[V,V]);
+6562  A$=V$[S]
+6565  GOSUB 8700
+6568  PRINT "ing a "B$" seems to do you no good."
+6571  GOTO 900
+6574  PRINT "Your surroundings gradually fade away...."'10
+6577  L9=G*(L9=F4)+F4*(L9=25)+25*(L9=28)+28*(L9=40)
+6580  READ #F4,V
+6583  READ #S,V
+6586  READ #G,V
+6589  GOTO 7450
+6600  GOSUB 5000
+6601  IF V1=O THEN 5109
+6602  IF E=F3 THEN 6605
+6603  PRINT "You can't lock that!"
+6604  GOTO 900
+6605  IF L0 THEN 6610
+6606  PRINT "The chest is already locked!"
+6607  GOTO 900
+6610  PRINT "Locked."
+6611  IF L[S,V]#F0 THEN 6620
+6612  PRINT "Good going.  You locked the keys in the chest!"
+6620  L0=C4=R[F9,F7]=R[F0,W]=O
+6621  L1=L1* NOT L[V,V]=F0
+6622  GOTO 900
+6625  PRINT "Welcome to the FROBOZZ Automatic Coupler!"'7
+6626  PRINT '10"This machine will perform a wedding ceremony provided that both"
+6627  PRINT "parties consent."'10
+6628  IF FNV(W+V) THEN 6632
+6629  PRINT "But I sense that there is no one of the opposite sex here."
+6630  PRINT '10"This wedding is officially ABORTED."
+6631  GOTO 900
+6632  PRINT '10"Dearly beloved, we are gathered here to join this man and this woma
+6633  PRINT "Matrimony."'10'13"Do you take this girl to be your wife?"'13'10"> ";
+6634  LINPUT A$
+6635  A$=UPS$(A$)
+6636  IF POS("YES I DO",A$[V,F4])=O THEN 6630
+6637  PRINT "Girl: "'34"I do...I guess."'34'10
+6640  PRINT '10"Is there is anyone here who knows a reason why this couple should n
+6641  ENTER G,A,A$
+
+6643  PRINT '13'10"Good...By the power vested in me by the FROBOZZ Magic Computer
+
+
+6644  PRINT "pronounce you man & wife."
+6645  PRINT "[A sparkling emerald wedding ring drops from a slot in the machine!]"
+6646  L[42,V]=L9
+6647  M2=V
+6648  PRINT "You may kiss the bride."
+6649  O$="RING"
+6650  GOTO 900
+6670  PRINT "The lift lurches forward and carries you swiftly into the sky.  A"
+6671  PRINT "striking view of the Mt. Frobozz panorama can be seen. After travelli
+6672  PRINT "for several minutes, the lift stops with a jerk and drops you in the
+6673  L9=95-L9
+6674  L[50,V]=L[51,V]=L9
+6675  A$="LOOK"
+6676  GOTO 1005
+6700  V$=B$
+6701  A$=A$[POS(A$," ")+V,POS(A$," ")+F6]
+6703  GOSUB 5006
+6710  IF V1=O THEN 5109
+6711  IF E=F3 THEN 6714
+6712  PRINT "There's no lock on the "B$"!"
+6713  GOTO 900
+6714  IF L[S,V]=-V THEN 6717
+6715  PRINT "You have no keys!"
+6716  GOTO 900
+6717  IF L0=O THEN 6720
+6718  PRINT "It's not locked!"
+6719  GOTO 900
+6720  PRINT "Unlocked."
+6721  L0=V
+6722  GOTO 900
+6750  PRINT "You have no axe."'10
+6751  PRINT "Suddenly, an EPA official runs up, discovers your intent and sentenc
+6752  GOTO 9005
+6800  IF L9#13 AND L9#21 THEN 6805
+6801  PRINT "In a flash..."'10
+6802  L9=34-L9
+6803  GOTO 6580
+6805  PRINT "Nothing seems to happen."
+6806  GOTO 900
+6950  IF L9=27 AND L[22,V]=L9 THEN 6972
+6951  GOTO RND(V)*F3 OF 6960,6970
+6952  PRINT "Very good.  Now you can go to the second grade."
+6953  GOTO 900
+6960  PRINT "Wheeeeeeeee!"
+6961  GOTO 900
+6970  PRINT "Are you enjoying yourself?"
+6971  GOTO 900
+6972  PRINT "As your feet hit the ground, one of the mines explodes.  A small, bu
+6973  PRINT "efficient putty knife comes out and scrapes you off the low ceiling.
+6975  GOTO 9005
+7000  REM
+7100  REM
+7149  GOTO 900
+7150  D3=-V
+7151  PRINT "Ok, no long descriptions at all, unless you say "'34"LOOK"'34"."
+7152  GOTO 7450
+
+7182  PRINT "ROOM #";
+
+
+7183  INPUT L9
+7185  GOTO 7450
+7199  D3=O
+7200  PRINT "Ok, from now on, I'll only print the long description of a"
+7250  PRINT "place the first time you come to it."
+7300  GOTO 7450
+7350  E=E-25
+7400  GOTO 4000
+7450  IF L1 AND FNV(V) OR FNL(L9) THEN 7480
+7460  GOTO RND(V)*F3 OF 7465,7465
+7461  PRINT "Oh, no! Wild xeener bugs just are your head!"'7
+7462  GOTO 9005
+7465  PRINT "It's pitch dark!  You may get eaten by a wild xeener bug!"'7
+7470  GOTO 900
+7480  IF D3=-V THEN 7500
+7490  IF D3 OR POS(" ",B1$[L9,L9]) THEN 7700
+7500  ADVANCE #G;L9-V,A
+7550  READ #G;B$
+7600  PRINT B$
+7650  GOTO 7750
+7700  IF  NOT (FNV(V) AND L1 OR FNL(L9)) THEN 7465
+7701  FOR U=V TO L9-V
+7702  READ #S;A
+7703  ADVANCE #S;A,A
+7704  NEXT U
+7705  READ #S;A
+7706  FOR U=V TO A
+7707  READ #S;B$
+7708  PRINT B$
+7709  NEXT U
+7750  K=O
+7801  IF B1$[L9,L9]#" " THEN 7803
+7802  B1$[L9,L9]="%"
+7803  IF L9#F4 AND L9#25 AND L9#28 AND L9#40 THEN 7850
+7804  L[W,V]=L9
+7850  FOR U=V TO N0
+7900  IF L[U,V]#L9 THEN 8000
+7950  K=V
+8000  NEXT U
+8050  IF K=O THEN 8313
+8100  PRINT "I see:"'10
+8150  FOR U=V TO N0
+8200  READ #F4;B$
+8250  IF L[U,V]#L9 THEN 8310
+8300  PRINT B$[POS(B$,"@")+V]
+8301  O$=B$[S,POS(B$[S],"/")]
+8302  IF L[U,S]#-V THEN 8310
+8303  F$=B$[S,F6]
+8304  M3=U
+8310  NEXT U
+8313  IF L9#12 OR A4=O THEN 8322
+8316  PRINT "Large rocks block the exit to the west."
+8319  GOTO 900
+8322  IF L9#44 THEN 8463
+8325  Q2=Q2-V
+8328  GOTO Q2 OF 8458,8461,900,900,900,900
+
+8334  IF Q2>-F4 THEN 900
+
+
+8337  PRINT '10"You are at the bottom of a pool of quicksand.  You're dead."
+8340  GOTO 9005
+8458  PRINT "The quicksand is beginning to melt."
+8459  GOTO 900
+8460  PRINT "The quicksand has melted."
+8461  GOTO 900
+8463  IF B1$[L9,L9]>'6 THEN 900
+8464  PRINT "It appears that somebody has been digging a hole here."
+8465  GOTO 900
+8500  REM
+8550  K7=L9+3000*(E=S OR E=30 OR E=43)
+8553  K6=-V+3000*(E=V OR E=F3)
+8554  B$=K$
+8555  K$=""
+8556  READ #F4,V
+8559  K=O
+8562  FOR U=V TO N0
+8565  READ #F4;A$[V,F6]
+8568  IF L[U,V]#K6 AND L[U,V]#K7 THEN 8583
+8571  K=V
+8577  K$[LEN(K$)+V]=V$[V,LEN(V$)+V]
+8580  K$[LEN(K$)+V]=A$[S,F6]
+8581  K$[LEN(K$)+V]='161"."
+8583  NEXT U
+8584  K$[LEN(K$)+V]=B$
+8586  IF K THEN 900
+8589  PRINT "I don't see anything that you can "V$"!!"
+8592  GOTO 900
+8700  FOR U=V TO LEN(A$)
+8701  P$=A$[U,U]
+8702  IF P$=" " THEN 8799
+8710  IF NUM(P$)>90 OR NUM(P$)<65 THEN 8730
+8720  P$=CHR$(NUM(A$[U,U])+32)
+8730  PRINT  USING "#,a";P$
+8740  NEXT U
+8799  RETURN
+9003  DEF FNH(E)=(L[E,V]=-V)
+9004  DEF FNV(E)=(L[E,V]=-V OR L[E,V]=L9 OR L[E,V]=10 AND L9=9 AND C4 OR L9=12 AND
+9005  PRINT '10"Oh dear!  It seems that you got yourself killed!"
+9006  PRINT "Do you want me to try to patch you? ";
+9007  LINPUT A$
+9008  IF POS("Yy",A$[V,V])=O THEN 9100
+9009  PRINT "Ok.."'10"."'10"."'10"."'10
+9010  B0=M3=O
+9011  FOR K=V TO N0
+9012  IF  NOT FNH(K) THEN 9014
+9013  L[K,V]=INT(RND(1)*F0+V)*L[K,S]<30+30*L[K,S]>29
+9014  NEXT K
+9015  L9=V
+9016  L[V,V]=F3
+9017  GOTO 900
+9100  PRINT "What?!? You don't trust me?  Why only last week I patched a Micom"
+9102  PRINT "Port Controller and it ~~~~~~~'fffx"'10;
+9103  SYSTEM A,"Pau-8"
+9104  PRINT '127'127'127'127'127'127" CLASS=";
+9105  SYSTEM A,"Pau-8"
