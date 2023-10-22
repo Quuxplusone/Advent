@@ -6,6 +6,8 @@
 !     void puts(buf)
 !     void printf(fmt, ...)
 !     void strcpy(dest, src)
+!     void strncpy(dest, src, n)
+!     int strcmp(a, b)
 !     int strncmp(a, b, n)
 !     char *strchr(s, c)
 !     int atoi(s)
@@ -41,6 +43,22 @@ void strcpy(char *dst, const char *src)
         *dst++ = *src++;
     }
     *dst = '\0';
+}
+
+void strncpy(char *dst, const char *src, int n)
+{
+    for (int i = 0; i < n; ++i) {
+        dst[i] = (*src ? *src++ : '\0');
+    }
+}
+
+int strcmp(const char *a, const char *b)
+{
+    while (1) {
+        unsigned char ca = *a++, cb = *b++;
+        if (ca != cb) return (ca < cb) ? -1 : (ca > cb);
+        if (ca == '\0') return 0;
+    }
 }
 
 int strncmp(const char *a, const char *b, int n)
@@ -89,11 +107,11 @@ void printf(const char *format, ...)
 char *strchr(const char *s, char c)
 {
     char *p = (char *)s;
-    while (*p != '\0') {
+    while (1) {
         if (*p == c) return p;
+        if (*p == '\0') return NULL;
         ++p;
     }
-    return NULL;
 }
 
 /* We don't handle signed inputs, but that's fine for our purpose. */
