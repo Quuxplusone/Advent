@@ -1,0 +1,9 @@
+  100 FILES *
+  110 PURGE X,"NOTE"
+  120 CREATE X,"NOTE",15
+  130 ASSIGN "NOTE",1,X
+  140 PRINT #1;"Type BUG to make comments, ask questions, etc."
+  150 PRINT #1;"By the way... SAVE and LOAD are now operational. To save a game in"
+  160 PRINT #1;"progress type SAVE when you see the prompt (>)."
+  170 PRINT #1;END
+  180 PRINT "OK"

@@ -1,0 +1,219 @@
+   97 FILES *
+   98 PURGE X,"DESCRP"
+   99 CREATE X,"DESCRP",60
+  100 ASSIGN "DESCRP",1,X
+  101 PRINT #1;2
+  102 PRINT #1;"You're in a vast meadow that stretches endlessly in all directions"
+  103 PRINT #1;"To the west is a tree."
+  104 PRINT #1;2
+  105 PRINT #1;"You're in the meadow, underneath a large oak tree.  There are small"
+  106 PRINT #1;"carvings on the tree, and they seem to mean something."
+  107 PRINT #1;2
+  108 PRINT #1;"You're in a treehouse, barren of furnishings except a cubicle to the south,"
+  109 PRINT #1;"which is filled with shimmering green light."
+  110 PRINT #1;2
+  111 PRINT #1;"You're in a cubicle. A green glow surrounds you on all sides,"
+  112 PRINT #1;"but it is impossible to see the source of it."
+  113 PRINT #1;2
+  114 PRINT #1;"You are in a small, dark room with a passage to the north and a"
+  115 PRINT #1;"set of ascending stone stairs to the east."
+  116 PRINT #1;1
+  117 PRINT #1;"You are in a twisting maze of little passages, all alike."
+  118 PRINT #1;1
+  119 PRINT #1;"You are in a little maze of twisty passages, all alike."
+  120 PRINT #1;1
+  121 PRINT #1;"You are in a twisty maze of little passages, all alike."
+  122 PRINT #1;2
+  123 PRINT #1;"You are in a very dusty room with a teakwood floor.  You may leave this"
+  124 PRINT #1;"room to the north and south."
+  125 PRINT #1;1
+  126 PRINT #1;"You are in a very small room with oak walls, and it's a little cramped,"
+  127 PRINT #1;2
+  128 PRINT #1;"You are in the Mystery Room, a very lovely room with exits to the"
+  129 PRINT #1;"east, west and south.  The hole in the ceiling is too far up to use."
+  130 PRINT #1;3
+  131 PRINT #1;"You have entered the Hall of the Sea, a room filled with blue-green"
+  132 PRINT #1;"mists.  Mysterious shadows seem to dance upon the walls as your Lamp"
+  133 PRINT #1;"sheds light through the eerie colored fog.  Exits are east and west."
+  134 PRINT #1;2
+  135 PRINT #1;"You're in a damp, somewhat musty chamber that appears te be an"
+  136 PRINT #1;"ancient catacomb.  There is a passage to the east."
+  137 PRINT #1;2
+  138 PRINT #1;"You're in the Turkish Bath.  Soothing mist surrounds you.  You may go"
+  139 PRINT #1;"down stone stairs to the west, or up a metal ramp To the east."
+  140 PRINT #1;2
+  141 PRINT #1;"You have entered a small garden.  The soil is very loose here.  To the west"
+  142 PRINT #1;"is a metal ramp that leads downward; to the north is a large glass building."
+  143 PRINT #1;3
+  144 PRINT #1;"You're in an empty glass building that seems to have been used for a"
+  145 PRINT #1;"greenhouse.  To the north is a house; to the south is a garden;  to the"
+  146 PRINT #1;"west is a store room."
+  147 PRINT #1;2
+  148 PRINT #1;"This is a very tiny store room that has a large hole in the floor on"
+  149 PRINT #1;"the western side of the room, and an exit to the east."
+  150 PRINT #1;2
+  151 PRINT #1;"You're in the Hall of Tones.  Pleasant tunes can be heard as you decide"
+  152 PRINT #1;"whether to go west, or up steep steps to the east."
+  153 PRINT #1;2
+  154 PRINT #1;"You are in a very beautiful room, the Chamber of Time.  Exists are to the"
+  155 PRINT #1;"east and west."
+  156 PRINT #1;2
+  157 PRINT #1;"This room's walls are covered with a mixture of blood and slimy ooze."
+  158 PRINT #1;"Exists: North and south."
+  159 PRINT #1;2
+  160 PRINT #1;"You're in a library.  The only apparent exists to the room are: a passage"
+  161 PRINT #1;"to the south and an archway to the east."
+  162 PRINT #1;2
+  163 PRINT #1;"You're in a kitchen.  There are two exits, one to the west and one to"
+  164 PRINT #1;"the south.  The scent of food is in the air."
+  165 PRINT #1;2
+  166 PRINT #1;"You are in the living room of the house.  Exits: North, south, east, and"
+  167 PRINT #1;"a very narrow passage to the west."
+  168 PRINT #1;3
+  169 PRINT #1;"You are in a small foyer, barren of any furnishings, except for a large"
+  170 PRINT #1;"glass cubicle to the south, which is filled with shimmering red light."
+  171 PRINT #1;"Exits: East and west, and a northern exit leading upstairs."
+  172 PRINT #1;2
+  173 PRINT #1;"You are in a glass cubicle.  Surrounding you is a shimmering red glow,"
+  174 PRINT #1;"but it is impossible to see the source of it."
+  175 PRINT #1;3
+  176 PRINT #1;"You're in a cool room with a towering waterfall filling up the eastern"
+  177 PRINT #1;"part of the room.  You're on a path that bends north and west, and there's"
+  178 PRINT #1;"a glass cubicle to the south, which is filled with shimmering blue light."
+  179 PRINT #1;1
+  180 PRINT #1;"This room is only five feet high, and has exits to the south and east."
+  181 PRINT #1;2
+  182 PRINT #1;"You are in a glass cubicle.  Surrounding you is a shimmering blue glow,"
+  183 PRINT #1;"but it is impossible to see the source of it."
+  184 PRINT #1;2
+  185 PRINT #1;"You are at the northern end of a very long sewer pipe.  To the north"
+  186 PRINT #1;"is a low room, and there are numerous holes in the floor of the pipe."
+  187 PRINT #1;3
+  188 PRINT #1;"This giant room is the home of the most valuable treasure in the cave."
+  189 PRINT #1;"In the direct center of the room, a sphere of great beauty was placed"
+  190 PRINT #1;"many years ago.  The only exits to this room are the stairs above you."
+  191 PRINT #1;1
+  192 PRINT #1;"You're in a deep pit.  The only exit is straight up."
+  193 PRINT #1;2
+  194 PRINT #1;"You're in the front yard of the house. To the west is a door, to the"
+  195 PRINT #1;"south a dark hole, and meadow everywhere else."
+  196 PRINT #1;2
+  197 PRINT #1;"You're in a meadow, north of a house.  Far to the north, a tiny oasis"
+  198 PRINT #1;"is visible."
+  199 PRINT #1;2
+  200 PRINT #1;"You're in Burgerland!  A meadow surrounds this tiny oasis, which has"
+  201 PRINT #1;"no apparent entrance."
+  202 PRINT #1;2
+  203 PRINT #1;"You're in a hallway.  There are various openings to the north and west,"
+  204 PRINT #1;"and two Stairways: one leading up to the east and one down to the foyer."
+  205 PRINT #1;1
+  206 PRINT #1;"You're in the attic.  The only exit is a stairway leading downward."
+  207 PRINT #1;2
+  208 PRINT #1;"You're in and old-fashioned bathroom, a very tidy place, with exits to"
+  209 PRINT #1;"the north and east,"
+  210 PRINT #1;2
+  211 PRINT #1;"You're in a large room, probably the master bedroom.  There is an exit"
+  212 PRINT #1;"to the south, and one to the east,"
+  213 PRINT #1;2
+  214 PRINT #1;"You're in the sitting room.  Exits: west and south, and a cubicle to the"
+  215 PRINT #1;"east, filled with shimmering purple light."
+  216 PRINT #1;2
+  217 PRINT #1;"You're in a cubicle.  A purple glow surrounds you, but you cannot see the"
+  218 PRINT #1;"source of it."
+  219 PRINT #1;3
+  220 PRINT #1;"You're in a very tight east-west passageway.  There is also a small hole"
+  221 PRINT #1;"in the floor on the northern side of the passage.  A freezing wind blows"
+  222 PRINT #1;"out of the hole."
+  223 PRINT #1;2
+  224 PRINT #1;"You're in an extremely cold room.  Icicles hang from the ceiling, and near"
+  225 PRINT #1;"a particularly large icicle in the southern part of the room, is a hole."
+  226 PRINT #1;2
+  227 PRINT #1;"You're on a sandy shore.  To the west is some more sand, but it seems"
+  228 PRINT #1;"to be mixed with water.  There is a tight passage leading east."
+  229 PRINT #1;2
+  230 PRINT #1;"You're in a pool of sand.  To the west you can see a path leading outside,"
+  231 PRINT #1;"and to the east, a shore."
+  232 PRINT #1;3
+  233 PRINT #1;"The floor here is quite rocky, making your footing quite unsure.  You're"
+  234 PRINT #1;"on a path with a lighted passage to the south and a dark tunnel to the north."
+  235 PRINT #1;"To the east is a somewhat soupy pool of sand."
+  236 PRINT #1;3
+  237 PRINT #1;"You're at the base of a mountain.  It is snowing lightly here, partially"
+  238 PRINT #1;"covering an assortment of heavy wires.  To the north is a cave leading"
+  239 PRINT #1;"underground,"
+  240 PRINT #1;2
+  241 PRINT #1;"You're in a room filled with cobwebs.  There appear to have been recent"
+  242 PRINT #1;"archaeological diggings in this area.  Passages exit to the north and south."
+  243 PRINT #1;3
+  244 PRINT #1;"You're in a small, but elaborately decorated chapel.  There is a large"
+  245 PRINT #1;"machine in one corner of the room, and it is covered with dust."
+  246 PRINT #1;"The only exit to the room is an archway to the south."
+  247 PRINT #1;3
+  248 PRINT #1;"You're at the summit of Mount Frobozz.  The eastern slope is impassable,"
+  249 PRINT #1;"hut there are trails to the north and south.  An inviting, cozy lighted"
+  250 PRINT #1;"shack is to the west.  It is snowing quite heavily here."
+  251 PRINT #1;2
+  252 PRINT #1;"You're at the top of the Expert Slope, a sheet of ice plunging downward"
+  253 PRINT #1;"out of sight at an unpleasant angle.  A small snowy trail leads away south."
+  254 PRINT #1;3
+  255 PRINT #1;"You're at the top of the Bunny Slope!  It seems as though a child would"
+  256 PRINT #1;"have no problem skiing down, although walking down is out of the question."
+  257 PRINT #1;"A path leads away to the north."
+  258 PRINT #1;2
+  259 PRINT #1;"You are in a comfortable ski shack, apparently a shelter from the cold"
+  260 PRINT #1;"weather outside.  There's a rickety staircase leading downward in this building."
+  261 PRINT #1;2
+  262 PRINT #1;"You're in a dark cave with a rocky floor.  There is a stairway leading up"
+  263 PRINT #1;"and an eastern passage."
+  264 PRINT #1;2
+  265 PRINT #1;"You're crawling over rocky cobbles in an east-west passage.  At the eastern"
+  266 PRINT #1;"end is a formidable wooden door, which is open."
+  267 PRINT #1;2
+  268 PRINT #1;"You are in a very peculiar room with no apparent exits.  There is an unusual"
+  269 PRINT #1;"flashing light that fills the room, seemingly coming from far above you."
+  270 PRINT #1;2
+  271 PRINT #1;"You're in a very long, north-south sewer pine.  You ran hear a strange,"
+  272 PRINT #1;"distant, echoing sound, apparently an animal humming to himself."
+  273 PRINT #1;2
+  274 PRINT #1;"You're in a very wet room on the eastern side of an immense waterfall."
+  275 PRINT #1;"There are openings to the north and south, and a small room to the east."
+  276 PRINT #1;4
+  277 PRINT #1;"You're in a warm room with an exit to the north.  The walls are covered"
+  278 PRINT #1;"with large metal slabs, apparently for insulation purposes.  In the center"
+  279 PRINT #1;"of the room is a low platform.  A bright orange glow emanates from a small"
+  280 PRINT #1;"grating on the southern wall."
+  281 PRINT #1;3
+  282 PRINT #1;"You're in a mysterious little room that appears to have been a scientific"
+  283 PRINT #1;"laboratory, judging from the assortment of junk around the room.  Exits"
+  284 PRINT #1;"are an open passage to the south and an odd thin hole to the east."
+  285 PRINT #1;2
+  286 PRINT #1;"You're in a small closet, perhaps used for storage of scientific supplies."
+  287 PRINT #1;"The exit is to the west."
+  288 PRINT #1;4
+  289 PRINT #1;"You are inside the reactor core, a large, circular room with a reinforced"
+  290 PRINT #1;"spherical ceiling.  The blinding glare from the reactor makes it difficult"
+  291 PRINT #1;"to make out any other features of the room.  There is an access grating"
+  292 PRINT #1;"on the northern wall."
+  293 PRINT #1;4
+  294 PRINT #1;"You're in a spotless white room, devoid of any furnishings or windows."
+  295 PRINT #1;"Although there is no visible heat source in the room, the air is very"
+  296 PRINT #1;"warm.  The most interesting feature of this room is the peculiar exit:"
+  297 PRINT #1;"a tall thin hole on the western wall."
+  298 PRINT #1;2
+  299 PRINT #1;"You're in a grassy arena north of Burgerland.  There is what appears to have"
+  300 PRINT #1;"been an escalator (now inoperative) leading downward here."
+  301 PRINT #1;3
+  302 PRINT #1;"You're standing in a very long, cylindrical room.  From the objects about"
+  303 PRINT #1;"the room, it would appear that this is a subway station.  Beyond a gate"
+  304 PRINT #1;"you can see the open doorway of an abandoned train."
+  305 PRINT #1;1
+  306 PRINT #1;"You're in a Froboliner subway train."
+  307 PRINT #1;3
+  308 PRINT #1;"You're standing in a very long, cylindrical room.  From the objects about"
+  309 PRINT #1;"the room, it would appear that this is a subway station.  Beyond a gate"
+  310 PRINT #1;"you can see the open doorway of an abandoned train."
+  311 PRINT #1;2
+  312 PRINT #1;"You are in a museum named for the great leader of Erehwon, King Frobozz II."
+  313 PRINT #1;"The only exit is down to Museum Station."
+  320 PRINT #1;END
+  330 PRINT "OK"
