@@ -1,4 +1,4 @@
-Files received by email from Alex Guma, 2023-07-23.
+Files received by email from Alex Guma, 2023-07-23 and 2023-07-25.
 
 Alex writes: "In 1978/79 I was an 11th grade student at Falls Church HS in Fairfax
 County VA. We had two HP264x terminals and an HP Decwriter printer
@@ -10,3 +10,6 @@ adlist.pdf corresponds to a different and presumably later version of the
 game than datafiles.pdf, with 11 more rooms, including the train station
 and reactor room. zork.pdf corresponds better to datafiles.pdf, since it
 seems to lack code for those locations.
+
+v2_full_data.pdf is yet another printout of the data files, including
+the verb list, which was included in neither adlist.pdf nor datafiles.pdf.
