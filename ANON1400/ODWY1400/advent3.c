@@ -69,6 +69,7 @@ bool wizard_mode = false;             // Z7 in the original program
 int zarka_status = 0;                 // Z9 in the original; 1=friendly, 2=enraged
 bool aboard_disc = false;             // D1 in the original program
 bool fucked = false;                  // F9 in the original program
+bool really_look = false;             // handled via control flow in the original
 
 #define X_MACRO_OBJECTS \
     X(LAMP, "LAMP", 5, "Battery-powered lamp") \
@@ -397,9 +398,12 @@ const char *get_direct_object(const char *verb) {
     static char input[130];
     fgets(input, sizeof input, stdin);
     char *p = input;
-    while (*p != ' ' && *p != '\n' && *p != '\0') ++p;
+    while (*p != ' ' && *p != '\n' && *p != '\0') {
+        *p = toupper(*p);
+        ++p;
+    }
     *p = '\0';
-    return input;
+    return (p != input) ? input : NULL;
 }
 
 const char *get_indirect_object(const char *prompt) {
@@ -407,7 +411,10 @@ const char *get_indirect_object(const char *prompt) {
     static char input[130];
     fgets(input, sizeof input, stdin);
     char *p = input;
-    while (*p != ' ' && *p != '\n' && *p != '\0') ++p;
+    while (*p != ' ' && *p != '\n' && *p != '\0') {
+        *p = toupper(*p);
+        ++p;
+    }
     *p = '\0';
     return (p != input) ? input : NULL;
 }
@@ -463,7 +470,7 @@ void initialize_rooms()
     ); n_to(R_MAZE1); s_to(R_SMALL); object(CHEST);
     new_place(R_INSIDE, "Inside Chest",
         "You are in a very small room with oak walls, and it's a little cramped."
-    ); object(GOLD);
+    ); object(GOLD); n_to(R_MAZE1); s_to(R_SMALL);
     new_place(R_MYSTERY, "Mystery Room",
         "You are in the Mystery Room, a very lovely room with exits to the" SOFT_NL
         "east, west and south.  The hole in the ceiling is too far up to use."
@@ -794,7 +801,7 @@ void move_xeener_bugs() {
 }
 
 // Line 1350 in advent.txt
-void attempt_look(bool really) {
+void describe_room() {
     // The original game seems to increase S by 1 (giving the player a point)
     // each time they pass through this codepath. That feels wrong, so we
     // don't do that.
@@ -802,7 +809,7 @@ void attempt_look(bool really) {
     // merely the chance of xeener bugs showing up (above).
     //
     bool print_long_description =
-        really ||
+        really_look ||
         (brief_mode == 2) ||
         (brief_mode == 0 && !places[loc].visited);
     if (print_long_description) {
@@ -811,6 +818,7 @@ void attempt_look(bool really) {
         if (places[loc].hole_depth > 0) {
             puts("Someone has been digging a hole here.");
         }
+        really_look = false;
     } else {
         puts(places[loc].short_desc);
     }
@@ -863,7 +871,9 @@ void update_timers_and_look()
     turns += 1;
     if (loc != oldloc) {
         move_xeener_bugs();
-        attempt_look(false);
+    }
+    if ((loc != oldloc) || really_look) {
+        describe_room();
         if (reactor_is_active) {
             reactor_countdown(turns);
         }
@@ -943,7 +953,7 @@ void attempt_drop() {
     extract_object();
     if (active_object == NULL) {
         active_object = get_direct_object("Drop");
-        if (active_object[0] == '\0') {
+        if (active_object == NULL) {
             return;
         }
     }
@@ -980,7 +990,7 @@ void attempt_eat(Object obj) {
         extract_object();
         if (active_object == NULL) {
             active_object = get_direct_object("Eat");
-            if (active_object[0] == '\0') {
+            if (active_object == NULL) {
                 return;
             }
         }
@@ -1065,7 +1075,7 @@ void attempt_read() {
     extract_object();
     if (active_object == NULL) {
         active_object = get_direct_object("Read");
-        if (active_object[0] == '\0') {
+        if (active_object == NULL) {
             return;
         }
     }
@@ -1160,7 +1170,7 @@ void attempt_kiss() {
     extract_object();
     if (active_object == NULL) {
         active_object = get_direct_object("Kiss");
-        if (active_object[0] == '\0') {
+        if (active_object == NULL) {
             return;
         }
     }
@@ -1296,7 +1306,7 @@ void attempt_kill(Object obj, Object weapon) {
         extract_object();
         if (active_object == NULL) {
             active_object = get_direct_object("Kill");
-            if (active_object[0] == '\0') {
+            if (active_object == NULL) {
                 return;
             } 
         }
@@ -1370,7 +1380,7 @@ void attempt_insert() {
     extract_object();
     if (active_object == NULL) {
         active_object = get_direct_object("Insert");
-        if (active_object[0] == '\0') {
+        if (active_object == NULL) {
             return;
         }
     }
@@ -1425,6 +1435,17 @@ void attempt_open() {
         } else if (!chest_is_unlocked) {
             puts("The chest is locked with a rusty padlock.");
         } else {
+            // This codepath is confusing in the original.
+            // Opening the chest teleports us to "Inside Chest,"
+            // which has the same exits as R_CHEST (thanks
+            // to line 4270 in the original movement code).
+            // It also prematurely shows the contents of that room,
+            // except that it shows only the gold (nothing else that
+            // might be in that room). There's no way to get from
+            // R_INSIDE back to R_CHEST, and no way to get from
+            // R_CHEST back to R_INSIDE except to close and open
+            // the chest again.
+            //
             chest_is_open = true;
             loc = R_INSIDE;
             puts("Chest: Open.\nThe chest contains:");
@@ -1466,9 +1487,9 @@ void attempt_close() {
         // The original game treats "CLOSE DOOR" as "CLOSE CHEST" when the chest is visible.
         puts("I see no door here.");
     } else if (obj == NO_OBJECT) {
-        puts("I see nothing to open here.");
+        puts("I see nothing to close here.");
     } else {
-        puts("I don't see how to open that!");
+        puts("I don't see how to close that!");
     }
 }
 
@@ -1534,7 +1555,7 @@ void attempt_stab() {
     extract_object();
     if (active_object == NULL) {
         active_object = get_direct_object(Titlecase(active_verb));
-        if (active_object[0] == '\0') {
+        if (active_object == NULL) {
             return;
         }
     }
@@ -1589,7 +1610,7 @@ void attempt_push_pull() {
         } else {
             // The original game omits this codepath.
             active_object = get_direct_object(Titlecase(active_verb));
-            if (active_object[0] == '\0') {
+            if (active_object == NULL) {
                 return;
             }
         }
@@ -1727,9 +1748,9 @@ void attempt_say() {
     extract_object();
     if (active_object == NULL) {
         active_object = get_direct_object("Say");
-    }
-    if (active_object[0] == '\0') {
-        return;
+        if (active_object == NULL) {
+            return;
+        }
     }
     if (strncmp(lowercase(active_object), "argyl", 5) == 0) {
         attempt_argyle();
@@ -1750,7 +1771,7 @@ void attempt_find() {
     extract_object();
     if (active_object == NULL) {
         active_object = get_direct_object("Find");
-        if (active_object[0] == '\0') {
+        if (active_object == NULL) {
             return;
         }
     }
@@ -1801,7 +1822,7 @@ void attempt_feed() {
     extract_object();
     if (active_object == NULL) {
         active_object = get_direct_object("Feed");
-        if (active_object[0] == '\0') {
+        if (active_object == NULL) {
             return;
         }
     }
@@ -1861,7 +1882,7 @@ void attempt_kick() {
     extract_object();
     if (active_object == NULL) {
         active_object = get_direct_object(Titlecase(active_verb));
-        if (active_object[0] == '\0') {
+        if (active_object == NULL) {
             return;
         }
     }
@@ -1883,7 +1904,7 @@ void attempt_use() {
     if (active_object == NULL) {
         // The original game accidentally omits this codepath.
         active_object = get_direct_object("Use");
-        if (active_object[0] == '\0') {
+        if (active_object == NULL) {
             return;
         }
     }
@@ -1911,7 +1932,7 @@ void attempt_taste() {
     extract_object();
     if (active_object == NULL) {
         active_object = get_direct_object("Taste");
-        if (active_object[0] == '\0') {
+        if (active_object == NULL) {
             return;
         }
     }
@@ -1976,7 +1997,7 @@ void attempt_board() {
     extract_object();
     if (active_object == NULL) {
         active_object = get_direct_object("Board");
-        if (active_object[0] == '\0') {
+        if (active_object == NULL) {
             return;
         }
     }
@@ -2028,7 +2049,7 @@ void attempt_turn() {
     extract_object();
     if (active_object == NULL) {
         active_object = get_direct_object("Turn");
-        if (active_object[0] == '\0') {
+        if (active_object == NULL) {
             return;
         }
     }
@@ -2061,7 +2082,7 @@ void attempt_comb() {
     extract_object();
     if (active_object == NULL) {
         active_object = get_direct_object("Comb");
-        if (active_object[0] == '\0') {
+        if (active_object == NULL) {
             return;
         }
     }
@@ -2193,10 +2214,10 @@ void parse_input() {
         attempt_break();
     } else if (CMDIS("ENTER")) {
         attempt_move('I');
-    } else if (CMDIS("EXIT")) {
+    } else if (CMDIS("EXIT") || CMDIS("LEAVE")) {
         attempt_move('O');
     } else if (CMDIS("LOOK")) {
-        attempt_look(true);
+        really_look = true;
     } else if (CMDIS("PUSH") || CMDIS("PULL")) {
         attempt_push_pull();
     } else if (CMDIS("ALLEZ")) {
