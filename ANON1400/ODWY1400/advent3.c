@@ -84,7 +84,7 @@ bool really_look = false;             // handled via control flow in the origina
     X(PEARL, "PEARL", 30, "Perfectly round pearl") \
     X(NOTE, "NOTE", 3, "Obscure, wrinkled note") \
     X(CELLO, "CELLO", 30, "Stradivarius cello") \
-    X(WATCH, "TIMEPIECE", 30, "Finely-crafted Swiss timepiece") \
+    X(WATCH, "WATCH", 30, "Finely crafted Swiss timepiece") \
     X(PARCHMENT, "PARCHMENT", 30, "Ancient piece of parchment") \
     X(VASE, "VASE", 30, "Delicate Ming vase") \
     X(STAFF, "STAFF", 17, "Three-foot long staff") \
@@ -149,9 +149,32 @@ X_MACRO_OBJECTS
 #undef X
 } Object;
 
+bool lookup_noun_helper(const char *input, const char *spelling, Object obj) {
+    unsigned int n = strlen(spelling);
+    if (n >= 5) {
+        n = 5;
+    } else if (strlen(input) != n) {
+        // "GET LANTEFOO" is OK; "GET LAMPFOO" is not
+        return false;
+    }
+    if (strncmp(input, spelling, n) == 0) {
+        // The original game doesn't do this. It's nice to make
+        // "GET LANTEFOO" print "Lantern: Taken" instead of
+        // "Lantefoo: Taken"; so if the named object is present,
+        // we'll aggressively substitute the correct spelling.
+        // (But if the object isn't present, we won't.)
+        //
+        if (here(obj, loc)) {
+            active_object = spelling;
+        }
+        return true;
+    }
+    return false;
+}
+
 Object lookup_noun(const char *word) {
     assert(word != NULL);
-#define N(e, w) if (strncmp(word, w, strlen(w)) == 0) return e;
+#define N(e, w) if (lookup_noun_helper(word, w, e)) return e;
     N(LAMP, "LAMP"); N(LAMP, "LANTERN"); N(LAMP, "LIGHT");
     N(KEYS, "KEYS"); N(KEYS, "SET"); N(KEYS, "IRON");
     N(CHEST, "CHEST"); N(CHEST, "TRUNK");
@@ -199,7 +222,8 @@ Object lookup_noun(const char *word) {
     N(LABEL, "LABEL"); N(LABEL, "SIGN"); N(LABEL, "TAN");
     N(RING, "RING"); N(RING, "EMERALD"); N(RING, "WEDDING");
     N(BLOCK, "BLOCK"); N(BLOCK, "BRICK"); N(BLOCK, "DRY ICE"); N(BLOCK, "ICE");
-    N(WATER, "WATER"); N(WATER, "H20");
+    // The original seems to have "H20" in place of "H2O"
+    N(WATER, "WATER"); N(WATER, "H2O");
     N(DOOR, "DOOR"); N(DOOR, "WOODEN THING");
     N(GLOVE, "GLOVE"); N(GLOVE, "MITTEN"); N(GLOVE, "WORK");
     N(DISC, "DISC"); N(DISC, "DISK"); N(DISC, "SAUCER"); N(DISC, "SILVER");
@@ -262,12 +286,17 @@ X_MACRO_OBJECTS
 const char *lowercase(const char *s) {
     static char buf[16];
     strncpy(buf, s, 16);
-    for (int i = 0; i < 16; ++i) {
+    buf[15] = '\0';
+    for (int i = 0; buf[i] != '\0'; ++i) {
         buf[i] = tolower(buf[i]);
     }
-    buf[15] = '\0';
-    if (strcmp(buf, "zarka") == 0 || strncmp(buf, "strad", 5) == 0 || strncmp(buf, "ming", 4) == 0) {
-        buf[0] = toupper(buf[0]);
+    static const char *capitalized_words[] = {
+        "zarka", "strad", "stradivarius", "ming", "trinity", "trinity-3000"
+    };
+    for (int i=0; i < 6; ++i) {
+        if (strcmp(buf, capitalized_words[i]) == 0) {
+            buf[0] = toupper(buf[0]);
+        }
     }
     return buf;
 }
@@ -460,7 +489,7 @@ void initialize_rooms()
     ); e_to(R_MAZE1); w_to(R_MAZE2); u_to(R_MAZE1); d_to(R_MAZE1); object(KEYS);
     new_place(R_MAZE2, "Maze",
         "You are in a little maze of twisty passages, all alike."
-    ); n_to(R_MAZE2); s_to(R_MAZE3); e_to(R_MAZE1); u_to(R_STROBE); d_to(R_MAZE2);
+    ); n_to(R_MAZE2); s_to(R_MAZE3); e_to(R_MAZE2); u_to(R_STROBE); d_to(R_MAZE2);
     new_place(R_MAZE3, "Maze",
         "You are in a twisty maze of little passages, all alike."
     ); n_to(R_MAZE2); s_to(R_MAZE3); w_to(R_MAZE3); u_to(R_MAZE3); d_to(R_MYSTERY);
@@ -722,14 +751,14 @@ void initialize_rooms()
 void attempt_help() {
     puts("");
     puts("Somewhere nearby is the land of Erehwon, a mysterious place");
-    puts("Filled with fantasy and magic.  It is your task to explore this");
+    puts("filled with fantasy and magic.  It is your task to explore this");
     puts("unknown region, requiring your physical skill and cunning to");
     puts("be at their peak.  I will be your eyes and ears in this exped-");
     puts("ition, describing your surroundings and any points of interest");
     puts("that you happen to run across.  Direct me with commands of one");
     puts("or two words.  To move from one place to another, try words like");
     puts("NORTH, WEST, CLIMB, DOWN.  To get a list of your current possessions");
-    puts("use the word INVENTORY.  All words, objects, etc. may be abbriev-");
+    puts("use the word INVENTORY.  All words, objects, etc. may be abbrev-");
     puts("iated to their first five letters; for example, type UNLOC for");
     puts("UNLOCK, INVEN for INVENTORY, and so forth.");
     puts("");
@@ -754,7 +783,7 @@ void attempt_help() {
     puts("");
     puts("If you are having trouble moving or using an object, try");
     puts("anything that comes to mind, not just the commands listed here.");
-    puts("Multiple commands on a line are separated thus:  N, S, E, W, EAT TREE.");
+    puts("Multiple commands on a line are separated thus:  N. S. E. W. EAT TREE.");
     puts("");
     puts("More help will be available here at a later time as the game");
     puts("develops further.");
@@ -963,7 +992,7 @@ void attempt_drop() {
     } else {
         active_object = spelling_of(obj);
         if (!toting(obj)) {
-            printf("I see no %s here.\n", active_object);
+            printf("You don't have the %s.\n", lowercase(active_object));
         } else if (obj == VASE && !there(STOOL, loc)) {
             puts("The vase falls to the floor and smashes into a million pieces!");
             apport(VASE, R_LIMBO);
@@ -1007,6 +1036,8 @@ void attempt_eat(Object obj) {
             }
             break;
         case GUM:
+            // The original game takes this codepath only for "GUM",
+            // not "OXYGUM" or "MATERIAL".
             if (toting(GUM)) {
                 // The original game forgets to lower your score here.
                 score += object_weight(GUM);
@@ -2044,6 +2075,46 @@ void attempt_launch() {
     }
 }
 
+// Line 5820 in adven2.txt
+void attempt_toss(bool verb_is_toss) {
+    extract_object();
+    if (active_object == NULL) {
+        active_object = get_direct_object(verb_is_toss ? "Toss" : "Throw");
+        if (active_object == NULL) {
+            return;
+        }
+    }
+    // This ought to be basically the same logic as in `attempt_drop`,
+    // but in fact it's different in several minor messages; and
+    // the BLOCK/GLOVE interaction isn't implemented. So in the original,
+    // you can successfully TOSS GLOVE away even while holding the BLOCK.
+    // We fix that.
+    //
+    Object obj = lookup_noun(active_object);
+    if (obj == NO_OBJECT) {
+        printf("I see no %s here.\n", lowercase(active_object));
+    } else if (!toting(obj)) {
+        printf("You don't have the %s.\n", lowercase(active_object));
+    } else if (obj == VASE && !there(STOOL, loc)) {
+        puts("The vase falls to the floor and smashes into a million pieces!");
+        apport(VASE, R_LIMBO);
+        apport(SHARDS, loc);
+    } else {
+        puts(verb_is_toss ? "Tossed." : "Thrown.");
+        apport(obj, loc);
+        // The following interactions aren't in the original.
+        if (loc == R_QUICK && obj == BLOCK) {
+            puts("As the block sinks, the quicksand instantly freezes over hard enough" SOFT_NL
+                 "to support your weight.");
+            apport(BLOCK, R_LIMBO);
+            quicksand_timer = 100;
+        } else if (obj == GLOVE && toting(BLOCK)) {
+            puts("The dry ice instantly freezes your hand, and you die from shock.");
+            die();
+        }
+    }
+}
+
 // Line 6110 in adven2.txt
 void attempt_turn() {
     extract_object();
@@ -2283,9 +2354,9 @@ void parse_input() {
     } else if (CMDIS("LAUNC")) {
         attempt_launch();
     } else if (CMDIS("THROW")) {
-        // 5720
+        attempt_toss(false);
     } else if (CMDIS("TOSS")) {
-        // 5820
+        attempt_toss(true);
     } else if (CMDIS("BURN")) {
         puts("You have no matches.");
         puts("An EPA official runs up and, upon discovering your evil intent," SOFT_NL
