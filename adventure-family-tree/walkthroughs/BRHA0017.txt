@@ -1,0 +1,217 @@
+
+## Zeroth trip:
+## The "intro cutscenes" are always the same, but you can't avoid them.
+
+N. E.E.E. SE.SE.SE.
+N.N.N.N.N. RETR MAP. READ MAP. PUT MAP. NW.NW. GET ALL.
+S.S.S.E. GET WATER. DROP FOOD.
+W.S.S.S. RETR KEY. OPEN GRAT. PUT KEY. D.W.
+
+## First trip: Bird, plant, open clam. Deposit TRID, PYRA, and EMER.
+## Leave EGGS at Y2 in readiness for the scarab puzzle.
+
+GET CAGE. W.W. LIGHT LAMP.
+W. GET BIRD. W.D. GET AX. D. DROP BIRD. DROP CAGE.
+N.D.W. D.W.W. W.W.D. WATER PLANT.
+U.W.U.N. KILL DRAGON. YES. N.N. GET WATER. S.S.S.D.S.D. WATER PLANT.
+U.E.D. GET OIL. U.W.D. CLIM BEAN. 
+W. GET EGG. N. OIL DOOR. OPEN DOOR. DROP FLASK.
+N. GET TRID. W.D.SE. SE.NE.E.N. OPEN CLAM.
+S.U.E.U.N. DROP EGG. PLOVER. E. GET PYRA. S. PUT PYRA. GET EMER. PLOVER.
+STAND ON. GLUP.
+DROP TRID. DROP PYRA. DROP EMER.
+
+## Second trip: Use rod. Deposit DIAM and CHEST.
+
+STAND ON. XYZZY. GET ROD.
+W.W.W.D.W. WAVE ROD. DROP ROD. W.W. GET DIAM. PUT DIAM.
+S. SE.N.S. GET ALL.
+N.N.N.D.E.E. STAND ON. XYZZY.
+DROP CHEST. DROP DIAM.
+
+## Third trip: Deposit JEWE and GOLD.
+
+STAND ON. GLUP. GET DISC.
+S.S.S. GET JEWE. PUT JEWE.
+N.U.S. DROP DISC. GET GOLD. STAND ON. GLUP.
+DROP GOLD. DROP JEWE.
+
+## Fourth trip: Deposit BAR and FIGU.
+## Move disc to Oriental room.
+
+STAND ON. GLUP. GET DISC.
+N.D.N. GET BAR. D.W.D.W.W. E. PUT AX. GET PILL.
+W.NW. DROP DISC. GET FIGU. STAND ON. GLUP.
+DROP PILL. DROP FIGU. DROP BAR.
+
+## Fifth trip: Troll bridge. Deposit SPIC and CHAI.
+## (You should still have the KEY in your pocket.)
+
+GET FOOD.
+STAND ON. GLUP.
+W.SW.U.NE. THROW FOOD.
+NE.NE.E.NE.N.E. GET SPIC. PUT SPIC. RETR KEY.
+W.S.S.SE.S.E. CLIM CHAI. UNLO CHAI. GET CHAI. PUT KEY.
+W.W.N. W.W. GET PROP.
+SW.SW.SW.S.SE. STAND ON. GLUP.
+DROP CHAI. DROP SPIC.
+
+## Sixth trip: Recharge lamp. Deposit EGGS and SCAR.
+
+U. GET STRA. GET COIN. D. STAND ON. XYZZY.
+W.W.W.D. W.W.W.W.W. S.U.U.S. PLACE COIN. PLACE LAMP. GET LAMP.
+N.E.U.D. E.N.E.E.N.N. GET EGG.
+E. DIG. D.W.NW. PLACE PROP.
+NW. GET SCAR. PLACE EGG.
+SE.SE.E.U.SW.
+S.D.W.D.W.W.W.W.D. CLIM BEAN. W.
+FEE. FIE. FOE. FOO. GET EGG.
+N.N.W.D.SE. STAND ON. GLUP.
+DROP EGG. DROP SCAR.
+
+## Seventh trip: Deposit RUG, CONC, PEAR.
+## Move disc to complex junction.
+
+STAND ON. GLUP.
+SE.W.W.W.U.N. GET RUG.
+N.N.N.N.D. GET CONCH. PUT AX.
+W. GET PEARL.
+U.U.S.W.W.NW. STAND ON. GLUP.
+DROP CONC. DROP PEAR. DROP RUG.
+
+## Eighth trip: Endgame. You must be carrying the scarab!
+
+GET SCARAB. STAND ON. XYZZY.
+W.W.W.D. W.W.W.S.E. MAGE DEN.
+
+======
+
+From far away you hear a thin
+crackle, and a gong sounds.
+
+A sepulchral voice says "The
+Cave Closing mechanism has been
+activated. All employees to the
+Main Office... Will visitors
+please leave by the nearest
+exit. Thankyou."
+
+As the last echoes fade the
+scarab's eyes glow red and there
+is a blinding flash of light!
+
+When your eyes refocus you see
+that a door has appeared in the
+far wall, so you step through,
+hoping to find a way out...
+
+Before you stands the Patron!
+"My friend!" he says, "I am
+truly the Wizard Eru Tnevda. At
+last, after generations of waiting,
+someone has passed my test!"
+
+Some dwarves enter. They are
+smiling and slapping each other
+on the back. Then you see the
+troll. He twiddles his thumbs
+and says bashfully "No hard
+feelings, huh?" Behind him the
+dragon nods in agreement.
+
+"Only you have the ingenuity"
+the Wizard says, "to embark upon
+a yet greater quest!" and
+smiling, he beckons you to
+follow.
+
+...But that's another story!
+
+======
+
+The "all alike" maze has this layout:
+
+   HOM: West end of Hall of Mists
+   PIT: Brink of pit
+     *: Pirate's treasure
+   SPL: Splendid chamber
+   BEN: Bend in secret canyon which goes north and east (E. to LED; N.N. to dragon)
+   LED: Secret east/west canyon, on a ledge (W. to BEN; D.N. to swiss cheese room)
+
+       |  N   S   E   W   U   D   NE  NW  SE  SW
+   HOM |      1
+     1 |  2   5   4   3   7  HOM BEN  4   7  LED
+     2 |  3   1   4   1   8   -   3  10   6   9
+     3 |  4   5   6   6   -   -   9   3  10   7
+     4 |  1   7   4   6   -   -   5   3   2   7
+     5 |  6   2   4   9   6   9  10   -   2   1
+     6 |  2   1   4   3   -   -  10   2  11   1
+     7 |  8   5  10  11   -   -  11   3   3   7
+     8 |  9   *   6  10   -   -   5   7   9   5
+     9 | PIT  8  PIT 11  10  PIT  5   7   4   6
+   PIT |  7  11   6   2  PIT SPL  2   8   4   3
+     * |  8   -   -   -   -   -   -   -   -   -
+    10 |  9   5  PIT  7   4   3   8   2  10  11
+    11 |  1   5   2   7   -   -   5   9   4   6
+
+The "all different" maze has this layout:
+
+   WLH: West end of long hall
+   VEN: Vending machine
+
+            |  N   S   E   W   U   D   NE  NW  SE  SW
+     WLH    |      1
+     1 MYLP |  2   3   4   5   2  WLH   4   6   5   6
+     2 YMLP |  1   4   5   6   7   6    5   2   3   4
+     3 MGLP |  5   2   1   1   6   4    2   4   6   5
+     4 GMLP |  4   7   6   6   1   3    5   5   2   2
+     5 LYMP |  3   4   2   2   5   6    1   2   4   7
+     6 LMYP |  4   5   5   2   3   2    4   1   7   6
+     7 LMGP |  6  VEN  4   4   2   5    6   5   2   3
+     VEN    |  7
+
+======
+
+The magazine "Sinclair User" printed a spoiler walkthru in issues #116,117,118,119.
+However, issue #115 doesn't seem to have printed the first part of the walkthrough at all!
+Weird. Also, notice the (intentional?) "typo" on the last line: "S.E." should be "SE."
+
+==PART 2==
+DROP ROD. DROP GRIM. STAND ON. GLUPH.
+PLOVER. GET EMER. E. GET PYRA. S. PLOVER. STAND ON. GLUPH.
+GET DISC. S.S. DROP DISC. GET JEWE. STAND ON. GLUPH.
+GET DISC. N.W.W.W. DROP DISC. GET DIAM. STAND ON. GLUPH.
+DROP DIAM. STAND ON. GLUPH.
+GET DISC. W.W.S.N.U.S. RETR COIN. INSERT COIN. PLACE LAMP. GET LAMP. N.U.N.D.E.U.S.N.U.S. DROP DISC. GET CHEST. STAND ON. GLUPH.
+DROP CHEST. STAND ON. GLUPH.
+GET DISC.
+
+==PART 3==
+N.N.N.D.W.D.D.N.D.W.D.E. GET SPEL. DROP SPEL. W.W.W.E. DROP DISC. GET PILL. STAND ON. GLUPH.
+DROP PILL. STAND ON. GLUPH.
+GET DISC. W.NW. DROP DISC. GET FIGU. STAND ON. GLUPH.
+DROP FIGU. STAND ON. GLUPH.
+GET DISC. N.N.N.N.D. GET CONCH. W. DROP DISC. STAND ON. GLUPH.
+DROP CONCH. GET FLASK. GET WATER. STAND ON. GLUPH.
+GET DISC. U.U.S.W.W.W.W. DROP DISC. D. WATER PLANT. U. STAND ON. GLUPH.
+GET WATER. STAND ON. GLUPH.
+D. WATER PLANT. U.E.D. GET OIL. U.W.D.
+
+==PART 4==
+CLIM BEAN. W.N. OIL DOOR. S. GET EGG. E.E.U. STAND ON. GLUPH.
+DROP EGG. DROP FLASK. STAND ON. GLUPH.
+D. CLIM BEAN. W.N. OPEN DOOR. N. GET TRID. S.S.E.E.U. GET DISC. E.E.NE.E.N. OPEN CLAM. D.D.
+DROP DISC. GET PEARL. STAND ON. GLUPH. DROP PEARL. STAND ON. GLUPH.
+GET DISC. U.U.S.W.W.NW.W. DROP DISC. SW.U. GET TIMBER. WE.D. STAND ON. GLUPH.
+DROP PROP. GET FOOD. STAND ON. GLUPH.
+SW.U.NE. THROW FOOD. NE.NE.E.SE.S.E. RETR KEY. CLIM CHAI. UNLO CHAI. PUT KEY. GET CHAI.
+W.W.NE.N.E. GET SPIC. W.S.S.W.W.SW.SW.SW.D. STAND ON. GLUPH.
+GET DISC.
+
+==PART 5==
+SE.SE.NE.E.U.E.U.N.E. DIG. D.W.NW. PROP ROOF. NW. DROP DISC. STAND ON. GLUPH.
+GET EGG. STAND ON. GLUPH.
+GET SCARAB. PLACE EGGS. GET DISC. SE.SE.E.U.SW.S.D.W.W.W.W. DROP DISC.
+D. CLIM BEAN. W. FEE. FIE. FOE. FOO. GET EGG. E.E.U. STAND ON. GLUPH.
+DROP EGG. STAND ON. GLUPH.
+GET DISC. E.E.NE.E.U.E.U.S.U.W.W.W.S.N.U.S.N.SW.W.S.E. MAGE DEN

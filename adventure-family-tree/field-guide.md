@@ -57,6 +57,22 @@ A blend of PLAT0550 and LUPI0440.
 
 - Picnic table
 
+### BRHA0017 (_A Serf's Tale_)
+
+- Inventory limit of four "carried" items plus three in "pockets" which must be
+    RETRieved before use, adding an extra level of inventory management.
+
+- The four well-house items are instead received via difficult-to-reach
+    aboveground "cutscenes": N E E E SE SE SE to get the keys, then
+    RETR MAP, EXAM MAP, and N N N N N NW NW to meet the Patron at the
+    Waystation and receive the lamp, flask, and sandwiches.
+
+- XYZZY is implemented as a sort of transporter disk; STAND ON DISC, then say XYZZY.
+    The magic word PLUGH has become GLUPH, and is associated with a second, _portable,_
+    transporter disc.
+
+- The pirate steals only one treasure at a time.
+
 ### GIBI0375
 
 - There is a Medieval Room behind the tablet in the Dark Room.
@@ -141,6 +157,10 @@ The same as LONG0501, plus two uncompleted dead ends:
     tall wooden leg stands sheltered by the wall of the house. A small pile of
     bird seed lies on the table._
 
+- BRHA0017: South of grate: _a dried-up waterfall atop an enormous sea-cliff.
+    Below you the terrain slopes dizzyingly down to the sea, a thousand feet
+    below._ There is nothing to do there besides fall off the cliff and die.
+
 - WOOD0430: chasm
 
 - LONG0501 (MCDO0551, LONG0751): billboard, salt marsh, Thunder Hole
@@ -180,6 +200,11 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 ### Dwarvish language
 
+- ARNA0770: I've heard that the ability to decode ROT1 Dwarvish is used in at
+    least one puzzle.
+
+- BRHA0017: If killed by a dwarf in the dark, _somebody mutters ‘Loodybay Ouristtay!’_
+
 - GIBI0375: _There is an ancient dog-eared Dwarvish-English dictionary here._ (at Y2)
 
 - PLAT0550 (ARNA0660, ARNA0770): _The dwarf staggers, slumps to the ground, gasps "Epo'u mfu uifn vtf fncbmnjoh
@@ -187,22 +212,23 @@ The same as LONG0501, plus two uncompleted dead ends:
     The gimmick here is that dwarves speak in ROT1: "Don't let them use embalming
     fluid. I want to be stuffed with crab meat!"
 
-- ARNA0770: I've heard that the ability to decode ROT1 Dwarvish is used in at
-    least one puzzle.
-
 ### Flying carpets
-
-- WOOD0430: _You board the Persian rug, which promptly whisks you across the chasm._
 
 - GOET0580:
 
+- WOOD0430: _You board the Persian rug, which promptly whisks you across the chasm._
+
 ### Garden-path sentence
+
+- BRHA0017: _A little dwarf walks around a corner. He throws an axe at you, which misses, curses and runs off!_
 
 - CROW0000 (WOOD0350): _A little dwarf just walked around a corner, saw you, threw a little axe at you which missed, cursed, and ran away._
 
-- KNUT0350: _A little dwarf just walked around a corner, saw you, threw a little axe at you, cursed, and ran away. (The axe missed.)_
-
 - GIBI0375: _A little dwarf just walked around a corner, saw you, threw a little axe, missing you, cursed, and ran away._
+
+- HOWE0301: _A little dwarf walked around a corner & saw you. He threw a little axe which missed then ran away._
+
+- KNUT0350: _A little dwarf just walked around a corner, saw you, threw a little axe at you, cursed, and ran away. (The axe missed.)_
 
 ### Genies and djinns
 
@@ -223,6 +249,8 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 - ARNA0770: PLAT0550, plus BASINGSTOKE
 
+- BRHA0017: XYZZY, GLUPH, PLOVER, FEE FIE FOE FOO, MAGE DEN
+
 - LIDI0366: WOOD0350, plus PKIHMN
 
 - LONG0501 (LONG0751): WOOD0350, plus PHUCE
@@ -239,9 +267,15 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 ### Mazes
 
+- BRHA0017: WOOD0350. The "all alike" maze is changed: the route to the chest is
+    simply SE N S, then N N N to the pit. The "all different" maze is also changed.
+
 - CROW0000: Twisty passages all alike
 
-- LUPI0440: WOOD0350, plus spider maze ("tangled web of intersecting passages"), sewer maze
+- HOWE0301: WOOD0350, but the "all different" maze rooms differ by text color, not
+    by description.
+
+- LUPI0440: WOOD0350, plus spider maze (_tangled web of intersecting passages_), sewer maze
 
 - MCDO0551: LONG0501, plus kaleidoscopic garden of the elves
 
@@ -322,6 +356,11 @@ The same as LONG0501, plus two uncompleted dead ends:
     mithril ring, scrimshaw spyglass, rock-crystal sculpture, jade bracelet, casket of opals,
     turquoise beads, opalescent starstone
 
+- BRHA0017: 16: large gold nugget, large diamond, silver bar, precious jewelry, **golden conch**,
+    treasure chest, clutch of golden eggs, jewel-encrusted trident, **delicate porcelain figurine**, egg-sized emerald,
+    tiny platinum pyramid, huge glistening pearl, Persian rug, rare spices, golden chain,
+    large silver scarab
+
 - CROW0000: 5: large gold nugget, diamonds, bars of silver, precious jewelry, coins
 
 - LUPI0440: 20: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
@@ -369,6 +408,19 @@ The same as LONG0501, plus two uncompleted dead ends:
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
     platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
     giant ruby, jade necklace, amber gemstone, star sapphire, ebony statuette
+
+## Vending machines
+
+- BRHA0017: _You are at a dead-end. Built into the far wall is a strange,
+    black and copper-coloured receptacle with a sign posted above it._
+    READ SIGN: _‘DWARFACELL’ LAMP RE-CHARGING STATION: Insert coin and wait for instructions._
+    There is a non-treasure _coin_.
+
+- LONG0501 (MCDO0551): The _lead slugs_ from the gnome's phone booth can also be used
+    in the vending machine.
+
+- WOOD0350 (LONG0501, PLAT0550, etc): _There is a massive vending machine here. The instructions on it read:
+    "Drop coins here to receive fresh batteries."_
 
 ## Wizards
 
