@@ -1,0 +1,135 @@
+in
+get all
+xyzzy
+e
+get cage
+pit
+light lamp
+e
+get bird
+e e
+get rod
+e
+pit
+d w
+wave rod
+w
+get lyre
+w w n e
+get coins
+e
+drop bird
+drop cage
+n n plugh
+drop lyre, coins
+
+plugh s d bedquilt slab s d
+water plant
+u w u reservoir
+fill
+s s d s d
+water plant
+u e d
+fill
+u w d
+climb w
+get eggs
+n
+oil door
+n
+get trident
+w d ne u
+throw eggs
+cross
+barren in
+throw food
+open chain
+get all
+out n view s e
+get spices
+w s w w
+cross
+drop bear
+cross
+sw sw sw
+n se
+drop all
+tunnel
+get emerald
+drop emerald out hole
+out
+get all
+nw s
+get vase
+se e
+get all
+w ne e n
+open clam
+d d
+get pearl
+u u s
+u e u n
+plugh
+drop pillow, vase, trident, pearl, chain, spices, emerald
+
+fee fie foe foo
+plugh
+s d bedquilt slab s d climb w
+get eggs
+n n jump s s s
+kill
+yes
+get rug
+e e n n
+plugh
+drop eggs, rug
+
+plugh
+s s s s
+get nugget
+n w w w s
+e s s s n e e nw
+[The pirate will have stolen the nugget by now.]
+open chest
+get nugget
+drop nugget
+get chest
+put nugget in chest
+se n d
+e e e e
+open grate
+u house in
+drop nugget, chest
+
+plugh s d w d e e
+get bill
+w u u e u n
+plugh
+drop bill
+
+[There is no Master Game.]
+quit
+
+You scored 240 out of a possible 240 using 323 turns.
+You have completed the warmup Adventure game.
+To achieve the next higher rating would be a neat trick!
+CONGRATULATIONS!!.
+
+Treasure list:
+
+NUGGET  20
+LYRE     5 (replaces diamonds)
+(no silver bars)
+(no jewelry)
+COINS   15
+CHEST   20
+EGGS    15
+TRIDENT 10
+VASE    10
+EMERALD 15
+(no pyramid)
+PEARL   15
+RUG     15
+SPICES   5
+CHAIN   10
+BILL    10
