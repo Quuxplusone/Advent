@@ -163,12 +163,15 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 - WOOD0430: chasm
 
-- LONG0501 (MCDO0551, LONG0751): billboard, salt marsh, Thunder Hole
+- LONG0501 (LONG0751, MCDO0551, ROBE0665): billboard, salt marsh, Thunder Hole
+
+- ROBE0665 (ROBE0240): The road west of the building leads to the base of a spire of rock.
+    _The spire looks natural, except for a tiny opening near its summit._
 
 ### Brooms
 
-- LONG0501 (MCDO0551, LONG0751): _You're at Tongue of Rock. There is a small whiskbroom here._
-    In the dusty rock room, SWEEP reveals the combination to the safe in the Well House:
+- LONG0501 (MCDO0551, ROBE0665, LONG0751): _You're at Tongue of Rock. There is a small whiskbroom here._
+    In the dusty rock room, SWEEP reveals the combination to the safe:
     _Brushing the dust from one of the larger rocks reveals some carved characters.
     In the rock is carved the message "7-22-34"._
 
@@ -193,10 +196,21 @@ The same as LONG0501, plus two uncompleted dead ends:
    SE of the Soft Room). In ARNA0660 and ARNA0770, you can EXAMINE ORB to receive
    non-essential hints re various puzzles.
 
+- LONG0501: _There is a polished sphere of pure opal here!_ (in the Crystal Palace).
+    It has no effect, though; it's just a treasure.
+
 - MCDO0551: _There is a polished sphere of pure quartz here!_ (in the Crystal Palace).
     LOOK BALL causes you to see whatever is in the room with the star sapphire.
     This in turn allows you to learn the magic word SAINT-MICHEL for teleporting
     to the Castle of the Elves.
+
+- ROBE0665: In addition to LONG0501's opal sphere, there is an actual crystal ball
+    guarded by Gollum: _There is a flawless crystal ball here. Before you have a
+    chance to figure out what to do, you hear wild splashing noises in the water
+    beside you. An emaciated creature of some unfamiliar description jumps from the
+    pool and screams "Mine! It's mine!" He snatches the crystal ball and runs
+    quickly up the slab to the cavern on the far side._
+    You can EXAMINE BALL or LOOK IN BALL to get hints to several puzzles.
 
 ### Dwarvish language
 
@@ -230,6 +244,8 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 - KNUT0350: _A little dwarf just walked around a corner, saw you, threw a little axe at you, cursed, and ran away. (The axe missed.)_
 
+- ROBE0665 (ROBE0240): _A little dwarf just walked around a corner, saw you, threw a little axe at you which missed. The dwarf then cursed and ran away._
+
 ### Genies and djinns
 
 - WOOD0430: _As you rub the urn, there is a flash of light and a genie appears.
@@ -242,7 +258,7 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 ### Magic words
 
-- ARNA0660: Same set as PLAT0550.
+- ARNA0660: Same as PLAT0550.
     The "skeleton key" that opens the safe is randomly one of BLERBI, KLAETU, KNERL, or SNOEZE.
     The magic word ZORTON is no longer one of the possible "skeleton keys";
     instead, it turns the singing sword into the mithril ring.
@@ -263,6 +279,8 @@ The same as LONG0501, plus two uncompleted dead ends:
 - PLAT0550: WOOD0350, plus ZORTON, THURB, SNOEZE, NOSIDE SAMOHT, PHUGGG, MELENKURION, KNERL, KLAETU, BLERBI.
     The "skeleton key" that opens the safe is randomly one of BLERBI, KLAETU, KNERL, SNOEZE, or ZORTON.
 
+- ROBE0665: LONG0501, plus KLARF and ABYSM
+
 - WOOD0350 (LUPI0440): XYZZY, PLUGH, PLOVER, FEE FIE FOE FOO
 
 ### Mazes
@@ -277,25 +295,28 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 - LUPI0440: WOOD0350, plus spider maze (_tangled web of intersecting passages_), sewer maze
 
-- MCDO0551: LONG0501, plus kaleidoscopic garden of the elves
+- MCDO0551: WOOD0350, plus kaleidoscopic garden of the elves
 
 - PLAT0550: WOOD0350, plus fog room, enchanted catacombs, ice maze (_THURB_)
 
-- WOOD0350: CROW0000, plus twisty passages all different
+- WOOD0350 (LONG0501): CROW0000, plus twisty passages all different
 
 ### Musical instruments
 
 - LUPI0440 (ARNA0660): There is a _little horn_ toted by the dwarves, which they'll drop if killed.
     You can BLOW HORN to summon a random number of angry dwarves. It has no other effect.
 
-- LONG0501 (MCDO0551, LONG0751): The silver bars are replaced with a _delicate lyre_, which is a treasure.
+- LONG0501 (LONG0751, MCDO0551, ROBE0665): The silver bars are replaced with a _delicate lyre_, which is a treasure.
     You must PLAY LYRE to get past the black dog at the Styx. The diamonds are replaced
     with a _silver horn_, which is also a treasure. You must PLAY HORN or BLOW HORN above
     the Shell Room to knock down a wall.
 
+- ROBE0665: Same as LONG0501, but this time the lyre replaces the diamonds
+    and the silver horn is moved to the "windy passage" east of the Blue Grotto.
+
 ### Safes
 
-- LONG0501 (MCDO0551, LONG0751): There is a wall safe in the Well House,
+- LONG0501 (LONG0751, MCDO0551): There is a wall safe in the Well House,
     initially hidden behind a poster. Most treasures must be deposited in
     the safe, rather than simply on the floor of the Well House.
     It is opened with a combination.
@@ -313,9 +334,12 @@ The same as LONG0501, plus two uncompleted dead ends:
     treasures dropped in either safe are accessible from the other.
     It is opened with a magic word.
 
+- ROBE0665: The wall safe from LONG0501 has moved to the East Side Chamber.
+    It is opened with the same combination as in LONG0501.
+
 ### Sword-in-stone puzzles
 
-- LONG0501 (MCDO0551, LONG0751): Go up from the Misty Cavern to reach Sword Point.
+- LONG0501 (LONG0751, MCDO0551, ROBE0665): Go up from the Misty Cavern to reach Sword Point.
     _Through the thick white mist looms a polished marble slab, to
     which is affixed an enormous rusty iron anvil.  In golden letters
     are written the words: "Whoso Pulleth Out This Sword of This
@@ -383,7 +407,7 @@ The same as LONG0501, plus two uncompleted dead ends:
     platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
     silken cloak, gleaming sword, elfin crown, ruby slippers, delicate lyre,
     star sapphire, Holy Grail (chalice), cask of vintage wine, golden ring (small gold ring),
-    four-leafed clover, rare book, glowing stone (radium), quartz sphere,
+    four-leafed clover, rare book, glowing stone (radium), **quartz sphere**,
     golden tree, silver droplet
 
 - PLAT0550: 26: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
@@ -393,6 +417,21 @@ The same as LONG0501, plus two uncompleted dead ends:
     sapphire sceptre, ruby-covered toy yacht (the Ruby Yacht of Omar Khayyam),
     mithril ring, scrimshaw spyglass, rock-crystal sculpture, jade bracelet, casket of opals,
     turquoise beads
+
+- ROBE0240: 13: large gold nugget, rare coins,
+    treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
+    glistening pearl, Persian rug, rare spices, golden chain,
+    delicate lyre, ancient two-dollar bill
+
+- ROBE0665: 40: large gold nugget, several diamonds, **silver horn**, precious jewelry, rare coins,
+    treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
+    platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
+    silken cloak, shining sword, elfin crown, ruby slippers, delicate lyre,
+    star sapphire, silver chalice, cask of vintage wine, tarnished ring (small gold ring),
+    rare illuminated manuscript, glowing stone (radium), opal sphere, crystal ball,
+    golden statue, golden belt, Venetian glass, Elvish scroll, silmaril, mahogany hoop,
+    ancient two-dollar bill, mithril mail, ivory elephant, gleaming scabbard,
+    crystal box, ruby diadem
 
 - SWEN0448: 21: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,

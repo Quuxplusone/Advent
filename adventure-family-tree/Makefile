@@ -1,3 +1,5 @@
+# To get the `dot` command, try `brew install graphviz`
+
 all: adventure-family-tree.pdf
 
 adventure-family-tree.pdf: adventure-family-tree.dot

@@ -14,14 +14,14 @@ define(CONJECTURED, style=dotted)
 define(MAJOR, shape=doublecircle)
 
 strict digraph {
-    CROW0000 [EXTANT,label="\N\nFortran"];
+    CROW0005 [EXTANT,label="\N\nFortran"];
 
-    WOOD0350 [EXTANT,MAJOR,label="\N\nFortran"]; CROW0000 -> WOOD0350 [EXTENSION];
+    WOOD0350 [EXTANT,MAJOR,label="\N\nFortran"]; CROW0005 -> WOOD0350 [EXTENSION];
 
-    CONL0000 [EXTANT,label="\N\nInform 7"]; CROW0000 -> CONL0000 [PORT];
-    GERR0000 [EXTANT,label="\N\nBasic"]; CROW0000 -> GERR0000 [PORT];
-    RUSS0000 [EXTANT]; CROW0000 -> RUSS0000 [RECOMPILE];
-    FULL0000 [EXTANT]; RUSS0000 -> FULL0000 [RECOMPILE];
+    CONL0000 [EXTANT,label="\N\nInform 7"]; CROW0005 -> CONL0005 [PORT];
+    GERR0000 [EXTANT,label="\N\nBasic"]; CROW0005 -> GERR0005 [PORT];
+    RUSS0000 [EXTANT]; CROW0005 -> RUSS0005 [RECOMPILE];
+    FULL0000 [EXTANT]; RUSS0005 -> FULL0005 [RECOMPILE];
 
     GILL0350 [EXTANT]; WOOD0350 -> GILL0350 [PORT];
     KING0350 [EXTANT]; GILL0350 -> KING0350 [PORT];
@@ -32,6 +32,7 @@ strict digraph {
     YONG_XXX [LOST]; AUST1100 -> YONG_XXX [SUBSET];
 
     EKMA0350 [EXTANT]; WOOD0350 -> EKMA0350 [PORT];
+    BRHA0017 [EXTANT,label="\N\nA Serf’s Tale"]; WOOD0350 -> BRHA0017 [EXTENSION];
     BAGG0350 [EXTANT,label="\N\nTADS"]; EKMA0350 -> BAGG0350 [PORT];
     KINE0350 [EXTANT]; EKMA0350 -> KINE0350 [PORT];
 
@@ -111,8 +112,6 @@ strict digraph {
     ARNA0440 [EXTANT]; LUPI0440 -> ARNA0440 [PORT];
     ODWY0440 [EXTANT,label="\N\nZ-machine"]; LUPI0440 -> ODWY0440 [PORT];
 
-    RICH0500 [EXTANT,label="\N\nPascal"]; WOOD0350 -> RICH0500 [MINOR];
-
     PLAT0550 [EXTANT,MAJOR,label="\N\nA-code"]; WOOD0350 -> PLAT0550 [EXTENSION];
     ARNA0550 [EXTANT,label="\N\nA-code"]; PLAT0550 -> ARNA0550 [PORT];
     ODWY0550 [EXTANT,label="\N\nZ-machine"]; PLAT0550 -> ODWY0550 [PORT]; ARNA0550 -> ODWY0550 [MINOR];
@@ -126,6 +125,11 @@ strict digraph {
 
     UCLA0365 [CONJECTURED]; WOOD0350 -> UCLA0365 [EXTENSION];
 
+    JAZE_XXX [CONJECTURED]; WOOD0350 -> JAZE_XXX [EXTENSION];
+    BECK0500 [EXTANT]; JAZE_XXX -> BECK0500 [PORT];
+
+    RICH0500 [EXTANT,label="\N\nPascal"]; WOOD0350 -> RICH0500 [MINOR];
+
     VMCM0350 [EXTANT,label="\N\nPL/I"]; WOOD0350 -> VMCM0350 [PORT];
 
     ARNA0660 [EXTANT,label="\N\nA-code"]; ARNA0550 -> ARNA0660 [EXTENSION]; LUPI0440 -> ARNA0660 [EXTENSION];
@@ -134,9 +138,6 @@ strict digraph {
     BALL0770 [EXTANT,label="\N\niOS"]; ARNA0770 -> BALL0770 [PORT];
 
     KIND0550 [EXTANT]; ARNA0550 -> KIND0550 [PORT];
-
-    JAZE_XXX [CONJECTURED]; WOOD0350 -> JAZE_XXX [EXTENSION];
-    BECK0500 [EXTANT]; JAZE_XXX -> BECK0500 [PORT];
 
     LONG0500 [LOST,MAJOR,label="\N\nFortran"]; WOOD0350 -> LONG0500 [EXTENSION];
     LONG0751 [LOST,MAJOR,label="\N\nNew Adventure"]; LONG0500 -> LONG0751 [EXTENSION];
@@ -162,7 +163,8 @@ strict digraph {
     KINM0551 [EXTANT]; MCDO0551 -> KINM0551 [PORT];
     MILL0551 [LOST]; MCDO0551 -> MILL0551 [PORT];
     ODWY0551 [EXTANT,label="\N\nZ-machine"]; MCDO0551 -> ODWY0551 [PORT];
-
+    ROBE0665 [EXTANT,MAJOR,label="\N\nWellesley"]; MCDO0551 -> ROBE0665 [EXTENSION];
+    ROBE0240 [EXTANT]; ROBE0665 -> ROBE0240 [SUBSET];
 
     // Below this line are commands for Graphviz layout.
 
@@ -172,17 +174,16 @@ strict digraph {
     splines=true;
     ordering=out;
 
-    { rank="same"; CROW0000 RUSS0000 CONL0000 GERR0000 FULL0000 }
-    { GERR0000 -> CONL0000 -> CROW0000 [style=invis]; }
-    { rank="same"; JAZE_XXX BECK0500 }
+    { rank="same"; CROW0005 RUSS0005 CONL0005 GERR0005 FULL0005 }
+    { GERR0000 -> CONL0005 -> CROW0005 [style=invis]; }
     { rank="same"; LONG0500 LONG0751 }
-    { rank="same"; EKMA0350 KINE0350 }
     { rank="same"; GILL0350 KING0350 }
     { rank="same"; GIBI0375 GRAY0375 }
     { rank="same"; WOOD0430 KIND0430 }
     { rank="same"; MALM0350 MCDO0551 }
     { rank="same"; MCDO0551 KINM0551 }
     { rank="same"; PLAT0550 VANE0560 }
+    { rank="same"; ROBE0665 ROBE0240 }
     { rank="same"; ARNA0550 ODWY0550 }
     { rank="same"; ARNA0660 KINA0660 }
     { rank="same"; ARNA0770 BALL0770 }

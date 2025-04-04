@@ -1,0 +1,417 @@
+
+FIRST TRIP:
+  Deposit vase, emerald, pyramid, coins, jewelry.
+  Acquire lyre, cloak, and scabbard.
+
+n n
+get all
+s
+xyzzy
+light match
+get all
+e
+get cage
+pit
+light lamp
+e
+drop rod
+get bird, rod
+w d s
+get gold
+n w
+drop gold in fissure
+wave rod
+w
+get lyre
+w w s s
+yank cloak
+nw n d e e e
+wave rod
+e n
+drop bird, cage
+w get e
+e
+7 22 34
+get jewels
+w ne
+klarf
+get all
+klarf
+get all
+klarf
+out w
+n n e
+drop match in slit
+nw u w w d
+pour
+u e e orient n se
+drop all
+tunnel
+get all
+n
+light match
+get pyramid
+s
+drop all in hole
+tunnel
+get all
+nw s
+get vase
+se e
+get all
+w sw se w
+turn off lamp
+plugh
+drop pillow
+drop vase, emerald, pyramid, coins, jewelry, scabbard
+
+SECOND TRIP:
+  Deposit diamonds, lyre, sapphire, cask, radium, cloak, opal sphere,
+          hoop, crystal ball, sword, and crown.
+  Acquire honeycomb and horn.
+
+open sack
+wear cloak, crown
+s w w
+n get s
+s get n
+w n u
+get flowers
+house
+s w s
+drop flowers
+u
+get comb
+d n
+get clover
+n w w w n d e
+play lyre
+e e e
+eat mushrooms
+get key
+eat cakes
+open door
+phuce
+e
+phuce
+get boat
+e
+drop boat
+u
+light lamp
+get horn
+u
+get rope
+u e
+get sapphire
+e e n
+hit phone
+get slugs
+s w w n
+get cannister
+n s
+put slugs in machine
+get batteries
+n nw s
+w w w w
+get boat
+n
+open cannister
+put stone in cannister
+close cannister
+drop boat
+u u d d
+get diamonds
+u u
+turn off lamp
+s get e n
+light lamp
+get cask
+turn off lamp
+s w n sw
+light lamp
+d
+get boat
+w
+drop boat
+ne u u
+open cask
+fill cask
+d d sw
+get boat
+se s
+drop boat,pole,cask,lyre,horn,cannister
+s
+[friend]
+s s w sw
+w w w
+get all
+e e e ne
+e e n n e e
+drop nugget
+w w
+get cask
+e e e e
+drop cask
+w w w w
+get lyre,horn,cannister
+e e e e
+get all
+s
+get ball
+n w
+s se s
+get sword
+n n
+get hoop
+e e
+jump
+e se w
+drop ring
+plugh
+drop diamonds, lyre, sapphire, cask, cannister, cloak, sphere
+drop hoop, ball, sword, crown
+
+THIRD TRIP:
+  Deposit trident, pearl, chain, spices, horn, grail, mail
+  Acquire scroll and shoes
+
+[YOU SHOULD BE CARRYING BOTTLE, HONEYCOMB, KEYS, AND HORN.]
+
+get keys
+fill bottle
+plugh
+e nw u canyon
+get amulet
+n w w d
+pour
+u e d
+fill
+u w d
+climb
+w
+get eggs
+n
+pour
+n
+get trident
+w d ne ne
+throw eggs
+ne barren in
+throw comb
+unlock
+get all
+n n view
+throw amulet
+get scroll
+s e
+get spices
+w s w w
+cross
+drop bear
+sw sw sw sw
+se w d
+fill
+u e ne e n
+open clam
+d d
+get pearl
+u u u
+blow horn
+n w d d s w
+wear shoes
+e e e
+get chalice
+w w n
+pray
+n get s
+pray
+u u e s d s
+u e u n
+plugh
+drop trident, pearl, chain, spices, horn, grail, mail
+
+FOURTH TRIP
+  Deposit eggs, manuscript, belt, glass, ivory, silmaril, rug, box
+
+[YOU SHOULD BE CARRYING SCROLL AND WEARING SHOES.]
+
+fee fie foe foo
+plugh
+e nw e e
+wear belt
+n e
+get book
+e e e n n
+n n
+put rope in bottle
+light match
+light rope
+melt glass
+get glass
+s s
+jump
+push button
+s get n
+w w
+get silmaril
+e s u w
+sw n d d
+get bar
+u u s u ne sw in
+put bar on base
+pull bar
+out
+get vial
+in
+push bar
+out ne w w w
+d climb w
+get eggs
+e d u w u s
+kill
+yes
+get rug
+e e n n
+pour vial
+abysm
+get box
+plugh
+drop scroll, belt, manuscript, elephant, silmaril, eggs, rug, box
+
+FIFTH TRIP
+  Deposit nugget, ring, statue, shoes
+
+[YOU SHOULD BE WEARING SHOES.]
+
+plugh
+wear ring
+click heels [THIS WILL DROP MOST OF YOUR STUFF AT Y2]
+w
+get statue
+rub ring
+w w w
+get ring
+e e e ne
+e e n n e e
+get nugget
+e s
+u u e e
+jump
+e n d d
+n n u u
+drop ring out window
+d d w
+n e
+get ring
+e n
+drop nugget, ring, statue, shoes
+
+SIXTH TRIP
+  Deposit two-dollar bill, diadem
+
+plugh
+e nw u ne e e e
+get bill
+w w sw se w
+plugh
+open box
+get diadem
+drop bill, diadem
+
+SEVENTH TRIP (if you haven't already done so)
+  Deposit chest
+
+xyzzy
+e pit d w w w s
+e s s s n e e nw
+get chest
+se n d
+e e
+xyzzy
+drop chest
+
+[WAIT FOR THE SEPULCHRAL VOICE.
+ The sepulchral voice reverberates through the cave: "The cave is
+ closing now. See you at the Devil's Chair."
+SO GO THERE.]
+
+plugh
+e nw u orient n ne s
+sit chair
+
+get lamp
+sw phuce s phuce s
+get crowbar
+n phuce n phuce
+get pillow
+ne
+open
+in
+drop pillow
+hit phone
+get slugs
+out sw d
+get bottle
+pour
+u ne
+fill
+sw d
+pour
+climb
+get torch
+u
+put slugs in machine
+put batteries in lamp
+drop torch
+e
+get rod
+w
+get torch
+d d u
+ne
+drop rod
+sw
+throw torch
+
+There is a loud explosion, and a twenty-foot hole appears in the far
+wall, burying the dwarves in the rubble. You march through the hole
+and find yourself in the Main Office, where a cheering band of
+friendly elves carry the conquering adventurer off into the sunset.
+You scored 655 out of a possible 665 using 749 turns.
+All of Adventuredom gives tribute to you, Adventurer Grandmaster!
+To achieve the next higher rating would be a neat trick!
+
+CONGRATULATIONS!!
+[Hit return to exit]
+
+
+Here's a complete mapping of the all-different maze.
+  "G" is "twisting", "Y" is "twisty".
+  "hall" is west end of long hall.
+  "star" is long narrow N/S passage, just north of the Star Chamber.
+  "vend" is the vending machine.
+
+       N    S    E    W    U    D    NE   NW   SE   SW
+LMGP - LMYP vend GMLP LYMP MLYP MLGP YMLP star YLMP MGLP
+LMYP - GMLP GLMP MLGP YLMP MGLP MLYP LYMP MYLP LMGP YMLP
+GMLP - LYMP LMGP YMLP LMYP MYLP MGLP GLMP MLGP MLYP YLMP
+LYMP - YMLP LMYP MLYP LMGP GLMP GMLP MGLP YLMP MYLP MLGP
+YMLP - LMGP YLMP MYLP MGLP LMYP GLMP MLYP LYMP MLGP GMLP
+GLMP - MGLP LYMP YLMP MLYP MLGP YMLP MYLP LMYP GMLP LMGP
+MGLP - MLGP MLYP LMGP MYLP YMLP LYMP YLMP GMLP LMYP GLMP
+MLGP - YLMP YMLP MGLP GLMP GMLP MYLP LMYP LMGP LYMP MLYP
+YLMP - MYLP GMLP GLMP YMLP LMGP LMYP MLGP MLYP MGLP LYMP
+MYLP - MLYP MGLP LYMP MLGP YLMP hall GMLP YMLP GLMP LMYP
+MLYP - GLMP MLGP LMYP GMLP LYMP YLMP LMGP MGLP YMLP MYLP
+
+The various "falling" connections are:
+- Troll bridge: nowhere, surprisingly enough
+- Fissure in Hall of Mists: to Lost River Canyon
+- West side window on pit: to mirror canyon
+- East side window on pit: to mirror canyon
+- Lookout at top of spire: to billboard (small items only)
+- Dante's Rest bridge: to hobbit amulet canyon (just S of swiss cheese room)
+- Black Chasm bridge: to ivory elephant and seven elves
+- High side of crack: to low side of crack
+- Low side of crack: to bottom of well
