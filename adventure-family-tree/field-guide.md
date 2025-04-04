@@ -163,11 +163,14 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 - WOOD0430: chasm
 
-- LONG0501 (MCDO0551, LONG0751): billboard, salt marsh, Thunder Hole
+- LONG0501 (LONG0751, MCDO0551, ROBE0665): billboard, salt marsh, Thunder Hole
+
+- ROBE0665 (ROBE0240): The road west of the building leads to the base of a spire of rock.
+    _The spire looks natural, except for a tiny opening near its summit._
 
 ### Brooms
 
-- LONG0501 (MCDO0551, LONG0751): _You're at Tongue of Rock. There is a small whiskbroom here._
+- LONG0501 (MCDO0551, ROBE0665, LONG0751): _You're at Tongue of Rock. There is a small whiskbroom here._
     In the dusty rock room, SWEEP reveals the combination to the safe in the Well House:
     _Brushing the dust from one of the larger rocks reveals some carved characters.
     In the rock is carved the message "7-22-34"._
@@ -230,6 +233,8 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 - KNUT0350: _A little dwarf just walked around a corner, saw you, threw a little axe at you, cursed, and ran away. (The axe missed.)_
 
+- ROBE0665 (ROBE0240): _A little dwarf just walked around a corner, saw you, threw a little axe at you which missed. The dwarf then cursed and ran away._
+
 ### Genies and djinns
 
 - WOOD0430: _As you rub the urn, there is a flash of light and a genie appears.
@@ -263,6 +268,8 @@ The same as LONG0501, plus two uncompleted dead ends:
 - PLAT0550: WOOD0350, plus ZORTON, THURB, SNOEZE, NOSIDE SAMOHT, PHUGGG, MELENKURION, KNERL, KLAETU, BLERBI.
     The "skeleton key" that opens the safe is randomly one of BLERBI, KLAETU, KNERL, SNOEZE, or ZORTON.
 
+- ROBE0665: LONG0501, plus KLARF
+
 - WOOD0350 (LUPI0440): XYZZY, PLUGH, PLOVER, FEE FIE FOE FOO
 
 ### Mazes
@@ -288,7 +295,7 @@ The same as LONG0501, plus two uncompleted dead ends:
 - LUPI0440 (ARNA0660): There is a _little horn_ toted by the dwarves, which they'll drop if killed.
     You can BLOW HORN to summon a random number of angry dwarves. It has no other effect.
 
-- LONG0501 (MCDO0551, LONG0751): The silver bars are replaced with a _delicate lyre_, which is a treasure.
+- LONG0501 (LONG0751, MCDO0551, ROBE0665): The silver bars are replaced with a _delicate lyre_, which is a treasure.
     You must PLAY LYRE to get past the black dog at the Styx. The diamonds are replaced
     with a _silver horn_, which is also a treasure. You must PLAY HORN or BLOW HORN above
     the Shell Room to knock down a wall.
@@ -393,6 +400,11 @@ The same as LONG0501, plus two uncompleted dead ends:
     sapphire sceptre, ruby-covered toy yacht (the Ruby Yacht of Omar Khayyam),
     mithril ring, scrimshaw spyglass, rock-crystal sculpture, jade bracelet, casket of opals,
     turquoise beads
+
+- ROBE0240: 13: large gold nugget, rare coins,
+    treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
+    glistening pearl, Persian rug, rare spices, golden chain,
+    delicate lyre, **ancient two-dollar bill**
 
 - SWEN0448: 21: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
