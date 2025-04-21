@@ -1,0 +1,2411 @@
+  1	You are standing at the end of a road before a small brick building.  
+  1	Around you is a forest.  A small stream flows out of the building and 
+  1	down a gully to the south.  The road runs up a small hill to the west.
+         0       2  ROAD  (HILL )
+         0       2  WEST  (W    )
+         0       2  UPWAR (UP     U      ABOVE  ASCEN)
+         0       3  ENTER
+         0       3  BUILD (HOUSE)
+         0       3  INWAR (INSID  IN     INTO )
+         0       3  EAST  (E    )
+         0       4  DOWNS
+         0       4  GULLY
+         0       4  STREA
+         0       4  SOUTH (S    )
+         0       4  D     (DOWNW  DOWN   DESCE)
+         0       5  FORES
+         0       5  NORTH (N    )
+         0       8  DEPRE
+  2	You are on a road at the top of a small hill, close to a large spire  
+  2	of rock which rises nearly fifteen meters into the air here.  The
+  2	spire looks natural, except for a tiny opening near its summit.  You  
+  2	can see a small brick building at the end of the road to the east.    
+  2	The road also continues westward for a short distance, but this  
+  2	section of the roadway is clearly newly constructed and does not 
+  2	appear to reach the bottom of the hill.  There is also a large   
+  2	billboard here.
+         0       1  ROAD  (HILL )
+         0       1  BUILD (HOUSE)
+         0       1  FORWA (CONTI  ONWAR)
+         0       1  EAST  (E    )
+         0       1  D     (DOWNW  DOWN   DESCE)
+        30     146  FORES
+         0       5  FORES
+         0       5  NORTH (N    )
+         0       5  SOUTH (S    )
+         0     146  WEST  (W    )
+         0     293  CLIMB
+         0     293  UPWAR (UP     U      ABOVE  ASCEN)
+  3	You are inside a building, a well house for a large spring. 
+  3	Off to the north side is a small pantry.
+         0       1  OUT   (OUTSI  EXIT   LEAVE)
+         0       1  OUTDO
+         0       1  WEST  (W    )
+         0      11  XYZZY
+         0      33  PLUGH
+         0      79  DOWNS
+         0      79  STREA
+         0     238  PANTR
+         0     238  ENTER
+         0     238  INWAR (INSID  IN     INTO )
+         0     238  NORTH (N    )
+  4	You are in a valley in the forest beside a stream tumbling along a    
+  4	rocky bed.  The stream is flowing to the south.   
+         0       1  UPSTR
+         0       1  BUILD (HOUSE)
+         0       1  NORTH (N    )
+         0       5  FORES
+         0       5  EAST  (E    )
+         0       5  WEST  (W    )
+         0       5  UPWAR (UP     U      ABOVE  ASCEN)
+         0       7  DOWNS
+         0       7  SOUTH (S    )
+         0       7  D     (DOWNW  DOWN   DESCE)
+         0       7  STREA
+         0       8  DEPRE
+  5	You are in open forest, with a deep valley to the east.
+         0       4  VALLE
+         0       4  EAST  (E    )
+         0       4  D     (DOWNW  DOWN   DESCE)
+        50       5  FORES
+        50       5  FORWA (CONTI  ONWAR)
+        50       5  NORTH (N    )
+         0       6  FORES
+         0       5  WEST  (W    )
+         0       5  SOUTH (S    )
+  6	You are in open forest near both a valley and a road.  
+         0       1  ROAD  (HILL )
+         0       1  NORTH (N    )
+         0       4  VALLE
+         0       4  EAST  (E    )
+         0       4  WEST  (W    )
+         0       4  D     (DOWNW  DOWN   DESCE)
+         0       5  FORES
+         0       5  SOUTH (S    )
+  7	At your feet all the water of the stream splashes into a two-inch slit
+  7	in the rock.  To the south, the streambed is bare rock.
+         0       1  BUILD (HOUSE)
+         0       4  UPSTR
+         0       4  NORTH (N    )
+         0       5  FORES
+         0       5  EAST  (E    )
+         0       5  WEST  (W    )
+         0       8  DOWNS
+         0       8  ROCK 
+         0       8  BED  
+         0       8  SOUTH (S    )
+         0    4095  SLIT 
+         0    4095  STREA
+         0    4095  D     (DOWNW  DOWN   DESCE)
+         0     171  PHUCE
+  8	You are in a 20-foot depression floored with bare dirt.  Set into the 
+  8	dirt is a strong steel grate mounted in concrete.  A dry streambed    
+  8	leads into the depression from the north.    
+         0       5  FORES
+         0       5  EAST  (E    )
+         0       5  WEST  (W    )
+         0       5  SOUTH (S    )
+         0       1  BUILD (HOUSE)
+         0       7  UPSTR
+         0       7  GULLY
+         0       7  NORTH (N    )
+      3003       9  ENTER
+      3003       9  INWAR (INSID  IN     INTO )
+      3003       9  D     (DOWNW  DOWN   DESCE)
+         0    4093  ENTER
+         0     176  PHUCE
+  9	You are in a small chamber beneath a 3x3 steel grate to the surface.  
+  9	A low crawl over cobbles leads inward to the west.
+      1072    4495  OUT   (OUTSI  EXIT   LEAVE)
+      1072    4495  UPWAR (UP     U      ABOVE  ASCEN)
+      3003       8  OUT   (OUTSI  EXIT   LEAVE)
+         0    4093  OUT   (OUTSI  EXIT   LEAVE)
+         0      10  CRAWL
+         0      10  COBBL
+         0      10  INWAR (INSID  IN     INTO )
+         0      10  WEST  (W    )
+ 10	You are crawling over cobbles in a low east/west passage.  There is   
+ 10	a dim light to the east. 
+         0       9  OUT   (OUTSI  EXIT   LEAVE)
+         0       9  SURFA
+         0       9  NULL  (NOWHE  WAIT )
+         0       9  EAST  (E    )
+         0      11  INWAR (INSID  IN     INTO )
+         0      11  DARK 
+         0      11  WEST  (W    )
+         0      11  DEBRI
+         0      14  PIT  
+ 11	You are in a debris room filled with stuff washed in from the surface.
+ 11	A low wide passage with cobbles becomes plugged with mud and debris   
+ 11	here, but an extremely narrow canyon leads upward and west. 
+ 11	Carved on the wall is the message: "Magic Word XYZZY". 
+      3003       8  DEPRE
+         0       9  ENTRA
+         0      10  CRAWL
+         0      10  COBBL
+         0      10  PASSA (TUNNE  DEFIL)
+         0      10  LOW  
+         0      10  EAST  (E    )
+         0      12  CANYO
+         0      12  INWAR (INSID  IN     INTO )
+         0      12  UPWAR (UP     U      ABOVE  ASCEN)
+         0      12  WEST  (W    )
+      1072    4494  XYZZY
+      1050    4410  XYZZY
+         0       3  XYZZY
+ 12	You are in an awkward sloping east/west canyon.   
+         0      11  DEBRI
+         0      11  EAST  (E    )
+         0      11  D     (DOWNW  DOWN   DESCE)
+         0      13  WEST  (W    )
+         0      13  UPWAR (UP     U      ABOVE  ASCEN)
+         0      13  CLIMB
+ 13	You are in a splendid chamber thirty feet high.  The walls are frozen 
+ 13	rivers of orange stone.  A narrow canyon and a good passage exit 
+ 13	from east and west sides of the chamber.
+         0      12  EAST  (E    )
+         0      12  D     (DOWNW  DOWN   DESCE)
+         0      14  PASSA (TUNNE  DEFIL)
+         0      14  PIT  
+         0      14  WEST  (W    )
+ 14	At your feet is a small pit breathing traces of white mist.  An east  
+ 14	passage ends here except for a small crack leading on.  Rough stone   
+ 14	steps lead into the pit. 
+         0      13  PASSA (TUNNE  DEFIL)
+         0      13  EAST  (E    )
+      3007    4465  D     (DOWNW  DOWN   DESCE)
+      3007    4465  PIT  
+      3007    4465  STEPS
+         0      15  D     (DOWNW  DOWN   DESCE)
+         0      16  CRACK
+         0      16  WEST  (W    )
+ 15	You are at one end of a vast hall stretching forward out of sight to  
+ 15	the west.  The hall is filled with wisps of white mist swaying to
+ 15	and fro almost as if alive.  There are passages to the north and 
+ 15	south, and a stone stairway leads upward.    
+         0      18  LEFT 
+         0      18  SOUTH (S    )
+         0      17  FORWA (CONTI  ONWAR)
+         0      17  HALL 
+         0      17  WEST  (W    )
+         0      19  NORTH (N    )
+      3007    4465  UPWAR (UP     U      ABOVE  ASCEN)
+      3007    4465  PIT  
+      3007    4465  STEPS
+      3007    4465  DOME 
+      3007    4465  PASSA (TUNNE  DEFIL)
+      3007    4465  EAST  (E    )
+      3007    4465  CLIMB
+      3007    4465  STAIR
+         0      14  UPWAR (UP     U      ABOVE  ASCEN)
+         0      33  Y2   
+ 16	The crack is far too small for you to follow.
+         0      14	[FORCED LOC]
+ 17	You are on the east bank of a fissure slicing clear across the hall.  
+ 17	The mist is quite thick here, and the fissure is too wide to jump.    
+         0      15  HALL 
+         0      15  EAST  (E    )
+         0    3010  JUMP  (LEAP )
+      4012    4097  OVER 
+      4012    4097  ACROS
+      4012    4097  WEST  (W    )
+      4012    4097  CROSS
+      4012    4097  BRIDG
+         0      27  OVER 
+ 18	This is a low room with a crude note on the wall.  The note says,
+ 18	"You won't get it up the steps".   
+         0      15  HALL 
+         0      15  OUT   (OUTSI  EXIT   LEAVE)
+         0      15  NORTH (N    )
+ 19	You are in the Hall of the Mountain King, with passages off in   
+ 19	most directions, some of which appear to be newly constructed.   
+         0      15  SOUTH (S    )
+      3011     143  NE   
+      3011      28  NORTH (N    )
+      3011      29  EAST  (E    )
+      3011      30  WEST  (W    )
+      3011      74  SW   
+      3011      74  SECRE
+         0      32  NORTH (N    )
+ 20	You're a little bruised, but you made it.    
+         0      74	[FORCED LOC]
+ 21	You didn't make it. 
+         0       0	[FORCED LOC]
+ 22	You are walking along a sloping north/south path which joins
+ 22	a steeply descending northwest passage.  There is a small stream 
+ 22	beside the path, and you hear the sound of cascading water ahead.
+         0     260  NORTH (N    )
+         0     260  UPWAR (UP     U      ABOVE  ASCEN)
+         0     141  SOUTH (S    )
+         0     141  D     (DOWNW  DOWN   DESCE)
+ 23	You are at the west end of the Twopit Room.  There is a large hole in 
+ 23	the wall above the pit at this end of the room.   
+         0      67  EAST  (E    )
+         0      67  ACROS
+         0      68  WEST  (W    )
+         0      68  SLAB  (SLABR)
+         0      25  D     (DOWNW  DOWN   DESCE)
+         0      25  PIT  
+      5024      31  HOLE 
+      5024      31  CLIMB
+         0    4148  HOLE 
+ 24	You are at the bottom of the eastern pit in the Twopit Room.  There is
+ 24	a small pool of oil in one corner of the pit.
+         0      67  UPWAR (UP     U      ABOVE  ASCEN)
+         0      67  OUT   (OUTSI  EXIT   LEAVE)
+         0      92  GIANT
+ 25	You are at the bottom of the western pit in the Twopit Room.  There is
+ 25	a large hole in the wall about 25 feet above you. 
+         0      23  UPWAR (UP     U      ABOVE  ASCEN)
+         0      23  OUT   (OUTSI  EXIT   LEAVE)
+      5024      31  CLIMB
+         0      26  CLIMB
+ 26	You clamber up the plant and scurry through the hole at the top. 
+         0      88	[FORCED LOC]
+ 27	You are on the west side of the fissure in the Hall of Mists.    
+         0    3010  JUMP  (LEAP )
+      4012    4097  OVER 
+      4012    4097  ACROS
+      4012    4097  EAST  (E    )
+      4012    4097  CROSS
+      4012    4097  BRIDG
+         0      17  OVER 
+         0      40  NORTH (N    )
+         0      41  WEST  (W    )
+ 28	You are in a low N/S passage at a hole in the floor.  The hole goes   
+ 28	down to an E/W passage.  
+         0      19  HALL 
+         0      19  OUT   (OUTSI  EXIT   LEAVE)
+         0      19  SOUTH (S    )
+         0      33  NORTH (N    )
+         0      33  Y2   
+         0      36  D     (DOWNW  DOWN   DESCE)
+         0      36  HOLE 
+ 29	You are in the East Side Chamber of the Hall of the Mountain King.    
+ 29	There is a safe mounted in the wall here.    
+         0      19  HALL 
+         0      19  OUT   (OUTSI  EXIT   LEAVE)
+         0      19  WEST  (W    )
+ 30	You are in the West Side Chamber of the Hall of the Mountain King.    
+ 30	A passage continues west and up here.   
+         0      19  HALL 
+         0      19  OUT   (OUTSI  EXIT   LEAVE)
+         0      19  EAST  (E    )
+         0      62  WEST  (W    )
+         0      62  UPWAR (UP     U      ABOVE  ASCEN)
+      4024      89	[FORCED LOC]
+ 32	You can't get by the snake.   
+         0      19	[FORCED LOC]
+ 33	You are in a large room, with a passage to the south, a passage to the
+ 33	west, and a wall of broken rock to the east.  There is a large "Y2" on
+ 33	a rock in the room's center.  
+      1072    4494  PLUGH
+      1050    4410  PLUGH
+         0       3  PLUGH
+         0      28  SOUTH (S    )
+         0      34  EAST  (E    )
+         0      34  WALL 
+         0      34  BROKE
+         0      35  WEST  (W    )
+ 34	You are in a jumble of rock, with an exit to the west and a narrow    
+ 34	crack to the northwest.  There is also a two-inch slit in the floor.  
+         0      33  WEST  (W    )
+         0      33  D     (DOWNW  DOWN   DESCE)
+         0      33  Y2   
+         0    4095  SLIT 
+         0     265  NW   
+         0      15  UPWAR (UP     U      ABOVE  ASCEN)
+ 35	You're at a low window overlooking a huge pit, which extends up out of
+ 35	sight.  A floor is indistinctly visible over 50 feet below.  Traces of
+ 35	white mist cover the floor of the pit, becoming thicker to the left.  
+ 35	Marks in the dust around the window would seem to indicate that  
+ 35	someone has been here recently.  Directly across the pit from you and 
+ 35	25 feet away there is a similar window in the wall of the pit.   
+         0      33  EAST  (E    )
+         0      33  Y2   
+         0    3010  JUMP  (LEAP )
+ 36	You are in a dirty broken passage.  To the east is a crawl.  To the   
+ 36	west is a large passage.  Above you is a hole to another passage.
+         0      37  EAST  (E    )
+         0      37  CRAWL
+         0      28  UPWAR (UP     U      ABOVE  ASCEN)
+         0      28  HOLE 
+         0      39  WEST  (W    )
+         0      65  BEDQU
+ 37	You are on the brink of a small clean climbable pit.  A crawl leads   
+ 37	west.
+         0      36  WEST  (W    )
+         0      36  CRAWL
+         0      38  D     (DOWNW  DOWN   DESCE)
+         0      38  PIT  
+         0      38  CLIMB
+ 38	You are in the bottom of a small pit with a little stream, which 
+ 38	enters and exits through tiny slits.    
+         0      37  CLIMB
+         0      37  UPWAR (UP     U      ABOVE  ASCEN)
+         0      37  OUT   (OUTSI  EXIT   LEAVE)
+         0    4095  SLIT 
+         0    4095  STREA
+         0    4095  D     (DOWNW  DOWN   DESCE)
+         0    4095  UPSTR
+         0    4095  DOWNS
+ 39	You are in a large room full of dusty rocks.  There is a big hole in  
+ 39	the floor, and a passage leading east.  There is dust everywhere.
+         0      36  EAST  (E    )
+         0      36  PASSA (TUNNE  DEFIL)
+         0      64  D     (DOWNW  DOWN   DESCE)
+         0      64  HOLE 
+         0      64  FLOOR
+         0      65  BEDQU
+ 40	You have crawled through a very low wide passage parallel to and north
+ 40	of the Hall of Mists.    
+         0      41	[FORCED LOC]
+ 41	You are at the west end of Hall of Mists.  A low wide crawl continues 
+ 41	west and another goes north.  To the south is a little passage 6 feet 
+ 41	off the floor. 
+         0      42  SOUTH (S    )
+         0      42  UPWAR (UP     U      ABOVE  ASCEN)
+         0      42  PASSA (TUNNE  DEFIL)
+         0      42  CLIMB
+         0      27  EAST  (E    )
+         0      59  NORTH (N    )
+         0      60  WEST  (W    )
+         0      60  CRAWL
+ 42	You are in a maze of twisty little passages, all alike.
+         0      41  UPWAR (UP     U      ABOVE  ASCEN)
+         0      42  NORTH (N    )
+         0      43  EAST  (E    )
+         0      45  SOUTH (S    )
+         0      80  WEST  (W    )
+         0     185  GRFTM
+ 43	You are in a maze of twisty little passages, all alike.
+         0      42  WEST  (W    )
+         0      44  SOUTH (S    )
+         0      45  EAST  (E    )
+         0     185  GRFTM
+ 44	You are in a maze of twisty little passages, all alike.
+         0      43  EAST  (E    )
+         0      48  D     (DOWNW  DOWN   DESCE)
+         0      50  SOUTH (S    )
+         0      82  NORTH (N    )
+         0     185  GRFTM
+ 45	You are in a maze of twisty little passages, all alike.
+         0      42  WEST  (W    )
+         0      43  NORTH (N    )
+         0      46  EAST  (E    )
+         0      47  SOUTH (S    )
+         0      87  UPWAR (UP     U      ABOVE  ASCEN)
+         0      87  D     (DOWNW  DOWN   DESCE)
+         0     185  GRFTM
+ 46	Dead end. 
+         0      45  WEST  (W    )
+         0      45  OUT   (OUTSI  EXIT   LEAVE)
+         0     185  GRFTM
+ 47	Dead end. 
+         0      45  EAST  (E    )
+         0      45  OUT   (OUTSI  EXIT   LEAVE)
+         0     185  GRFTM
+ 48	Dead end. 
+         0      44  UPWAR (UP     U      ABOVE  ASCEN)
+         0      44  OUT   (OUTSI  EXIT   LEAVE)
+         0     185  GRFTM
+ 49	You are in a maze of twisty little passages, all alike.
+         0      50  EAST  (E    )
+         0      51  WEST  (W    )
+         0     185  GRFTM
+ 50	You are in a maze of twisty little passages, all alike.
+         0      44  EAST  (E    )
+         0      49  WEST  (W    )
+         0      51  D     (DOWNW  DOWN   DESCE)
+         0      52  SOUTH (S    )
+         0     185  GRFTM
+ 51	You are in a maze of twisty little passages, all alike.
+         0      49  WEST  (W    )
+         0      50  UPWAR (UP     U      ABOVE  ASCEN)
+         0      52  EAST  (E    )
+         0      53  SOUTH (S    )
+         0     185  GRFTM
+ 52	You are in a maze of twisty little passages, all alike.
+         0      50  WEST  (W    )
+         0      51  EAST  (E    )
+         0      52  SOUTH (S    )
+         0      53  UPWAR (UP     U      ABOVE  ASCEN)
+         0      55  NORTH (N    )
+         0      86  D     (DOWNW  DOWN   DESCE)
+         0     185  GRFTM
+ 53	You are in a maze of twisty little passages, all alike.
+         0      51  WEST  (W    )
+         0      52  NORTH (N    )
+         0      54  SOUTH (S    )
+         0     185  GRFTM
+ 54	Dead end. 
+         0      53  WEST  (W    )
+         0      53  OUT   (OUTSI  EXIT   LEAVE)
+         0     185  GRFTM
+ 55	You are in a maze of twisty little passages, all alike.
+         0      52  WEST  (W    )
+         0      55  NORTH (N    )
+         0      56  D     (DOWNW  DOWN   DESCE)
+         0      57  EAST  (E    )
+         0     185  GRFTM
+ 56	Dead end. 
+         0      55  UPWAR (UP     U      ABOVE  ASCEN)
+         0      55  OUT   (OUTSI  EXIT   LEAVE)
+         0     185  GRFTM
+ 57	You are on the brink of a thirty foot pit with a massive orange column
+ 57	down one wall.  You could climb down here but you could not get back  
+ 57	up.  The maze continues at this level.  
+         0      13  D     (DOWNW  DOWN   DESCE)
+         0      13  CLIMB
+         0      55  WEST  (W    )
+         0      58  SOUTH (S    )
+         0      83  NORTH (N    )
+         0      84  EAST  (E    )
+         0    3010  JUMP  (LEAP )
+         0     185  GRFTM
+ 58	Dead end. 
+         0      57  EAST  (E    )
+         0      57  OUT   (OUTSI  EXIT   LEAVE)
+         0     185  GRFTM
+ 59	You have crawled through a very low wide passage parallel to and north
+ 59	of the Hall of Mists.    
+         0      27	[FORCED LOC]
+ 60	You are at the east end of a very long hall apparently without side   
+ 60	chambers.  In the south wall are several wide cracks and a high  
+ 60	hole, but the hole is far above your head.  To the east a wide   
+ 60	crawl slants up.  To the north a small circular passage slants down.  
+         0      41  EAST  (E    )
+         0      41  UPWAR (UP     U      ABOVE  ASCEN)
+         0      41  CRAWL
+         0      61  WEST  (W    )
+         0      62  NORTH (N    )
+         0      62  D     (DOWNW  DOWN   DESCE)
+      3092     173  SOUTH (S    )
+      3092     173  CRACK
+         0     172  SOUTH (S    )
+         0     172  CRACK
+         0    4148  CLIMB
+         0    4148  HOLE 
+      3092     173  SECRE
+         0     172  SECRE
+ 61	You are at the west end of a very long featureless hall.  The hall    
+ 61	joins up with a narrow north/south passage.  
+         0      60  EAST  (E    )
+         0      62  NORTH (N    )
+       100     107  SOUTH (S    )
+ 62	You are at a crossover of a high N/S passage and a low E/W one.  
+         0      60  WEST  (W    )
+         0      63  NORTH (N    )
+         0      30  EAST  (E    )
+         0      61  SOUTH (S    )
+ 63	Dead end. 
+         0      62  SOUTH (S    )
+         0      62  OUT   (OUTSI  EXIT   LEAVE)
+ 64	You are at a complex junction.  A low hands and knees passage from the
+ 64	north joins a higher crawl from the east to make a walking passage    
+ 64	going west.  There is also a large room above.  The air is damp here. 
+         0      39  UPWAR (UP     U      ABOVE  ASCEN)
+         0      39  CLIMB
+         0      39  ROOM 
+         0      65  WEST  (W    )
+         0      65  BEDQU
+         0     103  NORTH (N    )
+         0     106  EAST  (E    )
+ 65	You are in Bedquilt, a long east/west passage with holes everywhere.  
+ 65	To explore at random select north, south, southwest, up, or down.
+         0      64  EAST  (E    )
+         0      66  WEST  (W    )
+      1073      68  SOUTH (S    )
+        80    4056  SOUTH (S    )
+         0      68  SLAB  (SLABR)
+      1073     321  SW   
+        70    4056  SW   
+       100     321  SW   
+      1073      70  UPWAR (UP     U      ABOVE  ASCEN)
+        80    4056  UPWAR (UP     U      ABOVE  ASCEN)
+         0      70  UPWAR (UP     U      ABOVE  ASCEN)
+      1073      71  NORTH (N    )
+        60    4056  NORTH (N    )
+        75      72  NORTH (N    )
+         0      71  NORTH (N    )
+      1073     106  D     (DOWNW  DOWN   DESCE)
+        80    4056  D     (DOWNW  DOWN   DESCE)
+         0     106  D     (DOWNW  DOWN   DESCE)
+         0      71  SECRE
+ 66	You are in a room whose walls resemble swiss cheese.  Obvious passages
+ 66	go west, east, south, NE, and NW.  Part of the room is occupied by a  
+ 66	large bedrock block.
+         0      65  NE   
+         0      67  WEST  (W    )
+        50    4056  SOUTH (S    )
+         0      77  CANYO
+         0      96  EAST  (E    )
+         0     265  SW   
+        30    4056  NW   
+         0      97  ORIEN
+ 67	You are at the east end of the Twopit Room.  The floor here is   
+ 67	littered with thin rock slabs, which make it easy to descend the pits.
+ 67	There is a path here bypassing the pits to connect passages from east 
+ 67	and west.  There are holes all over, but the only big one is on the   
+ 67	wall directly over the west pit where you can't get to it.  
+         0      66  EAST  (E    )
+         0      23  WEST  (W    )
+         0      23  ACROS
+         0      24  D     (DOWNW  DOWN   DESCE)
+         0      24  PIT  
+ 68	You are in a large low circular chamber whose floor is an immense slab
+ 68	fallen from the ceiling (Slab Room).  East and west there once were   
+ 68	large passages, but they are now filled with boulders.  Low small
+ 68	passages go north and south, and the south one quickly bends west
+ 68	around the boulders.
+         0      23  SOUTH (S    )
+         0      69  UPWAR (UP     U      ABOVE  ASCEN)
+         0      69  CLIMB
+         0      65  NORTH (N    )
+ 69	You are in a secret N/S canyon above a large room.
+         0      68  D     (DOWNW  DOWN   DESCE)
+         0      68  SLAB  (SLABR)
+      3031     120  SOUTH (S    )
+         0     119  SOUTH (S    )
+         0     109  NORTH (N    )
+         0     113  RESER
+ 70	You are in a secret N/S canyon above a sizable passage.
+         0      71  NORTH (N    )
+         0      65  D     (DOWNW  DOWN   DESCE)
+         0      65  PASSA (TUNNE  DEFIL)
+         0     111  SOUTH (S    )
+ 71	You are in a secret canyon at a junction of three canyons, bearing    
+ 71	north, south, and SE.  The north one is as tall as the other two 
+ 71	combined. 
+         0      65  SE   
+         0      70  SOUTH (S    )
+         0     110  NORTH (N    )
+ 72	You are in a large low room.  Crawls lead north, NE, and SW.
+         0      65  BEDQU
+         0     118  NE   
+         0      73  NORTH (N    )
+         0      97  SW   
+         0      97  ORIEN
+ 73	Dead end crawl.
+         0      72  SOUTH (S    )
+         0      72  CRAWL
+         0      72  OUT   (OUTSI  EXIT   LEAVE)
+ 74	You are in a secret canyon which here runs E/W.  It crosses over a    
+ 74	very tight canyon 15 feet below.  If you go down you may not be able  
+ 74	to get back up.
+         0      20  JUMP  (LEAP )
+         0      19  EAST  (E    )
+      3031     120  WEST  (W    )
+         0     121  WEST  (W    )
+         0      75  D     (DOWNW  DOWN   DESCE)
+ 75	The canyon becomes too tight to proceed.  Your only exit is west.
+         0      77  WEST  (W    )
+         0      77  OUT   (OUTSI  EXIT   LEAVE)
+ 76	** Unused **   
+         0       0
+ 77	You are in a tall E/W canyon.  A low tight crawl goes 3 feet north and
+ 77	seems to open up.   
+         0      75  EAST  (E    )
+         0      78  WEST  (W    )
+         0      66  NORTH (N    )
+         0      66  CRAWL
+ 78	The canyon runs into a mass of boulders -- dead end.   
+         0      77  EAST  (E    )
+         0      77  OUT   (OUTSI  EXIT   LEAVE)
+ 79	The stream flows out through a pair of 1 foot diameter sewer pipes.   
+ 79	It would be advisable to use the exit.  
+         0       3	[FORCED LOC]
+ 80	You are in a maze of twisty little passages, all alike.
+         0      42  NORTH (N    )
+         0      80  WEST  (W    )
+         0      80  SOUTH (S    )
+         0      81  EAST  (E    )
+         0     185  GRFTM
+ 81	Dead end. 
+         0      80  WEST  (W    )
+         0      80  OUT   (OUTSI  EXIT   LEAVE)
+         0     185  GRFTM
+ 82	Dead end. 
+         0      44  SOUTH (S    )
+         0      44  OUT   (OUTSI  EXIT   LEAVE)
+         0     185  GRFTM
+ 83	You are in a maze of twisty little passages, all alike.
+         0      57  SOUTH (S    )
+         0      84  EAST  (E    )
+         0      85  WEST  (W    )
+         0     185  GRFTM
+ 84	You are in a maze of twisty little passages, all alike.
+         0      57  NORTH (N    )
+         0      83  WEST  (W    )
+         0     114  NW   
+         0     185  GRFTM
+ 85	Dead end. 
+         0      83  EAST  (E    )
+         0      83  OUT   (OUTSI  EXIT   LEAVE)
+         0     185  GRFTM
+ 86	Dead end. 
+         0      52  UPWAR (UP     U      ABOVE  ASCEN)
+         0      52  OUT   (OUTSI  EXIT   LEAVE)
+         0     185  GRFTM
+ 87	You are in a maze of twisty little passages, all alike.
+         0      45  UPWAR (UP     U      ABOVE  ASCEN)
+         0      45  D     (DOWNW  DOWN   DESCE)
+         0      45  OUT   (OUTSI  EXIT   LEAVE)
+         0     185  GRFTM
+ 88	You are in a long, narrow corridor stretching out of sight to the
+ 88	west.  At the eastern end is a hole through which you can see a  
+ 88	profusion of leaves.
+         0      25  D     (DOWNW  DOWN   DESCE)
+         0      25  CLIMB
+         0      25  EAST  (E    )
+         0    3010  JUMP  (LEAP )
+         0      92  WEST  (W    )
+         0      92  GIANT
+ 89	There is nothing here to climb.  Use "up" or "out" to leave the pit.  
+         0      25	[FORCED LOC]
+ 90	You have climbed up the plant and out of the pit. 
+         0      23	[FORCED LOC]
+ 91	You are at the top of a steep incline above a large room.  You could  
+ 91	climb down here, but you would not be able to climb up.  There is a   
+ 91	passage leading back to the north. 
+         0      95  NORTH (N    )
+         0      95  CAVER
+         0      95  PASSA (TUNNE  DEFIL)
+         0      72  D     (DOWNW  DOWN   DESCE)
+         0      72  CLIMB
+ 92	You are in the Giant Room.  The ceiling here is too high up for your  
+ 92	lamp to show it.  Cavernous passages lead east, north, and south.  On 
+ 92	the west wall is scrawled the inscription, "FEE FIE FOE FOO" [sic].   
+         0      88  EAST  (E    )
+         0      93  SOUTH (S    )
+         0      94  NORTH (N    )
+ 93	The passage here is blocked by a recent cave-in.  
+         0      92  NORTH (N    )
+         0      92  GIANT
+         0      92  OUT   (OUTSI  EXIT   LEAVE)
+ 94	You are at one end of an immense north/south passage.  
+         0      92  SOUTH (S    )
+         0      92  GIANT
+         0      92  PASSA (TUNNE  DEFIL)
+      3041      95  NORTH (N    )
+      3041      95  ENTER
+      3041      95  CAVER
+         0    4111  NORTH (N    )
+ 95	You are in a magnificent cavern with a rushing stream, which cascades 
+ 95	over a sparkling waterfall into a roaring whirlpool which disappears  
+ 95	through a hole in the floor.  Passages exit to the south and west.    
+         0      94  SOUTH (S    )
+         0      94  OUT   (OUTSI  EXIT   LEAVE)
+         0      92  GIANT
+         0      91  WEST  (W    )
+         0     145  D     (DOWNW  DOWN   DESCE)
+         0     145  JUMP  (LEAP )
+         0     145  POOL  (WHIRL)
+         0     145  HOLE 
+ 96	You are in the Soft Room.  The walls are covered with heavy curtains, 
+ 96	the floor with a thick pile carpet.  Moss covers the ceiling.  High   
+ 96	in the wall, there is an eight-inch square hole, but it is too high   
+ 96	for you to reach or see into. 
+         0      66  WEST  (W    )
+         0      66  OUT   (OUTSI  EXIT   LEAVE)
+         0    4148  HOLE 
+ 97	This is the Oriental Room.  Ancient oriental cave drawings cover the  
+ 97	walls.  A gently sloping passage leads upward to the north, another   
+ 97	passage leads SE, and a hands and knees crawl leads east.   
+         0      66  SE   
+         0      72  EAST  (E    )
+         0      72  CRAWL
+         0      98  UPWAR (UP     U      ABOVE  ASCEN)
+         0      98  NORTH (N    )
+         0      98  CAVER
+ 98	You are following a wide path around the outer edge of a large cavern.
+ 98	Far below, through a heavy white mist, strange splashing noises can be
+ 98	heard.  The mist rises up through a fissure in the ceiling.  The path 
+ 98	hugs the cavern's rim to the NE and south, while another branch forks 
+ 98	SE.  A round chute with extremely smooth walls angles sharply up 
+ 98	to the southwest.   
+         0     235  NE   
+         0      97  SOUTH (S    )
+         0      97  ORIEN
+         0      99  SE   
+         3     142  UPWAR (UP     U      ABOVE  ASCEN)
+         3     142  SW   
+         3     142  CLIMB
+         3     142  SLIDE
+        75    4202  UPWAR (UP     U      ABOVE  ASCEN)
+        75    4202  SW   
+        75    4202  CLIMB
+        75    4202  SLIDE
+         0    4203  UPWAR (UP     U      ABOVE  ASCEN)
+         0    4203  SW   
+         0    4203  CLIMB
+         0    4203  SLIDE
+         0     141  CHIMN
+ 99	You are in an alcove.  A small NW path seems to widen after a short   
+ 99	distance.  An extremely tight tunnel leads east.  It looks like a very
+ 99	tight squeeze.  An eerie light can be seen at the other end.
+         0      98  NW   
+         0      98  CAVER
+         0    3001  EAST  (E    )
+         0    3001  PASSA (TUNNE  DEFIL)
+         0    3001  PLOVE
+         0     100  EAST  (E    )
+100	You're in a small chamber lit by an eerie green light.  The walls and 
+100	ceiling are covered with tiny cracks.  A narrow tunnel exits to the   
+100	west, and a dark corridor leads north.  There is a hole (eight inches 
+100	on a side) carved into the wall, which leads to a downward shaft.
+         0    3001  WEST  (W    )
+         0    3001  PASSA (TUNNE  DEFIL)
+         0    3001  OUT   (OUTSI  EXIT   LEAVE)
+         0      99  WEST  (W    )
+         0    4488  HOLE 
+         0     101  NORTH (N    )
+         0     101  DARK 
+101	You're in the Dark-Room.  A corridor leading south is the only exit.  
+         0     100  SOUTH (S    )
+         0     100  PLOVE
+         0     100  OUT   (OUTSI  EXIT   LEAVE)
+102	You are in an arched hall.  A coral passage once continued up and east
+102	from here, but is now blocked by debris.  The air smells of sea water.
+         0     103  D     (DOWNW  DOWN   DESCE)
+         0     103  SHELL
+         0     103  OUT   (OUTSI  EXIT   LEAVE)
+103	You're in a large room carved out of sedimentary rock.  The floor and 
+103	walls are littered with bits of shells imbedded in the stone.  A 
+103	shallow passage proceeds downward, and a somewhat steeper one leads   
+103	up.  A low hands and knees passage enters from the south.   
+      3088     196  UPWAR (UP     U      ABOVE  ASCEN)
+      3088     196  HALL 
+         0     102  UPWAR (UP     U      ABOVE  ASCEN)
+         0     102  HALL 
+         0     104  D     (DOWNW  DOWN   DESCE)
+      1014    4118  SOUTH (S    )
+      1015    4119  SOUTH (S    )
+         0      64  SOUTH (S    )
+104	You are in a long sloping corridor with ragged sharp walls. 
+         0     103  UPWAR (UP     U      ABOVE  ASCEN)
+         0     105  D     (DOWNW  DOWN   DESCE)
+105	You are in a cul-de-sac about eight feet across.  
+         0     104  UPWAR (UP     U      ABOVE  ASCEN)
+         0     104  OUT   (OUTSI  EXIT   LEAVE)
+106	You are in an anteroom leading to a large passage to the east.  Small 
+106	passages go south, west and up.  The remnants of recent digging are   
+106	evident.  A sign in midair reads   
+106	-        +--------------------------------------------+        - 
+106	-        ! Cave under construction beyond this point. !        - 
+106	-        ! Proceed at own risk.                       !        - 
+106	-        !               -- Witt Construction Company !        - 
+106	-        +--------------------------------------------+        - 
+         0      64  UPWAR (UP     U      ABOVE  ASCEN)
+         0      65  WEST  (W    )
+         0     108  EAST  (E    )
+         0     275  SOUTH (S    )
+107	You are in a maze of twisty little passages, all different. 
+         0     131  SOUTH (S    )
+         0     132  SW   
+         0     133  NE   
+         0     134  SE   
+         0     135  UPWAR (UP     U      ABOVE  ASCEN)
+         0     136  NW   
+         0     137  EAST  (E    )
+         0     138  WEST  (W    )
+         0     139  NORTH (N    )
+         0      61  D     (DOWNW  DOWN   DESCE)
+108	You are at Witt's End.  Passages lead off in *ALL* directions.   
+      1073     106  EAST  (E    )
+      1073     106  NORTH (N    )
+      1073     106  SOUTH (S    )
+      1073     106  NE   
+      1073     106  SE   
+      1073     106  SW   
+      1073     106  NW   
+      1073     106  UPWAR (UP     U      ABOVE  ASCEN)
+      1073     106  D     (DOWNW  DOWN   DESCE)
+        95    4056  EAST  (E    )
+         0     106  EAST  (E    )
+        75    4126  WEST  (W    )
+         0     240  WEST  (W    )
+109	You are in a north/south canyon about 25 feet across.  The floor is   
+109	covered by white mist seeping in from the north.  The walls extend    
+109	upward for well over 100 feet.  Suspended from some unseen point far  
+109	above you, an enormous two-sided mirror is hanging parallel to and    
+109	midway between the canyon walls.  A small window can be seen in  
+109	either wall, some fifty feet up.  The canyon continues north and 
+109	south, and a dark passage leads west.   
+         0      69  SOUTH (S    )
+         0     113  NORTH (N    )
+         0     113  RESER
+         0     274  WEST  (W    )
+110	You're at a low window overlooking a huge pit, which extends up out of
+110	sight.  A floor is indistinctly visible over 50 feet below.  Traces of
+110	white mist cover the floor of the pit, becoming thicker to the left.  
+110	Marks in the dust around the window would seem to indicate that  
+110	someone has been here recently.  Directly across the pit from you and 
+110	25 feet away there is a similar window in the wall of the pit.   
+         0      71  SOUTH (S    )
+         0      71  OUT   (OUTSI  EXIT   LEAVE)
+         0    3010  JUMP  (LEAP )
+111	You are at the southern end of a north/south passage at a large hole  
+111	in the floor.  A large stalactite extends from the roof and almost    
+111	reaches the bottom of the passage below.  You could climb down it,    
+111	and jump from it to the floor, but having done so you would be   
+111	unable to reach it to climb back up.    
+         0      70  NORTH (N    )
+        40      50  D     (DOWNW  DOWN   DESCE)
+        40      50  JUMP  (LEAP )
+        40      50  CLIMB
+        50      53  D     (DOWNW  DOWN   DESCE)
+         0      45  D     (DOWNW  DOWN   DESCE)
+112	You are in a little maze of twisting passages, all different.    
+         0     131  SW   
+         0     132  NORTH (N    )
+         0     133  EAST  (E    )
+         0     187  NW   
+         0     135  SE   
+         0     136  NE   
+         0     137  WEST  (W    )
+         0     138  D     (DOWNW  DOWN   DESCE)
+         0     139  UPWAR (UP     U      ABOVE  ASCEN)
+         0     140  SOUTH (S    )
+113	You are at the edge of a large underground reservoir.  An opaque cloud
+113	of white mist fills the room and rises rapidly upward.  The lake is   
+113	fed by a stream, which tumbles out of a hole in the wall about 10 feet
+113	overhead and splashes noisily into the water somewhere within the
+113	mist.  The indistinct shape of the opposite shore can be dimly seen   
+113	through the mist.  The only passage goes back toward the south.  
+         0     109  SOUTH (S    )
+         0     109  OUT   (OUTSI  EXIT   LEAVE)
+114	Dead end. 
+         0      84  SE   
+         0      84  OUT   (OUTSI  EXIT   LEAVE)
+115	You are at the northeast end of an immense room, even larger than
+115	the Giant Room.  It appears to be a repository for the 
+115	"ADVENTURE" program.  Massive torches far overhead bathe the room
+115	with smoky yellow light.  Just below them, some fifteen feet up, 
+115	is a large hole in the wall, but you could not climb to it. 
+115	Several black rods with rusty stars on their ends are scattered  
+115	about the room.  Off to one side, a great many dwarves are  
+115	sleeping on the floor, snoring loudly.  A sign nearby reads: "Do 
+115	not disturb the dwarves!"  An immense mirror is hanging against  
+115	one wall, and stretches to the other end of the room, where 
+115	various other sundry objects can be glimpsed dimly in the   
+115	distance.  An unoccupied telephone booth stands against the north
+115	wall.  Much of the floor is covered with a thin layer of dust    
+115	which seems to be thicker just underneath a large hole in the    
+115	ceiling at the far end of the room.
+         0     116  SW   
+         0     116  ACROS
+         0     116  CROSS
+         0     212  INWAR (INSID  IN     INTO )
+         0     212  ENTER
+         0     212  NORTH (N    )
+116	You are at the southwest end of the repository.  To one side is a
+116	small depression filled with fierce green snakes.  On the other  
+116	side is a row of small wicker cages, each of which contains a    
+116	seemingly restless little bird.  A large number of velvet pillows are 
+116	scattered about on the floor.  To the north, there is a climbable
+116	pit above which (maybe twenty feet up) is a large hole into a    
+116	dark chamber.  A vast mirror stretches off to the northeast,
+116	almost reaching the phone booth.  Mounted very low in the south  
+116	wall is a large steel grate, securely locked.  The floor is covered   
+116	with a thin layer of dust which may have fallen from the hole    
+116	above you.
+         0     115  NE   
+         0     115  ACROS
+         0     115  CROSS
+         0    4093  INWAR (INSID  IN     INTO )
+         0    4093  ENTER
+         0    4093  SOUTH (S    )
+         0     245  D     (DOWNW  DOWN   DESCE)
+         0     241  PHUCE
+         0    4148  HOLE 
+         0    4148  UPWAR (UP     U      ABOVE  ASCEN)
+117	You are on one side of a large, deep chasm.  A heavy white mist rising
+117	up from below obscures all view of the far side.  A SW path leads away
+117	from the chasm into a winding corridor. 
+         0     118  SW   
+      2033    4160  OVER 
+      2033    4160  ACROS
+      2033    4160  CROSS
+      2033    4160  NE   
+      2033    4160  BRIDG
+      3032    4161  OVER 
+         0    3003  OVER 
+      3032    3010  JUMP  (LEAP )
+         0    4096  JUMP  (LEAP )
+118	You are in a long winding corridor sloping out of sight in both  
+118	directions.    
+         0      72  D     (DOWNW  DOWN   DESCE)
+         0      72  SW   
+         0     117  UPWAR (UP     U      ABOVE  ASCEN)
+         0     117  NE   
+119	You are in a secret canyon which exits to the north and east.    
+         0      69  NORTH (N    )
+         0      69  OUT   (OUTSI  EXIT   LEAVE)
+         0    4153  EAST  (E    )
+         0    4153  FORWA (CONTI  ONWAR)
+120	You are in a secret canyon which exits to the north and east.    
+         0      69  NORTH (N    )
+         0      74  EAST  (E    )
+121	You are in a secret canyon which exits to the north and east.    
+         0      74  EAST  (E    )
+         0      74  OUT   (OUTSI  EXIT   LEAVE)
+         0    4153  NORTH (N    )
+         0    4153  FORWA (CONTI  ONWAR)
+122	You are on the northeast side of a deep chasm.  A NE path leads away  
+122	from the chasm on this side.  
+         0     123  NE   
+      2033    4160  OVER 
+      2033    4160  ACROS
+      2033    4160  CROSS
+      2033    4160  SW   
+      2033    4160  BRIDG
+         0    3003  OVER 
+         0    3010  JUMP  (LEAP )
+         0     124  FORK 
+         0     126  VIEW 
+         0     129  BARRE
+123	You're in a long east/west corridor.  A faint rumbling noise can be   
+123	heard in the distance.   
+         0     122  WEST  (W    )
+         0     124  EAST  (E    )
+         0     124  FORK 
+         0     126  VIEW 
+         0     129  BARRE
+124	The path forks here.  The left fork leads northeast.  A dull rumbling 
+124	seems to get louder in that direction.  The right fork leads southeast
+124	down a gentle slope.  The main corridor enters from the west.    
+         0     123  WEST  (W    )
+         0     125  NE   
+         0     125  LEFT 
+         0     128  SE   
+         0     128  RIGHT
+         0     128  D     (DOWNW  DOWN   DESCE)
+         0     126  VIEW 
+         0     129  BARRE
+125	The walls are quite warm here.  From the north can be heard a steady  
+125	roar, so loud that the entire cave seems to be trembling.  Another    
+125	passage leads south, and a low crawl goes east.   
+         0     124  SOUTH (S    )
+         0     124  FORK 
+         0     126  NORTH (N    )
+         0     126  VIEW 
+         0     127  EAST  (E    )
+         0     127  CRAWL
+126	You are on the edge of a breath-taking view.  Far below you is an
+126	active volcano, from which great gouts of molten lava come surging    
+126	out, cascading back down into the depths.  The glowing rock fills the 
+126	farthest reaches of the cavern with a blood-red glare, giving every-  
+126	thing an eerie, macabre appearance.  The air is filled with flickering
+126	sparks of ash and a heavy smell of brimstone.  The walls are hot to   
+126	the touch, and the thundering of the volcano drowns out all other
+126	sounds.  Embedded in the jagged roof far overhead are myriad twisted  
+126	formations composed of pure white alabaster, which scatter the murky  
+126	light into sinister apparitions upon the walls.  To one side is a deep
+126	gorge, filled with a bizarre chaos of tortured rock which seems to    
+126	have been crafted by the devil himself.  An immense river of fire
+126	crashes out from the depths of the volcano, burns its way through the 
+126	gorge, and plummets into a bottomless pit far off to your left.  To   
+126	the right, an immense geyser of blistering steam erupts continuously  
+126	from a barren island in the center of a sulfurous lake, which bubbles 
+126	ominously.  The far right wall is aflame with an incandescence of its 
+126	own, which lends an additional infernal splendor to the already  
+126	hellish scene.  A dark, foreboding passage exits to the south.   
+         0     125  SOUTH (S    )
+         0     125  PASSA (TUNNE  DEFIL)
+         0     125  OUT   (OUTSI  EXIT   LEAVE)
+         0     124  FORK 
+         0    4110  D     (DOWNW  DOWN   DESCE)
+         0    4110  JUMP  (LEAP )
+127	You are in a small chamber filled with large boulders.  The walls are 
+127	very warm, causing the air in the room to be almost stifling from the 
+127	heat.  The only exit is a crawl heading west, through which is coming 
+127	a low rumbling.
+         0     125  WEST  (W    )
+         0     125  OUT   (OUTSI  EXIT   LEAVE)
+         0     125  CRAWL
+         0     124  FORK 
+         0     126  VIEW 
+128	You are walking along a gently sloping north/south passage lined with 
+128	oddly shaped limestone formations. 
+         0     124  NORTH (N    )
+         0     124  UPWAR (UP     U      ABOVE  ASCEN)
+         0     124  FORK 
+         0     129  SOUTH (S    )
+         0     129  D     (DOWNW  DOWN   DESCE)
+         0     129  BARRE
+         0     126  VIEW 
+129	You are standing at the entrance to a large, barren room.  A sign
+129	posted above the entrance reads:  "Caution!  Bear in room!" 
+129	A passage leads to the north behind you.
+         0     128  NORTH (N    )
+         0     130  SOUTH (S    )
+         0     130  INWAR (INSID  IN     INTO )
+         0     130  BARRE
+         0     130  ENTER
+130	You are inside a barren room.  The center of the room is completely   
+130	empty except for some dust.  Marks in the dust lead away toward the   
+130	far end of the room.  The only exit is the way you came in. 
+         0     129  NORTH (N    )
+         0     129  OUT   (OUTSI  EXIT   LEAVE)
+131	You are in a maze of twisting little passages, all different.    
+         0     107  WEST  (W    )
+         0     132  SE   
+         0     133  NW   
+         0     134  SW   
+         0     135  NE   
+         0     136  UPWAR (UP     U      ABOVE  ASCEN)
+         0     137  D     (DOWNW  DOWN   DESCE)
+         0     138  NORTH (N    )
+         0     139  SOUTH (S    )
+         0     112  EAST  (E    )
+132	You are in a little maze of twisty passages, all different. 
+         0     107  NW   
+         0     131  UPWAR (UP     U      ABOVE  ASCEN)
+         0     133  NORTH (N    )
+         0     134  SOUTH (S    )
+         0     135  WEST  (W    )
+         0     136  SW   
+         0     137  NE   
+         0     138  EAST  (E    )
+         0     139  D     (DOWNW  DOWN   DESCE)
+         0     112  SE   
+133	You are in a twisting maze of little passages, all different.    
+         0     107  UPWAR (UP     U      ABOVE  ASCEN)
+         0     131  D     (DOWNW  DOWN   DESCE)
+         0     132  WEST  (W    )
+         0     134  NE   
+         0     135  SW   
+         0     136  EAST  (E    )
+         0     137  NORTH (N    )
+         0     138  NW   
+         0     139  SE   
+         0     112  SOUTH (S    )
+134	You are in a twisting little maze of passages, all different.    
+         0     107  NE   
+         0     131  NORTH (N    )
+         0     132  NW   
+         0     133  SE   
+         0     135  EAST  (E    )
+         0     136  D     (DOWNW  DOWN   DESCE)
+         0     137  SOUTH (S    )
+         0     138  UPWAR (UP     U      ABOVE  ASCEN)
+         0     139  WEST  (W    )
+         0     112  SW   
+135	You are in a twisty little maze of passages, all different. 
+         0     107  NORTH (N    )
+         0     131  SE   
+         0     132  D     (DOWNW  DOWN   DESCE)
+         0     133  SOUTH (S    )
+         0     134  EAST  (E    )
+         0     136  WEST  (W    )
+         0     137  SW   
+         0     138  NE   
+         0     139  NW   
+         0     112  UPWAR (UP     U      ABOVE  ASCEN)
+136	You are in a twisty maze of little passages, all different. 
+         0     107  EAST  (E    )
+         0     131  WEST  (W    )
+         0     132  UPWAR (UP     U      ABOVE  ASCEN)
+         0     133  SW   
+         0     134  D     (DOWNW  DOWN   DESCE)
+         0     135  SOUTH (S    )
+         0     137  NW   
+         0     138  SE   
+         0     139  NE   
+         0     112  NORTH (N    )
+137	You are in a little twisty maze of passages, all different. 
+         0     107  SE   
+         0     131  NE   
+         0     132  SOUTH (S    )
+         0     133  D     (DOWNW  DOWN   DESCE)
+         0     134  UPWAR (UP     U      ABOVE  ASCEN)
+         0     135  NW   
+         0     136  NORTH (N    )
+         0     138  SW   
+         0     139  EAST  (E    )
+         0     112  WEST  (W    )
+138	You are in a maze of little twisting passages, all different.    
+         0     107  D     (DOWNW  DOWN   DESCE)
+         0     131  EAST  (E    )
+         0     132  NE   
+         0     133  UPWAR (UP     U      ABOVE  ASCEN)
+         0     134  WEST  (W    )
+         0     135  NORTH (N    )
+         0     136  SOUTH (S    )
+         0     137  SE   
+         0     139  SW   
+         0     112  NW   
+139	You are in a maze of little twisty passages, all different. 
+         0     107  SW   
+         0     131  NW   
+         0     132  EAST  (E    )
+         0     133  WEST  (W    )
+         0     134  NORTH (N    )
+         0     135  D     (DOWNW  DOWN   DESCE)
+         0     136  SE   
+         0     137  UPWAR (UP     U      ABOVE  ASCEN)
+         0     138  SOUTH (S    )
+         0     112  NE   
+140	Dead end. 
+         0     112  NORTH (N    )
+         0     112  OUT   (OUTSI  EXIT   LEAVE)
+141	You are on a narrow promontory at the foot of a waterfall, which 
+141	spurts from an overhead hole in the rock wall and splashes into a
+141	large reservoir, sending up clouds of mist and spray.  
+141	Through the thick white mist looms a polished marble slab, to    
+141	which is affixed an enormous rusty iron anvil.  In golden letters
+141	are written the words: "Whoso Pulleth Out This Sword of This
+141	Stone and Anvil, is Rightwise King-Born of All This Mountain."   
+141	There is a narrow chimney on the east side of the promontory,    
+141	and a small path runs north beside the waterfall. 
+         0     142  UPWAR (UP     U      ABOVE  ASCEN)
+         0     142  EAST  (E    )
+         0     142  CLIMB
+         0     142  CHIMN
+         0     142  SLIDE
+         0      22  NORTH (N    )
+142	You are on a narrow shelf above and east of the top of a very steep   
+142	chimney.  A long smooth granite slide curves down out of sight   
+142	to the east.  If you go down the slide, you may not be able to   
+142	climb back up. 
+         0      98  EAST  (E    )
+         0      98  D     (DOWNW  DOWN   DESCE)
+         0      98  FORWA (CONTI  ONWAR)
+         0      98  SLIDE
+         0     141  WEST  (W    )
+         0     141  CHIMN
+143	You are in the throne room of the Mountain King, with a western exit. 
+      3142    4514  WEST  (W    )
+         0      19  WEST  (W    )
+      3142    3002  CLIMB
+      3142    3002  D     (DOWNW  DOWN   DESCE)
+      3142    3002  OUT   (OUTSI  EXIT   LEAVE)
+         0      19  OUT   (OUTSI  EXIT   LEAVE)
+144	You are in a small alcove behind the throne room.  There are no  
+144	exits from this room.    
+      3142    3002  CLIMB
+      3142    3002  D     (DOWNW  DOWN   DESCE)
+      3142    3002  OUT   (OUTSI  EXIT   LEAVE)
+         0    4009  CLIMB
+145	You are dragged down, down, into the depths of the whirlpool.    
+145	Just as you can no longer hold your breath, you are shot out over
+145	a waterfall into the shallow end of a large reservoir.  Gasping  
+145	and sputtering, you crawl weakly towards the shore.... 
+         0     113	[FORCED LOC]
+146	You are in dense forest, with a hill to one side.  The trees appear   
+146	to thin out towards the north and east. 
+         0       2  EAST  (E    )
+         0       2  UPWAR (UP     U      ABOVE  ASCEN)
+         0       2  ROAD  (HILL )
+         0       2  CLIMB
+         0       6  SOUTH (S    )
+         0       6  FORES
+         0     147  WEST  (W    )
+         0     148  NORTH (N    )
+147	You are at the high point of a wide grassy knoll, partially surrounded
+147	by dense forest.  The land rises to the south and east, and drops off 
+147	sharply to the north and west.  The air smells of sea water.
+         0     146  EAST  (E    )
+         0     146  SOUTH (S    )
+         0     148  NORTH (N    )
+         0     153  WEST  (W    )
+         0     157  HOLE 
+         0       3  BUILD (HOUSE)
+         0     157  THUND
+148	You are at the edge of a trackless salt marsh.  Tall reeds obscure    
+148	the view except to the south where you can see a grassy knoll.   
+         0     147  SOUTH (S    )
+         0     149  EAST  (E    )
+         0     149  WEST  (W    )
+         0     149  NORTH (N    )
+         0       3  BUILD (HOUSE)
+         0     166  GROTT
+149	You're in a trackless salt marsh.  
+         0     149  SOUTH (S    )
+         0     151  EAST  (E    )
+         0     150  WEST  (W    )
+         0     152  NORTH (N    )
+150	You're in a trackless salt marsh.  
+         0     151  NORTH (N    )
+         0     151  SOUTH (S    )
+         0     149  EAST  (E    )
+         0     149  WEST  (W    )
+151	You're in a trackless salt marsh.  
+         0     148  EAST  (E    )
+         0     152  WEST  (W    )
+         0     150  NORTH (N    )
+         0     149  SOUTH (S    )
+152	You're in a trackless salt marsh.  
+         0     151  EAST  (E    )
+         0     150  SOUTH (S    )
+153	You're on a sandy beach at the edge of the open sea.  The beach  
+153	stretches out of sight to the south.  To the north, the beach ends    
+153	in cliffs and broken rocks.   
+         0     154  NORTH (N    )
+         0     153  SOUTH (S    )
+         0     147  EAST  (E    )
+         0       3  BUILD (HOUSE)
+154	You are at a jumble of large broken rocks.  A gentle path leads up    
+154	to the top of the nearby cliffs.  A narrow treacherous path 
+154	disappears among the rocks at the foot of the cliff.   
+         0     155  NORTH (N    )
+         0     157  D     (DOWNW  DOWN   DESCE)
+         0     155  UPWAR (UP     U      ABOVE  ASCEN)
+         0     153  SOUTH (S    )
+         0       3  BUILD (HOUSE)
+155	You are on a high cliff overlooking the sea.  Far below the 
+155	rolling breakers smash into a jumble of large broken rocks. 
+155	The thunder of the surf is deafening.   
+         0     154  D     (DOWNW  DOWN   DESCE)
+         0     154  SOUTH (S    )
+         0     156  JUMP  (LEAP )
+         0       3  BUILD (HOUSE)
+156	You're at the bottom of the cliff, smashed to smithereens by the 
+156	pounding surf. 
+         0       0	[FORCED LOC]
+157	You are at Thunder Hole, a funnel shaped cavern opening onto the sea. 
+157	The noise of the surf pounding against the outer rocks of the cave is 
+157	amplified by the peculiar shape of the cave, causing a thunder-like   
+157	booming sound to reverberate throughout the cave.  Outside, a narrow  
+157	path leads south towards some large rocks.   
+         0     227  INWAR (INSID  IN     INTO )
+         0     227  EAST  (E    )
+         0     154  OUT   (OUTSI  EXIT   LEAVE)
+         0     154  SOUTH (S    )
+         0     154  UPWAR (UP     U      ABOVE  ASCEN)
+         0       3  BUILD (HOUSE)
+158	You are in a gigantic room at the top of a wide arched staircase.
+158	On the east side, there is a tiny door no more than six inches high.  
+158	Above it, far out of reach, is a overhanging shelf.    
+         0     229  WEST  (W    )
+         0     229  STEPS
+         0     229  D     (DOWNW  DOWN   DESCE)
+         0     161  PHUCE
+         0    4225  CLIMB
+         0    4225  UPWAR (UP     U      ABOVE  ASCEN)
+         0    4226  LEDGE (SHELF)
+         0    4247  ENTER
+         0    4247  INWAR (INSID  IN     INTO )
+         0    4247  EAST  (E    )
+         0    4247  ENTRA
+159	You are in a low cramped chamber at the back of a small cave.    
+159	There is a shelf in the rock wall at about the height of your    
+159	shoulder. 
+         0    4232  OUT   (OUTSI  EXIT   LEAVE)
+         0    4232  WEST  (W    )
+         0    4232  STEPS
+160	You are on a wide ledge, bounded on one side by a rock wall,
+160	and on the other by a sheer cliff.  The only way past is through 
+160	a large wrought-iron door.    
+      3043     167  EAST  (E    )
+      3043     167  INWAR (INSID  IN     INTO )
+      3043     167  OUT   (OUTSI  EXIT   LEAVE)
+      3043     167  ENTER
+         0    4238  EAST  (E    )
+         0     162  PHUCE
+         0    4223  WEST  (W    )
+         0    4223  CLIMB
+         0    4223  D     (DOWNW  DOWN   DESCE)
+161	You feel dizzy...Everything around you is spinning, expanding,   
+161	growing larger....  Dear me!  Is the cave bigger or are you smaller?  
+         0    3004	[FORCED LOC]
+162	You are again overcome by a sickening vertigo, but this time
+162	everything around you is shrinking...Shrinking... 
+         0    3004	[FORCED LOC]
+163	You are again overcome by a sickening vertigo, but this time
+163	everything is shrinking... I mean, you are growing.  This is
+163	terribly confusing. 
+         0    3004	[FORCED LOC]
+164	You feel dizzy...Everything around you is spinning, expanding,   
+164	growing larger....  
+         0    3004	[FORCED LOC]
+165	You're at the bottom of the cliff with a broken neck.  
+         0       0	[FORCED LOC]
+166	You are at the western tip of the Blue Grotto.  A large lake almost   
+166	covers the cavern floor, except for where you are standing.  Small    
+166	holes high in the rock wall to the east admit a dim light.  The  
+166	reflection of the light from the water suffuses the cavern with  
+166	a hazy bluish glow. 
+         0    4247  ENTER
+         0    4247  OUT   (OUTSI  EXIT   LEAVE)
+         0    4247  INWAR (INSID  IN     INTO )
+         0    4247  WEST  (W    )
+      1048     232  EAST  (E    )
+      1048     232  CROSS
+      1048     232  OVER 
+      1048     232  ACROS
+      1048     307  NE   
+      1048     233  SOUTH (S    )
+      1048     234  NORTH (N    )
+      1048     308  SE   
+         0    4217  EAST  (E    )
+      4048     164  PHUCE
+      1072    4494  PHUCE
+         0    4220  PHUCE
+167	You are on the shore of an underground sea.  A high wooden  
+167	structure of vast proportions extends out into the water to the  
+167	east.  The way west is through a wrought-iron door.    
+         0     163  PHUCE
+      3043     160  WEST  (W    )
+      3043     160  OUT   (OUTSI  EXIT   LEAVE)
+      3043     160  ENTER
+      3043     160  INWAR (INSID  IN     INTO )
+         0    4239  WEST  (W    )
+         0    4222  EAST  (E    )
+         0    4222  CROSS
+         0    4222  OVER 
+         0    4222  ACROS
+168	You are on the eastern shore of the Blue Grotto.  An ascending   
+168	tunnel disappears into the darkness to the east.  
+      4048     170  EAST  (E    )
+      4048     170  UPWAR (UP     U      ABOVE  ASCEN)
+      4048     170  PASSA (TUNNE  DEFIL)
+         0    4219  EAST  (E    )
+         0    4219  UPWAR (UP     U      ABOVE  ASCEN)
+         0    4219  PASSA (TUNNE  DEFIL)
+      1048     307  NORTH (N    )
+      1048     234  NW   
+      1048     308  SOUTH (S    )
+      1048     233  SW   
+      1048     303  WEST  (W    )
+      1048     303  CROSS
+      1048     303  OVER 
+      1048     303  ACROS
+         0    4217  WEST  (W    )
+         0    4217  NORTH (N    )
+         0    4217  SOUTH (S    )
+169	You are at a high rock on the NE side of a watery chamber at the mouth
+169	of a small brook.  An unknown gas bubbles up through the water from   
+169	the chamber floor.  A bluish light can be seen to the southwest. 
+      1048     232  SOUTH (S    )
+      1048     303  SW   
+      1048     234  WEST  (W    )
+         0    4217  SW   
+         0    4217  SOUTH (S    )
+      4048     179  PASSA (TUNNE  DEFIL)
+      4048     179  EAST  (E    )
+      4048     179  UPWAR (UP     U      ABOVE  ASCEN)
+         0    4219  PASSA (TUNNE  DEFIL)
+         0    4219  UPWAR (UP     U      ABOVE  ASCEN)
+170	You are in a long tunnel running from east to west.  A wind is   
+170	blowing up the tunnel from the water below, giving rise to an    
+170	eerie sound as it passes over the small cracks in the wall. 
+         0     180  EAST  (E    )
+         0     180  UPWAR (UP     U      ABOVE  ASCEN)
+         0     168  WEST  (W    )
+         0     168  D     (DOWNW  DOWN   DESCE)
+171	When the syllable fades from your lips, you have a fleeting 
+171	sensation that you are shrinking into nothingness.  The feeling  
+171	leaves you dizzy and you stumble over.  Unfortunately, before any
+171	sprites can rescue you, you feel yourself slipping into a torrent
+171	of water and being dragged down into a yawning chasm (formerly a 
+171	two-inch slit).
+         0       0	[FORCED LOC]
+172	You are in a very tight N/S crack.  The passage seems to widen to
+172	the south.
+         0      60  NORTH (N    )
+         0     174  SOUTH (S    )
+173	You are in a very tight N/S crack.  The passage south is blocked 
+173	by a recent cave-in.
+         0      60  NORTH (N    )
+         0      60  OUT   (OUTSI  EXIT   LEAVE)
+174	You're in the Cloakroom.  This is where the dreaded Wumpus repairs    
+174	to sleep off heavy meals.  (Adventurers are his favorite dinner!)
+174	Two very narrow passages exit NW and NE.
+      3092     178  NE   
+         0     172  NE   
+         0     172  CRACK
+         0     175  NW   
+175	You are in a rough passage with exits to the east and north.
+         0     177  NORTH (N    )
+         0     174  EAST  (E    )
+176	You are in a pit of enormous proportions and you can just barely 
+176	see the top of the wall far out of reach above you.  In front of 
+176	you are large bars of iron through which you could easily pass,  
+176	but below which there is a precipitous drop into nothingness.    
+         0       8  PHUCE
+         0      21  D     (DOWNW  DOWN   DESCE)
+         0      21  GRATE
+         0      21  JUMP  (LEAP )
+177	You are at the north end of a narrow passage near a hole in the floor.
+         0      60  D     (DOWNW  DOWN   DESCE)
+         0      60  CLIMB
+         0      60  JUMP  (LEAP )
+         0     175  SOUTH (S    )
+178	The NE passage is blocked by a recent cave-in.    
+         0     174	[FORCED LOC]
+179	You are in a sloping muddy defile, next to a tumbling brook.
+         0     169  D     (DOWNW  DOWN   DESCE)
+         0     169  WEST  (W    )
+         0     198  UPWAR (UP     U      ABOVE  ASCEN)
+         0     198  EAST  (E    )
+         0     198  STREA
+180	You are in a level E/W passage partially blocked by an overhanging    
+180	tongue of rock.  A steep scramble would take you up over the tongue,  
+180	whence continues an upward crawl.  
+         0     170  WEST  (W    )
+         0     182  UPWAR (UP     U      ABOVE  ASCEN)
+         0     182  CLIMB
+         0     213  EAST  (E    )
+181	The dog won't let you pass.   
+         0     227	[FORCED LOC]
+182	You're at the end of a long level hall which runs to the east.   
+182	A steep crawl descends from here as well.    
+         0     180  WEST  (W    )
+         0     180  D     (DOWNW  DOWN   DESCE)
+         0     183  EAST  (E    )
+183	You are in a star-shaped chamber.  Passages exit north, east, west,   
+183	SE and SW.
+         0     182  WEST  (W    )
+         0     184  EAST  (E    )
+         0     186  SE   
+         0     197  SW   
+         0     187  NORTH (N    )
+184	You are in a winding E/W passage.  
+         0     183  WEST  (W    )
+         0     188  EAST  (E    )
+185	As you utter the magic word, you immediately become disoriented  
+185	and you feel like your body is twisting and turning in a variety 
+185	of directions.  The sensation lasts for a few moments, and you   
+185	quickly return to normal.
+         0      41	[FORCED LOC]
+186	You're at the intersection of two long tunnels.  One goes NW,    
+186	the other NE.  
+         0     183  NW   
+         0     188  NE   
+187	You're in a long narrow N/S passage which begins to twist and turn    
+187	toward its northern end. 
+         0     183  SOUTH (S    )
+         0     112  NORTH (N    )
+188	You're in the Rotunda.  Corridors radiate to the southwest, east and  
+188	west.  There is a telephone booth standing against the north wall.    
+         0     184  WEST  (W    )
+         0     190  EAST  (E    )
+         0     190  D     (DOWNW  DOWN   DESCE)
+         0     186  SW   
+         0     189  INWAR (INSID  IN     INTO )
+         0     189  ENTER
+         0     189  NORTH (N    )
+189	You are standing in a telephone booth at the side of a large chamber. 
+189	Hung on the wall is a banged-up pay telephone of ancient design. 
+         0     188  OUT   (OUTSI  EXIT   LEAVE)
+         0     188  SOUTH (S    )
+190	You're at the Devil's Chair, a large crystallization shaped like a    
+190	seat, at the edge of a black abyss.  You can't see the bottom.   
+190	An upward path leads away from the abyss.    
+      4022    3006  CROSS
+      4022    3006  NORTH (N    )
+      4022    3006  ACROS
+      4022    3006  BRIDG
+         0    4161  CROSS
+         0     188  UPWAR (UP     U      ABOVE  ASCEN)
+         0     188  WEST  (W    )
+         0    3010  JUMP  (LEAP )
+191	You're in a dead-end crack.   
+         0      60  NORTH (N    )
+         0      60  OUT   (OUTSI  EXIT   LEAVE)
+192	You're on a small gravel beach at the south wall of the Blue Grotto.  
+192	A gravelly path leads southeast.   
+      1048     303  NORTH (N    )
+      1048     232  NE   
+      1048     308  EAST  (E    )
+         0    4217  NORTH (N    )
+         0    4217  NE   
+      1048     303  NORTH (N    )
+      1048     232  NE   
+      1048     308  EAST  (E    )
+         0    4217  NORTH (N    )
+         0    4217  NE   
+      4048     197  SE   
+         0    4220  SE   
+193	You are in the Flower Room.  The walls are covered with colorful,
+193	intricate, flower-like patterns of crystallized gypsum.
+         0     197  WEST  (W    )
+         0     197  OUT   (OUTSI  EXIT   LEAVE)
+194	You are at the end of a short E/W corridor.  
+         0     224  WEST  (W    )
+         0     224  OUT   (OUTSI  EXIT   LEAVE)
+195	You are looking west from the end of a short E/W corridor.  At your   
+195	feet is a pile of loose rubble.  On your left is a hole into another  
+195	chamber.  
+         0     196  HOLE 
+         0     196  WALL 
+         0     196  SOUTH (S    )
+         0     196  CROSS
+         0     196  LEFT 
+         0     224  WEST  (W    )
+196	You are in an arched hall.  The remnants of a now-plugged coral  
+196	passage lie to the east.  The north wall has partially crumbled, 
+196	exposing a large connecting hole to another room. 
+         0     103  D     (DOWNW  DOWN   DESCE)
+      1014    4118  HOLE 
+      1014    4118  WALL 
+      1014    4118  NORTH (N    )
+      1014    4118  CROSS
+         0     195  HOLE 
+197	You're in the Vestibule, a short passageway between two rooms to the  
+197	east and north.  There is also a sandy path leading down to the west. 
+         0     193  EAST  (E    )
+         0     183  NORTH (N    )
+         0     192  WEST  (W    )
+         0     192  D     (DOWNW  DOWN   DESCE)
+198	You are in the Fairy Grotto.  All around you innumerable stalactites, 
+198	arranged in immense colonnades, form elegant arches.  On every side   
+198	you hear the dripping of water, like the footsteps of a thousand 
+198	fairies.  A small stream runs from the SW corner.  A bright glow 
+198	emanates from the south side of the grotto, and a steep passage  
+198	descends to the east.    
+         0     179  SW   
+         0     179  STREA
+         0     179  DOWNS
+         0     179  PASSA (TUNNE  DEFIL)
+         0     203  D     (DOWNW  DOWN   DESCE)
+         0     203  EAST  (E    )
+      4002     200  SOUTH (S    )
+      4002     200  UPWAR (UP     U      ABOVE  ASCEN)
+         0    4272  SOUTH (S    )
+         0    4272  UPWAR (UP     U      ABOVE  ASCEN)
+199	You have approached the lower end of a steep passage, but it is  
+199	just too cold here to hang around, and you aren't properly equipped   
+199	to continue.  With teeth chattering, you climb back up....  
+         0     198	[FORCED LOC]
+200	You are in the Crystal Palace.  An overhead vein of phosphorescent    
+200	quartz casts a luminous glow which is reflected by countless chips of 
+200	mica embedded in both walls, which consist of some sort of highly
+200	reflective glass, apparently of volcanic origin.  A winding path 
+200	of yellow sandstone leads east and another passage exits north.  
+         0     198  NORTH (N    )
+         0     201  EAST  (E    )
+201	You are following a yellow sandstone path which runs from east to
+201	west here and joins with a rocky path leading north.  There is a 
+201	bright glow to the west. 
+      4002     200  WEST  (W    )
+      4002     200  D     (DOWNW  DOWN   DESCE)
+         0    4272  WEST  (W    )
+         0    4272  D     (DOWNW  DOWN   DESCE)
+         0     202  EAST  (E    )
+         0     230  NORTH (N    )
+202	You are in a very tall chamber whose walls are comprised of many 
+202	different rock strata.  Layers of red and yellow sandstone  
+202	intertwine with bright bands of calcareous limestone in a rainbow-    
+202	like profusion of color.  The rainbow effect is so real, you
+202	are almost tempted to look for a pot of gold!  Poised far over   
+202	your head, a gigantic slab, wedged tightly between the north and 
+202	south walls, forms a natural bridge across the roof of the chamber.   
+202	There are exits on the east and west.   
+         0     201  WEST  (W    )
+         0     206  EAST  (E    )
+203	You're in a steeply sloping passage.  It is very cold here. 
+      4047     199  D     (DOWNW  DOWN   DESCE)
+      4047     199  EAST  (E    )
+      4047     199  ICE  
+         0     204  D     (DOWNW  DOWN   DESCE)
+         0     204  EAST  (E    )
+         0     204  ICE  
+         0     198  UPWAR (UP     U      ABOVE  ASCEN)
+         0     198  WEST  (W    )
+204	You are in the Hall of Ice, in the deepest part of the caverns.  
+204	During winter, frigid outside air settles here, making this room 
+204	extremely cold all year round.  The walls and ceilings are covered    
+204	with a thick coating of ice.  An upward passage exits to the west.    
+         0     203  UPWAR (UP     U      ABOVE  ASCEN)
+         0     203  WEST  (W    )
+         0     203  OUT   (OUTSI  EXIT   LEAVE)
+205	You are standing near the edge of a slab far above the floor of a
+205	circular chamber whose walls are a rainbow of multi-colored rock.
+205	There is a small stairway leading down to the west.    
+         0     239  D     (DOWNW  DOWN   DESCE)
+         0     239  WEST  (W    )
+         0    3010  JUMP  (LEAP )
+206	You are in a low, wide room below another chamber.  A small green
+206	pond fills the center of the room.  The lake is apparently spring-    
+206	fed.  A large passage continues west.   
+         0    4009  NORTH (N    )
+         0     207  NORTH (N    )
+         0     202  WEST  (W    )
+         0     213  UPWAR (UP     U      ABOVE  ASCEN)
+         0     213  HOLE 
+207	You are in a small cavern behind a waterfall which tumbles down  
+207	before you.  A narrow path leads westward skirting the edge of   
+207	the falls and a mist-filled chimney climbs steeply to the east.  
+         0     208  WEST  (W    )
+         0     250  UPWAR (UP     U      ABOVE  ASCEN)
+         0     250  EAST  (E    )
+         0     250  CHIMN
+208	You are in a tall canyon on the south side of a raging river
+208	which enters from the east over a cascading waterfall that covers
+208	much of the area with a fine mist.  Written in the mud in crude  
+208	letters are the words: "You Have Found Lost River."  A wide path 
+208	leads west along the bank.  The pathway narrows to the east where
+208	it seems to disappear into the waterfall.    
+         0     207  EAST  (E    )
+         0     207  UPSTR
+         0     207  FALLS
+         0     209  WEST  (W    )
+         0     209  DOWNS
+         0     209  D     (DOWNW  DOWN   DESCE)
+         0    4293  CROSS
+         0    4293  ACROS
+         0    4293  NORTH (N    )
+209	You are standing on a large flat rock table at the western end of
+209	Lost River Canyon.  Beneath your feet, the river disappears amidst    
+209	foam and spray into a large sinkhole.  A gentle path leads east  
+209	along the river's south shore.
+         0     208  EAST  (E    )
+         0     208  UPSTR
+         0     208  UPWAR (UP     U      ABOVE  ASCEN)
+         0     208  OUT   (OUTSI  EXIT   LEAVE)
+210	As you sit in Devil's Chair, the rock seat quickly tips into the 
+210	formation and you find yourself sliding down a smoothly carved   
+210	chute which winds its way down through the rock.  After a few    
+210	moments, your slide ends abruptly as you exit into empty space   
+210	and fall (slightly bruised, but otherwise unhurt) to the floor   
+210	of a chamber below. 
+         0     219	[FORCED LOC]
+211	The staircase is now unclimbable.  
+         0      19	[FORCED LOC]
+212	You are standing in a telephone booth at the side of the Repository.  
+         0     115  OUT   (OUTSI  EXIT   LEAVE)
+         0     115  SOUTH (S    )
+213	You're at the east end of a level passage at a hole in the floor.
+         0     206  D     (DOWNW  DOWN   DESCE)
+         0     206  HOLE 
+         0     180  WEST  (W    )
+214	You're at the north edge of a dark cove.  There is a passage to  
+214	the northeast. 
+      1048     303  SOUTH (S    )
+      1048     307  EAST  (E    )
+      1048     232  SE   
+         0    4217  SOUTH (S    )
+         0    4217  SE   
+      4048     215  NE   
+         0    4220  NE   
+215	You are in a dry granite basin, worn smooth eons ago by water    
+215	swirling down from a now-dry spillway.  The basin runs from 
+215	northeast to southwest here.  
+         0     214  SW   
+         0     216  UPWAR (UP     U      ABOVE  ASCEN)
+         0     216  NE   
+216	You're in a dry spillway east of and above a smooth rock basin.  
+         0     215  D     (DOWNW  DOWN   DESCE)
+         0     217  EAST  (E    )
+         0     217  UPWAR (UP     U      ABOVE  ASCEN)
+217	You are in the Winery, a cool dark room which extends some  
+217	distance off to the east.  A spillway exits down and to the west.
+         0     216  WEST  (W    )
+         0     216  D     (DOWNW  DOWN   DESCE)
+         0     216  OUT   (OUTSI  EXIT   LEAVE)
+         0     218  EAST  (E    )
+         0     218  PIT  
+218	You are to the east of the Winery, where the room ends in a thicket   
+218	of high, sharp, pointed, climable limestone pinnacles.  There is a    
+218	narrow ledge just above the top of the spires.    
+         0     217  WEST  (W    )
+         0     230  UPWAR (UP     U      ABOVE  ASCEN)
+         0     230  CLIMB
+219	You are at the southern end of a high-vaulted cavern whose roof  
+219	rises over fifty meters to culminate in a series of pointed 
+219	arches directly over your head.  There are also two low arches to
+219	either side, forming side portals which give the entire area the 
+219	feel of a Gothic cathedral.  Behind you, there is a hole in the  
+219	wall about fifteen feet above your head but the wall is much too 
+219	smooth for you to climb. 
+         0     222  NORTH (N    )
+         0     222  ALTAR
+         0     220  EAST  (E    )
+         0     221  WEST  (W    )
+220	You're at the east portal of the Gothic Cathedral.
+         0     219  WEST  (W    )
+         0     225  EAST  (E    )
+221	You're at the west portal of the Gothic Cathedral.
+         0     219  EAST  (E    )
+         0     219  OUT   (OUTSI  EXIT   LEAVE)
+222	You are at the foot of the Altar, an immense, broad stalagmite.  
+222	The room opens behind you to the south. 
+         0     219  SOUTH (S    )
+      4137     223  UPWAR (UP     U      ABOVE  ASCEN)
+      4137     223  CLIMB
+         0    4471  UPWAR (UP     U      ABOVE  ASCEN)
+         0    4471  CLIMB
+      3137     302  NORTH (N    )
+      3137     302  INWAR (INSID  IN     INTO )
+         0    4009  NORTH (N    )
+         0    3008  PRAY  (PRAYE  KNEEL)
+223	You're on top of an enormous, broad stalagmite.  There is a hole 
+223	in the ceiling overhead. 
+         0     222  D     (DOWNW  DOWN   DESCE)
+         0     224  UPWAR (UP     U      ABOVE  ASCEN)
+224	You are in a room the size and shape of a small crypt.  A narrow 
+224	cut exits east.  There is a hole in the floor.    
+         0     223  D     (DOWNW  DOWN   DESCE)
+         0     223  HOLE 
+      3088     195  EAST  (E    )
+         0     194  EAST  (E    )
+225	You are in the Gothic Chapel, a small chamber adjoining the Gothic    
+225	Cathedral.
+         0     220  WEST  (W    )
+         0     220  OUT   (OUTSI  EXIT   LEAVE)
+226	You are on the floor of the Rainbow Room.  In fact, you are spread    
+226	*ALL OVER* the floor of the Rainbow Room.    
+         0       0	[FORCED LOC]
+227	You are in a dimly lit passage behind Thunder Hole.  Etched into 
+227	the rock wall are the ominous words:    
+227	*       "You are approaching the River Styx.       *   
+227	*        Lasciate Ogni Speranza Voi Ch'Entrate."   *   
+         0     157  WEST  (W    )
+         0     157  OUT   (OUTSI  EXIT   LEAVE)
+         0     157  UPWAR (UP     U      ABOVE  ASCEN)
+      3098     228  EAST  (E    )
+      3098     228  INWAR (INSID  IN     INTO )
+      3098     228  D     (DOWNW  DOWN   DESCE)
+         0     181  EAST  (E    )
+         0     181  INWAR (INSID  IN     INTO )
+         0     181  D     (DOWNW  DOWN   DESCE)
+228	You are at the River Styx, a narrow little stream cutting directly    
+228	across the passageway.  The edge of the stream is littered with sticks
+228	and other debris washed in by a recent rainfall.  On the far side
+228	of the river, the passage continues east.    
+         0    4292  NORTH (N    )
+         0    4292  SOUTH (S    )
+         0    4292  UPSTR
+         0    4292  DOWNS
+         0    4292  CRACK
+         0     227  UPWAR (UP     U      ABOVE  ASCEN)
+         0     227  WEST  (W    )
+         0     227  OUT   (OUTSI  EXIT   LEAVE)
+         0     229  JUMP  (LEAP )
+         0     229  EAST  (E    )
+         0     229  INWAR (INSID  IN     INTO )
+         0     229  ACROS
+         0     229  CROSS
+         0     229  OVER 
+         0    4292  NORTH (N    )
+         0    4292  SOUTH (S    )
+         0    4292  UPSTR
+         0    4292  DOWNS
+         0    4292  CRACK
+229	You're on the east side of the river.  There is a very wide stairway  
+229	here leading up to a large room.   
+         0     228  JUMP  (LEAP )
+         0     228  WEST  (W    )
+         0     228  OUT   (OUTSI  EXIT   LEAVE)
+         0     228  ACROS
+         0     228  CROSS
+         0     228  OVER 
+         0     158  EAST  (E    )
+         0     158  INWAR (INSID  IN     INTO )
+         0     158  STEPS
+         0     158  UPWAR (UP     U      ABOVE  ASCEN)
+         0     158  CLIMB
+         0     158  STAIR
+         0    4292  NORTH (N    )
+         0    4292  SOUTH (S    )
+         0    4292  UPSTR
+         0    4292  DOWNS
+         0    4292  CRACK
+230	You are on a ledge at the northern end of a long N/S crawl.  The 
+230	ledge is above a large number of sharp vertical limestone spires.
+230	An attempt to climb down could be dangerous, particularly if you're   
+230	carrying anything large or unwieldy.    
+        30     218  D     (DOWNW  DOWN   DESCE)
+        30     218  JUMP  (LEAP )
+      1071     231  D     (DOWNW  DOWN   DESCE)
+      1071     231  JUMP  (LEAP )
+         0     218  D     (DOWNW  DOWN   DESCE)
+         0     218  JUMP  (LEAP )
+         0     201  SOUTH (S    )
+         0     201  CRAWL
+231	The oaken cask shifts position as you climb down, and you find   
+231	yourself neatly skewered on the point of a limestone spire. 
+         0       0	[FORCED LOC]
+232	You have poled your boat across the calm water.   
+         0     168	[FORCED LOC]
+233	You have poled your boat across the dark water.   
+         0     192	[FORCED LOC]
+234	You have poled your boat across the Blue Grotto.  
+         0     214	[FORCED LOC]
+235	You're at Dante's Rest, on the north side of a yawning dark chasm.    
+235	A passage continues west along the chasm's edge.  
+      4022    3006  CROSS
+      4022    3006  SOUTH (S    )
+      4022    3006  ACROS
+      4022    3006  BRIDG
+         0    4161  CROSS
+         0      98  WEST  (W    )
+         0    3010  JUMP  (LEAP )
+236	As you click the heels of the ruby slippers, the world around you
+236	is transformed into a swirling mist and you get the sensation that    
+236	you are moving at great speed -- so great, in fact, that your    
+236	possessions are stripped away by the sudden rush of wind.  Soon, 
+236	however, your speed decreases and the mist begins to clear. 
+         0     205	[FORCED LOC]
+237	As you click the heels of the ruby slippers, the world around you
+237	is transformed into a swirling mist and you get the sensation that    
+237	you are moving at great speed -- so great, in fact, that your    
+237	possessions are stripped away by the sudden rush of wind.  This  
+237	time, the wind is so strong that you feel even the slippers fall 
+237	from your feet into the void.  In the distance, you hear a voice 
+237	saying, "There's no place like home."  The mist clears swiftly,  
+237	and you find yourself back in familiar territory. 
+         0       3	[FORCED LOC]
+238	You're in the caretaker's pantry.  
+         0       3  OUT   (OUTSI  EXIT   LEAVE)
+         0       3  ENTRA
+         0       3  SOUTH (S    )
+239	You are in a small tunnel which has been dug through the rainbow 
+239	colored strata.  The only exit is a stairway leading up.    
+         0     205  UPWAR (UP     U      ABOVE  ASCEN)
+         0     205  EAST  (E    )
+240	As you crawl around in the tunnels, you hear a rumbling noise and
+240	you notice that the cavern roof is beginning to give way.  You   
+240	quickly try to make your escape, but you can't make it out in    
+240	time and are buried in the landslide.   
+         0       0	[FORCED LOC]
+241	You are standing on a large mountain with steep cliffs leading   
+241	down on all sides.  On the far side of the cliffs you can see    
+241	in the distance several fierce-looking animals of gigantic size. 
+241	You're only safe path of escape leads through several giant 
+241	columns of iron to the south. 
+         0     116  PHUCE
+         0     242  INWAR (INSID  IN     INTO )
+         0     242  ENTER
+         0     242  SOUTH (S    )
+242	You are on the far side of the massive iron columns.  There 
+242	is a reddish glow to the south, but the path is blocked by  
+242	a wide fissure which is much too large to cross.  The cave seems 
+242	very warm here.
+         0     241  OUT   (OUTSI  EXIT   LEAVE)
+         0     241  NORTH (N    )
+         0    4097  CROSS
+         0    4097  SOUTH (S    )
+         0     243  PHUCE
+243	You are standing at the south side of a locked grate which  
+243	leads into the repository to the north.  There is a passage 
+243	south which leads slightly downward toward an area lit by   
+243	a dull reddish glow.  The floor of the passage is broken by 
+243	some small fissures which you can easily step across.  The  
+243	walls of the cave here are quite warm and you can feel an   
+243	intense heat radiating from the southern corridor.
+         0     242  PHUCE
+         0     244  SOUTH (S    )
+244	A few steps ahead of you, the passage has been blocked by   
+244	a flow of molten lava which has melted its way into the
+244	chamber.  It is almost too hot to breathe here.   
+         0     243  NORTH (N    )
+         0    4110  SOUTH (S    )
+245	You are at the bottom of a small, climbable pit.  
+         0     116  UPWAR (UP     U      ABOVE  ASCEN)
+         0     116  OUT   (OUTSI  EXIT   LEAVE)
+      5024     116  CLIMB
+         0     246  CLIMB
+246	You are about midway along a beanstalk which grows through a
+246	hole in the ceiling directly above you.  The entire room is 
+246	bathed in light from torches hanging on the wall at this level.  
+         0     245  D     (DOWNW  DOWN   DESCE)
+         0     247  UPWAR (UP     U      ABOVE  ASCEN)
+         0     247  CLIMB
+247	You are in a large room which seems to have been recently   
+247	carved out of solid rock.  There is a beanstalk here growing
+247	up out of a hole in the floor.  There is also a small  
+247	passage to the east.  A sign floating in midair reads: 
+247	"DANGER -- BLASTING AREA!  Proceed at your own risk.   
+247	[Witt Construction Company]"  There is a faint smell of gas 
+247	which appears to grow stronger near the eastern corridor.   
+         0     246  D     (DOWNW  DOWN   DESCE)
+      1074     249  EAST  (E    )
+      1074     249  INWAR (INSID  IN     INTO )
+         0     248  EAST  (E    )
+248	You are in a small cavern which is clearly the result of recent  
+248	excavation work.  There is a small tunnel leading west.
+         0     247  WEST  (W    )
+         0     247  OUT   (OUTSI  EXIT   LEAVE)
+249	Just as you reach the far end of the passage, there is a    
+249	tremendous explosion which drops several tons of rock in the
+249	chamber, crushing you completely in the process.  
+         0       0	[FORCED LOC]
+250	You are in a swirling grey fog.  Moist tendrils caress your skin 
+250	which seem to draw all warmth from your body.  There is no sound.
+         0     250  NORTH (N    )
+         0     250  SOUTH (S    )
+         0     250  EAST  (E    )
+         0     250  UPWAR (UP     U      ABOVE  ASCEN)
+         0     250  SE   
+         0     250  SW   
+         0     250  NW   
+      1073     207  WEST  (W    )
+      1073     207  D     (DOWNW  DOWN   DESCE)
+        50     250  WEST  (W    )
+        50     250  D     (DOWNW  DOWN   DESCE)
+         0     207  WEST  (W    )
+         0     207  D     (DOWNW  DOWN   DESCE)
+         0     251  NE   
+251	You have entered into a cavern so vast that its far end is invisible. 
+251	Before you there is a deep and narrow channel, empty and silent  
+251	with hardly a trickle of water flowing among the brown and  
+251	red-stained stones of its bed; but on the near side there is
+251	a path, much broken and decayed, that winds its way eastward among    
+251	the ruined walls and paving-stones of an ancient dwarf highroad. 
+251	In the other direction, the road turns to the southwest and quickly   
+251	disappears into a dense fog.  
+         0     250  SW   
+         0     253  EAST  (E    )
+252	As you click the heels of the ruby slippers, the world around you
+252	is transformed into a swirling mist and you get the sensation that    
+252	you are moving at great speed.  Unfortunately, your flight is cut
+252	short by the wumpus who seems able to navigate even more effectively  
+252	in the misty world.  With a strength beyond defense, the wumpus grabs 
+252	you by the neck.  Your life passes before you as the wumpus hungrily  
+252	eyes its captive.   
+         0       0	[FORCED LOC]
+253	Before you is a low cliff, some five fathoms high, with a   
+253	broken and jagged top.  Over it water trickles down a wide  
+253	cleft.  To the north there is a flight of stairs cut in the rock.
+253	The main road runs both east and west from here.  
+         0     254  UPWAR (UP     U      ABOVE  ASCEN)
+         0     254  CLIMB
+         0     254  NORTH (N    )
+         0     251  WEST  (W    )
+         0     257  EAST  (E    )
+254	A dark still lake stretches before you.  Not even your lantern   
+254	is reflected in its sullen surface.  Beyond the ominous water    
+254	are reared vast cliffs.  There is a descending staircase to the  
+254	west which joins a path that goes northward around the eastern   
+254	edge of the lake.   
+         0     253  WEST  (W    )
+         0     253  SW   
+         0     253  D     (DOWNW  DOWN   DESCE)
+         0     255  LEFT 
+         0     255  NORTH (N    )
+         0     256  SOUTH (S    )
+         0     256  RIGHT
+         0     256  SWIM 
+255	The path ends in jumble of boulders.    
+         0     254  D     (DOWNW  DOWN   DESCE)
+         0     254  SOUTH (S    )
+         0     254  OUT   (OUTSI  EXIT   LEAVE)
+256	The water looks very unpleasant, and I can't swim.
+         0     254	[FORCED LOC]
+257	You are on a stony ridge overlooking the southern end of a dark  
+257	lake.  A road meanders away to the south.  Below you, between the
+257	water's edge and the looming cliffs, there is a small sandy beach.    
+         0     253  SOUTH (S    )
+         0     258  D     (DOWNW  DOWN   DESCE)
+         0     258  NORTH (N    )
+258	You are on a beach by a solid stone cliff.  You can make out the 
+258	edge of a dark body of water a short distance to the north. 
+         0     257  UPWAR (UP     U      ABOVE  ASCEN)
+         0     257  SOUTH (S    )
+         0     309  NORTH (N    )
+         0    3007  FRIEN
+      3090     259  ENTER
+      3090     259  INWAR (INSID  IN     INTO )
+      3090     259  EAST  (E    )
+         0    4525  ENTER
+259	You are at the foot of a huge stairway that runs into a seemingly
+259	solid granite wall.  The stairs climb eastwards into darkness.   
+         0    3007  FRIEN
+      3090     258  OUT   (OUTSI  EXIT   LEAVE)
+      3090     258  WEST  (W    )
+         0    4525  OUT   (OUTSI  EXIT   LEAVE)
+         0    4525  WEST  (W    )
+         0     260  CLIMB
+         0     260  UPWAR (UP     U      ABOVE  ASCEN)
+         0     260  EAST  (E    )
+260	You have reached an arched passage with a level floor leading    
+260	eastward and stairs descending westward.  There is also a path   
+260	to the south.  
+         0     259  D     (DOWNW  DOWN   DESCE)
+         0     259  WEST  (W    )
+         0     261  EAST  (E    )
+         0      22  SOUTH (S    )
+261	You are in a descending E/W passage.  The air is hot and    
+261	stifling, although a current of cooler air can be felt issuing   
+261	from some invisible openings on your right and left.   
+         0     260  WEST  (W    )
+         0      43  LEFT 
+         0      43  NORTH (N    )
+         0      50  RIGHT
+         0      50  SOUTH (S    )
+         0     262  EAST  (E    )
+         0     262  D     (DOWNW  DOWN   DESCE)
+262	You're in an E/W passage crossed with fissures and chasms.  
+262	A seven foot crack blocks the passage to the east.  Beyond  
+262	the crack the passage winds on into the dark.  The passage  
+262	is still descending to the east here, so that the other ledge    
+262	is perhaps three feet below this one.   
+         0     261  WEST  (W    )
+         0     261  UPWAR (UP     U      ABOVE  ASCEN)
+         0     264  EAST  (E    )
+         0     264  D     (DOWNW  DOWN   DESCE)
+         0     290  JUMP  (LEAP )
+263	To the west the passage is split by a seven foot crack, and you  
+263	can see the far edge above you.  To the east there is darkness.  
+         0    3010  JUMP  (LEAP )
+         0     292  WEST  (W    )
+         0     292  UPWAR (UP     U      ABOVE  ASCEN)
+         0     265  EAST  (E    )
+         0     265  D     (DOWNW  DOWN   DESCE)
+264	How am I expected to deal with that seven foot crack?! 
+         0     262	[FORCED LOC]
+265	To the east stands a wide dark arch opening into three 
+265	passages.  All lead eastwards; but the left-handed passage  
+265	plunges down, while the right-hand climbs up, and the middle
+265	way seems to run on, smooth and level but very narrow. 
+265	To the north of the great arch stands a stone door, half open.   
+265	To the west the passage fades into darkness. 
+         0     263  WEST  (W    )
+         0      66  LEFT 
+         0      66  NE   
+         0      66  UPWAR (UP     U      ABOVE  ASCEN)
+         0      34  RIGHT
+         0      34  SE   
+         0      34  D     (DOWNW  DOWN   DESCE)
+         0     273  EAST  (E    )
+         0     266  NORTH (N    )
+266	You're in a wide chamber.  In the middle of the floor there is   
+266	a large round hole which you might be able to climb down.   
+266	There is a south door.   
+         0     265  SOUTH (S    )
+         0     267  D     (DOWNW  DOWN   DESCE)
+267	You're clinging to the side of a dry well.  The bottom (if any)  
+267	is lost in darkness.
+         0     266  UPWAR (UP     U      ABOVE  ASCEN)
+         0     268  D     (DOWNW  DOWN   DESCE)
+268	You're at the bottom of the dry well.  A well-used path leads north.  
+268	There is also a path leading into a canyon on the west.
+         0     267  UPWAR (UP     U      ABOVE  ASCEN)
+         0     269  NORTH (N    )
+         0     305  WEST  (W    )
+269	You're on a well-used N/S path.    
+         0     268  SOUTH (S    )
+         0     270  NORTH (N    )
+270	You're at the bottom of a spiral stone staircase.  A path leads south.
+         0     269  SOUTH (S    )
+         0     271  UPWAR (UP     U      ABOVE  ASCEN)
+271	You're on a spiral stone staircase.
+         0     270  D     (DOWNW  DOWN   DESCE)
+         0     272  UPWAR (UP     U      ABOVE  ASCEN)
+         0     272  CLIMB
+272	You're in a little chamber with a small four-inch square window  
+272	open to the out-of-doors.
+         0     271  D     (DOWNW  DOWN   DESCE)
+         0     271  OUT   (OUTSI  EXIT   LEAVE)
+273	You're in a gradually climbing E/W passage.  
+         0     265  WEST  (W    )
+         0     274  EAST  (E    )
+274	You're in a huge hall; its black walls, polished and smooth as   
+274	glass, flash and glitter.  There are exits to the west, east,    
+274	and north.  A faint light can be seen from the north passage.    
+         0     109  EAST  (E    )
+         0     273  WEST  (W    )
+         0     275  NORTH (N    )
+275	You are in a wide N/S corridor.  A glimmer of light comes from   
+275	a doorway to the east.   
+         0     106  NORTH (N    )
+         0     274  SOUTH (S    )
+         0     276  RIGHT
+         0     276  EAST  (E    )
+276	You're in a large square chamber, which is lit by a wide shaft   
+276	high in the far wall.  The light falls directly on a table in    
+276	the middle of the room, a single oblong block of stone.  Unlike  
+276	most of the chambers in this cavern, this one seems to be largely
+276	free of dust.  A wide corridor exits to the west, a smaller passage   
+276	to the east.  There is also a doorway into a small room to the south. 
+         0     275  WEST  (W    )
+         0     277  D     (DOWNW  DOWN   DESCE)
+         0     277  EAST  (E    )
+         0     304  SOUTH (S    )
+277	You're on a steeply descending E/W flight of stairs.   
+         0     276  WEST  (W    )
+         0     276  UPWAR (UP     U      ABOVE  ASCEN)
+         0     278  EAST  (E    )
+         0     278  D     (DOWNW  DOWN   DESCE)
+278	You're on a narrow E/W path that slopes down swiftly.  The air is
+278	hot.  Red light flickers from an archway ahead.   
+         0     277  WEST  (W    )
+         0     277  UPWAR (UP     U      ABOVE  ASCEN)
+         0     279  EAST  (E    )
+         0     279  D     (DOWNW  DOWN   DESCE)
+279	You're at the east end of a cavernous hall.  Across the floor,   
+279	close to the feet of two huge pillars, there is a great fissure. 
+279	Flames lick at its brink, casting weird shadows in the 
+279	northern and southern reaches of the hall.   
+         0     278  WEST  (W    )
+         0     278  UPWAR (UP     U      ABOVE  ASCEN)
+         0     280  SOUTH (S    )
+         0     281  NORTH (N    )
+280	You're at the south end of the cavernous hall.  The fiery fissure
+280	is to the east of you.   
+         0     279  NORTH (N    )
+         0     279  OUT   (OUTSI  EXIT   LEAVE)
+281	You're before a black chasm.  To the north a slender bridge of stone, 
+281	without a railing, spans the chasm.
+         0     282  NORTH (N    )
+         0     282  CLIMB
+         0     282  ACROS
+         0     282  UPWAR (UP     U      ABOVE  ASCEN)
+         0     279  SOUTH (S    )
+282	You're teetering dangerously out on the middle of the stone arch.
+         0     281  SOUTH (S    )
+         0     283  NORTH (N    )
+         0    3010  JUMP  (LEAP )
+         0    3010  D     (DOWNW  DOWN   DESCE)
+283	You are next to a black chasm, spanned by a slender bridge of    
+283	stone.  Great stairs lead northwards.   
+         0     282  SOUTH (S    )
+         0     282  ACROS
+         0     282  CLIMB
+         0     282  UPWAR (UP     U      ABOVE  ASCEN)
+         0     284  NORTH (N    )
+284	You are in a round room which seems to be made entirely from
+284	colored marbles which reflect light every which way.  Stairs exit
+284	downward to the south.   
+         0     283  SOUTH (S    )
+         0     283  OUT   (OUTSI  EXIT   LEAVE)
+285	You are at the bottom of the chasm.  An arched passage, inches deep   
+285	in dust, leads west.  Another passage goes south. 
+         0     286  SOUTH (S    )
+         0     287  WEST  (W    )
+286	You are in a small chamber of black rock.  A passage leads north.
+         0     285  NORTH (N    )
+         0     285  OUT   (OUTSI  EXIT   LEAVE)
+287	You are in a large room lit by seven torches.  Seven stone chairs are 
+287	against the wall.  Passages enter from the east, west and south. 
+      2128     300  WEST  (W    )
+         0    4458  WEST  (W    )
+         0     285  EAST  (E    )
+         0     288  SOUTH (S    )
+288	You are in a small chamber adjoining the torch room.  A huge fireplace
+288	takes up one wall.  
+         0     287  NORTH (N    )
+         0     289  CLIMB
+         0     289  UPWAR (UP     U      ABOVE  ASCEN)
+289	You clamber up the chimney to find...   
+         0      65	[FORCED LOC]
+290	A nice jump!  Congratulations!  Lucky it wasn't uphill.
+         0     263	[FORCED LOC]
+291	Your jump is not quite far enough to take you to the far edge.   
+291	You manage to get a grasp on the ledge, but the rock crumbles    
+291	away and you find yourself falling into the abyss.
+         0       0	[FORCED LOC]
+292	Do you have a plan for negotiating that seven-foot crack?   
+         0     263	[FORCED LOC]
+293	It's much too steep to climb. 
+         0       2	[FORCED LOC]
+294	** Unused **   
+         0       0
+295	Nice try, but it's a long way down.
+         0       0	[FORCED LOC]
+296	Help!  You're falling!  Do something and save yourself!
+         0     295  UPWAR (UP     U      ABOVE  ASCEN)
+         0     295  D     (DOWNW  DOWN   DESCE)
+         0     295  NORTH (N    )
+         0     295  SOUTH (S    )
+         0     295  EAST  (E    )
+         0     295  WEST  (W    )
+         0     295  CLIMB
+         0     295  JUMP  (LEAP )
+297	The belt instantly becomes much lighter.  Unfortunately, the rapid    
+297	change in its momentum jerks the belt away from you.  Lazily, it 
+297	begins to float up while you keep falling down ... down ... down ...  
+         0       0	[FORCED LOC]
+298	As the belt buckle breaks, the belt rises for a brief instant and
+298	then, like you, crashes to the floor below.  
+         0       0	[FORCED LOC]
+299	You can't get here.  This is where the amulet ends up. 
+         0       0
+300	The elves bow low as you pass.  The eldest approaches you and    
+300	says, "Go in peace and honor, Elf-Friend."   
+         0     301	[FORCED LOC]
+301	You are in the vault of the elves. 
+         0     287  EAST  (E    )
+         0     287  OUT   (OUTSI  EXIT   LEAVE)
+302	You are in a secret armory which has been unused for ages.  There
+302	was once a forge here, but most of it has been removed.
+         0     222  OUT   (OUTSI  EXIT   LEAVE)
+         0     222  SOUTH (S    )
+303	You have poled your boat across the dark water.   
+         0     166	[FORCED LOC]
+304	You are in a closet to the south of the reading room.  
+         0     276  NORTH (N    )
+         0     276  OUT   (OUTSI  EXIT   LEAVE)
+305	You are in a tall canyon which narrows to an tiny slit to   
+305	the east.  A wider path goes west. 
+         0     268  WEST  (W    )
+         0    4480  EAST  (E    )
+         0    4480  CLIMB
+306	You are floating gently to the bottom of the chasm and in the    
+306	distance can see the troll bridge above you.  Unfortunately,
+306	at an even closer distance, you can see an entire family of 
+306	trolls who are poised to attack with battle axes drawn.
+306	You try to defend yourself, but you are hopelessly outnumbered,  
+306	and even though your axe manages to dispatch one troll, the 
+306	next one is not so unlucky.  He brings his battle axe down  
+306	against your skull.  You see your life pass before you 
+306	against a backdrop of shimmering stars; then all is darkness.    
+         0       0	[FORCED LOC]
+307	You have poled your boat through the water into a narrow inlet.  
+         0     169	[FORCED LOC]
+308	You have poled your boat across the water, which appears to 
+308	become somewhat darker and more forbidding here.  
+         0     309	[FORCED LOC]
+309	You are on the edge of a beach which extends some distance to    
+309	the south before it runs into a sheer cliff face.  To the east,  
+309	there is a small path beside a dark stream which flows into 
+309	the lake. 
+      1048     232  NORTH (N    )
+      1048     303  NW   
+      1048     233  WEST  (W    )
+         0    4217  NORTH (N    )
+      4048     258  SOUTH (S    )
+         0    4219  SOUTH (S    )
+      4048     310  EAST  (E    )
+         0    4219  EAST  (E    )
+310	You are standing at the edge of a dark pool which has a foul
+310	and generally unpleasant smell.  The water from the pool flows   
+310	into a stream running to the west alongside a narrow path.  
+310	The pool is quite shallow and you could easily wade across. 
+         0     309  WEST  (W    )
+      3150     312  EAST  (E    )
+      3150     312  WADE 
+      3150     312  ACROS
+      1117    3011  EAST  (E    )
+         0     311  EAST  (E    )
+311	You are standing on one end of a massive stone slab which rises up    
+311	out of a murky pool here.  At the far end of the slab (which you 
+311	ought to be able to climb), you can see a dark cavern in the rock
+311	face.  The water gets deeper to the north and south, but you could    
+311	wade across to the western edge.   
+       102     314  EAST  (E    )
+       102     314  UPWAR (UP     U      ABOVE  ASCEN)
+       102     314  CLIMB
+         0     316  EAST  (E    )
+       101     310  WEST  (W    )
+       101     310  WADE 
+       101     310  ACROS
+312	You are standing in a shallow pool filled with cold and
+312	unpleasant-smelling water.  Some twenty feet above you, a massive
+312	slab of rock hangs precariously overhead.    
+         0     310  WEST  (W    )
+313	You are standing on the west end of a large slab about twenty    
+313	feet above a murky pool.  This end of the slab is virtually 
+313	in mid-air and there is nothing nearby to jump to.
+         0     316  EAST  (E    )
+         0     316  D     (DOWNW  DOWN   DESCE)
+314	You are standing at the end of a massive rock slab which descends
+314	westward into a murky pool.  This end of the slab is positioned  
+314	about twenty-five feet above the cavern floor.  You would not    
+314	survive a jump to the ground from here, but there is a ledge
+314	about two feet to the east which you could easily reach.    
+314	The ledge leads inward to a dark cavern.
+      1117    3011  WEST  (W    )
+      1117    3011  D     (DOWNW  DOWN   DESCE)
+         0     311  WEST  (W    )
+         0     317  JUMP  (LEAP )
+         0     317  EAST  (E    )
+315	You are in a small chamber with no exits except a narrow    
+315	path which leads south.  High above you, there is a rock    
+315	slab at the same level as a ledge in the wall, but there    
+315	is no way to reach it.   
+         0     320  SOUTH (S    )
+         0     320  OUT   (OUTSI  EXIT   LEAVE)
+316	You are standing on top of a rock slab resting on the floor 
+316	of a small chamber.  High above your head, there is a narrow
+316	ledge in the rock wall, but there seems to be no way to reach    
+316	it from here.  A narrow path leads south from here.    
+       101     320  SOUTH (S    )
+       101     320  OUT   (OUTSI  EXIT   LEAVE)
+       102     313  WEST  (W    )
+       102     313  UPWAR (UP     U      ABOVE  ASCEN)
+       102     313  CLIMB
+      1117    3011  WEST  (W    )
+         0     311  WEST  (W    )
+317	You are on a small ledge high in the face of a rock wall.   
+317	Approximately two feet to the west is the top of a large    
+317	slab to which you could easily jump.  To the south, there   
+317	is a small cavern.  
+       103     314  JUMP  (LEAP )
+       103     314  WEST  (W    )
+         0     316  JUMP  (LEAP )
+         0     319  SOUTH (S    )
+         0     319  INWAR (INSID  IN     INTO )
+318	You are on a small ledge high in the face of a rock wall with    
+318	a small cavern to the south.  
+         0     319  SOUTH (S    )
+         0     319  INWAR (INSID  IN     INTO )
+         0    3010  JUMP  (LEAP )
+319	You are inside a small foul-smelling cavern which shows signs    
+319	of being the lair for some unfamiliar creature.  A small stream  
+319	flows through the cavern, but the channel is too narrow for you  
+319	to follow.  The only exit is to the north.   
+      4150     317  NORTH (N    )
+      4150     317  OUT   (OUTSI  EXIT   LEAVE)
+         0     318  NORTH (N    )
+320	You are on a narrow path which enters from the north, bends 
+320	slightly and exits upward to the southeast.  
+      4150     315  NORTH (N    )
+         0     316  NORTH (N    )
+         0      22  SE   
+         0      22  UPWAR (UP     U      ABOVE  ASCEN)
+321	You are in what appears to be a laboratory, with an exit to 
+321	the northeast.  The floor is covered with papers, and the   
+321	entire area is littered with scraps and tools.  There are a 
+321	few blueprints lying around haphazardly, but the whole place
+321	is such a mess that I doubt you could find anything specific
+321	in here.  At the south end of the room you can see a strange
+321	contraption made from brass, ebony, ivory and glass.   
+         0      65  NE   
+         0    4596  SOUTH (S    )
+         0     323  ENTER
+         0     323  INWAR (INSID  IN     INTO )
+322	You are in the ancient laboratory. 
+         0    4596  SOUTH (S    )
+         0     323  ENTER
+         0     323  INWAR (INSID  IN     INTO )
+         0     323  OUT   (OUTSI  EXIT   LEAVE)
+         0     323  OUT   (OUTSI  EXIT   LEAVE)
+323	You are sitting inside the machine.  In front of you is a control
+323	panel consisting of a set of clock dials covered by a glass face.
+      3159     325  OUT   (OUTSI  EXIT   LEAVE)
+      3159     325  OUT   (OUTSI  EXIT   LEAVE)
+      3157    3012  OUT   (OUTSI  EXIT   LEAVE)
+         0     321  OUT   (OUTSI  EXIT   LEAVE)
+324	The spinning of the dials comes to a sudden halt.  There is 
+324	darkness.  You have materialized into solid rock.  This is not   
+324	good for your health.    
+         0       0	[FORCED LOC]
+325	As you exit from the machine and your eyes grow accustomed to the
+325	the dim light of the laboratory, the source of the noise becomes 
+325	apparent in the form of a ghastly creature of a description not  
+325	known to your time.  Its red and glowing eyes have already spotted    
+325	you and it begins to snap at you with a giant set of claws. 
+325	Desperately, you run back toward the machine, but before you can 
+325	close the door for safety, a large claw reaches in, picks you up 
+325	and crunches your body.  The rest is too gory to describe.  
+         0       0	[FORCED LOC]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

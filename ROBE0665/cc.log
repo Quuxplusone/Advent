@@ -1,0 +1,16 @@
+make: `busy.o' is up to date.
+echo '#include "params.h"' > allcom.F
+echo '	IMPLICIT INTEGER (A-Z)' >> allcom.F
+ls -1 [a-z]*com.h | sed 's/.*/#include "&"/' >> allcom.F
+echo '	END' >> allcom.F
+/usr/bin/gfortran -g -std=legacy -ffixed-line-length-none -c allcom.F
+make: /usr/bin/gfortran: No such file or directory
+make: *** [allcom.o] Error 1
+/usr/bin/gfortran -g -std=legacy -ffixed-line-length-none -c allcom.F
+make: /usr/bin/gfortran: No such file or directory
+make: *** [allcom.o] Error 1
+/usr/bin/gfortran -g -std=legacy -ffixed-line-length-none -c setup.F
+make: /usr/bin/gfortran: No such file or directory
+make: *** [setup.o] Error 1
+make: `dataf.o' is up to date.
+make: `readln.o' is up to date.
