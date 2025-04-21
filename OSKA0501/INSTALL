@@ -1,0 +1,39 @@
+Requirements
+============
+
+This games has been ported to GNU g77, you should be okay with g77
+2.95 and later, but if you run into problems (other than the prefix
+problem, see below) try the lates version of g77 (should be
+3.something)
+
+This game also assumes a unix system (file name conventions) and no
+garantee is made for a working installation on other systems.  But it
+is possible to run the game in the src directory, which should work
+everywhere.
+
+Installation
+============
+
+To make this game do:
+
+  ./configure
+  make
+  make install
+
+This will (by default) put the game in /usr/local/bin
+and the adventure file in /usr/local/share/games
+
+You can specify another prefix with:
+
+  ./configure --prefix=/some/path/here
+
+in which case the game will be in /some/path/here/bin
+and the adventure file in /some/path/here/share/games
+
+WARNING: SPECIFYING TOO LONG PREFIX CAN RESULT IN COMPILATION ERROR!!!
+This is a limitation of FORTRAN 77, that I'm not sure how to deal
+with.  If you run into problems when specifying a prefix, try
+something that is not much longer than /usr/local
+
+To remove any object files, you can do `make clean'.  If you want to
+remove also those files that `configure' generated do `make distclean'

@@ -1,0 +1,5 @@
+! -*- mode: fortran -*-
+!	
+	CHARACTER*100 ADVTXT
+	DATA ADVTXT/'@prefix@/share/games/adventure.text'/
+

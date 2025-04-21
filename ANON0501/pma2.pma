@@ -1,0 +1,21 @@
+     SEG
+     ENT   GETTIM
+IGTM     NOP
+          D64V
+       E64V
+           PCL         TIMDAT
+     EXT   TIMDAT
+     AP    TIMBUF,S
+     AP    =5,SL
+     LDA   TIMBUF+3
+     PID
+     DIV   =60
+     XCB
+     MPY   =60
+     ADD   TIMBUF+4
+     PRTN
+GETTIM     ECB         IGTM,,0
+     LINK
+TIMBUF     BSZ         7
+     END
+

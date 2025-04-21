@@ -1,0 +1,27 @@
+I know nothing about the history of this particular version of
+adventure, although the submitter claims that it is the original
+FORTRAN version.
+
+There are no copyright notices in any of the code and there is no
+author information either. I have not tried to compile this, but it
+has been around long enough that it shouldn't be a problem as long
+as you have a fortran compiler that understands this syntax. Note that
+there may be system specific routines (e.g., SRCH$$(), SAVE$$()) that
+would need to be renamed.
+
+The .f.alt files are ones that someone used at onetime to disable
+gripe and log messages and the wizard monitor.
+
+	-Bill Randle
+	Moderator, comp.sources.games
+	Tektronix, Inc.
+	billr@saab.CNA.TEK.COM
+	May 18, 1990
+
+P.S. Be sure to combine all three parts of main.f (main.f.1, main.f.2,
+main.f.3) into a single main.f file and to combine the three parts of
+the data file (adv.data.1, adv.data.2, adv.data.3) into a single
+adv.data file.
+
+P.P.S. As an exercise to the reader, one is welcome to convert this
+to C using the f2c translator and submit the results for posting.

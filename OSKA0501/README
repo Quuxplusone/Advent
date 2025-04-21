@@ -1,0 +1,32 @@
+Welcome to Myrkraverk's Adventure 5!
+
+Before playing this game, see BUGS below!!!
+
+Send bug reports, comments, or just plain bitching to Johann Oskarsson
+<myrkraverk@users.sourceforge.net>
+
+This is a port of very old sources in FORTRAN IV to GNU g77.  This is
+meant for a unix system, so I guess some fiddling with the automake
+stuff is requried for a non-unix installation; it should be okay to
+'make' and then just run the game in the 'src' directory though.
+
+For installation instructions, see INSTALL.
+
+For copyright information, see COPYING (this is not GPL)
+
+The file doc/README.SRC is the readme that came with the origial sources.
+
+
+BUGS
+====
+
+The map maker is currently a no-no, so you will have to answer `no' to
+a new map (the very first question) otherwise the game will crash!
+
+The SAVE command will most likely just crash your game.
+
+Sometimes, the game will show garbage instead of something you typed
+in, this does not hinder gameplay, but you should let me know about
+it.
+
+...and probably a lot more that I haven't found yet :)

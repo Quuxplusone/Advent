@@ -1,0 +1,97 @@
+       SEG
+       ENT     ENTER
+ECBENT ARGT
+       D64V
+       E64V
+       CALL    GETTIM
+       STA     STIME
+READ   JMP     LOOP
+CHAR   BSZ     1
+CHKS   LDX     =8
+CHK    CAS     SPEC-1,1
+       SKP
+       JMP     BL-1,1
+       DRX
+       JMP     CHK
+       JMP     STORE
+RRED   JMP     READ
+ERASEC LDA     CP,*
+       SZE
+       S1A
+       STA     CP,*
+       JMP     READ
+KILLC  CRA
+       STA     CP,*
+       JMP     READ
+END    LDA     FLAG
+       SPL
+       PRTN
+       CALL    GETTIM
+       SUB     STIME
+       STA     ETIME,*
+       PRTN
+STORE  LDA     CP,*
+       LGR     1
+       STA     0
+       ERA     BS,*
+       SNZ
+       JMP     RRED
+       LDA     BA,*1
+       SSC
+       ICA
+       CAR
+       ERA     CHAR
+       SSC
+       ICA
+       STA     BA,*1
+       IRS     CP,*
+       JMP     RRED
+SPEC   DATA    '377
+       DATA    '223
+       DATA    '200
+       DATA    '222
+       DATA    '224
+ERASE  DATA    '210
+KILL   DATA    '230
+       DATA    '212
+BL     JMP     READ
+       JMP     READ
+       JMP     READ
+       JMP     READ
+       JMP     READ
+       JMP     ERASEC
+       JMP     KILLC
+       JMP     END
+FLAG   BSZ     1
+LOOP    E64R
+       SKS     '704            CHAR PRESENT
+       JMP     TSTTIM          NO TEST TIMEOUT
+        E64V
+       LDA     ='200
+ININ    E64R
+       INA     4
+       JMP     ININ
+        E64V
+T1RET  STA     CHAR             RETURN CHAR
+       JMP     CHKS
+TSTTIM        E64V
+       CALL    GETTIM
+       SUB     STIME
+       SPL
+       ADD     =3600
+       SUB     LIMIT,*
+       SPL
+       JMP     LOOP
+       LDA     LIMIT,*
+       TCA
+       STA     FLAG
+       STA     ETIME,*
+       LDA     ='212
+       JMP     T1RET
+*
+*
+       LINK
+STIME  BSZ     1
+ENTER  ECB     ECBENT,,BA,5
+       DYNM    BA(3),BS(3),LIMIT(3),ETIME(3),CP(3)
+       END
