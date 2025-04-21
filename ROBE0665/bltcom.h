@@ -1,0 +1,2 @@
+	COMMON /BLTCOM/ TOPBOT(50), NPAIRS, BLTCNT, TOPLOC, FALLRM,
+     +                  BLTCLK

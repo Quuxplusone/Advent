@@ -1,0 +1,14 @@
+common(bltcom_,"bltcom_",0x00000000000000dc);
+common(detcom_,"detcom_",0x0000000000000008);
+common(diecom_,"diecom_",0x0000000000000014);
+common(dwfcom_,"dwfcom_",0x0000000000000064);
+common(gencom_,"gencom_",0x0000000000000144);
+common(hntcom_,"hntcom_",0x00000000000001e8);
+common(lincom_,"lincom_",0x0000000000000004);
+common(loccom_,"loccom_",0x0000000000000010);
+common(milcom_,"milcom_",0x00000000000001a4);
+common(objcom_,"objcom_",0x0000000000000f80);
+common(placom_,"placom_",0x0000000000000fc8);
+common(usrcom_,"usrcom_",0x0000000000000004);
+common(vercom_,"vercom_",0x0000000000000018);
+common(wizcom_,"wizcom_",0x0000000000000038);
