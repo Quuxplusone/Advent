@@ -107,9 +107,21 @@ The same as MCDO0551, except...
 
 ### LONG0751
 
-- Elephant Graveyard, Leprechaun Rock, orcs at helipad, Castle of Aldor and lost silver mine
+- The helicopter. The Castle of Aldor. The Secret Garden, containing a
+    golden apple. The "reclaimed silver mine" setpiece, involving a control
+    room with red, yellow, green, and blue buttons à la _Zork_.
 
-- Outside the grate, there is a _large cloth bag_ containing _grey powder_.
+- A bramblebush east of the Gothic Cathedral. Sham Rock (a.k.a. Leprechaun Rock).
+    The Elephants' Burial Ground.
+
+- At Tongue of Rock, _There is a small hole in the north wall of the passage._
+    It leads to Lost River Canyon, connecting the Bubble Chamber/Rainbow Room
+    section of the cave with the Bat Cave/Rotunda section.
+
+- There are only five dwarves; the sixth is the pirate and the seventh is the
+    pack rat ("Bigrat"), which steals items left unattended above ground (even in
+    the well house) and replaces them with worthless items such as
+    _an old shiny button_, _an old cracked shaving mug_, or _a smooth, white pebble_.
 
 ### LUPI0440
 
@@ -125,7 +137,9 @@ The same as LONG0501, plus the "Castle of the Elves" sequence:
 - _You are on a small rise overlooking a beautiful bay. In the center
     of the bay is the castle of the elves._
 
-### OSKA0501
+- The cobble crawl, oddly enough, does not have light.
+
+### OSKA0501 (ANON0501)
 
 The same as LONG0501, plus two uncompleted dead ends:
 
@@ -182,7 +196,8 @@ The same as LONG0501, plus two uncompleted dead ends:
 - LONG0501 (LONG0751, MCDO0551, ROBE0665): billboard, salt marsh, Thunder Hole
 
 - LONG0751:
-    _You're in a flat circular clearing surrounded by dense forest.
+    Outside grate: a _large cloth bag_ containing _grey powder_.
+    East of well house: _You're in a flat circular clearing surrounded by dense forest.
     Not far away is a helicopter.  Its engine is idling slowly.
     Several jac-booted Orcs are standing guard around the aircraft._
     Swamp adjacent to the salt marsh.
@@ -190,8 +205,7 @@ The same as LONG0501, plus two uncompleted dead ends:
     valley.  To the north, the forest gives way to dense swamp and
     then to open flatlands.  Far beyond, the land rises sharply towards
     the impassible Misty Mountains.  Nestled at the base of a distant
-    cliff are the stone turrets of a tall white castle._ But the castle is
-    reached via the helicopter, not by foot.
+    cliff are the stone turrets of a tall white castle._
 
 - ROBE0665 (ROBE0240): The road west of the building leads to the base of a spire of rock.
     _The spire looks natural, except for a tiny opening near its summit._
@@ -224,7 +238,7 @@ The same as LONG0501, plus two uncompleted dead ends:
    SE of the Soft Room). In ARNA0660 and ARNA0770, you can EXAMINE ORB to receive
    non-essential hints re various puzzles.
 
-- LONG0501: _There is a polished sphere of pure opal here!_ (in the Crystal Palace).
+- LONG0501, LONG0751: _There is a polished sphere of pure opal here!_ (in the Crystal Palace).
     It has no effect, though; it's just a treasure.
 
 - MCDO0551: _There is a polished sphere of pure quartz here!_ (in the Crystal Palace).
@@ -329,7 +343,10 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 - PLAT0550: WOOD0350, plus fog room, enchanted catacombs, ice maze (_THURB_)
 
-- WOOD0350 (LONG0501): CROW0000, plus twisty passages all different
+- WOOD0350: CROW0000, plus twisty passages all different
+
+- LONG0501 (LONG0751): WOOD0350, although arguably the marsh and (in LONG0751) swamp
+    count as simple mazes.
 
 ### Musical instruments
 
@@ -342,19 +359,20 @@ The same as LONG0501, plus two uncompleted dead ends:
     the Shell Room to knock down a wall.
 
 - LONG0751: LONG0501, plus a _delicate silver flute_ in the Conservatory; also in that room
-    is _an old upright piano_, which is openable.
+    is _an old upright piano_, which is openable. You must PLAY FLUTE to lead the rat to
+    its death, and again to perform the Hindu rope trick.
 
 - ROBE0665: Same as LONG0501, but this time the lyre replaces the diamonds
     and the silver horn is moved to the "windy passage" east of the Blue Grotto.
 
 ### Safes
 
-- LONG0501 (LONG0751, MCDO0551): There is a wall safe in the Well House,
+- LONG0501 (LONG0751, MCDO0551): There is a wall safe in the well house,
     initially hidden behind a poster. Most treasures must be deposited in
-    the safe, rather than simply on the floor of the Well House.
+    the safe, rather than simply on the floor of the well house.
     It is opened with a combination.
 
-- MALM1000: In the Well House, _A huge steel safe has been installed
+- MALM1000: In the well house, _A huge steel safe has been installed
     into the brick wall on the east wall._ Opening the safe reveals a
     stairway connecting to the Programmer's Den and Computer Center.
     It is opened with a combination (using the command TURN KNOB).
@@ -431,13 +449,26 @@ The same as LONG0501, plus two uncompleted dead ends:
     platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
     sparkling crown, ivory tusk, inlaid chalice, large ruby, crystal orb
 
-- LONG0501 (ANON0501, OSKA0501): 27: large gold nugget, several diamonds, **silver horn**, precious jewelry, rare coins,
+- LONG0501: 28: large gold nugget, several diamonds, **silver horn**, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
     platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
     silken cloak, gleaming sword, elfin crown, ruby slippers, delicate lyre,
-    Holy Grail (chalice), cask of vintage wine, golden ring (small gold ring), four-leafed clover, rare book,
-    glowing stone (radium), **opal sphere**. (But `rating.f` also lists a `SAPPHIRE`,
-    which does not actually exist as an item.)
+    star sapphire, Holy Grail (chalice), cask of vintage wine, golden ring (small gold ring), four-leafed clover,
+    rare book, glowing stone (radium), opal sphere.
+
+- OSKA0501: 27: same as LONG0501 but without the star sapphire.
+    [Its item number is used for the black fly instead.]
+
+- LONG0751: 42: large gold nugget, several diamonds, silver horn, precious jewelry, rare coins,
+    treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
+    platinum pyramid, glistening pearl, Persian rug, **rare spice**, gleaming sword,
+    **elven crown**, ruby slippers, delicate lyre, star sapphire, Holy Grail (chalice),
+    cask of vintage wine, golden ring (small gold ring), **shamrock**, **velvet cloak**, rare book,
+    glowing stone (radium), opal sphere, marble statue, perfect rose, ivory tusk,
+    golden apple, priceless tapestry, golden fleece, sachet of perfume, Maltese falcon (black bird),
+    silver flute, delicate conch, bronze shield, valuable deed to a reclaimed silver mine (soiled paper), silver ingots,
+    golden chain, ancient mystic amulet
+    [The golden chain's item number changes, thanks somehow to the dumbwaiter pull-chain.]
 
 - MALM1000: 37: large gold nugget, several diamonds, silver bars, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
@@ -449,7 +480,7 @@ The same as LONG0501, plus two uncompleted dead ends:
     beautiful rose, red apple, jeweled urn, golden weathercock, silver cross,
     jeweled cane, gold key, gold watch, rare stamps, floppy disk
 
-- MCDO0551 (HALL0501): 30: large gold nugget, several diamonds, **silver horn**, precious jewelry, rare coins,
+- MCDO0551 (HALL0501): 30: large gold nugget, several diamonds, silver horn, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
     platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
     silken cloak, gleaming sword, elfin crown, ruby slippers, delicate lyre,
@@ -474,7 +505,7 @@ The same as LONG0501, plus two uncompleted dead ends:
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
     platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
     silken cloak, shining sword, elfin crown, ruby slippers, delicate lyre,
-    star sapphire, silver chalice, cask of vintage wine, tarnished ring (small gold ring),
+    **star sapphire**, silver chalice, cask of vintage wine, tarnished ring (small gold ring),
     rare illuminated manuscript, glowing stone (radium), opal sphere, crystal ball,
     golden statue, golden belt, Venetian glass, Elvish scroll, silmaril, mahogany hoop,
     ancient two-dollar bill, mithril mail, ivory elephant, gleaming scabbard,
@@ -502,13 +533,20 @@ The same as LONG0501, plus two uncompleted dead ends:
     READ SIGN: _‘DWARFACELL’ LAMP RE-CHARGING STATION: Insert coin and wait for instructions._
     There is a non-treasure _coin_.
 
-- LONG0501 (MCDO0551): The _lead slugs_ from the gnome's phone booth can also be used
-    in the vending machine.
+- LONG0501 (LONG0751, MCDO0551): As in WOOD0350.
+    The _lead slugs_ from the gnome's phone booth can also be used in the vending machine.
 
-- WOOD0350 (LONG0501, PLAT0550, etc): _There is a massive vending machine here. The instructions on it read:
+- WOOD0350 (PLAT0550, etc): _There is a massive vending machine here. The instructions on it read:
     "Drop coins here to receive fresh batteries."_
 
 ## Wizards
+
+- GIBI0375: In the expanded endgame, you are made an Apprentice or Journeyman Wizard.
+    _As you release the hat, a cloud of sandalwood-scented smoke appears, out
+    of which steps the Grandmaster of the Colossal Cave Lodge 437 of the Wizard's
+    Guild [...] "Congratulations, young Adventurer. By your ordeals in the Cave you have
+    proven yourself worthy of admission to the rank of Journeyman Wizard in the
+    Wizard's Guild." He places the gold Wizard's Hat on your head,_ and so on.
 
 - LUPI0440 (ARNA0660, ARNA0770): The "wizard's cellar" setpiece. There is a _circular cellar_
     where you must drop any item in order to be evicted by the wizard.
