@@ -1,0 +1,486 @@
+THIS FILE CONTAINS COMPLETE SPOILERS FOR LONG0751!!
+(Version 6.1/3, January 1982)
+
+Thanks to the PC-SIG Library 8th Edition CD-ROM (April 1990), disk 539,
+http://cd.textfil.es/geminiatari/FILES/GAMES/WALKTHRU/COLOSSAL.TXT
+for most of this information.
+
+Notes:
+- Never leave anything unattended above ground until you've killed the pack rat.
+    The pirate steals carried treasures; the rat steals unattended items of any kind.
+    Not-yet-seen items are of course safe from the rat. This walkthru guarantees that
+    the rat will never steal anything important.
+- There are only five dwarves. You can safely discard the axe after killing the fifth,
+    but this walkthru doesn't rely on that.
+- This walkthru relies heavily on at least two inventory-management behaviors that
+    are probably unintentional bugs: The weight check is skipped for the WEAR action,
+    and also for GET when you and the item you're getting are *both* in the boat.
+- If you meet the pirate and he steals something important, then you will have
+    to detour from this walkthru and go get the chest. YOU MUST BRING THE KEYS!
+    If the pirate stole something, his chest will likely be too heavy to lift,
+    so you must OPEN CHEST (with the keys) to get out your stuff. Come back
+    later to get the chest itself.
+
+[PART ONE]
+
+no
+in
+move poster
+get lamp,matchbox
+in
+get keys,food,bottle
+open bottle
+out xyzzy e
+get cage
+pit
+light lamp
+e
+get bird
+debris
+get rod
+pit d d
+open cage
+drop bird,cage
+w w s e secret s
+
+[PART TWO]
+
+yank cloak
+nw n d e e
+wave rod
+get horn
+e
+wave rod
+wave rod
+e d
+ne [KEEP GOING "ne" UNTIL YOU GET INTO THE THRONE ROOM]
+e
+wear crown
+out n n
+drop keys,food,matchbox,rod,cloak
+[YOU SHOULD BE CARRYING LAMP,AXE,HORN,BOTTLE AND WEARING CROWN]
+s d bedquilt
+drop horn
+slab s d
+pour
+u w u reservoir
+fill
+s s d s d
+pour
+u e d
+fill
+u w d climb w
+get eggs
+n
+pour
+n d
+yank sword
+e e s
+get vase
+se ne
+drop eggs,crown
+get horn
+e n u
+blow horn
+n w d d
+get candle
+s w w
+get grail
+e e s
+wear shoes
+n e
+wave sword
+put rose in vase
+w pray
+fill
+plugh
+drop candle,bottle,sword,grail,horn
+s d bedquilt secret n
+get can
+w se w e
+get pillow
+w ne e u e u
+get lyre
+n
+drop pillow,vase,shoes
+wear cloak
+[YOU SHOULD BE CARRYING LAMP,AXE,LYRE,CAN AND WEARING CLOAK]
+turn off lamp
+plugh
+
+[PART THREE]
+
+w w w
+get mushrooms
+n
+get pole
+house w hole s u
+get flowers
+d d e
+play lyre
+e jump e
+eat mushrooms
+get key
+eat cakes
+open door
+phuce
+e
+phuce
+put pole,lyre,can,key in boat
+get boat
+s
+drop boat
+e
+light lamp
+e
+throw flowers
+get comb
+w
+turn off lamp
+w
+get boat
+ne
+put comb,trident in boat
+n
+open can
+put stone in can
+close can
+drop boat
+u u d
+light lamp
+d get u
+turn off lamp
+u s
+get opal
+e n
+light lamp
+get cask
+turn off lamp
+s w w sw d
+put diamonds,opal,cask in boat
+get boat
+s
+drop boat
+u
+light lamp
+u
+get shovel
+u u e
+get sapphire
+e
+se [OR PERHAPS "ne", DEPENDING ON WHICH ELBOW YOU'RE IN]
+e
+open piano
+get all
+w
+turn off lamp
+fnord w knoll w
+dig dig dig
+drop shovel
+get conch,box
+n u
+play flute
+house
+drop all
+get box
+ravine d
+drop box
+put statue in box
+u e u
+get rope
+d
+move vines
+e nw
+wear clover
+e sw house
+get lamp,axe,flute
+fnord
+light lamp
+get card
+w sw w w n d
+wear ring
+u n w d
+turn off lamp
+d
+get boat
+w n
+get cask
+drop boat
+ne
+light lamp
+u u
+fill
+d d
+turn off lamp
+sw
+get boat
+s
+get opal,diamonds,trident,comb,can,lyre
+drop boat
+phuce w phuce out house
+drop opal,diamonds,lyre,cask,can
+[YOU SHOULD BE CARRYING LAMP,ROPE,AXE,TRIDENT,COMB,CARD,FLUTE,RING,CLOVER]
+plugh
+drop ring,flute,clover,rope,card
+light lamp
+get keys
+[YOU SHOULD BE CARRYING LAMP,AXE,TRIDENT,COMB,KEYS]
+s d w d n
+open
+d d
+get pearl
+shellroom s w
+drop trident,pearl
+get eggs
+[YOU SHOULD BE CARRYING LAMP,AXE,COMB,KEYS,EGGS]
+
+[PART FOUR (skipped the rug and the fresh batteries)]
+
+w orient e ne u
+throw eggs
+cross
+barren
+in
+throw comb
+open
+get chain,bear
+view s e
+get spice
+w fork w w
+cross
+drop bear
+cross
+sw d sw se ne
+get all
+e u e u n
+drop spice,keys,chain,crown,trident,pearl
+get flute,rope,candle,matchbox,card
+wear ring,clover,shoes
+put spice on food
+[YOU SHOULD BE WEARING SHOES,RING,CLOVER AND CARRYING LAMP,ROPE,AXE,MATCHBOX,CANDLE,CARD,FLUTE,FOOD]
+plugh click click n e ne n n
+eat food
+push boulder
+turn off lamp
+n
+drop rope
+get handle
+play flute
+play flute
+play flute
+climb
+w
+put handle in winch
+turn winch
+drop matchbox,candle
+n
+put card in slot
+n n nw w
+push fuschia tile
+push nacre tile
+push orange tile
+push red tile
+push dun tile
+in
+light lamp
+get shield
+turn off lamp
+out fnord house
+drop shield,ring,clover
+[YOU SHOULD BE CARRYING LAMP,AXE,FLUTE, AND WEARING SHOES]
+click
+light lamp
+click n e ne u
+open pouch
+put tobacco in pipe
+get pipe
+d n
+get tusk
+n
+turn off lamp
+n
+play flute
+play flute
+play flute
+climb w
+get matchbox
+s s e sw w s w nw
+open matchbox
+light match,pipe
+w
+yes
+drop pipe
+get amulet
+e s e e house
+drop amulet,tusk,flute,shoes,axe
+
+[PART FIVE]
+
+get letter
+[YOU SHOULD BE CARRYING LAMP,LETTER,MATCHBOX]
+w e in
+push button
+push button
+out e in
+light lamp
+push green button
+turn off lamp
+push red button
+l l l l l
+push yellow button
+out w in
+push button
+push button
+out e
+get candle
+n n n ne w
+wear knapsack
+e n
+light match
+open cabinet
+light candle
+put candle in dumbwaiter
+pull chain
+s s s s w in
+push button
+out e d
+light lamp
+d
+drop all
+n
+put ingots in dumbwaiter
+s
+get all
+u
+turn off lamp
+u w n n
+wear knapsack
+jump
+get apple
+move bar
+e e n
+light lamp
+pull chain
+get ingots
+turn off lamp
+s s s
+drop knapsack,matchbox,match,letter
+w get e
+n w w fnord house
+7
+22
+34
+put ring,clover,ingots,bird,apple in safe
+put shoes,flute,amulet,conch,opal,can,cloak in safe
+put sapphire,lyre,diamonds in safe
+ravine
+get statue
+house
+drop statue
+ravine
+e e nw n w
+move vines
+n
+get fleece
+s e n
+turn winch
+turn winch
+n n
+get tapestry
+n w w fnord house
+drop fleece,tapestry
+
+[YOU SHOULD HAVE GOTTEN THE PIRATE'S CHEST BY NOW. IF NOT, GO GET IT,
+AND OPEN IT WITH THE KEYS (WHICH YOU LEFT AT Y2).]
+
+get axe
+xyzzy
+light lamp
+pit d s
+get nugget
+n n
+get deed
+s get n
+w get e
+n n
+turn off lamp
+plugh
+drop nugget
+put deed,coins,jewels in safe
+plugh
+light lamp
+get vase,pillow,horn,grail,sword
+wear crown
+turn off lamp
+plugh
+drop pillow,vase
+put perfume,horn,grail,sword,crown in safe
+fee fie foe foo
+plugh
+light lamp
+s s secret w
+kill
+yes
+get rug
+n d s d climb w
+get eggs
+n n d e d w
+drop all
+tunnel
+get emerald
+tunnel
+get all
+nw s se
+ne e u e u n
+get spice,pearl
+turn off lamp
+plugh
+drop rug
+put spice,pearl,eggs,emerald in safe
+plugh
+drop axe
+light lamp
+get chain,trident,bottle
+plover ne
+light lamp
+get pyramid
+turn off lamp
+s plover plugh
+put nugget,cask,tusk,fleece in chest
+put tapestry,shield,trident in chest
+put pyramid,chain in safe
+pour water on bird
+
+[AT THIS POINT YOU SHOULD HAVE 700 POINTS.]
+
+plugh
+light lamp
+s d w d e
+get magazines
+e
+drop magazines
+turn off lamp
+look [STAND STILL AND REPEAT "l" UNTIL THE BLINDING FLASH.]
+sw
+get rod
+ne
+drop rod
+sw
+blast
+
+----
+
+There is a loud explosion, and a twenty-foot hole appears in the far
+wall, burying the dwarves in the rubble.  You march through the hole
+and find yourself in the Main Office, where a cheering band of
+friendly elves carry the conquering adventurer off into the sunset.
+
+
+
+You scored 751 out of a possible 751, using 994 turns.
+
+All of Adventuredom gives tribute to you, Adventurer Grandmaster!
+
+To achieve the next higher rating would be a neat trick!
+
+CONGRATULATIONS!!
