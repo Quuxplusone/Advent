@@ -1,0 +1,257 @@
+THIS FILE CONTAINS ALMOST COMPLETE SPOILERS FOR GIBI0375!
+Thanks to Jason Dyer's spoilers at https://bluerenga.blog/2024/12/08/adventure-375-no-higher-rating/
+for the final (unfair) stock-certificate puzzle.
+
+no
+in
+get lamp
+xyzzy
+e
+get cage
+pit
+on
+e
+get bird
+get quill
+debris
+get rod
+pit
+d
+s
+get
+n
+w
+wave rod
+drop rod
+w
+get diamonds
+w w w n e
+get coins
+e
+drop bird
+drop cage
+s get n
+n n
+plugh
+drop gold
+drop coins
+drop jewels
+drop diamonds
+
+get bottle
+get food
+get keys
+plugh
+s d bedquilt slab s d
+water plant
+u w u
+reservoir
+fill bottle
+s s d s d
+water plant
+u e d
+fill
+u w d
+climb w
+get eggs
+n
+oil door
+n
+fill
+w d sw u
+throw eggs
+cross
+barren in
+throw food
+unlock chain
+get chain
+get bear
+fork w w
+cross
+throw bear
+view s e
+get spices
+fork w w
+cross
+get sign
+hang chain
+d
+jump
+ne n w
+open desk
+pour
+dip
+write
+get shares
+se se s
+jump
+climb
+get chain
+sw d se
+se ne e u e u n
+drop keys
+drop bottle
+drop quill
+drop spices
+drop chain
+drop shares
+fee
+fie
+foe
+foo
+plugh
+s d bedquilt e orient n w
+drop lamp
+drop axe
+tunnel
+get emerald
+tunnel
+get lamp
+get axe
+nw s
+get vase
+se e
+get pillow
+w w w d
+climb
+w
+get eggs
+n n
+get trident
+w d se se ne e
+drop eggs
+n
+open clam
+d d
+get pearl
+shell
+s u e u n
+plugh
+drop trident
+drop pearl
+drop pillow
+drop vase
+drop emerald
+
+
+plugh
+s s secret w
+kill dragon
+yes
+get rug
+n d n e
+get eggs
+u e u
+get silver
+n
+plugh
+drop silver
+drop eggs
+drop rug
+
+plugh
+plover
+ne
+get pyramid
+push tablet
+n
+break sword
+e
+s
+plover
+plugh
+drop pyramid
+drop hilt
+
+xyzzy
+pit
+d w w w s
+e s s s
+n e e nw
+get chest
+[GET ANY OTHER TREASURES FROM THE PIRATE'S LAIR]
+se n d
+debris
+xyzzy
+drop chest
+
+plugh
+s d w d e
+get magazines
+e
+drop magazines
+[GO EAST OR WHATEVER UNTIL YOU GET OUT]
+[WAIT FOR THE BLINDING FLASH OF LIGHT]
+[get lamp?]
+sw
+get rod
+[get pillow? cage?]
+ne
+drop rod
+sw
+blast
+ne se
+get keys
+n sw
+open
+d
+get robe
+get hat
+u ne se
+s s e n e
+drop hat
+[YOU WIN!]
+
+As you release the hat, a cloud of
+sandalwood-scented smoke appears, out
+of which steps the Grandmaster of the
+Colossal Cave Lodge 437 of the Wizard's
+Guild. He is wearing a long blue velvet
+robe, a long, pointed bejewelled hat
+made of solid platinum, and love beads.
+He carries a three foot long rod with a
+star on the end, all of solid gold. His
+eyes twinkle behind thick gold-rimmed
+spectacles, and he smiles benevolently
+as he says,
+
+"Congratulations, young Adventurer. By
+your ordeals in the Cave you have
+proven yourself worthy of admission to
+the rank of Journeyman Wizard in the
+Wizard's Guild." He places the gold
+Wizard's Hat on your head and, bending,
+asks,
+
+"How do you want your name spelled on
+your Certificate of Wizardness?"
+_
+
+"All right, young Wizard, your
+personal Wizard Password is 'Pijqed'!"
+
+The Wizard waves his wand, and the
+cave bear and little bird appear in a
+puff of orange smoke, grunting and
+twittering their congratulations. You
+leap onto the bear's back, and, with
+the bird fluttering in a circle
+overhead, you ride out of the building,
+through a crowd of cheering elves, and
+into the sunset.
+
+You scored 375 out of a possible 375
+using 483 turns.
+
+All of Adventuredom gives tribute to
+you, Journeyman Wizard and Adventurer
+Grandmaster!
+
+There is no higher rating!
+Congratulations!!
+
+[You can trigger the endgame without ever seeing
+the stock shares. Depositing the hat without the
+shares results in a score of 359 out of 375 points,
+no Certificate of Wizardness, and the title of
+"Apprentice Wizard and Adventurer Life Master."]
