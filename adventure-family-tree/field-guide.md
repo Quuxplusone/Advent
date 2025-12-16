@@ -73,9 +73,23 @@ A blend of PLAT0550 and LUPI0440.
 
 - The pirate steals only one treasure at a time.
 
-### GIBI0375
+### GIBI0375 (Software Toolworks' _Original Adventure_)
+
+- READ MAGAZINES gives a hint and advertises the "Certificate of Wizardness"
+    (serially numbered and suitable for framing) available to Journeyman Wizards.
 
 - There is a Medieval Room behind the tablet in the Dark Room.
+
+- There is a lengthy and rather unfair puzzle that starts with hanging the
+    golden chain from a hook on the troll bridge, and ends with signing your
+    name (using a bird quill) to old shares of stock in the Colossal Cave
+    Gold Mines. The signed shares are a treasure.
+
+- The endgame is extended: you blast your way into the Main Office, get the keys,
+    and open the vault, where a _tall pointed wizard's hat, made of solid
+    gold, and inlaid with moons and stars carved from precious jewels,
+    shimmers in midair! Suspended a few feet off the ground is a wizard's
+    robe of blue velvet._ You must deposit the hat in the well house.
 
 ### HALL0501
 
@@ -93,7 +107,9 @@ The same as MCDO0551, except...
 
 ### LONG0751
 
-- Elephant Graveyard, Leprechaun Rock, orcs at helipad
+- Elephant Graveyard, Leprechaun Rock, orcs at helipad, Castle of Aldor and lost silver mine
+
+- Outside the grate, there is a _large cloth bag_ containing _grey powder_.
 
 ### LUPI0440
 
@@ -164,6 +180,18 @@ The same as LONG0501, plus two uncompleted dead ends:
 - WOOD0430: chasm
 
 - LONG0501 (LONG0751, MCDO0551, ROBE0665): billboard, salt marsh, Thunder Hole
+
+- LONG0751:
+    _You're in a flat circular clearing surrounded by dense forest.
+    Not far away is a helicopter.  Its engine is idling slowly.
+    Several jac-booted Orcs are standing guard around the aircraft._
+    Swamp adjacent to the salt marsh.
+    _You are standing behind a large billboard on a ridge above a deep
+    valley.  To the north, the forest gives way to dense swamp and
+    then to open flatlands.  Far beyond, the land rises sharply towards
+    the impassible Misty Mountains.  Nestled at the base of a distant
+    cliff are the stone turrets of a tall white castle._ But the castle is
+    reached via the helicopter, not by foot.
 
 - ROBE0665 (ROBE0240): The road west of the building leads to the base of a spire of rock.
     _The spire looks natural, except for a tiny opening near its summit._
@@ -269,7 +297,9 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 - LIDI0366: WOOD0350, plus PKIHMN
 
-- LONG0501 (LONG0751): WOOD0350, plus PHUCE
+- LONG0501: WOOD0350, plus PHUCE
+
+- LONG0751: LONG0501, plus FNORD
 
 - MALM1000: WOOD0350, plus ZORTON, THURB, NOSIDE SAMOHT, PHUGGG, MELENKURION.
     The "skeleton key" that opens the safe is always ZORTON.
@@ -306,10 +336,13 @@ The same as LONG0501, plus two uncompleted dead ends:
 - LUPI0440 (ARNA0660): There is a _little horn_ toted by the dwarves, which they'll drop if killed.
     You can BLOW HORN to summon a random number of angry dwarves. It has no other effect.
 
-- LONG0501 (LONG0751, MCDO0551, ROBE0665): The silver bars are replaced with a _delicate lyre_, which is a treasure.
+- LONG0501 (MCDO0551, ROBE0665): The silver bars are replaced with a _delicate lyre_, which is a treasure.
     You must PLAY LYRE to get past the black dog at the Styx. The diamonds are replaced
     with a _silver horn_, which is also a treasure. You must PLAY HORN or BLOW HORN above
     the Shell Room to knock down a wall.
+
+- LONG0751: LONG0501, plus a _delicate silver flute_ in the Conservatory; also in that room
+    is _an old upright piano_, which is openable.
 
 - ROBE0665: Same as LONG0501, but this time the lyre replaces the diamonds
     and the silver horn is moved to the "windy passage" east of the Blue Grotto.
@@ -353,6 +386,7 @@ The same as LONG0501, plus two uncompleted dead ends:
     A very rusty sword with a ruby-studded hilt is embedded in
     the boulder!_
     GET SWORD succeeds, but a cave-in blocks the passage back out.
+    You must BREAK SWORD to recover just the hilt.
 
 - PLAT0550 (MALM1000): _You are in a small chamber to the east of the Hall of Mists.
     The walls are composed of rough red sandstone. There is a large,
@@ -387,10 +421,23 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 - CROW0000: 5: large gold nugget, diamonds, bars of silver, precious jewelry, coins
 
+- GIBI0375: 18: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
+    treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
+    platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
+    ruby-studded sword hilt, old stock shares, golden wizard's hat
+
 - LUPI0440: 20: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
     platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
     sparkling crown, ivory tusk, inlaid chalice, large ruby, crystal orb
+
+- LONG0501 (ANON0501, OSKA0501): 27: large gold nugget, several diamonds, **silver horn**, precious jewelry, rare coins,
+    treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
+    platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
+    silken cloak, gleaming sword, elfin crown, ruby slippers, delicate lyre,
+    Holy Grail (chalice), cask of vintage wine, golden ring (small gold ring), four-leafed clover, rare book,
+    glowing stone (radium), **opal sphere**. (But `rating.f` also lists a `SAPPHIRE`,
+    which does not actually exist as an item.)
 
 - MALM1000: 37: large gold nugget, several diamonds, silver bars, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
