@@ -1,0 +1,4813 @@
+1
+1       You are standing at the end of a road before a small brick building.
+1       Around you is a forest.  A small stream flows out of the building and
+1       down a gully.
+2       You have walked up a hill, still in the forest.  The road slopes back
+2       down the other side of the hill.  There is a building in the distance.
+3       You are inside a building, a well house for a large spring.  Off
+3       to one side is a small storeroom.
+4       You are in a valley in the forest beside a stream tumbling along a
+4       rocky bed.
+5       You are in open forest, with a deep valley to one side.  Not far
+5       off is a large billboard.
+6       You are in open forest near both a valley and a road.
+7       At your feet all the water of the stream splashes into a 2-inch slit
+7       in the rock.  Downstream the streambed is bare rock.
+8       You are in a 20-foot depression floored with bare dirt.  Set into the
+8       dirt is a strong steel grate mounted in concrete.  A dry streambed
+8       leads into the depression.
+9       You are in a small chamber beneath a 3x3 steel grate to the surface.
+9       A low crawl over cobbles leads inward to the west.
+10      You are crawling over cobbles in a low passage.  There is a dim light
+10      at the east end of the passage.
+11      You are in a debris room filled with stuff washed in from the surface.
+11      A low wide passage with cobbles becomes plugged with mud and debris
+11      here, but an awkward canyon leads upward and west.  A note on the wall
+11      says "Magic Word XYZZY".
+12      You are in an awkward sloping east/west canyon.
+13      You are in a splendid chamber thirty feet high.  The walls are frozen
+13      rivers of orange stone.  An awkward canyon and a good passage exit
+13      from east and west sides of the chamber.
+14      At your feet is a small pit breathing traces of white mist.  An east
+14      passage ends here except for a small crack leading on.
+15      You are at one end of a vast hall stretching forward out of sight to
+15      the west.  There are openings to either side.  Nearby, a wide stone
+15      staircase leads downward.  The hall is filled with wisps of white mist
+15      swaying to and fro almost as if alive.  A cold wind blows up the
+15      staircase.  There is a passage at the top of a dome behind you.
+16      The crack is far too small for you to follow.
+17      You are on the east bank of a fissure slicing clear across the hall.
+17      The mist is quite thick here, and the fissure is too wide to jump.
+18      This is a low room with a crude note on the wall.  The note says,
+18      "You won't get it up the steps".
+19      You are in the Hall of the Mountain King, with passages off in all
+19      directions.
+20      You are at the bottom of the pit with a broken neck.
+21      You didn't make it.
+22      The dome is unclimbable.
+23      You are at the west end of the Twopit Room.  There is a large hole in
+23      the wall above the pit at this end of the room.
+24      You are at the bottom of the eastern pit in the Twopit Room.  There is
+24      a small pool of oil in one corner of the pit.
+25      You are at the bottom of the western pit in the Twopit Room.  There is
+25      a large hole in the wall about 25 feet above you.
+26      You clamber up the plant and scurry through the hole at the top.
+27      You are on the west side of the fissure in the Hall of Mists.
+28      You are in a low N/S passage at a hole in the floor.  The hole goes
+28      down to an E/W passage.
+29      You are in the South Side Chamber.
+30      You are in the West Side Chamber of the Hall of the Mountain King.
+30      A passage continues west and up here.
+31      >$<
+32      You can't get by the snake.
+33      You are in a large room, with a passage to the south, a passage to the
+33      west, and a wall of broken rock to the east.  There is a large "Y2" on
+33      a rock in the room's center.
+34      You are in a jumble of rock, with cracks everywhere.
+35      You're at a low window overlooking a huge pit, which extends up out of
+35      sight.  A floor is indistinctly visible over 50 feet below.  Traces of
+35      white mist cover the floor of the pit, becoming thicker to the right.
+35      Marks in the dust around the window would seem to indicate that
+35      someone has been here recently.  Directly across the pit from you and
+35      25 feet away there is a similar window looking into a lighted room.  A
+35      shadowy figure can be seen there peering back at you.
+36      You are in a dirty broken passage.  To the east is a crawl.  To the
+36      west is a large passage.  Above you is a hole to another passage.
+37      You are on the brink of a small clean climbable pit.  A crawl leads
+37      west.
+38      You are in the bottom of a small pit with a little stream, which
+38      enters and exits through tiny slits.
+39      You are in a large room full of dusty rocks.  There is a big hole in
+39      the floor.  There are cracks everywhere, and a passage leading east.
+40      You have crawled through a very low wide passage parallel to and north
+40      of the Hall of Mists.
+41      You are at the west end of Hall of Mists.  A low wide crawl continues
+41      west and another goes north.  To the south is a little passage 6 feet
+41      off the floor.
+42      You are in a maze of twisty little passages, all alike.
+43      You are in a maze of twisty little passages, all alike.
+44      You are in a maze of twisty little passages, all alike.
+45      You are in a maze of twisty little passages, all alike.
+46      Dead end.
+47      Dead end.
+48      Dead end.
+49      You are in a maze of twisty little passages, all alike.
+50      You are in a maze of twisty little passages, all alike.
+51      You are in a maze of twisty little passages, all alike.
+52      You are in a maze of twisty little passages, all alike.
+53      You are in a maze of twisty little passages, all alike.
+54      Dead end.
+55      You are in a maze of twisty little passages, all alike.
+56      Dead end.
+57      You are on the brink of a thirty foot pit with a massive orange column
+57      down one wall.  You could climb down here but you could not get back
+57      up.  The maze continues at this level.
+58      Dead end.
+59      You have crawled through a very low wide passage parallel to and north
+59      of the Hall of Mists.
+60      You are at the east end of a very long hall apparently without side
+60      chambers.  In the south wall are several wide cracks and a high
+60      hole, but the hole is far above your head.  To the east a wide
+60      crawl slants up.  To the north a round two foot hole slants down.
+61      You are at the west end of a very long featureless hall.  The hall
+61      joins up with a narrow north/south passage.
+62      You are at a crossover of a high N/S passage and a low E/W one.
+63      Dead end.
+64      You are at a complex junction.  A low hands and knees passage from the
+64      north joins a higher crawl from the east to make a walking passage
+64      going west.  There is also a large room above.  The air is damp here.
+65      You are in Bedquilt, a long east/west passage with holes everywhere.
+65      To explore at random select north, south, up, or down.
+66      You are in a room whose walls resemble swiss cheese.  Obvious passages
+66      go west, east, NE, and NW.  Part of the room is occupied by a large
+66      bedrock block.
+67      You are at the east end of the Twopit Room.  The floor here is
+67      littered with thin rock slabs, which make it easy to descend the pits.
+67      There is a path here bypassing the pits to connect passages from east
+67      and west.  There are holes all over, but the only big one is on the
+67      wall directly over the west pit where you can't get to it.
+68      You are in a large low circular chamber whose floor is an immense slab
+68      fallen from the ceiling (Slab Room).  East and west there once were
+68      large passages, but they are now filled with boulders.  Low small
+68      passages go north and south, and the south one quickly bends west
+68      around the boulders.
+69      You are in a secret N/S canyon above a large room.
+70      You are in a secret N/S canyon above a sizable passage.
+71      You are in a secret canyon at a junction of three canyons, bearing
+71      north, south, and SE.  The north one is as tall as the other two
+71      combined.
+72      You are in a large low room.  Crawls lead north, NE, and SW.
+73      Dead end crawl.
+74      You are in a secret canyon which here runs E/W.  It crosses over a
+74      very tight canyon 15 feet below.  If you go down you may not be able
+74      to get back up.
+75      You are at a wide place in a very tight N/S canyon.
+76      The canyon here becomes too tight to go further south.
+77      You are in a tall E/W canyon.  A low tight crawl goes 3 feet north and
+77      seems to open up.
+78      The canyon runs into a mass of boulders -- dead end.
+79      The stream flows out through a pair of 1 foot diameter sewer pipes.
+79      It would be advisable to use the exit.
+80      You are in a maze of twisty little passages, all alike.
+81      Dead end.
+82      Dead end.
+83      You are in a maze of twisty little passages, all alike.
+84      You are in a maze of twisty little passages, all alike.
+85      Dead end.
+86      Dead end.
+87      You are in a maze of twisty little passages, all alike.
+88      You are in a long, narrow corridor stretching out of sight to the
+88      west.  At the eastern end is a hole through which you can see a
+88      profusion of leaves.
+89      There is nothing here to climb.  Use "up" or "out" to leave the pit.
+90      You have climbed up the plant and out of the pit.
+91      You are at the top of a steep incline above a large room.  You could
+91      climb down here, but you would not be able to climb up.  There is a
+91      passage leading back to the north.
+92      You are in the Giant Room.  The ceiling here is too high up for your
+92      lamp to show it.  Cavernous passages lead east, north, and south.  On
+92      the west wall is scrawled the inscription, "FEE FIE FOE FOO" [sic].
+93      The passage here is blocked by a recent cave-in.
+94      You are at one end of an immense north/south passage.
+95      You are in a magnificent cavern with a rushing stream, which cascades
+95      over a sparkling waterfall into a roaring whirlpool which disappears
+95      through a hole in the floor.  Passages exit to the south and west.
+96      You are in the Soft Room.  The walls are covered with heavy curtains,
+96      the floor with a thick pile carpet.  Moss covers the ceiling.
+97      This is the Oriental Room.  Ancient oriental cave drawings cover the
+97      walls.  A gently sloping passage leads upward to the north, another
+97      passage leads SE, and a hands and knees crawl leads east.
+98      You are following a wide path around the outer edge of a large cavern.
+98      Far below, through a heavy white mist, strange splashing noises can be
+98      heard.  The mist rises up through a fissure in the ceiling.  The path
+98      hugs the cavern's rim to the NE and south, while another branch forks
+98      west.  A round chute with extremely smooth walls angles sharply up
+98      to the southwest.
+99      You are in an alcove.  A small NW path seems to widen after a short
+99      distance.  An extremely tight tunnel leads east.  It looks like a very
+99      tight squeeze.  An eerie light can be seen at the other end.
+100     You're in a small chamber lit by an eerie green light.  An extremely
+100     narrow tunnel exits to the west, and a dark corridor leads NE.
+101     You're in the Dark-Room.  A corridor leading south is the only exit.
+102     You are in an arched hall.  A coral passage once continued up and east
+102     from here, but is now blocked by debris.  The air smells of sea water.
+103     You're in a large room carved out of sedimentary rock.  The floor and
+103     walls are littered with bits of shells imbedded in the stone.  A
+103     shallow passage proceeds downward, and a somewhat steeper one leads
+103     up.  A low hands and knees passage enters from the south.
+104     You are in a long sloping corridor with ragged sharp walls.
+105     You are in a cul-de-sac about eight feet across.
+106     You are in an anteroom leading to a large passage to the east.  Small
+106     passages go west and up.  The remnants of recent digging are evident.
+106     A sign in midair here says "Cave under construction beyond this point.
+106     Proceed at own risk.  [Witt Construction Company]".
+107     You are in a maze of twisty little passages, all different.
+108     You are at Witt's End.  Passages lead off in *ALL* directions.
+109     You are in a north/south canyon about 25 feet across.  The floor is
+109     covered by white mist seeping in from the north.  The walls extend
+109     upward for well over 100 feet.  Suspended from some unseen point far
+109     above you, an enormous two-sided mirror is hanging parallel to and
+109     midway between the canyon walls.  (The mirror is obviously provided
+109     for the use of the dwarves, who as you know, are extremely vain.)  A
+109     small window can be seen in either wall, some fifty feet up.
+110     You're at a low window overlooking a huge pit, which extends up out of
+110     sight.  A floor is indistinctly visible over 50 feet below.  Traces of
+110     white mist cover the floor of the pit, becoming thicker to the left.
+110     Marks in the dust around the window would seem to indicate that
+110     someone has been here recently.  Directly across the pit from you and
+110     25 feet away there is a similar window looking into a lighted room.  A
+110     shadowy figure can be seen there peering back at you.
+111     A large stalactite extends from the roof and almost reaches the floor
+111     below.  You could climb down it, and jump from it to the floor, but
+111     having done so you would be unable to reach it to climb back up.
+112     You are in a little maze of twisting passages, all different.
+113     You are at the edge of a large underground reservoir.  An opaque cloud
+113     of white mist fills the room and rises rapidly upward.  The lake is
+113     fed by a stream, which tumbles out of a hole in the wall about 10 feet
+113     overhead and splashes noisily into the water somewhere within the
+113     mist.  The indistinct shape of the opposite shore can be dimly seen
+113     through the mist.  The only passage goes back toward the south.
+114     Dead end.
+115     You are at the northeast end of an immense room, even larger than the
+115     Giant Room.  It appears to be a repository for the "ADVENTURE"
+115     program.  Massive torches far overhead bathe the room with smokey
+115     yellow light.  Scattered about you can be seen a pile of bottles (all
+115     of them empty), a nursery of young beanstalks murmuring quietly, a bed
+115     of oysters, a bundle of black rods with rusty stars on their ends, and
+115     a collection of brass lanterns.  Off to one side a great many dwarves
+115     are sleeping on the floor, snoring loudly.  A sign nearby reads: "Do
+115     not disturb the dwarves!"  An immense mirror is hanging against one
+115     wall, and stretches to the other end of the room, where various other
+115     sundry objects can be glimpsed dimly in the distance.  An unoccupied
+115     telephone booth stands against the north wall.
+116     You are at the southwest end of the repository.  To one side is a pit
+116     full of fierce green snakes.  On the other side is a row of small
+116     wicker cages, each of which contains a little sulking bird.  In one
+116     corner is a bundle of black rods with rusty marks on their ends.  A
+116     large number of velvet pillows are scattered about on the floor.
+116     Beside one of the pillows is a large, dusty, leather-bound volume
+116     with the title "History of Adventure" embossed in pure gold.  A
+116     vast mirror stretches off to the northeast, almost reaching the
+116     phone booth.  At your feet is a large steel grate, next to which is
+116     a sign which reads, "Treasure Vault. Keys in Main Office."
+117     You are on one side of a large, deep chasm.  A heavy white mist rising
+117     up from below obscures all view of the far side.  A SW path leads away
+117     from the chasm into a winding corridor.
+118     You are in a long winding corridor sloping out of sight in both
+118     directions.
+119     You are in a secret canyon which exits to the north and east.
+120     You are in a secret canyon which exits to the north and east.
+121     You are in a secret canyon which exits to the north and east.
+122     You are on the northeast side of a deep chasm.  A NE path leads
+122     away from the chasm on this side.  A very narrow path hugging
+122     the rim of the chasm falls off almost vertically to the west.
+123     You're in a long east/west corridor.  A faint rumbling noise can be
+123     heard in the distance.
+124     The path forks here.  The left fork leads northeast.  A dull rumbling
+124     seems to get louder in that direction.  The right fork leads southeast
+124     down a gentle slope.  The main corridor enters from the west.
+125     The walls are quite warm here.  From the north can be heard a steady
+125     roar, so loud that the entire cave seems to be trembling.  Another
+125     passage leads south, and a low crawl goes east.
+126     You are on the edge of a breath-taking view.  Far below you is an
+126     active volcano, from which great gouts of molten lava come surging
+126     out, cascading back down into the depths.  The glowing rock fills the
+126     farthest reaches of the cavern with a blood-red glare, giving every-
+126     thing an eerie, macabre appearance.  The air is filled with flickering
+126     sparks of ash and a heavy smell of brimstone.  The walls are hot to
+126     the touch, and the thundering of the volcano drowns out all other
+126     sounds.  Embedded in the jagged roof far overhead are myriad twisted
+126     formations composed of pure white alabaster, which scatter the murky
+126     light into sinister apparitions upon the walls.  To one side is a deep
+126     gorge, filled with a bizarre chaos of tortured rock which seems to
+126     have been crafted by the devil himself.  An immense river of fire
+126     crashes out from the depths of the volcano, burns its way through the
+126     gorge, and plummets into a bottomless pit far off to your left.  To
+126     the right, an immense geyser of blistering steam erupts continuously
+126     from a barren island in the center of a sulfurous lake, which bubbles
+126     ominously.  The far right wall is aflame with an incandescence of its
+126     own, which lends an additional infernal splendor to the already
+126     hellish scene.  A dark, foreboding passage exits to the south.
+127     You are in a small chamber filled with large boulders.  The walls are
+127     very warm, causing the air in the room to be almost stifling from the
+127     heat.  The only exit is a crawl heading west, through which is coming
+127     a low rumbling.
+128     You are walking along a gently sloping north/south passage lined with
+128     oddly shaped limestone formations.
+129     You are standing at the entrance to a large, barren room.  A sign
+129     posted above the entrance reads:  "Caution!  Bear in room!"
+130     You are inside a barren room.  The center of the room is completely
+130     empty except for some dust.  Marks in the dust lead away toward the
+130     far end of the room.  The only exit is the way you came in.
+131     You are in a maze of twisting little passages, all different.
+132     You are in a little maze of twisty passages, all different.
+133     You are in a twisting maze of little passages, all different.
+134     You are in a twisting little maze of passages, all different.
+135     You are in a twisty little maze of passages, all different.
+136     You are in a twisty maze of little passages, all different.
+137     You are in a little twisty maze of passages, all different.
+138     You are in a maze of little twisting passages, all different.
+139     You are in a maze of little twisty passages, all different.
+140     Dead end.
+141     You are on a narrow promontory at the foot of a waterfall, which
+141     spurts from an overhead hole in the rock wall and splashes into a
+141     large reservoir, sending up clouds of mist and spray.
+141     There is a narrow chimney on the east side of the promontory.
+141     Through the thick white mist looms a polished marble slab, to
+141     which is affixed an enormous rusty iron anvil.  In golden letters
+141     are written the words: "Whoso Pulleth Out This Sword of This
+141     Stone and Anvil, is Rightwise King-Born of All This Mountain."
+142     You are on a narrow shelf above and east of the top of a very steep
+142     chimney.  A long smooth granite slide curves down out of sight
+142     to the east.  If you go down the slide, you may not be able to
+142     climb back up.
+143     You are in the private chamber of the Mountain King.  Hewn into the
+143     solid rock of the east wall of the chamber is an intricately-wrought
+143     throne of elven design.  There is an exit to the west.
+144     You are on the east side of the throne room.  On the arm of the throne
+144     has been hung a sign which reads "Gone for the day: visiting
+144     sick snake. --M.K."
+145     You are dragged down, down, into the depths of the whirlpool.
+145     Just as you can no longer hold your breath, you are shot out over
+145     a waterfall into the shallow end of a large reservoir.  Gasping
+145     and sputtering, you crawl weakly towards the shore....
+146     You are in dense forest, with a hill to one side.  The trees appear
+146     to thin out towards the north and east.
+147     You are at the high point of a wide grassy knoll, partially surrounded
+147     by dense forest.  The land rises to the south and east, and drops off
+147     sharply to the north and west.  The air smells of sea water.
+148     You are at the edge of a trackless salt marsh.  Tall reeds obscure
+148     the view.  In the mud is the partial word "-RO--O".  The missing
+148     letters have been washed away by the tide.
+149     You're in salt marsh.
+150     You're in salty marsh.
+151     You are in salt marsh.
+152     Dead end.
+153     You're on a sandy beach at the edge of the open sea.  The beach
+153     stretches out of sight to the south.  To the north, the beach ends
+153     in cliffs and blackened shoals.
+154     You are at a jumble of large broken rocks and blackened shoals.
+154     A gentle path leads up to the top of the nearby cliffs.  A narrow
+154     treacherous path disappears among the rocks at the foot of the cliff.
+155     You are on a high cliff overlooking the sea.  Far below the
+155     rolling breakers smash into a jumble of blackened shoals.
+155     The thunder of the surf is deafening.
+156     You're at the bottom of the cliff, smashed to a lifeless pulp by the
+156     pounding surf.
+157     You are at Thunder Hole, a funnel shaped cavern opening onto the sea.
+157     The noise of the surf pounding against the outer rocks of the cave is
+157     amplified by the peculiar shape of the cave, causing a thunder-like
+157     booming sound to reverberate throughout the cave.  Outside, a narrow
+157     path leads south towards some large rocks.
+158     You are at the top of some arched steps.  On one side is a blank wall
+158     with a tiny door at the base and a shelf overhead.  On the other side
+158     a westward passage leads to the sea.
+159     You are in a low cramped chamber at the back of a small cave.
+159     There is a shelf in the rock wall at about the height of your
+159     shoulder.
+160     You are on a wide ledge, bounded on one side by a rock wall,
+160     and on the other by a sheer cliff.  The only way past is through
+160     a large wrought-iron door.
+161     You feel dizzy...Everything around you is spinning, expanding,
+161     growing larger....  Dear me!  Is the cave bigger or are you smaller?
+162     You are again overcome by a sickening vertigo, but this time
+162     everything around you is shrinking...Shrinking...
+163     You are again overcome by a sickening vertigo, but this time
+163     everything is shrinking... I mean, you are growing.  This is
+163     terribly confusing!
+164     You feel dizzy...Everything around you is spinning, expanding,
+164     growing larger....
+165     You're at the bottom of the cliff with a broken neck.
+166     You are at the western tip of the Blue Grotto.  A large lake almost
+166     covers the cavern floor, except for where you are standing.  Small
+166     holes high in the rock wall to the east admit a dim light.  The
+166     reflection of the light from the water suffuses the cavern with
+166     a hazy bluish glow.
+167     You are on the western shore of an underground sea.  The way
+167     west is through a wrought-iron door.
+168     You are on the eastern shore of the Blue Grotto.  An ascending
+168     tunnel disappears into the darkness to the SE.
+169     You are at a high rock on the NE side of a watery chamber at the mouth
+169     of a small brook.  An unknown gas bubbles up through the water from
+169     the chamber floor.  A bluish light can be seen to the southwest.
+170     You are in a windy tunnel between two large rooms.
+171     You are in the Bat Cave.  The ceiling and tops of the walls are
+171     covered with sleeping bats.  The floor is buried by a mass of dry,
+171     foul-smelling guano.  The stench is overpowering.  Exits to the NW
+171     and east.
+172     You are in a very tight N/S crack.  The passage seems to widen to
+172     the south.
+173     You are in a very tight N/S crack.  The passage south is blocked
+173     by a recent cave-in.
+174     You're in the Cloakroom.  This is where the dreaded Wumpus repairs
+174     to sleep off heavy meals.  (Adventurers are his favorite dinner!)
+174     Two very narrow passages exit NW and NE.
+175     You're in a room containing several small climbable pits.  Passages
+175     exit to the east and north.
+176     You are at the bottom of a small featureless pit.
+177     You are at a high hole in a rock wall.
+178     The NE passage is blocked by a recent cave-in.
+179     You are in a sloping muddy defile, next to a tumbling brook.
+180     You are in a level E/W passage partially blocked by an overhanging
+180     tongue of rock.  A steep scramble would take you up over the tongue,
+180     whence continues an upward crawl.  There is a small hole in the
+180     north wall of the passage.
+181     The dog won't let you pass.
+182     You're in the Upper Passage, a long level E/W tunnel.
+183     You are in a star-shaped chamber.  Passages exit north, east, south,
+183     and west.
+184     You are at an elbow in a winding E/W passage.
+185     Dead end.
+186     You're at the intersection of two long tunnels.  One goes NW,
+186     the other NE.
+187     You're in a long narrow east-west passage which curves out of sight
+187     at both ends.
+188     You're in the Rotunda.  Corridors radiate in all directions.
+188     There is a telephone booth standing against the north wall.
+189     You are standing in a telephone booth at the side of a large chamber.
+189     Hung on the wall is a banged-up pay telephone of ancient design.
+190     You're at the Devil's Chair, a large crystallization shaped like a
+190     seat, at the edge of a black abyss.  You can't see the bottom.
+190     An upward path leads away from the abyss.
+191     You're in a dead-end crack.
+192     You're on a small gravel beach at the south wall of the Blue Grotto.
+192     A gravelly path leads east.
+193     You are in the Apiary.  The walls are covered with colorful,
+193     intricate, flower-like patterns of crystallized gypsum.
+194     You are at the end of a short E/W corridor.
+195     You are looking west from the end of a short E/W corridor.  At your
+195     feet is a pile of loose rubble.  On your left is a hole into another
+195     chamber.
+196     You are in an arched hall.  The remnants of a now-plugged coral
+196     passage lie to the east.  The north wall has partially crumbled,
+196     exposing a large connecting hole to another room.
+197     You're in the Vestibule, a short passageway between two rooms.
+198     You are in the Fairy Grotto.  All around you innumerable stalactites,
+198     arranged in immense colonnades, form elegant arches.  On every side
+198     you hear the dripping of water, like the footsteps of a thousand
+198     fairies.  A small stream runs from the SW corner.  A bright glow
+198     emanates from the south side of the grotto, and a steep passage
+198     descends to the east.
+199     You have approached the lower end of a steep passage, but it is
+199     just too cold here to hang around, and you aren't properly equipped
+199     to continue.  With teeth chattering, you climb back up....
+200     You are in the Crystal Palace.  An overhead vein of phosphorescent
+200     quartz casts a luminous glow which is reflected by countless chips of
+200     mica embedded in both walls, which consist of some sort of highly
+200     reflective glass, apparently of volcanic origin.  A winding path
+200     of yellow sandstone leads west and rises steeply to the east.
+201     You are following a yellow sandstone path.  There is a glow
+201     to the west.
+202     You are in a very tall chamber whose walls are comprised of many
+202     different rock strata.  Layers of red and yellow sandstone
+202     intertwine with bright bands of calcareous limestone in a rainbow-
+202     like profusion of color.  The rainbow effect is so real, you
+202     are almost tempted to look for a pot of gold!  Poised far over
+202     your head, a gigantic slab, wedged tightly between the north and
+202     south walls, forms a natural bridge across the roof of the chamber.
+203     You're in a steeply sloping passage.  It is very cold here.
+204     You are in the Hall of Ice, in the deepest part of the caverns.
+204     During winter, frigid outside air settles here, making this room
+204     extremely cold all year round.  The walls and ceilings are covered
+204     with a thick coating of ice.  An upward passage exits to the west.
+205     You are standing on a natural bridge far above the floor of a circular
+205     chamber whose walls are a rainbow of multi-colored rock.  The bridge
+205     was formed eons ago by a huge slab which fell from the ceiling and
+205     is now jammed between the north and south walls of the chamber.
+206     You are in a low, wide room below another chamber.  A small green
+206     pond fills the center of the room.  The lake is apparently spring-
+206     fed.  There is a narrow passage to the north.
+206     A larger passage continues west.
+207     You are in a tight north/south crawl through a stratum of red
+207     colored rock.  The air is damp with mist.
+208     You are in a tall canyon on the south side of a swift, wide river.
+208     Written in the mud in crude letters are the words: "You Have Found
+208     Lost River."  A wide path leads west along the bank.  A tight
+208     crawlway would take you out of the canyon.
+209     You are standing on a large flat rock table at the western end of
+209     Lost River Canyon.  Beneath your feet, the river disappears amidst
+209     foam and spray into a large sinkhole.  A gentle path leads east
+209     along the river's south shore.  Another leads sharply upward along
+209     the river's north side.
+210     You are at a niche in the canyon wall, far above a raging river.
+210     The air is filled with mist and spray, making it difficult to see
+210     ahead.  An E/W sloping ledge hugging the canyon's rim narrows to
+210     the east.  A wide crack in the canyon wall leads north and
+210     quickly bends around to the left.
+211     You are on a narrow and treacherous ledge, which rises
+211     almost vertically to the east.
+212     You are standing in a telephone booth at the side of the Repository.
+213     You're at the east end of a level passage at a hole in the floor.
+214     You're at the north edge of a dark cove.
+215     You are in a dry granite basin, worn smooth eons ago by water
+215     swirling down from a now-dry spillway.
+216     You're in a dry spillway east of and above a smooth rock basin.
+217     You are in the Winery, a cool dark room which extends some
+217     distance off to the east.
+218     You are to the east of the Winery, where the room ends in a thicket
+218     of high, sharp, pointed, climbable limestone pinnacles.  There is a
+218     narrow ledge just above the top of the spires.  If you go up, it
+218     might be difficult to get back down.
+219     You are in a high-vaulted cavern whose roof rises over fifty
+219     meters to culminate in a series of pointed arches directly over
+219     your head.  There are also two low arches to either side, forming
+219     side portals.  The whole effect is that of a gothic cathedral.
+220     You're at the east portal of the Gothic Cathedral.
+221     You're at the west portal of the Gothic Cathedral.
+222     You are at the foot of the Altar, an immense, broad stalagmite.
+223     You're on top of an enormous, broad stalagmite.  There is a hole
+223     in the ceiling overhead.
+224     You are in a room the size and shape of a small crypt.  A narrow
+224     cut exits east.  There is a hole in the floor.
+225     You are in the Gothic Chapel, a small chamber adjoining the Gothic
+225     Cathedral.
+226     You are on the floor of the Rainbow Room.  In fact, you are spread
+226     *ALL OVER* the floor of the Rainbow Room.
+227     You are in a dimly lit passage behind Thunder Hole.  Etched into
+227     the rock wall are the ominous words:
+227     >$<
+227             You are approaching the River Styx.
+227             Lasciate Ogni Speranza Voi Ch'Entrate.
+227     >$<
+228     You are at the River Styx, a narrow little stream cutting directly
+228     across the passageway.  The edge of the stream is littered with sticks
+228     and other debris washed in by a recent rainfall.  On the far side
+228     of the river, the passage continues east.
+229     You're on the east side of the river's sticks.
+230     You are on a ledge at the northern end of a long N/S crawl.  The
+230     ledge is above a large number of sharp vertical limestone spires.
+230     An attempt to climb down could be dangerous, if you get my *point*!
+231     You are very neatly skewered on the point of a sharp rock.
+232     You have poled your boat across the calm water.
+233     You have poled your boat across the dark water.
+234     You have poled your boat across the Blue Grotto.
+235     You're at Dante's Rest, on the north side of a yawning dark chasm.
+235     A passage continues west along the chasm's edge.
+236     You are at the east end of a riverbank path in Lost River Canyon.
+237     The staircase is now unclimbable.
+238     You're in the caretaker's storeroom.
+239     You are in many small pieces at the bottom of a deep chasm.
+240     You are standing behind a large billboard on a ridge above a deep
+240     valley.  To the north, the forest gives way to dense swamp and
+240     then to open flatlands.  Far beyond, the land rises sharply towards
+240     the impassible Misty Mountains.  Nestled at the base of a distant
+240     cliff are the stone turrets of a tall white castle.
+241     You are in hilly forest, but northward the land flattens out
+241     and grows swampy.  To the south and east is a heavily wooded
+241     ridge of low hills.
+242     You're at the edge of a great forest.  To the north lies dark,
+242     ominous swampland.
+243     Dense swamp surrounds you.  Dim sunlight filters through the
+243     foliage; all directions look alike.
+244     You are in a dark, murky swamp.  However, the deep foliage
+244     appears to thin out towards the south and southwest.  There
+244     is a faint smell of brackish salt water in the air.
+245     You are at the edge of an open area of wet sand.  The dense
+245     foliage appears to grow thinner towards the northeast.  A small
+245     sign stuck in the muck reads: "Site of Proposed Municipal Parking
+245     Lot -- D.M. Witt, Contractor."
+246     You've wandered into a quicksand pit and drowned.
+247     You are in an open area near the edge of the swamp.  The ground
+247     near you appears to have been paved with concrete.
+248     You're in an open field on the south side of a deep ravine.  South
+248     and west the land is an almost impassible swamp.  To the west the
+248     ravine merges with the swamp; some distance to the east it ends
+248     abruptly at the foot of a sheer granite cliff.  A dry drainage pipe
+248     six inches in diameter emerges from the base of the cliff just
+248     above the floor of the ravine.
+249     The bramblebush is too thick and thorny to penetrate.
+250     You are in a dull N/S passage beside a tall black rock.  On the rock
+250     is chisled the outline of a four-leafed clover, under which is the
+250     inscription: "Notice: This rock fabricated from ersatz materials."
+251     You are beside a deep, water-filled moat, in front of a great stone
+251     castle.
+252     You are at the foot of a towering cliff.  The sheer rock face is
+252     partially obscured by thick vines growing up the cliff.
+253     You are on a ledge about halfway up the cliff.  The upper part of
+253     the cliff seems unclimbable.
+254     You are beside an old dry well in the East Courtyard of a great
+254     castle built against the southern face of an unscalable granite
+254     cliff.  On your left an impregnable wall of gleaming white stone
+254     encompasses the entire court and castle in a half-moon shaped curve
+254     which meets the cliff at either end.  To your right, across the
+254     steeply rising courtyard, is Lords' Keep, the heart of the castle.
+255     You're at the bottom of a dry wellshaft.  Every bone in your
+255     body is broken.
+256     You are at the bottom of a vertical shaft, apparently a dry well,
+256     whose cylindrical wall is lined with smooth stone.  Far above your
+256     head, you can see daylight!
+257     You are at a sharp bend in a very narrow defile between two sheer
+257     rock walls.  The defile curves out of sight to the NW and SW.
+258     You are in an open field north of a deep ravine.  The ravine
+258     terminates at the base of a towering N/S cliff.  A narrow crack
+258     in the base of the cliff leads east.
+259     You're in a large chamber.  All around are massive skeletons of
+259     long-dead members of the order proboscidea ungulata, who evidently
+259     used this room as their final resting place.  Passages exit
+259     north and south.
+260     You are at the bottom of the ravine with a broken head.
+261     You are in a short tunnel north of a large room.
+262     You are on top of a flat black rock.
+263     You are at the entrance to Lords' Keep.
+264     You are at the base of the central portion of the courtyard near
+264     what appears to be some sort of large wooden door in the stone wall.
+264     Attached to the wall is a heavy winch.
+265     You are in the West Courtyard, a wide flat area bounded on the north
+265     by a high cliff and on the south and west by the curve of the castle
+265     wall.
+266     You have no way of crossing the moat.
+267     You are at the foot of a great cliff.  The moat and castle
+267     wall are built flush up against the side of the cliff.  A
+267     portion of the cliff's face is obscured by hanging vines.
+268     You are in the lair of Ralph the Giant Centipede.  The air reeks
+268     with the stench of rotting bits of flesh.  Giant centipedes, in
+268     general, are not partial to visitors.
+269     You are inside Lords' Keep, at the south end of the Great Hall.
+269     The room is lit by smokey torches hung high overhead.  Several
+269     passages lead off to connecting rooms.
+270     You are in the Aviary, where in days long gone the Royal
+270     Falconer kept and trained the King's hunting hawks.
+271     The short hallway ends at a heavy steel door inlaid with enamelled
+271     tiles, each of which is a different color.  The tiles, nine in all,
+271     are arranged in a 3x3 grid, thusly:
+271     >$<
+271     I--------------------------------------I
+271     I    Red     I   Silver   I  Fuschia   I
+271     I------------I------------I------------I
+271     I    Gold    I    Dun     I   White    I
+271     I------------I------------I------------I
+271     I   Orange   I   Nacre    I   Black    I
+271     I--------------------------------------I
+271     >$<
+272     You are inside a large steel vault.
+273     You are at the foot of a wide ascending staircase at the north
+273     end of the Great Hall.  On either side of the staircase, hallways
+273     continue north at this level.
+274     You are in a long north/south hallway on the west side of the
+274     castle.  A short westerly passage leads to an apparent dead end.
+275     You are in the Conservatory, whence the gnomes often repair to
+275     relax with a little music.  On one side of the room is an old
+275     upright piano.
+276     You're in a flat circular clearing surrounded by dense forest.
+277     You are in a gloomy north/south hallway on the east side of the
+277     castle.  An entrance in the west wall leads to a small sunlit room.
+278     >$<         (TRANSITION INTO COPTER.)
+279     As you move to enter the aircraft, the Orcs block your way.
+279     Their leader won't let you board without a letter of transit.
+280     After inspecting your letter of transit, the Orcs sullenly stand
+280     aside to let you board the aircraft.
+281     You are in the helicopter's cramped passenger cabin.  The only
+281     visible feature is a silver button on the wall.
+282     >$<         (TRANSITION FROM COPTER [1].)
+283     >$<         (TRANSITION FROM COPTER [2].)
+284     You're on the south end of a high narrow ridge, which is bounded
+284     on its east side by a high mountain.  Dug into the mountainside is
+284     a ramshackle old mine entrance.  The ridge drops off to the west
+284     in a rocky cliff.  You might be able to climb down the cliff, but
+284     you probably won't be able to get back up.
+285     You are in a gloomy tunnel, the entrance to a long-abandoned mine.
+285     All around is fallen rock and rotted timbers.  To your left, a
+285     small room adjoins the main tunnel.
+286     You are on a narrow N/S ridge high above a stone wall and wide moat.
+287     You are at the northwest end of a narrow ridge high above the
+287     castle's inner courtyard.
+288     You are in an idyllic garden hidden in an inner courtyard of,
+288     and surrounded on three sides by, the Castle Keep.  The far end
+288     of the garden is bounded by a high cliff.
+289     You are in a small room off the east hallway.  Through a heavily
+289     barred window you can look out on a lovely secret garden.
+290     You have leapt from a great hight into the moat, and drowned.
+291     You have jumped from a great hight into a lovely garden which is
+291     now your graveyard.
+292     After a few seconds in freefall your parachute opens with a sudden
+292     "Pop!"  Several moments later you land unhurt.  The magic 'chute
+292     then folds itself back into the knapsack.
+293     You're in an open field on the south side of a flooded ravine.
+293     South and west the land merges into nearly impassible swamp.  In
+293     the muck is a fresh footprint!  Incredibly, it looks very
+293     much like that of a Giant Devonian Rat, long thought extinct.
+294     You are in an open field north of a flooded ravine.  The ravine
+294     terminates at the base of a towering N/S cliff.  A narrow crack
+294     in the base of the cliff leads east.  A footprint, possibly that of
+294     a Giant Devonian Rat, is outlined in the mud.
+295     You are at the east end of a steep ravine, near where a drainage
+295     pipe emerges from a rock wall.
+296     You are at the western end of the ravine's floor.  The ground ahead
+296     looks wet and treacherous.
+297     You have stumbled into a quicksand patch and drowned.
+298     You are in the engineering room.  On a control panel on the wall
+298     are four buttons, colored green, brown, red and yellow; and a
+298     digital gauge.
+299     You are in a very steeply angled tunnel.
+300     You are at the bottom of the mine's main shaft.  Several passages,
+300     now all blocked by cave-ins, used to lead off in all directions.
+300     To the north, the one remaining tunnel is partially blocked.
+301     You are in a dead-end shaft formerly used for temporary storage.
+302     You are in the Kitchen.  Build into one wall is a narrow floor-to-
+302     ceiling cabinet.
+303     You are in the midst of a great, grey-green, greasy swamp, all
+303     set about with fever trees.
+304     You are on a small dry patch of earth, surrounded by dank swamp.
+-1      END
+2
+1       You're at end of road again.
+2       You're at hill in road.
+3       You're inside building.
+4       You're in valley.
+5       You're in forest.
+6       You're in forest.
+7       You're at slit in streambed.
+8       You're outside grate.
+9       You're below the grate.
+10      You're in cobble crawl.
+11      You're in Debris Room.
+13      You're in Bird Chamber.
+14      You're at top of small pit.
+15      You're in Hall of Mists.
+17      You're on east bank of fissure.
+18      You're in Nugget of Gold Room.
+19      You're in Hall of Mt King.
+23      You're at west end of Twopit Room.
+24      You're in east pit.
+25      You're in west pit.
+33      You're at "Y2".
+35      You're at window on pit.
+36      You're in dirty passage.
+39      You're in dusty rock room.
+41      You're at west end of Hall of Mists.
+57      You're at brink of pit.
+60      You're at east end of Long Hall.
+61      You're at west end of Long Hall.
+64      You're at Complex Junction.
+66      You're in Swiss Cheese Room.
+67      You're at east end of Twopit Room.
+68      You're in Slab Room.
+71      You're at junction of three secret canyons.
+74      You're in secret E/W canyon above tight canyon.
+88      You're in narrow corridor.
+91      You're at steep incline above large room.
+92      You're in Giant Room.
+95      You're in cavern with waterfall.
+96      You're in Soft Room.
+97      You're in Oriental Room.
+98      You're in Misty Cavern.
+99      You're in Alcove.
+100     You're in Plover Room.
+101     You're in Dark-Room.
+102     You're in Arched Hall.
+103     You're in Shell Room.
+106     You're in Anteroom.
+108     You're at Witt's End.
+109     You're in Mirror Canyon.
+110     You're at window on pit.
+111     You're at top of stalactite.
+113     You're at Reservoir.
+115     You're at NE end.
+116     You're at SW end.
+117     You're on SW side of chasm.
+118     You're in sloping corridor.
+122     You're on NE side of chasm.
+123     You're in corridor.
+124     You're at fork in path.
+125     You're at junction with warm walls.
+126     You're at breath-taking view.
+127     You're in Chamber of Boulders.
+128     You're in Limestone Passage.
+129     You're in front of Barren Room.
+130     You're in Barren Room.
+141     You're at Sword Point.
+142     You're at top of slide.
+143     You're at entrance to Throne Room.
+144     You're on east side of Throne Room.
+145     >$<
+146     You're in forest.
+147     You're on grassy knoll.
+148     You are at the edge of a trackless salt marsh.
+153     You're on sandy beach.
+154     You're at blackened shoals.
+155     You're at Ocean Vista.
+157     You're at Thunder Hole.
+158     You're at top of steps in back of Thunder Hole.
+159     You're in cramped chamber.
+160     You're at ledge by wrought-iron door.
+161     >$<
+162     >$<
+163     >$<
+164     >$<
+166     You're at west wall of Blue Grotto.
+167     You're at underground sea.
+168     You're on east side of the Blue Grotto.
+169     You're in Bubble Chamber.
+171     You're in Bat Cave.
+174     You're in the Cloakroom.
+180     You're at Tongue of Rock.
+183     You're in Star Chamber.
+188     You're in Rotunda.
+189     You're in phone booth.
+190     You're at Devil's Chair.
+192     You're at gravel beach.
+193     You're in Apiary.
+194     You are at east end of short E/W corridor.
+195     You are at east end of short E/W corridor.
+196     You're in Arched Hall.
+198     You're in the Fairy Grotto.
+200     You're in the Crystal Palace.
+202     You're in the Rainbow Room.
+204     You're in the Hall of Ice.
+205     You are over the Rainbow (Room).
+206     You're in Green Lake Room.
+207     You're in Red Rock Crawl.
+208     You're on south side of Lost River Canyon.
+209     You're at end of Lost River Canyon.
+210     You're at niche in ledge above Lost River.
+212     You're in phone booth.
+214     You're in dark cove.
+215     You're in dry basin.
+216     You're in old spillway.
+217     You're in the Winery.
+218     You're at limestone pinnacles.
+219     You're in Gothic Cathedral.
+223     You're on top of stalagmite.
+224     You're in the Crypt.
+225     You're in Gothic Chapel.
+227     You are at approach to River Styx.
+228     You're at the River Styx.
+230     You're on ledge above limestone pinnacles.
+235     You're at Dante's Rest.
+236     You're at east end of Lost River Canyon.
+240     You're in forest.
+241     You're in forest.
+242     You're at the forest's edge.
+243     You're in the swamp.
+244     You're in the swamp.
+245     You're at wet sands.
+247     You're on concrete pavement.
+248     You're on south side of ravine.
+250     You're at sham rock.
+251     You're beside moat.
+252     You're at foot of cliff.
+253     You're on cliff ledge.
+254     You're in the East Court.
+256     You are at bottom of well.
+257     You're at sharp bend in defile.
+258     You're north of ravine.
+259     You're in the Elephants' Burial Ground.
+261     You're in short tunnel.
+264     You're in the Central Court.
+265     You are in West Court.
+267     You are at cliff by west end of moat.
+268     You are in the Centipede's Lair.
+269     You're at south end of Great Hall.
+270     You're in the Aviary.
+271     You're in front of tiled door.
+273     You're at north end of Great Hall.
+274     You're in west hallway.
+275     You're in the Conservatory.
+277     You're in east hallway.
+284     You're at south end of ridge.
+285     You're in mine entrance.
+288     You're in Secret Garden.
+289     You're in room overlooking Secret Garden.
+293     You're on south side of flooded ravine.
+294     You're on north side of flooded ravine.
+295     You're at east end of ravine.
+296     You're at west end of ravine.
+298     You're in engineer's room.
+300     You're at bottom of mine.
+301     You're in dead-end shaft.
+302     You're in Kitchen.
+303     You're in the swamp.
+304     You are on a small patch of earth.
+-1
+3
+1       FORCD
+2       ROAD
+2       HILL
+3       ENTER
+4       UPSTREAM
+5       DOWNSTREAM
+5       DOWNSTR
+5       DOWNS
+6       FOREST
+7       FORWARD
+7       CONTINUE
+7       ONWARD
+8       BACK
+8       RETURN
+8       RETREAT
+9       VALLEY
+10      STAIR
+10      STAIRS
+11      OUT
+11      OUTSIDE
+11      EXIT
+11      LEAVE
+12      BUILDING
+12      BUILD
+12      B
+12      HOUSE
+13      GULLY
+14      STREAM
+15      ROCK
+15      ROCKS
+16      BED
+17      CRAWL
+18      COBBLE
+19      INWARD
+19      INSIDE
+19      IN
+20      SURFACE
+21      NULL
+21      NOWHERE
+22      DARK
+23      PASSAGE
+23      TUNNEL
+23      DEFILE
+24      LOW
+25      CANYON
+26      AWKWARD
+27      GIANT
+28      VIEW
+29      UPWARD
+29      UP
+29      U
+29      ABOVE
+29      ASCEND
+30      D
+30      DOWNWARD
+30      DOWN
+30      DESCEND
+31      PIT
+32      OUTDOORS
+33      CRACK
+34      STEPS
+35      DOME
+36      LEFT
+37      RIGHT
+38      HALL
+39      JUMP
+39      LEAP
+40      BARREN
+41      OVER
+42      ACROSS
+43      EAST
+43      E
+44      WEST
+44      W
+45      NORTH
+45      N
+46      SOUTH
+46      S
+47      NE
+47      NORTHEAST
+48      SE
+48      SOUTHEAST
+49      SW
+49      SOUTHWEST
+50      NW
+50      NORTHWEST
+51      DEBRIS
+52      HOLE
+53      WALL
+54      BROKEN
+55      Y2
+56      CLIMB
+57      STOREROOM
+58      FLOOR
+59      ROOM
+60      SLIT
+61      SLAB
+61      SLABROOM
+62      XYZZY
+63      DEPRESSION
+64      ENTRANCE
+65      PLUGH
+66      SECRET
+67      CAVE
+69      CROSS
+70      BEDQUILT
+71      PLOVER
+72      ORIENTAL
+72      ORIENT
+73      CAVERN
+74      SHELLROOM
+75      RESERVOIR
+76      MAIN
+76      OFFICE
+77      FORK
+78      CHIMNEY
+79      SLIDE
+80      POOL
+80      WHIRLPOOL
+81      KNOLL
+82      PHUCE
+83      LEDGE
+83      SHELF
+84      THUNDER
+85      CLICK
+88      ICE
+89      BRIDGE
+90      ALTAR
+91      GROTTO
+92      PRAY
+92      PRAYER
+93      FNORD
+94      BOARD
+95      MINE
+96      GARDEN
+97      CLIFF
+98      RAVINE
+99      ANVIL
+1001    BOULDER
+1002    LAMP
+1002    HEADLIGHT
+1002    LANTERN
+1002    LIGHT
+1003    GRATE
+1004    VINE
+1004    VINES
+1005    %VIN2
+1006    DRAWBRIDGE
+1006    BRIDGE
+1007    STEPS
+1008    ROCK
+1009    POLE
+1010    ROPE
+1010    COIL
+1011    SNAKE
+1012    FISSURE
+1013    DRAINPIPE
+1013    PIPE
+1014    CLAM
+1015    OYSTER
+1016    LETTER
+1016    DOCUMENT
+1017    DWARF
+1017    DWARVES
+1018    COPTER
+1018    HELICOPTER
+1018    AIRCRAFT
+1019    KNAPSACK
+1019    PARACHUTE
+1019    CHUTE
+1020    PUMP
+1020    PUMPS
+1020    ENGINES
+1021    CHASM
+1022    %%CM2
+1023    MIRROR
+1024    PLANT
+1024    BEANSTALK
+1025    %%PL2
+1026    STALACTITE
+1027    FIGURE
+1028    AXE
+1029    DRAWING
+1030    PIRATE
+1031    DRAGON
+1032    PIPE
+1032    %PIP2
+1033    TROLL
+1034    %TRL2
+1035    *****
+1036    *****
+1037    *****
+1038    *****
+1039    *****
+1040    *****
+1041    DOOR
+1041    HINGES
+1042    %%TDR
+1043    %%TD2
+1044    %%PDR
+1045    %%ODR
+1046    %%VDR
+1047    %%GDR
+1048    BOAT
+1048    SHIP
+1048    ROWBOAT
+1049    STICK
+1049    STICKS
+1049    RIVER
+1050    NUGGET
+1051    DIAMONDS
+1051    DIAMOND
+1052    HORN
+1053    JEWEL
+1053    JEWELS
+1053    JEWELRY
+1054    COINS
+1055    CHEST
+1056    EGGS
+1056    EGG
+1056    NEST
+1057    TRIDENT
+1058    VASE
+1058    SHARDS
+1058    POTTERY
+1059    EMERALD
+1060    PYRAMID
+1061    PEARL
+1062    RUG
+1063    SPICE
+1063    SPICES
+1064    %%BZZ
+1065    SWORD
+1066    CROWN
+1067    SHOES
+1067    HEELS
+1067    SLIPPERS
+1068    LYRE
+1068    HARP
+1069    SAPPHIRE
+1070    CHALICE
+1070    GRAIL
+1070    CUP
+1071    CASK
+1071    KEG
+1072    RING
+1073    CLOVER
+1073    SHAMROCK
+1074    STRUCTURE
+1075    BRAMBLE
+1075    BUSH
+1075    THICKET
+1076    CLOAK
+1076    CAPE
+1077    QUICKSAND
+1078    *****
+1079    *****
+1080    *****
+1081    WATER
+1081    H2O
+1082    %%WT2
+1083    OIL
+1084    %OIL2
+1085    WINE
+1086    %%WN2
+1087    BEE
+1087    BEES
+1087    BUMBLEBEES
+1088    WALL
+1089    %WAL2
+1090    KEY
+1091    ANVIL
+1092    ROCKS
+1093    BOOTH
+1093    PHONEBOOTH
+1094    TELEPHONE
+1094    PHONE
+1095    SLUGS
+1096    HONEYCOMB
+1096    HONEY
+1096    COMB
+1097    BEEHIVE
+1097    HIVE
+1098    DOG
+1098    HOUND
+1098    WOLF
+1099    WUMPUS
+1100    SIGN
+1101    BIRD
+1102    %%BD2
+1103    FOUNTAIN
+1104    BAT
+1104    BATS
+1104    GUANO
+1104    BATSHIT
+1105    GNOME
+1106    MUSHROOMS
+1106    MUSHROOM
+1106    MESCALINE
+1107    CAKES
+1107    CAKE
+1107    CUPCAKES
+1108    SACK
+1109    ALL
+1109    EVERYTHING
+1110    BOOK
+1110    VOLUME
+1110    TOME
+1111    %%BK2
+1112    SAFE
+1112    WALL-SAFE
+1112    DIAL
+1113    POSTER
+1114    BROOM
+1114    WHISKBROOM
+1114    BRUSH
+1115    CARVING
+1115    INSCRIPTIO
+1116    BILLBOARD
+1117    SMOKE
+1118    CANNISTER
+1118    CAN
+1118    TUBE
+1119    RADIUM
+1119    STONE
+1120    SPHERE
+1120    BALL
+1120    OPAL
+1121    BAG
+1121    SACK
+1122    POWDER
+1122    CEMENT
+1123    CONCRETE
+1123    PAVEMENT
+1124    SHOVEL
+1125    STATUE
+1126    SAND
+1127    MATCHBOX
+1128    MATCH
+1128    %%MT1
+1129    %%MT2
+1130    %%MT3
+1131    %%MT4
+1132    %%MT5
+1133    %%MT6
+1134    CANDLE
+1135    ROSE
+1135    %%RS1
+1136    %%RS2
+1137    MOAT
+1138    CARD
+1139    SLOT
+1140    TUSK
+1140    IVORY
+1141    APPLE
+1142    PAINTING
+1143    TAPESTRY
+1144    FLEECE
+1145    PERFUME
+1145    SACHET
+1146    LEPRECHAUN
+1146    ELF
+1147    %ROCKS2
+1148    POUCH
+1149    TOBACCO
+1150    HAT
+1150    TARNHELM
+1150    HELMET
+1151    %LMP2
+1152    FALCON
+1153    CAGE
+1154    PILLOW
+1155    FLUTE
+1156    WELL
+1157    SKELETON
+1158    CONCH
+1158    SHELL
+1158    SEASHELL
+1159    %%FD2
+1160    WAND
+1160    ROD
+1161    %ROD2
+1162    STAMP
+1163    NECKLACE
+1164    FUR
+1164    FURS
+1165    SHIELD
+1165    COAT-OF-AR
+1165    ESCUTCHEON
+1166    PILL
+1166    DOUGHNUT
+1167    MAGAZINE
+1167    MAGAZINES
+1167    ISSUE
+1167    ISSUES
+1167    SPELUNKER
+1167    "SPELUNKER
+1168    WINCH
+1168    CRANK
+1169    NOTICE
+1169    LEAFLET
+1170    FOOTPRINT
+1171    CENTIPEDE
+1171    INSECT
+1171    COOTIE
+1171    BUG
+1172    TORCH
+1173    FLOWER
+1173    FLOWERS
+1174    KEYS
+1175    PIANO
+1176    HANDLE
+1176    BAR
+1177    %BAR2
+1178    ORC
+1178    ORCS
+1178    GUARD
+1178    GUARDS
+1179    PEBBLE
+1180    TILE
+1181    %TIL1
+1182    %TIL2
+1183    %TIL3
+1184    %TIL4
+1185    %TIL5
+1186    KNIFE
+1186    KNIVES
+1187    TABLET
+1188    FOOD
+1188    RATIONS
+1188    SANDWICH
+1189    SHEETING
+1189    SHEET
+1190    PAPER
+1190    DEED
+1190    CERTIFICAT
+1191    %DEED2
+1192    BOX
+1193    BOTTLE
+1193    JAR
+1194    BUTTON
+1195    %BTN2
+1196    %BTN3
+1197    %BTN4
+1198    %BTN5
+1199    %BTN6
+1200    METER
+1200    GAUGE
+1201    INGOT
+1201    INGOTS
+1202    CHAIN
+1203    %CHN2
+1204    *****
+1205    CABINET
+1205    CLOSET
+1205    CUPBOARD
+1206    MUG
+1207    DUMBWAITER
+1207    WAITER
+1208    7
+1208    22
+1208    34
+1208    7%22%34
+1209    MOSQUITOS
+1209    MOSQUITO
+1209    BUGS
+1209    BUG
+1210    RAT
+1210    BIGRAT
+1210    MOUSE
+1210    RODENT
+1211    AMULET
+1212    BEAR
+1213    MESSAGE
+1214    VOLCANO
+1214    GEYSER
+1215    MACHINE
+1216    BATTERIES
+1216    BATTERY
+1217    CARPET
+1217    MOSS
+1218    TREASURES
+1218    TREASURE
+1218    T
+1218    VALUABLES
+1218    VALUABLE
+1218    PRIZES
+1218    PRIZE
+2001    CARRY
+2001    TAKE
+2001    KEEP
+2001    CATCH
+2001    STEAL
+2001    CAPTURE
+2001    TOTE
+2002    DROP
+2002    RELEASE
+2002    FREE
+2002    DISCARD
+2002    DUMP
+2002    DOFF
+2003    SAY
+2003    CHANT
+2003    SING
+2003    UTTER
+2003    MUMBLE
+2004    OPEN
+2005    NOTHING
+2005    NULL
+2006    CLOSE
+2006    SHUT
+2007    LIGHT
+2008    EXTINGUISH
+2009    WAVE
+2009    SHAKE
+2009    SWING
+2010    CALM
+2010    PLACATE
+2010    TAME
+2011    WALK
+2011    RUN
+2011    GO
+2011    PROCEED
+2011    CONTINUE
+2011    EXPLORE
+2011    GOTO
+2011    FOLLOW
+2011    TRAVEL
+2011    HIKE
+2012    ATTACK
+2012    KILL
+2012    FIGHT
+2012    SLAY
+2013    POUR
+2014    EAT
+2014    SWALLOW
+2014    DEVOUR
+2015    DRINK
+2016    RUB
+2017    THROW
+2017    TOSS
+2017    HURL
+2017    FLING
+2017    HEAVE
+2018    QUIT
+2019    FIND
+2019    WHERE
+2020    INVENTORY
+2020    INVEN
+2020    I
+2021    FEED
+2022    FILL
+2022    REFILL
+2023    BLAST
+2023    DETONATE
+2023    BLOWUP
+2024    SCORE
+2024    TURNS
+2025    FEE
+2025    FIE
+2025    FOE
+2025    FOO
+2025    FUM
+2026    BRIEF
+2026    UNBRIEF
+2027    READ
+2027    PERUSE
+2028    BREAK
+2028    SHATTER
+2028    SMASH
+2029    WAKE
+2029    WAKEN
+2029    DISTURB
+2029    AWAKE
+2030    SUSPEND
+2030    PAUSE
+2030    SAVE
+2031    HOURS
+2032    YANK
+2032    JERK
+2032    PULL
+2032    GRAB
+2033    WEAR
+2033    DON
+2034    HIT
+2034    STRIKE
+2034    KICK
+2034    PUNCH
+2034    POUND
+2034    WHACK
+2035    ANSWER
+2035    REPLY
+2036    BLOW
+2037    LEAVE
+2038    CALL
+2039    DIAL
+2040    PLAY
+2040    STRUM
+2041    PICK
+2042    PUT
+2043    TURN
+2043    CRANK
+2044    GET
+2045    INSERT
+2046    REMOVE
+2047    BURN
+2048    GRIPE
+2048    BITCH
+2048    COMPLAIN
+2048    SUGGEST
+2048    REPORT
+2049    LOCK
+2050    UNLOCK
+2051    HEALTH
+2051    DIAGNOSE
+2052    LOOK
+2052    L
+2052    EXAMINE
+2052    DESCRIBE
+2053    7
+2053    22
+2053    34
+2054    SWEEP
+2054    BRUSH
+2054    DUST
+2055    TERSE
+2055    UNTERSE
+2056    EMPTY
+2057    MOVE
+2057    PART
+2057    PUSH
+2057    PRESS
+2058    FLASH
+2059    DIG
+2060    IGNITE
+2061    FLY
+2062    UNSAVE
+2062    UNPAUSE
+2062    RESTART
+2062    RESTORE
+2062    RESUME
+3001    FEE
+3002    FIE
+3003    FOE
+3004    FOO
+3005    FUM
+3011    7
+3012    22
+3013    34
+3050    SESAME
+3050    OPENSESAME
+3050    ABRACADABR
+3050    ABRA
+3050    ALACAZAM
+3050    SHAZAM
+3050    HOCUS
+3050    POCUS
+3051    HELP
+3051    ?
+3064    TREE
+3064    TREES
+3068    LOST
+3069    MIST
+3069    MISTS
+3079    FUCK
+3079    FUCK!
+3139    STOP
+3147    SWIM
+3106    SHIT
+3106    SHIT!
+3106    CRAP
+3106    CRAP!
+3107    PISS
+3107    PISS!
+4001    IN
+4001    INTO
+4001    INSIDE
+4002    ON
+4002    ONTO
+4002    UPON
+4003    WITH
+4004    TO
+4005    FROM
+4006    OFF
+4007    UP
+4008    DOWN
+4009    AT
+4010    FOR
+5001    GOLD
+5001    GOLDEN
+5002    PERSIAN
+5003    WOODEN
+5004    BRASS
+5005    WICKER
+5006    SUEDE
+5007    VELVET
+5008    VENDING
+5009    WORN-OUT
+5009    WORNOUT
+5009    WORN
+5009    USED
+5010    FRESH
+5011    IRON
+5012    TINY
+5012    SMALL
+5012    LITTLE
+5013    SILK
+5013    SILKEN
+5014    SILVER
+5015    TREASURE
+5016    MING
+5017    PLATINUM
+5018    RARE
+5019    ELFIN
+5020    FLASHING
+5021    HOLY
+5022    OAKEN
+5022    OAK
+5023    LEAD
+5024    LEATHER
+5025    STEEL
+5026    STAR
+5027    SHADOWY
+5028    RUSTY
+5029    GIANT
+5029    ENORMOUS
+5029    HUGE
+5029    LARGE
+5030    TASTY
+5031    GLOWING
+5032    DUSTY
+5033    CRYSTAL
+5034    4-LEAFED
+5034    FOUR-LEAVE
+5035    METAL
+5036    CLOTH
+5036    BURLAP
+5037    FADED
+5038    SPICED
+5038    SPICY
+5038    SPICEY
+5039    PAPER
+5040    HOT
+5041    IVORY
+5042    BEAUTIFUL
+5043    WAX
+5044    DRY
+5045    WILTED
+5046    DEAD
+5047    MALTESE
+5048    MARBLE
+5049    ANCIENT
+5049    OLD
+5049    ANTIQUE
+5050    BLACK
+5051    GREEN
+5052    GREY
+5053    RED
+5053    RUBY
+5054    YELLOW
+5055    WHITE
+5056    ORANGE
+5057    NACRE
+5058    DUN
+5059    FUSCHIA
+5060    BRIAR
+5061    DRAIN
+5062    PERFECT
+5063    MAGNETIC
+5064    GLASS
+5065    PLASTIC
+5066    BROWN
+5067    #1
+5068    #2
+5069    #3
+5070    #4
+5071    #5
+5072    #6
+5077    OFFICIAL
+5078    SOILED
+5079    SMOOTH
+5080    CRACKED
+5081    SHAVING
+5082    SHINY
+5083    DEVONIAN
+5084    STONE
+5085    FAKE
+5085    ERSATZ
+5085    SHAM
+5086    BRONZE
+5087    MYSTIC
+6001    AND
+6002    THEN
+7001    IT
+7002    THEM
+9001    ANYCN
+9002    ANYLQ
+9003    ANYLV
+9004    ANYRD
+9005    ANYWP
+9006    ANYWR
+9007    ANYBU
+-1
+4
+1       2       ROAD    WEST    UPWARD  CLIMB
+1       3       ENTER   BUILDING        INWARD
+1       4       GULLY   STREAM  SOUTH   D       DOWNSTREAM
+1       5       FOREST  NORTH
+1       8       DEPRESSION
+1       147     KNOLL
+1       157     HOLE    THUNDER
+1       276     EAST
+2       1       ROAD    BUILDING        FORWARD EAST    NORTH   D
+2       300146  FOREST
+2       5       FOREST  NORTH   SOUTH
+2       146     WEST
+3       1       OUT     OUTDOORS        WEST    BUILDING
+3       11      XYZZY
+3       33      PLUGH
+3       4675285 CLICK
+3       202     CLICK
+3       79      DOWNSTREAM      STREAM
+3       238     STOREROOM       ENTER   INWARD
+3       188     FNORD
+3       252     CLIFF
+3       4130248 RAVINE
+3       293     RAVINE
+4       1       UPSTREAM        BUILDING        NORTH
+4       5       FOREST  EAST    WEST    UPWARD
+4       7       DOWNSTREAM      SOUTH   D
+4       8       DEPRESSION
+5       4       VALLEY  EAST    D
+5       500005  FOREST  FORWARD
+5       6       FOREST  SE
+5       5       WEST    SOUTH   SW      NW
+5       240     NORTH   NE
+6       1       ROAD    NORTH
+6       4       VALLEY  EAST    WEST    D
+6       5       FOREST  SOUTH
+7       1       BUILDING
+7       4       UPSTREAM        NORTH
+7       5       FOREST  EAST    WEST
+7       8       DOWNSTREAM      ROCK    BED     SOUTH
+7       5095    SLIT    STREAM  D
+8       5       FOREST  EAST    WEST    SOUTH
+8       1       BUILDING
+8       7       UPSTREAM        GULLY   NORTH
+8       3030009 ENTER   INWARD  D
+8       5093    ENTER
+9       3030008 OUT     UPWARD
+9       5093    OUT
+9       10      CRAWL   COBBLE  INWARD  WEST
+9       14      PIT
+9       11      DEBRIS
+10      9       OUT     SURFACE NULL    EAST
+10      11      INWARD  DARK    WEST    DEBRIS
+10      14      PIT
+11      3030008 DEPRESSION
+11      9       ENTRANCE
+11      10      CRAWL   COBBLE  PASSAGE LOW     EAST
+11      12      CANYON  INWARD  UPWARD  WEST
+11      3       XYZZY
+11      14      PIT
+12      3030008 DEPRESSION
+12      9       ENTRANCE
+12      11      D       EAST    DEBRIS
+12      13      INWARD  UPWARD  WEST
+12      14      PIT
+13      3030008 DEPRESSION
+13      9       ENTRANCE
+13      11      DEBRIS
+13      12      CANYON  EAST
+13      14      PASSAGE PIT     WEST
+14      3030008 DEPRESSION
+14      9       ENTRANCE
+14      11      DEBRIS
+14      13      PASSAGE EAST
+14      1500020 D       PIT     STEPS
+14      15      D
+14      16      CRACK   WEST
+15      18      LEFT    SOUTH
+15      17      FORWARD HALL    WEST
+15      19      STAIR   D       NORTH
+15      1500022 UPWARD  PIT     STEPS   DOME    PASSAGE EAST    CLIMB   STAIR
+15      14      UPWARD
+15      33      Y2
+16      14      FORCD
+17      15      HALL    EAST
+17      3125096 JUMP
+17      4120021 FORWARD
+17      4125097 OVER    ACROSS  WEST    CROSS   BRIDGE
+17      27      OVER
+18      15      HALL    OUT     NORTH
+19      1500237 UPWARD  PIT     STEPS   DOME    PASSAGE EAST    CLIMB   STAIR
+19      15      UPWARD  STAIR   UPWARD  EAST
+19      755056  NE
+19      3110143 NE
+19      3110028 NORTH   LEFT
+19      3110029 SOUTH   RIGHT
+19      3110030 WEST    FORWARD
+19      32      NORTH
+19      150074  SW
+19      2110032 SW
+19      74      SECRET
+20      0       FORCD
+21      0       FORCD
+22      15      FORCD
+23      67      EAST    ACROSS
+23      68      WEST    SLAB
+23      25      D       PIT
+23      5148    HOLE
+24      67      UPWARD  OUT
+24      92      GIANT
+25      23      UPWARD  OUT
+25      7240031 CLIMB
+25      26      CLIMB
+26      88      FORCD
+27      3125096 JUMP
+27      4120021 FORWARD
+27      4125097 OVER    ACROSS  EAST    CROSS   BRIDGE
+27      17      OVER
+27      40      NORTH
+27      41      WEST
+28      19      HALL    OUT     SOUTH
+28      33      NORTH   Y2
+28      36      D       HOLE
+29      19      HALL    OUT     NORTH
+30      19      HALL    OUT     EAST
+30      62      WEST    UPWARD
+31      5240089 FORCD
+31      90      FORCD
+32      19      FORCD
+33      3       PLUGH
+33      28      SOUTH
+33      34      EAST    WALL    ROCK
+33      35      WEST
+33      1593002 PLOVER
+33      100     PLOVER
+34      33      D       Y2
+34      15      UPWARD
+35      33      EAST    Y2
+35      20      JUMP
+36      37      EAST    CRAWL
+36      28      UPWARD  HOLE
+36      39      WEST
+36      65      BEDQUILT
+37      36      WEST    CRAWL
+37      38      D       PIT     CLIMB
+38      37      CLIMB   UPWARD  OUT
+38      5095    SLIT    STREAM  D       UPSTREAM        DOWNSTREAM
+39      36      EAST    PASSAGE
+39      64      D       HOLE    FLOOR
+39      65      BEDQUILT
+40      41      FORCD
+41      42      SOUTH   UPWARD  PASSAGE CLIMB
+41      27      EAST
+41      59      NORTH
+41      60      WEST    CRAWL
+42      41      UPWARD
+42      42      NORTH
+42      43      EAST
+42      45      SOUTH
+42      80      WEST
+43      42      WEST
+43      44      SOUTH
+43      45      EAST
+44      43      EAST
+44      48      D
+44      50      SOUTH
+44      82      NORTH
+45      42      WEST
+45      43      NORTH
+45      46      EAST
+45      47      SOUTH
+45      87      UPWARD  D
+46      45      WEST    OUT
+47      45      EAST    OUT
+48      44      UPWARD  OUT
+49      50      EAST
+49      51      WEST
+50      44      EAST
+50      49      WEST
+50      51      D
+50      52      SOUTH
+51      49      WEST
+51      50      UPWARD
+51      52      EAST
+51      53      SOUTH
+52      50      WEST
+52      51      EAST
+52      52      SOUTH
+52      53      UPWARD
+52      55      NORTH
+52      86      D
+53      51      WEST
+53      52      NORTH
+53      54      SOUTH
+54      53      WEST    OUT
+55      52      WEST
+55      55      NORTH
+55      56      D
+55      57      EAST
+56      55      UPWARD  OUT
+57      13      D       CLIMB
+57      55      WEST
+57      58      SOUTH
+57      83      NORTH
+57      84      EAST
+58      57      EAST    OUT
+59      27      FORCD
+60      41      EAST    UPWARD  CRAWL
+60      61      WEST
+60      62      NORTH   D       HOLE
+60      500191  SOUTH   CRACK
+60      3920173 SOUTH   CRACK
+60      172     SOUTH   CRACK
+60      5148    CLIMB
+60      3920173 SECRET
+60      172     SECRET
+61      60      EAST
+61      62      NORTH
+61      1000107 SOUTH
+62      60      WEST
+62      63      NORTH
+62      30      EAST
+62      61      SOUTH
+63      62      SOUTH   OUT
+64      39      UPWARD  CLIMB   ROOM
+64      65      WEST    BEDQUILT
+64      103     NORTH   SHELLROOM
+64      106     EAST
+65      64      EAST
+65      66      WEST
+65      805056  SOUTH
+65      68      SLAB
+65      805056  UPWARD
+65      500070  UPWARD
+65      39      UPWARD
+65      605056  NORTH
+65      750072  NORTH
+65      71      NORTH
+65      805056  D
+65      106     D
+65      71      SECRET
+66      65      NE
+66      67      WEST
+66      805056  SOUTH
+66      77      CANYON
+66      96      EAST
+66      505056  NW
+66      97      ORIENTAL
+67      66      EAST
+67      23      WEST    ACROSS
+67      24      D       PIT
+68      23      SOUTH
+68      69      UPWARD  CLIMB
+68      65      NORTH
+69      68      D       SLAB
+69      3310120 SOUTH
+69      119     SOUTH
+69      109     NORTH
+69      113     RESERVOIR
+70      71      NORTH
+70      65      D       PASSAGE
+70      111     SOUTH
+71      65      SE
+71      70      SOUTH
+71      110     NORTH
+72      65      BEDQUILT
+72      118     NE
+72      73      NORTH
+72      97      SW      ORIENTAL
+73      72      SOUTH   CRAWL   OUT
+74      19      EAST
+74      3310120 WEST
+74      121     WEST
+74      75      D
+75      76      SOUTH
+75      77      NORTH
+76      75      NORTH
+77      75      EAST
+77      78      WEST
+77      66      NORTH   CRAWL
+78      77      SOUTH
+79      3       FORCD
+80      42      NORTH
+80      80      WEST    SOUTH
+80      81      EAST
+81      80      WEST    OUT
+82      44      SOUTH   OUT
+83      57      SOUTH
+83      84      EAST
+83      85      WEST
+84      57      NORTH
+84      83      WEST
+84      114     NW
+85      83      EAST    OUT
+86      52      UPWARD  OUT
+87      45      UPWARD  D
+88      25      D       CLIMB   EAST
+88      20      JUMP
+88      92      WEST    GIANT
+89      25      FORCD
+90      23      FORCD
+91      95      NORTH   CAVERN  PASSAGE
+91      72      D       CLIMB
+92      88      SOUTH
+92      93      EAST
+92      94      NORTH
+93      92      SOUTH   GIANT   OUT
+94      92      SOUTH   GIANT   PASSAGE
+94      3410095 NORTH   ENTER   CAVERN
+94      5111    NORTH
+95      94      SOUTH   OUT
+95      92      GIANT
+95      91      WEST
+95      145     D       JUMP    POOL    HOLE
+96      66      WEST    OUT
+97      66      SE
+97      72      EAST    CRAWL
+97      98      UPWARD  NORTH   CAVERN
+98      235     NE
+98      97      SOUTH   ORIENTAL
+98      99      WEST
+98      30142   UPWARD  SW      CLIMB   SLIDE
+98      755202  UPWARD  SW      CLIMB   SLIDE
+98      5203    UPWARD  SW      CLIMB   SLIDE
+98      141     CHIMNEY
+99      98      NW      CAVERN
+99      3001    EAST    PASSAGE
+99      100     EAST
+100     3001    WEST    PASSAGE OUT
+100     99      WEST
+100     1593002 PLOVER  Y2
+100     33      PLOVER  Y2
+100     101     NE      DARK
+101     100     SOUTH   PLOVER  OUT
+102     103     D       SHELLROOM       OUT
+103     3880196 UPWARD  HALL
+103     102     UPWARD  HALL
+103     104     D
+103     1145118 SOUTH
+103     1155119 SOUTH
+103     64      SOUTH
+104     103     UPWARD  SHELLROOM
+104     105     D
+105     104     UPWARD  OUT
+105     103     SHELLROOM
+106     64      UPWARD
+106     65      WEST
+106     108     EAST
+107     131     SOUTH
+107     132     SW
+107     133     NE
+107     134     SE
+107     135     UPWARD
+107     136     NW
+107     137     EAST
+107     138     WEST
+107     139     NORTH
+107     61      D
+108     955056  EAST    NORTH   SOUTH   NE      SE      SW      NW      UPWARD  D
+108     106     EAST
+108     5126    WEST
+109     69      SOUTH
+109     113     NORTH   RESERVOIR
+110     71      WEST
+110     20      JUMP
+111     70      NORTH
+111     400050  D       JUMP    CLIMB
+111     500053  D
+111     45      D
+112     131     SW
+112     132     NORTH
+112     133     EAST
+112     134     NW
+112     135     SE
+112     136     NE
+112     137     WEST
+112     138     D
+112     139     UPWARD
+112     140     SOUTH
+113     109     SOUTH   OUT
+114     84      SE
+115     116     SW      ACROSS  CROSS
+115     212     INWARD  ENTER   NORTH
+116     115     NE      ACROSS  SW
+116     5093    D
+117     118     SW
+117     2335160 OVER    ACROSS  CROSS   NE      BRIDGE
+117     3325161 OVER
+117     3003    OVER
+117     3220021 JUMP
+117     5096    JUMP
+118     72      D
+118     117     UPWARD
+119     69      NORTH   OUT
+119     5153    EAST    FORWARD
+120     69      NORTH
+120     74      EAST
+121     74      EAST    OUT
+121     5153    NORTH   FORWARD
+122     123     NE
+122     2335160 OVER    ACROSS  CROSS   SW      BRIDGE
+122     3003    OVER
+122     5096    JUMP
+122     124     FORK
+122     126     VIEW
+122     129     BARREN
+122     1355400 D       WEST
+122     211     D       WEST
+123     122     WEST
+123     124     EAST    FORK
+123     126     VIEW
+123     129     BARREN
+124     123     WEST
+124     125     NE      LEFT
+124     128     SE      RIGHT   D
+124     126     VIEW
+124     129     BARREN
+125     124     SOUTH   FORK
+125     126     NORTH   VIEW
+125     127     EAST    CRAWL
+126     125     SOUTH   PASSAGE OUT
+126     124     FORK
+126     5110    D       JUMP
+127     125     WEST    OUT     CRAWL
+127     124     FORK
+127     126     VIEW
+128     124     NORTH   UPWARD  FORK
+128     129     SOUTH   D       BARREN
+128     126     VIEW
+129     128     WEST    UPWARD
+129     124     FORK
+129     130     EAST    INWARD  BARREN  ENTER
+129     126     VIEW
+130     129     WEST    OUT
+130     124     FORK
+130     126     VIEW
+131     107     WEST
+131     132     SE
+131     133     NW
+131     134     SW
+131     135     NE
+131     136     UPWARD
+131     137     D
+131     138     NORTH
+131     139     SOUTH
+131     112     EAST
+132     107     NW
+132     131     UPWARD
+132     133     NORTH
+132     134     SOUTH
+132     135     WEST
+132     136     SW
+132     137     NE
+132     138     EAST
+132     139     D
+132     112     SE
+133     107     UPWARD
+133     131     D
+133     132     WEST
+133     134     NE
+133     135     SW
+133     136     EAST
+133     137     NORTH
+133     138     NW
+133     139     SE
+133     112     SOUTH
+134     107     NE
+134     131     NORTH
+134     132     NW
+134     133     SE
+134     135     EAST
+134     136     D
+134     137     SOUTH
+134     138     UPWARD
+134     139     WEST
+134     112     SW
+135     107     NORTH
+135     131     SE
+135     132     D
+135     133     SOUTH
+135     134     EAST
+135     136     WEST
+135     137     SW
+135     138     NE
+135     139     NW
+135     112     UPWARD
+136     107     EAST
+136     131     WEST
+136     132     UPWARD
+136     133     SW
+136     134     D
+136     135     SOUTH
+136     137     NW
+136     138     SE
+136     139     NE
+136     112     NORTH
+137     107     SE
+137     131     NE
+137     132     SOUTH
+137     133     D
+137     134     UPWARD
+137     135     NW
+137     136     NORTH
+137     138     SW
+137     139     EAST
+137     112     WEST
+138     107     D
+138     131     EAST
+138     132     NE
+138     133     UPWARD
+138     134     WEST
+138     135     NORTH
+138     136     SOUTH
+138     137     SE
+138     139     SW
+138     112     NW
+139     107     SW
+139     131     NW
+139     132     EAST
+139     133     WEST
+139     134     NORTH
+139     135     D
+139     136     SE
+139     137     UPWARD
+139     138     SOUTH
+139     112     NE
+140     112     NORTH   OUT
+141     142     UPWARD  EAST    CLIMB   CHIMNEY SLIDE
+142     98      EAST    D       FORWARD SLIDE
+142     141     BACK    WEST    CHIMNEY
+143     19      WEST    OUT
+143     144     EAST
+143     141     ANVIL
+144     143     WEST    BACK
+144     19      OUT
+145     141     FORCD
+146     2       EAST    UPWARD  ROAD    CLIMB
+146     500006  SOUTH   FOREST
+146     146     SOUTH   FOREST
+146     147     WEST
+146     148     NORTH
+147     146     EAST
+147     148     NORTH
+147     153     WEST
+147     157     HOLE
+147     3       BUILDING
+147     157     THUNDER
+147     3460271 FNORD
+147     5464    FNORD
+148     500147  SOUTH
+148     146     SOUTH
+148     149     EAST    WEST    NORTH
+148     3       BUILDING
+148     3745012 GROTTO
+148     166     GROTTO
+149     149     SOUTH
+149     151     EAST
+149     150     WEST
+149     152     NORTH
+150     151     SOUTH
+150     303     NORTH
+150     500149  EAST    WEST
+150     149     EAST    WEST
+151     148     EAST
+151     152     WEST
+151     500244  NORTH
+151     303     NORTH
+151     149     SOUTH
+152     151     EAST
+152     150     SOUTH
+153     154     NORTH
+153     153     SOUTH
+153     147     EAST
+153     3       BUILDING
+154     500155  NORTH
+154     157     NORTH   D
+154     155     UPWARD
+154     153     SOUTH
+154     3       BUILDING
+155     154     D       BACK    SOUTH
+155     156     JUMP
+155     3       BUILDING
+156     0       FORCD
+157     227     INWARD  EAST
+157     154     OUT     SOUTH   UPWARD
+157     3       BUILDING
+158     229     WEST    STEPS   D
+158     157     OUT
+158     161     PHUCE
+158     5225    CLIMB   UPWARD
+158     5226    LEDGE
+158     5247    ENTER   INWARD  EAST    ENTRANCE
+159     5232    OUT     WEST    STEPS
+160     3430167 EAST    INWARD  OUT     ENTER
+160     5238    EAST
+160     162     PHUCE
+160     5223    WEST    CLIMB   D
+160     165     JUMP
+161     3004    FORCD
+162     3004    FORCD
+163     3004    FORCD
+164     3004    FORCD
+165     0       FORCD
+166     5247    ENTER   OUT     INWARD  WEST
+166     1480232 EAST    CROSS   OVER    ACROSS
+166     1480169 NE
+166     1480233 SOUTH
+166     1480234 NORTH
+166     5217    EAST    CROSS   OVER    ACROSS  SOUTH   NE
+166     4480164 PHUCE
+166     5220    PHUCE
+167     163     PHUCE
+167     3430160 WEST    OUT     ENTER   INWARD
+167     5239    WEST
+167     5222    EAST    CROSS   OVER    ACROSS
+168     4480170 SE      UPWARD  PASSAGE
+168     5219    SE      UPWARD  PASSAGE
+168     1480169 NORTH
+168     1480192 SOUTH
+168     1480166 WEST    CROSS   OVER    ACROSS
+168     5217    WEST    NORTH   SOUTH
+169     1480168 SOUTH
+169     1480166 SW
+169     5217    SW      SOUTH
+169     4480179 PASSAGE EAST    UPWARD
+169     5219    PASSAGE UPWARD
+170     171     EAST    UPWARD
+170     168     WEST    D
+171     170     NW      D
+171     180     EAST    UPWARD
+172     60      NORTH
+172     174     SOUTH
+173     60      NORTH
+174     3920178 NE
+174     172     NE      CRACK
+174     175     NW
+175     177     NORTH
+175     174     EAST
+175     176     PIT     D       CLIMB
+176     175     UPWARD  CLIMB   OUT     BACK
+177     60      D       CLIMB   JUMP
+177     175     SOUTH   BACK
+178     174     FORCD
+179     169     D       WEST
+179     198     UPWARD  EAST    STREAM
+180     171     WEST
+180     182     UPWARD  CLIMB
+180     213     EAST
+180     210     NORTH   HOLE
+181     227     FORCD
+182     180     WEST
+182     183     EAST
+183     182     WEST
+183     500184  EAST
+183     186     EAST
+183     185     SOUTH
+183     187     NORTH
+184     183     SW
+184     188     SE
+185     183     NORTH
+186     183     NW
+186     188     NE
+187     183     WEST
+187     188     EAST
+188     187     NORTH
+188     184     WEST
+188     650190  SW      D
+188     186     SW
+188     3005    INWARD  ENTER
+188     275     EAST
+188     3       FNORD
+189     188     OUT     BACK
+190     4223006 CROSS   NORTH   ACROSS  BRIDGE
+190     5161    CROSS
+190     188     UPWARD  BACK
+190     3220021 JUMP
+190     5096    JUMP
+191     60      NORTH
+192     1480166 NORTH
+192     1480168 NE
+192     5217    NORTH   NE
+192     4480197 EAST
+192     5220    EAST
+193     197     WEST
+194     224     WEST
+195     196     HOLE    WALL    SOUTH   CROSS   LEFT
+195     224     WEST
+196     103     D       SHELLROOM
+196     1145118 HOLE    WALL    NORTH   CROSS
+196     1145119 HOLE
+196     195     HOLE
+197     193     EAST
+197     192     WEST
+198     179     SW      STREAM  DOWNSTREAM      PASSAGE
+198     203     D       EAST
+198     4020200 SOUTH   UPWARD
+198     5272    SOUTH   UPWARD
+199     198     FORCD
+200     198     WEST
+200     201     EAST    UPWARD
+201     4020200 WEST    D
+201     5272    WEST    D
+201     202     EAST
+201     230     NORTH
+202     201     WEST
+202     4675285 CLICK
+202     205     CLICK
+202     206     EAST
+203     4760199 D       EAST    ICE
+203     204     D       EAST    ICE
+203     198     UPWARD  WEST
+204     203     UPWARD  WEST    BACK    OUT
+205     219     NORTH
+205     4675285 CLICK
+205     202     CLICK
+205     226     JUMP
+206     207     NORTH   CRAWL
+206     202     WEST
+206     213     UPWARD  HOLE
+207     208     NORTH
+207     206     SOUTH
+208     236     EAST    UPSTREAM
+208     207     SOUTH   CRAWL
+208     209     WEST    DOWNSTREAM
+208     5293    CROSS   ACROSS  NORTH
+209     208     EAST    UPSTREAM
+209     210     UPWARD  CLIMB
+209     33      Y2
+210     211     UPWARD  EAST
+210     209     D       WEST
+210     180     INWARD  CRACK   NORTH
+210     239     JUMP
+211     210     D       BACK    WEST
+211     5401    EAST    UPWARD  CLIMB
+211     239     JUMP
+212     115     OUT     BACK    SOUTH
+213     206     D       HOLE
+213     180     WEST    BACK
+214     1480166 SOUTH
+214     1480169 SE
+214     5217    SOUTH   SE
+214     4480215 NE
+214     5220    NE
+215     214     SW
+215     216     UPWARD
+216     215     D
+216     217     EAST    UPWARD
+217     216     WEST    D       OUT
+217     218     EAST    PIT
+218     217     BACK    WEST
+218     230     UPWARD  CLIMB
+219     205     SOUTH   BRIDGE
+219     222     NORTH   ALTAR
+219     220     EAST
+219     221     WEST
+219     3       PRAY
+220     219     WEST
+220     3753009 NE
+220     249     NE
+221     219     EAST
+221     225     WEST
+222     219     SOUTH
+222     223     UPWARD
+222     3       PRAY
+223     222     D
+223     224     UPWARD
+224     223     D       HOLE
+224     3880195 EAST
+224     194     EAST
+225     221     EAST
+226     0       FORCD
+227     157     WEST    OUT     UPWARD
+227     3980228 EAST    INWARD  D
+227     181     EAST    INWARD  D
+228     5292    NORTH   SOUTH   UPSTREAM        DOWNSTREAM      CRACK
+228     227     UPWARD  WEST    OUT
+228     229     JUMP
+228     5286    EAST    INWARD  ACROSS  CROSS   OVER
+228     5292    NORTH   SOUTH   UPSTREAM        DOWNSTREAM      CRACK
+229     228     JUMP
+229     5286    WEST    OUT     ACROSS  CROSS   OVER
+229     158     EAST    INWARD  STEPS
+229     5292    NORTH   SOUTH   UPSTREAM        DOWNSTREAM      CRACK
+230     650218  D       JUMP
+230     231     D       JUMP
+230     201     SOUTH   CRAWL
+231     0       FORCD
+232     168     FORCD
+233     192     FORCD
+234     214     FORCD
+235     4223006 CROSS   SOUTH   ACROSS  BRIDGE
+235     5161    CROSS
+235     98      WEST
+235     3220021 JUMP
+235     5096    JUMP
+236     208     WEST
+237     19      FORCD
+238     3       OUT     OUT     ENTRANCE        STOREROOM
+239     0       FORCD
+240     4       VALLEY  EAST    D
+240     500005  FOREST  FORWARD SOUTH   SW      SE
+240     6       FOREST
+240     241     NORTH   NW      NE
+241     240     EAST    SE      SOUTH
+241     148     WEST    SW
+241     242     NORTH   NE      NW
+242     241     SOUTH   SE
+242     244     WEST    SW      NW
+242     242     EAST
+242     243     NORTH   NE
+243     705402  WEST    NW
+243     244     WEST
+243     5402    SW      SE      LEFT    RIGHT
+243     246     NORTH
+243     605402  SOUTH
+243     242     SOUTH
+243     3770247 NE      EAST
+243     245     EAST
+244     151     SW
+244     246     SOUTH
+244     242     SE
+244     243     NORTH
+244     303     NW      WEST
+245     243     WEST    SW      NW
+245     246     EAST    NE
+246     0       FORCD
+247     244     WEST    SW      NW
+247     4130248 NE      NORTH
+247     293     SW
+248     247     SW      SOUTH
+248     252     EAST
+248     5171    CROSS   ACROSS  NORTH
+248     260     JUMP
+248     295     D       CLIMB   ENTER
+248     3       BUILDING
+249     220     FORCD
+250     220     SOUTH
+250     3050262 UPWARD  CLIMB
+250     3008    UPWARD
+250     3050259 NORTH
+250     3008    NORTH
+251     4130258 SOUTH
+251     294     SOUTH
+251     3060264 CROSS   ACROSS  NORTH   BRIDGE  ENTER
+251     266     CROSS
+251     267     WEST    NW
+252     4130248 WEST
+252     293     WEST
+252     253     UPWARD  CLIMB
+252     3040257 EAST    INWARD  ENTER   CRACK
+252     5172    EAST
+252     3       BUILDING
+253     252     D
+253     5223    UPWARD  CLIMB
+254     255     JUMP
+254     264     D       WEST
+254     263     UPWARD  NORTH   ENTER   RIGHT
+255     0       FORCD
+256     6105342 UPWARD  CLIMB
+256     3007    UPWARD
+256     261     SOUTH   BACK
+257     252     SW
+257     4130258 NW
+257     294     NW
+258     257     INWARD  CRACK   EAST
+258     251     NORTH
+258     5494    CROSS   ACROSS  SOUTH   D       CLIMB
+258     260     JUMP
+259     261     NORTH
+259     250     SOUTH
+260     0       FORCD
+261     259     SOUTH
+261     4015333 NORTH
+261     256     NORTH
+262     250     D       JUMP    BACK
+263     254     EAST
+263     265     WEST
+263     264     D       OUT     SOUTH
+263     3450269 INWARD  ENTER   NORTH
+263     5455    INWARD
+264     3060251 ACROSS  CROSS   BRIDGE  OUT     SOUTH
+264     5442    CROSS
+264     254     EAST
+264     265     WEST
+264     263     UPWARD  ENTER   NORTH
+265     264     EAST    D       BACK
+265     2180281 INWARD  ENTER   BOARD
+265     263     INWARD
+266     251     FORCD
+267     251     EAST    SE
+267     3050268 NORTH   INWARD  ENTER
+267     5172    EAST
+268     267     SOUTH   OUT     BACK
+269     263     OUT     OUT     SOUTH
+269     270     WEST
+269     273     NORTH   ACROSS  CROSS
+270     269     EAST    OUT     BACK    HALL
+271     3460272 ENTER   INWARD
+271     5455    ENTER
+271     147     FNORD
+271     274     OUT     BACK    EAST
+272     271     OUT     BACK    EAST
+273     5466    NORTH
+273     274     NW      WEST
+273     277     NE      EAST
+273     269     SOUTH   CROSS   ACROSS  OUT
+274     273     SE      SOUTH   HALL
+274     271     WEST    ENTER   PASSAGE
+275     188     WEST    OUT     BACK
+276     1       WEST
+276     3       BUILDING
+276     6       NORTH
+276     4       SOUTH
+276     2180278 INWARD  ENTER   BOARD
+276     5043    INWARD
+277     289     WEST    INWARD  ENTER
+277     273     SW      SOUTH   HALL
+277     302     NORTH
+278     1160280 FORCD
+278     279     FORCD
+279     276     FORCD
+280     281     FORCD
+281     3180282 OUT     OUTDOORS
+281     276     OUT
+282     4180283 FORCD
+282     265     FORCD
+283     284     FORCD
+284     253     D       WEST
+284     2180281 INWARD  ENTER   BOARD
+284     5200285 INWARD  EAST    MINE
+284     5496    INWARD
+284     286     NORTH
+285     284     OUT     OUTDOORS        WEST
+285     298     ROOM    LEFT    INWARD
+285     299     D
+286     284     SOUTH
+286     5478    D
+286     290     JUMP
+286     287     NW      NORTH
+287     286     BACK    SE      SOUTH
+287     5478    D
+287     4190291 JUMP
+287     292     JUMP
+288     3470289 OUT     INWARD  ENTER   BUILDING        EAST
+288     5480    OUT
+289     3470288 OUT     INWARD  ENTER   GARDEN  WEST
+289     5479    ENTER
+289     277     EAST    OUT     HALL
+290     0       FORCD
+291     0       FORCD
+292     288     FORCD
+293     247     SW      SOUTH
+293     252     EAST
+293     5495    CROSS   ACROSS  NORTH
+293     3       BUILDING
+294     257     INWARD  CRACK   EAST
+294     251     NORTH
+294     5495    CROSS   ACROSS  SOUTH
+295     3010    UPWARD  SOUTH   OUT     BACK    CLIMB
+295     296     WEST
+295     5494    NORTH
+296     3010    UPWARD  SOUTH   OUT     CLIMB
+296     295     EAST    BACK
+296     5494    NORTH
+296     297     WEST    FORWARD
+297     0       FORCD
+298     285     OUT     BACK
+299     3130300 D       INWARD
+299     5497    D
+299     285     UPWARD  OUT
+300     299     UPWARD  OUT
+300     3011    ENTER   NORTH
+301     3011    OUT     SOUTH
+302     277     OUT     SOUTH   BACK
+303     243     EAST    NE
+303     244     SE
+303     152     SOUTH   SW
+303     2643012 WEST    NW
+303     304     WEST    NW
+304     303     EAST    BACK    OUT
+-1
+5
+1       boulder by well
+0000    A large round boulder blocks the path.
+1000    There is a large boulder on one side of the tunnel.
+2       brass lantern
+0000    There is a shiny brass lamp nearby.
+1000    There is a lamp shining nearby.
+3       grate
+0000    The grate is locked.
+1000    The grate is open.
+4       vines on cliff
+0000    >$<       (covering cliff face)
+1000    In the center of the cliff, the vines have been parted, revealing
+1000    a narrow defile into the rock wall.
+5       vines at centipede's lair
+0000    >$<
+1000    A dim alcove can be seen behind the vines.
+6       drawbridge
+0000    >$<
+1000    A wooden drawbridge spans the moat.
+2000    With a great creaking and groaning, the winch raises the drawbridge
+2000    to a vertical position against the stone wall.
+3000    Turning the winch slowly lowers the great wooden drawbridge.
+7       steps
+0000    Rough stone steps lead down the pit.
+1000    Rough stone steps lead up the dome.
+8       black (sham) rock
+0000    >$<
+1000    >$<
+9       wooden pole
+0000    A wooden pole is lying nearby.
+1000    A wooden pole has been stuck in the mud here.
+10      coil of rope
+0000    There is a tightly coiled rope here.
+1000    As you play, the coiled rope begins to vibrate and sway.
+2000    The rope is rising straight upwards!
+3000    The rope is extended vertically right to the top of the well.
+4000    As you clamber from the well, the rope suddenly collapses
+4000    and disappears out of sight.
+5000    As soon as you stop playing, the rope collapses back into a
+5000    tight coil.
+11      snake
+0000    A huge green fierce snake bars the way!
+1000    >$<  (Chased away)
+12      fissure
+0000    >$<
+1000    A crystal bridge now spans the fissure.
+2000    The crystal bridge has vanished!
+13      drainpipe
+0000    >$<         (RAVINE DRY).
+1000    The ravine is filled with dark muddy water.
+14      giant clam  >grunt!<
+0000    There is an enormous clam here with its shell tightly closed.
+15      giant oyster  >groan!<
+0000    There is an enormous oyster here with its shell tightly closed.
+1000    Interesting.  There seems to be something written on the underside of
+1000    the oyster.
+16      official document
+0000    An official-looking document is lying nearby.
+1000    Hidden inside the piano is an official-looking document.
+18      helicopter
+0000    Not far away is a helicopter.  Its engine is idling slowly.
+1000    A helicopter is waiting nearby.
+2000    A helicopter is waiting nearby.
+19      knapsack
+0000    There is a bulging knapsack here.
+1000    >$<  (wearing knapsack)
+20      pumps in mine
+0000    >$<             (PUMPS SILENT).
+1000    The deep hum of heavy machinery fills the control room.
+2000    >$<             (PUMPS EXPLODED).
+21      chasm - troll bridge
+0000    A rickety wooden bridge extends across the chasm, vanishing into the
+0000    mist.  A sign posted on the bridge reads, "Stop! Pay troll!"
+1000    The wreckage of a bridge (and a dead bear) can be seen at the bottom
+1000    of the chasm.
+22      chasm2 & decrepit natural bridge
+0000    A decrepit natural bridge spans the chasm.  A message scrawled into
+0000    the rock wall reads: "Bridge out of repair.  Maximum load: 35 Foonts."
+1000    The remnants of a natural bridge partially overhang the chasm.
+23      mirror
+0000    >$<
+24      plant
+0000    There is a tiny little plant in the pit, murmuring "Water, water, ..."
+1000    The plant spurts into furious growth for a few seconds.
+2000    There is a 12-foot-tall beanstalk stretching up out of the pit,
+2000    bellowing "Water!! Water!!"
+3000    The plant grows explosively, almost filling the bottom of the pit.
+4000    There is a gigantic beanstalk stretching all the way up to the hole.
+5000    You've over-watered the plant!  It's shriveling up!  It's, it's...
+25      phony plant (seen in twopit room only when tall enough)
+0000    >$<
+1000    The top of a 12-foot-tall beanstalk is poking out of the west pit.
+2000    There is a huge beanstalk growing out of the west pit up to the hole.
+26      stalactite
+0000    >$<
+27      shadowy figure
+0000    The shadowy figure seems to be trying to attract your attention.
+28      dwarf's axe
+0000    There is a little axe here.
+1000    There is a little axe lying beside the bear.
+2000    There is a little axe lying beside the Wumpus.
+3000    There is a little axe lying beside the dog.
+4000    Deeply entangled in the brambles is a little axe.
+29      cave drawings
+0000    >$<
+30      pirate
+0000    >$<
+31      dragon
+0000    A huge green fierce dragon bars the way!
+1000    Congratulations!  You have just vanquished a dragon with your bare
+1000    hands!  (Unbelievable, isn't it?)
+2000    The body of a huge green dead dragon is lying off to one side.
+32      briar pipe
+0000    There is a small briar pipe here.
+33      troll
+0000    A burly troll stands by the bridge and insists you throw him a
+0000    treasure before you may cross.
+1000    The troll steps out from beneath the bridge and blocks your way.
+2000    >$<  (Chased away)
+34      phony troll
+0000    The troll is nowhere to be seen.
+41      rusty door
+0000    The way north is barred by a massive, rusty, iron door.
+1000    The way north leads through a massive, rusty, iron door.
+42      tiny door
+0000    The only way past the wall is through a tiny locked door.
+1000    The only way past the wall is through a tiny open door.
+43      tiny door
+0000    The door is locked.
+1000    The door is open.
+44      phone booth door
+0000    >$<
+45      oaken door
+0000    A massive door of solid oak guards the castle entrance.  In
+0000    the center of the door is a small slot.
+1000    >$<
+46      steel door with inlaid tiles
+0000    The stainless steel door is locked.
+1000    The stainless steel door is unlocked.
+47      door to secret garden
+0000    A wooden door leads out to the garden.
+1000    A wooden door leads into the castle.
+48      wooden boat
+0000    There is a small wooden boat here.
+1000    You are in a small boat.
+49      sticks at Styx
+0000    >$<
+50      large gold nugget
+0000    There is a large sparkling nugget of gold here!
+51      several diamonds
+0000    There are diamonds here!
+52      silver horn
+0000    There is a silver horn here!
+53      precious jewelry
+0000    There is precious jewelry here!
+1000    >$<  (wearing jewelry)
+54      rare coins
+0000    There are many coins here!
+55      treasure chest
+0000    The pirate's treasure chest is here!
+56      golden eggs
+0000    There is a large nest here, full of golden eggs!
+1000    The nest of golden eggs has vanished!
+2000    Done!
+57      jeweled trident
+0000    There is a jewel-encrusted trident here!
+58      ming vase
+0000    There is a delicate, precious, ming vase here!
+1000    The vase is now resting, delicately, on a velvet pillow.
+2000    The floor is littered with worthless shards of pottery.
+3000    The ming vase drops with a delicate crash.
+59      egg-sized emerald
+0000    There is an emerald here the size of a plover's egg!
+60      platinum pyramid
+0000    There is a platinum pyramid here, 8 inches on a side!
+61      glistening pearl
+0000    Off to one side lies a glistening pearl!
+62      persian rug
+0000    There is a persian rug spread out on the floor!
+1000    The dragon is sprawled out on a persian rug!!
+63      rare spice
+0000    There is some rare spice here!
+64      buzzing sound
+0000    A loud buzzing sound can be heard not far off.
+65      gleaming sword
+0000    There is a gleaming sword here!
+1000    You grasp the sword's handle and give a mighty heave, but with a
+1000    loud clang the sword blade shatters into several fragments.
+2000    Rusty shards of an elven sword lie scattered about.
+3000    A very clean sword is stuck into the anvil!
+4000    An oily sword is stuck into the anvil.
+66      elven crown
+0000    An ancient crown of elven kings lies here!
+1000    >$<  (wearing crown)
+67      ruby slippers
+0000    There is a pair of ruby slippers here.
+1000    >$<  (wearing slippers)
+2000    There is a pair of ruby slippers here.
+68      delicate lyre
+0000    There is a delicate lyre here!
+69      star sapphire
+0000    There is a star sapphire here!
+70      Holy Grail
+0000    There is an ornate silver chalice here!
+71      oaken cask
+0000    There is a cask of water here.
+1000    There is an empty oaken cask here.
+2000    There is a cask of oil here.
+3000    >$<  (Unused)
+4000    There is a cask of wine here.
+72      golden ring
+0000    There is a small gold ring here.
+1000    >$<  (wearing ring)
+2000    On the Wumpus' finger is a small gold ring.
+73      shamrock
+0000    There is a four-leafed clover here!
+1000    >$<  (wearing clover)
+74      wooden structure (boat as seen when small)
+0000    A high wooden structure of vast proportions extends into the water.
+1000    >$<  (Boat isn't on this shore.)
+75      brambles
+0000    A NE passage is blocked by an impenetrable thicket of sharp thorny
+0000    brambles.
+1000    >$<  (Brambles removed.)
+76      velvet cloak
+0000    There is a velvet cloak here!
+1000    >$<  (wearing cloak)
+2000    A lovely velvet cloak lies partially buried under a pile of
+2000    loose rocks.
+77      quicksand
+0000    Foul smelling gasses bubble up through the wet sand.
+1000    >$<  (changed to concrete)
+81      clear water
+82      cool water
+83      thick, black oil
+84      thick, black oil
+85      vintage wine
+86      vintage wine
+87      bumblebees
+0000    >$<
+1000    Some bumblebees are swarming around a bunch of fresh flowers.
+88      hollow wall
+0000    Your footsteps echo hollowly throughout the chamber.
+1000    >$<
+89      wall with safe
+0000    A steel safe is embedded in the wall.
+90      tiny brass key
+0000    There is a tiny brass key here.
+1000    There is a tiny brass key on the shelf.
+91      anvil
+0000    A gleaming sword is stuck into the anvil!
+1000    >$<
+92      rocks on cloak
+0000    >$<  (ON CLOAK)
+1000    >$<  (AFTER ROCKSLIDE)
+93      telephone booth
+0000    The telephone booth is empty.  The phone is ringing.
+1000    The phone booth is occupied by a gnome.  He is talking excitedly
+1000    to someone at the other end.
+2000    The telephone booth is empty.
+3000    >$<
+94      telephone
+0000    The phone is ringing.
+1000    The telephone is out of order.
+2000    The telephone is out of order.  It is badly dented.
+3000    >$<
+95      lead slugs
+0000    There are some lead slugs here!
+96      sweet honeycomb
+0000    There is a sweet honeycomb here!
+97      beehive
+0000    There is an active beehive nearby.  The bees hum protectively
+0000    around the hive.
+1000    There is an empty beehive nearby.
+98      black dog
+0000    A hideous black dog bares his teeth and growls at your approach.
+1000    Nearby, a large black dog is in a deep slumber.
+99      dreaded Wumpus
+0000    In the corner, a Wumpus is sleeping peacefully.
+1000    A sleepy Wumpus is ambling towards you.  He wants to invite you to
+1000    dinner.  He wants you to *be* the dinner!
+2000    The Wumpus is still on your trail!  And he's getting closer!!
+3000    The Wumpus is only a few steps behind you!  All this exercise is
+3000    making him veerrrrry hungry!
+4000    The Wumpus almost has you in his grasp!  You can feel his hot breath
+4000    on your neck!
+5000    "Chomp, chomp."  Crunch!  Chew!  Slurp!  Smack!  Yum!!!
+6000    Nearby is the smashed body of a defunct Wumpus.
+100     sign by quicksand
+0000    >$<
+101     little bird
+0000    A cheerful little bird is sitting here singing.
+102     black bird
+0000    There is a clay statue of a black bird here.
+103     fountain
+0000    There is a fountain of sparkling vintage wine here!
+104     bats & guano in bat-cave
+0000    >$<
+105     gnome in phone booth
+0000    >$<
+106     colored mushrooms
+0000    There are some oddly-colored mushrooms here.
+107     tiny cakes
+0000    There are some tiny cakes on the shelf.
+108     leather sack
+0000    There is a leather sack here.
+110     rare book
+0000    There is a dusty, leather-bound volume here.
+111     rare book
+0000    There is a dusty, leather-bound volume here.
+112     steel wall-safe
+0000    The safe door is locked.
+1000    The safe door is open.
+113     faded poster
+0000    Taped to the wall is a faded poster.
+1000    There is a faded poster here.
+114     whiskbroom
+0000    There is a small whiskbroom here.
+115     carving on dusty rocks
+0000    >$<
+116     billboard
+0000    >$<
+117     smoke rings
+0000    Smoke rings curl upward from the rock.
+118     metal cannister
+0000    There is a heavy, grey, metal cannister here.
+119     glowing stone
+0000    Nearby, a strange, greenish stone is glowing brightly.
+120     opal sphere
+0000    There is a polished sphere of pure opal here!
+121     cloth bag
+0000    There is a large cloth bag lying nearby.
+122     grey powder
+0000    Grey powder has been strewn all about.
+123     concrete
+0000    >$<
+124     shovel
+0000    A shovel is lying nearby.
+125     marble statue
+0000    There is an ancient marble statue lying here!
+126     sand on beach
+0000    >$<
+127     matchbox
+0000    There is a small matchbox here.
+1000    There is an empty matchbox here.
+128     match
+0000    >$<
+129     match
+0000    >$<
+130     match
+0000    >$<
+131     match
+0000    >$<
+132     match
+0000    >$<
+133     match
+0000    >$<
+134     wax candle
+0000    There is a wax candle here.
+135     perfect rose
+0000    Deep within the brambles is growing a perfect, blood-red rose!
+1000    A perfect, blood-red rose is growing here!
+2000    A perfect, blood-red rose lies here!
+136     dry, wilted rose
+0000    There is a dry, dead, wilted rose here.
+137     moat
+0000    >$<
+138     plastic card
+0000    Nearby is a small plastic card.
+139     slot in oaken door
+0000    >$<
+140     ivory tusk
+0000    There is a huge ivory tusk here!
+141     golden apple
+0000    Lying in one corner of the garden is a golden apple!
+1000    There is a golden apple here!
+142     beautiful painting
+0000    A beautiful painting is hung on the wall.
+1000    There is a beautiful painting here!
+143     priceless tapestry
+0000    A priceless tapestry is hanging on the wall!
+1000    There is a priceless tapestry here!
+144     golden fleece
+0000    A golden fleece is lying nearby!
+145     sachet of perfume
+0000    There is a sachet of rare perfume here!
+146     leprechaun
+0000    On top of the rock sits a little man dressed all in green and
+0000    puffing away on a small pipe, blowing smoke rings into the air.
+147     dusty rocks
+0000    >$<
+148     suede pouch
+0000    There is a suede pouch here.
+149     tobacco
+0000    There is a small heap of tobacco here.
+150     tarnhelm
+0000    There is a round iron helmet here.
+151     light over steel door
+0000    Above the door, a green light is shining.
+1000    Above the door, a yellow light is shining.
+2000    Above the door, a red light is flashing!
+3000    >$<
+152     maltese falcon
+0000    There is a jewel-encrusted statue of a bird here!
+153     wicker cage
+0000    A small wicker cage lined with paper spattered with bird
+0000    droppings lies nearby.
+1000    There is a small wicker cage discarded nearby.
+154     velvet pillow
+0000    A small velvet pillow lies on the floor.
+155     silver flute
+0000    A delicate silver flute is lying nearby.
+156     dry well
+0000    >$<
+157     elephant skeletons
+0000    >$<
+158     delicate conch
+0000    A rare, multi-hued conch is lying here!
+159     spicey food
+0000    There is some very spicey food here.
+160     black rod
+0000    A three foot black rod with a rusty star on an end lies nearby.
+161     black rod
+0000    A three foot black rod with a rusty mark on an end lies nearby.
+162     rare stamp
+0000    There is a rare postage stamp here!
+163     golden necklace
+0000    There is a golden necklace here!
+164     valuable furs
+0000    Nearby, some valuable furs have been strewn about.
+165     bronze shield
+0000    Nearby is an intricately-wrought bronze shield bearing the escutcheon
+0000    of Duke Aldor.
+166     huge yellow pill
+0000    A yellow pill-shaped tablet, as large as a doughnut, lies nearby.
+167     "Spelunker Today"
+0000    There are a few recent issues of "Spelunker Today" magazine here.
+168     winch
+0000    >$<
+1000    A heavy iron handle is inserted into the winch.
+169     leaflet
+0000    A leaflet is affixed to the staircase.
+1000    There is a small leaflet here.
+170     footprint of BigRat
+0000    >$<
+171     giant centipede
+0000    A giant centipede is eyeing you with a none-too-friendly look.
+1000    Provoked beyond endurance (centipedes have none), the indignant
+1000    insect lurches to all of its feet and starts towards you.
+2000    The cantankerous cootie is heading towards you, and he
+2000    definitely harbors no goodwill towards you.
+3000    The angry arthropod is definitely gaining on you.  You had
+3000    better either sprout several more legs or find some way to
+3000    evade him.
+4000    The incensed insect is in full gear now.  If you don't move
+4000    quickly, his monstrous mandibles may masticate you into murky mush!
+5000    You are just too slow!  The baneful bug has caught up to you!
+5000    The word "stomp" takes on a whole new meaning as you are kicked
+5000    to death by a creature with 73 feet!
+6000    You have raised the bridge just in time.  The centipede stamps
+6000    furiously up and down in front of the moat, but, finding no
+6000    way to cross, finally gives up and lumbers back to his cave.
+172     torches
+0000    >$<
+173     beautiful flowers
+0000    There are some beautiful flowers here!
+1000    On the other side of the room a swarm of bees eagerly buzzes over
+1000    a bunch of fresh flowers.
+174     set of keys
+0000    There are some keys on the ground here.
+175     upright piano
+0000    >$<
+176     iron handle
+0000    A heavy iron handle, slotted at one end and rounded at the other,
+0000    lies at your feet.
+177     wooden bar
+0000    >$<
+178     Orcan guard
+0000    Several jac-booted Orcs are standing guard around the aircraft.
+179     smooth, white pebble
+0000    There is a smooth, white pebble lying nearby.
+180     gold, silver, white, black tiles
+0000    >$<
+181     fuschia tile
+0000    >$<
+182     nacre tile
+0000    >$<
+183     orange tile
+0000    >$<
+184     red tile
+0000    >$<
+185     dun tile
+0000    >$<
+187     stone tablet
+0000    A massive stone tablet imbedded in the wall reads:
+0000    "Congratulations on bringing light into the Dark-Room!"
+188     tasty food
+0000    There is food here.
+189     silk sheeting
+0000    The sack is tightly packed with white silk sheeting.
+190     soiled paper
+0000    The cage is lined with paper spattered with bird droppings.
+1000    There is some soiled paper nearby.
+191     soiled paper
+0000    The cage is lined with paper spattered with bird droppings.
+1000    There is some soiled paper nearby.
+192     wooden box
+0000    A large wooden box has washed up on the shore.
+1000    There is a wooden box here.
+2000    A large wooden box has washed up onto the ravine's bank.
+193     glass bottle
+0000    There is a bottle of water here.
+1000    There is an empty bottle here.
+2000    There is a bottle of oil here.
+3000    There is a broken bottle here.
+4000    There is a bottle of wine here.
+194     silver button
+0000    >$<
+195     red button
+0000    >$<
+196     yellow button
+0000    >$<
+197     green button
+0000    >$<
+198     brown button
+0000    >$<
+199     shiny button
+0000    An old shiny button is lying here.
+200     digital meter
+0000    >$<
+201     silver ingots
+0000    There is a pile of silver ingots here!
+202     golden chain
+0000    There is a golden chain lying in a heap on the floor!
+1000    The bear is locked to the wall with a golden chain!
+2000    There is a golden chain locked to the wall!
+203     iron chain
+0000    >$<
+205     cabinet
+0000    >$<
+1000    The dumbwaiter is at this level.
+2000    The cabinet is actually the opening to a dumbwaiter shaft.  The
+2000    operation of the dumbwaiter is controlled by a pulley-mounted
+2000    iron chain.
+206     cracked shaving mug
+0000    There is an old cracked shaving mug here.
+207     dumbwaiter
+0000    >$<
+1000    The dumbwaiter is at this level.
+208     numbers on safe
+0000    >$<
+209     giant mosquitos
+0000    >$<
+211     ancient mystic amulet
+0000    An ancient mystic amulet, somewhat tarnished by the dampness, is
+0000    lying here!
+1000    An ancient mystic amulet is lying here!
+212     bear
+0000    There is a ferocious cave bear eying you from the far end of the room!
+1000    There is a gentle cave bear sitting placidly in one corner.
+2000    There is a contented-looking bear wandering about nearby.
+3000    >$<  (Dead)
+213     message in second maze
+0000    There is a message scrawled in the dust in a flowery script, reading:
+0000    "This is not the maze where the pirate leaves his treasure chest."
+214     volcano and/or geyser
+0000    >$<
+215     vending machine
+0000    There is a massive vending machine here.  The instructions on it
+0000    read:  "Insert coins to receive fresh batteries."
+1000    There is a massive vending machine here.
+216     batteries
+0000    There are fresh batteries here.
+1000    Some worn-out batteries have been discarded nearby.
+2000    Some worn-out batteries have been discarded nearby.
+217     carpet and/or moss
+0000    >$<
+-1
+6
+1       Somewhere nearby is Colossal Cave, where others have found fortunes in
+1       treasure and gold, though it is rumored that some who enter are never
+1       seen again.  Magic is said to work in the cave.  I will be your eyes
+1       and hands.  Direct me with natural English commands and I will tell
+1       you where you are and describe what is happening around you.  My
+1       normal language is Fnordish, so if I don't always understand what
+1       you tell me, be patient and try to say the same thing some other way.
+1       - - - -
+1       (If this is your first trip to ADVENTURE-Land, you should type
+1       "HELP" to get some general instructions.)
+1       Good Luck!
+1       - - - -
+2       A little dwarf with a big knife blocks your way.
+3       A little dwarf just walked around a corner, saw you, threw a little
+3       axe at you which missed, cursed, and ran away.
+4       There is a threatening little dwarf in the room with you!
+5       One sharp nasty knife is thrown at you!
+6       None of them hit you!
+7       One of them gets you!
+8       A hollow voice says "Plugh".
+9       There is no way to go that direction.
+10      I am unsure how you are facing.  Use compass points or nearby objects.
+11      I don't know in from out here.  Use compass points or name something
+11      in the general direction you want to go.
+12      I don't know how to apply that word here.
+13      I don't understand that!
+14      I'm game.  Would you care to explain how?
+15      Sorry, but I am not allowed to give more detail.  I will repeat the
+15      long description of your location.
+16      It is now pitch dark.  If you proceed you will likely fall into a pit.
+17      If you prefer, simply type "W" rather than "West".
+18      Are you trying to catch the bird?
+19      If you want to snatch the birdy's bod,
+19      You'd better hide that nasty rod.
+20      Are you trying to somehow deal with the snake?
+21      That nasty snake means to stay;
+21      You'll need a friend's help to chase her away.
+22      Do you really want to quit now?
+23      You fell into a pit and broke every bone in your body!
+24      You are already carrying it!
+25      You can't be serious!
+26      The bird was unafraid when you entered, but as you approach it becomes
+26      disturbed and you cannot catch it.
+27      You can catch the bird, but you cannot carry it.
+28      There is nothing here with a lock!
+29      You aren't carrying it!
+30      The little bird attacks the green snake, and in an astounding flurry
+30      drives the snake away.
+31      You have no keys!
+32      It has no lock.
+33      I don't know how to lock or unlock such a thing.
+34      It was already locked.
+35      Are you kidding?  You'd break every tooth in your mouth!
+36      The label on the bag reads: "Mix with care.  Property of
+36      Witt Construction Company".
+37      It was already unlocked.
+38      You have no source of light.
+39      Your lamp is now on.
+40      Your lamp is now off.
+41      There is no way to get past the bear to unlock the chain, which is
+41      probably just as well.
+42      Nothing happens.
+43      Where?
+44      There is nothing here to attack.
+45      The little bird is now dead.  Its body disappears.
+46      Attacking the snake both doesn't work and is very dangerous.
+47      You killed a little dwarf.
+48      You attack a little dwarf, but he dodges out of the way.
+49      With what?  Your bare hands?
+50      Good try, but that is an old worn-out magic word.
+51      Welcome.    In ADVENTURE you are invited to exercise your intelligence
+51      and imagination in the attempt to explore and master Colossal Cave and
+51      its environs.
+51      >$<
+51      You can "move" from place to place by typing in various motion  verbs,
+51      such as FOREST, BUILDING, DOWNSTREAM, ENTER, EAST, WEST, NORTH, SOUTH,
+51      UP,  or  DOWN.   As you move from place to place, I will describe your
+51      surroundings.  The first time you enter a place, I'll give you a  full
+51      description,  but,  just to move things along, I'll give you a shorter
+51      description when (if) you return.
+51      >$<
+51      To speed the game you can sometimes move long distances with a  single
+51      word.  For example, "BUILDING" (or "B", for short) usually gets you to
+51      the  building  from anywhere above ground except when lost or near the
+51      castle.  Also, note that cave passages turn a lot, and that leaving  a
+51      room to the north does not guarantee entering the next from the south.
+51      You'd best make yourself a map as you go along.
+51      >$<
+51      I  know  about a number of special objects, like a BLACK ROD hidden in
+51      the cave.  These objects can be manipulated using action words that  I
+51      know.   Examples of action verbs are TAKE, DROP, OPEN, DRINK, READ and
+51      so forth.  To manipulate objects, type normal  declarative  sentences.
+51      For example, if you wanted to pick up the black rod and insert it into
+51      a sack you could type:
+51      >$<
+51          TAKE BLACK ROD AND PUT IT INTO THE SACK
+51          PICK UP SACK AND CLOSE IT
+51      >$<
+51      Use  of  some  objects  may  have  side effects; for instance, the ROD
+51      scares the BIRD.  Usually people trying unsuccessfully  to  manipulate
+51      an  object are attempting something beyond their (or my!) capabilities
+51      and should try a completely different tack.
+51      >$<
+51      As you progress through the  cave,  you  may  find  objects  of  value
+51      (treasures).  Each treasure has a point value associated with it.  Its
+51      value is roughly proportional to the degree of difficulty of obtaining
+51      it.    To get full credit for a treasure, you must have left it safely
+51      in the building, though you get partial credit just for  locating  it.
+51      Note  that  leaving treasures *safely* in the building may be trickier
+51      than you think!
+51      >$<
+51      You lose points for getting killed, or for asking  for  hints,  though
+51      the  former  costs  you more.  There are also points based on how much
+51      (if any) of the cave you've managed to explore; in  particular,  there
+51      is  a  large bonus just for getting in (to distinguish the dilletantes
+51      from the rest of the pack), and there  are  other  ways  to  determine
+51      whether you've been through some of the more harrowing sections.
+51      >$<
+51      If you think you've found all the treasures, just keep exploring for a
+51      while.    If  nothing  interesting happens, you haven't found them all
+51      yet.  If something interesting *DOES* happen, it means you're  getting
+51      a  bonus  and  have  an  opportunity to garner many more points in the
+51      Master's Section.  I may occasionally offer hints if you  seem  to  be
+51      having  trouble.    If I do, I'll warn you in advance how much it will
+51      affect your score to accept the hints.
+51      >$<
+51      A word about my understanding of English -- I will try very hard to do
+51      whatever you say, but here  are  a  few  suggestions.    To  scarf  up
+51      everything movable at a given location, say 'TAKE EVERYTHING' or 'TAKE
+51      ALL'.    Some  objects may be differentiated only by some attribute or
+51      other.  For example, if you  were  holding  both  a  red  and  a  blue
+51      frammitz,  you  would  have to distinguish between them by typing 'RED
+51      FRAMMITZ' or 'BLUE FRAMMITZ' so that I'll know  which  one  you  mean.
+51      Also,  you  can  specify several actions or objects by using commas or
+51      'AND', as 'TAKE ABC,DEF AND XYZ AND BURN WITCH'.
+51      >$<
+51      The following commands will help you to play the game:
+51      >$<
+51      BRIEF           To save paper, you may type the command "BRIEF", which
+51                      tells me never to repeat the  full  description  of  a
+51                      place unless you explicitly ask me to.
+51      >$<
+51      DIAGNOSE        In  addition  to getting yourself killed, you can also
+51                      be wounded or injured in  various  (non-lethal)  ways.
+51                      If  you get burnt, poisoned, electrocuted or whatever,
+51                      you can check on  your  current  state  of  health  by
+51                      typing 'HEALTH' or 'DIAGNOSE'.  Note that recuperation
+51                      takes place faster outside in the fresh air!
+51      >$<
+51      EXAMINE         A  general verb for inspecting objects, e.g., "EXAMINE
+51                      FRAMMITZ".  Will often give useful  information  about
+51                      the specified object.  More specific operations can be
+51                      performed with the verb "LOOK", described below.
+51      >$<
+51      GRIPE           If  you  think  you have run into a program bug, or if
+51                      you have any ideas for extensions to  the  cave,  type
+51                      "GRIPE"  or  "REPORT" and then enter as long a message
+51                      as you like.  This will be immediately transmitted  to
+51                      the Wizard, who will try to reply within a day or two.
+51      >$<
+51      HOURS           To  see  what  hours  the  cave  is normally open, say
+51                      "HOURS".
+51      >$<
+51      INVENTORY, I    Lists what you are currently carrying.
+51      >$<
+51      LOOK, L         Reprints the detailed description of  where  you  are.
+51                      You  can  also  "LOOK  IN",  "LOOK  AT"  or "LOOK FOR"
+51                      appropriate objects.
+51      >$<
+51      QUIT            To end your adventure immediately.
+51      >$<
+51      PAUSE           To  suspend  your adventure such that you can continue
+51                      later, say "SUSPEND" (or "PAUSE" or "SAVE").  When you
+51                      pause in mid-game, a small disk file, named by you, is
+51                      created  which  holds  all  the  variable  information
+51                      pertinent  to  your game.  Prudent players should save
+51                      their games  prior  to  attempting  new  or  dangerous
+51                      challenges.
+51      >$<
+51      RESUME          A  suspended  game  can  be resumed by beginning a new
+51                      game and then typing "RESUME".
+51      >$<
+51      SCORE, TURNS    Tells you how well you're doing.
+51      >$<
+51      TERSE           Experienced  players  may  suppress  *all*   long-form
+51                      descriptions  by  typing  "TERSE".   You can return to
+51                      normal  description  mode  by  typing   "UNBRIEF"   or
+51                      "UNTERSE".
+51      >$<
+51      TREASURE(S)     You  may  manipulate  nearby treasures as a group with
+51                      the class  word  "TREASURES"  ("PRIZES",  "VALUABLES",
+51                      "T").
+51      >$<
+51      Comments        If you are playing on a hard-copy terminal and wish to
+51                      type  comments,  simply type a semi-colon (";") at any
+51                      point on the input line.  Everything you type in after
+51                      the semicolon is ignored by the parser.
+51      >$<
+51      Best Game       To encourage competition amongst the hackers, a  minor
+51                      new  feature  has been added to the game.  At startup,
+51                      the best game since some base date will be  displayed.
+51                      "Best  game"  is  that  game having the combination of
+51                      highest score and lowest number of turns.  A new  game
+51                      having  a  score  higher  than  the  current best game
+51                      always becomes the new best game.  A new game having a
+51                      score equal to the current best  game  but  played  in
+51                      fewer turns becomes the new best game.
+51      >$<
+51      Adventurers interested in the history and development of Colossal Cave
+51      and  environs  should  find  the  contents  of  the  safe  of especial
+51      interest.
+51      >$<
+51      Those interested in obtaining the latest releases of this game  should
+51      contact:
+51      >$<
+51          David E. Long
+51          GSB Computing Services
+51          University of Chicago
+51          1101 E 58th Street
+51          Chicago IL 60637
+51              Phone: 312/753-0860.
+51      >$<
+51      Finally,   adventurers   should  regularly  check  the  billboard  for
+51      announcements of current interest.
+51      >$<
+51                         Copyright (C) 1980 David E. Long
+51      >$<
+52      It misses!
+53      It gets you!
+54      Ok
+55      You can't unlock the keys.
+56      You have crawled around in some little holes and wound up back in the
+56      main passage.
+57      I don't know where the cave is, but hereabouts no stream can run on
+57      the surface for long.  I would try the stream.
+58      I need more detailed instructions to do that.
+59      I can only tell you what you see as you move about and manipulate
+59      things.  I cannot tell you where remote things are.
+60      I can't make any sense out of that.
+61      What?
+62      Are you trying to get into the cave?
+63      The grate is set in solid rock;
+63      You'll need some keys to pick that lock.
+64      The trees of the forest are large hardwood oak and maple, with an
+64      occasional grove of pine or spruce.  There is quite a bit of under-
+64      growth, largely birch and ash saplings plus nondescript bushes of
+64      various sorts.  This time of year visibility is quite restricted by
+64      all the leaves, but travel is quite easy if you detour around the
+64      spruce and berry bushes.
+65      Welcome to ADVENTURE!!  Would you like instructions?
+66      Digging without a shovel is quite impractical.  Even with a shovel
+66      progress is unlikely.
+67      Blasting requires dynamite.
+68      I'm as confused as you are.
+69      Mist is a white vapor, usually water, seen from time to time in
+69      caverns.  It can be found anywhere but is frequently a sign of a deep
+69      pit leading down to water.
+70      Your feet are now wet.
+71      I think I just lost my appetite.
+72      Thank you, it was delicious!
+73      You have taken a drink from the clear water.  The water tastes
+73      strongly of minerals, but is not unpleasant.  It is extremely cold.
+74      The bottle is now empty.
+75      Rubbing the electric lamp is not particularly rewarding.  Anyway,
+75      nothing exciting happens.
+76      Peculiar.  Nothing unexpected happens.
+77      Your bottle is empty and the ground is wet.
+78      The ground here is not suitable for digging.
+79      Watch it!
+80      Which way?
+81      Oh dear, you seem to have gotten yourself killed.  I might be able to
+81      help you out, but I've never really done this before.  Do you want me
+81      to try to reincarnate you?
+82      All right.  But don't blame me if something goes wr......
+82      *                    --- POOF!! ---                    *
+82      You are engulfed in a cloud of orange smoke.  Coughing and gasping,
+82      you emerge from the smoke and find....
+83      You clumsy oaf, you've done it again!  I don't know how long I can
+83      keep this up.  Do you want me to try reincarnating you again?
+84      Okay, now where did I put my orange smoke?....  >POOF!<
+84      Everything disappears in a dense cloud of orange smoke.
+85      Now you've really done it!  I'm out of orange smoke!  You don't expect
+85      me to do a decent reincarnation without any orange smoke, do you?
+86      Okay, if you're so smart, do it yourself!  I'm leaving!
+90      >>> Messages 81 thru 90 are reserved for "Obituaries". <<<
+91      Sorry, but I no longer seem to remember how it was you got here.
+92      It's too heavy.  You'll have to drop something first.
+93      You can't go through a locked steel grate!
+94      I believe what you want is right here with you.
+95      You don't fit through a two-inch slit!
+96      I respectfully suggest you go across the bridge instead of jumping.
+97      There is no way across the fissure.
+98      You're not carrying anything.
+99      You are currently holding the following:
+100     It's not hungry (it's merely pinin' for the fjords).  Besides, you
+100     have no bird seed.
+101     The snake has now devoured your bird.
+102     There's nothing here it wants to eat (except perhaps you).
+103     You fool, dwarves eat only coal!  Now you've made him *REALLY* mad!!
+104     Your cask is empty and the ground is soaked.
+105     You aren't carrying them!
+106     I don't need to, thank you.
+107     The ground is wet and the air is smelly.
+108     Your lamp is now on, but the glare from the walls is absolutely
+108     blinding.  If you proceed you are likely to fall into a pit.
+109     The vines are extremely tough and deeply rooted into the cliff wall.
+109     And they wouldn't be good for much anyway.
+110     Don't be ridiculous!
+111     The door is extremely rusty and refuses to open.
+112     The plant indignantly shakes dry its leaves and asks, "Water?"
+113     The hinges are quite thoroughly rusted now and won't budge.
+114     The oil has freed up the hinges so that the door will now move,
+114     although it requires some effort.
+115     The plant has exceptionally deep roots and cannot be pulled free.
+116     The dwarves' knives vanish as they strike the walls of the cave.
+117     Something you're carrying won't fit through the tunnel with you.
+117     You'd best take inventory and drop something.
+118     You can't fit this five-foot clam through that little passage!
+119     You can't fit this five-foot oyster through that little passage!
+120     I advise you to put down the clam before opening it.  >Strain!<
+121     I advise you to put down the oyster before opening it.  >Wrench!<
+122     You don't have anything strong enough to open the clam.
+123     You don't have anything strong enough to open the oyster.
+124     A glistening pearl falls out of the clam and rolls away.  Goodness,
+124     this must really be an oyster.  (I never was very good at identifying
+124     bivalves.)  Whatever it is, it has now snapped shut again.
+125     The oyster creaks open, revealing nothing but oyster inside.  It
+125     promptly snaps shut again.
+126     You have crawled around in some little holes and found your way
+126     blocked by a recent cave-in.  You are now back in the main passage.
+127     There are faint rustling noises from the darkness behind you.
+128     Out from the shadows behind you pounces a bearded pirate!  "Har, har,"
+128     he chortles, "I'll just take all this booty and hide it away with me
+128     chest deep in the maze!"  He snatches your treasure and vanishes into
+128     the gloom.
+129     A sepulchral voice reverberating through the cave, says, "Cave closing
+129     soon.  All adventurers exit immediately through Main Office."
+130     A mysterious recorded voice groans into life and announces:
+130        "This exit is closed.  Please leave via Main Office."
+131     It looks as though you're dead.  Well, seeing as how it's so close to
+131     closing time anyway, I think we'll just call it a day.
+132     The sepulchral voice entones, "The cave is now closed."  As the echoes
+132     fade, there is a blinding flash of light (and a small puff of orange
+132     smoke). . . .    As your eyes refocus, you look around and find...
+133     There is a loud explosion, and a twenty-foot hole appears in the far
+133     wall, burying the dwarves in the rubble.  You march through the hole
+133     and find yourself in the Main Office, where a cheering band of
+133     friendly elves carry the conquering adventurer off into the sunset.
+134     There is a loud explosion, and a twenty-foot hole appears in the far
+134     wall, burying the snakes in the rubble.  A river of molten lava pours
+134     in through the hole, destroying everything in its path, including you!
+135     There is a loud explosion, and you are suddenly splashed across the
+135     walls of the room.
+136     The resulting ruckus has awakened the dwarves.  There are now several
+136     threatening little dwarves in the room with you!  Most of them throw
+136     knives at you!  All of them get you!
+137     Oh, leave the poor unhappy bird alone.
+138     I daresay whatever you want is around here somewhere.
+139     I'm not sure what you mean by "Stop".  Use "Quit" if you want to give
+139     up.
+140     You can't get there from here.
+141     You are being followed by a very large, tame bear.
+142                *** THE HISTORY OF ADVENTURE (ABRIDGED) ***
+142                            By:  W. I. Zerd, F.R.C.W.
+142     >$<
+142     ADVENTURE was originally developed by William Crowther, and later
+142     substantially rewritten and expanded by Don Woods at Stanford Univ.
+142     According to legend, Crowther's original version was modelled on an
+142     a real cavern, called Colossal Cave, which is a part of Kentucky's
+142     Mammoth Caverns.  That version of the game included the main maze
+142     and a portion of the third-level (Complex Junction - Bedquilt -
+142     Swiss Cheese rooms, etc.), but not much more.
+142     >$<
+142     Don Woods and some others at Stanford later rewrote portions of
+142     the original program, and greatly expanded the cave.  That version
+142     of the game is recognizable by the maximum score of 350 points.
+142     >$<
+142     The latest additions were done throughout 1978-80 by David Long
+142     at the University of Chicago, Graduate School of Business.
+142     Long's additions include the seaside entrance and all of
+142     the cave on the "far side" of Lost River (Rainbow Rm - Crystal
+142     Palace - Blue Grotto - Rotunda - beyond Joshua's wall, etc., etc.).
+142     The surface has also been greatly increased to include a much
+142     more varied landscape containing swamp, marsh, seashore and
+142     meadowland areas.  Most recent additions include the great Castle of
+142     Aldor, the Elephants' Burial Ground, Leprechaun Rock and more.
+142     The current cave is more than double the size of the Woods model,
+142     and moreover the puzzles and treasures are somewhat more "dense",
+142     (and more difficult!) in the current version.  During the expansion
+142     process, the code was almost entirely rewritten to permit more
+142     generalized handling of objects and to interpret a more complex
+142     natural English syntax.
+142     >$<
+142     Except for a couple of trivial subroutines (to get user-ID's for
+142     logging purposes), ADVENTURE is written entirely in FORTRAN.  This
+142     not because Crowther/Woods/Long love FORTRAN, but because it is
+142     almost infinitely portable.  There were indeed moments when it took
+142     great strength to withstand the temptation to whip out some character
+142     handling routine in MACRO, instead of the furshlugginer compiler.
+142     For example, there is an excellent rival game to Adventure, called
+142     DUNGEON, developed at M.I.T., which is totally non-portable since
+142     it is coded in an obscure variant of two initially obscure compilers,
+142     and can only be transported in executable form between DEC-10's
+142     and 20's.
+142     >$<
+142     Thanks are owed to Roger Matus and David Feldman, both of U. of C.,
+142     for several suggestions, including the Rainbow Room, the telephone
+142     booth and the fearsome Wumpus.  Further thanks go to J. R. Carlson,
+142     Bob Silverman and John Rager for many debugging suggestions.
+142     Most thanks (and apologies) go to Thomas Malory, Charles Dodgson,
+142     the Grimm Brothers, Dante, Homer, Frank Baum and especially Anon.,
+142     the real authors of ADVENTURE.
+142     >$<
+142            Copyright (C) 1978, 1979, 1980, David E. Long
+143     Do you indeed wish to quit now?
+144     There is nothing here with which to fill the vase.
+145     The sudden change in temperature has delicately shattered the vase.
+146     It is beyond your power to do that.
+147     I don't know how.
+148     It is too far up for you to reach.
+149     You killed a little dwarf.  The body vanishes in a cloud of greasy
+149     black smoke.
+150     The shell is very strong and is impervious to attack.
+151     What's the matter, can't you read?  Now you'd best start over.
+152     The axe bounces harmlessly off the dragon's thick scales.
+153     The dragon looks rather nasty.  You'd best not try to get by.
+154     The little bird attacks the green dragon, and in an astounding flurry
+154     gets burnt to a cinder.  The ashes blow away.
+155     On what?
+156     Okay, from now on I'll only describe a place in full the first time
+156     you come to it.  To get the full description, say "LOOK".
+157     Trolls are close relatives with the rocks and have skin as tough as
+157     that of a rhinoceros.  The troll fends off your blows effortlessly.
+158     The troll deftly catches the axe, examines it carefully, and tosses it
+158     back, declaring, "Good workmanship, but it's not valuable enough."
+159     The troll catches your treasure and scurries away out of sight.
+160     The troll refuses to let you cross.
+161     There is no longer any way across the chasm.
+162     Just as you reach the other side, the bridge buckles beneath the
+162     weight of the bear, which was still following you around.  You
+162     scrabble desperately for support, but as the bridge collapses you
+162     stumble back and fall into the chasm.
+163     The bear lumbers toward the troll, who lets out a startled shriek and
+163     scurries away.  The bear soon gives up the pursuit and wanders back.
+164     The axe misses and lands near the bear where you can't get at it.
+165     With what?  Your bare hands?  Against *HIS* bear hands??
+166     The bear is confused; he only wants to be your friend.
+167     For crying out loud, the poor thing is already dead!
+168     The bear eagerly licks up the honeycomb, after which he seems to calm
+168     down considerably and even becomes rather friendly.
+169     The bear is still chained to the wall.
+170     The chain is still locked.
+171     The ravine is too deep to cross, but you might be able to climb down
+171     into it on this side.  The ravine wall is extremely steep, however.
+172     How?  Through solid rock?
+173     There is nothing here to which the chain can be locked.
+174     There is nothing here to eat.
+175     Do you want the hint?
+176     Do you need help getting out of the maze?
+177     If you try dropping some of your pelf,
+177     You may find your long lost self.
+178     Are you trying to explore beyond the Plover Room?
+179     Why not indeed explore that way?
+179     For if you do, it'll surely pay.
+179     And why, too, should I offer a clue? --
+179     I have better things to do!
+180     Do you need help getting out of here?
+181     T'would be best
+181     To avoid going West.
+182     Gluttony is not one of the troll's vices.  Avarice, however, is.
+183     Your lamp is getting dim.  You'd best start wrapping this up, unless
+183     you can find some fresh batteries.  I seem to recall there's a vending
+183     machine in the maze.  Bring some coins with you.
+184     Your lamp has run out of power.
+185     A sudden draft has extinguished your match.
+186     There are faint rustling noises from the darkness behind you.  As you
+186     turn toward them, the beam of your lamp falls across a bearded pirate.
+186     He is carrying a large chest.  "Shiver me timbers!", he cries, "I've
+186     been spotted!  I'd best hie meself off to the maze to hide me chest!"
+186     With that, he vanishes into the gloom.
+187     Your lamp is getting dim.  You'd best replace those batteries.
+188     Your lamp is now shining with renewed strength.
+189     Your lamp is getting dim, and you haven't any more coins.  You'd
+189     best start wrapping this up.
+190     I'm afraid the magazine is written in dwarvish.
+191     "This is not the maze where the pirate leaves his treasure chest."
+192     Hmmm, this looks like a clue, which means it'll cost you 10 points to
+192     read it.  Should I go ahead and read it anyway?
+193     It says,
+193     "Something about this place is new,
+193     Although it may appear old to you.
+193     If you really want to win,
+193     I'm afraid you'll have to make a din."
+194     It says the same thing it did before.
+195     I'm afraid I don't understand.
+196     "Congratulations on bringing light into the dark-room!"
+197     You strike the mirror a resounding blow, whereupon it shatters into a
+197     myriad tiny fragments.
+198     You have taken the vase and hurled it delicately to the ground.
+199     You prod the nearest dwarf, who wakes up grumpily, takes one look at
+199     you, curses, and grabs for his axe.
+200     Is this acceptable?
+201     There's no point in suspending a demonstration game.
+202     You managed to climb about halfway up before losing your hold and
+202     sliding back.
+203     You were only a few yards from the top when you slipped and tumbled
+203     all the way back down.
+204     Ok, ok.  No need to be grabby.
+205     Pulling an angry bear around is a good way to get your arm ripped off.
+206     The sword is now very clean.
+207     The sword is now covered with oil.
+208     The handle is now too slippery to grasp.
+209     You have no scabbard!
+210     You are already wearing it!
+211     Do you want to extract the sword from the anvil?
+212     The sword will all your efforts foil
+212     Until you gain a stature royal.
+213     Are you trying to go up the slide?
+214     You can slide and you can slip,
+214     But there's an easier way to make the trip.
+215     You grasp the sword's handle and pull, but the sword won't budge.
+215     Do you want to try yanking it out?
+216     A tiny little man dressed all in green runs straight at you, shouts
+216     "Phuce!", aims a kick squarely at your kneecap, misses, and
+216     disappears into the forest.
+217     You can't swim.  You'd best go by boat.
+218     The boat's oars were stolen by the dwarves to play bing-bong.
+218     (That's dwarvish ping-pong -- with rocks!).  You have no way
+218     to propel the boat.
+219     You are still in the boat.  It is too heavy to carry.
+220     You had better leave the boat first.
+221     You are now sitting in a small boat.
+222     You couldn't possibly cross this sea without a large ship.
+223     The cliff is unscalable.
+224     Your keys are all too large for the lock.
+225     The wall is too smooth to climb.
+226     The shelf is beyond your reach.
+227     You are already wearing them!
+228     You thought maybe it was mescaline??  You feel a little dizzy,
+228     but nothing happens.
+229     You are growing taller, expanding like a telescope!  Just before
+229     your head strikes the top of the chamber, the mysterious process
+229     stops as suddenly as it began.
+230     You are closing up like an accordion....shrinking..shrinking.  You
+230     are now your normal size.
+231     You have smashed your bottle all over the ground.
+232     You are now too big to leave the way you came in.
+233     This little door was built for elves,
+233     Who don't blab secrets outside themselves.
+233     >$<
+233           - or -      (a bonus clue!)
+233     >$<
+233     If you're taller,
+233     You'll have to get smaller.
+234     Parting the vines reveals a narrow crack in the face of the cliff.
+235     Sounds good.  Are you in training to be the pied piper, or what?
+236     Are you trying to ascend the wellshaft?
+237     You may be phoney or you may be sincere,
+237     But only a fakir could climb from here.
+238     You are blocked by a wall of solid rock.
+239     >$<
+240     The Wumpus looks at the food with distaste.  He looks at *YOU* with
+240     relish!
+241     You have jerked the cloak free of the rocks.  However, in doing
+241     so you have caused a small rockslide, blocking the entrance
+241     and making an unholy din.
+242     The cloak is stuck tight under the rocks.  You'll probably have to
+242     yank it out.
+243     The Wumpus grabs the axe, stops and picks his teeth with it for a few
+243     moments while looking thoughtfully at you.  When he finishes picking
+243     his teeth, he eats the axe, belches, farts... and starts after
+243     you again!
+244     As the bridge disappears, the Wumpus scrambles frantically to reach
+244     your side of the fissure.  He misses by inches, and with a horrible
+244     shriek plunges to his death in the depths of the fissure!
+245     You can't even hit a sleeping Wumpus!  The axe is now lying too near
+245     the Wumpus for you to retrieve it.
+246     The Wumpus is between you and the axe.  You can't reach it.
+247     You can't fit through a six-inch door!
+248     The dog easily dodges the axe, which lands beyond him where you can't
+248     get at it.
+249     The dog wolfs (natch) down the food and looks around hungrily for
+249     more.  However, he does not appear to be any better disposed towards
+249     your presence.
+250     You've got to be kidding!
+251     It's attached to the wall!
+252     You can't put a thing into itself!
+253     The gnome firmly blocks the door of the booth.  You can't enter.
+254     The constant ringing has awakened the dwarves!
+254     There are now several threatening little dwarves in the room with
+254     you!  Most of them throw knives at you!  All of them get you!
+255     The telephone is out of order.
+256     The telephone is out of order and your hand is sore.
+257     A couple of lead slugs drop from the coinbox.  (Gnomes are
+257     notoriously cheap....)  But you've broken the phone beyond
+257     all hope.
+258     He wants treasure, not gab.
+259     He didn't say anything!
+260     It isn't a parrot.  He didn't say anything.
+261     No one replies.  The line goes dead with a faint "CLICK".
+262     I think you are a little confused!
+263     As you move towards the phone booth, a gnome suddenly streaks
+263     around the corner, jumps into the booth and rudely slams the door
+263     in your face.  You can't get in.
+264     He isn't hungry.
+265     As the blast of the horn reverberates through the chamber, the
+265     seemingly solid rock wall crumbles away, revealing another room just
+265     beyond.  The wall was most likely worn thin by an ancient watercourse
+265     which dried up just before completely wearing away the rock.
+266     The chamber reverberates to the blast of the horn.
+266     (Satchmo you ain't!)
+267     The bees swarm over the fresh flowers, leaving the hive unguarded
+267     and revealing a sweet honeycomb.
+268     You are now out of breath.
+269     It isn't ringing!
+270     A hairy paw reaches out of the darkness and....
+271     You don't have the correct change.
+272     You go a short way down the bright passage, but the light
+272     grows to blinding intensity.  You can't continue.
+273     You know, if you type "BRIEF", I won't have to keep repeating these
+273     long descriptions of each room.
+274     Are you trying to reach the natural bridge?
+275     From here to there you cannot go,
+275     Seek Joshua's Wall and blow, man, blow.
+276     You turkey!!!  Now you've done it!  It took some effort, but you
+276     woke up the Wumpus.  He slowly opens one red eye, and then another,
+276     and then one more (!!), and looks at you sleepily.  He had been
+276     dreaming of a late snack.  If you don't act quickly, you'll
+276     be a *late* adventurer!
+277     The blast of your horn echos throughout hill and dale.
+278     All you have are watercress sandwiches.  The bear is less than
+278     interested.
+279     You have smashed your sword to smithereens against a rock.
+280     Setting yourself adrift in the boat with no way to propel it would
+280     not be very smart.  Best to keep the pole.
+281     You're already in it!
+282     You've hit the jackpot!!  Hundreds of coins and slugs cascade from
+282     the telephone's coin return slot and spill all over the floor of
+282     the booth.
+283     Whoops!  The floor has opened out from under you!  It seems you
+283     have fallen into a bottomless pit.  As a matter of fact, you're
+283     still falling!  Well, I have better things to do than wait around
+283     for you to strike bottom, so let's just assume you're dead.
+283     Sorry about that, Chief.
+284     The telephone in the booth has begun to ring.
+285     I don't understand what you are trying to do!
+286     How do you propose to cross the river?
+287     The air is filled with beautiful music.
+288     The air fills with beautiful music.  The dog gradually becomes
+288     less fierce, and after a short while he lies down by the side of
+288     the cavern and falls into a deep sleep.
+289     Are you trying to get past the dog?
+290     The only stranger to pass this way,
+290     Was held in Euridice's sway.
+291     That wouldn't be wise.  It is best to let sleeping dogs lie.
+292     The stream flows out of one very small crack and into another.
+292     You can't go that way.
+293     The river is too wide and deep to cross.
+294     The glare is absolutely blinding.  If you proceed you are likely
+294     to fall into a pit.
+295     The hum of the bees rises to an angry buzz as you move towards
+295     the hive.
+296     The sticks and branches are all in a tangle and are stuck deep in
+296     the mud.  You can't pull them out.
+297     You're already carrying them!
+298     The chalice is slightly cracked.  It won't hold any liquids.
+299     The cask is now empty.
+300     The wine goes right to your head.  You reel around in a drunken
+300     stupor and finally pass out.  You awaken with a splitting headache,
+300     and try to focus your eyes....
+301     Yeeeecchhh!!
+302     Your bottle is already full.
+303     The cask is already full.
+304     There is nothing here with which to fill the bottle.
+305     There is nothing here which you would want to put into the cask.
+306     Your bottle is now full of water.
+307     The cask is now full of water.
+308     Your bottle is now full of oil.
+309     The cask is now full of oil.
+310     The bottle is now full of wine.
+311     The cask is now full of wine.
+312     You have nothing in which to carry it.
+313     You can't fill that.
+314     Do you want it in the bottle or the cask?
+315     Your containers are both full.
+316     It's empty.
+317     Hmmm, I see you have already gone through an extra set of batteries.
+317     I'll get rid of the trash for you.
+318     The bridge shakes as you cross.  Large hunks of clay and rock near
+318     the edge break off and hurtle far down into the chasm.  Several of
+318     the cracks on the bridge surface widen perceptibly.
+319     The load is too much for the bridge!  With a roar, the entire
+319     structure gives way, plunging you headlong into the raging river at
+319     the bottom of the chasm and scattering all your holdings.  As the
+319     icy waters close over your head, you flail and thrash with all your
+319     might, and with your last ounce of strength pull yourself onto the
+319     south bank of the river.
+320     You can't get at him.  He is inside the phone booth.
+321     Your lamp is already on.
+322     Your lamp is already off.
+323     Your lamp is again growing dim.  You'd better get some more batteries.
+324     You know, you are wasting your batteries by wandering around out
+324     here with your light on.
+325     Out of the corner of your eye, you see a quick movement.  As
+325     you turn, a creature the size of a large dog disappears into
+325     some bushes.
+326     Dead wumpi, as a rule, have little appetite.  Nothing happens.
+327     How do you expect to feed a sleeping Wumpus?
+328     You aren't holding it!
+329     It won't fit!
+330     The coin drops into the slot with a dull "clunk".  There is no
+330     dial tone.
+331     It's already there.
+332     Thank you for your comments.  They will be dispatched immediately
+332     via Gnome Express to the Wizard.
+333     You can't squeeze past the boulder.
+334     Grunt...Pant...You have pushed the boulder to one side, enough to
+334     permit you to squeeze past it.
+335     You can't get at it.
+336     It's already open.
+337     It's locked.
+338     It's already closed.
+339     You can't fill that.  It would leak all over the place.
+340     It's not inside anything.
+341     It isn't there!
+342     How?
+343     Taken.
+344     Dropped.
+345     I don't think I can.
+346     Interesting.  How?
+347     Huh?
+348     You are in perfect health.
+349     You are fit as a fiddle.
+350     Only wizards can do that!
+351     Are you kidding?  Do you want to suffocate the poor thing?
+352     Thrown.
+353     Left.
+354     You can't get close enough for a clean thrust.
+355     As you move in for the kill, the dwarf neatly slips a knife
+355     between your ribs.
+356     As you approach, the dwarf slashes out with his knife!
+357     It's too dark to see anything!
+358     <Pant!> <Strain!> The boulder now blocks the path again.
+359     There's nothing inside.
+360     It contains:
+361     Sorry, that feature isn't implemented in this version of the
+361     game.  You'll have to complain to the Wizard in person.
+362     Hidden behind the poster is a steel safe, embedded in the wall.
+363     Brushing the dust from one of the larger rocks reveals some carved
+363     characters.
+364     Enough dusting, already!  You're making me sneeze.
+365     The safe door smoothly swings open.
+366     Maybe if you rubbed your fingertips with sandpaper....
+367     The safe's door clicks shut.
+368     This is a combination safe.  The keys won't help.
+369     I certainly can't read in this light.
+370     The poster has a picture of a thin man with a long white beard.
+370     He is wearing a high pointed cap embroidered with strange symbols,
+370     and he is pointing a finger at you.  Below the picture are the words:
+370     >$<
+370     !--------------------------------------------------------------------!
+370     ! "I want you!--To report all good ideas for extensions to this game !
+370     ! to me without delay.  Remember: ask not what ADVENTURE can do to   !
+370     ! you; ask what you can do for ADVENTURE."                           !
+370     !                           -  -  -                                  !
+370     ! >>>A public service of the John-Dillinger-Died-for-You Society<<<  !
+370     !--------------------------------------------------------------------!
+371     "Click."
+372     In the rock is carved the inscription:
+372     >$<
+372           +------------------------------------------------+
+372           !                In Memoriam:                    !
+372           !  John Dillinger, Liberator of the Little Man.  !
+372           !               Died: 7-22-34.                   !
+372           +------------------------------------------------+
+373     All the food needed was a bit of spicing up: it smells delicious!
+374     Ok, I'll give you the full description whenever you enter a room
+374     for the first time.
+375     You don't have the right key.
+376     That's not strong enough to open the clam.
+377     That's not strong enough to open the oyster.
+378     The top of the bottle is too small.  You can't get it in.
+379     There is only a small hole in one end of the cask.  You can't force
+379     anything solid through the hole.
+380     >>> Messages 381 thru 389 are reserved for "Diagnoses". <<<
+381     You are a bit off top form, but nothing to worry about.
+382     You are weaker than usual.  Better avoid fights.
+383     You really ought to take a break.  You're in tough shape.
+384     You are on the edge of collapse.  Lots of sun and fresh air will
+384     speed your recovery.
+385     Your strength is nearly gone.  Only a miracle can save you now.
+386     ** Reserved **
+387     ** Reserved **
+388     ** Reserved **
+389     ** Reserved **
+390     >>> Messages 391 thru 399 are reserved for Radium Poisoning. <<<
+391     Is it hot in here?  You are flushed and sweating.
+392     You are feeling definitely peculiar, weak....
+393     You're dizzy, nauseous.  You can barely stand.
+394     You are really ill.  If you don't find an antidote soon, it's
+394     curtains.
+395     You are a walking wound.  You are very weak.  You'd better find out
+395     what's wrong before it's too late.
+396     Sheeesh!  What a mess!  Your hair has fallen out and your skin is
+396     covered with blisters.  And not an aspirin in sight!
+397     Well, you tried, but your strength is gone.  The agony is finally
+397     over.
+398     ** Reserved **
+399     ** Reserved **
+400     The ledge is too steep for the bear, who refuses to follow.
+401     The path in that direction is too steep.  You can't proceed.
+402     You have stumbled blindly through the trackless muck.
+403     On the back of the billboard is a scrawled note:
+403     >$<
+403              B E   A L E R T !!    The world needs more lerts.
+404     As the grey powder mixes with the bubbling quicksand, the whole
+404     mixture gradually thickens to a rocklike hardness.
+405     The grey powder is too fine to pick up.
+406     You are standing in a knee-deep hole in the bat guano.
+407     You are up to your hips in bat guano.
+408     You've got bat turds hanging off your ears, wimp!  This isn't
+408     getting you anywhere.  Best try somewhere else.
+409     You've dug yourself into a three foot hole in the sand.
+410     You're up to your waist in sand.
+411     You're in a deep pit in the sand.
+412     You have unearthed a delicate, multi-hued conch.
+413     You can't burn that!
+414     It's already burning!
+415     You have nothing to light it with!
+416     The match flares into flame.
+417     You already have a lit match.
+418     You have no more matches.
+419     The axe is too small to do much good.  The thorns cut your arm.
+420     Your elfin sword makes short work of the brambles.  After a few
+420     minutes work, you hack a large hole through the tangle.
+421     The axe disappears into the thicket.  You can't reach it.
+422     The bramble bush sucks up the water and grows even thicker.
+423     The dry brambles immediately catch fire and disappear in a roar
+423     of flame.
+424     You can't reach it.
+425     I'm afraid it's a little late for that.
+426     As you place the rose into the vase, the rose opens in full bloom,
+426     revealing a sachet of rare perfume inside.
+427     The following are being removed:
+428     <Grunt!>  <Oy-Vey!>  Although the boulder moves a fraction of an inch,
+428     it is too heavy for you to roll away.
+429     Are you trying to get past the boulder?
+430     You're just too tired to move that rock;
+430     A good *hot* meal would help a lot.
+431     Zam!  What a meal!  Now we're ready for anything!
+432     As you approach the rock, an indistinct muttering sound arises from
+432     the general area of the rock.  The only word you can hear clearly
+432     is "Fnord!"
+433     As you approach the rock, the little man suddenly notices your
+433     shamrock.  "Well, well," says he, "you may be able to see me now,
+433     but you'll never get by this place until you have vanquished one
+433     much larger than I!  Fnord!"
+434     As you approach the rock, the leprechaun (for indeed that is what he
+434     is) notices your shamrock *and* your ring, and with a muttered curse,
+434     disappears.
+435     Donning the shamrock makes you aware of something you hadn't
+435     noticed before....
+436     Loose tobacco won't burn.
+437     You can't light an empty pipe!
+438     Fat chance.
+439     No way!
+440     Get serious, you bozo!
+441     The leaflet reads:
+441     >$<
+441     Notice: Stairway blocked until further notice.  Upper quarters
+441     of castle still under renovation.  -- Haf Witt, Foreman.
+442     Through a solid wall?  Sounds pretty tricky to me...
+443     Eat flowers?  Only health nuts and left-wingers do that!
+444     There is an ominous rustling behind you in some nearby underbrush.
+445     From a dark corner of the room a pair of feral eyes glitter
+445     brightly, and then vanish silently.
+446     A faint sound as of rapid breathing and a fetid stink fills the
+446     air for a moment, and then, just as mysteriously as it began, it
+446     vanishes.
+447     [** UNUSED -- BUG **]
+448     Parting the vines reveals a dim recess in the cliff wall.
+449     Attacking a creature with 73 feet and hair on its teeth would
+449     not be the smartest thing in the world.
+450     The axe has no effect on the big bug's armor-like exoskeleton.
+451     You couldn't leave well enough alone, could you?
+452     You have snatched the centipede's very own security blanket!
+453     The food tastes bland, but is not unpalatable.
+454     The face of the card bears the embossed legend:
+454     >$<
+454            --------------------------------------------
+454            !   M E R K I N   E X P R E S S   C A R D  !
+454            !                                          !
+454            !   (Aren't *YOU* proud to be a Merkin?)   !
+454            --------------------------------------------
+454     >$<
+454     The back of the card is blank, except for a wide, dark-brown stripe.
+455     The door is locked.
+456     From behind the door there is a whirring sound and the card is
+456     sucked from your hand.  A moment later, the great oaken door
+456     swings open.
+457     The liquid reacts oddly with the black substance covering the
+457     statue of the bird.  After a few moments, the black coating
+457     dissolves completely, revealing a statue of solid gold encrusted
+457     with priceless gems of every description!
+458     The door has no keyhole!
+459     You are obviously attempting to intrude into a section of the castle
+459     in which you have no business.  Faster than you can spit, a
+459     trapdoor springs open beneath you, catapulting you into a deep
+459     pit at the bottom of which a number of sharp, upright spikes
+459     have been affixed.
+460     Whoops, it's pitsville again!
+461     As soon as you press the last tile, the great steel door slowly
+461     swings open with an eerie silence.
+462     Done.
+463     The lamp is hardwired into the wall above the door.  You can't
+463     get at it.
+464     From somewhere behind you there is a faint chuckling, but
+464     nothing else happens.
+465     The thin black coating on the statue goes up in a flash, revealing
+465     a statue of solid gold encrusted with priceless gems of every
+465     description!
+466     "North" is too ambiguous here: you can 'climb' the staircase,
+466     or enter one of the N/S hallways on either side of the stairs
+466     by typing 'NE' or 'NW'.
+467     You are wearing:
+468     Ahh, stroke them ivories!   Play it, Sam.
+469     The document is written in an undecipherable script.  However,
+469     it bears the official seal of the Orcan government.
+470     You have no way of manipulating the winch.
+471     The iron bar, evidently the winch handle, slips easily into the
+471     winch mechanism.
+472     The ancient coat-of-arms of the family of Aldor consists of a gold
+472     fiddle-dee-dee with bronze oak leaf cluster.  Stemming from the
+472     cluster are three brass spheres, under which is the family motto
+472     (obviously in Latin): "IN HOC TU OFFEN".
+473     The silk sheeting is tightly folded and is attached to the
+473     knapsack by numerous strong cords.  You can't remove it.
+474     The door slams shut as soon as you hit the button, followed by
+474     the sound of the engine revving up.  After many minutes of noise
+474     and vibration, the engine falls silent and the door slides open.
+475     Rattle, roar, shake, etc....
+476     The paper is a worthless deed to a defunct silver mine.
+477     The paper is a valuable deed to a reclaimed silver mine.
+478     The ledge drops off into a sheer cliff.  You can't climb down.
+479     The door is tightly shut.  There is no apparent way to open it.
+480     The door is locked on the outside (garden side) with a heavy
+480     wooden bar.
+481     The garden door is now open.
+482     The garden door is now locked.
+483     The bar is too heavy to carry.
+484     A wimp like you would have no chance against a combat-trained
+484     Orc, let alone four of them.
+485     It would help if you'd insert the handle into the winch mechanism.
+486     Are you trying to board the helicopter?
+487     If of the Orcs you wish to be rid,
+487     First you must find where the letter is hid.
+487     As time goes by you're sure to find
+487     What Bogey once had on his mind.
+488     From somewhere in the distance comes the deep throbbing of a heavy
+488     engine.
+489     The sound of the engine ceases.
+490     I'm no engineer, but judging by the sound, the pump engines are
+490     overheating.
+491     The pumps have run too long without cooling off!  From deep within
+491     the mine the engine's throbbing becomes a loud vibrating roar as
+491     the great engine tears itself apart.  All around you timbers are
+491     cracking!  The entire roof of the mine is collapsing!
+492     According to the pump sensors, the mine floor is dry.  Nothing
+492     happens.
+493     The bank of the ravine is so steep you'll need both hands to climb
+493     out.  You can't carry anything.
+494     The ravine's north bank is too steep to climb.
+495     The ravine is full of water and too wide to swim.
+496     The mine entrance has collapsed.  There is no way to enter.
+497     The tunnel is completely flooded.  You can't proceed.
+498     Opening the cabinet reveals a narrow vertical dumbwaiter shaft.
+498     A pulley-mounted chain controls the movement of the dumbwaiter.
+499     There isn't any way to climb down the dumbwaiter shaft.
+500     The meter reads zero.
+501     The meter reads "1".
+502     The meter reads "2".
+503     The meter reads "3".
+504     The meter reads "4".
+505     The meter reads "5".
+506     The engine is already in operation.
+507     The room lights are already on.
+508     The room lights were already off.
+509     The tunnel is a real squeaker.  You'll be lucky to get through
+509     with your clothes on, let alone anything else.
+510     The dumbwaiter slides smoothly into view.
+511     The dumbwaiter slides smoothly out of sight.
+512     Achoo!  Ker-snuf!  I think the dust around this place is
+512     getting to me.  Why don't you clean it up a little?
+513     You are enveloped in a cloud of noxious-smelling tobacco fumes.
+514     The air ahead is filled with huge mosquitos, with stingers the
+514     size of icepicks!  The mosquitos haven't yet caught your scent.
+514     Do you really want to proceed?
+515     Once the mosquitos catch your scent, it's all over very quickly.
+515     Sheesh!  You have more holes in you than a pincushion!
+516     Your pipe fumes have effectively fumigated your flying foes.  The
+516     bothersome bugs beat it as you approach.
+517     After playing the flute for a few moments, you become aware of
+517     stealthy footsteps behind you.
+518     You are being followed by a strangely docile giant Devonian rat!
+519     A rat as large as a small pony seems to appear from nowhere.  It seems
+519     entranced by the sound of your flute.
+520     The big rat, entranced by the music, blindly lurches over the edge
+520     of the cliff, only to be pounded to smithereens on the rocks below.
+521     The dirty rat is too quick for you!  She easily dodges the blow.
+522     Your foolhardy action has broken the spell of the music.  With a
+522     lightning-quick move, the mammoth mouse bites you on the forearm
+522     with her razor-sharp teeth, and is gone in a flash.
+523     The rat bite on your arm, though not deep, is aching.
+524     Your arm is aching badly.
+525     The dirty rat's wound is festering badly.  The injury may be more
+525     serious than you had thought.
+526     Your whole arm is infected and turning black.  And the rest of you
+526     doesn't feel so hot, either.
+527     You are running a very high fever.  Your arm is black and swollen
+527     and is hanging by a thread.   You're sinking fast.
+528     [** Unused **]
+529     [** Unused **]
+530     [** Unused **]
+531     The huge pill (if that's what it is) tastes awful, but seems
+531     to have no adverse effects.
+532     Just in time!  The contents of the huge pill quickly cure you of
+532     the rat-induced infection.
+533     ****************************************************************
+533     * Internal database error detected.  Has been reported to Wiz. *
+533     ****************************************************************
+534     The amulet shines with a strange blue light and then goes dark.
+535     Its clasp is broken.  You can't wear it.
+536     You really should keep better track of things you have found.
+537     A round dial covered with numeric markings is on the door of the
+537     safe.
+538     Sorry, the GRIPE facility is not enabled at this time.
+539     The billboard reads:
+539     >$<
+539     Welcome to Adventureland!  Visit beautiful Colossal Cave!
+539     Open year round for your enjoyment!
+539     >$<
+540     Are you trying to open the safe?
+541     To open the safe (and find something new)
+541     You'd better solve the poster's clue.
+541     If that proves too obscure to do,
+541     It's back to Colossal Cave with you!
+-1
+7
+1       261     -1      0       boulder by w    0       0       0
+2       3       0       1       brass lanter    0       0       0
+3       8       9       0       grate           0       0       0
+4       252     -1      0       vines on cli    0       0       0
+5       267     -1      0       vines at cen    0       0       0
+6       251     264     0       drawbridge      0       0       0
+7       14      15      0       steps           0       0       0
+8       250     -1      0       black (sham)    0       0       0
+9       148     0       2       wooden pole     0       0       0
+10      253     0       2       coil of rope    0       0       0
+11      19      -1      0       snake           0       0       0
+12      17      27      0       fissure         0       0       0
+13      295     248     0       drainpipe       0       0       0
+14      103     0       9       giant clam      0       0       0
+15      0       0       9       giant oyster    0       0       0
+16      -175    0       0       official doc    0       0       0
+18      276     -1      0       helicopter      0       0       0
+19      289     0       2       knapsack        0       0       0
+20      298     -1      0       pumps in min    0       0       0
+21      117     122     0       chasm - trol    0       0       0
+22      190     235     0       chasm2 & dec    0       0       0
+23      109     -1      0       mirror          0       0       0
+24      25      -1      0       plant           0       0       0
+25      23      67      0       phony plant     0       0       0
+26      111     -1      0       stalactite      0       0       0
+27      35      110     0       shadowy figu    0       0       0
+28      0       0       2       dwarf's axe     0       0       0
+29      97      -1      0       cave drawing    0       0       0
+30      0       -1      0       pirate          0       0       0
+31      119     121     0       dragon          0       0       0
+32      262     0       1       briar pipe      0       0       0
+33      117     122     0       troll           0       0       0
+34      0       0       0       phony troll     0       0       0
+41      94      -1      0       rusty door      0       0       0
+42      158     166     0       tiny door       0       0       0
+43      160     167     0       tiny door       0       0       0
+44      188     189     0       phone booth     0       0       0
+45      263     269     0       oaken door      0       0       0
+46      271     272     0       steel door w    0       0       0
+47      289     288     0       door to secr    0       0       0
+48      166     0       0       wooden boat     0       0       0
+49      228     229     0       sticks at St    0       0       0
+50      18      0       6       large gold n    2       0       -55
+51      204     0       1       several diam    2       0       -112
+52      27      0       2       silver horn     2       0       -112
+53      29      0       2       precious jew    1       0       -112
+54      30      0       3       rare coins      5       0       -112
+55      0       0       5       treasure che    5       0       3
+56      92      0       4       golden eggs     3       0       -112
+57      168     0       3       jeweled trid    2       0       -55
+58      97      0       2       ming vase       3       0       3
+59      100     0       3       egg-sized em    4       0       -112
+60      101     0       4       platinum pyr    4       0       -112
+61      0       0       1       glistening p    4       0       -112
+62      119     121     3       persian rug     3       0       3
+63      127     0       1       rare spice      2       0       -112
+64      303     -1      0       buzzing soun    0       0       0
+65      -91     0       2       gleaming swo    4       0       -112
+66      144     0       3       elven crown     2       0       -112
+67      205     0       1       ruby slipper    3       0       -112
+68      28      0       2       delicate lyr    1       0       -112
+69      183     0       2       star sapphir    1       0       -112
+70      225     0       2       Holy Grail      2       0       -112
+71      230     0       3       oaken cask      3       4       -55
+72      0       0       1       golden ring     4       0       -112
+73      258     0       1       shamrock        2       0       -112
+74      167     -1      0       wooden struc    0       0       0
+75      220     -1      0       brambles        0       0       0
+76      174     -1      1       velvet cloak    3       0       -112
+77      245     -1      0       quicksand       0       0       0
+81      -193    0       2       clear water     0       0       0
+82      0       0       2       cool water      0       0       0
+83      0       0       2       thick, black    0       0       0
+84      0       0       2       thick, black    0       0       0
+85      0       0       2       vintage wine    0       0       0
+86      0       0       2       vintage wine    0       0       0
+87      193     -1      0       bumblebees      0       0       0
+88      102     194     0       hollow wall     0       0       0
+89      0       -1      0       wall with sa    0       0       0
+90      159     0       1       tiny brass k    0       0       0
+91      141     -1      0       anvil           0       0       0
+92      172     174     0       rocks on clo    0       0       0
+93      188     -1      0       telephone bo    0       0       0
+94      189     -1      0       telephone       0       0       0
+95      0       0       3       lead slugs      0       0       0
+96      0       0       2       sweet honeyc    0       0       0
+97      193     -1      0       beehive         0       0       0
+98      227     -1      0       black dog       0       0       0
+99      174     -1      0       dreaded Wump    0       0       0
+100     0       0       0       sign by quic    0       0       0
+101     13      0       2       little bird     0       0       0
+102     270     0       4       black bird      0       0       0
+103     217     -1      0       fountain        0       0       0
+104     171     -1      0       bats & guano    0       0       0
+105     0       -1      0       gnome in pho    0       0       0
+106     146     0       1       colored mush    0       0       0
+107     159     0       1       tiny cakes      0       0       0
+108     3       0       2       leather sack    0       0       0
+110     -112    0       3       rare book       1       0       -112
+111     0       0       3       rare book       0       0       0
+112     0       -1      0       steel wall-s    0       0       0
+113     3       0       1       faded poster    0       0       0
+114     180     0       1       whiskbroom      0       0       0
+115     0       -1      0       carving on d    0       0       0
+116     5       240     0       billboard       0       0       0
+117     250     -1      0       smoke rings     0       0       0
+118     110     0       3       metal cannis    0       0       0
+119     169     0       1       glowing ston    4       0       -118
+120     200     0       2       opal sphere     2       0       -112
+121     8       0       1       cloth bag       0       0       0
+122     -121    -1      9       grey powder     0       0       0
+123     247     -1      0       concrete        0       0       0
+124     171     0       3       shovel          0       0       0
+125     295     0       5       marble statu    4       0       3
+126     153     -1      0       sand on beac    0       0       0
+127     3       0       1       matchbox        0       0       0
+128     -127    0       0       match           0       0       0
+129     -127    0       0       match           0       0       0
+130     -127    0       0       match           0       0       0
+131     0       0       0       match           0       0       0
+132     0       0       0       match           0       0       0
+133     0       0       0       match           0       0       0
+134     222     0       2       wax candle      0       0       0
+135     220     -1      1       perfect rose    4       2       -58
+136     0       0       1       dry, wilted     0       0       0
+137     251     267     0       moat            0       0       0
+138     188     0       1       plastic card    0       0       0
+139     263     -1      0       slot in oake    0       0       0
+140     259     0       6       ivory tusk      4       0       -55
+141     288     0       3       golden apple    5       1       -112
+142     0       0       0       beautiful pa    0       0       0
+143     269     0       7       priceless ta    4       1       -55
+144     268     0       4       golden fleec    4       0       -55
+145     -135    0       1       sachet of pe    4       0       -112
+146     250     -1      0       leprechaun      0       0       0
+147     39      -1      0       dusty rocks     0       0       0
+148     262     0       2       suede pouch     0       0       0
+149     -148    0       1       tobacco         0       0       0
+150     0       0       0       tarnhelm        0       0       0
+151     271     -1      0       light over s    0       0       0
+152     0       0       4       maltese falc    4       0       -112
+153     10      0       1       wicker cage     0       0       0
+154     96      0       1       velvet pillo    0       0       0
+155     275     0       2       silver flute    3       0       -112
+156     254     256     0       dry well        0       0       0
+157     259     -1      0       elephant ske    0       0       0
+158     0       0       3       delicate con    4       0       -112
+159     0       0       2       spicey food     0       0       0
+160     11      0       2       black rod       0       0       0
+161     0       0       2       black rod       0       0       0
+162     0       0       1       rare stamp      0       0       0
+163     0       0       0       golden neckl    0       0       0
+164     0       0       0       valuable fur    0       0       0
+165     272     0       6       bronze shiel    5       0       -55
+166     238     0       1       huge yellow     0       0       0
+167     106     0       1       "Spelunker T    1       0       108
+168     264     -1      0       winch           0       0       0
+169     273     0       1       leaflet         0       0       0
+170     293     294     0       footprint of    0       0       0
+171     268     -1      0       giant centip    0       0       0
+172     269     -1      0       torches         0       0       0
+173     155     0       1       beautiful fl    0       0       0
+174     238     0       1       set of keys     0       0       0
+175     275     -1      0       upright pian    0       0       0
+176     256     0       3       iron handle     0       0       0
+177     288     -1      0       wooden bar      0       0       0
+178     276     -1      0       Orcan guard     0       0       0
+179     304     0       1       smooth, whit    0       0       0
+180     271     -1      0       gold, silver    0       0       0
+181     271     -1      0       fuschia tile    0       0       0
+182     271     -1      0       nacre tile      0       0       0
+183     271     -1      0       orange tile     0       0       0
+184     271     -1      0       red tile        0       0       0
+185     271     -1      0       dun tile        0       0       0
+187     101     -1      0       stone tablet    0       0       0
+188     238     0       2       tasty food      0       0       0
+189     -19     -1      0       silk sheetin    0       0       0
+190     -153    0       1       soiled paper    0       0       0
+191     0       0       1       soiled paper    5       1       -112
+192     153     0       2       wooden box      0       0       0
+193     238     0       1       glass bottle    0       0       0
+194     281     -1      0       silver butto    0       0       0
+195     298     -1      0       red button      0       0       0
+196     298     -1      0       yellow butto    0       0       0
+197     298     -1      0       green button    0       0       0
+198     298     -1      0       brown button    0       0       0
+199     304     0       0       shiny button    0       0       0
+200     298     -1      0       digital mete    0       0       0
+201     301     0       5       silver ingot    5       0       -112
+202     130     -1      3       golden chain    4       0       -112
+203     -205    -1      0       iron chain      0       0       0
+205     302     -1      0       cabinet         0       0       0
+206     304     0       0       cracked shav    0       0       0
+207     302     -1      0       dumbwaiter      0       0       0
+208     3       -1      0       numbers on s    0       0       0
+209     0       0       0       giant mosqui    0       0       0
+211     304     0       1       ancient myst    2       1       -112
+212     130     -1      0       bear            0       0       0
+213     0       -1      0       message in s    0       0       0
+214     126     -1      0       volcano and/    0       0       0
+215     140     -1      0       vending mach    0       0       0
+216     0       0       0       batteries       0       0       0
+217     96      -1      0       carpet and/o    0       0       0
+-1      -1      -1      -1      END LIST        -1      -1      -1
+8
+1       24
+2       29
+3       0
+4       33
+5       0
+6       33
+7       38
+8       38
+9       29
+10      14
+11      43
+12      110
+13      29
+14      110
+15      73
+16      75
+17      29
+18      13
+19      59
+20      59
+21      174
+22      313
+23      67
+24      13
+25      147
+26      155
+27      369
+28      146
+29      110
+30      13
+31      13
+32      24
+33      209
+34      110
+35      262
+36      14
+37      29
+38      271
+39      14
+40      14
+41      24
+42      29
+43      38
+44      24
+45      331
+46      24
+47      437
+48      332
+49      0
+50      0
+51      348
+52      359
+53      0
+54      364
+55      0
+56      359
+57      42
+58      0
+59      66
+60      414
+61      0
+62      0
+-1
+9
+0       1       2       3       4       5       6       7       8       9
+0       10      99      100     115     116     126     146     147     148
+0       149     150     151     152     153     154     155     157     158
+0       159     160     166     167     168     169     192     198     200
+0       201     212     214     227     228     229     238     240     241
+0       242     243     244     245     247     248     251     252     253
+0       254     256     257     258     263     264     265     267     268
+0       269     270     271     273     274     276     277     281     284
+0       285     286     287     288     289     293     294     295     296
+0       303     304
+1       16      20      21      22      24      26      31      32      40
+1       59      79      89      90      145     156     161     162     163
+1       164     165     178     181     199     226     231     232     233
+1       234     237     239     246     249     255     260     266     278
+1       279     280     282     283     290     291     292     297
+2       217
+3       1       3       4       7       24      38      95      113     141
+3       166     167     168     169     192     198     206     207     208
+3       209     214     217     228     229     243     244     245     251
+3       267     303
+4       46      47      48      54      56      58      82      85      86
+4       122     123     124     125     126     127     128     129     130
+4       141     142     189
+5       9       10      11      12      13      14      166     167     256
+5       298     299
+6       1       2       3       4       5       6       7       8       146
+6       147     148     149     150     151     152     153     154     155
+6       157     158     159     160     227     228     229     238     240
+6       241     242     243     244     245     247     248     251     252
+6       253     254     257     258     263     264     265     267     268
+6       269     270     271     273     274     276     277     281     284
+6       285     286     287     288     289     293     294     295     296
+6       302     303     304
+7       285     298     299     300     301
+8       99      100     101
+9       108
+10      141
+11      98
+12      8
+13      13
+14      158
+15      202
+16      157     227
+17      19
+18      256
+19      261
+20      276
+21      42      43      44      45      46      47      48      49      50
+21      51      52      53      54      55      56      80      81      82
+21      86      87
+22      3
+-1
+10
+12      (True, 24812, 'You are obviously a rank amateur.  Better luck next time.   ')
+45      (True, 24825, 'Your score qualifies you as a Novice Class Adventurer. ')
+85      (True, 24837, 'You have achieved the rating: "Experienced Adventurer".')
+150     (True, 24849, 'You may now consider yourself a "Seasoned Adventurer". ')
+260     (True, 24861, 'You now have the rank of "Senior Adventurer".')
+400     (True, 24871, 'You have reached "Junior Master" status.')
+500     (True, 24880, 'Your score puts you in Master Adventurer Class C. ')
+610     (True, 24891, 'Your score puts you in Master Adventurer Class B. ')
+690     (True, 24902, 'Your score puts you in Master Adventurer Class A. ')
+750     (True, 24913, 'All of Adventuredom gives tribute to you, Adventurer Grandmaster!')
+-1
+11
+2       9999    10      0       0
+3       9999    5       0       0
+8       25      5       178     179
+9       20      3       180     181
+10      6       10      211     212
+11      16      5       213     214
+12      4       2       62      63
+13      5       2       18      19
+14      10      2       62      233
+15      8       5       274     275
+16      10      5       289     290
+17      8       2       20      21
+18      12      9       236     237
+19      10      4       429     430
+20      10      10      486     487
+21      75      4       176     177
+22      40      20      540     541
+-1
+14
+CARRY   OFF     ANYWR
+CARRY   FROM    ANYCN   CLAM    OYSTER  WUMPUS  BRAMBLE
+CARRY   IN      CHEST   SACK    BOTTLE  CASK    CHALICE VASE    CAGE    BOAT
+CARRY   IN      ANVIL   CANNISTER
+DROP    IN      ANYCN
+DROP    ON      RUG     CROWN   CLOAK   SHOES   JEWEL   SWORD   PILLOW
+OPEN    WITH    CARD    KEYS    KEY     ANYWP
+CLOSE   WITH    KEYS    KEY
+LIGHT   WITH    ANYBU
+WAVE    AT      ANY
+WAVE    TO      ANYLV
+ATTACK  WITH    ANYWP
+POUR    ON      ANVIL   %%BD2   BRAMBLE CLOVER  DOOR    PLANT   SWORD
+POUR    FROM    BAG     CASK    CHALICE VASE    BOTTLE
+DRINK   FROM    CASK    CHALICE VASE    BOTTLE
+THROW   TO      ANYLV
+THROW   AT      ANY
+THROW   DOWN    ANY
+FEED    TO      ANYLV
+FILL    WITH    ANY
+READ    ON      CLAM    OYSTER  TABLET  BILLBOARD       NOTICE
+READ    FROM    ANYRD
+BREAK   WITH    ANYWP
+YANK    FROM    ANY
+HIT     WITH    ANYWP
+LEAVE   IN      ANYCN
+LEAVE   ON      RUG     CROWN   CLOAK   SHOES   JEWEL   SWORD   PILLOW
+PLAY    ON      FLUTE   HORN    LYRE    PIANO
+PICK    UP      ANY
+PUT     DOWN    ANY
+PUT     ON      ANYWR   FOOD    PILLOW  ROCK    RUG     SWORD   DUMBWAITER
+PUT     IN      ANYCN
+TURN    ON      LAMP
+TURN    OFF     LAMP
+TURN    WITH    HANDLE
+TURN    TO      7
+GET     FROM    ANYCN   WUMPUS  DRAGON  BEAR    BRAMBLE
+GET     IN      ANYCN
+INSERT  IN      ANYCN
+REMOVE  FROM    ANYCN   CLAM    OYSTER  WUMPUS  BRAMBLE
+BURN    WITH    ANYBU
+LOCK    WITH    KEYS    KEY
+UNLOCK  WITH    KEYS    KEY     CARD
+LOOK    IN      ANYCN   MATCHBOX
+LOOK    AT      ANY
+LOOK    FOR     ANY
+SWEEP   WITH    BROOM
+DIG     IN      SAND    BAT     QUICKSAND
+IGNITE  WITH    ANYBU
+-1
+15
+1       3       14      15      19      41      42      43      44      45      46
+1       47      55      71      108     110     111     112     118     121     127
+1       135     148     153     175     193     202     205
+2       108
+3       3       42      43      45      46      47      55      112     202
+4       3       41      42      43      45      46      47      55      112     202
+5       9       16      75      76      104     110     111     113     121     128
+5       129     130     134     149     153     167     190     191
+7       63      96      106     107     159     166     173     188
+8       14      15      16      110     111     112     113     115     116     121
+8       138     165     167     169     187     190     191     200     213
+9       11      14      15      17      27      30      31      33      87      98
+9       99      101     105     171     178     209     210     212
+11      19      53      66      67      72      73      76
+13      7       29      51      53      54      56      67      87      95      106
+13      107     173     174     178     201     209     216
+14      50      51      52      53      54      55      56      57      58      59
+14      60      61      62      63      65      66      67      68      69      70
+14      71      72      73      76      110     119     120     125     135     140
+14      141     143     144     145     152     155     158     165     191     201
+14      202     211
+15      2       19      32      48      55      58      70      71      91      94
+15      108     112     118     121     127     135     139     148     153     168
+15      175     192     193     205     207     215
+16      19      55      108     112     118     121     127     135     148     175
+16      205
+18      9       28      57      65      160     186
+19      81      82      83      84      85      86
+20      18      48
+-1
+16
+GOLD            APPLE   CHAIN   EGGS    FLEECE  NUGGET  RING    TILE
+PERSIAN         RUG
+WOODEN          HANDLE  BOAT    BOX     DRAWBRIDGE      CASK    POLE    STRUCTURE
+BRASS           LAMP    KEY
+WICKER          CAGE
+SUEDE           BAG     POUCH   SACK
+VELVET          PILLOW  CLOAK
+VENDING         MACHINE
+WORN-OUT        BATTERIES
+FRESH           BATTERIES
+IRON            CHAIN   HANDLE  DOOR    HAT
+TINY            BIRD    BOTTLE  CAKES   DOOR    KEY     DRAINPIPE       RING
+SILK            SHEETING
+SILVER          BUTTON  HORN    INGOT   FLUTE   TILE
+TREASURE        CHEST
+MING            VASE
+PLATINUM        PYRAMID
+RARE            BOOK    COINS   SPICE   TAPESTRY
+ELFIN           CROWN   DOOR    KEY
+FLASHING        LAMP
+HOLY            CHALICE
+OAKEN           CASK    DOOR
+LEAD            SLUGS   CANNISTER
+LEATHER         BOOK    SACK    BAG     POUCH
+STEEL           DOOR    GRATE   SAFE    SWORD
+STAR            SAPPHIRE
+SHADOWY         FIGURE
+RUSTY           DOOR
+GIANT           RAT     BOULDER CENTIPEDE       CLAM    DOOR    MOSQUITOS       NUGGET  OYSTER  PILL    SNAKE
+TASTY           FOOD
+GLOWING         RADIUM
+DUSTY           ROCKS
+CRYSTAL         SPHERE  DRAWBRIDGE
+4-LEAFED        CLOVER
+METAL           CANNISTER
+CLOTH           BAG     POUCH   SACK
+FADED           POSTER
+SPICED          FOOD
+PAPER           NOTICE
+HOT             FOOD
+IVORY           TUSK
+BEAUTIFUL       PAINTING        FLOWER
+WAX             CANDLE
+DRY             ROSE    DRAINPIPE
+WILTED          ROSE
+DEAD            WUMPUS  ROSE
+MALTESE         FALCON
+MARBLE          STATUE
+ANCIENT         AMULET  STATUE
+BLACK           BIRD    DOG     OIL     ROCK    WAND    TILE
+GREEN           BUTTON  CLOVER  DRAGON  EMERALD LAMP    RADIUM  SNAKE
+GREY            CANNISTER
+RED             BUTTON  LAMP    ROSE    SHOES   TILE
+YELLOW          BUTTON  LAMP    PILL
+WHITE           TILE    PEBBLE
+ORANGE          TILE
+NACRE           TILE
+DUN             TILE
+FUSCHIA         TILE
+BRIAR           DRAINPIPE
+DRAIN           DRAINPIPE
+PERFECT         ROSE
+MAGNETIC        CARD
+GLASS           BOTTLE  MIRROR
+PLASTIC         CARD
+BROWN           BUTTON
+#1              MATCH
+#2              MATCH
+#3              MATCH
+#4              MATCH
+#5              MATCH
+#6              MATCH
+OFFICIAL        LETTER
+SOILED          PAPER   PAPER
+SMOOTH          PEBBLE
+CRACKED         MUG
+SHAVING         MUG
+SHINY           BUTTON
+DEVONIAN        RAT
+STONE           TABLET
+FAKE            ROCK
+BRONZE          SHIELD
+MYSTIC          AMULET
+-1
