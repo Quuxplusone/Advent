@@ -29,6 +29,9 @@ As of 2026-01-05, the Adventure Family Tree taxonomizes
 only PALT0350; it appears that PALT0350 begat Reynolds' HCSD0350
 begat Horvath and Norwood's HORV0350.
 
+Meanwhile, PALT0350 begat WHIT0370 "FunAdv" at Georgia Tech;
+see the SMIT0370 directory in this repository.
+
 
 ==Notes on the transcription process==
 

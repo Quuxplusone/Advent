@@ -1,0 +1,29 @@
+      SUBROUTINE PSPEAK(MSG,SKIP) 
+  
+*  FIND THE SKIP+1ST MESSAGE FROM MSG AND PRINT IT.  MSG SHOULD BE THE I
+*  THE INVENTORY MESSAGE FOR OBJECT.  (INVEN+N+1 MESSAGE IS PROP=N MESSA
+
+      IMPLICIT INTEGER(A-Z) 
+
+      STRUCTURE /TEXTYPE/
+        Integer*4 count
+        Character*80 string
+      end structure
+
+      record /textype/ lines 
+
+      COMMON /TXTCOM/ RTEXT,LINES,LINUSE
+      COMMON /PTXCOM/ PTEXT 
+
+      DIMENSION RTEXT(250), LINES(2000), PTEXT(100)
+  
+      M=PTEXT(MSG)
+      IF(SKIP.LT.0)GOTO 9 
+      SKIP1=SKIP+1
+      DO 3 I=1,SKIP1
+    1 M=IABS(LINES(M).COUNT)
+      IF(LINES(M).COUNT.GE.0) GOTO 1
+    3 CONTINUE
+    9 CALL SPEAK(M) 
+      RETURN
+      END 
