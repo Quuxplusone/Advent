@@ -1,0 +1,590 @@
+        .TITLE  DEHEX
+        .SBTTL  Stuart Hecht and Eric McQueen, Stevens Inst of Technology
+
+        .LIBRARY /SYS$LIBRARY:STARLET/
+        .LIBRARY /SYS$LIBRARY:LIB/
+        .IDENT   /1.1.02/
+;++
+;1.1.01
+;Updated March 9, 1898, by Susan Webb and Jerry Holliday of Lockheed Aircraft
+;Systems Co, Marietta, GA, to work for files longer than 64K.  Added lines
+;marked with ";JH".
+;--
+;++
+;1.1.02
+;Updated March 15, 1989, by Tom Allebrandi of Advanced Computer Consulting,
+;Inc, Charlottesville, VA. (ta2@acci.com)
+;
+;On March 14, 1989, I pulled this file and VMSMIT.HEX from Columbia via
+;KERMSRV. After compiling, this utility would not decode the VMSMIT file.
+;The problem was the 1.1.01 fix noted above.
+;
+;I have removed the 1.1.01 fix and coded it so that it works correctly.
+;My changes are marked ";ta2"
+;--
+
+;++
+;This will take a set hexidecimal strings created by the hexify program and
+;  recreate the source file(s).
+;--
+
+        .EXTRN  LIB$GET_INPUT
+        .EXTRN  LIB$PUT_OUTPUT
+        .EXTRN  DSC$K_DTYPE_T
+        .EXTRN  DSC$K_CLASS_S
+        .EXTRN  SS$_NORMAL
+        .MCALL  $FAB                            ; RMS calls
+        .MCALL  $RAB
+        .MCALL  $CLOSE
+        .MCALL  $CONNECT
+        .MCALL  $CREATE
+        .MCALL  $DISCONNECT
+        .MCALL  $GET
+        .MCALL  $OPEN
+        .MCALL  $WRITE
+        .MCALL  $RAB_STORE
+        .MCALL  $FAB_STORE
+
+        .SBTTL  Definitions of symbols
+
+DWRLUN  =1                              ; Disk read LUN
+DWWLUN  =5                              ; Disk write LUN
+TRUE    =1                              ; True
+FALSE   =0                              ; False
+KNORMAL =0                              ; No error
+LEFTBYTE=^O377*^O400                    ; All ones in left byte
+HEXOFFSET=7                             ; Offset to get to 'A from '9+1
+CR      =13.                            ; Carriage return
+LF      =10.                            ; Line feed
+MAX.MSG =256.                           ; Maximum number of chars from XK
+RCV.SOH =^A/:/                          ; Receive start of packet
+RCV.EOL =13.                            ; End of line character
+MSB     =128.                           ; Most significant bit
+; Packet types currently supported
+PKDATA  =00                             ; Data packet code
+PKRFM   =255.                           ; Record format
+PKRAT   =254.                           ; Record attributes
+PKMRS   =253.                           ; Maximum record size
+PKALQ   =252.                           ; File length(blocks)
+PKFILNM =251.                           ; File name
+PKEOF   =250.                           ; End of task file
+;
+
+
+        .SBTTL  RMS Data
+
+        .PSECT  $PLIT$,LONG
+
+DEFALT: .ASCIZ  'SYS$DISK:'             ; System default.
+DEFALN  =.-DEFALT                       ; Size of the default device.
+        .EVEN
+
+        .SBTTL  Data
+
+
+M$FILE: .BYTE   CR,LF
+        .ASCII  'Please type the file name: '
+L$FILE= .-M$FILE
+
+M$CRLF: .BYTE   CR,LF                   ; Data for carriage return/line feed
+L$CRLF  =.-M$CRLF
+
+;M$AK:
+;       .ASCII  'Y'                     ; Data for aknowledged
+
+M$NAK:
+        ;.ASCII 'N'                     ; Data for not aknowledged
+        .ASCII  'BAD CHECK SUM'         ; Data for not aknowledged
+L$NAK   =.-M$NAK
+
+M$UN:
+        ;.ASCII 'U'                     ; Data for unrecognized code
+        .ASCII  'UNKNOWN BLOCK TYPE'    ; Data for unrecognized code
+L$UN    =.-M$UN
+
+M$RMS:  .BYTE   CR,LF,LF
+        .ASCII  'RMS ERROR'
+L$RMS   =.-M$RMS
+
+M$REC:  .BYTE   CR,LF,LF
+        .ASCII  'RECEIVE ERROR - Try again.'
+L$REC   =.-M$REC
+        .EVEN
+
+
+        .SBTTL  Storage locations
+
+        .PSECT  $OWN$,LONG
+        .ALIGN  LONG
+
+MSGDSC: .BLKW   1                       ; Data block for terminal output
+        .BYTE   DSC$K_DTYPE_T
+        .BYTE   DSC$K_CLASS_S
+ADDR:   .ADDRESS ADDR
+LNGADR: .BLKL   1
+
+INP_STR_D:                              ; Key string desciptor
+         .BLKL  1
+INP_BUF: .ADDRESS ADDR
+
+INP_STR_LEN: .BLKL 1                    ; Key string length
+
+WTCOUNT: .BLKL  1                       ; Number of characters written
+LENGTH: .BLKL   1                       ; Length of data portion of packet
+OPENFL: .BLKL   1                       ; Tells us if the file is open
+
+CHKSUM: .BLKL   1                       ; Checksum for the line
+ADDRESS: .BLKL  1                       ; Current address
+ALQLOC: .BLKW   2                       ; Storage for allocation
+
+OUT.N:  .BLKB   28.                     ; Space for output file name
+OUT.L   =.-OUT.N                        ; Length of output file name
+
+INP.N:  .BLKB   28.                     ; Space for input file name
+INP.L   =.-INP.N                        ; Length of input file name
+
+        .EVEN                           ; Need to start RDBUF on even boundary
+RDBUF:  .BLKB   MAX.MSG                 ; XK read buffer
+        .EVEN
+WTBUF:  .BLKB   512.                    ; Disk write buffer
+        .EVEN
+
+
+
+        .SBTTL  RMS Data structures
+        .ALIGN  LONG
+
+RDFAB:: $FAB    DNA=DEFALT,DNS=DEFALN,FNA=INP.N,FNS=INP.L,-
+                LCH=DWRLUN,FAC=GET,SHR=GET
+
+        .ALIGN  LONG
+RDRAB:: $RAB    FAB=RDFAB,RAC=SEQ ; Beginning of RAB block.
+
+        .ALIGN  LONG
+WTFAB:: $FAB    DNA=DEFALT,DNS=DEFALN,FNA=OUT.N,FNS=OUT.L,-
+                LCH=DWWLUN,FAC=PUT,SHR=NIL
+
+WTRAB:: $RAB    FAB=WTFAB,RAC=SEQ ; Beginning of RAB block.
+
+
+        .SBTTL  Start of program
+
+        .PSECT  $CODE$,LONG,EXE
+
+DEHEX:: .WORD   ^M<>
+FILE:   MOVAB   M$FILE,R11              ; Output the get file name message
+        MOVZBL  #L$FILE,R12
+        MOVAB   INP.N,R10               ; Get the file name
+        MOVZBL  #INP.L,R1
+        JSB     READ
+        TSTL    R0                      ; Check for no input
+        BEQL    FILE                    ; Go back and get some
+;Open the file
+        MOVAL   RDFAB,R1                ; Put address of FAB into R1.
+        $FAB_STORE FAB=R1,FNS=R0        ; Tell RMS file name length
+        $OPEN   #RDFAB                  ; Open the file
+        JSB     RMSERR                  ; Check for file error
+        MOVAL   RDRAB,R1                ; Put address of RAB into R1.
+; Put address of user buffer and size and record buffer and size in RAB.
+        $RAB_STORE RAB=R1,UBF=RDBUF,RBF=RDBUF,USZ=#MAX.MSG,RSZ=#MAX.MSG
+        $CONNECT #RDRAB                 ; Connect to record.
+        JSB     RMSERR                  ; Check for file error
+
+
+        .SBTTL  Do the real work
+;++
+; Do the actual work
+;--
+BEGIN:  MOVAL   M$CRLF,R10              ; Get a return/linefeed and output them
+        MOVZBL  #L$CRLF,R1
+        JSB     WRITE
+
+20$:    CLRL    WTCOUNT                 ; Initialize the pointer
+        CLRL    ADDRESS                 ; Initialize the address
+        CLRL    OPENFL                  ; Set the file to not open
+
+        .SBTTL  Main loop
+
+; Main loop to get data
+DOLIN:
+        CLRL    CHKSUM                  ; Clear the checksum
+        JSB     RECEIVE                 ; Get the line
+        JSB     CVTBIN                  ; Convert it to a real number
+        MOVL    R10,LENGTH              ; Save the length
+NAB:    JSB     CVTBIN                  ;
+        BISL    R10,R3                  ; Save a byte of the address
+        ASHL    #8.,R3,R3               ; Make room for next byte
+        SOBGEQ  LNGADR,NAB              ; If there are more than 2 bytes
+        JSB     CVTBIN                  ;
+        BISL    R10,R3                  ; Fill in the low byte of address
+
+;ta2 The fix for 1.1.01 converted two more hex values here. As of March
+;    1989, this doesn't appear to be required. The conversion has been
+;    removed.
+
+        JSB     CVTBIN                  ;ta2 Pick up the record type code
+
+        CMPL    #PKDATA,R10             ; Check to see if this is regular data
+        BNEQ    NOTDAT                  ; If not then check the special cases
+; Check for end of hex file
+        TSTL    R3                      ; Check to see if the address is all
+        BNEQ    DATST                   ;  zero, if not then branch
+        TSTL    LENGTH                  ; Check to see if the length is zero
+        BNEQ    DATST                   ;  also, if not then branch
+        JMP     FINISH                  ; Must be end of hex file so finish up
+; Regular data to put into the file
+DATST:  TSTL    OPENFL                  ; Check to see if the file is open yet
+        BNEQ    DAT1                    ; If it is then skip the open
+        JSB     OPEN                    ; Open the file
+DAT1:   CMPL    R3,ADDRESS              ; Check for null compression
+        BEQL    10$                     ; If none compressed then continue past
+        CLRL    R10                     ; Make a null
+        JSB     PUT                     ;  and put it into the file
+        INCL    ADDRESS                 ; Point to next address
+        BRW     DAT1                    ; Go see if there are any more nulls
+; Go to work on the HEX we got on the line
+10$:    MOVL    LENGTH,R2               ; Get the length
+        TSTL    R2                      ; See if there is any data
+        BEQL    30$                     ; If not then branch
+25$:    JSB     CVTBIN                  ; Convert it
+        JSB     PUT                     ; Put the character in the file
+        INCL    ADDRESS                 ; Increment the address
+        SOBGTR  R2,25$                  ; Repeat until all done
+30$:    BRW     LINDON                  ; Go finish this line
+
+
+
+NOTDAT: MOVAL   WTFAB,R5                ; Get the FAB address
+        CMPL    #PKRFM,R10              ; Check to see if this is record fmt
+        BNEQ    NOTRFM                  ; If not then don't do this stuff
+; Store the Record format (FIX, VAR, ...)
+        JSB     CVTBIN                  ;
+        $FAB_STORE FAB=R5,RFM=R10       ; Store the record format
+        BRW     LINDON                  ; Go finish this line
+
+NOTRFM: CMPL    #PKRAT,R10              ; Check to see if this is record type
+        BNEQ    NOTRAT                  ; If not then branch
+; Store the record type (CR, ...)
+        JSB     CVTBIN                  ;
+        $FAB_STORE FAB=R5,RAT=R10       ; Store the record type
+        BRW     LINDON                  ; Go finish this line
+
+NOTRAT: CMPL    #PKMRS,R10              ; Check to see if this is max record
+        BNEQ    NOTMRS                  ;  size, branch if not
+; Get the maximum record size (512. for tasks)
+        JSB     CVTBIN                  ; Convert high order byte
+        MOVL    R10,R3                  ; Save it
+        ASHL    #8.,R3,R3               ; Shift it to the high order byte
+        JSB     CVTBIN                  ; Convert low order byte
+        BISL    R10,R3                  ; Put low order word into R3 also
+        $FAB_STORE FAB=R5,MRS=R3        ; Store the maximum record size
+        BRW     LINDON                  ; Go finish this line
+
+NOTMRS: CMPL    #PKALQ,R10              ; Check to see if this is allocation
+        BNEQ    NOTALQ                  ; If not then branch
+; Get the file length (in blocks)
+        JSB     CVTBIN                  ; Convert high order byte
+        MOVL    R10,R3                  ; Save it
+        ASHL    #8.,R3,R3               ; Shift it to the high order byte
+        JSB     CVTBIN                  ; Convert low order byte
+        BISL    R10,R3                  ; Put low order word into R3 also
+        MOVZWL  R3,ALQLOC               ; Save it
+        $FAB_STORE FAB=R5,ALQ=ALQLOC    ; Store the allocation
+        BRW     LINDON                  ; Go finish this line
+
+NOTALQ: CMPL    #PKFILNM,R10            ; Check to see if this is file name
+        BNEQ    NOTFILNM                ; If not then branch
+; Get the file name
+        MOVL    LENGTH,R2               ; Get the length
+        $FAB_STORE FAB=R5,FNS=R2        ; Store the file name length
+        MOVAB   OUT.N,R3                ; Get the output file name address
+25$:    JSB     CVTBIN                  ; Convert next character of the name
+        MOVB    R10,(R3)+               ; Save the character
+        SOBGTR  R2,25$                  ; Repeat until all done
+        MOVAB   M$CRLF,R10              ;
+        MOVZBL  #L$CRLF,R1              ;
+        JSB     WRITE                   ; Output a return/line feed
+        MOVAB   OUT.N,R10               ;
+        MOVL    LENGTH,R1               ;
+        JSB     WRITE                   ; Output the file name
+        MOVAB   M$CRLF,R10              ;
+        MOVZBL  #L$CRLF,R1              ;
+        JSB     WRITE                   ; Output a return/line feed
+        BRW     LINDON                  ; Go finish this line
+
+
+
+NOTFILNM:
+        CMPL    #PKEOF,R10              ; Check to see if this is end of task
+        BNEQ    NOTPKEOF                ; If not then branch
+; End of ouput file record found
+        JSB     CLTSK                   ; Close the task file
+        CLRL    WTCOUNT                 ; Initialize the pointer
+        CLRL    ADDRESS                 ; Initialize the address
+        JMP     LINDON                  ; Go finish this line
+
+; Unknown code
+NOTPKEOF:                               ; Since we don't know what the code
+        MOVAB   M$UN,R10                ;   just send the unknown code text to
+        MOVZBL  #L$UN,R1                ;   the terminal
+        JSB     WRITE                   ;
+        JMP     DOLIN                   ; Go do next input line
+
+
+        .SBTTL  Finished with this line
+
+; Line processed without a problem
+LINDON:
+;       MOVAB   M$AK,R10                ; Get the data address of the
+                                        ;  single character
+;       MOVZBL  #1,R1                   ; Only write single char to terminal
+;       JSB     WRITE                   ; Write to the terminal
+        JMP     DOLIN                   ; Good so do next line
+
+
+        .SBTTL  Finish up
+;++
+;Finish up
+;--
+FINISH:
+; Close the file(s)
+        JSB     CLTSK                   ; Close the task file if it isn't yet
+        MOVAL   RDFAB,R1                ; Get FAB for input file
+        $CLOSE  R1                      ; Close the input file
+        JSB     RMSERR                  ; Check for file error
+END:    MOVL    #SS$_NORMAL,R0          ; Set up successful completion
+        RET
+
+        .SBTTL  Close file
+
+;++
+; Close the output file if there is one open
+;
+; If there is an error the program stops with an RMS error
+;
+; Registers destroyed:  R0, R1
+; The OPENFL state is changed to file not open (OPENFL=0).
+;--
+
+CLTSK:  TSTL    OPENFL                  ; See if the task file is open
+        BEQL    10$                     ; If not then just return
+
+; Write last buffer if needed
+        TSTL    WTCOUNT                 ; See if there is any data not written
+        BEQL    8$                      ; If not then branch
+        MOVAL   WTRAB,R1                ; Get the RAB address
+        $RAB_STORE RAB=R1,RSZ=WTCOUNT   ; Put its size into the RAB.
+        $WRITE  R1                      ; Put the buffer of data.
+        JSB     RMSERR                  ; Check for file error
+
+; Close the file
+8$:     MOVAL   WTFAB,R1                ; Get FAB for output file
+        $CLOSE  R1                      ; Close output file
+        JSB     RMSERR                  ; Check for file error
+        CLRL    OPENFL                  ; Set the state to file not open
+10$:    RSB                             ; Return to sender
+
+
+        .SBTTL  Output and input to/from terminal
+;++
+; Write data to terminal.
+;       R10     Address of data to output
+;       R1      Length of data
+;--
+WRITE:
+        MOVW    R1,MSGDSC               ; Store the length in the descript blk
+        MOVL    R10,ADDR                ; Store the address of the ASCII
+        PUSHAQ  MSGDSC                  ; Push the descriptor block address
+        CALLS   #1,G^LIB$PUT_OUTPUT     ; Do the output
+        RSB                             ; Return to sender
+
+;++
+; Read from the terminal
+;       R10     Address of buffer
+;       R1      Number of characters to read
+;       R11     Input prompt address
+;       R12     Length of prompt
+;
+;Returned:
+;       R0      Number of characters read
+;--
+READ:
+        MOVL    R1,INP_STR_D            ; Store the buffer length in desc block
+        MOVL    R10,INP_BUF             ; Store the buffer address in desc blk
+        MOVL    R11,ADDR                ; Store prompt address in desc block
+        MOVW    R12,MSGDSC              ; Store length in desctriptor block
+        PUSHAB  INP_STR_LEN             ; Address for string length
+        PUSHAQ  MSGDSC                  ; Push address of prompt descriptor blk
+        PUSHAB  INP_STR_D               ; String buffer descriptor
+        CALLS   #3,G^LIB$GET_INPUT      ; Get input string value
+        MOVL    INP_STR_LEN,R0          ; Get actual input length back
+        RSB                             ; Return to sender
+
+
+        .SBTTL  RMS error routine
+;++
+;Check for RMS error
+; Call with:            R0      Status of last RMS call (automatically stored
+;                                 in R0 by RMS after an operation)
+;
+; Returned:             R0      Status
+; Registers destroyed:  R0
+; Program stops after error message is displayed if there is any type of error.
+;--
+RMSERR:
+        BLBC    R0,60$                  ; If error, go check it out
+        MOVL    #KNORMAL,R0             ; Set up a successful return code.
+        RSB                             ; Return to caller
+
+; Here if there is an RMS error we don't know how to handle
+60$:    PUSHL   R0                      ; Save the error code
+        MOVAB   M$RMS,R10               ; Get the address and length of the
+        MOVL    #L$RMS,R1               ;   message to output
+        JSB     WRITE                   ; Output it
+        POPL    R0                      ; Get the error code back
+        RET                             ; Exit program
+
+
+        .SBTTL  Open the output file
+;++
+; Create and open the output file and set the file open flag
+;
+; Registers destroyed:  R0, R1
+; Program stops after error message is displayed if there is any type of error.
+;--
+
+OPEN:   MOVL    #TRUE,OPENFL            ; State that the file is open
+        MOVAL   WTFAB,R1                ; Put address of FAB into R1.
+        $FAB_STORE FAB=R1,FAC=<BIO,GET> ; Set the block I/O in FAB.
+        ;$FAB_STORE FAB=R1,FOP=CTG      ; Tell RMS to make the task contiguous
+        $CREATE #WTFAB                  ; Create the file
+        JSB     RMSERR                  ; Check for file error
+        MOVAL   WTRAB,R1                ; Put address of RAB into R1.
+; Put address of user buffer and record buffer and sizes into RAB
+        $RAB_STORE RAB=R1,UBF=WTBUF,RBF=WTBUF,USZ=#512.,RSZ=#512.
+        $CONNECT #WTRAB                 ; Connect to record.
+        JSB     RMSERR                  ; Check for file error
+        RSB                             ; Return to sender
+
+        .SBTTL  Put a character to the file
+;++
+; Put a character to the output file.
+; The buffer is only written when 512. characters have been sent to the routine
+; If the file does not end on a boundary then the buffer will have to be
+; written by some other routine.
+;
+; Call with:            R10     Contains the character to be put into file
+; Registers destroyed:  R1, R10
+;
+; Program stops after error message is displayed if there is any type of error.
+;--
+
+PUT:    PUSHL   R10                     ; Save the character
+        MOVL    WTCOUNT,R10             ; Get the offset into the buffer
+        MOVB    (SP),WTBUF(R10)         ; Put the character
+        TSTL    (SP)+                   ; Restore the stack
+        INCL    WTCOUNT                 ; Increment the offset into the buffer
+        CMPL    WTCOUNT,#512.           ; Check to see if we are past the end
+        BNEQ    10$                     ; If not then branch
+        MOVAL   WTRAB,R1                ; Get the RAB address
+        $RAB_STORE RAB=R1,RSZ=WTCOUNT   ; Put its size into the RAB.
+        $WRITE  R1                      ; Put the buffer of data.
+        JSB     RMSERR                  ; Check for file error
+        CLRL    WTCOUNT                 ; Clear the pointer
+10$:    RSB                             ; Return to sender
+
+        .SBTTL   Convert to binary
+;++
+; Convert 2 hexidecimal digits to binary
+; Input is from the input buffer pointed to by R4 (it is incremented twice)
+;
+; Call with:            R4      The pointer into the input buffer
+; Returned:             R10     The binary walue
+; Registers destroyed:  R10,R1
+;--
+
+CVTBIN:
+        CLRL    R10                     ; Clear R10 for the BISB
+        BISB    (R4)+,R10               ; Get the next digit
+        JSB     BIN                     ;   in place and convert to binary
+        ASHL    #4,R10,R10              ; Multiply the result by 16
+        MOVL    R10,R1                  ;  and save it
+        CLRL    R10                     ; Clear R10
+        BISB    (R4)+,R10               ; Get the next digit
+        JSB     BIN                     ; Convert to binary
+        BISL    R1,R10                  ; Set the correct bits for high order
+        ADDL2   R10,CHKSUM              ; Add the value to the checksum
+        RSB                             ; Return to sender
+
+BIN:    CMPL    R10,#^A/9/              ; Check to see if above '9
+        BLEQ    1$                      ; If not then branch
+        SUBL2   #HEXOFFSET,R10          ; Subtract offset to alphabet
+1$:     SUBL2   #48.,R10                ; Make binary
+        RSB                             ; Return to sender
+
+
+        .SBTTL  Receive a line of data
+
+;++
+; This will get a line of data from the input device
+;
+; Returned:             R4      Address of start of data buffer
+; Registers destroyed:  R0, R1, R3, R4
+;
+; A checksum error will cause a NAK to be sent and input to be read again
+; A real error will cause an error message to be output and the program to stop
+;--
+
+RECEIVE:
+; Here to read from a file
+        MOVAL   RDRAB,R1                ; Get the RAB address
+        $GET    R1                      ; Get the record
+        JSB     RMSERR                  ; Check for file error
+        MOVZWL  #MAX.MSG,R3             ; Assume we got a full buffer
+; Here to check the data we got
+RECCHK: MOVAL   RDBUF,R4                ; Get the address of the information
+        CLRL    R1                      ; Clear the data start address
+80$:    BICB    #MSB,(R4)               ; Clear parity bit
+        SUBB3   #RCV.SOH,(R4)+,R0       ; Check for start of header
+        BLSS    81$                     ; If not, just keep going
+        CMPB    R0,#2                   ; There are 3 possible headers
+        BGTR    81$                     ; Not a header
+        MOVZBL  R0,LNGADR               ; Amount of extra bytes in the address
+        MOVL    R4,R1                   ; Start of header so save it
+81$:    SOBGTR  R3,80$                  ; Repeat until done
+        TSTL    R1                      ; Check to see if we got a SOH
+        BNEQ    85$                     ; If good then skip the jump
+        JMP     RECEIVE                 ; If not then re-read
+85$:    MOVL    R1,R4                   ; Move to R4 for use
+        PUSHL   R4                      ; Save SOH pointer on stack
+
+        JSB     CVTBIN                  ; Convert all to binary to see if
+                                        ;   checksum is correct
+        MOVL    R10,R3                  ; Get the length of data
+        ADDL2   #4,R3                   ; Add the length of address and field
+                                        ;   type and checksum
+        ADDL2   LNGADR,R3               ; If long address, skip more bytes
+        BLSS    94$                     ; If we have a negative number then
+                                        ;   must have been a bad length
+        CMPL    R3,#MAX.MSG/2-1         ; If we got some length that is out of
+        BGEQ    94$                     ;   range then NAK right away
+92$:    JSB     CVTBIN                  ; Convert all to binary to see if
+        SOBGTR  R3,92$                  ;   the checksum is OK
+93$:    BICL    #LEFTBYTE,CHKSUM        ; We only want an 8 bit checksum
+        TSTL    CHKSUM                  ; Test for a zero checksum
+        BEQL    95$                     ; If OK then exit normally
+94$:    CLRL    CHKSUM                  ; Clear the checksum for the line
+        MOVAL   M$NAK,R10               ; Get the address of the message
+        MOVZBL  #L$NAK,R1               ; Only write the first character to
+        JSB     WRITE                   ;   the terminal
+        TSTL    (SP)+                   ; Pull the pointer off the stack
+        JMP     RECEIVE                 ; Try to get the line again
+
+; Return to sender
+95$:    POPL    R4                      ; Get the pointer back
+        RSB                             ; Return to sender
+
+
+        .SBTTL  End of the Dehexify
+
+        .END    DEHEX
