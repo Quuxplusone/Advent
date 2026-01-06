@@ -1,0 +1,55 @@
+Path: uunet!nntp1.radiomail.net!fernwood!portal!cup.portal.com!FisKer
+From: FisKer@cup.portal.com (Scott M Martin)
+Newsgroups: vmsnet.sources.games
+Subject: FUNADV without the PASCAL
+Message-ID: <55588@cup.portal.com>
+Date: Mon,  9 Mar 92 18:35:47 PST
+Organization: The Portal System (TM)
+Distribution: world
+
+I just downloaded FUNADV, and to my dismay, I saw that I needed a
+PASCAL compiler for two files: USER.PAS and SHIFT.PAS
+
+Well,  I don't have a PASCAL compiler, so I thought I'd upload a
+replacement for user.pas in FORTRAN.  Also, instead of using the
+SHIFT routine, you can easily substitute the FORTRAN JISHFTC function
+which does the same thing.  The SHIFT function is called in FUNADV.FOR,
+so replace both occurrences as follows:
+
+SHIFT(1,n) becomes JISHFTC(1,n,32) 
+SHIFT(1,k) becomes JISHFTC(1,k,32)
+
+Remove all references to SHIFT in the $BUILD.COM file.
+
+
+I renamed the USER routine to GETUSER; I saw that the COMMON was using
+USER and I like to have uniqueness among common blocks and subroutines.
+Of course, this requires you to change CALL USER to CALL GETUSER in the
+WIZARD.FOR file, as well as changing references in $BUILD.COM from USER
+to GETUSER.
+
+The above may sound lengthy, but it'll only take a couple of minutes.
+The next file is the actual routine to get the username.
+
+Have fun.
+Path: uunet!nntp1.radiomail.net!fernwood!portal!cup.portal.com!FisKer
+From: FisKer@cup.portal.com (Scott M Martin)
+Newsgroups: vmsnet.sources.games
+Subject: GETUSER.FOR - replaces USER.PAS
+Message-ID: <55589@cup.portal.com>
+Date: Mon,  9 Mar 92 18:38:09 PST
+Organization: The Portal System (TM)
+Distribution: world
+
+      SUBROUTINE GETUSER(username)
+
+      CHARACTER  jpi_pid*8, username*12
+      INTEGER    dummy, pid
+
+      INCLUDE '($JPIDEF)'
+
+      call lib$getjpi(jpi$_pid,,,pid,jpi_pid)			! get PID
+      call lib$getjpi(jpi$_username,pid,,dummy,username)	! get username
+
+      RETURN
+      end
