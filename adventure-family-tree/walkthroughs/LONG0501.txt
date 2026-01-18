@@ -1,0 +1,293 @@
+THIS FILE CONTAINS COMPLETE SPOILERS FOR LONG0501!!
+<Adventure--Experimental Version:5.0/6, NOV-78>
+
+Notes:
+- This version is extremely tight on lamp life, so this walkthrough includes
+    a side trip to get fresh batteries.
+- There are only five dwarves. You can safely discard the axe after killing the fifth,
+    but this walkthru doesn't rely on that.
+- This walkthru relies heavily on one unintentional bug: The weight check is
+    skipped for GET when you and the item you're getting are *both* in the boat.
+- If you meet the pirate and he steals something important, then you will have
+    to detour from this walkthru and go get the chest. YOU MUST BRING THE KEYS!
+    If the pirate stole something, his chest will likely be too heavy to lift,
+    so you must OPEN CHEST (with the keys) to get out your stuff. Come back
+    later to get the chest itself.
+
+no
+in
+get lamp,poster
+7
+22
+34
+xyzzy
+e
+get cage
+pit
+light lamp
+e
+get bird
+debris
+get rod
+pit d w
+wave rod
+w
+get horn
+w w s
+[IF YOU ARE IN A DEAD-END CRACK: n s. REPEAT UNTIL YOU CAN GO SOUTH.]
+s
+yank cloak
+nw n d e e e
+wave rod
+wave rod [RESTORE THE BRIDGE]
+e d
+open cage
+drop bird,cage,rod,poster
+w get e
+s get n
+n d w d n u
+blow horn
+n w d d s
+e e get w w
+turn off lamp
+pray
+drop horn,jewels,coins,grail
+
+wear cloak
+w knoll
+get flowers
+n
+get pole
+grotto
+get boat
+s
+drop boat
+e
+light lamp
+e
+throw flowers
+get comb
+w
+turn off lamp
+w
+get boat
+ne
+drop boat
+u
+light lamp
+u u u e
+get sapphire
+e
+ne [OR se DEPENDING ON WHICH ELBOW YOU'RE IN]
+in
+[IF THE GNOME BLOCKS YOU: d. u. in. REPEAT UNTIL YOU GET IN.]
+hit phone
+get slugs
+out w sw
+w w w d
+turn off lamp
+d
+get boat
+n
+drop boat,pole,slugs
+u u d
+light lamp
+d get u
+turn off lamp
+u s
+wear shoes
+e n
+light lamp
+get cask
+turn off lamp
+s w w sw d
+drop cask
+get pole,boat
+put trident,cask,slugs in boat
+get trident,cask,slugs
+
+sw n
+drop boat,pole
+ne
+light lamp
+u u
+fill
+e u
+turn off lamp
+s e
+light lamp
+click n
+turn off lamp
+pray
+drop cloak,diamonds,sapphire,cask,slugs
+
+[YOU SHOULD BE CARRYING: LAMP, AXE, TRIDENT, HONEY, SLIPPERS]
+plugh
+light lamp
+s d w d n
+open
+d d
+get pearl
+shell
+s u e u
+get lyre
+n
+turn off lamp
+plugh
+drop lyre,trident,pearl
+
+in
+get keys,bottle
+out
+[YOU SHOULD BE CARRYING: LAMP, BOTTLE, AXE, HONEY, KEYS, SLIPPERS]
+click
+light lamp
+e n n w
+get ring
+u e e
+barren
+in
+throw honey
+unlock chain
+get chain,bear
+view
+s e
+get spices
+fork w w
+drop bear
+cross
+sw d sw se
+e
+get pillow
+w w w d
+water plant
+u w n
+e u e u n
+turn off lamp
+plugh
+drop pillow,keys
+drop chain,ring,slippers,spices
+
+plugh
+light lamp
+s s
+ne [REPEAT "ne" UNTIL YOU GET INTO THE THRONE ROOM]
+e
+wear crown
+out secret w
+kill
+yes
+get rug
+n d n w orient n chimney
+yank sword [YOU MUST BE WEARING THE CROWN!]
+e d s
+get vase
+se ne
+e u e u n
+turn off lamp
+plugh
+drop rug,vase,crown,sword
+
+[TAKE A BREAK HERE TO GO GET FRESH BATTERIES]
+fill bottle
+get slugs
+xyzzy
+light lamp
+pit
+w w w w w s
+n ne s
+put slugs in machine
+get batteries
+n d d d
+e e e e e y2
+s d bedquilt w
+orient n w
+drop all
+tunnel
+get emerald
+tunnel
+get all
+nw s se
+w w d
+water plant
+climb
+w
+get eggs
+s d u w n
+e u e u n
+plover
+ne
+get pyramid
+turn off lamp
+s
+plover
+plugh
+drop eggs,pyramid,bottle
+
+xyzzy
+light lamp
+pit d
+s get n
+y2
+get emerald
+turn off lamp
+plugh
+drop nugget,emerald
+
+get keys
+[YOU SHOULD BE CARRYING: LAMP, AXE, KEYS]
+xyzzy
+light lamp
+pit d
+w w w s
+e s s s
+n e e nw
+open chest
+get chest
+se n d
+debris
+turn off lamp
+xyzzy
+drop chest
+
+[NOW WORK AROUND THE BOOK BUG: VIEW IT TO GET FULL POINTS]
+get book
+drop book
+look
+
+put nugget,cask,trident in chest
+put horn,jewels,coins,grail,cloak,diamonds,sapphire in safe
+put lyre,pearl,chain,ring,shoes,spices in safe
+put crown,sword,eggs,pyramid,emerald,book in safe
+
+[YOU SHOULD NOW HAVE 441 OUT OF 501 POINTS]
+
+plugh
+light lamp
+s d w d e
+get magazines
+e
+drop magazines
+[GO EAST OR WHATEVER UNTIL YOU GET OUT]
+[WAIT FOR THE BLINDING FLASH OF LIGHT]
+sw
+get rod
+ne n
+drop rod
+s sw
+blast
+[YOU WIN!]
+
+
+There is a loud explosion, and a twenty-foot hole appears in the far
+wall, burying the dwarves in the rubble.  You march through the hole
+and find yourself in the Main Office, where a cheering band of
+friendly elves carry the conquering adventurer off into the sunset.
+
+You scored 501 out of a possible 501, using  850 turns.
+
+All of Adventuredom gives tribute to you, Adventurer Grandmaster!
+
+To achieve the next higher rating would be a neat trick!
+
+CONGRATULATIONS!!
