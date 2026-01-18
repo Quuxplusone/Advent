@@ -105,6 +105,14 @@ The same as MCDO0551, except...
 - Blue Grotto, Bat Cave, Cloakroom/Wumpus, Rotunda, Devil's Chair, Fairy Grotto, Lost River Canyon,
     the Winery, the Rainbow Room
 
+- Following the narrow ledge from Lost River Canyon is a one-way passage _to_
+    the NE side of the troll bridge. (Preserved in MCDO0551. Reversed in LONG0751.)
+
+- In the version recovered by LanHawk, `<Adventure--Experimental Version:5.0/6, NOV-78>`,
+    the Bubble Chamber has the trident (not the radium) and the ruby slippers are
+    in the Crystal Palace (not over the Rainbow Room). In these respects it differs
+    from all four of ANON0501/OSKA0501, MCDO0551, and LONG0751.
+
 ### LONG0751
 
 - The helicopter. The Castle of Aldor. The Secret Garden, containing a
@@ -118,7 +126,13 @@ The same as MCDO0551, except...
     It leads to Lost River Canyon, connecting the Bubble Chamber/Rainbow Room
     section of the cave with the Bat Cave/Rotunda section.
 
-- There are only five dwarves; the sixth is the pirate and the seventh is the
+- Following the narrow ledge from Lost River Canyon is a one-way passage _from_
+    the NE side of the troll bridge. (The reverse of LONG0501 and MCDO0551.)
+
+- It's possible to go UP from the Green Lake Room. (It's impossible in LONG0501
+    and MCDO0551, possible in ROBE0665.)
+
+- Besides the usual five dwarves, the sixth is the pirate and the seventh is the
     pack rat ("Bigrat"), which steals items left unattended above ground (even in
     the well house) and replaces them with worthless items such as
     _an old shiny button_, _an old cracked shaving mug_, or _a smooth, white pebble_.
@@ -141,18 +155,33 @@ The same as LONG0501, plus the "Castle of the Elves" sequence:
 
 ### OSKA0501 (ANON0501)
 
-The same as LONG0501, plus two uncompleted dead ends:
+Basically the same as LONG0501, with one added (presumably uncompleted, and
+apparently not-quite-working) dead end. OSKA0501 seems to be a faithful port
+of ANON0501.
 
-- _You have entered Haunted Chamber.  A cold wind whistles eerily
+- ANON0501 replaces the star sapphire (69) with the black fly in the pantry,
+    and adds spider (121) and parchment (122). The fly remains a treasure,
+    since the author didn't clear its object flags in section 7.
+
+- ANON0501 replaces the Gothic Chapel (225) with the "bizzare room" [sic],
+    eliminating the west exit from the west portal (221)
+    and moving the chalice from the Chapel to the east portal (220).
+
+- ANON0501 adds Haunted Chamber (239) north of awkward canyon.
+    _You have entered Haunted Chamber.  A cold wind whistles eerily
     throughout the room.  Strange chords from an unseen organ echo
     from all over.  A passage leads east and a small hole leads south._
-
-- _You are in an extremely bizzare room.  The entire north wall
+    This room contains the spider, which you can't pass without the fly;
+    leads to slanty tunnel (240) and bizzare room (225).
+    _You are in an extremely bizzare room.  The entire north wall
     glow with a luminous red light.  There are gnarled stone formations
     rising from the floor, which look like contorted staues in the
     wierd red light.  A bronze plaque on the east wall bears the
     inscription, 'Shamut'.  There is a dark tunnel to the south and an
     impossibly steep passage west._
+
+- ANON0501 adds messages 378, 379, 386 (overwriting an unused diagnosis slot),
+    398, and 399.
 
 ### SWEN0448
 
@@ -193,7 +222,7 @@ The same as LONG0501, plus two uncompleted dead ends:
 
 - WOOD0430: chasm
 
-- LONG0501 (LONG0751, MCDO0551, ROBE0665): billboard, salt marsh, Thunder Hole
+- LONG0501 (LONG0751, MCDO0551, OSKA0501, ROBE0665): billboard, salt marsh, Thunder Hole
 
 - LONG0751:
     Outside grate: a _large cloth bag_ containing _grey powder_.
@@ -453,11 +482,10 @@ The same as LONG0501, plus two uncompleted dead ends:
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
     platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
     silken cloak, gleaming sword, elfin crown, ruby slippers, delicate lyre,
-    star sapphire, Holy Grail (chalice), cask of vintage wine, golden ring (small gold ring), four-leafed clover,
-    rare book, glowing stone (radium), opal sphere.
-
-- OSKA0501: 27: same as LONG0501 but without the star sapphire.
-    [Its item number is used for the black fly instead.]
+    star sapphire, Holy Grail (chalice), cask of vintage wine, golden ring (small gold ring),
+    four-leafed clover, rare book, glowing stone (radium), opal sphere
+    [According to the common subset of OSKA0501/ANON0501, MCDO0551, and ROBE0665.
+    Version `5.0/6` lacks the clover, radium, and opal, but still has 501 points.]
 
 - LONG0751: 42: large gold nugget, several diamonds, silver horn, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
@@ -468,7 +496,7 @@ The same as LONG0501, plus two uncompleted dead ends:
     golden apple, priceless tapestry, golden fleece, sachet of perfume, Maltese falcon (black bird),
     silver flute, delicate conch, bronze shield, valuable deed to a reclaimed silver mine (soiled paper), silver ingots,
     golden chain, ancient mystic amulet
-    [The golden chain's item number changes, thanks somehow to the dumbwaiter pull-chain.]
+    [According to version `6.1/3`.]
 
 - MALM1000: 37: large gold nugget, several diamonds, silver bars, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
@@ -476,7 +504,7 @@ The same as LONG0501, plus two uncompleted dead ends:
     gold bag (pieces of eight), iridium crown, visorless helmet,
     sapphire sceptre, toy yacht (the Ruby Yacht of Omar Khayyam),
     mithril ring, scrimshaw spyglass, ice sculpture, jade bracelet, casket opals,
-    turquoise beads, metal plate (PLAT0550's plate is now a treasure),
+    turquoise beads, metal plate [PLAT0550's plate is now a treasure],
     beautiful rose, red apple, jeweled urn, golden weathercock, silver cross,
     jeweled cane, gold key, gold watch, rare stamps, floppy disk
 
@@ -487,6 +515,8 @@ The same as LONG0501, plus two uncompleted dead ends:
     star sapphire, Holy Grail (chalice), cask of vintage wine, golden ring (small gold ring),
     four-leafed clover, rare book, glowing stone (radium), **quartz sphere**,
     golden tree, silver droplet
+
+- OSKA0501/ANON0501: 28: same as LONG0501 but with the black fly instead of the star sapphire
 
 - PLAT0550: 26: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
@@ -505,11 +535,12 @@ The same as LONG0501, plus two uncompleted dead ends:
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
     platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
     silken cloak, shining sword, elfin crown, ruby slippers, delicate lyre,
-    **star sapphire**, silver chalice, cask of vintage wine, tarnished ring (small gold ring),
+    star sapphire, silver chalice, cask of vintage wine, tarnished ring (small gold ring),
     rare illuminated manuscript, glowing stone (radium), opal sphere, crystal ball,
     golden statue, golden belt, Venetian glass, Elvish scroll, silmaril, mahogany hoop,
     ancient two-dollar bill, mithril mail, ivory elephant, gleaming scabbard,
     crystal box, ruby diadem
+    [The four-leafed clover exists but is not a treasure.]
 
 - SWEN0448: 21: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
