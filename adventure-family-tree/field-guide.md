@@ -307,7 +307,7 @@ of ANON0501.
 
 - BRHA0017: _A little dwarf walks around a corner. He throws an axe at you, which misses, curses and runs off!_
 
-- CROW0000 (WOOD0350): _A little dwarf just walked around a corner, saw you, threw a little axe at you which missed, cursed, and ran away._
+- CROW0005 (WOOD0350): _A little dwarf just walked around a corner, saw you, threw a little axe at you which missed, cursed, and ran away._
 
 - GIBI0375: _A little dwarf just walked around a corner, saw you, threw a little axe, missing you, cursed, and ran away._
 
@@ -361,7 +361,7 @@ of ANON0501.
 - BRHA0017: WOOD0350. The "all alike" maze is changed: the route to the chest is
     simply SE N S, then N N N to the pit. The "all different" maze is also changed.
 
-- CROW0000: Twisty passages all alike
+- CROW0005: Twisty passages all alike
 
 - HOWE0301: WOOD0350, but the "all different" maze rooms differ by text color, not
     by description.
@@ -372,7 +372,7 @@ of ANON0501.
 
 - PLAT0550: WOOD0350, plus fog room, enchanted catacombs, ice maze (_THURB_)
 
-- WOOD0350: CROW0000, plus twisty passages all different
+- WOOD0350: CROW0005, plus twisty passages all different
 
 - LONG0501 (LONG0751): WOOD0350, although arguably the marsh and (in LONG0751) swamp
     count as simple mazes.
@@ -466,7 +466,7 @@ of ANON0501.
     tiny platinum pyramid, huge glistening pearl, Persian rug, rare spices, golden chain,
     large silver scarab
 
-- CROW0000: 5: large gold nugget, diamonds, bars of silver, precious jewelry, coins
+- CROW0005: 5: large gold nugget, diamonds, bars of silver, precious jewelry, coins
 
 - GIBI0375: 18: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
