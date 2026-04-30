@@ -1,14 +1,22 @@
 
-This project provides translations into modern, modular C99 of four classic
-games: Crowther and Woods' "Adventure", Luckett and Pike's 440-point
-"Adventure II", David Platt's 550-point "Adventure 3", and David Long
-et al.'s 551-point "Adventure 6".
+This repository provides my own translations into modern, modular C99 of
+four classic games: Crowther and Woods' "Adventure", Luckett and Pike's
+440-point "Adventure II", David Platt's 550-point "Adventure 3", and
+Doug McDonald's 551-point "Adventure 6".
+
+This repository also hosts copies of the source code of many other
+variants of Adventure, including the originals of all of the above.
 
 ===========================================================================
 
-A summary of existing versions and ports of Adventure is available
-on Russel Dalenberg's website:
-http://www.prismnet.com/~ged/www/advelist.html
+A "family tree" of versions and ports of Adventure, originally due to
+Russel Dalenberg and greatly expanded by Nathanael Culver and others,
+is available on Mike Arnautov's website:
+https://mipmip.org/advfamily/advfamily.html
+Another tree is available in the "adventure-family-tree/" subdirectory
+of this repository, alongside a spoiler-heavy "Field Guide" to identifying
+various versions of Adventure:
+https://github.com/Quuxplusone/Advent/blob/master/adventure-family-tree/adventure-family-tree.pdf
 
   The original "Adventure" was written in Fortran IV by Will Crowther,
   and extended also in Fortran by Don Woods.
@@ -126,20 +134,24 @@ The history of David Long et al.'s 551-point "Adventure 6" is:
   AND AXE IN SACK". Long wrote "Adventure 5" in DEC Fortran, a dialect
   of Fortran IV.
 
-  David Long planned to release version 6 of his game in "summer 1979",
-  and in fact did at some point release a 751-point "Adventure", but that
-  version seems to be lost; or at least not available on the Internet
-  today.
+  David Long completed version 6 of his game in the first half of 1980.
+  He provided an executable of this 751-point "New Adventure" or
+  "Enhanced Adventure" to CompuServe; it remained online for at least
+  15 years. With the demise of CompuServe, Long's game was lost to public
+  view until an executable (no source code) was rediscovered in late 2025.
+  https://quuxplusone.github.io/blog/2025/12/29/long0751/
 
-  In late 1984, Doug McDonald expanded Long's 501-point game, increasing
-  the maximum score to 551 points and porting the game to Fortran 77.
-  He called his version "Adventure 6".
+  Independently, in late 1984, Doug McDonald expanded Long's 501-point
+  game, increasing the maximum score to 551 points and porting the game
+  to Fortran 77. Since he had updated Long's "version 5," McDonald
+  called his version "Adventure 6".
 
   A 501-point version of Long's game (dated October 1979) was posted to
   Usenet by Bill Randle in May 1990. By that point Long's single aamain.f
   had been fragmented into many smaller source files, contained "GRIPE"
   code attributed to Mike St Johns, and may have had other (anonymous)
-  contributors as well.
+  contributors as well. It had a small amount of additional game content,
+  unfinished and uncredited.
   http://cd.textfiles.com/gigagames9308/NET/USENET/VOLUME9/ADVEN
 
   This 501-point version was ported to Fortran 77 by Johann Oskarsson
@@ -160,16 +172,19 @@ The history of David Long et al.'s 551-point "Adventure 6" is:
   quirks. Picton made some idiosyncratic changes, most notably adding
   some hints and randomizing the combination to Long's safe.
 
-  For this translation, I took as my gold standard Doug McDonald's
-  August 1990 version ("Adventure 6.6"), since no "original" game by
-  David Long alone appears to have survived. My secondary source was
-  the 501-point Randle version.
-
 The history of "Adventure 6" on the Z-machine, as far as I know, is:
 
   In November 2012, Arthur O'Dwyer (that's me!) ported "Adventure 6"
   to C and got it running on the Z-machine. Play it here:
   http://quuxplusone.github.io/Advent/play-551.html
+
+  For this translation, I took as my gold standard Doug McDonald's
+  August 1990 version ("Adventure 6.6"). Initially, in 2012, I thought
+  of myself as reconstructing LONG0501; but at the time I had no access
+  to original Long material beyond ANON0501/OSKA0501, and besides,
+  McDonald's Castle of the Elves material proved too good to lose.
+  Therefore some of my code comments may still say "Long" when
+  "McDonald" would be more accurate; or vice versa. Caveat lector.
 
 ===========================================================================
 
@@ -225,3 +240,4 @@ you're lucky, but they might just generate bad code. Use with caution.
 
                                                   Arthur O'Dwyer
                                                   November 2012
+                                                  Updated May 2026

@@ -71,7 +71,7 @@ port, and in most cases it's copied straight from WOOD0350. In no case
 did I just "invent" text beyond the 72nd or 80th column.
 
 Truncating the data file at 80 columns on print-out is historically
-significant. ANON0501, MCDO0551, and ROBE0665, among others,
+significant. ANON0501, OSKA0501, and MCDO0551, among others,
 seem to have suffered 80-column truncation at some point in their
 history, because room 10 (the cobble crawl) is absent from their list
 of rooms with bitflag 0 (light). Less observably, rooms 51 and 87
