@@ -93,7 +93,9 @@
     make_ins(CRAWL, R_COBBLES); ditto(COBBLES); ditto(IN); ditto(W);
     make_ins(PIT, R_SPIT);
     make_ins(DEBRIS, R_DEBRIS);
-    /* Crowther gives the cobble crawl F_LIGHTED; Long, strangely, does not. */
+    /* Crowther and Long give the cobble crawl F_LIGHTED; McDonald, strangely, does not.
+     * I believe this is because he (or some ancestor) was working from a paper printout
+     * that truncated each line of data at 80 columns. */
     make_loc(q, R_COBBLES,
              "You are crawling over cobbles in a low passage.  There is a dim light" SOFT_NL
              "at the east end of the passage.",
@@ -223,7 +225,10 @@
     make_ins(W, R_MAZEA49);
     make_ins(D, R_MAZEA51);
     make_ins(S, R_MAZEA52);
-    make_loc(q, R_MAZEA51, all_alike, NULL, F_TWIST_HINT);
+    /* McDonald omits F_TWIST_HINT from room 51, probably because he was
+     * working from a paper printout that truncated each line of data at
+     * 80 columns. */
+    make_loc(q, R_MAZEA51, all_alike, NULL, 0);
     make_ins(W, R_MAZEA49);
     make_ins(U, R_MAZEA50);
     make_ins(E, R_MAZEA52);
@@ -256,7 +261,10 @@
     make_ins(N, R_BRINK);
     make_ins(W, R_MAZEA83);
     make_ins(NW, R_PIRATES_NEST);  /* NW: a dirty trick! */
-    make_loc(q, R_MAZEA87, all_alike, NULL, F_TWIST_HINT);
+    /* McDonald omits F_TWIST_HINT from room 87, probably because he was
+     * working from a paper printout that truncated each line of data at
+     * 80 columns. */
+    make_loc(q, R_MAZEA87, all_alike, NULL, 0);
     make_ins(U, R_MAZEA45); ditto(D);
     make_loc(q, R_BRINK,
              "You are on the brink of a thirty-foot pit with a massive orange column" SOFT_NL
