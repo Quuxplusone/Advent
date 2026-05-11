@@ -299,7 +299,11 @@ of ANON0501.
 
 ### Flying carpets
 
-- GOET0580:
+- GOET0580: `THGIRW RUBLIW`, then `RIDE RUG`.
+    _You climb onto the rug which gently starts to float across the rift.
+    You slowly rise up to the level of the ledge on the western side of
+    rift.  The rug loops around once or twice, and then gently deposits
+    you on the western side of the rift._
 
 - WOOD0430: _You board the Persian rug, which promptly whisks you across the chasm._
 
@@ -337,6 +341,8 @@ of ANON0501.
 - ARNA0770: PLAT0550, plus BASINGSTOKE
 
 - BRHA0017: XYZZY, GLUPH, PLOVER, FEE FIE FOE FOO, MAGE DEN
+
+- GOET0580: PLAT0550, plus THGIRW and RUBLIW
 
 - LIDI0366: WOOD0350, plus PKIHMN
 
