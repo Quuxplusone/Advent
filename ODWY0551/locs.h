@@ -579,6 +579,7 @@
     make_ins(S, R_IMMENSE); ditto(OUT);
     make_ins(GIANT, R_GIANT);
     make_ins(W, R_INCLINE);
+    make_ins(D, R_WHIRLPOOL); ditto(JUMP); ditto(WHIRLPOOL); ditto(HOLE);
     make_loc(q, R_INCLINE,
              "You are at the top of a steep incline above a large room.  You could" SOFT_NL
              "climb down here, but you would not be able to climb up.  There is a" SOFT_NL
