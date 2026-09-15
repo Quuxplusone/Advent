@@ -16,7 +16,7 @@ ZORK
 505  B1$[V,R0]=""
 600  L9=V
 601  L2=R0*G
-700  DEF FNL(R)=R<G OR R>14 AND R<17 OR R>30 AND R<35 OR R=46 OR 4>48 AND R
+700  DEF FNL(R)=R<G OR R>14 AND R<17 OR R>30 AND R<35 OR R=46 OR R=40 OR R>48 AND R
 800  PRINT "Welcome to Adventure II!"'10'13"Do you want instructions? ";
 801  LINPUT A$[V,V]
 802  K$="HELP.LOOK"
@@ -145,7 +145,7 @@ ZORK
 5004  A$=A$[POS(A$," ")+V,POS(A$," ")+F6]
 5006  IF A$="IT    " THEN 5009
 5007  IF A$#"      " THEN 5028
-5009  IF A$#"" THEN 5022
+5009  IF O$#"" THEN 5022
 5012  PRINT V$;" what?"
 5015  LINPUT A$
 5018  A$=UPS$(A$[V,G+V])
@@ -209,7 +209,7 @@ ZORK
 5113  GOTO 900
 5114  IF L[E,S]#500 THEN 5127
 5115  B$="A valiant attempt.  What a concept!     An interesting idea.Close, but
-5116  PRINT B$[20*(T1-INT(T1/F4)*F4)+V,20*(T1-INT(T1/F4)*F4+20]
+5116  PRINT B$[20*(T1-INT(T1/F4)*F4)+V,20*(T1-INT(T1/F4)*F4)+20]
 5117  GOTO 900
 5127  IF L[E,S]#-V THEN 5132
 5128  PRINT "Not only is trying to take the "B$" impossible, but it's also very d
@@ -558,7 +558,7 @@ ZORK
 7400  GOTO 4000
 7450  IF L1 AND FNV(V) OR FNL(L9) THEN 7480
 7460  GOTO RND(V)*F3 OF 7465,7465
-7461  PRINT "Oh, no! Wild xeener bugs just are your head!"'7
+7461  PRINT "Oh, no! Wild xeener bugs just ate your head!"'7
 7462  GOTO 9005
 7465  PRINT "It's pitch dark!  You may get eaten by a wild xeener bug!"'7
 7470  GOTO 900
@@ -659,7 +659,7 @@ ZORK
 9015  L9=V
 9016  L[V,V]=F3
 9017  GOTO 900
-9100  PRINT "What?!? You don't trust me?  Why only last week I patched a Micom"
+9100  PRINT "What?!? You don't trust me?  Why, only last week I patched a Micom"
 9102  PRINT "Port Controller and it ~~~~~~~'fffx"'10;
 9103  SYSTEM A,"Pau-8"
 9104  PRINT '127'127'127'127'127'127" CLASS=";

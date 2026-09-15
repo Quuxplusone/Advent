@@ -512,7 +512,7 @@ ADVEN2
 5650  PRINT "You are going 90 meters per second on a sheet of ice."'13'10"A cliff!  Watch out!"'7
 5660  PRINT "You impaled yourself on a treelimb, you do not survive."
 5670  STOP
-5680  PRINT "You coast down the gentle grade with ease."
+5680  PRINT "You coast down the the gentle grade with ease."
 5690  R0=46
 5700  O[24,K1]=R0
  5710  GOTO 2990

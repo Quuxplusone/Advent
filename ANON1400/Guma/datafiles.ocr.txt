@@ -265,7 +265,7 @@ This room's walls are covered with a mixture of blood
 and slimy ooze.  Exits: North and south.
 Slime Room
 
-You're in a library.  The only apparent exits to this room are:
+You're in a library.  The only apparent exits to the room are:
 a passage to the south and an archway to the east.
 Library
 
@@ -315,7 +315,7 @@ south a dark hole, and meadow everywhere else.
 Front Yard
 
 
-You're in a meadow, north of a house.  For to the north,
+You're in a meadow, north of a house.  Far to the north,
 a tiny oasis is visible.
 North of House
 
@@ -404,7 +404,7 @@ You're in a dark cave with a rocky floor.  There is a stairway leading
 up and an eastern passage.
 Cave
 
-You're crawling over rocky cobbles is an east-west passage.  At the
+You're crawling over rocky cobbles in an east-west passage.  At the
 eastern end is a formidable wooden door, which is open.
 East-West Crawl
 
