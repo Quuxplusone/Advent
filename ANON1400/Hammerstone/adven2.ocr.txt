@@ -11,7 +11,7 @@ ADVEN2
 1081  GOTO 1080
  1090  REM <<Get off/Disem>>
 1150  IF D1 THEN 1180
- 1160  PRINT "You are not on anything."
+ 1160  PRINT "You are not on anything,"
 1170  GOTO 1080
  1180  D1=K0
 1190  PRINT "You are off the SNO-DISC."
@@ -36,9 +36,9 @@ ADVEN2
 1380  GOTO 1080
 1390  IF  NOT POS("CUBE :GUM  ",O1$[K1,K5]) THEN 1460
 1400  IF O[62,K1]=-K1 THEN 1430
-1410  PRINT "You don't have the "O$"."
+1410  PRINT "You don't have the "O$","
 1420  GOTO 1080
-1430  PRINT "Somewhat chewy and refreshing."
+1430  PRINT "Somewhat chewy and refreshing,"
  1440  O[62,K1]=K0
 1441  L0=L0-O[62,K1]
  1450  GOTO 1080
@@ -46,7 +46,7 @@ ADVEN2
 1470  IF O[29,K1]#-K1 THEN 1410
 1471  L0=L0-O[29,K2]
 1480  S=S-O[29,K2]
- 1490  PRINT "Yummy."
+ 1490  PRINT "Yummy,"
 1500  GOTO 1080
 1510  IF O1$[K1,K4]#"FISH" THEN 1560
 1520  IF O[31,K1]#-K1 THEN 1410
@@ -71,7 +71,7 @@ ADVEN2
 1690  IF  NOT LEN(O$) THEN 1080
 1700  O1$=UPS$(O$)
 1710  IF POS("CARD :CYLIN",O1$[K1,K5]) THEN 1740
-1720  PRINT "I don't see how to do that with the "O$"."
+1720  PRINT "I don't see how to do that with the "O$","
 1730  GOTO 1080
 1740  PRINT O$": where?";
 1750  LINPUT A$
@@ -82,12 +82,12 @@ ADVEN2
 1800  GOTO 1080
 1810  IF O1$[K1,K4]="CARD" THEN 1920
 1820  IF O[K4*K6,K1]=-K1 THEN 1850
-1830  PRINT "You don't have the "O$"."
+1830  PRINT "You don't have the "O$","
 1840  GOTO 1080
 1850  IF R0=58 THEN 1880
 1860  PRINT "I see no slot here."
 1870  GOTO 1080
-1880  PRINT "As the cylinder goes in, the hum from the reactor ceases."
+1880  PRINT "As the cylinder goes in, the hum from the reactor ceases,"
 1881  L0=L0-O[K4*K6,K2]
 1890  R3=K0
  1900  O[K6*K4,K1]=K0
@@ -131,16 +131,16 @@ ADVEN2
  2240  REM <<Quit/Score/Stop>>
 2250  CONVERT S TO A$
 2260  CONVERT T TO B$
-2270  PRINT "Your score is "A$" out of a possible 1400 in "B$" turns."
+2270  PRINT "Your score is "A$" out of a possible 1400 in "B$" turns,"
 2280  DATA "Beginner","Novice","Intermediate","Class IV","Advanced","Expert","Cheater"
 2290  FOR A=K1 TO (S/200)+K1
 2300  READ A$
 2310  NEXT A
-2320  PRINT "This qualifies you as a "A$" Adventurer."
+2320  PRINT "This qualifies you as a "A$" Adventurer,"
 2330  PRINT "Do you wish to stop now?";
 2340  LINPUT A$
 2350  IF POS("Nn",A$[K1,K1]) THEN 1080
-2360  PRINT "Okay."
+2360  PRINT "Okay,"
  2370  ASSIGN "Score.L957",K3,R9
 2380  IF R9 THEN 2370
  2390  IF  END #K3 THEN 2460
@@ -158,10 +158,10 @@ ADVEN2
  2510  PRINT A$
 2520  GOTO 2500
  2530  REM <<Bug>>
-2540  PRINT "Leave a two line message explaining problem."
+2540  PRINT "Leave a two line message explaining problem,"
 2550  ASSIGN "Bug.M317",K3,R9
 2560  IF  NOT R9 THEN 2590
-2570  PRINT "Bug file busy."
+2570  PRINT "Bug file busy,"
 2580  GOTO 1080
 2590  IF  END #K3 THEN 2611
 2600  READ #K3;A$
@@ -171,8 +171,8 @@ ADVEN2
 2630  LINPUT A$
  2650  PRINT #K3;A$
 2660  NEXT A
- 2670  PRINT "Thank you."
-2680  PRINT #K3;T$, END
+ 2670  PRINT "Thank you,'
+2680  PRINT #K3;T$,. END
 
 2690  GOTO 1080
 2700  PRINT "Bug file full."
@@ -187,7 +187,7 @@ ADVEN2
 2790  IF POS("Nn",B$[K1,K1]) THEN 1080
 2800  CREATE R9,A$,K2
  2810  IF  NOT R9 THEN 2750
-2820  PRINT "Can't create."
+2820  PRINT "Can't create,"
  2830  GOTO 1080
 2840  IF  END #K3 THEN 2770
 2850  MAT  PRINT #K3;O,M
@@ -199,7 +199,7 @@ ADVEN2
  2910  LINPUT A$
 2920  ASSIGN A$,K3,R9,"Argyle"
 2930  IF R9<K2 THEN 2960
-2940  PRINT "Unable to load."
+2940  PRINT "Unable to load,"
 2950  GOTO 1080
  2960  MAT  READ #K3;O,M
 2970  READ #K3;A,B9,C8,C9,D2,L,L0,P0,R0,R1,R3,M9,S,T,Z9,D1,F9
@@ -208,7 +208,7 @@ ADVEN2
 3000  GOTO 2230
  3010  REM <<Find>>
 3011  IF Z7 THEN 3020
-3012  PRINT "You are not a wizard."
+3012  PRINT "You are not a wizard,"
 3013  GOTO 1080
  3020  GOSUB 6580
 3030  IF LEN(O$) THEN 3080
@@ -221,14 +221,14 @@ ADVEN2
 3100  A$=UPS$(A$)
 3110  IF POS(A$,O1$[K1,K5]) THEN 3150
 3120  NEXT A
-3130  PRINT O$": unable to locate this object."
+3130  PRINT O$": unable to locate this object,"
 3140  GOTO 1080
 3150  IF O[A,K1] THEN 3180
-3160  PRINT O$": object does not exist."
+3160  PRINT O$": object does not exist,"
 3170  GOTO 1080
- 3180  A$=": room 00."
+ 3180  A$=": room 00,"
 3181  IF O[A,K1]#-K1 THEN 3190
-3182  PRINT O$": you are carrying it."
+3182  PRINT O$": you are carrying it,"
 3183  GOTO 1080
 3190  CONVERT O[A,K1] TO A$[K9-(O[A,K1]>K9),K9]
 3200  PRINT O$;A$
@@ -250,17 +250,17 @@ ADVEN2
 3341  PRINT O$": A valiant attempt."
 3350  GOTO 1080
 3360  IF O[35,K1]=R0 THEN 3390
-3370  PRINT "I see no bed here."
+3370  PRINT "I see no bed here,'
 3380  GOTO 1080
 3390  IF O[K9,K1]#R0 AND O[K9,K1]#-K1 THEN 3470
 3400  IF  NOT F9 THEN 3430
-3410  PRINT "Not now the girl has a headache."
+3410  PRINT "Not now the girl has a headache,"
  3420  GOTO 1080
 3430  PRINT "Cosmic!  What a WOMAN!"
  3440  F9=K1
 3450  S=S+69
  3460  GOTO 1080
-3470  PRINT "I see no girl here."
+3470  PRINT "I see no girl here,'
  3480  GOTO 1080
 3490  REM <<Feed>>
  3500  GOSUB 6580
@@ -269,20 +269,20 @@ ADVEN2
 3530  LINPUT A$
 3540  IF  NOT LEN(A$) THEN 1080
 3550  IF POS(O1$,"ZARKA") THEN 3580
-3560  PRINT "The "O$" is not interested in the "A$"."
+3560  PRINT "The "O$" is not interested in the "A$","
 3570  GOTO 1650
 3580  IF O[25,K1]=R0 THEN 3610
-3590  PRINT "I see no "O$" here."
+3590  PRINT "I see no "O$" here,"
 3600  GOTO 1080
 3610  O1$=UPS$(A$)
 3620  IF O1$#"PIZZA" THEN 3560
 3630  IF O[34,K1]=-K1 THEN 3660
-3640  PRINT "You don't have the "A$"."
+3640  PRINT "You don't have the "A$","
 3650  GOTO 1080
 3660  O[25,K2]=50
  3670  O[34,K1]=K0
 3671  L0=L0-O[34,K1]
-3672  PRINT "The Zarka becomes you friend for life and shows you an exit on the western wall."
+3672  PRINT "The Zarka becomes you friend for life and shows you an exit on the western wall,'
 3680  Z9=K1
 3690  GOTO 1080
  3700  PRINT "Feed what?";
@@ -297,13 +297,13 @@ ADVEN2
 3780  IF  NOT LEN(O$) THEN 3830
  3790  IF O1$#"SLIME" THEN 3810
 3791  IF O[33,K1]=-K1 THEN 3800
-3792  PRINT "You don't have the spray."
+3792  PRINT "You don't have the spray,"
 3793  GOTO 1080
  3800  GOTO 5190
-3810  PRINT "I see no reason to spray the "O$"."
+3810  PRINT "I see no reason to spray the "O$","
 3820  GOTO 1080
 3830  IF R0=K5*K4 AND O[19,K1] THEN 3791
-3840  PRINT "I see nothing to spray here."
+3840  PRINT "I see nothing to spray here,"
 3850  GOTO 1080
 3860  REM <<Hit/Kick/Punch/Bite/Poke>>
 3861  GOSUB 6580
@@ -313,7 +313,7 @@ ADVEN2
 3865  IF  NOT LEN(O$) THEN 1080
  3866  O1$=UPS$(O$)
 3867  IF POS("WITCH:GIRL :SNAKE:CLOWN:ZARKA:SLIME:BEAST:NURSE",O1$[K1,K5]) THEN 1610
-3868  PRINT "That doesn't accomplish much."
+3868  PRINT "That doesn't accomplish much,"
 3870  GOTO 1080
 3880  REM <<Use>>
  3890  GOSUB 6580
@@ -323,20 +323,20 @@ ADVEN2
 3930  LINPUT O$
 3940  IF  NOT LEN(O$) THEN 1080
  3950  O1$=UPS$(O$)
-3960  PRINT "Fiddling with the "O$" in this manner is not very productive."
+3960  PRINT "Fiddling with the "O$" in this manner is not very productive,"
 3970  GOTO 1080
 3980  REM <<Sing>>
-3990  PRINT "If I were a rich man..."
+3990  PRINT "If I were a rich man,,,"
  4000  GOTO 1080
 4010  REM <<Swim>>
  4020  IF R0=26 OR R0=57 THEN 4050
-4030  PRINT "I don't see how to swim here."
+4030  PRINT "I don't see how to swim here,"
  4040  GOTO 1080
 4050  IF  NOT O[62,K1] THEN 4080
-4060  PRINT "You can't breathe under water; you suddenly feel very dead."
+4060  PRINT "You can't breathe under water; you suddenly feel very dead,"
 4070  STOP
 4080  PRINT "For some reason, you can breathe underwater!  After swimming for a while, you"
-4090  PRINT "surface on the other side of the waterfall."
+4090  PRINT "surface on the other side of the waterfall,"
 4100  R0=26+31*(R0=26)
 4110  GOTO 2990
  4120  REM <<Taste>>
@@ -348,10 +348,10 @@ ADVEN2
 4126  O1$=UPS$(O$)
 4127  IF O1$#"WATER" THEN 1290
 4128  IF O[44,K1]=-K1 THEN 4131
-4129  PRINT "You don't have the water."
+4129  PRINT "You don't have the water,"
 4130  GOTO 1080
 
-4131  PRINT "Cool and delicious."
+4131  PRINT "Cool and delicious,"
 4132  O[44,K1]=K0
  4133  S=S-O[44,K2]
 4134  L0=L0-O[44,K2]
@@ -367,27 +367,27 @@ ADVEN2
 4210  GOTO 1080
 4220  REM <<Dig>>
  4230  IF O[52,K1]=-K1 THEN 4260
-4240  PRINT "You don't have anything to dig with."
+4240  PRINT "You don't have anything to dig with,"
 4250  GOTO 1080
 4260  CONVERT R0 TO A$
 4270  IF POS("1 :2 :15:16:26:27:31:32:33:43:44:46:47:63",A$[K1,K2]) THEN 4300
-4280  PRINT "You can't dig here."
+4280  PRINT "You can't dig here,"
 4290  GOTO 1080
 4300  GOTO -M[R0] OF 4310,4370,4390,4410,4440
 4310  M[R0]=-K1
-4320  PRINT "You are digging a hole."
+4320  PRINT "You are digging a hole,"
 4330  M[R0]=M[R0]-K1
 4340  IF R0#27 OR  NOT O[22,K1] THEN 1080
 4350  PRINT "Booom!"'7"  You just dug up a live mine!"
 4360  STOP
-4370  PRINT "The hole is getting deeper, but that's about all."
+4370  PRINT "The hole is getting deeper, but that's about all,"
 4380  GOTO 4330
-4390  PRINT "You are getting your nails dirty."
+4390  PRINT "You are getting your nails dirty,"
 4400  GOTO 4330
-4410  PRINT "You are surrounded on all sides by earth."
+4410  PRINT "You are surrounded on all sides by earth,"
 4420  M[R0]=M[R0]-((R0=15) AND O[53,K1]=K0)
 4430  GOTO 1080
-4440  PRINT "You have unearthed a beautiful jade statue."
+4440  PRINT "You have unearthed a beautiful jade statue,"
 4450  O[53,K1]=R0
 4460  M[R0]=-K4
 4470  GOTO 1080
@@ -395,18 +395,18 @@ ADVEN2
 4490  CONVERT R0 TO A$
 4500  X=POS("18:26:56:58",A$[K1,K2])
 4510  IF X THEN 4540
- 4520  PRINT "I don't hear anything."
+ 4520  PRINT "I don't hear anything.'
 4530  GOTO 1080
 4540  GOTO INT(X/K3) OF 4570,4590,4620
-4550  PRINT "You hear pleasent tones eminating from this room."
+4550  PRINT "You hear pleasent tones eminating from this room,"
 4560  GOTO 1080
-4570  PRINT "You hear the sound of cool water splashing all around you."
+4570  PRINT "You hear the sound of cool water splashing all around you,"
  4580  GOTO 1080
 4590  PRINT "You hear a strange, distant echoing sound, apparently an animal"
- 4600  PRINT "humming to himself."
+ 4600  PRINT "humming to himself,"
 4610  GOTO 1080
  4620  IF  NOT R3 THEN 4520
-4630  PRINT "You hear a humming noise probobly coming from the reactor."
+4630  PRINT "You hear a humming noise probobly coming from the reactor,"
  4640  GOTO 1080
 4650  REM <<Kill/Attack>>
 
@@ -427,13 +427,13 @@ ADVEN2
 4800  GOTO 1080
  4810  IF A$="KNIFE" THEN 4850
 4820  IF O[33,K1]=-K1 THEN 4860
- 4830  PRINT "You don't have the "A$"."
+ 4830  PRINT "You don't have the "A$","
 4840  GOTO 1080
 4850  IF O[K9*K2,K1]#-K1 THEN 4830
  4860  IF O1$[K1,K2]#"SN" THEN 4950
 4870  IF O[K3^K3,K1]#R0 THEN 3590
  4880  IF A$="KNIFE" THEN 4910
-4890  PRINT "The "A$" is ineffective against the "O$"."
+4890  PRINT "The "A$" is ineffective against the "O$","
 4900  GOTO 1080
 4910  PRINT "The snake is wounded.  He crawls away to reveal a large number of rare coins!"
 4920  O[K3^K3,K1]=K0
@@ -442,7 +442,7 @@ ADVEN2
 4950  GOTO POS("WGCZSBN",O1$[K1,K1]) OF 4960,5020,5090,5150,5190,5270,5320
 4960  IF O[K7,K1]#R0 THEN 3590
 4970  IF A$="SPRAY" THEN 4890
-4980  PRINT "The witch laughs at your attempt, and your knife disintegrates."
+4980  PRINT "The witch laughs at your attempt, and your knife disintegrates,"
 4990  O[K9*K2,K1]=K0
 5000  S=S-K5*K2
  5001  L0=L0-O[K2*K9,K2]
@@ -464,7 +464,7 @@ ADVEN2
 5180  GOTO 4990
 5190  IF O[19,K1]#R0 THEN 3590
 5200  IF A$="SPRAY" THEN 5230
-5210  PRINT "The slime dissolves your knife and a small part of your hand."
+5210  PRINT "The slime dissolves your knife and a small part of your hand,"
 5220  GOTO 3590
 5230  PRINT "The slime quickly dehydrates and becomes a powder that falls"
 5240  PRINT "into the crevices in the floor."
@@ -474,7 +474,7 @@ ADVEN2
  5270  IF O[23,K1]#R0 THEN 3590
 5280  IF A$="SPRAY" THEN 4890
 5290  PRINT "As you thrust toward the beast, he grabs your arm, causing you"
-5300  PRINT "to release the knife.  He then proceeds to bend the knife in half."
+5300  PRINT "to release the knife.  He then proceeds to bend the knife in half,"
 5310  GOTO 4990
 5320  IF O[K9*K7,K1]#R0 THEN 3590
 5330  IF A$="SPRAY" THEN 4890
@@ -493,26 +493,26 @@ ADVEN2
 5460  PRINT "I don't see how to board that!"
 5470  GOTO 1080
 5480  IF O[47,K1]=R0 OR O[47,K1]=-K1 THEN 5510
-5490  PRINT "You don't have the "O$"."
+5490  PRINT "You don't have the "O$","
 5500  GOTO 1080
 5510  IF O[47,K1]=R0 THEN 5540
-5520  PRINT "The disc must be on the ground to board."
+5520  PRINT "The disc must be on the ground to board,"
 5530  GOTO 1080
 5540  PRINT "You are aboard the disc!"
 5550  D1=K1
  5560  GOTO 1080
 5570  REM <<Launch>>
  5580  IF D1 THEN 5610
-5590  PRINT "You are not aboard the disc."
+5590  PRINT "You are not aboard the disc,"
  5600  GOTO 1080
 5610  IF R0=51 THEN 5680
  5620  IF R0=50 THEN 5650
-5630  PRINT "You don't seem to go anywhere."
+5630  PRINT "You don't seem to go anywhere,"
  5640  GOTO 1080
-5650  PRINT "You are going 90 meters per second on a sheet of ice."'13'10"A cliff!  Watch out!"'7
+5650  PRINT "You are going 90 meters per second on a sheet of ice.'13'10"A cliff!  Watch out!"'7
 5660  PRINT "You impaled yourself on a treelimb, you do not survive."
 5670  STOP
-5680  PRINT "You coast down the the gentle grade with ease."
+5680  PRINT "You coast down the the gentle grade with ease,"
 5690  R0=46
 5700  O[24,K1]=R0
  5710  GOTO 2990
@@ -522,8 +522,8 @@ ADVEN2
  5750  PRINT "Throw what?";
 5760  GOTO 5850
  5770  REM <<Burn>>
-5780  PRINT "You have no matches."
-5790  PRINT "An EPA official runs up and upon discovering your evil intent,"'10'13"sentances you to death."
+5780  PRINT "You have no matches,"
+5790  PRINT "An EPA official runs up and upon discovering your evil intent,"'10'13"sentances you to death,"
 5800  STOP
 5810  REM <<Toss>>
  5820  GOSUB 6580
@@ -534,7 +534,7 @@ ADVEN2
 5860  IF  NOT LEN(O$) THEN 1080
 5870  O1$=UPS$(O$)
 5890  IF A#83 THEN 5920
- 5900  C1$="Thrown."
+ 5900  C1$="Thrown,"
 5910  GOTO 5930
  5920  C1$="Tossed."
 5930  FOR A=K1 TO 69
@@ -544,7 +544,7 @@ ADVEN2
 5970  NEXT A
 5980  GOTO 3310
  5990  IF O[A,K1]=-K1 THEN 6020
-6000  PRINT "You don't have the "O$"."
+6000  PRINT "You don't have the "O$","
  6010  GOTO 1080
 6020  IF A#K3*K5 THEN 6050
 6030  IF O[K4*K5,K1]=R0 THEN 6050
@@ -566,14 +566,14 @@ ADVEN2
 6190  PRINT "I don't see how to turn that!"
 6200  GOTO 1080
 6210  IF R0=58 THEN 6240
-6220  PRINT "I see no wheel here."
+6220  PRINT "I see no wheel here,"
 6230  GOTO 1080
 6240  PRINT "The gratings slide away."
  6250  O[58,K1]=K0
 6260  GOTO 1080
  6270  REM <<Comb>>
 6280  IF O[54,K1]=-K1 THEN 6310
-6290  PRINT "You don't have the comb."
+6290  PRINT "You don't have the comb,"
 6300  GOTO 1080
 6310  IF LEN(O$) THEN 6360
  6320  PRINT "Comb what?";
@@ -584,20 +584,20 @@ ADVEN2
 6370  PRINT "I don't see how to comb that!"
 6380  GOTO 1080
 6390  IF O[25,K1]=-K1 THEN 6420
-6400  PRINT "You don't have the Zarka."
+6400  PRINT "You don't have the Zarka,"
 6410  GOTO 1080
 
 6420  GOTO Z9-K1 OF 6460
-6430  PRINT "The Zarka becomes enraged [but shiny]."
+6430  PRINT "The Zarka becomes enraged [but shiny],"
 6440  Z9=K2
 6450  GOTO 1080
-6460  PRINT "The Zarka is not very amused."
+6460  PRINT "The Zarka is not very amused,"
 6470  GOTO 1080
  6480  REM <<Pray>>
 6490  PRINT "Oh father, who art in heaven..."
 6500  IF R0#48 THEN 1080
 6510  PRINT '10'10"Thou hast honoured me with thy words..."
-6520  PRINT "For thine worship ye shall be blessed."LIN(2);"LET THERE BE LIGHT!"LIN(2)
+6520  PRINT "For thine worship ye shall be blessed,"LIN(2);"LET THERE BE LIGHT!"LIN(2)
 6530  P0=450
 6540  GOTO 1080
  6550  REM <<In>>
