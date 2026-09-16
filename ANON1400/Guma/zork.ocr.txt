@@ -31,7 +31,7 @@ ZORK
 854  IF  NOT POS(K$," ALL") THEN 900
 855  K=POS(K$," ALL")+V
 856  IF  NOT POS(K$[K]," ALL") THEN 900
-857  PRINT "Only one 'all' per input.  Reenter."
+857  PRINT "Only one 'all' per input.  Reenter,"
 858  GOTO 850
 900  IF K$="" THEN 850
 901  L2=L2-L1
@@ -45,11 +45,11 @@ ZORK
 911  IF L2>R0 THEN 1005
 912  E$=CHR$(L2+G)
 913  GOTO POS('16'11'6'0,E$)+V OF 1005,914,914,916,919
-914  PRINT "Your lamp appears to be getting dimmer."
+914  PRINT "Your lamp appears to be getting dimmer,"
 915  GOTO 1005
 916  PRINT "Your lamp is dying.  I hope you can see in the dark!"
 917  GOTO 1005
-919  PRINT "Your lamp is dead."
+919  PRINT "Your lamp is dead,"
 920  L1=O
 921  L2=-G
 930  GOTO 7465
@@ -85,7 +85,7 @@ ZORK
 3200  GOTO 900
 3300  PRINT "Hmm?"
 3400  GOTO 900
-3500  PRINT "I don't understand."
+3500  PRINT "I don't understand,"
 3600  GOTO 900
 3900  E=E-12
 3910  IF L9#27 OR E#S OR L[22,V]=O THEN 3931
@@ -93,26 +93,26 @@ ZORK
 3920  PRINT "one of the mines.  It explodes, and you suddenly ";
 3930  GOTO 5140
 3931  IF R[L9,E]#38 OR L[F9,V]#-V OR M2 THEN 4000
-3932  PRINT "A mysterious force prevents your entering the bedroom."
+3932  PRINT "A mysterious force prevents your entering the bedroom,"
 3934  GOTO 900
 4000  IF R[L9,E] OR L9#13 OR A4=O THEN 4025
-4001  PRINT "There are too many rocks in the way."
+4001  PRINT "There are too many rocks in the way,"
 4002  GOTO 900
 4025  IF R[L9,E]=O THEN 4100
 4050  IF M3=O THEN 4300
 4051  PRINT "You can't get by the "F$"!!!"
 4052  GOTO 4101
-4100  PRINT "You can't go that way."
+4100  PRINT "You can't go that way,"
 4101  K$=""
 4102  IF L9=44 THEN 8325
 4200  GOTO 900
 4300  IF L9#44 OR Q2>O THEN 4303
-4301  PRINT "You thrash about, but you cannot get anywhere."
+4301  PRINT "You thrash about, but you cannot get anywhere,"
 4302  GOTO 8325
 4303  IF L9#54 OR E#3 THEN 4310
-4304  PRINT "As you pass through the door, it slams noisily behind you."
+4304  PRINT "As you pass through the door, it slams noisily behind you,"
 4305  PRINT "To further confound your attempt to leave, rocks fall from above"
-4306  PRINT "you, making the wooden door completely inaccessible."
+4306  PRINT "you, making the wooden door completely inaccessible,"
 4310  L9=R[L9,E]
 4311  O$=""
 
@@ -134,7 +134,7 @@ ZORK
 4950  IF V1=O THEN 5109
 4951  IF H1=O THEN 5215
 4952  IF L9=27 AND FNV(22) THEN 4962
-4953  PRINT "Nothing happens."
+4953  PRINT "Nothing happens,"
 4954  GOTO 900
 4962  PRINT "The little hills are gone!"
 4963  L[22,V]=O
@@ -180,7 +180,7 @@ ZORK
 5062  IF V$="Turn" THEN 5100
 5063  PRINT "I don't know the word ";
 5066  GOSUB 8700
-5069  PRINT "."
+5069  PRINT ","
 5070  K$=""
 5071  O$=""
 5072  GOTO 900
@@ -241,17 +241,17 @@ ZORK
 
 5159  GOTO 900
 5160  IF E#47 OR B0=O THEN 5186
-5161  PRINT "There seems to be an adventurer on it."
+5161  PRINT "There seems to be an adventurer on it,"
 5162  GOTO 900
 5186  W0=L[E,S]
 5187  FOR K=1 TO N0
 5188  W0=W0+L[K,S]*FNH(K)
 5189  NEXT K
 5190  IF W0<150 THEN 5196
-5191  PRINT "Your load is too heavy.  You will have to leave something behind."
+5191  PRINT "Your load is too heavy.  You will have to leave something behind,"
 5192  GOTO 900
 5196  L[E,V]=-V
-5198  PRINT "Taken."
+5198  PRINT "Taken,"
 5201  GOTO 900
 5204  GOSUB 5000
 
@@ -263,20 +263,20 @@ ZORK
 5215  PRINT "You aren't carrying the "B$"!"
 5216  GOTO 900
 5217  L[E,V]=L9
-5218  PRINT "Dropped."
+5218  PRINT "Dropped,"
 5219  IF L[22,V]#L9 THEN 5222
 5220  PRINT "As it hits the floor, one of the mines explodes and a small, but"
 5221  GOTO 6973
 5222  IF L9#44 OR E#43 THEN 5228
 5223  PRINT "As the block sinks, the quicksand instantly freezes over; it may be h
-5224  PRINT "enough to support your weight."
+5224  PRINT "enough to support your weight,"
 5225  L[E,V]=O
 5226  Q2=F6
 5227  GOTO 900
 5228  IF E=46 AND FNH(43) THEN 5152
 5229  IF E#15 THEN 900
 5230  IF L[20,V]#L9 THEN 5233
-5231  PRINT "The vase gently lands on the soft stool."
+5231  PRINT "The vase gently lands on the soft stool,"
 5232  GOTO 900
 5233  PRINT "Crunch! The vase drops to the ground and shatters into a million piece
 5234  L[15,V]=O
@@ -293,9 +293,9 @@ ZORK
 5260  E$=CHR$(E)
 5261  IF POS('31'29"!"'34'11'9,E$) THEN 5279
 5273  IF RND(S)>.5 THEN 5276
-5274  PRINT "I don't think that would agree with you."
+5274  PRINT "I don't think that would agree with you,"
 5275  GOTO 900
-5276  PRINT "But there's no vitamin content."
+5276  PRINT "But there's no vitamin content,"
 5277  GOTO 900
 5279  IF E#F9 THEN 5303
 
@@ -323,7 +323,7 @@ ZORK
 5413  B$="lamp "
 5414  IF FNV(E)=O THEN 5109
 5415  IF L1=O THEN 5419
-5416  PRINT "The lamp is now off."
+5416  PRINT "The lamp is now off,"
 5417  L1=O
 5418  GOTO 900
 5419  PRINT "The lamp isn't on!"
@@ -332,18 +332,18 @@ ZORK
 5440  GOTO 900
 5451  IF FNV(E)=O THEN 5109
 5452  IF E=V THEN 5460
-5453  PRINT "An electric "B$"?  I don't think so."
+5453  PRINT "An electric "B$"?  I don't think so,"
 5455  GOTO 900
 5460  IF L2<V THEN 5465
 5461  IF L1 THEN 5470
-5462  PRINT "Lighted."
+5462  PRINT "Lighted,"
 5463  L1=V
 5464  GOTO 6580
-5465  PRINT "The batteries are drained."
+5465  PRINT "The batteries are drained,"
 5466  GOTO 900
 5470  PRINT "It's already lit!"
 5471  GOTO 900
-5500  PRINT "Ok, from now on, I'll print a long description any time you move."
+5500  PRINT "Ok, from now on, I'll print a long description any time you move,'
 5502  D3=V
 5503  GOTO 6580
 5550  A$=A$[POS(A$," ")+V]
@@ -399,14 +399,14 @@ ZORK
 6437  IF E#26 THEN 6448
 6438  IF G1=O THEN 6432
 6439  G1=O
-6440  PRINT "Closed."
+6440  PRINT "Closed,"
 6443  GOTO 900
 6448  PRINT "You can't close a "B$"!"
 6449  GOTO 900
 6450  GOSUB 5000
 6451  IF V1=O THEN 5109
 6452  IF E=12 THEN 6455
-6453  PRINT "Thunk, thunk.  The "B$" doesn't sound too musical."
+6453  PRINT "Thunk, thunk.  The "B$" doesn't sound too musical,"
 6454  GOTO 900
 6455  PRINT "Squeeeeeeeeeeeeeek!"
                     THEN 900                     6456  IF L[23,V]#L
@@ -432,7 +432,7 @@ ZORK
 
 6455  PRINT "Squeeeeeeeeeeeeeek!"
 6456  IF L[23,V]#L9 THEN 900
-6457  PRINT "The beast is calmed by your music and leaves."
+6457  PRINT "The beast is calmed by your music and leaves,"
 6458  M3=O
 6459  L[23,V]=O
 6460  F$=""
@@ -447,7 +447,7 @@ ZORK
 6559  PRINT UPS$(V$[V,V]);
 6562  A$=V$[S]
 6565  GOSUB 8700
-6568  PRINT "ing a "B$" seems to do you no good."
+6568  PRINT "ing a "B$" seems to do you no good,"
 6571  GOTO 900
 6574  PRINT "Your surroundings gradually fade away...."'10
 6577  L9=G*(L9=F4)+F4*(L9=25)+25*(L9=28)+28*(L9=40)
@@ -463,7 +463,7 @@ ZORK
 6605  IF L0 THEN 6610
 6606  PRINT "The chest is already locked!"
 6607  GOTO 900
-6610  PRINT "Locked."
+6610  PRINT "Locked,"
 6611  IF L[S,V]#F0 THEN 6620
 6612  PRINT "Good going.  You locked the keys in the chest!"
 6620  L0=C4=R[F9,F7]=R[F0,W]=O
@@ -488,11 +488,11 @@ ZORK
 6643  PRINT '13'10"Good...By the power vested in me by the FROBOZZ Magic Computer
 
 
-6644  PRINT "pronounce you man & wife."
+6644  PRINT "pronounce you man & wife,"
 6645  PRINT "[A sparkling emerald wedding ring drops from a slot in the machine!]"
 6646  L[42,V]=L9
 6647  M2=V
-6648  PRINT "You may kiss the bride."
+6648  PRINT "You may kiss the bride,"
 6649  O$="RING"
 6650  GOTO 900
 6670  PRINT "The lift lurches forward and carries you swiftly into the sky.  A"
@@ -515,7 +515,7 @@ ZORK
 6717  IF L0=O THEN 6720
 6718  PRINT "It's not locked!"
 6719  GOTO 900
-6720  PRINT "Unlocked."
+6720  PRINT "Unlocked,"
 6721  L0=V
 6722  GOTO 900
 6750  PRINT "You have no axe."'10
@@ -542,7 +542,7 @@ ZORK
 7100  REM
 7149  GOTO 900
 7150  D3=-V
-7151  PRINT "Ok, no long descriptions at all, unless you say "'34"LOOK"'34"."
+7151  PRINT "Ok, no long descriptions at all, unless you say "'34"LOOK"'34","
 7152  GOTO 7450
 
 7182  PRINT "ROOM #";
@@ -599,7 +599,7 @@ ZORK
 8304  M3=U
 8310  NEXT U
 8313  IF L9#12 OR A4=O THEN 8322
-8316  PRINT "Large rocks block the exit to the west."
+8316  PRINT "Large rocks block the exit to the west,"
 8319  GOTO 900
 8322  IF L9#44 THEN 8463
 8325  Q2=Q2-V
@@ -610,12 +610,12 @@ ZORK
 
 8337  PRINT '10"You are at the bottom of a pool of quicksand.  You're dead."
 8340  GOTO 9005
-8458  PRINT "The quicksand is beginning to melt."
+8458  PRINT "The quicksand is beginning to melt,"
 8459  GOTO 900
-8460  PRINT "The quicksand has melted."
+8460  PRINT "The quicksand has melted,"
 8461  GOTO 900
 8463  IF B1$[L9,L9]>'6 THEN 900
-8464  PRINT "It appears that somebody has been digging a hole here."
+8464  PRINT "It appears that somebody has been digging a hole here,"
 8465  GOTO 900
 8500  REM
 8550  K7=L9+3000*(E=S OR E=30 OR E=43)
@@ -630,7 +630,7 @@ ZORK
 8571  K=V
 8577  K$[LEN(K$)+V]=V$[V,LEN(V$)+V]
 8580  K$[LEN(K$)+V]=A$[S,F6]
-8581  K$[LEN(K$)+V]='161"."
+8581  K$[LEN(K$)+V]='161","'
 8583  NEXT U
 8584  K$[LEN(K$)+V]=B$
 8586  IF K THEN 900
@@ -650,7 +650,7 @@ ZORK
 9006  PRINT "Do you want me to try to patch you? ";
 9007  LINPUT A$
 9008  IF POS("Yy",A$[V,V])=O THEN 9100
-9009  PRINT "Ok.."'10"."'10"."'10"."'10
+9009  PRINT "Ok.,"'10","'10","'10","'10
 9010  B0=M3=O
 9011  FOR K=V TO N0
 9012  IF  NOT FNH(K) THEN 9014
