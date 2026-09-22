@@ -1,0 +1,103 @@
+{********>>>>>>>><<<<<<<<********
+
+>>	MODULE:	TRANSI
+		1-OCT-80
+
+	This module contains the procedure TRANSITIVE.
+	
+********>>>>>>>><<<<<<<<********}
+
+
+{$C	.TITLE TRANSI
+	.IDENT /V0/   }
+
+{ *************** I/O SUBROUTINES ******************* }
+
+PROCEDURE RSPEAK(MSG:INTEGER);EXTERNAL;
+
+{ **************** ACTION PROCEDURES ******************** }
+
+PROCEDURE WAKEDWARVES;EXTERNAL;
+
+PROCEDURE GETOBJ;EXTERNAL;
+
+PROCEDURE DROPOBJ;EXTERNAL;
+
+PROCEDURE SAYIT;EXTERNAL;
+
+PROCEDURE LOCKED;EXTERNAL;
+
+PROCEDURE LAMPON;EXTERNAL;
+
+PROCEDURE LAMPOFF;EXTERNAL;
+
+PROCEDURE WAVEIT;EXTERNAL;
+
+PROCEDURE FINDIT;EXTERNAL;
+
+PROCEDURE KILLOBJ;EXTERNAL;
+
+PROCEDURE FILLIT;EXTERNAL;
+
+PROCEDURE BLASTIT;EXTERNAL;
+
+PROCEDURE READOBJ;EXTERNAL;
+
+PROCEDURE BREAKIT;EXTERNAL;
+
+PROCEDURE EATOBJ;EXTERNAL;
+
+PROCEDURE DRINKIT;EXTERNAL;
+
+PROCEDURE FEEDIT;EXTERNAL;
+
+PROCEDURE POURIT;EXTERNAL;
+
+PROCEDURE THROWOBJ;EXTERNAL;
+
+{ *******************  VERB PROCEDURES **************** }
+
+{  Procedure to analyze a transitive verb, i.e. object has been given.
+Self-explanatory case statement....}
+PROCEDURE TRANSITIVE;
+BEGIN
+	CASE VERB OF
+	{take} 1:GETOBJ;
+	{drop} 2:DROPOBJ;
+	{say}  3:SAYIT;
+
+	{open} 4,
+	{lock} 6:LOCKED;
+	{noth} 5:RSPEAK(54);
+	{on}   7:LAMPON;
+	{off}  8:LAMPOFF;
+	{wave} 9:WAVEIT;
+	{calm}10,
+	{walk}11,
+	{quit}18,
+	{scor}24,
+	{foo} 25,
+	{brf} 26,
+	{susp}30,
+	{hour}31: RSPEAK(ACTSPK[VERB]);
+	{kill}12: KILLOBJ;
+	{pour}13: POURIT;
+	{eat} 14: EATOBJ;
+	{drnk}15: DRINKIT;
+	{rub} 16: IF OBJ=LAMP THEN RSPEAK(ACTSPK[VERB]) ELSE RSPEAK(76);
+	{toss}17: THROWOBJ;
+	{find}19,
+	{inve}20: FINDIT;
+	{feed}21: FEEDIT;
+	{fill}22: FILLIT;
+	{blst}23: BLASTIT;
+	{read}27: READOBJ;
+	{brek}28: BREAKIT;
+	{wake}29: IF (OBJ<>DWARF)OR NOT CLOSED THEN RSPEAK(ACTSPK[VERB])
+		ELSE BEGIN
+			RSPEAK(199);
+			WAKEDWARVES
+		END
+	END
+END;
+
