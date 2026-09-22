@@ -9,7 +9,7 @@ starting in 1975; RTM was its operating system, the
 The printout itself was printed on the morning of 1979-03-21.
 
 
-==Authorship==
+## Authorship
 
 Comments in the Fortran code credit the following authors
 with porting the game. There are no intentional differences
@@ -33,7 +33,7 @@ Meanwhile, PALT0350 begat WHIT0370 "FunAdv" at Georgia Tech;
 see the SMIT0370 directory in this repository.
 
 
-==Notes on the transcription process==
+## Notes on the transcription process
 
 This transcription has "curatorial markings" that need to be
 removed before you could really do anything technical with it.
