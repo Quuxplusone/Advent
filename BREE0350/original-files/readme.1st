@@ -1,0 +1,264 @@
+>>	ADVENTURES IN PASCAL
+
+	Barry C. Breen
+	P.O. Box 1964
+	Bellevue, Washington 98009
+
+	28-OCT-80
+	Rev. 3-DEC-82
+
+ >>	History -- This version of the "Adventures"  game  is  written  in  OMSI
+	PASCAL  V1.2 running under RSX11M V3.2 BL26 on a PDP 11/23.  It contains
+	special  display  text  files  for  the VT-100 which makes use of double
+	width and double height characters for special effect.  It  was  written
+	as an exercise in learning PASCAL and RSX while developing software  for
+	the  Sundstrand Data Control  Digital Ground Proximity Warning  Computer 
+	for the Boeing 767/757 series aircraft.
+
+ 	Adapted from a FORTRAN-IV-PLUS version found in a cave, not from the
+	latest DECUS version.
+
+	The comments on the original read as follows:
+ 	    ADVENTURES
+ 	    MODIFIED BY KENT BLACKETT
+		    ENGINEERING SYSTEMS GROUP
+		    DIGITAL EQUIPMENT CORP.
+	  	    15-JUL-77
+	
+	    ORIGINAL VERSION WAS FOR DECSYSTEM-10
+	    THIS VERSION IS FOR FORTRAN IV-PLUS UNDER
+	    THE IAS OPERATING SYSTEM ON THE PDP-11/70
+
+ 	The FORTRAN  version also had a notice in the text files  (listed in the 
+	instructions at the beginning of the game) which credited  the  original 
+	authors as follows:
+
+ 	THIS PROGRAM WAS ORIGINALLY DEVELOPED BY WILLIE CROWTHER.  MOST OF THE
+	FEATURES OF THE CURRENT PROGRAM WERE ADDED BY DON WOODS (DON @ SU-AI).
+	CONTACT DON IF YOU HAVE ANY QUESTIONS, COMMENTS ETC.
+
+ 	I have retained most of the data structures and  algorithms as they were 
+	in the F4P version with the following changes:
+
+ 	  1)	 The  entire  game  is  organized  into  separately  compileable
+	    PASCAL modules which run overlaid  when  built  into  a  task.   The 
+	    resulting task file is huge,  but  the  task image runs in less than
+	    12  Kwords of memory.   Modules  and  procedures which correspond to
+	    subroutines in the F4P version  have  the  same  or  similar  names,
+	    as do the data variables and constants.   Also the original comments
+	    were retained where  applicable.   These  features  should  make  it 
+	    easy for someone familiar with the original to follow this  version.
+	  
+	  2)	The travel  array,  vocabulary data,  and  "atloc"  arrays  make
+	    use of PASCAL  pointer  types  and  linked  lists  rather  than  the 
+	    integer array linkage used in the F4P version.
+
+ 	  3)	The ASCII text and data file is split up into smaller  files  by 
+	    a special  "files initialization"  task  before  installation;  then 
+	    these smaller files are used  when  running  the  game  rather  than 
+	    re-initializing from the main database  each time the  game is  run.
+	    The main data files  (ADVENTURE.DAT and ADVENTURE.100) are organized
+	    similar to the original F4P database file  (TEXT.TXT),  which  makes
+	    them  easy  to  edit.   The  smaller  files  (ADVTXT.DTA  (or .100),
+	    ADVDAT.DTA  (or .100),  KATAB.DTA,  and   ADVENT.DTA)   are   PASCAL 
+	    structured file types.   Refer to the comments in the initialization
+	    module  (ADVINI)  for a description  of  the  database.   Constants,
+	    variables and type structures  are  described  in  the  comments  in
+	    the global declarations module (ADVGBL).
+
+ 	  4)	Vocabulary searches  are  done  on  a  letter  by  letter  basis
+	    via a linked tree file structure rather than searching a  vocabulary
+	    table  for  a  word  match.    This  results  in  much  faster  word
+	    recognition time.
+
+ 	  5)	Maintenence and wizardry  routines which had only been partially
+	    implemented in the Blackett F4P  version I worked from were restored 
+	    and enhanced slightly:
+
+		1. All  wizardry  data  and  variables  are saved in an external
+		file of integers, ADVWIZ.DTA.
+
+		2. The  "message  of  the  day"  works  and  allows  wizards  to 
+		put out a 10 line by  70  character  message  at  the  beginning
+		of the game.
+
+		3. The test for  wizards  now  requires  knowledge  of  a  magic
+		word and number and a new algorithm for correct response.
+
+		4. The pause feature does  not  require  saving  a  core  image;
+		player name and variables are written to ADVWIZ.
+
+		5. POOF  (wizardry data initialization) was made into a separate
+		task; it simply creates an initial ADVWIZ file.   I  also  added
+		a task named PEEK which allows  the  "Grand Wizard"  (presumably
+		the system manager) to cheat and list out the  current  contents
+		of ADVWIZ.	
+
+ 	If you come across a copy of this program  and  have  any  questions  or
+	comments, write to me at the address at the start of this  readme  file.
+ 
+>>	Contents of Distribution:
+
+ 	1 ** PASCAL Source Files Library
+
+ 		ADV.ULB
+
+ 		Besides containing  the  source  files  for  each  of  the  game
+	modules  (see  list  below),  this  file  contains  the source for PEEK,
+	POOF,  and  the files  initialization  tasks,  ADVFLS  and  100FLS.   It
+	also includes the overlay description file for the main task, ADVBLD.ODL.
+        You  need  to  add  an  overlay  description  for the OMSI and RSX stuff,
+	derived  from  their  PAS.ODL,  and  rename  it ADVPAS.ODL.  It need only
+ 	reference  the  SYSLIB tree (if no FCSRES) and the  following OMSI PASLIB
+	modules:
+		$INIT,$IO,$INPUT,$OUTPT,$ERROR,$WRINT,$DYNMM,$GETF,$PUTF,$CLOSE,
+		$RSIM,ERROR,$ARITH,$OPEN,$READI,$SEEK,$FTIME,$FPSIM,$CNVRT	
+
+ 	2 ** Assembled Object Code Library
+
+ 		ADV.OLB
+
+ 		OMSI compiled and improved and MAC assembled version of all  the 
+	game modules.  The OMSI Improver was used to  condense  the  code,  some 
+	modules are reduced in size by as much as 12% from the compiler  output. 
+	Compiler used was the EIS/FIS V1.2 but no floating math is  used.   Note 
+	that the modules recommended to include in the  overlay description  for
+	the  PASCAL runtime stuff has the floating math packages removed (except
+	for the "time" function, which is used to seed the pseudo-random number
+	generator and in DATIME).
+
+ 	All modules were compiled with the following command to PAS:
+
+ 		PAS	<module>=ADVGBL,<module>/E 
+		
+	except  MAIN  which is the  main  program  block  and  doesn't  use  the
+	"/E" switch.
+ 
+	3 ** Useful Command Files
+
+		It is recommended that you read and modify to suit your
+		installation before using.
+
+ 		ADVEDT.CMD   -- "Do-all" command  file  for  extracting  modules
+				from the source library,  editing,  replacement,
+				compilation,   improvement,  assembly,  listing,
+				task  build,  library  compression,  etc.    You
+				may want to edit this to suit your own needs.
+
+ 		ADVPRT.CMD   -- Prints source listings from  ADV.ULB  using  the
+				serial print spooler or QMG.
+
+ 		ADVBLD.CMD   -- Task building sub-set of ADVEDT.
+ 
+	4 ** Database Files
+
+ 		ADVENTURE.DAT -- ASCII format data
+		ADVENTURE.100 -- ASCII format data (VT100 version)
+		ADVTXT.DTA    -- Text Files from ADVENTURE.DAT
+		KATAB.DTA     -- Tree-structured version of vocabulary
+				from ADVENTURE.DAT (or ADVENTURE.100)
+		ADVDAT.DTA    -- Arrays of record pointers into text and
+				vocabulary files.
+		ADVTXT.100    -- Text Files from ADVENTURE.100
+		ADVDAT.100    -- Record pointers into vocabulary and VT100
+				text files.
+		ADVENT.DTA    -- Remainder of data from ADVENTURE.DAT
+				(same as ADVENTURE.100)
+ 
+>>	General Instructons:
+
+	You need at least EIS instructions to use the object library as  is  for
+	task building.  In this case, modify a copy of the OMSI supplied PAS.ODL
+	to include only the modules in the above list (see ADV.ULB description).
+	Use PIP to rename it ADVPAS.ODL and insert into ADV.ULB using LBR.  Then
+	invoke ADVBLD.CMD, it does the rest.
+
+	If you wish to recompile everything first, examine and  edit  ADVEDT  so
+	that task names, devices, and UIC's correspond to your  installation and
+	then use it.  All three command files may be used  as a  guide for doing
+	it all by hand.	
+
+	I have supplied enough  goodies  so  you  can  easily  change  the  game
+	at any level of the process.  Note that  the  source  files  make  heavy
+	use  of  OMSI  extentions  to  standard  PASCAL  so  if  you  are  using
+	someone else's PASCAL watch out for the following:
+
+ 		1)  Random files access using the OMSI "SEEK" procedure
+		   and non-standard REWRITE and RESET procedures.
+ 		2)  ELSE clause in CASE statements.
+ 		3)  EXIT statement.
+ 		4)  TIME function.
+ 		5)  EXTERNAL declarations, {$E+} imbedded switch,
+		   and handling of globals.
+ 		6)  Imbedded MACRO code using the {$C} switch.
+ 
+	Have fun!!
+
+
+>>	Index to Source Modules -- 
+
+ 		Here is a list of what procedures are contained in each of the
+	game modules.   Only the global level procedures are listed.
+
+		ADVINI   	--	INITIALIZE
+		ASK		--	ASK, ASKM, ASKR, WIZARD
+		BACKUP		--	BACKUP
+		CALSCO		--	CALSCORE, WRTSCORE
+		DATIME		--	DATIME
+		DROPOB		--	DROPOBJ
+		DUMPWD		--	DUMPWD1, DOWHAT, NOTHERE, SMALL, VERBHUH
+		FILLIT		--	FILLIT
+		FINISH		--	FINISH, WAKEDWARVES
+		GETIN		--	GETIN, CAPS
+		GETIT		--	GETIT
+		HOURS		--	HOURS, LIQLOC
+		KILLIT		--	KILLIT, KILLOBJ
+		LOOP0		--	ALIVE, BLOCKED, DEATH, DWARFSTUFF,
+					PITDEATH, WHATSHERE, WHEREAREWE
+		LOOP1		--	CAVECLOSING, CLOSECAVE, CLSECLUE, 
+					ENDDEMO, HINTROUTINE, LAMPDIM, LAMP0,
+					LAMP1, LAMP2, 
+		MAGICM		--	MAINTINENCE, MOTD, NEWHRS
+		MAGICW		--	ECHO, FEEFOO, MAGIC
+		MAIN		--	MAIN PROGRAM BLOCK
+		NOWAY		--	NOWAY
+		PARSE		--	PARSE, DOOBJ, DOVERB
+		PLOVER		--	PLOVER
+		PRIMET		--	PRIMETIME
+		RDWIZ		--	RDWIZ, BIT
+		RESPON		--	RESPONSE
+		SAVNAM		--	SAVNAME
+		SAVVAR		--	SAVVAR
+		SAYIT		--	SAYIT
+		SPEAK		--	SPEAK, CSPEAK, MSPEAK, RSPEAK
+		START		--	START, UNSAVE
+		SUBS0		--	BITSET, DARK, FORCED, HERE, PCT, RAN,
+					TOTING
+		SUBS1		--	AT, CARRY, DESTROY, DROP, JUGGLE, LIQ,
+					MOVE, PSPEAK, VOCAB
+		TAKE		--	TAKEIT, GETOBJ
+		THROWO		--	THROWOBJ
+		TRANSI		--	TRANSITIVE
+		TRAVEL		--	TRAVEL, TRVTBL, SEARCH
+		TROLLB		--	TROLLBRIDGE
+		VERBS0		--	BREAKIT, FINDIT, LAMPOFF, LAMPON,
+					WAVEIT
+		VERBS1		--	LOCKED, LOCKIT, READIT, READOBJ
+		VERBS2		--	BLASTIT, DRINKIT, EATIT, EATOBJ, POURIT
+		VERBS3		--	FEEDIT, SNARF, THROWAXE
+		VERBS4		--	ASKSCORE, SAVE, WRWIZ, WRWIZB, WRWRD
+		VERBS5		--	BRIEF, QUITGAME, TSTOBJ, WHATYOUGOT
+		WIZMAG		--	CHKMAG, GETMAG, WRTMAG
+		WIZMAG		--	CHKMAG, GETMAG, WRTMAG
+
+>>	Final Notes and Novice Wizard's Disclaimer, 2-DEC-82:
+
+	I have yet to run this on V4 RSX or the VAX AME, but if OMSI works there,
+	so should this.  It is currently up and running on a friend's 11/23 and
+	another's 11/34A, both running V3.2.  It will be re-written in VAX PASCAL
+	when I find the time.  Current work address:
+				Barry C. Breen
+				Senior Design Engineer
+				Sundstrand Data Control
+				Redmond, Wash. 98052
+

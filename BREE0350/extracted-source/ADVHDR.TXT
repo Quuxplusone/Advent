@@ -1,0 +1,35 @@
+{********>>>>>>>><<<<<<<<********
+
+>>	ADVENTURES IN PASCAL
+	Barry C. Breen
+	PO Box 1964
+	Bellevue, Washington  98009
+
+>>	History -- This version of the "Adventures" game is written in OMSI
+	PASCAL V1.2 running under RSX11M V3.2 BL26 on a PDP 11/23.  It utilizes
+	special display text files for the VT-100 which makes use of double
+	width and double height characters for special effect.
+
+	Adapted from a FORTRAN-IV-PLUS version obtained from DEC in Santa CLara:
+
+	    ADVENTURES
+
+	    MODIFIED BY KENT BLACKETT
+		    ENGINEERING SYSTEMS GROUP
+		    DIGITAL EQUIPMENT CORP.
+	  	    15-JUL-77
+	
+	    ORIGINAL VERSION WAS FOR DECSYSTEM-10
+	    THIS VERSION IS FOR FORTRAN IV-PLUS UNDER
+	    THE IAS OPERATING SYSTEM ON THE PDP-11/70
+
+	The FORTRAN version also had a notice in the text files which was
+	listed in the instructions at the beginning of the game crediting the
+	original authors as follows:
+
+	THIS PROGRAM WAS ORIGINALLY DEVELOPED BY WILLIE CROWTHER.  MOST OF THE
+	FEATURES OF THE CURRENT PROGRAM WERE ADDED BY DON WOODS (DON @ SU-AI).
+	CONTACT DON IF YOU HAVE ANY QUESTIONS, COMMENTS ETC.
+
+********>>>>>>>><<<<<<<<********}
+
