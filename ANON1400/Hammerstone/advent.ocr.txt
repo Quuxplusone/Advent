@@ -9,7 +9,7 @@ ADVENT
 1070  SYSTEM T$[K1,K4],"Time"
 1071  Z7=POS("B500S452S310L804L615S405",T$[1,4])
 1072  IF T$[K1,K2]#"S3" THEN 1076
- 1073  PRINT "Advent is down from 8:01 to 1:20."
+ 1073  PRINT "Advent is down from 8:01 to 1:20,"
 1074  IF Z7 THEN 1076
  1075  STOP
 1076  IF  END #K7 THEN 1080
@@ -57,7 +57,7 @@ ADVENT
 1450  NEXT A
 1460  IF M[R0]>-K1 THEN 1490
 
-1470  PRINT "Someone has been digging a hole here."
+1470  PRINT "Someone has been digging a hole here,"
 1480  GOTO 1500
 1490  M[R0]=K1
  1500  Z=K0
@@ -99,7 +99,7 @@ ADVENT
 1860  PRINT "An EPA official runs by muttering, "'34"Tsk, tsk.  Another TMI."'34
 1870  GOTO 1990
 1880  IF T#215 THEN 1910
-1890  PRINT "A calm, pleasent voice reports, "'34"Meltdown...4 minutes.  Warning only."'34
+1890  PRINT "A calm, pleasent voice reports, "'34"Meltdown,,,4 minutes.  Warning only,"'34
 1900  GOTO 1990
 1910  IF T<216 THEN 1990
  1920  R3=(LOG(30)/LOG(T-214))-.95
@@ -111,15 +111,15 @@ ADVENT
  1980  STOP
 1990  P0=P0-(L=K1)
  2000  IF P0#K5*K5 THEN 2030
-2010  PRINT "The lamp is getting dim."
+2010  PRINT "The lamp is getting dim,"
  2020  P0=25.5
 2030  IF P0#K1/K2 THEN 2060
-2040  PRINT "The lamp's batteries are dead."
+2040  PRINT "The lamp's batteries are dead,"
 
 2050  L=K0
 2060  D2=D2-K1*(D2#K0)
  2070  IF R0#44 OR D2 THEN 2100
-2080  PRINT "You are sinking in quicksand."
+2080  PRINT "You are sinking in quicksand,"
 2090  IF  ERROR  THEN 1190
 2100  IF LEN(C$) THEN 2150
 2110  PRINT "> ";
@@ -143,7 +143,7 @@ ADVENT
  2290  B$=UPS$(C1$)
 2300  X=POS("NSEWUDIO",B$)
 2310  IF X THEN 4190
-2320  PRINT "I don't understand."
+2320  PRINT "I don't understand,"
 2330  GOTO 1830
 2340  READ #K6,K1
 2350  FOR A=K1 TO 91
@@ -166,7 +166,7 @@ ADVENT
 2520  B$=UPS$(A$)
 2530  IF POS(B$,O1$[K1,K5]) THEN 2570
 2540  NEXT A
-2550  PRINT "I see no "O$" here."
+2550  PRINT "I see no "O$" here,"
 2560  GOTO 1830
  2570  IF O[A,K1]#R0 THEN 2550
 2580  IF O[A,K2]#-K1 THEN 2610
@@ -180,13 +180,13 @@ ADVENT
  2614  GOTO 1830
 2615  PRINT ": Want a hernia?"
  2616  GOTO 1830
-2617  PRINT ": Close but no cigar."
+2617  PRINT ": Close but no cigar,"
  2618  GOTO 1830
-2619  PRINT ": Nice try."
+2619  PRINT ": Nice try,"
 2620  GOTO 1830
 2640  IF A#43 THEN 2680
 2650  IF O[46,K1]=-K1 THEN 2680
-2660  PRINT "The dry ice instantly freezes your hand, and you die from shock."
+2660  PRINT "The dry ice instantly freezes your hand, and you die from shock,"
 2670  STOP
 2680  IF A#26 THEN 2770
  2690  IF O[K5*K5,K1] THEN 2740
@@ -196,7 +196,7 @@ ADVENT
 2721  D$="Zarka"
 2730  GOTO 1830
 2740  IF Z9 OR O[26,K1]#R0 THEN 2820
-2750  PRINT "The Zarka won't let you have the globe."
+2750  PRINT "The Zarka won't let you have the globe,"
 2760  GOTO 1830
 2770  IF A#K9+K2 THEN 2820
  2780  IF O[K7*K4,K1] THEN 2820
@@ -205,7 +205,7 @@ ADVENT
 2810  GOTO 2820
  2820  L0=L0+O[A,K2]
 2830  IF L0>150 THEN 2910
-2840  PRINT O$": Taken."
+2840  PRINT O$": Taken,"
 2850  IF R0#K3 THEN 2880
 2860  S=S-K5*K2*(A#K1)
 2870  GOTO 2890
@@ -253,12 +253,12 @@ ADVENT
  3280  S=S-K5*K6
 3290  L0=L0-K5*K6
  3300  GOTO 1830
-3310  PRINT "Dropped."
+3310  PRINT "Dropped,"
  3320  O[A,K1]=R0
 3330  IF A#43 THEN 3400
  3340  IF R0#44 THEN 3420
 3350  PRINT "As the block sinks, the quicksand instantly freezes over hard enough"
-3360  PRINT "to support your weight."
+3360  PRINT "to support your weight,"
 3370  O[A,K1]=K0
 3380  D2=100
  3390  GOTO 3420
@@ -278,20 +278,20 @@ ADVENT
  3530  GOTO 1190
 3540  REM*Light*
 3550  IF O[K1,K1]=-K1 THEN 3580
-3560  PRINT "You don't have the lamp."
+3560  PRINT "You don't have the lamp,"
 3570  GOTO 1830
 3580  IF L=K0 THEN 3610
-3590  PRINT "The lamp is already lit."
+3590  PRINT "The lamp is already lit,"
 3600  GOTO 1830
 3610  IF P0>.5 THEN 3640
-3620  PRINT "The batteries are drained."
+3620  PRINT "The batteries are drained,"
 3630  GOTO 1830
-3640  PRINT "Lighted."
+3640  PRINT "Lighted,"
  3650  L=K1
 3660  GOTO 1830
 3670  REM*Long*
 3680  B9=K2
-3690  PRINT "From now on I'll give you a complete description of each room."
+3690  PRINT "From now on I'll give you a complete description of each room,"
 
 3700  GOTO 1830
 3710  REM*Off*
@@ -326,7 +326,7 @@ ADVENT
 3990  IF O1$="GIRL" THEN 4010
  4000  IF  NOT M9 THEN 2550
 4010  IF O[K9,K1]#R0 AND O[K9,K1]#-K1 THEN 2550
-4020  PRINT "The girl gazes dreamily into your eyes as your lips press gently together."
+4020  PRINT "The girl gazes dreamily into your eyes as your lips press gently together,"
 4030  GOTO 1830
 4040  PRINT "The "O$" will become angry if you persist!"
 4050  GOTO 1830
@@ -362,7 +362,7 @@ ADVENT
  4340  R1=R0
 4350  R0=61
  4360  GOTO 1200
-4370  PRINT "You're in an active nuclear reactor.  You do not survive."
+4370  PRINT "You're in an active nuclear reactor.  You do not survive,"
 4380  STOP
 4390  IF R0#K5*K6 OR Z9=K0 OR X#K4 THEN 4420
  4400  A$[X,X]=")"
@@ -370,7 +370,7 @@ ADVENT
 4420  IF R0#65 OR X#K8 THEN 4429
 4421  R0=K8*K8+((R1=K8*K8)*K2)
 4423  GOTO 1200
-4429  PRINT "You can't go that way."
+4429  PRINT "You can't go that way,"
 4430  GOTO 1830
  4440  DATA 7,19,22,23,27,32,63
 4450  FOR A=K1 TO K7
@@ -379,7 +379,7 @@ ADVENT
  4480  NEXT A
 4490  IF NUM(A$[X,X])#38 THEN 4530
 4500  IF O[K9,K1]#-K1 OR M9 THEN 4530
-4510  PRINT "A mysterious force prevents you from entering the room (leave the girl outside)."
+4510  PRINT "A mysterious force prevents you from entering the room (leave the girl outside),"
 4520  GOTO 1830
 4530  R1=R0
  4540  R0=NUM(A$[X,X])
@@ -387,19 +387,19 @@ ADVENT
 4560  GOTO A OF 4570,4590,4610,4650,4670,4690,4710
 4570  PRINT "The witch won't let you go."
 4580  GOTO 1830
-4590  PRINT "You can't get past the slime."
+4590  PRINT "You can't get past the slime,"
  4600  GOTO 1830
 4610  IF NUM(A$[X,X])=R1 THEN 4530
 4620  PRINT "As you walk across the room, your foot crushes one of the little"
 4630  PRINT "dirt hills, and you suddenly feel very dead."
 4640  STOP
-4650  PRINT "You can't get past the beast."
+4650  PRINT "You can't get past the beast,"
  4660  GOTO 1830
-4670  PRINT "You can't get past the snake."
+4670  PRINT "You can't get past the snake,"
  4680  GOTO 1830
-4690  PRINT "You can't get by the clown."
+4690  PRINT "You can't get by the clown,"
  4700  GOTO 1830
-4710  PRINT "You can't get past the nurse."
+4710  PRINT "You can't get past the nurse,"
  4720  GOTO 1830
 4730  REM*Inven*
  4740  B=K0
@@ -421,23 +421,23 @@ ADVENT
 4890  GOSUB 7360
 4900  IF LEN(O$) THEN 5090
 4910  IF R0=K9 OR R0=K5*K2 THEN 4940
-4920  PRINT "The door is already open."
+4920  PRINT "The door is already open,"
 4930  GOTO 1830
 4940  IF C9 THEN 5070
 4950  IF C8 THEN 4980
-4960  PRINT "The chest is locked with a rusty padlock."
+4960  PRINT "The chest is locked with a rusty padlock,"
 4970  GOTO 1830
 4980  PRINT "Chest: Open."
 4990  PRINT "The chest contains:"
 5000  IF O[K5,K1]=K5*K2 THEN 5030
 5010  PRINT "Nothing."
 5020  GOTO 5040
-5030  PRINT "Dazzling nugget of gold."
+5030  PRINT "Dazzling nugget of gold,"
 5031  D$="gold"
 5040  C9=K1
  5050  R0=K5*K2
 5060  GOTO 1200
-5070  PRINT "The chest is already open."
+5070  PRINT "The chest is already open,"
  5080  GOTO 1830
 5090  IF O1$#"DOOR" THEN 5110
 5100  GOTO (R0=K9*K6)+K1 OF 2550,4920
@@ -450,7 +450,7 @@ ADVENT
 5170  PRINT "I see nothing to "C1$" here."
 5180  GOTO 1830
 5190  IF R0=K9 OR R0=K5*K2 THEN 5220
-5200  PRINT "The door won't budge."
+5200  PRINT "The door won't budge,"
 5210  GOTO 1830
 5220  IF C9 THEN 5250
 5230  PRINT "The chest is already closed."
@@ -477,7 +477,7 @@ ADVENT
 5430  PRINT "The chest is already locked."
 5440  GOTO 1830
 5450  IF O[K2,K1]=-K1 THEN 5480
-5460  PRINT "You don't have the key."
+5460  PRINT "You don't have the key,"
 5470  GOTO 1830
 5480  PRINT "Chest: Locked."
 5490  C8=K0
@@ -486,16 +486,16 @@ ADVENT
 5520  GOTO 2550
 5530  REM*Unlock*
 5540  IF R0=K9 OR R0=K5*K2 THEN 5570
- 5550  PRINT "I don't see how to unlock that."
+ 5550  PRINT "I don't see how to unlock that,"
 5560  GOTO 1830
  5570  GOSUB 7360
 5580  IF LEN(O$) THEN 5670
  5590  IF R0=K9 THEN 5620
-5600  PRINT "The chest is already unlocked."
+5600  PRINT "The chest is already unlocked,"
 5610  GOTO 1830
 5620  IF C8 THEN 5600
 5630  IF O[K2,K1]#-K1 THEN 5460
-5640  PRINT "Chest: Unlocked."
+5640  PRINT "Chest: Unlocked,"
 5650  C8=K1
 5660  GOTO 1830
 5670  IF POS("CHEST:TRUNK",O1$[K1,K5]) THEN 5590
@@ -505,7 +505,7 @@ ADVENT
 5710  PRINT "They make socks don't they?"
 5720  GOTO 1830
 5730  R0=R0+K8-K4^K2*(R0=K7*K3)
-5740  PRINT "In a flash..."'10
+5740  PRINT "In a flash,,,"'10
 5750  GOTO 1200
  5760  REM*Stab-Chop*
 5770  GOSUB 7360
@@ -519,8 +519,8 @@ ADVENT
 5850  CHAIN R9,"Adven2",4850
 5851  IF O1$#"TREE" THEN 5860
 5852  IF R0#K2 THEN 2550
- 5853  PRINT "You don't have the axe."
-5854  PRINT "An EPA official runs up and upon discovering you evil intent,"'10'13"sentances you to death."
+ 5853  PRINT "You don't have the axe,"
+5854  PRINT "An EPA official runs up and upon discovering you evil intent,"'10'13"sentances you to death,"
 5855  STOP
 5860  PRINT "I don't see how to kill that!"
 5870  GOTO 1830
@@ -534,11 +534,11 @@ ADVENT
 5940  O$="vase"
 5950  GOTO 5990
  5960  IF O1$="VASE" THEN 5990
-5970  PRINT "I see no reason to break the "O$"."
+5970  PRINT "I see no reason to break the "O$",'
 5980  GOTO 1830
 5990  A=K5*K3
 6000  IF O[A,K1]#-K1 AND O[A,K1]#R0 THEN 2550
-6010  PRINT "The "O$" is reduced to worthless shards of pottery."
+6010  PRINT "The "O$" is reduced to worthless shards of pottery,"
 6020  IF O[A,K1]=-K1 THEN 3260
 6030  O[A,K1]=K0
 6040  O[55,K1]=R0
@@ -570,19 +570,19 @@ ADVENT
 6300  PRINT "There's only one problem:  I don't see any girl here!"
 6310  GOTO 1830
 6320  PRINT "Dearly beloved, we are gathered here to join this man and this woman in Holy"
-6330  PRINT "Matrimony."'10'13"Do you take this girl to be your wife?";
+6330  PRINT "Matrimony,"'10'13"Do you take this girl to be your wife?";
 6340  LINPUT A$
 6350  IF POS("yY",A$[K1,K1]) THEN 6380
-6360  PRINT "This wedding is officially aborted."
+6360  PRINT "This wedding is officially aborted,"
 6370  GOTO 1830
 6380  PRINT "Girl: 'I guess.'"'10
 6390  PRINT "Is there anyone here who knows a reason why this couple should not be wed? ";
 6400  LINPUT A$
 6410  IF POS("Yy",A$[K1,K1]) THEN 6360
 6420  PRINT "Good...By the power vested in me by the FROBOZZ Magic Computer Company, I now"
-6430  PRINT "pronounce you man & wife."
+6430  PRINT "pronounce you man & wife,"
 6440  PRINT "[A sparkling emerald wedding ring drops from a slot in the machine!]"
-6450  PRINT "You may kiss the bride."
+6450  PRINT "You may kiss the bride,"
 6460  O[K7*K6,K1]=R0
 6461  D$="ring"
  6470  M9=K1
@@ -620,12 +620,12 @@ ADVENT
 6780  IF R0=K4 OR R0=K5*K5 OR R0=K7*K4 OR R0=K5*K8 THEN 6600
 6790  GOTO 2550
 6800  REM*Super*
-6810  PRINT "From now on, I will only give room names."
+6810  PRINT "From now on, I will only give room names,"
 6820  B9=K1
 6830  GOTO 1830
  6840  REM*Allez*
 6842  IF Z7 THEN 6850
- 6844  PRINT "You are not a wizard."
+ 6844  PRINT "You are not a wizard,"
 6848  GOTO 1830
  6850  ENTER K9,R9,K
 6860  IF R9<K0 THEN 1830
@@ -643,33 +643,33 @@ ADVENT
 6980  IF O[K3*K4,K1]#-K1 AND O[K3*K4,K1]#R0 THEN 2550
 6990  PRINT "Squeeek!"
 7000  IF R0#29 OR O[23,K1]=K0 THEN 1830
-7010  PRINT "The beast is calmed by your music and leaves."
+7010  PRINT "The beast is calmed by your music and leaves,"
 7020  O[23,K1]=K0
 7030  GOTO 1830
 
 7040  IF O[K4*K3,K1]=-K1 OR O[K4*K3,K1]=R0 THEN 6990
-7050  PRINT "I see nothing to play here."
+7050  PRINT "I see nothing to play here,"
 7060  GOTO 1830
 7070  REM*Jump-Hop*
 7080  IF R0=K3^K3 AND O[22,K1] THEN 7110
-7090  PRINT "Very good, now you can go to the second grade."
+7090  PRINT "Very good, now you can go to the second grade,"
 7100  GOTO 1830
 7110  PRINT "As you "C1$" around the room, you crush one of the little"
 7120  GOTO 4630
 7130  REM*Wave*
  7140  GOSUB 7360
 7150  IF LEN(O$) THEN 7180
- 7160  PRINT "That doesn't accomplish much."
+ 7160  PRINT "That doesn't accomplish much,"
 7170  GOTO 1830
 7180  IF POS("STAFF:ROD  :WAND ",O1$[K1,K5]) THEN 7210
- 7190  PRINT "I see no reason to wave the "O$"."
+ 7190  PRINT "I see no reason to wave the "O$","
 7200  GOTO 1830
 7210  IF O[K4*K4,K1]#R0 AND O[K4*K4,K1]#-K1 THEN 2550
 7220  IF R0#K3^K3 THEN 7260
 7230  PRINT "The little hills are gone!"
 7240  O[22,K1]=K0
 7250  GOTO 1830
-7260  PRINT "Nothing seems to happen."
+7260  PRINT "Nothing seems to happen,"
 7270  GOTO 1830
 7280  A=80
  7290  GOTO 1190
