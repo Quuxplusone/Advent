@@ -369,6 +369,8 @@ of ANON0501.
 
 - CROW0005: Twisty passages all alike
 
+- DGAO0500: WOOD0350, plus "Marquis De Sade Memorial Maze"
+
 - HOWE0301: WOOD0350, but the "all different" maze rooms differ by text color, not
     by description.
 
@@ -473,6 +475,12 @@ of ANON0501.
     large silver scarab
 
 - CROW0005: 5: large gold nugget, diamonds, bars of silver, precious jewelry, coins
+
+- DGAO0500: 25: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
+    treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
+    platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
+    cloth-of-gold seashell, ivory snuff box, ebony scarab, beautiful geode, bag of money,
+    ancient jade carving, fist-sized ruby, rare stamps, gold statue of a cat, opal ring
 
 - GIBI0375: 18: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
     treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
