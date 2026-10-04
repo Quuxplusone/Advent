@@ -64,11 +64,12 @@ strict digraph {
     BREE0350 [EXTANT,label="\N\nPascal"]; BLKT0350 -> BREE0350 [PORT];
     GOET0350 [EXTANT,label="\N\nFortran"]; BLKT0350 -> GOET0350 [PORT];
     SUPN0350 [EXTANT]; BLKT0350 -> SUPN0350 [PORT];
+    EWHH0366 [EXTANT]; SUPN0350 -> EWHH0366 [EXTENSION];
+    LIDI0366 [EXTANT]; EWHH0366 -> LIDI0366 [RECOMPILE];
+    BLAC0350 [EXTANT]; SUPN0350 -> BLAC0350 [PORT];
     TICM0350 [EXTANT]; SUPN0350 -> TICM0350 [RECOMPILE];
     KINT0350 [EXTANT]; TICM0350 -> KINT0350 [PORT];
-    SCOP0366 [EXTANT]; SUPN0350 -> SCOP0366 [EXTENSION];
-    LIDI0366 [EXTANT]; SCOP0366 -> LIDI0366 [RECOMPILE];
-    BLAC0350 [EXTANT]; SUPN0350 -> BLAC0350 [PORT];
+    BASA0366 [EXTANT,label="\N\nZenith"]; SUPN0350 -> BASA0366 [EXTENSION];
 
     PLOT0350 [EXTANT]; SUPN0350 -> PLOT0350 [RECOMPILE];
     BENH0350 [EXTANT,label="\N\nBatch file"]; PLOT0350 -> BENH0350 [PORT];
@@ -134,14 +135,15 @@ strict digraph {
 
     VMCM0350 [EXTANT,label="\N\nPL/I"]; WOOD0350 -> VMCM0350 [PORT];
 
-    MALM1000 [EXTANT,MAJOR,label=<\N<br/>Humongous Cave<br/>AGT>]; MALM0350 -> MALM1000 [EXTENSION,label="code"];
+    MALM1000 [EXTANT,MAJOR,label=<\N<br/>Humongous Cave<br/>AGT>];
+      MALM0350 -> MALM1000 [EXTENSION,headlabel="code",labeldistance=4];
     STAN1000 [EXTANT,label="\N\niOS"];
       MALM1000 -> STAN1000 [PORT, constraint=false];
       NELS0350 -> STAN1000 [MINOR,constraint=false];
     GOLD1000 [EXTANT]; MALM1000 -> GOLD1000 [PORT];
 
     GOET0580 [EXTANT,MAJOR,label="\N\nA-code"];
-      GOET0580 -> MALM1000 [EXTENSION,label="content",constraint=false];
+      GOET0580 -> MALM1000 [EXTENSION,headlabel="content",labeldistance=5,constraint=false];
       GOET0565 -> GOET0580 [EXTENSION,constraint=false];
     STAN0580 [EXTANT,label=<\N<br/>PolyAdv>]; GOET0580 -> STAN0580 [PORT];
 

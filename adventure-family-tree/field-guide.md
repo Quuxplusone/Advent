@@ -57,6 +57,22 @@ A blend of PLAT0550 and LUPI0440.
 
 - Picnic table
 
+### BASA0366
+
+- The dwarvish magazines are now _a few recent issues of "REMark" magazine._
+    (They're still written in dwarvish.)
+
+- _Behind the curtains to the north a telephone can be heard ringing._
+    North of the Soft Room is the Software Manager's Office.
+    _There is a sign on the desk that reads "Go find Jane!".
+    The Software Manager is talking on the phone._
+    GET JANE to receive a signed package pass.
+
+- There is a raft in the reservoir. RAFT, ROW, OUT to reach the far shore.
+    _The only passage from here is up and to the north, but standing next to
+    the passage is a fierce looking guard in a blue suit._ Beyond the guard
+    is the Pirate's Aviary, containing the one new treasure (the parrot).
+
 ### BRHA0017 (_A Serf's Tale_)
 
 - Inventory limit of four "carried" items plus three in "pockets" which must be
@@ -258,7 +274,7 @@ of ANON0501.
 
 ### Crystal balls
 
-- LIDI0366: _You are in the gazebo. The dust is deep here, indicating long disuse.
+- EWHH0366 (LIDI0366): _You are in the gazebo. The dust is deep here, indicating long disuse.
    Ancient elvish runes here describe this as a place where one may see many things.
    Another, more ancient inscription reads "PKIHMN". There is a palantir(orb) here._
    You can PEER ORB to get some useless messages.
@@ -342,9 +358,9 @@ of ANON0501.
 
 - BRHA0017: XYZZY, GLUPH, PLOVER, FEE FIE FOE FOO, MAGE DEN
 
-- GOET0580: PLAT0550, plus THGIRW and RUBLIW
+- EWHH0366: WOOD0350, plus PKIHMN
 
-- LIDI0366: WOOD0350, plus PKIHMN
+- GOET0580: PLAT0550, plus THGIRW and RUBLIW
 
 - LONG0501: WOOD0350, plus PHUCE
 
@@ -469,6 +485,11 @@ of ANON0501.
     mithril ring, scrimshaw spyglass, rock-crystal sculpture, jade bracelet, casket of opals,
     turquoise beads, opalescent starstone
 
+- BASA0366: 16: large gold nugget, several diamonds, bars of silver, precious jewelry, rare coins,
+    treasure chest, golden eggs, jeweled trident, Ming vase, egg-sized emerald,
+    platinum pyramid, glistening pearl, Persian rug, rare spices, golden chain,
+    African grey parrot
+
 - BRHA0017: 16: large gold nugget, large diamond, silver bar, precious jewelry, **golden conch**,
     treasure chest, clutch of golden eggs, jewel-encrusted trident, **delicate porcelain figurine**, egg-sized emerald,
     tiny platinum pyramid, huge glistening pearl, Persian rug, rare spices, golden chain,
@@ -583,6 +604,26 @@ of ANON0501.
 
 - WOOD0350 (PLAT0550, etc): _There is a massive vending machine here. The instructions on it read:
     "Drop coins here to receive fresh batteries."_
+
+## Vehicles
+
+- BASA0366: A raft at the reservoir. _...splashes noisily into the water somewhere
+    within the mist. There is a small raft floating just off shore. The only passage
+    goes back toward the south._ GET RAFT and ROW to cross the reservoir, then OUT
+    to leave the raft behind.
+
+- GOET0580, WOOD0430: See the section on "Flying carpets."
+
+- LONG0501 (MCDO0551, LONG0751): A wooden boat at the Blue Grotto. GET BOAT enters the
+    boat; DROP BOAT leaves it. It works kind of like the bear, but is also a container.
+
+- LONG0751: A helicopter guarded by orcs. The helicopter is its own room; PUSH BUTTON
+    cycles through its three landing spots.
+
+- PLAT0550 (ARNA0660, ARNA0770): At the reservoir: _With a swoosh and a swirl of water,
+    a large tortoise rises to the surface of the reservoir and paddles over to the shore
+    near you. The message, "I'm Darwin — ride me!" is inscribed on his back in ornate
+    letters._ RIDE DARWIN to cross the reservoir.
 
 ## Wizards
 
